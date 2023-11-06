@@ -25,6 +25,6 @@ The package exposes only the `Circuit` class, whose up-to-date documentation is 
 >>> help(opensquirrel.Circuit)
 ```
 
-- from a Linux shell: `python3 -c "import opensquirrel; help(opensquirrel.Circuit)`
+- from a Linux shell: `python3 -c "import opensquirrel; help(opensquirrel.Circuit)"`
 
 Currently there is also a set of default gates exposed as `opensquirrel.DefaultGates` to use in the `Circuit` constructor.
