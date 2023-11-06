@@ -36,7 +36,7 @@ class Replacer:
                 replacementGateSignature = querySignature(self.gates, replacementGateName)
                 assert len(replacementGateArgs) == len(replacementGateSignature)
                 assert all(replacementGateArgs[i] in originalQubits for i in range(len(replacementGateArgs)) if replacementGateSignature[i] == ArgType.QUBIT), \
-                    f"Substitution for gate `{gateName}` must use the input qubits {originalQubits} only"
+                    f"Substitution for gate `{replacedGateName}` must use the input qubits {originalQubits} only"
 
                 result.addGate(replacementGateName, *replacementGateArgs)
         
