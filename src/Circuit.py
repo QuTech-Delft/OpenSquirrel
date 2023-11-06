@@ -8,11 +8,38 @@ from src.SquirrelASTCreator import SquirrelASTCreator
 from src.TestInterpreter import TestInterpreter
 from src.Replacer import Replacer
 from src.Writer import Writer
+from test.TestGates import TEST_GATES as DefaultGates # For the doctest.
 import antlr4
 
 class Circuit:
+    """The Circuit class is the only interface to access OpenSquirrel's features.
+
+A Circuit object is constructed from a cQasm3 string, representing a quantum circuit, and a Python dictionary
+containing the prototypes and semantic of the allowed quantum gates.
+A default set of gates is exposed as `opensquirrel.DefaultGates` but it can be replaced and extended.
+
+>>> c = Circuit(DefaultGates, "version 3.0; qubit[3] q; h q[0]")
+>>> c
+version 3.0
+<BLANKLINE>
+qubit[3] q
+<BLANKLINE>
+h q[0]
+<BLANKLINE>
+>>> c.decompose_mckay()
+>>> c
+version 3.0
+<BLANKLINE>
+qubit[3] q
+<BLANKLINE>
+x90 q[0]
+rz q[0], 1.5707963267948966
+x90 q[0]
+<BLANKLINE>
+"""
+
     def __init__(self, gates, cqasm3_string):
-        """Create a circuit object from a cQasm3 string.
+        """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in the `gates` argument.
 
             * type-checking is performed, eliminating qubit indices errors and incoherences
             * checks that used gates are supported and mentioned in `gates` with appropriate signatures

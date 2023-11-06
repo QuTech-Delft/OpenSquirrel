@@ -11,8 +11,20 @@
           ``'"`
 ```
 
-For current status, see docstring in the entrypoint `src/Circuit.py`.
+# Installation
 
-pip dependencies (among others): `numpy`, `antlr4-tools`
+`pip install opensquirrel`
 
-To run the unit tests, do in this folder `python -m unittest discover test` (on Linux) or `py -m unittest discover test` (on Windows)
+# Documentation
+
+The package exposes only the `Circuit` class, whose up-to-date documentation is accessed:
+
+- from the Python console:
+```pycon
+>>> import opensquirrel
+>>> help(opensquirrel.Circuit)
+```
+
+- from a Linux shell: `python3 -c "import opensquirrel; help(opensquirrel.Circuit)`
+
+Currently there is also a set of default gates exposed as `opensquirrel.DefaultGates` to use in the `Circuit` constructor.
