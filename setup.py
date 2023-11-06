@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "opensquirrel",
-    version = "0.0.2",
+    version = "0.0.3",
     author = "Pablo Le Henaff",
     author_email = "p.lehenaff@tudelft.nl",
     description = "A quantum circuit transformation and manipulation tool",
