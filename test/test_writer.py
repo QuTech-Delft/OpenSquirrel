@@ -30,6 +30,26 @@ h myqubitsregister[0]
 cr myqubitsregister[0], myqubitsregister[1], 1.234
 """)
 
+    def test_comment(self):
+        squirrelAST = SquirrelAST(TEST_GATES, 3, "q")
+
+        writer = Writer(TEST_GATES)
+
+        squirrelAST.addGate("h", 0)
+        squirrelAST.addComment("My comment")
+        squirrelAST.addGate("cr", 0, 1, 1.234)
+
+        self.assertEqual(writer.process(squirrelAST), """version 3.0
+
+qubit[3] q
+
+h q[0]
+
+/* My comment */
+
+cr q[0], q[1], 1.234
+""")
+
 
 if __name__ == '__main__':
     unittest.main()

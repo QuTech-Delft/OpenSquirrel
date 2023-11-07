@@ -17,6 +17,10 @@ class SquirrelAST:
 
         self.operations.append((gateName, interpretedArgs))
     
+    def addComment(self, commentString: str):
+        assert "*/" not in commentString, "Comment contains illegal characters"
+        self.operations.append(commentString)
+    
     def __eq__(self, other):
         if self.gates != other.gates:
             return False

@@ -16,10 +16,15 @@ Mainly here to allow for Qiskit-style circuit construction:
         self.squirrelAST = SquirrelAST(gates, numberOfQubits, self.__default_qubit_register_name)
 
     def __getattr__(self, attr):
+        def addComment(commentString: str):
+            self.squirrelAST.addComment(commentString)
+            return self
+        
         def addThisGate(*args):
             self.squirrelAST.addGate(attr, *args)
             return self
-        return addThisGate
+        
+        return addComment if attr == "comment" else addThisGate
 
     def to_circuit(self):
         return Circuit(self.squirrelAST)

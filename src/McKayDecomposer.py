@@ -96,6 +96,9 @@ class McKayDecomposer:
     self.oneQubitGates = {}
 
     for operation in squirrelAST.operations:
+      if isinstance(operation, str):
+        continue
+      
       self._processSingleOperation(operation)
     
     self._flush_all()

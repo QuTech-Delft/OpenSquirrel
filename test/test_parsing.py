@@ -64,6 +64,8 @@ class ParsingTest(unittest.TestCase):
         with self.assertRaisesRegex(Exception, "Argument #0 passed to gate `rx` is of type ArgType.FLOAT but should be ArgType.QUBIT"):
             self.typeCheck("version 3.0; qubit[1] q; rx 42., q[0]")
 
+    # FIXME: add comments to AST when parsing?
+
     def test_simple(self):
         ast = self.getAST("""
 version 3.0

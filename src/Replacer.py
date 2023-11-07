@@ -11,7 +11,12 @@ class Replacer:
 
         signature = querySignature(self.gates, replacedGateName)
 
-        for otherGateName, otherArgs in squirrelAST.operations:
+        for operation in squirrelAST.operations:
+            if isinstance(operation, str):
+                continue
+
+            otherGateName, otherArgs = operation
+                
             if otherGateName != replacedGateName:
                 result.addGate(otherGateName, *otherArgs)
                 continue

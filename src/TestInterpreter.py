@@ -10,7 +10,12 @@ class TestInterpreter:
   def process(self, squirrelAST):
     totalUnitary = np.eye(1 << squirrelAST.nQubits, dtype=np.complex128)
 
-    for gateName, gateArgs in squirrelAST.operations:
+    for operation in squirrelAST.operations:
+      if isinstance(operation, str):
+        continue
+
+      gateName, gateArgs = operation
+      
       signature = querySignature(self.gates, gateName)
       assert len(gateArgs) == len(signature)
       qubitOperands = [gateArgs[i] for i in range(len(gateArgs)) if signature[i] == ArgType.QUBIT]
