@@ -13,11 +13,15 @@ setup(
     license = "Apache",
     keywords = "quantum circuits compilation",
     url = "https://github.com/QuTech-Delft/OpenSquirrel",
-    packages=['opensquirrel', 'test'],
+    packages=['opensquirrel', 'src', 'test', 'parsing'],
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: Apache Software License",
+    ],
+    install_requires=[
+        'antlr4-python3-runtime',
+        'numpy',
     ],
 )
