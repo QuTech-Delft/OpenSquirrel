@@ -4,6 +4,7 @@ from parsing.GeneratedParsingCode import CQasm3Visitor
 from src.TypeChecker import TypeChecker
 from src.McKayDecomposer import McKayDecomposer
 from src.SquirrelErrorHandler import SquirrelErrorHandler
+from src.SquirrelAST import SquirrelAST
 from src.SquirrelASTCreator import SquirrelASTCreator
 from src.TestInterpreter import TestInterpreter
 from src.Replacer import Replacer
@@ -18,7 +19,7 @@ A Circuit object is constructed from a cQasm3 string, representing a quantum cir
 containing the prototypes and semantic of the allowed quantum gates.
 A default set of gates is exposed as `opensquirrel.DefaultGates` but it can be replaced and extended.
 
->>> c = Circuit(DefaultGates, "version 3.0; qubit[3] q; h q[0]")
+>>> c = Circuit.from_string(DefaultGates, "version 3.0; qubit[3] q; h q[0]")
 >>> c
 version 3.0
 <BLANKLINE>
@@ -38,7 +39,15 @@ x90 q[0]
 <BLANKLINE>
 """
 
-    def __init__(self, gates, cqasm3_string):
+    def __init__(self, squirrelAST: SquirrelAST):
+        """Create a circuit object from a SquirrelAST object."""
+
+        self.gates = squirrelAST.gates
+        self.squirrelAST = squirrelAST
+
+
+    @classmethod
+    def from_string(cls, gates, cqasm3_string):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in the `gates` argument.
 
             * type-checking is performed, eliminating qubit indices errors and incoherences
@@ -46,8 +55,6 @@ x90 q[0]
             * does not support map or variables, and other things...
             * for example of `gates` dictionary, please look at TestGates.py
         """
-
-        self.gates = gates
 
         input_stream = antlr4.InputStream(cqasm3_string)
 
@@ -62,11 +69,20 @@ x90 q[0]
 
         tree = parser.prog()
 
-        typeChecker = TypeChecker(self.gates)
+        typeChecker = TypeChecker(gates)
         typeChecker.visit(tree) # FIXME: return error instead of throwing?
 
-        squirrelASTCreator = SquirrelASTCreator(self.gates)
-        self.squirrelAST = squirrelASTCreator.visit(tree)
+        squirrelASTCreator = SquirrelASTCreator(gates)
+
+        return Circuit(squirrelASTCreator.visit(tree))
+
+    
+    def getNumberOfQubits(self):
+        return self.squirrelAST.nQubits
+
+    
+    def getQubitRegisterName(self):
+        return self.squirrelAST.qubitRegisterName
 
     
     def decompose_mckay(self):
