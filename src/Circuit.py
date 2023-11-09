@@ -9,7 +9,6 @@ from src.SquirrelASTCreator import SquirrelASTCreator
 from src.TestInterpreter import TestInterpreter
 from src.Replacer import Replacer
 from src.Writer import Writer
-from test.TestGates import TEST_GATES as DefaultGates # For the doctest.
 import antlr4
 
 class Circuit:
