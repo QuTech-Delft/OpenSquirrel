@@ -1,3 +1,3 @@
-from src.Circuit import Circuit
-from src.CircuitBuilder import CircuitBuilder
-from src.DefaultGates import DefaultGates
+from opensquirrel.Circuit import Circuit
+from opensquirrel.CircuitBuilder import CircuitBuilder
+from opensquirrel.DefaultGates import DefaultGates

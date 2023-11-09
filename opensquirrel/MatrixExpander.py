@@ -11,7 +11,8 @@ def getBigMatrix(semantic, qubitOperands, totalQubits):
         whichQubit = qubitOperands[0]
 
         axis, angle, phase = semantic.axis, semantic.angle, semantic.phase
-        result = np.kron(np.kron(np.eye(1 << (totalQubits - whichQubit - 1)), Can1(axis, angle, phase)), np.eye(1 << whichQubit))
+        result = np.kron(np.kron(np.eye(1 << (totalQubits - whichQubit - 1)),
+                                 Can1(axis, angle, phase)), np.eye(1 << whichQubit))
         assert result.shape == (1 << totalQubits, 1 << totalQubits)
         return result
 
@@ -26,7 +27,8 @@ def getBigMatrix(semantic, qubitOperands, totalQubits):
     for input in range(1 << totalQubits):
         smallMatrixCol = 0
         for i in range(len(qubitOperands)):
-            smallMatrixCol |= ((input & (1 << qubitOperands[i])) >> qubitOperands[i]) << (len(qubitOperands) - 1 - i)
+            smallMatrixCol |= ((input & (1 << qubitOperands[i])) >> qubitOperands[i]) \
+                              << (len(qubitOperands) - 1 - i)
         
         col = m[:, smallMatrixCol]
         

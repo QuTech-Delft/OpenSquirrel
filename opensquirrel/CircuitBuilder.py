@@ -1,4 +1,5 @@
 from opensquirrel.Circuit import Circuit
+from opensquirrel.DefaultGates import DefaultGates
 from opensquirrel.SquirrelAST import SquirrelAST
 
 

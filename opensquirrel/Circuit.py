@@ -1,5 +1,6 @@
 import antlr4
 
+from opensquirrel.DefaultGates import DefaultGates  # For the doctest.
 from opensquirrel.McKayDecomposer import McKayDecomposer
 from opensquirrel.Replacer import Replacer
 from opensquirrel.SquirrelAST import SquirrelAST
@@ -10,7 +11,6 @@ from opensquirrel.TypeChecker import TypeChecker
 from opensquirrel.Writer import Writer
 from parsing.GeneratedParsingCode import CQasm3Lexer
 from parsing.GeneratedParsingCode import CQasm3Parser
-from test.TestGates import TEST_GATES as DefaultGates  # For the doctest.
 
 
 class Circuit:
