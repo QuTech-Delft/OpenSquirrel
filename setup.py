@@ -13,7 +13,7 @@ setup(
     license = "Apache",
     keywords = "quantum circuits compilation",
     url = "https://github.com/QuTech-Delft/OpenSquirrel",
-    packages=['opensquirrel', 'src', 'test', 'parsing'],
+    packages=['opensquirrel', 'src', 'test', 'parsing', 'parsing.GeneratedParsingCode', 'parsing.grammar'],
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
     classifiers=[
