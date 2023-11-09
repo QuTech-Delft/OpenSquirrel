@@ -52,7 +52,7 @@ x90 q[0]
             * type-checking is performed, eliminating qubit indices errors and incoherences
             * checks that used gates are supported and mentioned in `gates` with appropriate signatures
             * does not support map or variables, and other things...
-            * for example of `gates` dictionary, please look at TestGates.py
+            * for example of `gates` dictionary, please look at src/DefaultGates.py
         """
 
         input_stream = antlr4.InputStream(cqasm3_string)

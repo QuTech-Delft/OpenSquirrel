@@ -1,5 +1,5 @@
 import unittest
-from test.TestGates import TEST_GATES
+from src.DefaultGates import DefaultGates
 from src.SquirrelASTCreator import SquirrelASTCreator
 from parsing.GeneratedParsingCode import CQasm3Parser
 from parsing.GeneratedParsingCode import CQasm3Lexer
@@ -10,8 +10,8 @@ import antlr4
 
 class ParsingTest(unittest.TestCase):
     def setUp(self):
-        self.gates = TEST_GATES
-        self.astCreator = SquirrelASTCreator(TEST_GATES)
+        self.gates = DefaultGates
+        self.astCreator = SquirrelASTCreator(DefaultGates)
     
     def typeCheck(self, cQasm3String):
         input_stream = antlr4.InputStream(cQasm3String)

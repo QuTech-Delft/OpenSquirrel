@@ -1,12 +1,12 @@
 from src.Circuit import Circuit
-from test.TestGates import TEST_GATES
+from src.DefaultGates import DefaultGates
 import unittest
 import numpy as np
 import math
 
 class TestInterpreterTest(unittest.TestCase):
     def test_hadamard(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[1] q
 
@@ -18,7 +18,7 @@ h q[0]
         ])))
     
     def test_doublehadamard(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[1] q
 
@@ -28,7 +28,7 @@ h q[0]
         self.assertTrue(np.allclose(circuit.test_get_circuit_matrix(), np.eye(2)))
 
     def test_triplehadamard(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[1] q
 
@@ -42,7 +42,7 @@ h q[0]
         ])))
 
     def test_hadamardx(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[2] q
 
@@ -57,7 +57,7 @@ x q[1]
         ])))
 
     def test_xhadamard(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[2] q
 
@@ -72,7 +72,7 @@ x q[0]
         ])))
 
     def test_cnot(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[2] q
 
@@ -87,7 +87,7 @@ cnot q[1], q[0]
         ])))
 
     def test_cnot_reversed(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[2] q
 
@@ -102,7 +102,7 @@ cnot q[0], q[1]
         ])))
 
     def test_hadamard_cnot(self):
-        circuit = Circuit.from_string(TEST_GATES, r"""
+        circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[2] q
 

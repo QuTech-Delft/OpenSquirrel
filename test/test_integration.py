@@ -2,12 +2,12 @@
 
 import unittest
 from src.Circuit import Circuit
-from test.TestGates import TEST_GATES
+from src.DefaultGates import DefaultGates
 
 
 class IntegrationTest(unittest.TestCase):
     def test_simple(self):
-        myCircuit = Circuit.from_string(TEST_GATES, """
+        myCircuit = Circuit.from_string(DefaultGates, """
                 version 3.0
 
                 qubit[3] qreg
@@ -63,7 +63,7 @@ rz qreg[0], 1.5707963267948966
 """)
 
     def test_qi(self):
-        myCircuit = Circuit.from_string(TEST_GATES, """
+        myCircuit = Circuit.from_string(DefaultGates, """
             version 3.0
 
             // This is a single line comment which ends on the newline.
