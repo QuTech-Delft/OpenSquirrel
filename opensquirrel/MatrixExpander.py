@@ -1,7 +1,9 @@
 
-from src.Gates import SingleQubitAxisAngleSemantic, MultiQubitMatrixSemantic
 import numpy as np
-from src.Common import Can1
+
+from opensquirrel.Common import Can1
+from opensquirrel.Gates import SingleQubitAxisAngleSemantic, MultiQubitMatrixSemantic
+
 
 # This should only be used for testing and on circuits with low number of qubits.
 def getBigMatrix(semantic, qubitOperands, totalQubits):
@@ -39,4 +41,3 @@ def getBigMatrix(semantic, qubitOperands, totalQubits):
             result[largeOutput][input] = coeff
     
     return result
-

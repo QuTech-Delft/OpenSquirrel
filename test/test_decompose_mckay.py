@@ -1,12 +1,14 @@
-from test.TestGates import TEST_GATES
-from test.TestHelpers import areMatricesEqualUpToGlobalPhase
-from src.SquirrelAST import SquirrelAST
-from src.TestInterpreter import TestInterpreter
-from src.McKayDecomposer import McKayDecomposer
 import unittest
 
+from opensquirrel.McKayDecomposer import McKayDecomposer
+from opensquirrel.SquirrelAST import SquirrelAST
+from opensquirrel.TestInterpreter import TestInterpreter
+from test.TestGates import TEST_GATES
+from test.TestHelpers import areMatricesEqualUpToGlobalPhase
+
+
 class DecomposeMcKayTests(unittest.TestCase):
-    def checkMcKayDecomposition(self, squirrelAST, expectedAST = None):
+    def checkMcKayDecomposition(self, squirrelAST, expectedAST=None):
         """
             Check whether the mcKay decomposition transformation applied to the input AST preserves the
             circuit matrix up to an irrelevant global phase factor.
@@ -52,8 +54,7 @@ class DecomposeMcKayTests(unittest.TestCase):
 
         self.checkMcKayDecomposition(ast)
 
-
-    def test_smallrandom(self):
+    def test_small_random(self):
         ast = SquirrelAST(TEST_GATES, 4, "q")
 
         ast.addGate("H", 2)
@@ -64,7 +65,6 @@ class DecomposeMcKayTests(unittest.TestCase):
         ast.addGate("H", 1)
         ast.addGate("H", 0)
         ast.addGate("cr", 2, 3, 2.123)
-
 
         expectedAst = SquirrelAST(TEST_GATES, 4, "q")
 
@@ -78,6 +78,7 @@ class DecomposeMcKayTests(unittest.TestCase):
         expectedAst.addGate("cr", 2, 3, 2.123)
 
         self.checkMcKayDecomposition(ast, expectedAst)
+
 
 if __name__ == '__main__':
     unittest.main()

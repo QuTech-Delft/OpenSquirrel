@@ -1,7 +1,10 @@
-from src.Common import ArgType, Parameter
+import cmath
+import math
+
 import numpy as np
-import math, cmath
-from src.Gates import SingleQubitAxisAngleSemantic, MultiQubitMatrixSemantic
+
+from opensquirrel.Common import ArgType
+from opensquirrel.Gates import SingleQubitAxisAngleSemantic, MultiQubitMatrixSemantic
 
 TEST_GATES = {
     "h": {

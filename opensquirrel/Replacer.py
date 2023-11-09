@@ -1,6 +1,7 @@
-from src.Common import ArgType
-from src.Gates import querySignature
-from src.SquirrelAST import SquirrelAST
+from opensquirrel.Common import ArgType
+from opensquirrel.Gates import querySignature
+from opensquirrel.SquirrelAST import SquirrelAST
+
 
 class Replacer:
     def __init__(self, gates):
@@ -40,8 +41,11 @@ class Replacer:
 
                 replacementGateSignature = querySignature(self.gates, replacementGateName)
                 assert len(replacementGateArgs) == len(replacementGateSignature)
-                assert all(replacementGateArgs[i] in originalQubits for i in range(len(replacementGateArgs)) if replacementGateSignature[i] == ArgType.QUBIT), \
-                    f"Substitution for gate `{replacedGateName}` must use the input qubits {originalQubits} only"
+                assert all(
+                    replacementGateArgs[i] in originalQubits for i in range(len(replacementGateArgs)) if
+                    replacementGateSignature[i] == ArgType.QUBIT), \
+                    f"Substitution for gate `{replacedGateName}` " \
+                    f"must use the input qubits {originalQubits} only"
 
                 result.addGate(replacementGateName, *replacementGateArgs)
         

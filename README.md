@@ -13,7 +13,23 @@
 
 # Installation
 
-`pip install opensquirrel`
+## General installation
+
+```shell
+$ pip install opensquirrel
+```
+
+## Editable installation
+
+Run the following command in the root directory of `OpenSquirrel`
+```shell
+$ pip install -e .
+```
+
+To install the developer specific dependencies, run the command
+```shell
+$ pip install -e '.[dev]'
+```
 
 # Documentation
 

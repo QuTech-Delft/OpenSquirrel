@@ -1,5 +1,6 @@
-from src.Common import ArgType
-from src.Gates import querySignature
+from opensquirrel.Common import ArgType
+from opensquirrel.Gates import querySignature
+
 
 class Writer:
     def __init__(self, gates):
@@ -20,7 +21,8 @@ class Writer:
             gateName, gateArgs = operation
             signature = querySignature(self.gates, gateName)
 
-            args = [f"{squirrelAST.qubitRegisterName}[{arg}]" if t == ArgType.QUBIT else f"{arg}" for arg, t in zip(gateArgs, signature)]
+            args = [f"{squirrelAST.qubitRegisterName}[{arg}]"
+                    if t == ArgType.QUBIT else f"{arg}" for arg, t in zip(gateArgs, signature)]
 
             output += f"{gateName} {', '.join(args)}\n"
         

@@ -1,9 +1,11 @@
-import typing
-from src.Common import ArgType
 import numpy as np
+
+from opensquirrel.Common import ArgType
+
 
 class Semantic:
     pass
+
 
 class SingleQubitAxisAngleSemantic(Semantic):
     def __init__(self, axis: (float, float, float), angle: float, phase: float):
@@ -21,9 +23,11 @@ class MultiQubitMatrixSemantic(Semantic):
     def __init__(self, matrix: np.ndarray):
         self.matrix = matrix
 
+
 class ControlledSemantic(MultiQubitMatrixSemantic):
     def __init__(self, numberOfControlQubits: int, matrix: np.ndarray):
-        pass #TODO
+        pass  # TODO
+
 
 def queryEntry(gatesDict, gateName):
     if gateName not in gatesDict:
@@ -35,6 +39,7 @@ def queryEntry(gatesDict, gateName):
         return queryEntry(gatesDict, entry)
     
     return entry
+
 
 def querySemantic(gatesDict, gateName, *gateArgs):
     signature = querySignature(gatesDict, gateName)
@@ -51,7 +56,8 @@ def querySemantic(gatesDict, gateName, *gateArgs):
 
         return semantic
 
-    return semantic(*gateArgs) # TODO: nice error when args don't match? But should be already checked by typer
+    return semantic(*gateArgs)  # TODO: nice error when args don't match? But should be already checked by typer
+
 
 def querySignature(gatesDict, gateName: str):
     entry = queryEntry(gatesDict, gateName)
@@ -61,9 +67,3 @@ def querySignature(gatesDict, gateName: str):
     signature = entry["signature"]
 
     return signature
-
-
-
-    
-
-

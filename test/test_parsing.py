@@ -1,12 +1,14 @@
 import unittest
-from test.TestGates import TEST_GATES
-from src.SquirrelASTCreator import SquirrelASTCreator
-from parsing.GeneratedParsingCode import CQasm3Parser
-from parsing.GeneratedParsingCode import CQasm3Lexer
-from parsing.GeneratedParsingCode import CQasm3Visitor
-from src.TypeChecker import TypeChecker
-from src.SquirrelErrorHandler import SquirrelErrorHandler, SquirrelParseException
+
 import antlr4
+
+from parsing.GeneratedParsingCode import CQasm3Lexer
+from parsing.GeneratedParsingCode import CQasm3Parser
+from opensquirrel.SquirrelASTCreator import SquirrelASTCreator
+from opensquirrel.SquirrelErrorHandler import SquirrelErrorHandler, SquirrelParseException
+from opensquirrel.TypeChecker import TypeChecker
+from test.TestGates import TEST_GATES
+
 
 class ParsingTest(unittest.TestCase):
     def setUp(self):
@@ -37,41 +39,60 @@ class ParsingTest(unittest.TestCase):
         return self.astCreator.visit(tree)
 
     def test_empty(self):
-        with self.assertRaisesRegex(SquirrelParseException, "Parsing error at 1:0: mismatched input '<EOF>' expecting"):
+        with self.assertRaisesRegex(
+                SquirrelParseException,
+                "Parsing error at 1:0: mismatched input '<EOF>' expecting"
+        ):
             self.typeCheck("")
     
     def test_illegal(self):
-        with self.assertRaisesRegex(SquirrelParseException, "Parsing error at 1:0: mismatched input 'illegal' expecting"):
+        with self.assertRaisesRegex(
+                SquirrelParseException,
+                "Parsing error at 1:0: mismatched input 'illegal' expecting"
+        ):
             self.typeCheck("illegal")
         
-    def test_noqubits(self):
-        with self.assertRaisesRegex(SquirrelParseException, "Parsing error at 1:14: mismatched input 'h' expecting 'qubit"):
+    def test_no_qubits(self):
+        with self.assertRaisesRegex(
+                SquirrelParseException,
+                "Parsing error at 1:14: mismatched input 'h' expecting 'qubit"
+        ):
             self.typeCheck("version 3.0;  h q[0]")
-    
-    def test_wrongversion(self):
-        with self.assertRaisesRegex(SquirrelParseException, "Parsing error at 1:8: mismatched input '3.1' expecting '3.0'"):
+
+    def test_wrong_version(self):
+        with self.assertRaisesRegex(
+                SquirrelParseException,
+                "Parsing error at 1:8: mismatched input '3.1' expecting '3.0'"
+        ):
             self.typeCheck("version 3.1; qubit[1] q; h q[0]")
 
-    def test_unknowngate(self):
+    def test_unknown_gate(self):
         with self.assertRaisesRegex(Exception, "Unknown gate `unknowngate`"):
             self.typeCheck("version 3.0; qubit[1] q; unknowngate q[0]")
 
-    def test_wrongargumenttype(self):
-        with self.assertRaisesRegex(Exception, "Argument #1 passed to gate `rx` is of type ArgType.INT but should be ArgType.FLOAT"):
+    def test_wrong_argument_type(self):
+        with self.assertRaisesRegex(
+                Exception,
+                "Argument #1 passed to gate `rx` is of type ArgType.INT but should be ArgType.FLOAT"
+        ):
             self.typeCheck("version 3.0; qubit[1] q; rx q[0], 42")
     
-    def test_wrongargumenttype2(self):
-        with self.assertRaisesRegex(Exception, "Argument #0 passed to gate `rx` is of type ArgType.FLOAT but should be ArgType.QUBIT"):
+    def test_wrong_argument_type_2(self):
+        with self.assertRaisesRegex(
+                Exception,
+                "Argument #0 passed to gate `rx` is of type ArgType.FLOAT but should be ArgType.QUBIT"
+        ):
             self.typeCheck("version 3.0; qubit[1] q; rx 42., q[0]")
 
     # FIXME: add comments to AST when parsing?
 
     def test_simple(self):
         ast = self.getAST("""
-version 3.0
-  qubit[1] qu
-  
-  h qu[0]
+            version 3.0
+            
+            qubit[1] qu
+            
+            h qu[0]
         """)
 
         self.assertEqual(ast.nQubits, 1)
@@ -79,7 +100,7 @@ version 3.0
         self.assertEqual(len(ast.operations), 1)
         self.assertEqual(ast.operations[0], ("h", (0,)))
 
-    def test_rxyz(self):
+    def test_r_xyz(self):
         ast = self.getAST("""
 version 3.0
   qubit[2] squirrel
@@ -96,7 +117,7 @@ version 3.0
         self.assertEqual(ast.operations[1], ("rx", (1, 1.23)))
         self.assertEqual(ast.operations[2], ("ry", (0, -42)))
 
-    def test_multiplequbits(self):
+    def test_multiple_qubits(self):
         ast = self.getAST("""
 version 3.0
   qubit[10] large
@@ -123,6 +144,7 @@ version 3.0
         """)
 
         self.assertEqual(ast.operations[0], ("H", (1,)))
+
 
 if __name__ == '__main__':
     unittest.main()
