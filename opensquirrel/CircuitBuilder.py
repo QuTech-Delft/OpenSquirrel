@@ -1,14 +1,16 @@
-from src.Circuit import Circuit
-from src.SquirrelAST import SquirrelAST
+from opensquirrel.Circuit import Circuit
+from opensquirrel.DefaultGates import DefaultGates
+from opensquirrel.SquirrelAST import SquirrelAST
+
 
 class CircuitBuilder:
     """A class using the builder pattern to make construction of circuits easy.
-Adds corresponding gate when a method is called. Checks gates are known and called with the right arguments.
-Mainly here to allow for Qiskit-style circuit construction:
+    Adds corresponding gate when a method is called. Checks gates are known and called with the right arguments.
+    Mainly here to allow for Qiskit-style circuit construction:
 
->>> myCircuit = CircuitBuilder(DefaultGates, 3).h(0).cnot(0, 1).cnot(0, 2).to_circuit()
+    >>> myCircuit = CircuitBuilder(DefaultGates, 3).h(0).cnot(0, 1).cnot(0, 2).to_circuit()
 
-"""
+    """
 
     __default_qubit_register_name = "q"
 

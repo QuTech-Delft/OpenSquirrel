@@ -1,7 +1,9 @@
 import unittest
-from src.DefaultGates import DefaultGates
-from src.SquirrelAST import SquirrelAST
-from src.Writer import Writer
+
+from opensquirrel.DefaultGates import DefaultGates
+from opensquirrel.SquirrelAST import SquirrelAST
+from opensquirrel.Writer import Writer
+
 
 class WriterTest(unittest.TestCase):
     def test_write(self):
@@ -53,4 +55,3 @@ cr q[0], q[1], 1.234
 
 if __name__ == '__main__':
     unittest.main()
-

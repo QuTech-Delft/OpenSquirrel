@@ -1,5 +1,5 @@
-from src.Gates import querySignature
-from src.Common import ATOL
+from opensquirrel.Gates import querySignature
+
 
 class SquirrelAST:
     # This is just a list of gates (for now?)
@@ -42,7 +42,8 @@ class SquirrelAST:
                 return False
             
             if len(leftArgs) != len(rightArgs) or any(leftArgs[i] != rightArgs[i] for i in range(len(leftArgs))):
-            # if len(leftArgs) != len(rightArgs) or any(abs(leftArgs[i] - rightArgs[i]) > ATOL for i in range(len(leftArgs))):
+                # if len(leftArgs) != len(rightArgs) or any(abs(leftArgs[i] - rightArgs[i]) >
+                # ATOL for i in range(len(leftArgs))):
                 return False
         
         return True

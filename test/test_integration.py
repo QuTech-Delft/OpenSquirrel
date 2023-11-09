@@ -1,8 +1,9 @@
 # This integration test also serves as example and code documentation.
 
 import unittest
-from src.Circuit import Circuit
-from src.DefaultGates import DefaultGates
+
+from opensquirrel.Circuit import Circuit
+from opensquirrel.DefaultGates import DefaultGates
 
 
 class IntegrationTest(unittest.TestCase):
@@ -36,7 +37,9 @@ class IntegrationTest(unittest.TestCase):
 
         output = str(myCircuit)
 
-        self.assertEqual(output, """version 3.0
+        self.assertEqual(output,
+
+"""version 3.0
 
 qubit[3] qreg
 
@@ -60,7 +63,8 @@ x90 qreg[0]
 rz qreg[0], 0.8415926535897933
 x90 qreg[0]
 rz qreg[0], 1.5707963267948966
-""")
+"""
+                         )
 
     def test_qi(self):
         myCircuit = Circuit.from_string(DefaultGates, """
@@ -127,3 +131,7 @@ rz q[1], 3.141592653589793
 """
         
         self.assertEqual(output, expected)
+
+
+if __name__ == '__main__':
+    unittest.main()

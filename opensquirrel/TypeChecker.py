@@ -1,6 +1,7 @@
+from opensquirrel.Common import ExprType, exprTypeToArgType
+from opensquirrel.Gates import querySignature
 from parsing.GeneratedParsingCode import CQasm3Visitor
-from src.Common import ExprType, ArgType, exprTypeToArgType
-from src.Gates import querySignature
+
 
 class TypeChecker(CQasm3Visitor.CQasm3Visitor):
     def __init__(self, gates):
@@ -25,7 +26,8 @@ class TypeChecker(CQasm3Visitor.CQasm3Visitor):
         expectedSignature = querySignature(self.gates, gateName)
 
         if len(ctx.expr()) != len(expectedSignature):
-            raise Exception(f"Gate `{gateName}` takes {len(expectedSignature)} arguments, but {len(ctx.expr())} were given!")
+            raise Exception(f"Gate `{gateName}` takes {len(expectedSignature)} arguments,"
+                            f" but {len(ctx.expr())} were given!")
 
         i = 0
         qubitArrays = None
@@ -39,51 +41,52 @@ class TypeChecker(CQasm3Visitor.CQasm3Visitor):
               qubitArrays = argumentData[1]
 
             if expectedSignature[i] != exprTypeToArgType(argumentType):
-                raise Exception(f"Argument #{i} passed to gate `{gateName}` is of type {exprTypeToArgType(argumentType)} but should be {expectedSignature[i]}")
+                raise Exception(f"Argument #{i} passed to gate `{gateName}` is of type"
+                                f" {exprTypeToArgType(argumentType)} but should be {expectedSignature[i]}")
             i += 1
 
     def visitQubit(self, ctx):
         if str(ctx.ID()) != self.registerName:
-          raise Exception(f"Qubit register {str(ctx.ID())} not declared")
+            raise Exception(f"Qubit register {str(ctx.ID())} not declared")
 
         qubitIndex = int(str(ctx.INT()))
-        if (qubitIndex >= self.nQubits):
-          raise Exception(f"Qubit index {qubitIndex} out of range")
+        if qubitIndex >= self.nQubits:
+            raise Exception(f"Qubit index {qubitIndex} out of range")
 
         return (ExprType.QUBITREFS,1)
 
     def visitQubits(self, ctx):
         if str(ctx.ID()) != self.registerName:
-          raise Exception(f"Qubit register {str(ctx.ID())} not declared")
+            raise Exception(f"Qubit register {str(ctx.ID())} not declared")
 
         qubitIndices = list(map(int, map(str, ctx.INT())))
         if any(i >= self.nQubits for i in qubitIndices):
-          raise Exception(f"Qubit index {next(i for i in qubitIndices if i >= self.nQubits)} out of range")
+            raise Exception(f"Qubit index {next(i for i in qubitIndices if i >= self.nQubits)} out of range")
 
-        return (ExprType.QUBITREFS, len(qubitIndices))
+        return ExprType.QUBITREFS, len(qubitIndices)
 
     def visitQubitRange(self, ctx):
         if str(ctx.ID()) != self.registerName:
-          raise Exception(f"Qubit register {str(ctx.ID())} not declared")
+            raise Exception(f"Qubit register {str(ctx.ID())} not declared")
         
         qubitIndex1 = int(str(ctx.INT(0)))
         qubitIndex2 = int(str(ctx.INT(1)))
-        if (max(qubitIndex1, qubitIndex2) >= self.nQubits):
-          raise Exception(f"Qubit indices {qubitIndex1}:{qubitIndex2} out of range")
+        if max(qubitIndex1, qubitIndex2) >= self.nQubits:
+            raise Exception(f"Qubit indices {qubitIndex1}:{qubitIndex2} out of range")
 
         if (qubitIndex1 > qubitIndex2):
-          raise Exception(f"Qubit indices {qubitIndex1}:{qubitIndex2} malformed")
+            raise Exception(f"Qubit indices {qubitIndex1}:{qubitIndex2} malformed")
 
         return (ExprType.QUBITREFS, qubitIndex2 - qubitIndex1 + 1)
 
     def visitIntLiteral(self, ctx):
-        return (ExprType.INT,)
+        return ExprType.INT,
 
     def visitNegatedIntLiteral(self, ctx):
-        return (ExprType.INT,)
+        return ExprType.INT,
 
     def visitFloatLiteral(self, ctx):
-        return (ExprType.FLOAT,)
+        return ExprType.FLOAT,
 
     def visitNegatedFloatLiteral(self, ctx):
-        return (ExprType.FLOAT,)
+        return ExprType.FLOAT,

@@ -1,42 +1,44 @@
-from parsing.GeneratedParsingCode import CQasm3Parser
-from parsing.GeneratedParsingCode import CQasm3Lexer
-from parsing.GeneratedParsingCode import CQasm3Visitor
-from src.TypeChecker import TypeChecker
-from src.McKayDecomposer import McKayDecomposer
-from src.SquirrelErrorHandler import SquirrelErrorHandler
-from src.SquirrelAST import SquirrelAST
-from src.SquirrelASTCreator import SquirrelASTCreator
-from src.TestInterpreter import TestInterpreter
-from src.Replacer import Replacer
-from src.Writer import Writer
 import antlr4
+
+from opensquirrel.DefaultGates import DefaultGates  # For the doctest.
+from opensquirrel.McKayDecomposer import McKayDecomposer
+from opensquirrel.Replacer import Replacer
+from opensquirrel.SquirrelAST import SquirrelAST
+from opensquirrel.SquirrelASTCreator import SquirrelASTCreator
+from opensquirrel.SquirrelErrorHandler import SquirrelErrorHandler
+from opensquirrel.TestInterpreter import TestInterpreter
+from opensquirrel.TypeChecker import TypeChecker
+from opensquirrel.Writer import Writer
+from parsing.GeneratedParsingCode import CQasm3Lexer
+from parsing.GeneratedParsingCode import CQasm3Parser
+
 
 class Circuit:
     """The Circuit class is the only interface to access OpenSquirrel's features.
 
-A Circuit object is constructed from a cQasm3 string, representing a quantum circuit, and a Python dictionary
-containing the prototypes and semantic of the allowed quantum gates.
-A default set of gates is exposed as `opensquirrel.DefaultGates` but it can be replaced and extended.
+    A Circuit object is constructed from a cQasm3 string, representing a quantum circuit, and a Python dictionary
+    containing the prototypes and semantic of the allowed quantum gates.
+    A default set of gates is exposed as `opensquirrel.DefaultGates` but it can be replaced and extended.
 
->>> c = Circuit.from_string(DefaultGates, "version 3.0; qubit[3] q; h q[0]")
->>> c
-version 3.0
-<BLANKLINE>
-qubit[3] q
-<BLANKLINE>
-h q[0]
-<BLANKLINE>
->>> c.decompose_mckay()
->>> c
-version 3.0
-<BLANKLINE>
-qubit[3] q
-<BLANKLINE>
-x90 q[0]
-rz q[0], 1.5707963267948966
-x90 q[0]
-<BLANKLINE>
-"""
+    >>> c = Circuit.from_string(DefaultGates, "version 3.0; qubit[3] q; h q[0]")
+    >>> c
+    version 3.0
+    <BLANKLINE>
+    qubit[3] q
+    <BLANKLINE>
+    h q[0]
+    <BLANKLINE>
+    >>> c.decompose_mckay()
+    >>> c
+    version 3.0
+    <BLANKLINE>
+    qubit[3] q
+    <BLANKLINE>
+    x90 q[0]
+    rz q[0], 1.5707963267948966
+    x90 q[0]
+    <BLANKLINE>
+    """
 
     def __init__(self, squirrelAST: SquirrelAST):
         """Create a circuit object from a SquirrelAST object."""
@@ -47,12 +49,13 @@ x90 q[0]
 
     @classmethod
     def from_string(cls, gates, cqasm3_string):
-        """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in the `gates` argument.
+        """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
+        the `gates` argument.
 
-            * type-checking is performed, eliminating qubit indices errors and incoherences
+            * type-checking is performed, eliminating qubit indices errors and incoherencies
             * checks that used gates are supported and mentioned in `gates` with appropriate signatures
             * does not support map or variables, and other things...
-            * for example of `gates` dictionary, please look at src/DefaultGates.py
+            * for example of `gates` dictionary, please look at TestGates.py
         """
 
         input_stream = antlr4.InputStream(cqasm3_string)
@@ -75,15 +78,12 @@ x90 q[0]
 
         return Circuit(squirrelASTCreator.visit(tree))
 
-    
     def getNumberOfQubits(self):
         return self.squirrelAST.nQubits
 
-    
     def getQubitRegisterName(self):
         return self.squirrelAST.qubitRegisterName
 
-    
     def decompose_mckay(self):
         """Perform gate fusion on all one-qubit gates and decompose them in the McKay style.
 
@@ -97,7 +97,6 @@ x90 q[0]
 
         mcKayDecomposer = McKayDecomposer(self.gates)
         self.squirrelAST = mcKayDecomposer.process(self.squirrelAST)
-    
 
     def replace(self, gateName, f):
         """Manually replace occurrences of a given gate with a list of gates.
@@ -110,7 +109,6 @@ x90 q[0]
         replacer = Replacer(self.gates) # FIXME: only one instance of this is needed.
         self.squirrelAST = replacer.process(self.squirrelAST, gateName, f)
 
-
     def test_get_circuit_matrix(self):
         """Get the (large) unitary matrix corresponding to the circuit.
 
@@ -121,7 +119,6 @@ x90 q[0]
 
         interpreter = TestInterpreter(self.gates)
         return interpreter.process(self.squirrelAST)
-
 
     def __repr__(self):
         """Write the circuit to a cQasm3 string.

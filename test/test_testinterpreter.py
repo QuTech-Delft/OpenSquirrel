@@ -1,8 +1,11 @@
-from src.Circuit import Circuit
-from src.DefaultGates import DefaultGates
-import unittest
-import numpy as np
 import math
+import unittest
+
+import numpy as np
+
+from opensquirrel.Circuit import Circuit
+from opensquirrel.DefaultGates import DefaultGates
+
 
 class TestInterpreterTest(unittest.TestCase):
     def test_hadamard(self):
@@ -17,7 +20,7 @@ h q[0]
                 [1, -1],
         ])))
     
-    def test_doublehadamard(self):
+    def test_double_hadamard(self):
         circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[1] q
@@ -27,7 +30,7 @@ h q[0]
 """)
         self.assertTrue(np.allclose(circuit.test_get_circuit_matrix(), np.eye(2)))
 
-    def test_triplehadamard(self):
+    def test_triple_hadamard(self):
         circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[1] q
@@ -41,7 +44,7 @@ h q[0]
                 [1, -1],
         ])))
 
-    def test_hadamardx(self):
+    def test_hadamard_x(self):
         circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[2] q
@@ -56,7 +59,7 @@ x q[1]
                 [1, -1, 0, 0],
         ])))
 
-    def test_xhadamard(self):
+    def test_x_hadamard(self):
         circuit = Circuit.from_string(DefaultGates, r"""
 version 3.0
 qubit[2] q

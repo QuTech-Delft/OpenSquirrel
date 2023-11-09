@@ -1,0 +1,49 @@
+[build-system]
+requires = [
+    "setuptools>=61.2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opensquirrel"
+version = "0.0.5"
+authors = [
+    { name = "Pablo Le Henaff", email = "p.lehenaff@tudelft.nl" },
+]
+description = "A quantum circuit transformation and manipulation tool"
+keywords = [
+    "quantum",
+    "circuits",
+    "compilation",
+]
+# requires-python = ">=3.10"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: Apache Software License",
+]
+dependencies = [
+    "antlr4-python3-runtime",
+    "numpy",
+]
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
+[project.license]
+text = "Apache"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://github.com/QuTech-Delft/OpenSquirrel"
+
+[tool.setuptools]
+packages = [
+    "opensquirrel",
+    "test",
+    "parsing",
+]
+include-package-data = false

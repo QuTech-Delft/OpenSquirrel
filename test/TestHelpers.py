@@ -1,8 +1,11 @@
-from src.Common import ATOL
 import numpy as np
 
+from opensquirrel.Common import ATOL
+
+
 def areMatricesEqualUpToGlobalPhase(matrixA, matrixB):
-    firstNonZero = next((i, j) for i in range(matrixA.shape[0]) for j in range(matrixA.shape[1]) if abs(matrixA[i, j]) > ATOL)
+    firstNonZero = next((i, j) for i in range(matrixA.shape[0])
+                        for j in range(matrixA.shape[1]) if abs(matrixA[i, j]) > ATOL)
 
     if abs(matrixB[firstNonZero]) < ATOL:
         return False

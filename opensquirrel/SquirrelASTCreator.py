@@ -1,7 +1,7 @@
 from parsing.GeneratedParsingCode import CQasm3Visitor
-from src.Common import ArgType
-from src.SquirrelAST import SquirrelAST
-from src.Gates import querySignature
+from opensquirrel.Common import ArgType
+from opensquirrel.SquirrelAST import SquirrelAST
+from opensquirrel.Gates import querySignature
 
 
 class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
@@ -9,7 +9,7 @@ class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
         self.gates = gates
     
     def visitProg(self, ctx):
-        qubitRegisterName, nQubits = self.visit(ctx.qubitRegisterDeclaration()) # Use?
+        qubitRegisterName, nQubits = self.visit(ctx.qubitRegisterDeclaration())  # Use?
 
         self.squirrelAST = SquirrelAST(self.gates, nQubits, qubitRegisterName)
 
@@ -23,15 +23,19 @@ class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
 
         signature = querySignature(self.gates, gateName)
 
-        numberOfQubits = next(len(self.visit(ctx.expr(i))) for i in range(len(signature)) if signature[i] == ArgType.QUBIT)
+        numberOfQubits = next(len(self.visit(ctx.expr(i))) for i in range(len(signature)) if signature[i]
+                              == ArgType.QUBIT)
 
-        expandedArgs = [self.visit(ctx.expr(i)) if signature[i] == ArgType.QUBIT else [self.visit(ctx.expr(i)) for _ in range(numberOfQubits)] for i in range(len(signature))]
+        expandedArgs = [self.visit(ctx.expr(i))
+                        if signature[i] == ArgType.QUBIT else
+                        [self.visit(ctx.expr(i)) for _ in range(numberOfQubits)]
+                        for i in range(len(signature))]
         
         for individualArgs in zip(*expandedArgs):
             self.squirrelAST.addGate(gateName, *individualArgs)
 
     def visitQubitRegisterDeclaration(self, ctx):
-        return (str(ctx.ID()), int(str(ctx.INT())))
+        return str(ctx.ID()), int(str(ctx.INT()))
 
     def visitQubit(self, ctx):
         return [int(str(ctx.INT()))]

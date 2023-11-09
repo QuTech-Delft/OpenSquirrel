@@ -1,6 +1,9 @@
-from src.CircuitBuilder import CircuitBuilder
-from src.DefaultGates import DefaultGates
 import unittest
+
+from opensquirrel.DefaultGates import DefaultGates
+
+from opensquirrel.CircuitBuilder import CircuitBuilder
+
 
 class CircuitBuilderTest(unittest.TestCase):
     def test_simple(self):
@@ -40,3 +43,7 @@ class CircuitBuilderTest(unittest.TestCase):
         
         with self.assertRaisesRegex(AssertionError, "Wrong number of arguments for gate `h`"):
             builder.h(0, 1)
+
+
+if __name__ == '__main__':
+    unittest.main()
