@@ -21,7 +21,7 @@ $ pip install opensquirrel
 
 ## Editable installation
 
-Run the following command in the root directory of `OpenSquirrel`
+To perform an editable install, run the following command in the root directory of `OpenSquirrel` with the `-e` flag
 ```shell
 $ pip install -e .
 ```
@@ -44,3 +44,10 @@ The package exposes only the `Circuit` class, whose up-to-date documentation is 
 - from a Linux shell: `python3 -c "import opensquirrel; help(opensquirrel.Circuit)"`
 
 Currently there is also a set of default gates exposed as `opensquirrel.DefaultGates` to use in the `Circuit` constructor.
+
+# Testing
+
+To run the tests, run the following command in the root directory of `OpenSquirrel`
+```shell
+$ pytest
+```
