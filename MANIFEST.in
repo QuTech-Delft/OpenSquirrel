@@ -1,0 +1,3 @@
+include parsing/grammar/*.g4
+include parsing/GeneratedParsingCode/*.tokens
+include parsing/GeneratedParsingCode/*.interp

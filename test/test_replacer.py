@@ -1,8 +1,8 @@
 import unittest
 
+from opensquirrel.DefaultGates import DefaultGates
 from opensquirrel.Replacer import Replacer
 from opensquirrel.SquirrelAST import SquirrelAST
-from test.TestGates import TEST_GATES
 
 
 def hadamard_decomposition(q):
@@ -14,9 +14,9 @@ def hadamard_decomposition(q):
 
 class ReplacerTest(unittest.TestCase):
     def test_replace(self):
-        squirrelAST = SquirrelAST(TEST_GATES, 3, "test")
+        squirrelAST = SquirrelAST(DefaultGates, 3, "test")
 
-        replacer = Replacer(TEST_GATES)
+        replacer = Replacer(DefaultGates)
 
         squirrelAST.addGate("h", 0)
 

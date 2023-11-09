@@ -1,15 +1,15 @@
 import unittest
 
+from opensquirrel.DefaultGates import DefaultGates
 from opensquirrel.SquirrelAST import SquirrelAST
 from opensquirrel.Writer import Writer
-from test.TestGates import TEST_GATES
 
 
 class WriterTest(unittest.TestCase):
     def test_write(self):
-        squirrelAST = SquirrelAST(TEST_GATES, 3, "myqubitsregister")
+        squirrelAST = SquirrelAST(DefaultGates, 3, "myqubitsregister")
 
-        writer = Writer(TEST_GATES)
+        writer = Writer(DefaultGates)
 
         written = writer.process(squirrelAST)
         
@@ -33,9 +33,9 @@ cr myqubitsregister[0], myqubitsregister[1], 1.234
 """)
 
     def test_comment(self):
-        squirrelAST = SquirrelAST(TEST_GATES, 3, "q")
+        squirrelAST = SquirrelAST(DefaultGates, 3, "q")
 
-        writer = Writer(TEST_GATES)
+        writer = Writer(DefaultGates)
 
         squirrelAST.addGate("h", 0)
         squirrelAST.addComment("My comment")

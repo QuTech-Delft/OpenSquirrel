@@ -1,9 +1,9 @@
 import unittest
 
+from opensquirrel.DefaultGates import DefaultGates
 from opensquirrel.McKayDecomposer import McKayDecomposer
 from opensquirrel.SquirrelAST import SquirrelAST
 from opensquirrel.TestInterpreter import TestInterpreter
-from test.TestGates import TEST_GATES
 from test.TestHelpers import areMatricesEqualUpToGlobalPhase
 
 
@@ -33,7 +33,7 @@ class DecomposeMcKayTests(unittest.TestCase):
         self.assertTrue(areMatricesEqualUpToGlobalPhase(actualMatrix, expectedMatrix))
 
     def test_one(self):
-        ast = SquirrelAST(TEST_GATES, 2, "squirrel")
+        ast = SquirrelAST(DefaultGates, 2, "squirrel")
 
         ast.addGate("ry", 0, 23847628349.123)
         ast.addGate("rx", 0, 29384672.234)
@@ -42,7 +42,7 @@ class DecomposeMcKayTests(unittest.TestCase):
         self.checkMcKayDecomposition(ast)
 
     def test_two(self):
-        ast = SquirrelAST(TEST_GATES, 2, "squirrel")
+        ast = SquirrelAST(DefaultGates, 2, "squirrel")
 
         ast.addGate("ry", 0, 23847628349.123)
         ast.addGate("cnot", 0, 1)
@@ -54,8 +54,9 @@ class DecomposeMcKayTests(unittest.TestCase):
 
         self.checkMcKayDecomposition(ast)
 
+
     def test_small_random(self):
-        ast = SquirrelAST(TEST_GATES, 4, "q")
+        ast = SquirrelAST(DefaultGates, 4, "q")
 
         ast.addGate("H", 2)
         ast.addGate("cr", 2, 3, 2.123)
@@ -66,7 +67,7 @@ class DecomposeMcKayTests(unittest.TestCase):
         ast.addGate("H", 0)
         ast.addGate("cr", 2, 3, 2.123)
 
-        expectedAst = SquirrelAST(TEST_GATES, 4, "q")
+        expectedAst = SquirrelAST(DefaultGates, 4, "q")
 
         expectedAst.addGate("x90", 2)
         expectedAst.addGate("rz", 2, 1.5707963267948966)
