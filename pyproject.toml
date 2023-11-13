@@ -1,49 +1,56 @@
-[build-system]
-requires = [
-    "setuptools>=61.2",
-]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "opensquirrel"
 version = "0.0.5"
-authors = [
-    { name = "Pablo Le Henaff", email = "p.lehenaff@tudelft.nl" },
-]
 description = "A quantum circuit transformation and manipulation tool"
+authors = [
+    "Pablo Le Henaff <p.lehenaff@tudelft.nl>",
+    "Roberto Turrado Camblor <r.turradocamblor@tudelft.nl>",
+    "Chris Elenbaas <chris.elenbaas@tno.nl"
+]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://github.com/QuTech-Delft/OpenSquirrel"
+repository = "https://github.com/QuTech-Delft/OpenSquirrel"
+# documentation = "<url-docs>"
 keywords = [
     "quantum",
     "circuits",
     "compilation",
 ]
-# requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache Software License",
 ]
-dependencies = [
-    "antlr4-python3-runtime",
-    "numpy",
-]
-[project.optional-dependencies]
-dev = [
-    "pytest"
-]
-
-[project.license]
-text = "Apache"
-
-[project.readme]
-file = "README.md"
-content-type = "text/markdown"
-
-[project.urls]
-Homepage = "https://github.com/QuTech-Delft/OpenSquirrel"
-
-[tool.setuptools]
 packages = [
-    "opensquirrel",
-    "test",
-    "parsing",
+    { include = "opensquirrel" },
+    { include = "test" },
+    { include = "parsing" },
 ]
-include-package-data = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+antlr4-python3-runtime = "^4.13.1"
+numpy = "^1.26.1"
+# structlog = "^23.1.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+# mypy = "^1.1.0"
+
+#[tool.poetry.group.doc.dependencies]
+#mkdocs = "^1.5.3"
+
+#[tool.poetry.group.dev.dependencies]
+#black
+#coverage
+#flake8
+#isort
+#pre-commit
+
+#[tool.black]
+#line-length = 100
+#target-version = ["py310"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

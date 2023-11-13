@@ -1,10 +1,24 @@
 import unittest
 
+import numpy as np
+
+from opensquirrel.Common import ATOL
 from opensquirrel.DefaultGates import DefaultGates
 from opensquirrel.McKayDecomposer import McKayDecomposer
 from opensquirrel.SquirrelAST import SquirrelAST
 from opensquirrel.TestInterpreter import TestInterpreter
-from test.TestHelpers import areMatricesEqualUpToGlobalPhase
+
+
+def areMatricesEqualUpToGlobalPhase(matrixA, matrixB):
+    firstNonZero = next((i, j) for i in range(matrixA.shape[0])
+                        for j in range(matrixA.shape[1]) if abs(matrixA[i, j]) > ATOL)
+
+    if abs(matrixB[firstNonZero]) < ATOL:
+        return False
+
+    phaseDifference = matrixA[firstNonZero] / matrixB[firstNonZero]
+
+    return np.allclose(matrixA, phaseDifference * matrixB)
 
 
 class DecomposeMcKayTests(unittest.TestCase):
