@@ -5,7 +5,7 @@ description = "A quantum circuit transformation and manipulation tool"
 authors = [
     "Pablo Le Henaff <p.lehenaff@tudelft.nl>",
     "Roberto Turrado Camblor <r.turradocamblor@tudelft.nl>",
-    "Chris Elenbaas <chris.elenbaas@tno.nl"
+    "Chris Elenbaas <chris.elenbaas@tno.nl>"
 ]
 license = "Apache-2.0"
 readme = "README.md"
