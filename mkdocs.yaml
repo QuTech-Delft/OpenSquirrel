@@ -1,0 +1,6 @@
+site_name: OpenSquirrel
+site_url: http://127.0.0.1:8000/
+nav:
+  - Home: index.md
+  - Development: development.md
+theme: readthedocs
