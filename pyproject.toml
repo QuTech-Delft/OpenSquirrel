@@ -22,9 +22,10 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
 ]
 packages = [
+    { include = "docs" },
     { include = "opensquirrel" },
+    { include = "parsing"},
     { include = "test" },
-    { include = "parsing" },
 ]
 
 [tool.poetry.dependencies]
@@ -37,8 +38,8 @@ numpy = "^1.26.1"
 pytest = "^7.4.3"
 # mypy = "^1.1.0"
 
-#[tool.poetry.group.doc.dependencies]
-#mkdocs = "^1.5.3"
+[tool.poetry.group.doc.dependencies]
+mkdocs = "^1.5.3"
 
 #[tool.poetry.group.dev.dependencies]
 #black
