@@ -2,7 +2,7 @@
 
 ### Tools
 
-### Poetry
+#### Poetry
 
 Project dependencies are specified in the `pyproject.toml` file in the root directory of the project.
 
