@@ -1,0 +1,10 @@
+{
+	"name": "OpenSquirrel",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"USER": "vscode"
+		}
+	},
+	"remoteUser": "vscode"
+}
