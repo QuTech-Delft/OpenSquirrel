@@ -29,5 +29,5 @@ class ReplacerTest(unittest.TestCase):
         self.assertEqual(replaced.operations[1], ("x", (0,)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -5,7 +5,7 @@ class SquirrelParseException(Exception):
     pass
 
 
-class SquirrelErrorHandler(Antlr4ErrorListener) :
+class SquirrelErrorHandler(Antlr4ErrorListener):
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         stack = recognizer.getRuleInvocationStack()
         stack.reverse()

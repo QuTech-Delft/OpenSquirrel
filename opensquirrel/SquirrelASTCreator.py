@@ -1,13 +1,13 @@
-from parsing.GeneratedParsingCode import CQasm3Visitor
 from opensquirrel.Common import ArgType
-from opensquirrel.SquirrelAST import SquirrelAST
 from opensquirrel.Gates import querySignature
+from opensquirrel.SquirrelAST import SquirrelAST
+from parsing.GeneratedParsingCode import CQasm3Visitor
 
 
 class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
     def __init__(self, gates):
         self.gates = gates
-    
+
     def visitProg(self, ctx):
         qubitRegisterName, nQubits = self.visit(ctx.qubitRegisterDeclaration())  # Use?
 
@@ -17,20 +17,23 @@ class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
             self.visit(gApp)
 
         return self.squirrelAST
-  
+
     def visitGateApplication(self, ctx):
         gateName = str(ctx.ID())
 
         signature = querySignature(self.gates, gateName)
 
-        numberOfQubits = next(len(self.visit(ctx.expr(i))) for i in range(len(signature)) if signature[i]
-                              == ArgType.QUBIT)
+        numberOfQubits = next(
+            len(self.visit(ctx.expr(i))) for i in range(len(signature)) if signature[i] == ArgType.QUBIT
+        )
 
-        expandedArgs = [self.visit(ctx.expr(i))
-                        if signature[i] == ArgType.QUBIT else
-                        [self.visit(ctx.expr(i)) for _ in range(numberOfQubits)]
-                        for i in range(len(signature))]
-        
+        expandedArgs = [
+            self.visit(ctx.expr(i))
+            if signature[i] == ArgType.QUBIT
+            else [self.visit(ctx.expr(i)) for _ in range(numberOfQubits)]
+            for i in range(len(signature))
+        ]
+
         for individualArgs in zip(*expandedArgs):
             self.squirrelAST.addGate(gateName, *individualArgs)
 
@@ -52,10 +55,10 @@ class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
         return float(str(ctx.FLOAT()))
 
     def visitNegatedFloatLiteral(self, ctx):
-        return - float(str(ctx.FLOAT()))
+        return -float(str(ctx.FLOAT()))
 
     def visitIntLiteral(self, ctx):
         return int(str(ctx.INT()))
 
     def visitNegatedIntLiteral(self, ctx):
-        return - int(str(ctx.INT()))
+        return -int(str(ctx.INT()))

@@ -11,46 +11,65 @@ license = "Apache-2.0"
 readme = "README.md"
 homepage = "https://github.com/QuTech-Delft/OpenSquirrel"
 repository = "https://github.com/QuTech-Delft/OpenSquirrel"
-# documentation = "<url-docs>"
 keywords = [
     "quantum",
     "circuits",
     "compilation",
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: Apache Software License",
+  'Development Status :: 3 - Alpha',
+  'Programming Language :: Python :: 3',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+  'License :: OSI Approved :: Apache Software License'
 ]
 packages = [
-    { include = "docs" },
     { include = "opensquirrel" },
     { include = "parsing"},
-    { include = "test" },
 ]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 antlr4-python3-runtime = "^4.13.1"
 numpy = "^1.26.1"
-# structlog = "^23.1.0"
 
-[tool.poetry.group.test.dependencies]
-pytest = "^7.4.3"
-# mypy = "^1.1.0"
+[tool.poetry.group.dev.dependencies]
+black = "^23.11.0"
+coverage = {extras = ["toml"], version = "^7.3.2"}
+isort = "^5.11.4"
+pytest = {extras = ["toml"], version = "^7.4.3"}
+pytest-cov = "^4.1.0"
 
-[tool.poetry.group.doc.dependencies]
-mkdocs = "^1.5.3"
+[tool.pytest.ini_options]
+addopts = "-v --cov --cov-report term-missing:skip-covered --cov-report xml"
+asyncio_mode = "auto"
 
-#[tool.poetry.group.dev.dependencies]
-#black
-#coverage
-#flake8
-#isort
-#pre-commit
+[tool.coverage.run]
+branch = true
+omit = ["tests/*", "**/.tox/**"]
 
-#[tool.black]
-#line-length = 100
-#target-version = ["py310"]
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:"
+]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+line_length = 120
+
+[tool.black]
+line-length = 120
 
 [build-system]
 requires = ["poetry-core"]

@@ -38,7 +38,7 @@ Y = np.array([[0, -1j], [1j, 0]])
 Z = np.array([[1, 0], [0, -1]])
 
 
-def Can1(axis, angle, phase = 0):
+def Can1(axis, angle, phase=0):
     nx, ny, nz = axis
     norm = math.sqrt(nx**2 + ny**2 + nz**2)
     assert norm > 0.00000001
@@ -47,7 +47,8 @@ def Can1(axis, angle, phase = 0):
     ny /= norm
     nz /= norm
 
-    result = cmath.rect(1, phase) * (math.cos(angle / 2) * np.identity(2)
-                                     - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z))
+    result = cmath.rect(1, phase) * (
+        math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
+    )
 
     return result
