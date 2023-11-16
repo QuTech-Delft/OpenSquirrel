@@ -61,6 +61,23 @@ cr q[0], q[1], 1.234
 """,
         )
 
+    def test_cap_significant_digits(self):
+        squirrelAST = SquirrelAST(DefaultGates, 3, "q")
+
+        writer = Writer(DefaultGates)
+
+        squirrelAST.addGate("cr", 0, 1, 1.6546514861321684321654)
+
+        self.assertEqual(
+            writer.process(squirrelAST),
+            """version 3.0
+
+qubit[3] q
+
+cr q[0], q[1], 1.6546515
+""",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
