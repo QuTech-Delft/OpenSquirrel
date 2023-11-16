@@ -6,7 +6,7 @@ from opensquirrel.SquirrelAST import SquirrelAST
 class Replacer:
     def __init__(self, gates):
         self.gates = gates
-    
+
     def process(self, squirrelAST: SquirrelAST, replacedGateName: str, f):
         result = SquirrelAST(self.gates, squirrelAST.nQubits, squirrelAST.qubitRegisterName)
 
@@ -17,13 +17,13 @@ class Replacer:
                 continue
 
             otherGateName, otherArgs = operation
-                
+
             if otherGateName != replacedGateName:
                 result.addGate(otherGateName, *otherArgs)
                 continue
-            
+
             # FIXME: handle case where if f is not a function but directly a list.
-            
+
             assert len(otherArgs) == len(signature)
             originalQubits = set(otherArgs[i] for i in range(len(otherArgs)) if signature[i] == ArgType.QUBIT)
 
@@ -42,11 +42,11 @@ class Replacer:
                 replacementGateSignature = querySignature(self.gates, replacementGateName)
                 assert len(replacementGateArgs) == len(replacementGateSignature)
                 assert all(
-                    replacementGateArgs[i] in originalQubits for i in range(len(replacementGateArgs)) if
-                    replacementGateSignature[i] == ArgType.QUBIT), \
-                    f"Substitution for gate `{replacedGateName}` " \
-                    f"must use the input qubits {originalQubits} only"
+                    replacementGateArgs[i] in originalQubits
+                    for i in range(len(replacementGateArgs))
+                    if replacementGateSignature[i] == ArgType.QUBIT
+                ), (f"Substitution for gate `{replacedGateName}` " f"must use the input qubits {originalQubits} only")
 
                 result.addGate(replacementGateName, *replacementGateArgs)
-        
+
         return result

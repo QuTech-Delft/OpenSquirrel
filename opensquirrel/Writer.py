@@ -8,7 +8,7 @@ class Writer:
 
     def process(self, squirrelAST):
         output = ""
-        output += f'''version 3.0\n\nqubit[{squirrelAST.nQubits}] {squirrelAST.qubitRegisterName}\n\n'''
+        output += f"""version 3.0\n\nqubit[{squirrelAST.nQubits}] {squirrelAST.qubitRegisterName}\n\n"""
 
         for operation in squirrelAST.operations:
             if isinstance(operation, str):
@@ -17,13 +17,15 @@ class Writer:
 
                 output += f"\n/* {comment} */\n\n"
                 continue
-            
+
             gateName, gateArgs = operation
             signature = querySignature(self.gates, gateName)
 
-            args = [f"{squirrelAST.qubitRegisterName}[{arg}]"
-                    if t == ArgType.QUBIT else f"{arg}" for arg, t in zip(gateArgs, signature)]
+            args = [
+                f"{squirrelAST.qubitRegisterName}[{arg}]" if t == ArgType.QUBIT else f"{arg}"
+                for arg, t in zip(gateArgs, signature)
+            ]
 
             output += f"{gateName} {', '.join(args)}\n"
-        
+
         return output
