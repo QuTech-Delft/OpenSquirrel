@@ -1,4 +1,5 @@
 import antlr4
+import numpy as np
 
 from opensquirrel.DefaultGates import DefaultGates  # For the doctest.
 from opensquirrel.McKayDecomposer import McKayDecomposer
@@ -48,7 +49,7 @@ class Circuit:
 
 
     @classmethod
-    def from_string(cls, gates, cqasm3_string):
+    def from_string(cls, gates: dict, cqasm3_string: str):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
@@ -78,10 +79,10 @@ class Circuit:
 
         return Circuit(squirrelASTCreator.visit(tree))
 
-    def getNumberOfQubits(self):
+    def getNumberOfQubits(self) -> int:
         return self.squirrelAST.nQubits
 
-    def getQubitRegisterName(self):
+    def getQubitRegisterName(self) -> str:
         return self.squirrelAST.qubitRegisterName
 
     def decompose_mckay(self):
@@ -98,7 +99,7 @@ class Circuit:
         mcKayDecomposer = McKayDecomposer(self.gates)
         self.squirrelAST = mcKayDecomposer.process(self.squirrelAST)
 
-    def replace(self, gateName, f):
+    def replace(self, gateName: str, f):
         """Manually replace occurrences of a given gate with a list of gates.
 
             * this can be called decomposition - but it's the least fancy version of it
@@ -109,7 +110,7 @@ class Circuit:
         replacer = Replacer(self.gates) # FIXME: only one instance of this is needed.
         self.squirrelAST = replacer.process(self.squirrelAST, gateName, f)
 
-    def test_get_circuit_matrix(self):
+    def test_get_circuit_matrix(self) -> np.ndarray:
         """Get the (large) unitary matrix corresponding to the circuit.
 
             * this matrix has 4**n elements, where n is the number of qubits
@@ -120,7 +121,7 @@ class Circuit:
         interpreter = TestInterpreter(self.gates)
         return interpreter.process(self.squirrelAST)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Write the circuit to a cQasm3 string.
 
             * comments are removed

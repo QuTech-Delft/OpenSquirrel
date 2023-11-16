@@ -9,7 +9,7 @@ from opensquirrel.Gates import SingleQubitAxisAngleSemantic, MultiQubitMatrixSem
 DefaultGates = {
     "h": {
         "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis = (1, 0, 1), angle = math.pi, phase = math.pi / 2),
+        "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2),
     },
     "H": "h", # This is how you define an alias.
     "hadamard": "h",

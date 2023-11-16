@@ -14,7 +14,7 @@ class CircuitBuilder:
 
     __default_qubit_register_name = "q"
 
-    def __init__(self, gates, numberOfQubits):
+    def __init__(self, gates: dict, numberOfQubits: int):
         self.squirrelAST = SquirrelAST(gates, numberOfQubits, self.__default_qubit_register_name)
 
     def __getattr__(self, attr):
@@ -28,5 +28,5 @@ class CircuitBuilder:
         
         return addComment if attr == "comment" else addThisGate
 
-    def to_circuit(self):
+    def to_circuit(self) -> Circuit:
         return Circuit(self.squirrelAST)

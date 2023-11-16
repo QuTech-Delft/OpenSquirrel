@@ -36,21 +36,33 @@ numpy = "^1.26.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.3"
-# mypy = "^1.1.0"
+mypy = "^1.7.0"
+
+[tool.mypy]
+ignore_missing_imports = true
 
 [tool.poetry.group.doc.dependencies]
 mkdocs = "^1.5.3"
 
-#[tool.poetry.group.dev.dependencies]
-#black
+[tool.poetry.group.dev.dependencies]
+black = "^23.11.0"
 #coverage
-#flake8
-#isort
+flake8 = "^6.1.0"
+isort = "^5.12.0"
 #pre-commit
 
-#[tool.black]
-#line-length = 100
-#target-version = ["py310"]
+[tool.black]
+line-length = 99
+target-version = ["py310"]
+
+[tool.flake8]
+ignore = ["W503"]
+max-doc-length = 99
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+py_version = 310
 
 [build-system]
 requires = ["poetry-core"]
