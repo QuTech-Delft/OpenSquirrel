@@ -3,8 +3,21 @@ from opensquirrel.Gates import querySignature
 
 
 class Writer:
+    NUMBER_OF_SIGNIFICANT_DIGITS = 8
+
     def __init__(self, gates):
         self.gates = gates
+
+    @classmethod
+    def _format_arg(cls, squirrelAST, arg, t: ArgType):
+        if t == ArgType.QUBIT:
+            return f"{squirrelAST.qubitRegisterName}[{arg}]"
+        if t == ArgType.INT:
+            return f"{int(arg)}"
+        if t == ArgType.FLOAT:
+            return f"{float(arg):.{Writer.NUMBER_OF_SIGNIFICANT_DIGITS}}"
+
+        assert False, "Unknown argument type"
 
     def process(self, squirrelAST):
         output = ""
@@ -21,10 +34,7 @@ class Writer:
             gateName, gateArgs = operation
             signature = querySignature(self.gates, gateName)
 
-            args = [
-                f"{squirrelAST.qubitRegisterName}[{arg}]" if t == ArgType.QUBIT else f"{arg}"
-                for arg, t in zip(gateArgs, signature)
-            ]
+            args = [Writer._format_arg(squirrelAST, arg, t) for arg, t in zip(gateArgs, signature)]
 
             output += f"{gateName} {', '.join(args)}\n"
 
