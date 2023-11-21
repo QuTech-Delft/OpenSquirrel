@@ -23,3 +23,17 @@ The documentation is generated using MkDocs. For full documentation visit [mkdoc
 * `mkdocs serve` - Start the live-reloading docs server.
 * `mkdocs build` - Build the documentation site.
 * `mkdocs -h` - Print help message and exit.
+
+#### MyPy
+
+Check Python typing by running the following command in the root directory
+```shell
+$ mypy -p opensquirrel
+```
+
+#### PyTest
+
+Run project unit tests through the following command
+```shell
+$ pytest .
+```

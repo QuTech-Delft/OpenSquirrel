@@ -1,15 +1,17 @@
+from typing import Any
+
 from opensquirrel.Gates import querySignature
 
 
 class SquirrelAST:
     # This is just a list of gates (for now?)
-    def __init__(self, gates, nQubits, qubitRegisterName):
+    def __init__(self, gates, nQubits: int, qubitRegisterName: str):
         self.gates = gates
-        self.nQubits = nQubits
-        self.operations = []
-        self.qubitRegisterName = qubitRegisterName
+        self.nQubits: int = nQubits
+        self.operations: list[Any] = []
+        self.qubitRegisterName: str = qubitRegisterName
     
-    def addGate(self, gateName, *interpretedArgs):
+    def addGate(self, gateName: str, *interpretedArgs):
         signature = querySignature(self.gates, gateName)
         assert len(signature) == len(interpretedArgs), f"Wrong number of arguments for gate `{gateName}`"
         

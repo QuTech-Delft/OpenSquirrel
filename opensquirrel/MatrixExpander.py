@@ -6,7 +6,7 @@ from opensquirrel.Gates import SingleQubitAxisAngleSemantic, MultiQubitMatrixSem
 
 
 # This should only be used for testing and on circuits with low number of qubits.
-def getBigMatrix(semantic, qubitOperands, totalQubits):
+def getBigMatrix(semantic: MultiQubitMatrixSemantic, qubitOperands, totalQubits):
     if isinstance(semantic, SingleQubitAxisAngleSemantic):
         whichQubit = qubitOperands[0]
 

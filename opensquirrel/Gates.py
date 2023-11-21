@@ -10,7 +10,7 @@ class Semantic:
 
 
 class SingleQubitAxisAngleSemantic(Semantic):
-    def __init__(self, axis: (float, float, float), angle: float, phase: float):
+    def __init__(self, axis: tuple[float, float, float], angle: float, phase: float):
         self.axis = self._normalize(np.array(axis).astype(np.float64))
         self.angle = angle
         self.phase = phase
@@ -31,7 +31,7 @@ class ControlledSemantic(MultiQubitMatrixSemantic):
         pass  # TODO
 
 
-def queryEntry(gatesDict, gateName):
+def queryEntry(gatesDict: dict, gateName: str):
     if gateName not in gatesDict:
         raise Exception(f"Unknown gate or alias of gate: `{gateName}`")
     

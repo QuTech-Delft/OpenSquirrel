@@ -23,7 +23,7 @@ class TestInterpreter:
             qubitOperands = [gateArgs[i] for i in range(len(gateArgs)) if signature[i] == ArgType.QUBIT]
             semantic = querySemantic(self.gates, gateName, *[gateArgs[i] for i in range(len(gateArgs))
                                                              if signature[i] != ArgType.QUBIT])
-            bigMatrix = getBigMatrix(semantic, qubitOperands, totalQubits = squirrelAST.nQubits)
+            bigMatrix = getBigMatrix(semantic, qubitOperands, totalQubits=squirrelAST.nQubits)
             totalUnitary = bigMatrix @ totalUnitary
 
         return totalUnitary
