@@ -4,14 +4,14 @@ import math
 import numpy as np
 
 from opensquirrel.Common import ArgType
-from opensquirrel.Gates import SingleQubitAxisAngleSemantic, MultiQubitMatrixSemantic
+from opensquirrel.Gates import MultiQubitMatrixSemantic, SingleQubitAxisAngleSemantic
 
 DefaultGates = {
     "h": {
         "signature": (ArgType.QUBIT,),
         "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2),
     },
-    "H": "h", # This is how you define an alias.
+    "H": "h",  # This is how you define an alias.
     "hadamard": "h",
     "x": {
         "signature": (ArgType.QUBIT,),
@@ -40,7 +40,7 @@ DefaultGates = {
     "X90": "x90",
     "mx90": {
         "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 0), angle=- math.pi / 2, phase=0),
+        "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 0), angle=-math.pi / 2, phase=0),
     },
     "MX90": "mx90",
     "ry": {
@@ -60,34 +60,45 @@ DefaultGates = {
     "RZ": "rz",
     "cnot": {
         "signature": (ArgType.QUBIT, ArgType.QUBIT),
-        "semantic": MultiQubitMatrixSemantic(np.array([
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 0, 1],
-            [0, 0, 1, 0],
-        ])),
+        "semantic": MultiQubitMatrixSemantic(
+            np.array(
+                [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 0, 1],
+                    [0, 0, 1, 0],
+                ]
+            )
+        ),
     },
     "CNOT": "cnot",
     "cz": {
         "signature": (ArgType.QUBIT, ArgType.QUBIT),
-        "semantic": MultiQubitMatrixSemantic(np.array([
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, -1],
-        ])),
+        "semantic": MultiQubitMatrixSemantic(
+            np.array(
+                [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, -1],
+                ]
+            )
+        ),
     },
     "CZ": "cz",
     "cr": {
         "signature": (ArgType.QUBIT, ArgType.QUBIT, ArgType.FLOAT),
-        "semantic": lambda theta: MultiQubitMatrixSemantic(np.array([
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 1, 0],
-            [0, 0, 0, cmath.rect(1, theta)],
-        ])),
+        "semantic": lambda theta: MultiQubitMatrixSemantic(
+            np.array(
+                [
+                    [1, 0, 0, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, cmath.rect(1, theta)],
+                ]
+            )
+        ),
     },
     "CR": "cr",
-
     # Rest is TODO
 }

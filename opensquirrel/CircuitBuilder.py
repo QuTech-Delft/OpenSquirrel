@@ -21,11 +21,11 @@ class CircuitBuilder:
         def addComment(commentString: str):
             self.squirrelAST.addComment(commentString)
             return self
-        
+
         def addThisGate(*args):
             self.squirrelAST.addGate(attr, *args)
             return self
-        
+
         return addComment if attr == "comment" else addThisGate
 
     def to_circuit(self) -> Circuit:

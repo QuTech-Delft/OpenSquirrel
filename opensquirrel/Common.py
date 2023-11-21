@@ -42,7 +42,8 @@ def Can1(axis: tuple[float, float, float], angle: float, phase: float = 0) -> np
     ny /= norm
     nz /= norm
 
-    result = cmath.rect(1, phase) * (math.cos(angle / 2) * np.identity(2)
-                                     - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z))
+    result = cmath.rect(1, phase) * (
+        math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
+    )
 
     return result

@@ -34,12 +34,12 @@ class ControlledSemantic(MultiQubitMatrixSemantic):
 def queryEntry(gatesDict: dict, gateName: str):
     if gateName not in gatesDict:
         raise Exception(f"Unknown gate or alias of gate: `{gateName}`")
-    
+
     entry = gatesDict[gateName]
 
     if isinstance(entry, str):
         return queryEntry(gatesDict, entry)
-    
+
     return entry
 
 
@@ -48,7 +48,7 @@ def querySemantic(gatesDict: dict, gateName: str, *gateArgs):
     assert len(gateArgs) == sum(1 for t in signature if t != ArgType.QUBIT)
 
     entry = queryEntry(gatesDict, gateName)
-    
+
     assert "semantic" in entry, f"Gate semantic not defined for gate: `{gateName}`"
 
     semantic = entry["semantic"]

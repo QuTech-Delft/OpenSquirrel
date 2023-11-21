@@ -10,8 +10,7 @@ from opensquirrel.SquirrelErrorHandler import SquirrelErrorHandler
 from opensquirrel.TestInterpreter import TestInterpreter
 from opensquirrel.TypeChecker import TypeChecker
 from opensquirrel.Writer import Writer
-from parsing.GeneratedParsingCode import CQasm3Lexer
-from parsing.GeneratedParsingCode import CQasm3Parser
+from parsing.GeneratedParsingCode import CQasm3Lexer, CQasm3Parser
 
 
 class Circuit:
@@ -47,7 +46,6 @@ class Circuit:
         self.gates = squirrelAST.gates
         self.squirrelAST = squirrelAST
 
-
     @classmethod
     def from_string(cls, gates: dict, cqasm3_string: str):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
@@ -73,7 +71,7 @@ class Circuit:
         tree = parser.prog()
 
         typeChecker = TypeChecker(gates)
-        typeChecker.visit(tree) # FIXME: return error instead of throwing?
+        typeChecker.visit(tree)  # FIXME: return error instead of throwing?
 
         squirrelASTCreator = SquirrelASTCreator(gates)
 
@@ -88,12 +86,12 @@ class Circuit:
     def decompose_mckay(self):
         """Perform gate fusion on all one-qubit gates and decompose them in the McKay style.
 
-            * all one-qubit gates on same qubit are merged together, without attempting to commute any gate
-            * two-or-more-qubit gates are left as-is
-            * merged one-qubit gates are decomposed according to McKay decomposition, that is:
-                    gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
-            * _global phase is deemed irrelevant_, therefore a simulator backend might produce different output
-                for the input and output circuit - those outputs should be equivalent modulo global phase.
+        * all one-qubit gates on same qubit are merged together, without attempting to commute any gate
+        * two-or-more-qubit gates are left as-is
+        * merged one-qubit gates are decomposed according to McKay decomposition, that is:
+                gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
+        * _global phase is deemed irrelevant_, therefore a simulator backend might produce different output
+            for the input and output circuit - those outputs should be equivalent modulo global phase.
         """
 
         mcKayDecomposer = McKayDecomposer(self.gates)
@@ -102,20 +100,20 @@ class Circuit:
     def replace(self, gateName: str, f):
         """Manually replace occurrences of a given gate with a list of gates.
 
-            * this can be called decomposition - but it's the least fancy version of it
-            * function parameter gives the decomposition based on parameters of original gate
+        * this can be called decomposition - but it's the least fancy version of it
+        * function parameter gives the decomposition based on parameters of original gate
         """
 
         assert gateName in self.gates, f"Cannot replace unknown gate `{gateName}`"
-        replacer = Replacer(self.gates) # FIXME: only one instance of this is needed.
+        replacer = Replacer(self.gates)  # FIXME: only one instance of this is needed.
         self.squirrelAST = replacer.process(self.squirrelAST, gateName, f)
 
     def test_get_circuit_matrix(self) -> np.ndarray:
         """Get the (large) unitary matrix corresponding to the circuit.
 
-            * this matrix has 4**n elements, where n is the number of qubits
-            * therefore this function is only here for testing purposes on small number of qubits
-            * result is stored as a numpy array of complex numbers
+        * this matrix has 4**n elements, where n is the number of qubits
+        * therefore this function is only here for testing purposes on small number of qubits
+        * result is stored as a numpy array of complex numbers
         """
 
         interpreter = TestInterpreter(self.gates)
@@ -124,7 +122,7 @@ class Circuit:
     def __repr__(self) -> str:
         """Write the circuit to a cQasm3 string.
 
-            * comments are removed
+        * comments are removed
         """
 
         writer = Writer(self.gates)

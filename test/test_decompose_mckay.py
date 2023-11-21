@@ -10,8 +10,9 @@ from opensquirrel.TestInterpreter import TestInterpreter
 
 
 def areMatricesEqualUpToGlobalPhase(matrixA, matrixB):
-    firstNonZero = next((i, j) for i in range(matrixA.shape[0])
-                        for j in range(matrixA.shape[1]) if abs(matrixA[i, j]) > ATOL)
+    firstNonZero = next(
+        (i, j) for i in range(matrixA.shape[0]) for j in range(matrixA.shape[1]) if abs(matrixA[i, j]) > ATOL
+    )
 
     if abs(matrixB[firstNonZero]) < ATOL:
         return False
@@ -24,8 +25,8 @@ def areMatricesEqualUpToGlobalPhase(matrixA, matrixB):
 class DecomposeMcKayTests(unittest.TestCase):
     def checkMcKayDecomposition(self, squirrelAST, expectedAST=None):
         """
-            Check whether the mcKay decomposition transformation applied to the input AST preserves the
-            circuit matrix up to an irrelevant global phase factor.
+        Check whether the mcKay decomposition transformation applied to the input AST preserves the
+        circuit matrix up to an irrelevant global phase factor.
         """
 
         interpreter = TestInterpreter(squirrelAST.gates)
@@ -68,7 +69,6 @@ class DecomposeMcKayTests(unittest.TestCase):
 
         self.checkMcKayDecomposition(ast)
 
-
     def test_small_random(self):
         ast = SquirrelAST(DefaultGates, 4, "q")
 
@@ -95,5 +95,5 @@ class DecomposeMcKayTests(unittest.TestCase):
         self.checkMcKayDecomposition(ast, expectedAst)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

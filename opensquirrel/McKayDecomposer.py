@@ -1,9 +1,9 @@
-from math import acos, cos, sin, atan2, pi, sqrt
+from math import acos, atan2, cos, pi, sin, sqrt
 
 import numpy as np
 
 from opensquirrel.Common import ATOL, ArgType
-from opensquirrel.Gates import SingleQubitAxisAngleSemantic, queryEntry, querySignature, querySemantic
+from opensquirrel.Gates import SingleQubitAxisAngleSemantic, queryEntry, querySemantic, querySignature
 from opensquirrel.SquirrelAST import SquirrelAST
 
 
@@ -20,7 +20,7 @@ class McKayDecomposer:
     def __init__(self, gates):
         self.gates = gates
 
-        queryEntry(self.gates, "rz") # FIXME: improve. Pass those gates as parameters to the constructor.
+        queryEntry(self.gates, "rz")  # FIXME: improve. Pass those gates as parameters to the constructor.
         queryEntry(self.gates, "x90")
 
     def _decomposeAndAdd(self, qubit, angle: float, axis: tuple[float, float, float]):
@@ -34,8 +34,8 @@ class McKayDecomposer:
 
         theta = pi - 2 * atan2(zbMod, zaMod)
 
-        alpha = atan2(- sin(angle / 2) * axis[2], cos(angle / 2))
-        beta = atan2(- sin(angle / 2) * axis[0], - sin(angle / 2) * axis[1])
+        alpha = atan2(-sin(angle / 2) * axis[2], cos(angle / 2))
+        beta = atan2(-sin(angle / 2) * axis[0], -sin(angle / 2) * axis[1])
 
         lam = beta - alpha
         phi = -beta - alpha - pi
@@ -61,10 +61,10 @@ class McKayDecomposer:
         if q not in self.oneQubitGates:
             return
         p = self.oneQubitGates.pop(q)
-        self._decomposeAndAdd(q, p['angle'], p['axis'])
+        self._decomposeAndAdd(q, p["angle"], p["axis"])
 
     def _flush_all(self):
-        while(len(self.oneQubitGates) > 0):
+        while len(self.oneQubitGates) > 0:
             self._flush(next(iter(self.oneQubitGates.keys())))
 
     def _acc(self, qubit, semantic: SingleQubitAxisAngleSemantic):
@@ -88,8 +88,11 @@ class McKayDecomposer:
             self.oneQubitGates.pop(qubit)
             return
 
-        combinedAxis = 1 / sin(combinedAngle / 2) * (sin(a / 2) * cos(b / 2) * l + cos(a / 2) * sin(b / 2) * m
-                                                            + sin(a / 2) * sin(b / 2) * np.cross(l, m))
+        combinedAxis = (
+            1
+            / sin(combinedAngle / 2)
+            * (sin(a / 2) * cos(b / 2) * l + cos(a / 2) * sin(b / 2) * m + sin(a / 2) * sin(b / 2) * np.cross(l, m))
+        )
 
         self.oneQubitGates[qubit] = {"angle": combinedAngle, "axis": combinedAxis, "phase": combinedPhase}
 
@@ -126,7 +129,8 @@ class McKayDecomposer:
 
         semantic = querySemantic(self.gates, gateName, *nonQubitArguments)
 
-        assert isinstance(semantic, SingleQubitAxisAngleSemantic), \
-          f"Not supported for single qubit gate `{gateName}`: {type(semantic)}"
+        assert isinstance(
+            semantic, SingleQubitAxisAngleSemantic
+        ), f"Not supported for single qubit gate `{gateName}`: {type(semantic)}"
 
         self._acc(qubitArguments[0], semantic)

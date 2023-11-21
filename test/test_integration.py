@@ -8,7 +8,9 @@ from opensquirrel.DefaultGates import DefaultGates
 
 class IntegrationTest(unittest.TestCase):
     def test_simple(self):
-        myCircuit = Circuit.from_string(DefaultGates, """
+        myCircuit = Circuit.from_string(
+            DefaultGates,
+            """
                 version 3.0
 
                 qubit[3] qreg
@@ -18,8 +20,9 @@ class IntegrationTest(unittest.TestCase):
                 cnot qreg[0], qreg[1]
                 rx qreg[0], -2.3
                 ry qreg[1], -3.14
-            """)
-        
+            """,
+        )
+
         #    Decompose CNOT as
         #
         #    -----•-----        ------- Z -------
@@ -27,8 +30,10 @@ class IntegrationTest(unittest.TestCase):
         #    -----⊕----        --- H --•-- H ---
         #
 
-        myCircuit.replace("cnot", lambda control, target: [("h", (target,)), ("cz", (control, target)), ("h", (target,))])
-        
+        myCircuit.replace(
+            "cnot", lambda control, target: [("h", (target,)), ("cz", (control, target)), ("h", (target,))]
+        )
+
         # Do 1q-gate fusion and decompose with McKay decomposition.
 
         myCircuit.decompose_mckay()
@@ -37,37 +42,39 @@ class IntegrationTest(unittest.TestCase):
 
         output = str(myCircuit)
 
-        self.assertEqual(output,
-
-"""version 3.0
+        self.assertEqual(
+            output,
+            """version 3.0
 
 qubit[3] qreg
 
-rz qreg[0], 3.141592653589793
+rz qreg[0], 3.1415927
 x90 qreg[0]
-rz qreg[0], 1.9115926535897927
+rz qreg[0], 1.9115927
 x90 qreg[0]
-rz qreg[1], 3.141592653589793
+rz qreg[1], 3.1415927
 x90 qreg[1]
-rz qreg[1], 2.37238898038469
+rz qreg[1], 2.372389
 x90 qreg[1]
-rz qreg[1], 3.141592653589793
+rz qreg[1], 3.1415927
 cz qreg[0], qreg[1]
-rz qreg[1], 3.141592653589793
+rz qreg[1], 3.1415927
 x90 qreg[1]
-rz qreg[1], 1.57238898038469
+rz qreg[1], 1.572389
 x90 qreg[1]
-rz qreg[1], 3.141592653589793
-rz qreg[0], 1.5707963267948966
+rz qreg[1], 3.1415927
+rz qreg[0], 1.5707963
 x90 qreg[0]
-rz qreg[0], 0.8415926535897933
+rz qreg[0], 0.84159265
 x90 qreg[0]
-rz qreg[0], 1.5707963267948966
-"""
-                         )
+rz qreg[0], 1.5707963
+""",
+        )
 
     def test_qi(self):
-        myCircuit = Circuit.from_string(DefaultGates, """
+        myCircuit = Circuit.from_string(
+            DefaultGates,
+            """
             version 3.0
 
             // This is a single line comment which ends on the newline.
@@ -84,17 +91,18 @@ rz qreg[0], 1.5707963267948966
             H q[2]
             H q[1]
             H q[0]
-            RZ q[0], 1.5707963267949
+            RZ q[0], 1.5707963
             RY q[0], -0.2
             cnot q[1], q[0]
             RZ q[0], 1.5789
             cnot q[1], q[0]
             cnot q[1], q[2]
-            RZ q[1], 2.5707963267949
+            RZ q[1], 2.5707963
             cr q[2], q[3], 2.123
-            RY q[1], -1.5707963267949
+            RY q[1], -1.5707963
 
-            """)
+            """,
+        )
 
         myCircuit.decompose_mckay()
         output = str(myCircuit)
@@ -104,34 +112,34 @@ rz qreg[0], 1.5707963267948966
 qubit[4] q
 
 x90 q[1]
-rz q[1], 1.5707963267948966
+rz q[1], 1.5707963
 x90 q[1]
-rz q[0], -0.20000000000000018
+rz q[0], -0.2
 x90 q[0]
-rz q[0], 1.5707963267948957
+rz q[0], 1.5707963
 x90 q[0]
-rz q[0], 1.5707963267949
+rz q[0], 1.5707963
 cnot q[1], q[0]
-rz q[0], -2.352142653589793
+rz q[0], -2.3521427
 x90 q[0]
-rz q[0], 3.141592653589793
+rz q[0], 3.1415927
 x90 q[0]
-rz q[0], 0.7894500000000004
+rz q[0], 0.78945
 cnot q[1], q[0]
 x90 q[2]
-rz q[2], 1.5707963267948966
+rz q[2], 1.5707963
 x90 q[2]
 cnot q[1], q[2]
 cr q[2], q[3], 2.123
-rz q[1], 2.5707963267949
+rz q[1], 2.5707963
 x90 q[1]
-rz q[1], 1.570796326794893
+rz q[1], 1.5707964
 x90 q[1]
-rz q[1], 3.141592653589793
+rz q[1], 3.1415927
 """
-        
+
         self.assertEqual(output, expected)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
