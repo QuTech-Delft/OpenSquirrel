@@ -1,7 +1,7 @@
 import numpy as np
 
 from opensquirrel.Common import Can1
-from opensquirrel.Gates import MultiQubitMatrixSemantic, SingleQubitAxisAngleSemantic, Semantic
+from opensquirrel.Gates import MultiQubitMatrixSemantic, Semantic, SingleQubitAxisAngleSemantic
 
 
 # This should only be used for testing and on circuits with low number of qubits.
@@ -11,8 +11,7 @@ def getBigMatrix(semantic: Semantic, qubitOperands, totalQubits):
 
         axis, angle, phase = semantic.axis, semantic.angle, semantic.phase
         result = np.kron(
-            np.kron(np.eye(1 << (totalQubits - whichQubit - 1)), Can1(axis, angle, phase)), np.eye(1 <<
-                                                                                                   whichQubit)
+            np.kron(np.eye(1 << (totalQubits - whichQubit - 1)), Can1(axis, angle, phase)), np.eye(1 << whichQubit)
         )
         assert result.shape == (1 << totalQubits, 1 << totalQubits)
         return result
@@ -28,8 +27,7 @@ def getBigMatrix(semantic: Semantic, qubitOperands, totalQubits):
     for input in range(1 << totalQubits):
         smallMatrixCol = 0
         for i in range(len(qubitOperands)):
-            smallMatrixCol |= ((input & (1 << qubitOperands[i])) >> qubitOperands[i]) << (len(qubitOperands) -
-                                                                                          1 - i)
+            smallMatrixCol |= ((input & (1 << qubitOperands[i])) >> qubitOperands[i]) << (len(qubitOperands) - 1 - i)
 
         col = m[:, smallMatrixCol]
 
