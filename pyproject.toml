@@ -45,6 +45,7 @@ coverage = {extras = ["toml"], version = "^7.3.2"}
 isort = "^5.11.4"
 pytest = {extras = ["toml"], version = "^7.4.3"}
 pytest-cov = "^4.1.0"
+mypy = "^1.7.0"
 
 [tool.pytest.ini_options]
 addopts = "-v --cov --cov-report term-missing:skip-covered --cov-report xml"
@@ -73,6 +74,9 @@ line_length = 120
 
 [tool.black]
 line-length = 120
+
+[tool.mypy]
+ignore_missing_imports = true
 
 [build-system]
 requires = ["poetry-core"]

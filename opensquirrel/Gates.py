@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import numpy as np
 
 from opensquirrel.Common import ArgType
@@ -8,7 +10,7 @@ class Semantic:
 
 
 class SingleQubitAxisAngleSemantic(Semantic):
-    def __init__(self, axis: (float, float, float), angle: float, phase: float):
+    def __init__(self, axis: Tuple[float, float, float], angle: float, phase: float):
         self.axis = self._normalize(np.array(axis).astype(np.float64))
         self.angle = angle
         self.phase = phase
@@ -29,7 +31,7 @@ class ControlledSemantic(MultiQubitMatrixSemantic):
         pass  # TODO
 
 
-def queryEntry(gatesDict, gateName):
+def queryEntry(gatesDict: dict, gateName: str):
     if gateName not in gatesDict:
         raise Exception(f"Unknown gate or alias of gate: `{gateName}`")
 
@@ -41,7 +43,7 @@ def queryEntry(gatesDict, gateName):
     return entry
 
 
-def querySemantic(gatesDict, gateName, *gateArgs):
+def querySemantic(gatesDict: dict, gateName: str, *gateArgs):
     signature = querySignature(gatesDict, gateName)
     assert len(gateArgs) == sum(1 for t in signature if t != ArgType.QUBIT)
 
@@ -59,7 +61,7 @@ def querySemantic(gatesDict, gateName, *gateArgs):
     return semantic(*gateArgs)  # TODO: nice error when args don't match? But should be already checked by typer
 
 
-def querySignature(gatesDict, gateName: str):
+def querySignature(gatesDict: dict, gateName: str):
     entry = queryEntry(gatesDict, gateName)
 
     assert "signature" in entry, f"Gate signature not defined for gate: `{gateName}`"

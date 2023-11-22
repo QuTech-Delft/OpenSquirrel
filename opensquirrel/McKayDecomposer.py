@@ -1,4 +1,5 @@
 from math import acos, atan2, cos, pi, sin, sqrt
+from typing import Tuple
 
 import numpy as np
 
@@ -7,7 +8,7 @@ from opensquirrel.Gates import SingleQubitAxisAngleSemantic, queryEntry, querySe
 from opensquirrel.SquirrelAST import SquirrelAST
 
 
-def normalizeAngle(x):
+def normalizeAngle(x: float) -> float:
     t = x - 2 * pi * (x // (2 * pi) + 1)
     if t < -pi + ATOL:
         t += 2 * pi
@@ -23,7 +24,7 @@ class McKayDecomposer:
         queryEntry(self.gates, "rz")  # FIXME: improve. Pass those gates as parameters to the constructor.
         queryEntry(self.gates, "x90")
 
-    def _decomposeAndAdd(self, qubit, angle, axis):
+    def _decomposeAndAdd(self, qubit, angle: float, axis: Tuple[float, float, float]):
         if abs(angle) < ATOL:
             return
 

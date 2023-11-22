@@ -1,11 +1,11 @@
 import numpy as np
 
 from opensquirrel.Common import Can1
-from opensquirrel.Gates import MultiQubitMatrixSemantic, SingleQubitAxisAngleSemantic
+from opensquirrel.Gates import MultiQubitMatrixSemantic, Semantic, SingleQubitAxisAngleSemantic
 
 
 # This should only be used for testing and on circuits with low number of qubits.
-def getBigMatrix(semantic, qubitOperands, totalQubits):
+def getBigMatrix(semantic: Semantic, qubitOperands, totalQubits):
     if isinstance(semantic, SingleQubitAxisAngleSemantic):
         whichQubit = qubitOperands[0]
 
