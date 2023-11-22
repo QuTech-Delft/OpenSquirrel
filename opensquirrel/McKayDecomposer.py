@@ -1,4 +1,5 @@
 from math import acos, atan2, cos, pi, sin, sqrt
+from typing import Tuple
 
 import numpy as np
 
@@ -23,7 +24,7 @@ class McKayDecomposer:
         queryEntry(self.gates, "rz")  # FIXME: improve. Pass those gates as parameters to the constructor.
         queryEntry(self.gates, "x90")
 
-    def _decomposeAndAdd(self, qubit, angle: float, axis: tuple[float, float, float]):
+    def _decomposeAndAdd(self, qubit, angle: float, axis: Tuple[float, float, float]):
         if abs(angle) < ATOL:
             return
 
