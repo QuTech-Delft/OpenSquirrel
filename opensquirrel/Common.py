@@ -1,6 +1,7 @@
 import cmath
 import math
 from enum import Enum
+from typing import Tuple
 
 import numpy as np
 
@@ -33,7 +34,7 @@ Y = np.array([[0, -1j], [1j, 0]])
 Z = np.array([[1, 0], [0, -1]])
 
 
-def Can1(axis: tuple[float, float, float], angle: float, phase: float = 0) -> np.ndarray:
+def Can1(axis: Tuple[float, float, float], angle: float, phase: float = 0) -> np.ndarray:
     nx, ny, nz = axis
     norm = math.sqrt(nx**2 + ny**2 + nz**2)
     assert norm > 0.00000001
