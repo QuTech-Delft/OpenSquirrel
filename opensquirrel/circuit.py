@@ -43,6 +43,7 @@ class Circuit:
     Args:
         squirrelAST: OpenSquirrel internal AST.
     """
+
     def __init__(self, squirrelAST: SquirrelAST):
         """Create a circuit object from a SquirrelAST object."""
 
