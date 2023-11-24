@@ -6,11 +6,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>http://127.0.0.1:8000/development/</loc>
-         <lastmod>2023-11-24</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>http://127.0.0.1:8000/explanation/</loc>
          <lastmod>2023-11-24</lastmod>
          <changefreq>daily</changefreq>
