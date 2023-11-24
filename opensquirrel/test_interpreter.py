@@ -1,8 +1,8 @@
 import numpy as np
 
-from opensquirrel.Common import ArgType
-from opensquirrel.Gates import querySemantic, querySignature
-from opensquirrel.MatrixExpander import getBigMatrix
+from opensquirrel.common import ArgType
+from opensquirrel.gates import querySemantic, querySignature
+from opensquirrel.matrix_expander import getBigMatrix
 
 
 class TestInterpreter:

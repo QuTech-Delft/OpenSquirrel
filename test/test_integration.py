@@ -2,8 +2,8 @@
 
 import unittest
 
-from opensquirrel.Circuit import Circuit
-from opensquirrel.DefaultGates import DefaultGates
+from opensquirrel.circuit import Circuit
+from opensquirrel.default_gates import DefaultGates
 
 
 class IntegrationTest(unittest.TestCase):

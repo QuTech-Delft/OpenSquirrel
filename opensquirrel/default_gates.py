@@ -3,8 +3,8 @@ import math
 
 import numpy as np
 
-from opensquirrel.Common import ArgType
-from opensquirrel.Gates import MultiQubitMatrixSemantic, SingleQubitAxisAngleSemantic
+from opensquirrel.common import ArgType
+from opensquirrel.gates import MultiQubitMatrixSemantic, SingleQubitAxisAngleSemantic
 
 DefaultGates = {
     "h": {

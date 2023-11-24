@@ -1,7 +1,7 @@
 import numpy as np
 
-from opensquirrel.Common import Can1
-from opensquirrel.Gates import MultiQubitMatrixSemantic, Semantic, SingleQubitAxisAngleSemantic
+from opensquirrel.common import Can1
+from opensquirrel.gates import MultiQubitMatrixSemantic, Semantic, SingleQubitAxisAngleSemantic
 
 
 # This should only be used for testing and on circuits with low number of qubits.

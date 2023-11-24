@@ -1,6 +1,14 @@
 site_name: OpenSquirrel
 site_url: http://127.0.0.1:8000/
+
+theme:
+  name: "material"
+
+plugins:
+  - mkdocstrings
+
 nav:
-  - Home: index.md
-  - Development: development.md
-theme: readthedocs
+  - OpenSquirrel: index.md
+  - Tutorials: tutorials.md
+  - How-To Guides: how-to-guides.md
+  - Reference: reference.md

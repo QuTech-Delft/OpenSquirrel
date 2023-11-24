@@ -1,8 +1,8 @@
 import unittest
 
-from opensquirrel.DefaultGates import DefaultGates
-from opensquirrel.Replacer import Replacer
-from opensquirrel.SquirrelAST import SquirrelAST
+from opensquirrel.default_gates import DefaultGates
+from opensquirrel.replacer import Replacer
+from opensquirrel.squirrel_ast import SquirrelAST
 
 
 def hadamard_decomposition(q):

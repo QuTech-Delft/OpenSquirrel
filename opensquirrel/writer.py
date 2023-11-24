@@ -1,5 +1,5 @@
-from opensquirrel.Common import ArgType
-from opensquirrel.Gates import querySignature
+from opensquirrel.common import ArgType
+from opensquirrel.gates import querySignature
 
 
 class Writer:

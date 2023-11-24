@@ -1,7 +1,7 @@
 import unittest
 
-from opensquirrel.CircuitBuilder import CircuitBuilder
-from opensquirrel.DefaultGates import DefaultGates
+from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.default_gates import DefaultGates
 
 
 class CircuitBuilderTest(unittest.TestCase):
