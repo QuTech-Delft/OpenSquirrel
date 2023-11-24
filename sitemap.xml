@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>http://127.0.0.1:8000/</loc>
+         <lastmod>2023-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://127.0.0.1:8000/development/</loc>
+         <lastmod>2023-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://127.0.0.1:8000/explanation/</loc>
+         <lastmod>2023-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://127.0.0.1:8000/how-to-guides/</loc>
+         <lastmod>2023-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://127.0.0.1:8000/reference/</loc>
+         <lastmod>2023-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>http://127.0.0.1:8000/tutorials/</loc>
+         <lastmod>2023-11-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>
