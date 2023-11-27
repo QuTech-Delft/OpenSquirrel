@@ -1,8 +1,8 @@
 import unittest
 
-from opensquirrel.DefaultGates import DefaultGates
-from opensquirrel.SquirrelAST import SquirrelAST
-from opensquirrel.Writer import Writer
+from opensquirrel.default_gates import DefaultGates
+from opensquirrel.squirrel_ast import SquirrelAST
+from opensquirrel.writer import Writer
 
 
 class WriterTest(unittest.TestCase):

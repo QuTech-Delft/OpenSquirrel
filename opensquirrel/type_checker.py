@@ -1,5 +1,5 @@
-from opensquirrel.Common import ExprType, exprTypeToArgType
-from opensquirrel.Gates import querySignature
+from opensquirrel.common import ExprType, exprTypeToArgType
+from opensquirrel.gates import querySignature
 from parsing.GeneratedParsingCode import CQasm3Visitor
 
 

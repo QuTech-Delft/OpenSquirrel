@@ -3,9 +3,9 @@ from typing import Tuple
 
 import numpy as np
 
-from opensquirrel.Common import ATOL, ArgType
-from opensquirrel.Gates import SingleQubitAxisAngleSemantic, queryEntry, querySemantic, querySignature
-from opensquirrel.SquirrelAST import SquirrelAST
+from opensquirrel.common import ATOL, ArgType
+from opensquirrel.gates import SingleQubitAxisAngleSemantic, queryEntry, querySemantic, querySignature
+from opensquirrel.squirrel_ast import SquirrelAST
 
 
 def normalizeAngle(x: float) -> float:

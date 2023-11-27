@@ -1,6 +1,6 @@
 from typing import Any
 
-from opensquirrel.Gates import querySignature
+from opensquirrel.gates import querySignature
 
 
 class SquirrelAST:

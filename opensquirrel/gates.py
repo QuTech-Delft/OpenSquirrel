@@ -2,7 +2,7 @@ from typing import Tuple
 
 import numpy as np
 
-from opensquirrel.Common import ArgType
+from opensquirrel.common import ArgType
 
 
 class Semantic:

@@ -1,10 +1,21 @@
-# Welcome to OpenSquirrel
+This site contains the project documentation for OpenSquirrel, _i.e._, a quantum circuit transformation and manipulation tool.
 
-## Introduction
+_<Brief intro to OpenSquirrel\>_
 
-A quantum circuit transformation and manipulation tool.
+GitHub repository: <https://github.com/QuTech-Delft/OpenSquirrel>
 
-**Authors**:
+PyPI: <https://pypi.org/project/opensquirrel/>
+
+## Table of Contents
+
+The following documentation structure is used: [Diátaxis documentation framework](https://diataxis.fr/).
+
+1. [Tutorials](tutorials.md)
+2. [How-To Guides](how-to-guides.md)
+3. [Reference](reference.md)
+4. [Explanation](explanation.md)
+
+## Authors
 
 - Pablo Le Henaff (<p.lehenaff@tudelft.nl>)
 
@@ -12,6 +23,6 @@ A quantum circuit transformation and manipulation tool.
 
 - Chris Elenbaas (<chris.elenbaas@tno.nl>)
 
-GitHub repository: <https://github.com/QuTech-Delft/OpenSquirrel>
+## Acknowledgements
 
-PyPI: <https://pypi.org/project/opensquirrel/>
+_<Who made OpenSquirrel possible?\>_

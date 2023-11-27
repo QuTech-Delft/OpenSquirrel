@@ -1,6 +1,6 @@
-from opensquirrel.Circuit import Circuit
-from opensquirrel.DefaultGates import DefaultGates
-from opensquirrel.SquirrelAST import SquirrelAST
+from opensquirrel.circuit import Circuit
+from opensquirrel.default_gates import DefaultGates
+from opensquirrel.squirrel_ast import SquirrelAST
 
 
 class CircuitBuilder:

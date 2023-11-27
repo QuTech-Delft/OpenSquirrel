@@ -2,11 +2,11 @@ import unittest
 
 import numpy as np
 
-from opensquirrel.Common import ATOL
-from opensquirrel.DefaultGates import DefaultGates
-from opensquirrel.McKayDecomposer import McKayDecomposer
-from opensquirrel.SquirrelAST import SquirrelAST
-from opensquirrel.TestInterpreter import TestInterpreter
+from opensquirrel.common import ATOL
+from opensquirrel.default_gates import DefaultGates
+from opensquirrel.mckay_decomposer import McKayDecomposer
+from opensquirrel.squirrel_ast import SquirrelAST
+from opensquirrel.test_interpreter import TestInterpreter
 
 
 def areMatricesEqualUpToGlobalPhase(matrixA, matrixB):

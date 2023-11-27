@@ -1,15 +1,15 @@
 import antlr4
 import numpy as np
 
-from opensquirrel.DefaultGates import DefaultGates  # For the doctest.
-from opensquirrel.McKayDecomposer import McKayDecomposer
-from opensquirrel.Replacer import Replacer
-from opensquirrel.SquirrelAST import SquirrelAST
-from opensquirrel.SquirrelASTCreator import SquirrelASTCreator
-from opensquirrel.SquirrelErrorHandler import SquirrelErrorHandler
-from opensquirrel.TestInterpreter import TestInterpreter
-from opensquirrel.TypeChecker import TypeChecker
-from opensquirrel.Writer import Writer
+from opensquirrel.default_gates import DefaultGates  # For the doctest.
+from opensquirrel.mckay_decomposer import McKayDecomposer
+from opensquirrel.replacer import Replacer
+from opensquirrel.squirrel_ast import SquirrelAST
+from opensquirrel.squirrel_ast_creator import SquirrelASTCreator
+from opensquirrel.squirrel_error_handler import SquirrelErrorHandler
+from opensquirrel.test_interpreter import TestInterpreter
+from opensquirrel.type_checker import TypeChecker
+from opensquirrel.writer import Writer
 from parsing.GeneratedParsingCode import CQasm3Lexer, CQasm3Parser
 
 
@@ -18,26 +18,30 @@ class Circuit:
 
     A Circuit object is constructed from a cQasm3 string, representing a quantum circuit, and a Python dictionary
     containing the prototypes and semantic of the allowed quantum gates.
-    A default set of gates is exposed as `opensquirrel.DefaultGates` but it can be replaced and extended.
+    A default set of gates is exposed as `opensquirrel.default_gates` but it can be replaced and extended.
 
-    >>> c = Circuit.from_string(DefaultGates, "version 3.0; qubit[3] q; h q[0]")
-    >>> c
-    version 3.0
-    <BLANKLINE>
-    qubit[3] q
-    <BLANKLINE>
-    h q[0]
-    <BLANKLINE>
-    >>> c.decompose_mckay()
-    >>> c
-    version 3.0
-    <BLANKLINE>
-    qubit[3] q
-    <BLANKLINE>
-    x90 q[0]
-    rz q[0], 1.5707963267948966
-    x90 q[0]
-    <BLANKLINE>
+    Examples:
+        >>> c = Circuit.from_string(DefaultGates, "version 3.0; qubit[3] q; h q[0]")
+        >>> c
+        version 3.0
+        <BLANKLINE>
+        qubit[3] q
+        <BLANKLINE>
+        h q[0]
+        <BLANKLINE>
+        >>> c.decompose_mckay()
+        >>> c
+        version 3.0
+        <BLANKLINE>
+        qubit[3] q
+        <BLANKLINE>
+        x90 q[0]
+        rz q[0], 1.5707963
+        x90 q[0]
+        <BLANKLINE>
+
+    Args:
+        squirrelAST: OpenSquirrel internal AST.
     """
 
     def __init__(self, squirrelAST: SquirrelAST):
@@ -51,10 +55,10 @@ class Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
-            * type-checking is performed, eliminating qubit indices errors and incoherencies
-            * checks that used gates are supported and mentioned in `gates` with appropriate signatures
-            * does not support map or variables, and other things...
-            * for example of `gates` dictionary, please look at TestGates.py
+        * type-checking is performed, eliminating qubit indices errors and incoherencies
+        * checks that used gates are supported and mentioned in `gates` with appropriate signatures
+        * does not support map or variables, and other things...
+        * for example of `gates` dictionary, please look at TestGates.py
         """
 
         input_stream = antlr4.InputStream(cqasm3_string)

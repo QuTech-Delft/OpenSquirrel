@@ -2,10 +2,10 @@ import unittest
 
 import antlr4
 
-from opensquirrel.DefaultGates import DefaultGates
-from opensquirrel.SquirrelASTCreator import SquirrelASTCreator
-from opensquirrel.SquirrelErrorHandler import SquirrelErrorHandler, SquirrelParseException
-from opensquirrel.TypeChecker import TypeChecker
+from opensquirrel.default_gates import DefaultGates
+from opensquirrel.squirrel_ast_creator import SquirrelASTCreator
+from opensquirrel.squirrel_error_handler import SquirrelErrorHandler, SquirrelParseException
+from opensquirrel.type_checker import TypeChecker
 from parsing.GeneratedParsingCode import CQasm3Lexer, CQasm3Parser
 
 
@@ -81,9 +81,9 @@ class ParsingTest(unittest.TestCase):
         ast = self.getAST(
             """
             version 3.0
-            
+
             qubit[1] qu
-            
+
             h qu[0]
         """
         )
@@ -98,7 +98,7 @@ class ParsingTest(unittest.TestCase):
             """
 version 3.0
   qubit[2] squirrel
-  
+
   h squirrel[0];
   rx squirrel[1], 1.23;;;;;
   ry squirrel[0], -42.;;;;;
@@ -117,7 +117,7 @@ version 3.0
             """
 version 3.0
   qubit[10] large
-  
+
   h large[0,3,6];
   x90 large[4:5];
         """
@@ -137,7 +137,7 @@ version 3.0
             """
 version 3.0
   qubit[2] q;
-  
+
   H q[1]
         """
         )
