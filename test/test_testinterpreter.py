@@ -198,6 +198,37 @@ cnot q[0], q[1]
             )
         )
 
+    def test_hadamard_cnot_0_2(self):
+        circuit = Circuit.from_string(
+            DefaultGates,
+            r"""
+version 3.0
+qubit[3] q
+
+h q[0]
+cnot q[0], q[2]
+""",
+        )
+        print(circuit.test_get_circuit_matrix())
+        self.assertTrue(
+            np.allclose(
+                circuit.test_get_circuit_matrix(),
+                math.sqrt(0.5)
+                * np.array(
+                    [
+                        [1, 1, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 1, -1, 0, 0],
+                        [0, 0, 1, 1, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 1, -1],
+                        [0, 0, 0, 0, 1, 1, 0, 0],
+                        [1, -1, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 1, 1],
+                        [0, 0, 1, -1, 0, 0, 0, 0],
+                    ]
+                ),
+            )
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
