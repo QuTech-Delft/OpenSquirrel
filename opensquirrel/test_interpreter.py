@@ -2,7 +2,7 @@ import numpy as np
 
 from opensquirrel.common import ArgType
 from opensquirrel.gates import querySemantic, querySignature
-from opensquirrel.matrix_expander import getBigMatrix
+from opensquirrel.utils.matrix_expander import get_expanded_matrix
 
 
 class TestInterpreter:
@@ -24,7 +24,7 @@ class TestInterpreter:
             semantic = querySemantic(
                 self.gates, gateName, *[gateArgs[i] for i in range(len(gateArgs)) if signature[i] != ArgType.QUBIT]
             )
-            bigMatrix = getBigMatrix(semantic, qubitOperands, totalQubits=squirrelAST.nQubits)
+            bigMatrix = get_expanded_matrix(semantic, qubitOperands, number_of_qubits=squirrelAST.nQubits)
             totalUnitary = bigMatrix @ totalUnitary
 
         return totalUnitary
