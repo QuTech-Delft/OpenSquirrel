@@ -10,33 +10,33 @@ class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
         self.squirrel_ast = None
 
     def visitProg(self, ctx):
-        qubitRegisterName, nQubits = self.visit(ctx.qubitRegisterDeclaration())  # Use?
+        qubit_register_name, number_of_qubits = self.visit(ctx.qubitRegisterDeclaration())  # Use?
 
-        self.squirrel_ast = SquirrelAST(self.gates, nQubits, qubitRegisterName)
+        self.squirrel_ast = SquirrelAST(self.gates, number_of_qubits, qubit_register_name)
 
-        for gApp in ctx.gateApplication():
-            self.visit(gApp)
+        for gate_application in ctx.gateApplication():
+            self.visit(gate_application)
 
         return self.squirrel_ast
 
     def visitGateApplication(self, ctx):
-        gateName = str(ctx.ID())
+        gate_name = str(ctx.ID())
 
-        signature = querySignature(self.gates, gateName)
+        signature = querySignature(self.gates, gate_name)
 
-        numberOfQubits = next(
+        number_of_operands = next(
             len(self.visit(ctx.expr(i))) for i in range(len(signature)) if signature[i] == ArgType.QUBIT
         )
 
-        expandedArgs = [
+        expanded_args = [
             self.visit(ctx.expr(i))
             if signature[i] == ArgType.QUBIT
-            else [self.visit(ctx.expr(i)) for _ in range(numberOfQubits)]
+            else [self.visit(ctx.expr(i)) for _ in range(number_of_operands)]
             for i in range(len(signature))
         ]
 
-        for individualArgs in zip(*expandedArgs):
-            self.squirrel_ast.addGate(gateName, *individualArgs)
+        for individual_args in zip(*expanded_args):
+            self.squirrel_ast.addGate(gate_name, *individual_args)
 
     def visitQubitRegisterDeclaration(self, ctx):
         return str(ctx.ID()), int(str(ctx.INT()))
@@ -48,9 +48,9 @@ class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
         return list(map(int, map(str, ctx.INT())))
 
     def visitQubitRange(self, ctx):
-        qubitIndex1 = int(str(ctx.INT(0)))
-        qubitIndex2 = int(str(ctx.INT(1)))
-        return list(range(qubitIndex1, qubitIndex2 + 1))
+        qubit1 = int(str(ctx.INT(0)))
+        qubit2 = int(str(ctx.INT(1)))
+        return list(range(qubit1, qubit2 + 1))
 
     def visitFloatLiteral(self, ctx):
         return float(str(ctx.FLOAT()))
