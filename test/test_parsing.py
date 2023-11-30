@@ -3,10 +3,10 @@ import unittest
 import antlr4
 
 from opensquirrel.default_gates import DefaultGates
-from opensquirrel.squirrel_ast_creator import SquirrelASTCreator
+from opensquirrel.parsing.antlr.generated import CQasm3Lexer, CQasm3Parser
+from opensquirrel.parsing.antlr.squirrel_ast_creator import SquirrelASTCreator
 from opensquirrel.squirrel_error_handler import SquirrelErrorHandler, SquirrelParseException
 from opensquirrel.type_checker import TypeChecker
-from parsing.GeneratedParsingCode import CQasm3Lexer, CQasm3Parser
 
 
 class ParsingTest(unittest.TestCase):
