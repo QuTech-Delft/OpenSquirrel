@@ -28,7 +28,6 @@ classifiers = [
 ]
 packages = [
     { include = "opensquirrel" },
-    { include = "parsing"},
 ]
 
 [tool.poetry.dependencies]

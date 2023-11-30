@@ -3,14 +3,14 @@ import numpy as np
 
 from opensquirrel.default_gates import DefaultGates  # For the doctest.
 from opensquirrel.mckay_decomposer import McKayDecomposer
+from opensquirrel.parsing.antlr.generated import CQasm3Lexer, CQasm3Parser
+from opensquirrel.parsing.antlr.squirrel_ast_creator import SquirrelASTCreator
 from opensquirrel.replacer import Replacer
 from opensquirrel.squirrel_ast import SquirrelAST
-from opensquirrel.squirrel_ast_creator import SquirrelASTCreator
 from opensquirrel.squirrel_error_handler import SquirrelErrorHandler
 from opensquirrel.test_interpreter import TestInterpreter
 from opensquirrel.type_checker import TypeChecker
 from opensquirrel.writer import Writer
-from parsing.GeneratedParsingCode import CQasm3Lexer, CQasm3Parser
 
 
 class Circuit:

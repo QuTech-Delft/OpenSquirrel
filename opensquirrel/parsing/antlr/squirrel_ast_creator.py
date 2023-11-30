@@ -1,12 +1,13 @@
 from opensquirrel.common import ArgType
 from opensquirrel.gates import querySignature
+from opensquirrel.parsing.antlr.generated import CQasm3Visitor
 from opensquirrel.squirrel_ast import SquirrelAST
-from parsing.GeneratedParsingCode import CQasm3Visitor
 
 
 class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
     def __init__(self, gates):
         self.gates = gates
+        self.squirrelAST = None
 
     def visitProg(self, ctx):
         qubitRegisterName, nQubits = self.visit(ctx.qubitRegisterDeclaration())  # Use?

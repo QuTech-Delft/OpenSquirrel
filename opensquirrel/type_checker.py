@@ -1,6 +1,6 @@
 from opensquirrel.common import ExprType, exprTypeToArgType
 from opensquirrel.gates import querySignature
-from parsing.GeneratedParsingCode import CQasm3Visitor
+from opensquirrel.parsing.antlr.generated import CQasm3Visitor
 
 
 class TypeChecker(CQasm3Visitor.CQasm3Visitor):
