@@ -5,6 +5,12 @@ from opensquirrel.squirrel_ast import SquirrelAST
 
 
 class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
+    """
+    This class creates a SquirrelAST object from an ANTLR parse tree.
+    It is an instance of the ANTLR grammar visitor.
+    Therefore, method names are fixed and based on rule names in the Grammar .g4 file.
+    """
+
     def __init__(self, gates):
         self.gates = gates
         self.squirrel_ast = None
