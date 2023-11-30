@@ -48,7 +48,7 @@ class Circuit:
         """Create a circuit object from a SquirrelAST object."""
 
         self.gates = squirrelAST.gates
-        self.squirrelAST = squirrelAST
+        self.squirrel_ast = squirrelAST
 
     @classmethod
     def from_string(cls, gates: dict, cqasm3_string: str):
@@ -82,10 +82,10 @@ class Circuit:
         return Circuit(squirrelASTCreator.visit(tree))
 
     def getNumberOfQubits(self) -> int:
-        return self.squirrelAST.nQubits
+        return self.squirrel_ast.nQubits
 
     def getQubitRegisterName(self) -> str:
-        return self.squirrelAST.qubitRegisterName
+        return self.squirrel_ast.qubitRegisterName
 
     def decompose_mckay(self):
         """Perform gate fusion on all one-qubit gates and decompose them in the McKay style.
@@ -99,7 +99,7 @@ class Circuit:
         """
 
         mcKayDecomposer = McKayDecomposer(self.gates)
-        self.squirrelAST = mcKayDecomposer.process(self.squirrelAST)
+        self.squirrel_ast = mcKayDecomposer.process(self.squirrel_ast)
 
     def replace(self, gateName: str, f):
         """Manually replace occurrences of a given gate with a list of gates.
@@ -110,7 +110,7 @@ class Circuit:
 
         assert gateName in self.gates, f"Cannot replace unknown gate `{gateName}`"
         replacer = Replacer(self.gates)  # FIXME: only one instance of this is needed.
-        self.squirrelAST = replacer.process(self.squirrelAST, gateName, f)
+        self.squirrel_ast = replacer.process(self.squirrel_ast, gateName, f)
 
     def test_get_circuit_matrix(self) -> np.ndarray:
         """Get the (large) unitary matrix corresponding to the circuit.
@@ -121,7 +121,7 @@ class Circuit:
         """
 
         interpreter = TestInterpreter(self.gates)
-        return interpreter.process(self.squirrelAST)
+        return interpreter.process(self.squirrel_ast)
 
     def __repr__(self) -> str:
         """Write the circuit to a cQasm3 string.
@@ -130,4 +130,4 @@ class Circuit:
         """
 
         writer = Writer(self.gates)
-        return writer.process(self.squirrelAST)
+        return writer.process(self.squirrel_ast)
