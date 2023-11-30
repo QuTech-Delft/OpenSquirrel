@@ -15,18 +15,18 @@ class CircuitBuilderTest(unittest.TestCase):
 
         self.assertEqual(circuit.getNumberOfQubits(), 3)
         self.assertEqual(circuit.getQubitRegisterName(), "q")
-        self.assertEqual(len(circuit.squirrelAST.operations), 2)
-        self.assertEqual(circuit.squirrelAST.operations[0], ("h", (0,)))
-        self.assertEqual(circuit.squirrelAST.operations[1], ("cnot", (0, 1)))
+        self.assertEqual(len(circuit.squirrel_ast.operations), 2)
+        self.assertEqual(circuit.squirrel_ast.operations[0], ("h", (0,)))
+        self.assertEqual(circuit.squirrel_ast.operations[1], ("cnot", (0, 1)))
 
     def test_chain(self):
         builder = CircuitBuilder(DefaultGates, 3)
 
         circuit = builder.h(0).cnot(0, 1).to_circuit()
 
-        self.assertEqual(len(circuit.squirrelAST.operations), 2)
-        self.assertEqual(circuit.squirrelAST.operations[0], ("h", (0,)))
-        self.assertEqual(circuit.squirrelAST.operations[1], ("cnot", (0, 1)))
+        self.assertEqual(len(circuit.squirrel_ast.operations), 2)
+        self.assertEqual(circuit.squirrel_ast.operations[0], ("h", (0,)))
+        self.assertEqual(circuit.squirrel_ast.operations[1], ("cnot", (0, 1)))
 
     def test_unknown_gate(self):
         builder = CircuitBuilder(DefaultGates, 3)

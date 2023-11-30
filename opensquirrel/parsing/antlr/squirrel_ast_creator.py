@@ -7,17 +7,17 @@ from opensquirrel.squirrel_ast import SquirrelAST
 class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
     def __init__(self, gates):
         self.gates = gates
-        self.squirrelAST = None
+        self.squirrel_ast = None
 
     def visitProg(self, ctx):
         qubitRegisterName, nQubits = self.visit(ctx.qubitRegisterDeclaration())  # Use?
 
-        self.squirrelAST = SquirrelAST(self.gates, nQubits, qubitRegisterName)
+        self.squirrel_ast = SquirrelAST(self.gates, nQubits, qubitRegisterName)
 
         for gApp in ctx.gateApplication():
             self.visit(gApp)
 
-        return self.squirrelAST
+        return self.squirrel_ast
 
     def visitGateApplication(self, ctx):
         gateName = str(ctx.ID())
@@ -36,7 +36,7 @@ class SquirrelASTCreator(CQasm3Visitor.CQasm3Visitor):
         ]
 
         for individualArgs in zip(*expandedArgs):
-            self.squirrelAST.addGate(gateName, *individualArgs)
+            self.squirrel_ast.addGate(gateName, *individualArgs)
 
     def visitQubitRegisterDeclaration(self, ctx):
         return str(ctx.ID()), int(str(ctx.INT()))
