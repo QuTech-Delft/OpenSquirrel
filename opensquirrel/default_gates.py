@@ -1,104 +1,74 @@
-import cmath
 import math
 
-import numpy as np
+from opensquirrel.squirrel_ir import *
 
-from opensquirrel.common import ArgType
-from opensquirrel.gates import MultiQubitMatrixSemantic, SingleQubitAxisAngleSemantic
 
-DefaultGates = {
-    "h": {
-        "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2),
-    },
-    "H": "h",  # This is how you define an alias.
-    "hadamard": "h",
-    "x": {
-        "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
-    },
-    "X": "x",
-    "y": {
-        "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2),
-    },
-    "Y": "y",
-    "z": {
-        "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2),
-    },
-    "Z": "z",
-    "rx": {
-        "signature": (ArgType.QUBIT, ArgType.FLOAT),
-        "semantic": lambda theta: SingleQubitAxisAngleSemantic(axis=(1, 0, 0), angle=theta, phase=0),
-    },
-    "RX": "rx",
-    "x90": {
-        "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 0), angle=math.pi / 2, phase=0),
-    },
-    "X90": "x90",
-    "mx90": {
-        "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(1, 0, 0), angle=-math.pi / 2, phase=0),
-    },
-    "MX90": "mx90",
-    "ry": {
-        "signature": (ArgType.QUBIT, ArgType.FLOAT),
-        "semantic": lambda theta: SingleQubitAxisAngleSemantic(axis=(0, 1, 0), angle=theta, phase=0),
-    },
-    "RY": "ry",
-    "y90": {
-        "signature": (ArgType.QUBIT,),
-        "semantic": SingleQubitAxisAngleSemantic(axis=(0, 1, 0), angle=math.pi / 2, phase=0),
-    },
-    "Y90": "y90",
-    "rz": {
-        "signature": (ArgType.QUBIT, ArgType.FLOAT),
-        "semantic": lambda theta: SingleQubitAxisAngleSemantic(axis=(0, 0, 1), angle=theta, phase=0),
-    },
-    "RZ": "rz",
-    "cnot": {
-        "signature": (ArgType.QUBIT, ArgType.QUBIT),
-        "semantic": MultiQubitMatrixSemantic(
-            np.array(
-                [
-                    [1, 0, 0, 0],
-                    [0, 1, 0, 0],
-                    [0, 0, 0, 1],
-                    [0, 0, 1, 0],
-                ]
-            )
-        ),
-    },
-    "CNOT": "cnot",
-    "cz": {
-        "signature": (ArgType.QUBIT, ArgType.QUBIT),
-        "semantic": MultiQubitMatrixSemantic(
-            np.array(
-                [
-                    [1, 0, 0, 0],
-                    [0, 1, 0, 0],
-                    [0, 0, 1, 0],
-                    [0, 0, 0, -1],
-                ]
-            )
-        ),
-    },
-    "CZ": "cz",
-    "cr": {
-        "signature": (ArgType.QUBIT, ArgType.QUBIT, ArgType.FLOAT),
-        "semantic": lambda theta: MultiQubitMatrixSemantic(
-            np.array(
-                [
-                    [1, 0, 0, 0],
-                    [0, 1, 0, 0],
-                    [0, 0, 1, 0],
-                    [0, 0, 0, cmath.rect(1, theta)],
-                ]
-            )
-        ),
-    },
-    "CR": "cr",
-    # Rest is TODO
-}
+@named_gate
+def h(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
+
+
+@named_gate
+def x(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+
+
+@named_gate
+def x90(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi / 2, phase=0)
+
+
+@named_gate
+def y(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
+
+
+@named_gate
+def y90(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi / 2, phase=0)
+
+
+@named_gate
+def z(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
+
+
+@named_gate
+def z90(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 2, phase=0)
+
+
+@named_gate
+def rx(q: Qubit, theta: Float) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=theta.value, phase=0)
+
+
+@named_gate
+def ry(q: Qubit, theta: Float) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=theta.value, phase=0)
+
+
+@named_gate
+def rz(q: Qubit, theta: Float) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=theta.value, phase=0)
+
+
+@named_gate
+def cnot(control: Qubit, target: Qubit) -> Gate:
+    return ControlledGate(control, x(target))
+
+
+@named_gate
+def cz(control: Qubit, target: Qubit) -> Gate:
+    return ControlledGate(control, z(target))
+
+
+@named_gate
+def cr(control: Qubit, target: Qubit, theta: Float) -> Gate:
+    return ControlledGate(
+        control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2)
+    )
+
+
+default_gate_set = [h, x, x90, y, y90, z, z90, cz, cr, cnot, rx, ry, rz, x]
+default_gate_aliases = {"X": x, "RX": rx, "RY": ry, "RZ": rz, "Hadamard": h, "H": h}

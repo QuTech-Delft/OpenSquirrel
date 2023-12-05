@@ -1,6 +1,5 @@
 # Generated from CQasm3.g4 by ANTLR 4.13.1
 import sys
-from io import StringIO
 
 from antlr4 import *
 

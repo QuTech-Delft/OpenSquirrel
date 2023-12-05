@@ -2,26 +2,18 @@
 
 ::: opensquirrel.circuit_builder
 
+::: opensquirrel.circuit_matrix_calculator
+
 ::: opensquirrel.common
 
 ::: opensquirrel.default_gates
 
-::: opensquirrel.gates
-
-::: opensquirrel.matrix_expander
+::: opensquirrel.gate_library
 
 ::: opensquirrel.mckay_decomposer
 
 ::: opensquirrel.replacer
 
-::: opensquirrel.squirrel_ast
-
-::: opensquirrel.squirrel_ast_creator
-
-::: opensquirrel.squirrel_error_handler
-
-::: opensquirrel.test_interpreter
-
-::: opensquirrel.type_checker
+::: opensquirrel.squirrel_ir
 
 ::: opensquirrel.writer
