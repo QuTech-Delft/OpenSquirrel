@@ -1,26 +1,18 @@
-import math
 import unittest
 
-import numpy as np
+from opensquirrel import circuit_matrix_calculator
+from opensquirrel.default_gates import *
+from opensquirrel.squirrel_ir import Qubit, SquirrelIR
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import DefaultGates
 
-
-class TestInterpreterTest(unittest.TestCase):
+class CircuitMatrixCalculatorTest(unittest.TestCase):
     def test_hadamard(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[1] q
+        squirrel_ir = SquirrelIR(number_of_qubits=1)
+        squirrel_ir.add_gate(h(Qubit(0)))
 
-h q[0]
-""",
-        )
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 math.sqrt(0.5)
                 * np.array(
                     [
@@ -32,33 +24,21 @@ h q[0]
         )
 
     def test_double_hadamard(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[1] q
+        squirrel_ir = SquirrelIR(number_of_qubits=1)
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_gate(h(Qubit(0)))
 
-h q[0]
-h q[0]
-""",
-        )
-        self.assertTrue(np.allclose(circuit.test_get_circuit_matrix(), np.eye(2)))
+        self.assertTrue(np.allclose(circuit_matrix_calculator.get_circuit_matrix(squirrel_ir), np.eye(2)))
 
     def test_triple_hadamard(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[1] q
+        squirrel_ir = SquirrelIR(number_of_qubits=1)
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_gate(h(Qubit(0)))
 
-h q[0]
-h q[0]
-h q[0]
-""",
-        )
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 math.sqrt(0.5)
                 * np.array(
                     [
@@ -70,19 +50,13 @@ h q[0]
         )
 
     def test_hadamard_x(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[2] q
+        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_gate(x(Qubit(1)))
 
-h q[0]
-x q[1]
-""",
-        )
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 math.sqrt(0.5)
                 * np.array(
                     [
@@ -96,19 +70,13 @@ x q[1]
         )
 
     def test_x_hadamard(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[2] q
+        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir.add_gate(h(Qubit(1)))
+        squirrel_ir.add_gate(x(Qubit(0)))
 
-h q[1]
-x q[0]
-""",
-        )
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 math.sqrt(0.5)
                 * np.array(
                     [
@@ -122,19 +90,12 @@ x q[0]
         )
 
     def test_cnot(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[2] q
-
-cnot q[1], q[0]
-""",
-        )
+        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir.add_gate(cnot(Qubit(1), Qubit(0)))
 
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 np.array(
                     [
                         [1, 0, 0, 0],
@@ -147,19 +108,12 @@ cnot q[1], q[0]
         )
 
     def test_cnot_reversed(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[2] q
-
-cnot q[0], q[1]
-""",
-        )
+        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir.add_gate(cnot(Qubit(0), Qubit(1)))
 
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 np.array(
                     [
                         [1, 0, 0, 0],
@@ -172,20 +126,13 @@ cnot q[0], q[1]
         )
 
     def test_hadamard_cnot(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[2] q
-
-h q[0]
-cnot q[0], q[1]
-""",
-        )
+        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_gate(cnot(Qubit(0), Qubit(1)))
 
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 math.sqrt(0.5)
                 * np.array(
                     [
@@ -199,20 +146,14 @@ cnot q[0], q[1]
         )
 
     def test_hadamard_cnot_0_2(self):
-        circuit = Circuit.from_string(
-            DefaultGates,
-            r"""
-version 3.0
-qubit[3] q
+        squirrel_ir = SquirrelIR(number_of_qubits=3)
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_gate(cnot(Qubit(0), Qubit(2)))
 
-h q[0]
-cnot q[0], q[2]
-""",
-        )
-        print(circuit.test_get_circuit_matrix())
+        print(circuit_matrix_calculator.get_circuit_matrix(squirrel_ir))
         self.assertTrue(
             np.allclose(
-                circuit.test_get_circuit_matrix(),
+                circuit_matrix_calculator.get_circuit_matrix(squirrel_ir),
                 math.sqrt(0.5)
                 * np.array(
                     [

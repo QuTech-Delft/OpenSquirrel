@@ -6,7 +6,7 @@ class SquirrelParseException(Exception):
 
 
 class SquirrelErrorHandler(Antlr4ErrorListener):
-    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+    def syntaxError(self, recognizer, offending_symbol, line, column, msg, e):
         stack = recognizer.getRuleInvocationStack()
         stack.reverse()
         raise SquirrelParseException(f"Parsing error at {line}:{column}: {msg}")
