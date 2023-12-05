@@ -1,17 +1,15 @@
 import unittest
 
-from opensquirrel.default_gates import DefaultGates
-from opensquirrel.squirrel_ast import SquirrelAST
-from opensquirrel.writer import Writer
+from opensquirrel import writer
+from opensquirrel.default_gates import *
+from opensquirrel.squirrel_ir import Comment, Float, Qubit, SquirrelIR
 
 
 class WriterTest(unittest.TestCase):
     def test_write(self):
-        squirrelAST = SquirrelAST(DefaultGates, 3, "myqubitsregister")
+        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="myqubitsregister")
 
-        writer = Writer(DefaultGates)
-
-        written = writer.process(squirrelAST)
+        written = writer.squirrel_ir_to_string(squirrel_ir)
 
         self.assertEqual(
             written,
@@ -22,10 +20,10 @@ qubit[3] myqubitsregister
 """,
         )
 
-        squirrelAST.addGate("h", 0)
-        squirrelAST.addGate("cr", 0, 1, 1.234)
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_gate(cr(Qubit(0), Qubit(1), Float(1.234)))
 
-        written = writer.process(squirrelAST)
+        written = writer.squirrel_ir_to_string(squirrel_ir)
 
         self.assertEqual(
             written,
@@ -38,17 +36,34 @@ cr myqubitsregister[0], myqubitsregister[1], 1.234
 """,
         )
 
-    def test_comment(self):
-        squirrelAST = SquirrelAST(DefaultGates, 3, "q")
+    def test_anonymous_gate(self):
+        squirrel_ir = SquirrelIR(number_of_qubits=1, qubit_register_name="q")
 
-        writer = Writer(DefaultGates)
-
-        squirrelAST.addGate("h", 0)
-        squirrelAST.addComment("My comment")
-        squirrelAST.addGate("cr", 0, 1, 1.234)
+        squirrel_ir.add_gate(cr(Qubit(0), Qubit(1), Float(1.234)))
+        squirrel_ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
+        squirrel_ir.add_gate(cr(Qubit(0), Qubit(1), Float(1.234)))
 
         self.assertEqual(
-            writer.process(squirrelAST),
+            writer.squirrel_ir_to_string(squirrel_ir),
+            """version 3.0
+
+qubit[1] q
+
+cr q[0], q[1], 1.234
+<anonymous-gate>
+cr q[0], q[1], 1.234
+""",
+        )
+
+    def test_comment(self):
+        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="q")
+
+        squirrel_ir.add_gate(h(Qubit(0)))
+        squirrel_ir.add_comment(Comment("My comment"))
+        squirrel_ir.add_gate(cr(Qubit(0), Qubit(1), Float(1.234)))
+
+        self.assertEqual(
+            writer.squirrel_ir_to_string(squirrel_ir),
             """version 3.0
 
 qubit[3] q
@@ -62,14 +77,12 @@ cr q[0], q[1], 1.234
         )
 
     def test_cap_significant_digits(self):
-        squirrelAST = SquirrelAST(DefaultGates, 3, "q")
+        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="q")
 
-        writer = Writer(DefaultGates)
-
-        squirrelAST.addGate("cr", 0, 1, 1.6546514861321684321654)
+        squirrel_ir.add_gate(cr(Qubit(0), Qubit(1), Float(1.6546514861321684321654)))
 
         self.assertEqual(
-            writer.process(squirrelAST),
+            writer.squirrel_ir_to_string(squirrel_ir),
             """version 3.0
 
 qubit[3] q

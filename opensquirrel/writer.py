@@ -1,41 +1,37 @@
-from opensquirrel.common import ArgType
-from opensquirrel.gates import querySignature
+from opensquirrel.squirrel_ir import Comment, Float, Gate, Int, Qubit, SquirrelIR, SquirrelIRVisitor
 
 
-class Writer:
-    NUMBER_OF_SIGNIFICANT_DIGITS = 8
+class _WriterImpl(SquirrelIRVisitor):
+    number_of_significant_digits = 8
 
-    def __init__(self, gates):
-        self.gates = gates
+    def __init__(self, number_of_qubits, qubit_register_name):
+        self.qubit_register_name = qubit_register_name
+        self.output = f"""version 3.0\n\nqubit[{number_of_qubits}] {qubit_register_name}\n\n"""
 
-    @classmethod
-    def _format_arg(cls, squirrelAST, arg, t: ArgType):
-        if t == ArgType.QUBIT:
-            return f"{squirrelAST.qubitRegisterName}[{arg}]"
-        if t == ArgType.INT:
-            return f"{int(arg)}"
-        if t == ArgType.FLOAT:
-            return f"{float(arg):.{Writer.NUMBER_OF_SIGNIFICANT_DIGITS}}"
+    def visit_qubit(self, qubit: Qubit):
+        return f"{self.qubit_register_name}[{qubit.index}]"
 
-        assert False, "Unknown argument type"
+    def visit_int(self, i: Int):
+        return f"{i.value}"
 
-    def process(self, squirrelAST):
-        output = ""
-        output += f"""version 3.0\n\nqubit[{squirrelAST.nQubits}] {squirrelAST.qubitRegisterName}\n\n"""
+    def visit_float(self, f: Float):
+        return f"{f.value:.{self.number_of_significant_digits}}"
 
-        for operation in squirrelAST.operations:
-            if isinstance(operation, str):
-                comment = operation
-                assert "*/" not in comment, "Comment contains illegal characters"
+    def visit_gate(self, gate: Gate):
+        if gate.is_anonymous:
+            self.output += "<anonymous-gate>\n"
+            return
 
-                output += f"\n/* {comment} */\n\n"
-                continue
+        formatted_args = (arg.accept(self) for arg in gate.arguments)
+        self.output += f"{gate.name} {', '.join(formatted_args)}\n"
 
-            gateName, gateArgs = operation
-            signature = querySignature(self.gates, gateName)
+    def visit_comment(self, comment: Comment):
+        self.output += f"\n/* {comment.str} */\n\n"
 
-            args = [Writer._format_arg(squirrelAST, arg, t) for arg, t in zip(gateArgs, signature)]
 
-            output += f"{gateName} {', '.join(args)}\n"
+def squirrel_ir_to_string(squirrel_ir: SquirrelIR):
+    writer_impl = _WriterImpl(squirrel_ir.number_of_qubits, squirrel_ir.qubit_register_name)
 
-        return output
+    squirrel_ir.accept(writer_impl)
+
+    return writer_impl.output
