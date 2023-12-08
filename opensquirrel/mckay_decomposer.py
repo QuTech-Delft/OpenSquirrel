@@ -2,12 +2,13 @@ from math import acos, atan2, cos, pi, sin, sqrt
 from typing import Tuple
 
 import numpy as np
+import numpy.typing as npt
 
 from opensquirrel.common import ATOL, ArgType
 from opensquirrel.gates import SingleQubitAxisAngleSemantic, queryEntry, querySemantic, querySignature
 from opensquirrel.squirrel_ast import SquirrelAST
 
-FloatArray = np.typing.NDArray[np.float64]
+FloatArray = npt.NDArray[np.float64]
 
 def normalizeAngle(x: float) -> float:
     t = x - 2 * pi * (x // (2 * pi) + 1)
