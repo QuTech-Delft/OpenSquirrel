@@ -10,6 +10,7 @@ from opensquirrel.squirrel_ast import SquirrelAST
 
 FloatArray = npt.NDArray[np.float64]
 
+
 def normalizeAngle(x: float) -> float:
     t = x - 2 * pi * (x // (2 * pi) + 1)
     if t < -pi + ATOL:
@@ -18,10 +19,10 @@ def normalizeAngle(x: float) -> float:
         t -= 2 * pi
     return t
 
-def cross(l : FloatArray, r : FloatArray) -> FloatArray:
-    return np.array( [ l[1] * r[2] - l[2] * r[1],
-                      l[2] * r[0] - l[0] * r[2],
-                      l[0] * r[1] - l[1] * r[0] ], dtype=l.dtype) 
+
+def cross(l: FloatArray, r: FloatArray) -> FloatArray:
+    return np.array([l[1] * r[2] - l[2] * r[1], l[2] * r[0] - l[0] * r[2], l[0] * r[1] - l[1] * r[0]], dtype=l.dtype)
+
 
 class McKayDecomposer:
     def __init__(self, gates):
