@@ -7,6 +7,7 @@ from opensquirrel.common import ATOL, ArgType
 from opensquirrel.gates import SingleQubitAxisAngleSemantic, queryEntry, querySemantic, querySignature
 from opensquirrel.squirrel_ast import SquirrelAST
 
+FloatArray = np.typing.NDArray[np.float64]
 
 def normalizeAngle(x: float) -> float:
     t = x - 2 * pi * (x // (2 * pi) + 1)
@@ -16,6 +17,10 @@ def normalizeAngle(x: float) -> float:
         t -= 2 * pi
     return t
 
+def cross(l : FloatArray, r : FloatArray) -> FloatArray:
+    return np.array( [ l[1] * r[2] - l[2] * r[1],
+                      l[2] * r[0] - l[0] * r[2],
+                      l[0] * r[1] - l[1] * r[0] ], dtype=l.dtype) 
 
 class McKayDecomposer:
     def __init__(self, gates):
@@ -66,7 +71,7 @@ class McKayDecomposer:
 
     def _flush_all(self):
         while len(self.oneQubitGates) > 0:
-            self._flush(next(iter(self.oneQubitGates.keys())))
+            self._flush(next(iter(self.oneQubitGates)))
 
     def _acc(self, qubit, semantic: SingleQubitAxisAngleSemantic):
         axis, angle, phase = semantic.axis, semantic.angle, semantic.phase
@@ -92,7 +97,7 @@ class McKayDecomposer:
         combinedAxis = (
             1
             / sin(combinedAngle / 2)
-            * (sin(a / 2) * cos(b / 2) * l + cos(a / 2) * sin(b / 2) * m + sin(a / 2) * sin(b / 2) * np.cross(l, m))
+            * (sin(a / 2) * cos(b / 2) * l + cos(a / 2) * sin(b / 2) * m + sin(a / 2) * sin(b / 2) * cross(l, m))
         )
 
         self.oneQubitGates[qubit] = {"angle": combinedAngle, "axis": combinedAxis, "phase": combinedPhase}
@@ -116,8 +121,8 @@ class McKayDecomposer:
         gateName, gateArgs = operation
 
         signature = querySignature(self.gates, gateName)
-        qubitArguments = [gateArgs[i] for i in range(len(gateArgs)) if signature[i] == ArgType.QUBIT]
-        nonQubitArguments = [gateArgs[i] for i in range(len(gateArgs)) if signature[i] != ArgType.QUBIT]
+        qubitArguments = [arg for i, arg in enumerate(gateArgs) if signature[i] == ArgType.QUBIT]
+        nonQubitArguments = [arg for i, arg in enumerate(gateArgs) if signature[i] != ArgType.QUBIT]
 
         if len(qubitArguments) >= 2:
             [self._flush(q) for q in qubitArguments]

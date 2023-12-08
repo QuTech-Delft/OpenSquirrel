@@ -11,7 +11,7 @@ class Semantic:
 
 class SingleQubitAxisAngleSemantic(Semantic):
     def __init__(self, axis: Tuple[float, float, float], angle: float, phase: float):
-        self.axis = self._normalize(np.array(axis).astype(np.float64))
+        self.axis = self._normalize(np.asarray(axis, dtype=np.float64))
         self.angle = angle
         self.phase = phase
 
