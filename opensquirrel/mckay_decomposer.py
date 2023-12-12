@@ -2,13 +2,10 @@ from math import acos, atan2, cos, pi, sin, sqrt
 from typing import Tuple
 
 import numpy as np
-import numpy.typing as npt
 
 from opensquirrel.common import ATOL, ArgType
 from opensquirrel.gates import SingleQubitAxisAngleSemantic, queryEntry, querySemantic, querySignature
 from opensquirrel.squirrel_ast import SquirrelAST
-
-FloatArray = npt.NDArray[np.float64]
 
 
 def normalizeAngle(x: float) -> float:
@@ -18,10 +15,6 @@ def normalizeAngle(x: float) -> float:
     elif t > pi:
         t -= 2 * pi
     return t
-
-
-def cross(l: FloatArray, r: FloatArray) -> FloatArray:
-    return np.array([l[1] * r[2] - l[2] * r[1], l[2] * r[0] - l[0] * r[2], l[0] * r[1] - l[1] * r[0]], dtype=l.dtype)
 
 
 class McKayDecomposer:
@@ -99,7 +92,7 @@ class McKayDecomposer:
         combinedAxis = (
             1
             / sin(combinedAngle / 2)
-            * (sin(a / 2) * cos(b / 2) * l + cos(a / 2) * sin(b / 2) * m + sin(a / 2) * sin(b / 2) * cross(l, m))
+            * (sin(a / 2) * cos(b / 2) * l + cos(a / 2) * sin(b / 2) * m + sin(a / 2) * sin(b / 2) * np.cross(l, m))
         )
 
         self.oneQubitGates[qubit] = {"angle": combinedAngle, "axis": combinedAxis, "phase": combinedPhase}
