@@ -17,18 +17,6 @@
 $ pip install opensquirrel
 ```
 
-### Editable installation
-
-To perform an editable install, run the following command in the root directory of `OpenSquirrel` with the `-e` flag
-```shell
-$ pip install -e .
-```
-
-To install the developer specific dependencies, run the command
-```shell
-$ pip install -e '.[dev]'
-```
-
 ## Documentation
 
 OpenSquirrel documentation is hosted through GitHub Pages [here](https://QuTech-Delft.github.io/OpenSquirrel/).
@@ -83,3 +71,48 @@ $ mypy -p opensquirrel
 ```shell
 $ pytest
 ```
+
+## Dev Container
+
+### VSCode
+
+(tbd)
+
+### PyCharm
+
+Open the Dev Container configuration file located at `.devcontainer/devcontainer.json` in the PyCharm editor. On the left of the editor, in the gutter, you should see the Docker icon: <img src="docs/_static/devcontainer_docker_icon.png" width="20" height="20"> or <img src="docs/_static/devcontainer_docker_icon_2.png" width="20" height="20">. Upon clicking on the Docker icon, the following options appear (depending on the PyCharm version used): **Create Dev Container and Mount Sources...** and **Show Dev Containers**. If no Dev Containers have been created previously, select the former option and proceed to create a Dev Container, otherwise select the latter option to list the existing Dev Containers.
+
+ - If you select **Create Dev Container and Mount Sources...** a separate window (*Building Dev Container*) will open and a Dev Container will be built according to the specification in the `.devcontainer/Dockerfile`. The system dependencies are installed, a user account (*i.e.* **vscode**) is created, and additional Python packages and Poetry are installed. Upon completion the status messages should read: *'Dev Container' has been deployed successfully* and *Environment is successfully prepared…* Proceed by choosing your PyCharm installation, from the dropdown menu that appears at the top, and click **Continue**. A connection is established with the remote host and new PyCharm window is opened, initiates with the OpenSquirrel project.
+
+    Open the Terminal (`Alt`+`F12`), or click on the terminal icon <img src="docs/_static/terminal_icon.png" width="20" height="20">  in the lower left corner. Change to the **vscode** user:
+
+    ```bash
+    sudo -u vscode -i
+    ```
+    and make sure to navigate to the project root folder
+    ```bash
+    cd /IdeaProjects/OpenSquirrel/
+    ```
+    Continue to install the dependencies
+    ```bash
+    poetry install
+    ```
+    and initiating the Poetry shell environment
+    ```bash
+    poetry shell
+    ```
+- If you select **Show Dev Containers**, a separate window appears where the existing (previously created) Dev Containers are listed by their name and status (*i.e.* either running or idle). If they are idle they can be started by clicking on their name or on the play button.
+
+    *PyCharm does not open a new JetBrain Client as it did when you created the Dev Container for the first time.*
+
+    An idle Dev Container can also be started from the command line:
+
+    ```bash
+    docker container start <container-name>
+    ```
+
+    A currently running Dev Container can be accessed from the command line:
+
+    ```bash
+    docker exec -it <container-name> bash
+    ```
