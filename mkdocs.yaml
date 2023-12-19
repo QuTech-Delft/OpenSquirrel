@@ -5,6 +5,10 @@ theme:
   name: "material"
 
 plugins:
+  - search
+  - gen-files:
+      scripts:
+        - scripts/gen_reference_page.py
   - mkdocstrings
 
 nav:
