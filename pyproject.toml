@@ -56,7 +56,7 @@ asyncio_mode = "auto"
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/.tox/**"]
+omit = ["tests/*", "**/.tox/**", "opensquirrel/parsing/antlr/generated/*"]
 
 [tool.coverage.report]
 show_missing = true
