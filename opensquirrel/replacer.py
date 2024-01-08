@@ -1,52 +1,31 @@
-from opensquirrel.common import ArgType
-from opensquirrel.gates import querySignature
-from opensquirrel.squirrel_ast import SquirrelAST
+from typing import List
+
+from opensquirrel.squirrel_ir import Comment, Gate, SquirrelIR
 
 
-class Replacer:
-    def __init__(self, gates):
-        self.gates = gates
+def replace(squirrel_ir: SquirrelIR, gate_name_to_replace: str, f):
+    statement_index = 0
+    while statement_index < len(squirrel_ir.statements):
+        statement = squirrel_ir.statements[statement_index]
 
-    def process(self, squirrelAST: SquirrelAST, replacedGateName: str, f):
-        result = SquirrelAST(self.gates, squirrelAST.nQubits, squirrelAST.qubitRegisterName)
+        if isinstance(statement, Comment):
+            statement_index += 1
+            continue
 
-        signature = querySignature(self.gates, replacedGateName)
+        if not isinstance(statement, Gate):
+            raise Exception("Unsupported")
 
-        for operation in squirrelAST.operations:
-            if isinstance(operation, str):
-                continue
+        if statement.name != gate_name_to_replace:
+            statement_index += 1
+            continue
 
-            otherGateName, otherArgs = operation
+        # FIXME: handle case where if f is not a function but directly a list.
 
-            if otherGateName != replacedGateName:
-                result.addGate(otherGateName, *otherArgs)
-                continue
+        replacement: List[Gate] = f(*statement.arguments)
+        squirrel_ir.statements[statement_index : statement_index + 1] = replacement
+        statement_index += len(replacement)
 
-            # FIXME: handle case where if f is not a function but directly a list.
+        # TODO: Here, check that the semantic of the replacement is the same!
+        # For this, need to update the simulation capabilities.
 
-            assert len(otherArgs) == len(signature)
-            originalQubits = set(otherArgs[i] for i in range(len(otherArgs)) if signature[i] == ArgType.QUBIT)
-
-            replacement = f(*otherArgs)
-
-            # TODO: Here, check that the semantic of the replacement is the same!
-            # For this, need to update the simulation capabilities.
-
-            # TODO: Do we allow skipping the replacement, based on arguments?
-
-            assert isinstance(replacement, list), "Substitution needs to be a list"
-
-            for replacementGate in replacement:
-                replacementGateName, replacementGateArgs = replacementGate
-
-                replacementGateSignature = querySignature(self.gates, replacementGateName)
-                assert len(replacementGateArgs) == len(replacementGateSignature)
-                assert all(
-                    replacementGateArgs[i] in originalQubits
-                    for i in range(len(replacementGateArgs))
-                    if replacementGateSignature[i] == ArgType.QUBIT
-                ), (f"Substitution for gate `{replacedGateName}` " f"must use the input qubits {originalQubits} only")
-
-                result.addGate(replacementGateName, *replacementGateArgs)
-
-        return result
+        # TODO: Do we allow skipping the replacement, based on arguments?

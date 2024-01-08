@@ -3,13 +3,12 @@
 import unittest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import DefaultGates
+from opensquirrel.default_gates import *
 
 
 class IntegrationTest(unittest.TestCase):
     def test_simple(self):
         myCircuit = Circuit.from_string(
-            DefaultGates,
             """
                 version 3.0
 
@@ -20,7 +19,7 @@ class IntegrationTest(unittest.TestCase):
                 cnot qreg[0], qreg[1]
                 rx qreg[0], -2.3
                 ry qreg[1], -3.14
-            """,
+            """
         )
 
         #    Decompose CNOT as
@@ -31,7 +30,12 @@ class IntegrationTest(unittest.TestCase):
         #
 
         myCircuit.replace(
-            "cnot", lambda control, target: [("h", (target,)), ("cz", (control, target)), ("h", (target,))]
+            "cnot",
+            lambda control, target: [
+                h(target),
+                cz(control, target),
+                h(target),
+            ],
         )
 
         # Do 1q-gate fusion and decompose with McKay decomposition.
@@ -73,7 +77,6 @@ rz qreg[0], 1.5707963
 
     def test_qi(self):
         myCircuit = Circuit.from_string(
-            DefaultGates,
             """
             version 3.0
 
@@ -101,7 +104,7 @@ rz qreg[0], 1.5707963
             cr q[2], q[3], 2.123
             RY q[1], -1.5707963
 
-            """,
+            """
         )
 
         myCircuit.decompose_mckay()
