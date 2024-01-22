@@ -17,6 +17,7 @@
 ::: opensquirrel.parsing.antlr.squirrel_ir_creator
 ::: opensquirrel.parsing.antlr.squirrel_ir_from_string
 ::: opensquirrel.parsing.antlr.type_checker
+::: opensquirrel.parsing.libqasm.libqasm_ir_creator
 ::: opensquirrel.replacer
 ::: opensquirrel.squirrel_ir
 ::: opensquirrel.utils.matrix_expander

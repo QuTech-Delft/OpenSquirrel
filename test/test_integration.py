@@ -143,6 +143,20 @@ rz q[1], 3.1415927
 
         self.assertEqual(output, expected)
 
+    def test_libqasm_error(self):
+        with self.assertRaisesRegex(
+            Exception,
+            r"Parsing error: Error at <unknown>:4:21\.\.23: failed to resolve overload for ry with argument pack \(qubit, real, int\)",
+        ):
+            Circuit.from_string(
+                """
+                    version 3.0
+                    qubit[3] qreg
+                    ry qreg[0], 1.23, 1
+                """,
+                use_libqasm=True,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

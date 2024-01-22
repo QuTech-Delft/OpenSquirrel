@@ -2,9 +2,10 @@ from typing import Callable, Dict
 
 import numpy as np
 
+import opensquirrel.parsing.antlr.squirrel_ir_from_string
 from opensquirrel import circuit_matrix_calculator, mckay_decomposer, replacer, writer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.parsing.antlr.squirrel_ir_from_string import squirrel_ir_from_string
+from opensquirrel.parsing.libqasm.libqasm_ir_creator import LibqasmIRCreator
 from opensquirrel.squirrel_ir import Gate, SquirrelIR
 
 
@@ -43,6 +44,7 @@ class Circuit:
         cqasm3_string: str,
         gate_set: [Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
+        use_libqasm: bool = False,
     ):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -51,9 +53,28 @@ class Circuit:
         * checks that used gates are supported and mentioned in `gates` with appropriate signatures
         * does not support map or variables, and other things...
         * for example of `gates` dictionary, please look at TestGates.py
+
+
+        Args:
+            cqasm3_string: a cqasm 3 string
+            gate_set: an array of gate semantic functions. See default_gates for examples
+            gate_aliases: a dictionary of extra aliases, mapping strings to functions in the gate set
+            use_libqasm: if True, use libqasm instead of build-in ANTLR parser.
+                Note: those two separate implementations may diverge and libqasm should be taken as reference.
+
+        Returns:
+            A Circuit object corresponding to the input string. Throws on parsing errors.
         """
 
-        return Circuit(squirrel_ir_from_string(cqasm3_string, gate_set=gate_set, gate_aliases=gate_aliases))
+        if use_libqasm:
+            libqasm_ir_creator = LibqasmIRCreator(gate_set=gate_set, gate_aliases=gate_aliases)
+            return Circuit(libqasm_ir_creator.squirrel_ir_from_string(cqasm3_string))
+
+        return Circuit(
+            opensquirrel.parsing.antlr.squirrel_ir_from_string.squirrel_ir_from_string(
+                cqasm3_string, gate_set=gate_set, gate_aliases=gate_aliases
+            )
+        )
 
     @property
     def number_of_qubits(self) -> int:

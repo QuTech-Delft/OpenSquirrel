@@ -14,7 +14,7 @@
       
       
       <link rel="icon" href="../../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.2">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
     
     
       
@@ -310,7 +310,7 @@
           <li class="md-nav__item">
   <a href="#opensquirrel.circuit.Circuit.__init__" class="md-nav__link">
     <span class="md-ellipsis">
-      __init__()
+      __init__
     </span>
   </a>
   
@@ -319,7 +319,7 @@
           <li class="md-nav__item">
   <a href="#opensquirrel.circuit.Circuit.__repr__" class="md-nav__link">
     <span class="md-ellipsis">
-      __repr__()
+      __repr__
     </span>
   </a>
   
@@ -328,7 +328,7 @@
           <li class="md-nav__item">
   <a href="#opensquirrel.circuit.Circuit.decompose_mckay" class="md-nav__link">
     <span class="md-ellipsis">
-      decompose_mckay()
+      decompose_mckay
     </span>
   </a>
   
@@ -337,7 +337,7 @@
           <li class="md-nav__item">
   <a href="#opensquirrel.circuit.Circuit.from_string" class="md-nav__link">
     <span class="md-ellipsis">
-      from_string()
+      from_string
     </span>
   </a>
   
@@ -346,7 +346,7 @@
           <li class="md-nav__item">
   <a href="#opensquirrel.circuit.Circuit.replace" class="md-nav__link">
     <span class="md-ellipsis">
-      replace()
+      replace
     </span>
   </a>
   
@@ -355,7 +355,7 @@
           <li class="md-nav__item">
   <a href="#opensquirrel.circuit.Circuit.test_get_circuit_matrix" class="md-nav__link">
     <span class="md-ellipsis">
-      test_get_circuit_matrix()
+      test_get_circuit_matrix
     </span>
   </a>
   
@@ -396,7 +396,7 @@
         <li class="md-nav__item">
   <a href="#opensquirrel.circuit_matrix_calculator.get_circuit_matrix" class="md-nav__link">
     <span class="md-ellipsis">
-      get_circuit_matrix()
+      get_circuit_matrix
     </span>
   </a>
   
@@ -540,7 +540,7 @@
         <li class="md-nav__item">
   <a href="#opensquirrel.parsing.antlr.squirrel_ir_from_string.squirrel_ir_from_string" class="md-nav__link">
     <span class="md-ellipsis">
-      squirrel_ir_from_string()
+      squirrel_ir_from_string
     </span>
   </a>
   
@@ -559,6 +559,15 @@
   <a href="#opensquirrel.parsing.antlr.type_checker.TypeChecker" class="md-nav__link">
     <span class="md-ellipsis">
       TypeChecker
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opensquirrel.parsing.libqasm.libqasm_ir_creator" class="md-nav__link">
+    <span class="md-ellipsis">
+      libqasm_ir_creator
     </span>
   </a>
   
@@ -594,7 +603,7 @@
         <li class="md-nav__item">
   <a href="#opensquirrel.utils.matrix_expander.expand_ket" class="md-nav__link">
     <span class="md-ellipsis">
-      expand_ket()
+      expand_ket
     </span>
   </a>
   
@@ -603,7 +612,7 @@
         <li class="md-nav__item">
   <a href="#opensquirrel.utils.matrix_expander.get_matrix" class="md-nav__link">
     <span class="md-ellipsis">
-      get_matrix()
+      get_matrix
     </span>
   </a>
   
@@ -612,7 +621,7 @@
         <li class="md-nav__item">
   <a href="#opensquirrel.utils.matrix_expander.get_reduced_ket" class="md-nav__link">
     <span class="md-ellipsis">
-      get_reduced_ket()
+      get_reduced_ket
     </span>
   </a>
   
@@ -670,7 +679,6 @@
 
 
 
-
 <h2 id="opensquirrel.circuit.Circuit" class="doc doc-heading">
           <code>Circuit</code>
 
@@ -707,8 +715,7 @@
 
             <details class="quote">
               <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 11</span>
-<span class="normal"> 12</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 12</span>
 <span class="normal"> 13</span>
 <span class="normal"> 14</span>
 <span class="normal"> 15</span>
@@ -800,7 +807,28 @@
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
-<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Circuit</span><span class="p">:</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Circuit</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The Circuit class is the only interface to access OpenSquirrel&#39;s features.</span>
 
 <span class="sd">    Examples:</span>
@@ -835,6 +863,7 @@
         <span class="n">cqasm3_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">gate_set</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">]]</span> <span class="o">=</span> <span class="n">default_gate_set</span><span class="p">,</span>
         <span class="n">gate_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">]]</span> <span class="o">=</span> <span class="n">default_gate_aliases</span><span class="p">,</span>
+        <span class="n">use_libqasm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in</span>
 <span class="sd">        the `gates` argument.</span>
@@ -843,9 +872,28 @@
 <span class="sd">        * checks that used gates are supported and mentioned in `gates` with appropriate signatures</span>
 <span class="sd">        * does not support map or variables, and other things...</span>
 <span class="sd">        * for example of `gates` dictionary, please look at TestGates.py</span>
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            cqasm3_string: a cqasm 3 string</span>
+<span class="sd">            gate_set: an array of gate semantic functions. See default_gates for examples</span>
+<span class="sd">            gate_aliases: a dictionary of extra aliases, mapping strings to functions in the gate set</span>
+<span class="sd">            use_libqasm: if True, use libqasm instead of build-in ANTLR parser.</span>
+<span class="sd">                Note: those two separate implementations may diverge and libqasm should be taken as reference.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A Circuit object corresponding to the input string. Throws on parsing errors.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">use_libqasm</span><span class="p">:</span>
+            <span class="n">libqasm_ir_creator</span> <span class="o">=</span> <span class="n">LibqasmIRCreator</span><span class="p">(</span><span class="n">gate_set</span><span class="o">=</span><span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">libqasm_ir_creator</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span>
+            <span class="n">opensquirrel</span><span class="o">.</span><span class="n">parsing</span><span class="o">.</span><span class="n">antlr</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span>
+                <span class="n">cqasm3_string</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">number_of_qubits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -914,7 +962,6 @@
 
 
 
-
 <h3 id="opensquirrel.circuit.Circuit.__init__" class="doc doc-heading">
           <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">)</span></code>
 
@@ -927,10 +974,10 @@
 
           <details class="quote">
             <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
-<span class="normal">36</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
 <span class="normal">37</span>
-<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">squirrel_ir</span><span class="p">:</span> <span class="n">SquirrelIR</span><span class="p">):</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">squirrel_ir</span><span class="p">:</span> <span class="n">SquirrelIR</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a circuit object from a SquirrelIR object.&quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span> <span class="o">=</span> <span class="n">squirrel_ir</span>
@@ -942,7 +989,6 @@
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -961,13 +1007,13 @@
 
           <details class="quote">
             <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the circuit to a cQasm3 string.</span>
 
 <span class="sd">    * comments are removed</span>
@@ -982,7 +1028,6 @@
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -1006,18 +1051,18 @@
 
           <details class="quote">
             <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
-<span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">decompose_mckay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span>
+<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">decompose_mckay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform gate fusion on all one-qubit gates and decompose them in the McKay style.</span>
 
 <span class="sd">    * all one-qubit gates on same qubit are merged together, without attempting to commute any gate</span>
@@ -1040,9 +1085,8 @@
 
 
 
-
 <h3 id="opensquirrel.circuit.Circuit.from_string" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">default_gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">default_gate_aliases</span><span class="p">)</span></code>
+          <code class="highlight language-python"><span class="n">from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">default_gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">default_gate_aliases</span><span class="p">,</span> <span class="n">use_libqasm</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -1062,10 +1106,105 @@ the <code>gates</code> argument.</p>
 <li>for example of <code>gates</code> dictionary, please look at TestGates.py</li>
 </ul>
 
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>cqasm3_string</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>a cqasm 3 string</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>gate_set</code></td>
+          <td>
+                <code>[<span title="typing.Callable">Callable</span>[..., <span title="opensquirrel.squirrel_ir.Gate">Gate</span>]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>an array of gate semantic functions. See default_gates for examples</p>
+            </div>
+          </td>
+          <td>
+                <code><span title="opensquirrel.default_gates.default_gate_set">default_gate_set</span></code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>gate_aliases</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>[..., <span title="opensquirrel.squirrel_ir.Gate">Gate</span>]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>a dictionary of extra aliases, mapping strings to functions in the gate set</p>
+            </div>
+          </td>
+          <td>
+                <code><span title="opensquirrel.default_gates.default_gate_aliases">default_gate_aliases</span></code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>use_libqasm</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>if True, use libqasm instead of build-in ANTLR parser.
+Note: those two separate implementations may diverge and libqasm should be taken as reference.</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A Circuit object corresponding to the input string. Throws on parsing errors.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
           <details class="quote">
             <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
-<span class="normal">41</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
@@ -1080,12 +1219,34 @@ the <code>gates</code> argument.</p>
 <span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span>
-<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">cqasm3_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">gate_set</span><span class="p">:</span> <span class="p">[</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">]]</span> <span class="o">=</span> <span class="n">default_gate_set</span><span class="p">,</span>
     <span class="n">gate_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">]]</span> <span class="o">=</span> <span class="n">default_gate_aliases</span><span class="p">,</span>
+    <span class="n">use_libqasm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in</span>
 <span class="sd">    the `gates` argument.</span>
@@ -1094,9 +1255,28 @@ the <code>gates</code> argument.</p>
 <span class="sd">    * checks that used gates are supported and mentioned in `gates` with appropriate signatures</span>
 <span class="sd">    * does not support map or variables, and other things...</span>
 <span class="sd">    * for example of `gates` dictionary, please look at TestGates.py</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        cqasm3_string: a cqasm 3 string</span>
+<span class="sd">        gate_set: an array of gate semantic functions. See default_gates for examples</span>
+<span class="sd">        gate_aliases: a dictionary of extra aliases, mapping strings to functions in the gate set</span>
+<span class="sd">        use_libqasm: if True, use libqasm instead of build-in ANTLR parser.</span>
+<span class="sd">            Note: those two separate implementations may diverge and libqasm should be taken as reference.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A Circuit object corresponding to the input string. Throws on parsing errors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">use_libqasm</span><span class="p">:</span>
+        <span class="n">libqasm_ir_creator</span> <span class="o">=</span> <span class="n">LibqasmIRCreator</span><span class="p">(</span><span class="n">gate_set</span><span class="o">=</span><span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">libqasm_ir_creator</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span>
+        <span class="n">opensquirrel</span><span class="o">.</span><span class="n">parsing</span><span class="o">.</span><span class="n">antlr</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span>
+            <span class="n">cqasm3_string</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1105,7 +1285,6 @@ the <code>gates</code> argument.</p>
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -1125,14 +1304,14 @@ the <code>gates</code> argument.</p>
 
           <details class="quote">
             <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Manually replace occurrences of a given gate with a list of gates.</span>
 
 <span class="sd">    * this can be called decomposition - but it&#39;s the least fancy version of it</span>
@@ -1148,7 +1327,6 @@ the <code>gates</code> argument.</p>
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -1169,15 +1347,15 @@ the <code>gates</code> argument.</p>
 
           <details class="quote">
             <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">test_get_circuit_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">test_get_circuit_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the (large) unitary matrix corresponding to the circuit.</span>
 
 <span class="sd">    * this matrix has 4**n elements, where n is the number of qubits</span>
@@ -1197,6 +1375,7 @@ the <code>gates</code> argument.</p>
   </div>
 
   </div>
+
 
 </div>
 
@@ -1228,7 +1407,6 @@ the <code>gates</code> argument.</p>
 
 
 <div class="doc doc-object doc-class">
-
 
 
 
@@ -1387,6 +1565,7 @@ cnot q[0], q[2]
 
   </div>
 
+
 </div>
 
 
@@ -1419,7 +1598,6 @@ cnot q[0], q[2]
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -1736,7 +1914,6 @@ The size of this matrix grows exponentially with the number of qubits.</p>
 
 
 
-
 <h2 id="opensquirrel.parsing.antlr.qubit_range_checker.QubitRangeChecker" class="doc doc-heading">
           <code>QubitRangeChecker</code>
 
@@ -1829,8 +2006,8 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
     <span class="k">def</span> <span class="nf">visitProg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">qubitRegisterDeclaration</span><span class="p">())</span>
-        <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">gateApplication</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">gate_application</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">gateApplication</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">gate_application</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">visitQubitRegisterDeclaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">number_of_qubits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">INT</span><span class="p">()))</span>
@@ -1901,6 +2078,7 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
   </div>
 
+
 </div>
 
 
@@ -1958,7 +2136,6 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
 
 <div class="doc doc-object doc-class">
-
 
 
 
@@ -2130,6 +2307,7 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
   </div>
 
+
 </div>
 
 
@@ -2162,7 +2340,6 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -2324,7 +2501,6 @@ Creates the IR where each gate node is mapped to its semantic function and argum
 
 
 
-
 <h2 id="opensquirrel.parsing.antlr.type_checker.TypeChecker" class="doc doc-heading">
           <code>TypeChecker</code>
 
@@ -2418,15 +2594,15 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">default_gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">default_gate_aliases</span><span class="p">):</span>
         <span class="n">GateLibrary</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qubit_register_name</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">visitProg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">qubitRegisterDeclaration</span><span class="p">())</span>
-        <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">gateApplication</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">gate_application</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">gateApplication</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">gate_application</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">visitQubitRegisterDeclaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">register_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qubit_register_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">visitGateApplication</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
         <span class="c1"># Check that the types of the operands match the gate generator function.</span>
@@ -2448,19 +2624,19 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
                 <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">visitQubit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubit_register_name</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Qubit register </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span><span class="si">}</span><span class="s2"> not declared&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Qubit</span>
 
     <span class="k">def</span> <span class="nf">visitQubits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubit_register_name</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Qubit register </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span><span class="si">}</span><span class="s2"> not declared&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Qubit</span>
 
     <span class="k">def</span> <span class="nf">visitQubitRange</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubit_register_name</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Qubit register </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">ID</span><span class="p">())</span><span class="si">}</span><span class="s2"> not declared&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">Qubit</span>
@@ -2497,7 +2673,35 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
   </div>
 
+
 </div>
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="opensquirrel.parsing.libqasm.libqasm_ir_creator"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
 
 
 
@@ -2583,7 +2787,6 @@ Therefore, method names are fixed and based on rule names in the Grammar .g4 fil
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -2802,7 +3005,6 @@ Roughly equivalent to the <code>pdep</code> assembly instruction (bits deposit).
 
 
 
-
 <h2 id="opensquirrel.utils.matrix_expander.get_matrix" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">number_of_qubits</span><span class="p">)</span></code>
 
@@ -2987,7 +3189,6 @@ This can be used for, e.g.,
 
 
 <div class="doc doc-object doc-function">
-
 
 
 
@@ -3242,10 +3443,10 @@ Roughly equivalent to the <code>pext</code> assembly instruction (bits extractio
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../../../../../..", "features": [], "search": "../../../../../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../../../..", "features": [], "search": "../../../../../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../../../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../../../../../../../assets/javascripts/bundle.7389ff0e.min.js"></script>
       
     
   </body>
