@@ -70,5 +70,11 @@ def cr(control: Qubit, target: Qubit, theta: Float) -> Gate:
     )
 
 
-default_gate_set = [h, x, x90, y, y90, z, z90, cz, cr, cnot, rx, ry, rz, x]
+@named_gate
+def crk(control: Qubit, target: Qubit, k: Int) -> Gate:
+    theta = 2 * math.pi / (2**k.value)
+    return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
+
+
+default_gate_set = [h, x, x90, y, y90, z, z90, cz, cr, crk, cnot, rx, ry, rz, x]
 default_gate_aliases = {"X": x, "RX": rx, "RY": ry, "RZ": rz, "Hadamard": h, "H": h}
