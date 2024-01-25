@@ -1,12 +1,14 @@
+import cmath
 import inspect
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import wraps
+from math import cos, sin
 from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 
-from opensquirrel.common import ATOL, normalize_angle, normalize_axis
+from opensquirrel.common import ATOL, X, Y, Z, normalize_angle, normalize_axis
 
 
 class SquirrelIRVisitor(ABC):
@@ -36,6 +38,7 @@ class SquirrelIRVisitor(ABC):
 
 
 class IRNode(ABC):
+    @abstractmethod
     def accept(self, visitor: SquirrelIRVisitor):
         pass
 
@@ -79,8 +82,13 @@ class Statement(IRNode, ABC):
 
 
 class Gate(Statement, ABC):
-    arguments: Optional[Tuple[Expression, ...]] = None
+    # Note: two gates are considered equal even when their generators/arguments are different.
     generator: Optional[Callable[..., "Gate"]] = None
+    arguments: Optional[Tuple[Expression, ...]] = None
+
+    def __init__(self, generator, arguments):
+        self.generator = generator
+        self.arguments = arguments
 
     @property
     def name(self) -> Optional[str]:
@@ -90,20 +98,40 @@ class Gate(Statement, ABC):
     def is_anonymous(self) -> bool:
         return self.arguments is None
 
+    @abstractmethod
+    def get_qubit_operands(self) -> List[Qubit]:
+        raise NotImplementedError
+
 
 class BlochSphereRotation(Gate):
     generator: Optional[Callable[..., "BlochSphereRotation"]] = None
 
-    def __init__(self, qubit: Qubit, axis: Tuple[float, float, float], angle: float, phase: float = 0):
+    def __init__(
+        self,
+        qubit: Qubit,
+        axis: Tuple[float, float, float],
+        angle: float,
+        phase: float = 0,
+        generator=None,
+        arguments=None,
+    ):
+        Gate.__init__(self, generator, arguments)
         self.qubit: Qubit = qubit
         self.axis = normalize_axis(np.array(axis).astype(np.float64))
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
 
+    @staticmethod
+    def identity(q: Qubit) -> "BlochSphereRotation":
+        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
+
     def __repr__(self):
         return f"BlochSphereRotation({self.qubit}, axis={self.axis}, angle={self.angle}, phase={self.phase})"
 
     def __eq__(self, other):
+        if not isinstance(other, BlochSphereRotation):
+            return False
+
         if self.qubit != other.qubit:
             return False
 
@@ -120,11 +148,19 @@ class BlochSphereRotation(Gate):
         visitor.visit_gate(self)
         return visitor.visit_bloch_sphere_rotation(self)
 
+    def get_qubit_operands(self) -> List[Qubit]:
+        return [self.qubit]
+
+    def is_identity(self) -> bool:
+        # Angle and phase are already normalized.
+        return abs(self.angle) < ATOL and abs(self.phase) < ATOL
+
 
 class MatrixGate(Gate):
     generator: Optional[Callable[..., "MatrixGate"]] = None
 
-    def __init__(self, matrix: np.ndarray, operands: List[Qubit]):
+    def __init__(self, matrix: np.ndarray, operands: List[Qubit], generator=None, arguments=None):
+        Gate.__init__(self, generator, arguments)
         assert len(operands) >= 2, "For 1q gates, please use BlochSphereRotation"
         assert matrix.shape == (1 << len(operands), 1 << len(operands))
 
@@ -133,6 +169,8 @@ class MatrixGate(Gate):
 
     def __eq__(self, other):
         # TODO: Determine whether we shall allow for a global phase difference here.
+        if not isinstance(other, MatrixGate):
+            return False  # FIXME: a MatrixGate can hide a ControlledGate. https://github.com/QuTech-Delft/OpenSquirrel/issues/88
         return np.allclose(self.matrix, other.matrix)
 
     def __repr__(self):
@@ -142,15 +180,21 @@ class MatrixGate(Gate):
         visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
+    def get_qubit_operands(self) -> List[Qubit]:
+        return self.operands
+
 
 class ControlledGate(Gate):
     generator: Optional[Callable[..., "ControlledGate"]] = None
 
-    def __init__(self, control_qubit: Qubit, target_gate: Gate):
+    def __init__(self, control_qubit: Qubit, target_gate: Gate, generator=None, arguments=None):
+        Gate.__init__(self, generator, arguments)
         self.control_qubit = control_qubit
         self.target_gate = target_gate
 
     def __eq__(self, other):
+        if not isinstance(other, ControlledGate):
+            return False  # FIXME: a MatrixGate can hide a ControlledGate. https://github.com/QuTech-Delft/OpenSquirrel/issues/88
         if self.control_qubit != other.control_qubit:
             return False
 
@@ -163,16 +207,19 @@ class ControlledGate(Gate):
         visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
 
+    def get_qubit_operands(self) -> List[Qubit]:
+        return [self.control_qubit] + self.target_gate.get_qubit_operands()
+
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     @wraps(gate_generator)
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
         for i, par in enumerate(inspect.signature(gate_generator).parameters.values()):
             if not issubclass(par.annotation, Expression):
                 raise TypeError("Gate argument types must be expressions")
 
-        result = gate_generator(*args)
-        result.generator = gate_generator
+        result = gate_generator(*args, **kwargs)
+        result.generator = wrapper
         result.arguments = args
         return result
 

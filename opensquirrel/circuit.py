@@ -1,11 +1,12 @@
-from typing import Callable, Dict
+from typing import Callable, Dict, List
 
 import numpy as np
 
 import opensquirrel.parsing.antlr.squirrel_ir_from_string
-from opensquirrel import circuit_matrix_calculator, mckay_decomposer, replacer, writer
+from opensquirrel import circuit_matrix_calculator, mckay_decomposer, merger, replacer, writer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.parsing.libqasm.libqasm_ir_creator import LibqasmIRCreator
+from opensquirrel.replacer import Decomposer
 from opensquirrel.squirrel_ir import Gate, SquirrelIR
 
 
@@ -21,7 +22,7 @@ class Circuit:
         <BLANKLINE>
         h q[0]
         <BLANKLINE>
-        >>> c.decompose_mckay()
+        >>> c.decompose(decomposer=mckay_decomposer.McKayDecomposer)
         >>> c
         version 3.0
         <BLANKLINE>
@@ -84,27 +85,25 @@ class Circuit:
     def qubit_register_name(self) -> str:
         return self.squirrel_ir.qubit_register_name
 
-    def decompose_mckay(self):
-        """Perform gate fusion on all one-qubit gates and decompose them in the McKay style.
-
-        * all one-qubit gates on same qubit are merged together, without attempting to commute any gate
-        * two-or-more-qubit gates are left as-is
-        * merged one-qubit gates are decomposed according to McKay decomposition, that is:
-                gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
-        * _global phase is deemed irrelevant_, therefore a simulator backend might produce different output
-            for the input and output circuit - those outputs should be equivalent modulo global phase.
+    def merge_single_qubit_gates(self):
+        """Merge all consecutive 1-qubit gates in the circuit.
+        Gates obtained from merging other gates become anonymous gates.
         """
 
-        self.squirrel_ir = mckay_decomposer.decompose_mckay(self.squirrel_ir)  # FIXME: inplace
+        merger.merge_single_qubit_gates(self.squirrel_ir)
 
-    def replace(self, gate_name: str, f):
+    def decompose(self, decomposer: Decomposer):
+        """Generic decomposition pass. It applies the given decomposer function
+        to every gate in the circuit."""
+        replacer.decompose(self.squirrel_ir, decomposer)
+
+    def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.
-
-        * this can be called decomposition - but it's the least fancy version of it
-        * function parameter gives the decomposition based on parameters of original gate
+        `f` is a callable that takes the arguments of the gate that is to be replaced
+        and returns the decomposition as a list of gates.
         """
 
-        replacer.replace(self.squirrel_ir, gate_name, f)
+        replacer.replace(self.squirrel_ir, gate_generator, f)
 
     def test_get_circuit_matrix(self) -> np.ndarray:
         """Get the (large) unitary matrix corresponding to the circuit.
@@ -117,9 +116,6 @@ class Circuit:
         return circuit_matrix_calculator.get_circuit_matrix(self.squirrel_ir)
 
     def __repr__(self) -> str:
-        """Write the circuit to a cQasm3 string.
-
-        * comments are removed
-        """
+        """Write the circuit to a cQasm3 string."""
 
         return writer.squirrel_ir_to_string(self.squirrel_ir)
