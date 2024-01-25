@@ -4,6 +4,7 @@ import unittest
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import *
+from opensquirrel.mckay_decomposer import McKayDecomposer
 
 
 class IntegrationTest(unittest.TestCase):
@@ -30,7 +31,7 @@ class IntegrationTest(unittest.TestCase):
         #
 
         myCircuit.replace(
-            "cnot",
+            cnot,
             lambda control, target: [
                 h(target),
                 cz(control, target),
@@ -40,7 +41,9 @@ class IntegrationTest(unittest.TestCase):
 
         # Do 1q-gate fusion and decompose with McKay decomposition.
 
-        myCircuit.decompose_mckay()
+        myCircuit.merge_single_qubit_gates()
+
+        myCircuit.decompose(decomposer=McKayDecomposer)
 
         # Write the transformed circuit as a cQasm3 string.
 
@@ -62,16 +65,16 @@ rz qreg[1], 2.372389
 x90 qreg[1]
 rz qreg[1], 3.1415927
 cz qreg[0], qreg[1]
-rz qreg[1], 3.1415927
-x90 qreg[1]
-rz qreg[1], 1.572389
-x90 qreg[1]
-rz qreg[1], 3.1415927
 rz qreg[0], 1.5707963
 x90 qreg[0]
 rz qreg[0], 0.84159265
 x90 qreg[0]
 rz qreg[0], 1.5707963
+rz qreg[1], 3.1415927
+x90 qreg[1]
+rz qreg[1], 1.572389
+x90 qreg[1]
+rz qreg[1], 3.1415927
 """,
         )
 
@@ -107,7 +110,9 @@ rz qreg[0], 1.5707963
             """
         )
 
-        myCircuit.decompose_mckay()
+        myCircuit.merge_single_qubit_gates()
+
+        myCircuit.decompose(decomposer=McKayDecomposer)
         output = str(myCircuit)
 
         expected = """version 3.0
