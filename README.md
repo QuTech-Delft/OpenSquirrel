@@ -92,41 +92,42 @@ otherwise select the latter option to list the existing Dev Containers.
 
 #### Create Dev Container and Mount Sources...
 
-- If you select **Create Dev Container and Mount Sources...**,
+1. If you select **Create Dev Container and Mount Sources...**,
   a separate window (*Building Dev Container*) will open and
   a Dev Container will be built according to the specification in the `devcontainer/Dockerfile`.
-- The system dependencies are installed, a user account (*i.e.* **pydev**) is created,
+2. The system dependencies are installed, a user account (*i.e.* **pydev**) is created,
   and additional Python packages and Poetry are installed.
-- Upon completion the status messages should read something like:
+3. Upon completion the status messages should read something like:
   *'Dev Container' has been deployed successfully* and *Environment is successfully prepared…*
-- Proceed by choosing your PyCharm installation, from the dropdown menu that appears at the top,
+4. Proceed by choosing your PyCharm installation, from the dropdown menu that appears at the top,
   and click **Continue**.
-- A connection is established with the remote host and a new PyCharm window is opened.
-- Skip the following bullet point and proceed below.
+5. A connection is established with the remote host and a new PyCharm window is opened.
+6. Skip the following subsection and proceed below.
 
 #### Show Dev Containers
 
-- If you select **Show Dev Containers**,
+1. If you select **Show Dev Containers**,
   a separate window appears where the existing (previously created) Dev Containers are listed by their name and status
-  (*i.e.* either running or idle).
-- If they are idle they can be started by clicking on their name or on the play button.
-  Note that an idle (Dev) Container can also be started from the terminal:
+  (*i.e.* either running or idle). In general, all docker containers (including idle ones) can be listed using:
 
-  ```bash
-  docker container start <container-name>
-  ```
+   ```bash
+   docker ps -a
+   ```
 
-  In general, all docker containers (including idle ones) can be listed using:
+2. If they are idle they can be started by clicking on their name or on the play button.
+  An idle (Dev) Container can also be started from the terminal:
 
-  ```bash
-  docker ps -a
-  ```
+   ```bash
+   docker container start <container-name>
+   ```
 
   A running Dev Container can be accessed from the terminal, accordingly:
 
   ```bash
   docker exec -it <container-name> bash
   ```
+
+  The `-i` flag stands for interactive session and the `-t` stands for running it in the terminal.
 
 Once you have accessed the Dev Container, change to the user **pydev**:
 
