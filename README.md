@@ -62,7 +62,7 @@ Project dependencies are specified in the `pyproject.toml` file in the root dire
 
 Website: <https://python-poetry.org/>
 
-Install dependencies.
+Install dependencies:
 
 ```shell
 $ poetry install
