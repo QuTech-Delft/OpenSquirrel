@@ -68,7 +68,7 @@ Install dependencies:
 $ poetry install
 ```
 
-Start a Poetry shell.
+Start a Poetry shell:
 
 ```shell
 $ poetry shell
