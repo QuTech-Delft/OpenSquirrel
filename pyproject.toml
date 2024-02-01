@@ -47,7 +47,7 @@ libqasm = "0.5.2"
 black = ">=23.11,<25.0"
 coverage = {extras = ["toml"], version = "^7.3.2"}
 isort = "^5.11.4"
-pytest = {extras = ["toml"], version = "^7.4.3"}
+pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = "^4.1.0"
 mypy = "^1.7.0"
 
