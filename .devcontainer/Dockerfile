@@ -10,7 +10,7 @@ RUN apt-get update -y && \
     apt-get clean
 
 # Set up user
-ARG USER=vscode
+ARG USER=pydev
 ENV PATH /home/${USER}/.local/bin:$PATH
 RUN groupadd -r ${USER} && \
     useradd -m -r -s /bin/bash -g ${USER} ${USER} && \

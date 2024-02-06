@@ -60,9 +60,11 @@ class LibqasmIRCreator(GateLibrary):
         )
 
         expanded_args = [
-            cls._get_qubits(cqasm_arg)
-            if expected_parameter.annotation == Qubit
-            else [cls._get_literal(cqasm_arg)] * number_of_operands
+            (
+                cls._get_qubits(cqasm_arg)
+                if expected_parameter.annotation == Qubit
+                else [cls._get_literal(cqasm_arg)] * number_of_operands
+            )
             for cqasm_arg, expected_parameter in zip(cqasm_args, parameters)
         ]
 
