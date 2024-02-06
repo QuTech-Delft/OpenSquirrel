@@ -79,8 +79,8 @@ $ pytest
 Open the Dev Container configuration file located at `.devcontainer/devcontainer.json` in the PyCharm editor.
 
 On the left of the editor, in the gutter, you should see the Docker icon:
-<img src="docs/_static/devcontainer_docker_icon.PNG" width="20" height="20"> or
-<img src="docs/_static/devcontainer_docker_icon_2.PNG" width="20" height="20">.
+<img src="docs/_static/devcontainer_docker_icon.png" width="20" height="20"> or
+<img src="docs/_static/devcontainer_docker_icon_2.png" width="20" height="20">.
 
 Upon clicking on the Docker icon, the following options appear (depending on the PyCharm version used):
 - **Create Dev Container and Mount Sources...**, and
