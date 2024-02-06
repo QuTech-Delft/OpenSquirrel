@@ -92,7 +92,7 @@ class Gate(Statement, ABC):
 
     @property
     def name(self) -> Optional[str]:
-        return self.generator.__name__ if self.generator else None
+        return self.generator.__name__ if self.generator else "<anonymous>"
 
     @property
     def is_anonymous(self) -> bool:
@@ -100,6 +100,10 @@ class Gate(Statement, ABC):
 
     @abstractmethod
     def get_qubit_operands(self) -> List[Qubit]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_identity(self) -> bool:
         raise NotImplementedError
 
 
@@ -183,6 +187,9 @@ class MatrixGate(Gate):
     def get_qubit_operands(self) -> List[Qubit]:
         return self.operands
 
+    def is_identity(self) -> bool:
+        return np.allclose(self.matrix, np.eye(2 ** len(self.operands)))
+
 
 class ControlledGate(Gate):
     generator: Optional[Callable[..., "ControlledGate"]] = None
@@ -210,17 +217,29 @@ class ControlledGate(Gate):
     def get_qubit_operands(self) -> List[Qubit]:
         return [self.control_qubit] + self.target_gate.get_qubit_operands()
 
+    def is_identity(self) -> bool:
+        return self.target_gate.is_identity()
+
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     @wraps(gate_generator)
     def wrapper(*args, **kwargs):
-        for i, par in enumerate(inspect.signature(gate_generator).parameters.values()):
+        result = gate_generator(*args, **kwargs)
+        result.generator = wrapper
+
+        all_args = []
+        arg_index = 0
+        for par in inspect.signature(gate_generator).parameters.values():
             if not issubclass(par.annotation, Expression):
                 raise TypeError("Gate argument types must be expressions")
 
-        result = gate_generator(*args, **kwargs)
-        result.generator = wrapper
-        result.arguments = args
+            if par.name in kwargs:
+                all_args.append(kwargs[par.name])
+            else:
+                all_args.append(args[arg_index])
+                arg_index += 1
+
+        result.arguments = tuple(all_args)
         return result
 
     return wrapper
