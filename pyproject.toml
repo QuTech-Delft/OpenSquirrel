@@ -42,6 +42,18 @@ mkdocstrings = {extras = ["python"], version = "^0.24.0"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
 mkdocs-material = "^9.4.12"
 libqasm = "0.5.2"
+pyqt5-qt5=[
+    # This package is a transitive dependency of quantify-scheduler.
+    # The latest version is not portable, therefore it is necessary to pin an older version
+    # otherwise Poetry will try to install the latest version and fail on e.g. Windows.
+    { version = "5.15.2", python = "<3.10" },
+]
+quantify-scheduler=[
+    # quantify-scheduler is not released for newer Python versions.
+    # Its presence is only required for exporting opensquirrel circuits to the
+    # Schedule format. Other functionalities do not need it.
+    { version = "^0.18.0", python = "<3.10" },
+]
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23.11,<25.0"

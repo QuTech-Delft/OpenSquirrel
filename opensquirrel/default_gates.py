@@ -44,6 +44,11 @@ def z90(q: Qubit) -> Gate:
 
 
 @named_gate
+def zm90(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 2, phase=0)
+
+
+@named_gate
 def rx(q: Qubit, theta: Float) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=theta.value, phase=0)
 
@@ -111,5 +116,10 @@ def sqrt_swap(q1: Qubit, q2: Qubit) -> Gate:
     )
 
 
-default_gate_set = [h, x, x90, xm90, y, y90, z, z90, cz, cr, crk, cnot, rx, ry, rz, x, swap, sqrt_swap]
+@named_gate
+def ccz(control1: Qubit, control2: Qubit, target: Qubit) -> Gate:
+    return ControlledGate(control1, cz(control2, target))
+
+
+default_gate_set = [h, x, x90, xm90, y, y90, z, z90, zm90, cz, cr, crk, cnot, rx, ry, rz, x, swap, sqrt_swap, ccz]
 default_gate_aliases = {"X": x, "RX": rx, "RY": ry, "RZ": rz, "Hadamard": h, "H": h}

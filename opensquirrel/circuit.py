@@ -1,10 +1,12 @@
-from typing import Callable, Dict, List
+from typing import Callable, Dict
 
 import numpy as np
 
 import opensquirrel.parsing.antlr.squirrel_ir_from_string
 from opensquirrel import circuit_matrix_calculator, mckay_decomposer, merger, replacer, writer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
+from opensquirrel.export import quantify_scheduler_exporter
+from opensquirrel.export_format import ExportFormat
 from opensquirrel.parsing.libqasm.libqasm_ir_creator import LibqasmIRCreator
 from opensquirrel.replacer import Decomposer
 from opensquirrel.squirrel_ir import Gate, SquirrelIR
@@ -119,3 +121,9 @@ class Circuit:
         """Write the circuit to a cQasm3 string."""
 
         return writer.squirrel_ir_to_string(self.squirrel_ir)
+
+    def export(self, format: ExportFormat):
+        if format == ExportFormat.QUANTIFY_SCHEDULER:
+            return quantify_scheduler_exporter.export(self.squirrel_ir)
+
+        raise Exception("Unknown export format")
