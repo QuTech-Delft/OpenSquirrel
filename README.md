@@ -17,6 +17,20 @@
 $ pip install opensquirrel
 ```
 
+### Editable installation
+
+To perform an editable install, run the following command in the root directory of `OpenSquirrel` with the `-e` flag:
+
+```shell
+$ pip install -e .
+```
+
+To install the developer specific dependencies, run the command:
+
+```shell
+$ pip install -e '.[dev]'
+```
+
 ## Documentation
 
 OpenSquirrel documentation is hosted through GitHub Pages [here](https://QuTech-Delft.github.io/OpenSquirrel/).
@@ -30,13 +44,11 @@ The documentation is generated using MkDocs. For full documentation visit [mkdoc
         index.md  # The documentation homepage.
         ...       # Other markdown pages, images and other files.
 
-#### Commands
+In order to build `OpenSquirrel` documentation, run the following command in the root directory of `OpenSquirrel`:
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-* `mkdocs gh-deploy` - Rebuild and deploy documentation to GitHub Pages.
+```shell
+mkdocs build
+```
 
 ### Style guide
 
@@ -50,13 +62,13 @@ Project dependencies are specified in the `pyproject.toml` file in the root dire
 
 Website: <https://python-poetry.org/>
 
-Install dependencies
+Install dependencies:
 
 ```shell
 $ poetry install
 ```
 
-Start a Poetry shell
+Start a Poetry shell:
 
 ```shell
 $ poetry shell
