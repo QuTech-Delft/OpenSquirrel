@@ -29,13 +29,12 @@ class CNOTDecomposerTest(IREqualityTestBase):
     def test_cz(self):
         self.assertEqual(
             CNOTDecomposer.decompose(cz(Qubit(0), Qubit(1))),
-            # FIXME: this should only be H-CNOT-H no? Check https://github.com/QuTech-Delft/OpenSquirrel/issues/99
             [
-                rz(Qubit(1), Float(math.pi / 2)),
+                rz(Qubit(1), Float(math.pi)),
+                ry(Qubit(1), Float(math.pi / 2)),
                 cnot(Qubit(0), Qubit(1)),
-                rz(Qubit(1), Float(-math.pi / 2)),
-                cnot(Qubit(0), Qubit(1)),
-                rz(Qubit(0), Float(math.pi / 2)),
+                ry(Qubit(1), Float(-math.pi / 2)),
+                rz(Qubit(1), Float(math.pi)),
             ],
         )
 

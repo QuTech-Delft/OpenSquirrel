@@ -166,9 +166,6 @@ rz q[1], 3.1415927
                 use_libqasm=True,
             )
 
-    @unittest.skipIf(
-        importlib.util.find_spec("quantify_scheduler") is None, reason="quantify_scheduler is not installed"
-    )
     def test_export_quantify_scheduler(self):
         myCircuit = Circuit.from_string(
             """
@@ -177,12 +174,16 @@ rz q[1], 3.1415927
                 qubit[3] qreg
 
                 h qreg[1]
+                cz qreg[0], qreg[1]
+                cnot qreg[0], qreg[1]
                 crk qreg[0], qreg[1], 4
                 h qreg[0]
             """
         )
 
         myCircuit.decompose(decomposer=CNOTDecomposer)
+
+        # Quantify-scheduler prefers CZ.
         myCircuit.replace(
             cnot,
             lambda control, target: [
@@ -191,34 +192,53 @@ rz q[1], 3.1415927
                 h(target),
             ],
         )
+
+        # Reduce gate count by single-qubit gate fusion.
         myCircuit.merge_single_qubit_gates()
-        myCircuit.decompose(decomposer=ZYZDecomposer)  # FIXME: for best gate count we need a Z-XY decomposer.
 
-        exported_schedule = myCircuit.export(format=ExportFormat.QUANTIFY_SCHEDULER)
+        # FIXME: for best gate count we need a Z-XY decomposer.
+        # See https://github.com/QuTech-Delft/OpenSquirrel/issues/98
+        myCircuit.decompose(decomposer=ZYZDecomposer)
 
-        self.assertEqual(exported_schedule.name, "Exported OpenSquirrel circuit")
+        if importlib.util.find_spec("quantify_scheduler") is None:
+            with self.assertRaisesRegex(
+                Exception, "quantify-scheduler is not installed, or cannot be installed on " "your system"
+            ):
+                myCircuit.export(format=ExportFormat.QUANTIFY_SCHEDULER)
+        else:
+            exported_schedule = myCircuit.export(format=ExportFormat.QUANTIFY_SCHEDULER)
 
-        operation_ids = [v["operation_id"] for k, v in exported_schedule.schedulables.items()]
-        operations = [exported_schedule.operations[operation_id].name for operation_id in operation_ids]
+            self.assertEqual(exported_schedule.name, "Exported OpenSquirrel circuit")
 
-        self.assertEqual(
-            operations,
-            [
-                "Rz(1.5707963, 'qreg[1]')",
-                "Rxy(0.19634954, 1.5707963, 'qreg[1]')",
-                "Rz(-1.5707963, 'qreg[1]')",
-                "CZ (qreg[0], qreg[1])",
-                "Rz(1.5707963, 'qreg[1]')",
-                "Rxy(-0.19634954, 1.5707963, 'qreg[1]')",
-                "Rz(-1.5707963, 'qreg[1]')",
-                "CZ (qreg[0], qreg[1])",
-                "Rz(0.19634954, 'qreg[0]')",
-                "Rxy(-1.5707963, 1.5707963, 'qreg[0]')",
-                "Rz(3.1415927, 'qreg[0]')",
-                "Rz(3.1415927, 'qreg[1]')",
-                "Rxy(1.5707963, 1.5707963, 'qreg[1]')",
-            ],
-        )
+            operations = [
+                exported_schedule.operations[schedulable["operation_id"]].name
+                for schedulable in exported_schedule.schedulables.values()
+            ]
+
+            self.assertEqual(
+                operations,
+                [
+                    "Rz(3.1415927, 'qreg[1]')",
+                    "Rxy(1.5707963, 1.5707963, 'qreg[1]')",
+                    "CZ (qreg[0], qreg[1])",
+                    "Rz(3.1415927, 'qreg[1]')",
+                    "Rxy(1.5707963, 1.5707963, 'qreg[1]')",
+                    "CZ (qreg[0], qreg[1])",
+                    "Rz(1.5707963, 'qreg[1]')",
+                    "Rxy(0.19634954, 1.5707963, 'qreg[1]')",
+                    "Rz(-1.5707963, 'qreg[1]')",
+                    "CZ (qreg[0], qreg[1])",
+                    "Rz(1.5707963, 'qreg[1]')",
+                    "Rxy(-0.19634954, 1.5707963, 'qreg[1]')",
+                    "Rz(-1.5707963, 'qreg[1]')",
+                    "CZ (qreg[0], qreg[1])",
+                    "Rz(0.19634954, 'qreg[0]')",
+                    "Rxy(-1.5707963, 1.5707963, 'qreg[0]')",
+                    "Rz(3.1415927, 'qreg[0]')",
+                    "Rz(3.1415927, 'qreg[1]')",
+                    "Rxy(1.5707963, 1.5707963, 'qreg[1]')",
+                ],
+            )
 
 
 if __name__ == "__main__":
