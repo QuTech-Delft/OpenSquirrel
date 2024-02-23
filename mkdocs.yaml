@@ -10,9 +10,15 @@ plugins:
       scripts:
         - scripts/gen_reference_page.py
   - mkdocstrings
+  - mkdocs-jupyter
+
+markdown_extensions:
+    - pymdownx.superfences
+    - pymdownx.tasklist
+    - pymdownx.tabbed
 
 nav:
   - OpenSquirrel: index.md
-  - Tutorials: tutorials.md
+  - Tutorial: tutorial.ipynb
   - How-To Guides: how-to-guides.md
   - Reference: reference.md

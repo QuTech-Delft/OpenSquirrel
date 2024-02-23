@@ -10,10 +10,9 @@ PyPI: <https://pypi.org/project/opensquirrel/>
 
 The following documentation structure is used: [Diátaxis documentation framework](https://diataxis.fr/).
 
-1. [Tutorials](tutorials.md)
+1. [Tutorial](tutorial.ipynb)
 2. [How-To Guides](how-to-guides.md)
 3. [Reference](reference.md)
-4. [Explanation](explanation.md)
 
 ## Authors
 
@@ -25,4 +24,6 @@ The following documentation structure is used: [Diátaxis documentation framewor
 
 ## Acknowledgements
 
-_<Who made OpenSquirrel possible?\>_
+The  Quantum Inspire project
+QuTech TNO
+TU Delft
