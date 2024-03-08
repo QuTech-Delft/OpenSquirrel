@@ -16,9 +16,11 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     """
     assert a.qubit == b.qubit, "Cannot merge two BlochSphereRotation's on different qubits"
 
-    combined_angle = 2 * acos(
-        cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
-    )
+    acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
+    # This fixes float approximations like 1.0000000000002 which acos doesn't like.
+    acos_argument = max(min(acos_argument, 1.0), -1.0)
+
+    combined_angle = 2 * acos(acos_argument)
 
     if abs(sin(combined_angle / 2)) < ATOL:
         return BlochSphereRotation.identity(a.qubit)
