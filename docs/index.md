@@ -1,10 +1,12 @@
-This site contains the project documentation for OpenSquirrel, _i.e._, a quantum circuit transformation and manipulation tool.
+This site contains the documentation for OpenSquirrel, _i.e._, a flexible quantum program compiler.
+OpenSquirrel chooses a _modular_, over a _configurable_, approach to prepare and optimize quantum circuits for heterogeneous target architectures.
 
-_<Brief intro to OpenSquirrel\>_
+It has a user-friendly interface and is straightforwardly extensible with custom made readers, compiler passes, and exporters.
+As a quantum circuit compiler, it is fully aware of the semantics of each gate and arbitrary quantum gates can be constructed manually.
+It understands the quantum programming language cQASM 3 and will support additional quantum programming languages in the future.
+It is developed in modern Python and follows best practices.
 
-GitHub repository: <https://github.com/QuTech-Delft/OpenSquirrel>
-
-PyPI: <https://pypi.org/project/opensquirrel/>
+\[[GitHub repository](<https://github.com/QuTech-Delft/OpenSquirrel>)\]\[[PyPI](<https://pypi.org/project/opensquirrel/>)\]
 
 ## Table of Contents
 
@@ -24,6 +26,4 @@ The following documentation structure is used: [Diátaxis documentation framewor
 
 ## Acknowledgements
 
-The  Quantum Inspire project
-QuTech TNO
-TU Delft
+The Quantum Inspire project (by QuTech: a collaboration of TNO and TU Delft)
