@@ -14,7 +14,7 @@
       
       
       <link rel="icon" href="../../../../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.12">
     
     
       
@@ -1789,8 +1789,7 @@ Applying single-qubit gate fusion after this pass might be beneficial.</p>
 
             <details class="quote">
               <summary>Source code in <code>opensquirrel\cnot_decomposer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
-<span class="normal">12</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
@@ -1852,7 +1851,14 @@ Applying single-qubit gate fusion after this pass might be beneficial.</p>
 <span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CNOTDecomposer</span><span class="p">(</span><span class="n">Decomposer</span><span class="p">):</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CNOTDecomposer</span><span class="p">(</span><span class="n">Decomposer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Decomposes 2-qubit controlled unitary gates to CNOT + rz/ry.</span>
 <span class="sd">    Applying single-qubit gate fusion after this pass might be beneficial.</span>
@@ -1873,29 +1879,35 @@ Applying single-qubit gate fusion after this pass might be beneficial.</p>
             <span class="c1"># ControlledGate&#39;s with 2+ control qubits are ignored.</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">g</span><span class="p">]</span>
 
+        <span class="n">target_qubit</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">qubit</span>
+
         <span class="c1"># Perform ZYZ decomposition on the target gate.</span>
         <span class="c1"># This gives us an ABC decomposition (U = AXBXC, ABC = I) of the target gate.</span>
         <span class="c1"># See https://threeplusone.com/pubs/on_gates.pdf</span>
-        <span class="n">theta0</span><span class="p">,</span> <span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span> <span class="o">=</span> <span class="n">get_zyz_decomposition_angles</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
-        <span class="n">target_qubit</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">qubit</span>
 
-        <span class="c1"># First try to see if we can get away with a single CNOT.</span>
-        <span class="c1"># FIXME: see https://github.com/QuTech-Delft/OpenSquirrel/issues/99 this could be extended, I believe.</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">theta0</span> <span class="o">+</span> <span class="n">theta2</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">ATOL</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">theta1</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">ATOL</span><span class="p">:</span>
-            <span class="c1"># g == rz(theta0) Y rz(theta2) == rz(theta0 - pi / 2) X rz(theta2 + pi / 2)</span>
-            <span class="c1"># theta0 + theta2 == 0</span>
+        <span class="c1"># Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5</span>
+        <span class="n">controlled_rotation_times_x</span> <span class="o">=</span> <span class="n">merger</span><span class="o">.</span><span class="n">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">x</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">),</span> <span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="p">)</span>
+        <span class="n">theta0_with_x</span><span class="p">,</span> <span class="n">theta1_with_x</span><span class="p">,</span> <span class="n">theta2_with_x</span> <span class="o">=</span> <span class="n">get_zyz_decomposition_angles</span><span class="p">(</span>
+            <span class="n">controlled_rotation_times_x</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">controlled_rotation_times_x</span><span class="o">.</span><span class="n">axis</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">((</span><span class="n">theta0_with_x</span> <span class="o">-</span> <span class="n">theta2_with_x</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">ATOL</span><span class="p">:</span>
+            <span class="c1"># The decomposition can use a single CNOT according to the lemma.</span>
 
-            <span class="n">alpha0</span> <span class="o">=</span> <span class="n">theta0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>
-            <span class="n">alpha2</span> <span class="o">=</span> <span class="n">theta2</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="n">ry</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="o">-</span><span class="n">theta1_with_x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">rz</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="o">-</span><span class="n">theta2_with_x</span><span class="p">))]</span>
+
+            <span class="n">B</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">rz</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">theta2_with_x</span><span class="p">)),</span>
+                <span class="n">ry</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">theta1_with_x</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span>
+            <span class="p">]</span>
 
             <span class="k">return</span> <span class="n">filter_out_identities</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="n">rz</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">alpha2</span><span class="p">)),</span>
-                    <span class="n">cnot</span><span class="p">(</span><span class="n">control</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">),</span>
-                    <span class="n">rz</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">alpha0</span><span class="p">)),</span>
-                    <span class="n">rz</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">phase</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span>
-                <span class="p">]</span>
+                <span class="n">B</span>
+                <span class="o">+</span> <span class="p">[</span><span class="n">cnot</span><span class="p">(</span><span class="n">control</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">)]</span>
+                <span class="o">+</span> <span class="n">A</span>
+                <span class="o">+</span> <span class="p">[</span><span class="n">rz</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">g</span><span class="o">.</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">phase</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))]</span>
             <span class="p">)</span>
+
+        <span class="n">theta0</span><span class="p">,</span> <span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span> <span class="o">=</span> <span class="n">get_zyz_decomposition_angles</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
 
         <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="n">ry</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">theta1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">rz</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">Float</span><span class="p">(</span><span class="n">theta2</span><span class="p">))]</span>
 
@@ -2484,7 +2496,9 @@ The resulting gate is anonymous except if <code>a</code> is the identity and <co
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
-<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.</span>
 <span class="sd">    The first rotation is applied and then the second.</span>
 <span class="sd">    The resulting gate is anonymous except if `a` is the identity and `b` is not anonymous, or vice versa.</span>
@@ -2493,9 +2507,11 @@ The resulting gate is anonymous except if <code>a</code> is the identity and <co
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">a</span><span class="o">.</span><span class="n">qubit</span> <span class="o">==</span> <span class="n">b</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="s2">&quot;Cannot merge two BlochSphereRotation&#39;s on different qubits&quot;</span>
 
-    <span class="n">combined_angle</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">acos</span><span class="p">(</span>
-        <span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">acos_argument</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+    <span class="c1"># This fixes float approximations like 1.0000000000002 which acos doesn&#39;t like.</span>
+    <span class="n">acos_argument</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">acos_argument</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">combined_angle</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">acos</span><span class="p">(</span><span class="n">acos_argument</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">combined_angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">ATOL</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">BlochSphereRotation</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">qubit</span><span class="p">)</span>
@@ -4586,7 +4602,7 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
     <script id="__config" type="application/json">{"base": "../../../../../../../../..", "features": [], "search": "../../../../../../../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../../../../../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../../../../../../../../assets/javascripts/bundle.c8d2eff1.min.js"></script>
       
     
   </body>
