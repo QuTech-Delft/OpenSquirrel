@@ -8,7 +8,15 @@ from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 
-from opensquirrel.common import ATOL, X, Y, Z, normalize_angle, normalize_axis
+from opensquirrel.common import (
+    ATOL,
+    X,
+    Y,
+    Z,
+    are_matrices_equivalent_up_to_global_phase,
+    normalize_angle,
+    normalize_axis,
+)
 
 
 class SquirrelIRVisitor(ABC):
@@ -89,6 +97,11 @@ class Gate(Statement, ABC):
     def __init__(self, generator, arguments):
         self.generator = generator
         self.arguments = arguments
+
+    def __eq__(self, other):
+        if not isinstance(other, Gate):
+            return False
+        return _compare_gate_classes(self, other)
 
     @property
     def name(self) -> Optional[str]:
@@ -171,12 +184,6 @@ class MatrixGate(Gate):
         self.matrix = matrix
         self.operands = operands
 
-    def __eq__(self, other):
-        # TODO: Determine whether we shall allow for a global phase difference here.
-        if not isinstance(other, MatrixGate):
-            return False  # FIXME: a MatrixGate can hide a ControlledGate. https://github.com/QuTech-Delft/OpenSquirrel/issues/88
-        return np.allclose(self.matrix, other.matrix)
-
     def __repr__(self):
         return f"MatrixGate(qubits={self.operands}, matrix={self.matrix})"
 
@@ -199,14 +206,6 @@ class ControlledGate(Gate):
         self.control_qubit = control_qubit
         self.target_gate = target_gate
 
-    def __eq__(self, other):
-        if not isinstance(other, ControlledGate):
-            return False  # FIXME: a MatrixGate can hide a ControlledGate. https://github.com/QuTech-Delft/OpenSquirrel/issues/88
-        if self.control_qubit != other.control_qubit:
-            return False
-
-        return self.target_gate == other.target_gate
-
     def __repr__(self):
         return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
 
@@ -219,6 +218,18 @@ class ControlledGate(Gate):
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
+
+
+def _compare_gate_classes(g1: Gate, g2: Gate) -> bool:
+
+    union_mapping = list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))
+
+    from opensquirrel.utils.matrix_expander import get_matrix_after_qubit_remapping
+
+    matrix_g1 = get_matrix_after_qubit_remapping([g1], union_mapping)
+    matrix_g2 = get_matrix_after_qubit_remapping([g2], union_mapping)
+
+    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:

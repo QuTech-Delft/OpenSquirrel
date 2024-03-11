@@ -1914,6 +1914,7 @@ mkdocs = ">=1.0.3"
 [[package]]
 name = "mkdocs-material"
 version = "9.5.13"
+
 description = "Documentation that simply works"
 optional = false
 python-versions = ">=3.8"

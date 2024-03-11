@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Callable, List
 
-from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.squirrel_ir import (
     BlochSphereRotation,
@@ -43,17 +42,6 @@ class _QubitReIndexer(SquirrelIRVisitor):
         return result
 
 
-def get_replacement_matrix(replacement: List[Gate], qubit_mappings):
-    replacement_ir = SquirrelIR(number_of_qubits=len(qubit_mappings), qubit_register_name="q_temp")
-    qubit_remapper = _QubitReIndexer(qubit_mappings)
-
-    for gate in replacement:
-        gate_with_remapped_qubits = gate.accept(qubit_remapper)
-        replacement_ir.add_gate(gate_with_remapped_qubits)
-
-    return get_circuit_matrix(replacement_ir)
-
-
 def check_valid_replacement(statement, replacement):
     expected_qubit_operands = statement.get_qubit_operands()
     replacement_qubit_operands = set()
@@ -62,8 +50,10 @@ def check_valid_replacement(statement, replacement):
     if set(expected_qubit_operands) != replacement_qubit_operands:
         raise Exception(f"Replacement for gate {statement.name} does not seem to operate on the right qubits")
 
-    replacement_matrix = get_replacement_matrix(replacement, expected_qubit_operands)
-    replaced_matrix = get_replacement_matrix([statement], expected_qubit_operands)
+    from opensquirrel.utils.matrix_expander import get_matrix_after_qubit_remapping
+
+    replacement_matrix = get_matrix_after_qubit_remapping(replacement, expected_qubit_operands)
+    replaced_matrix = get_matrix_after_qubit_remapping([statement], expected_qubit_operands)
 
     if not are_matrices_equivalent_up_to_global_phase(replacement_matrix, replaced_matrix):
         raise Exception(f"Replacement for gate {statement.name} does not preserve the quantum state")
