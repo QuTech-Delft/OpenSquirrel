@@ -12,7 +12,7 @@ It is developed in modern Python and follows best practices.
 
 The following documentation structure is used: [Diátaxis documentation framework](https://diataxis.fr/).
 
-1. [Tutorial](tutorial.ipynb)
+1. [Tutorial](tutorial.md)
 2. [How-To Guides](how-to-guides.md)
 3. [Reference](reference.md)
 

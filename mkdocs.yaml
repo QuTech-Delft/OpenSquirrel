@@ -10,15 +10,21 @@ plugins:
       scripts:
         - scripts/gen_reference_page.py
   - mkdocstrings
-  - mkdocs-jupyter
 
 markdown_extensions:
-    - pymdownx.superfences
-    - pymdownx.tasklist
-    - pymdownx.tabbed
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 nav:
   - OpenSquirrel: index.md
-  - Tutorial: tutorial.ipynb
+  - Tutorial: tutorial.md
   - How-To Guides: how-to-guides.md
   - Reference: reference.md
