@@ -1,0 +1,1124 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="http://127.0.0.1:8000/tutorial/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../how-to-guides/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.13">
+    
+    
+      
+        <title>Tutorial - OpenSquirrel</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e359304.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tutorial" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OpenSquirrel
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tutorial
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    OpenSquirrel
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    OpenSquirrel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a circuit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a circuit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-from-a-cqasm-30-string" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. From a cQASM 3.0 string
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-using-opensquirrels-circuitbuilder" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Using OpenSquirrel's CircuitBuilder
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strong-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strong types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modifying-a-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modifying a circuit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modifying a circuit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#merging-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merging gates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-your-own-quantum-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining your own quantum gates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gate-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gate decomposition
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gate decomposition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-predefined-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Predefined decomposition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-inferred-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Inferred decomposition
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-a-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exporting a circuit
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to-guides/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How-To Guides
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a circuit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a circuit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-from-a-cqasm-30-string" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. From a cQASM 3.0 string
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-using-opensquirrels-circuitbuilder" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Using OpenSquirrel's CircuitBuilder
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strong-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      Strong types
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modifying-a-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modifying a circuit
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Modifying a circuit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#merging-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merging gates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-your-own-quantum-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining your own quantum gates
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gate-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gate decomposition
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gate decomposition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-predefined-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Predefined decomposition
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-inferred-decomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Inferred decomposition
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-a-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exporting a circuit
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="tutorial">Tutorial</h1>
+<h2 id="installation">Installation</h2>
+<p>OpenSquirrel is available through the Python Package Index (<a href="https://pypi.org/project/opensquirrel/">PyPI</a>). Accordingly, the installation is as easy as ABC:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="err">!</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">opensquirrel</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span> <span class="nn">opensquirrel</span>
+</code></pre></div>
+<h2 id="creating-a-circuit">Creating a circuit</h2>
+<p>OpenSquirrel's entrypoint is the <code>Circuit</code>, which represents a quantum circuit. You can create a circuit in two different ways:
+ 1. form a string written in the cQASM 3.0 quantum programming language, or;
+ 2. by using OpenSquirrel's <code>CircuitBuilder</code> in Python.</p>
+<h3 id="1-from-a-cqasm-30-string">1. From a cQASM 3.0 string</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">opensquirrel</span> <span class="kn">import</span> <span class="n">Circuit</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">my_circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="sd">    qubit[2] q</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="sd">    h q[0]; cnot q[0], q[1] // Create a Bell pair</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="p">)</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">my_circuit</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>version 3.0
+
+qubit[2] q
+
+h q[0]
+cnot q[0], q[1]
+</code></pre></div>
+<blockquote>
+<p><strong>Note</strong>: Currently OpenSquirrel only supports a limited version of the quantum programming language cQASM 3.0. This is due to the fact that the latter is still under development. When new features are introduced to the language, OpenSquirrel will follow in due course. For example, at the time of writing, OpenSquirrel only supports the declaration of a single qubit register per quantum program, whereas the language already allows for the declaration of multiple qubit registers within the global scope of the quantum program. Both the language and OpenSquirrel are under continuous development. Nevertheless, the language features that <em>are</em> supported by OpenSquirrel function properly.</p>
+</blockquote>
+<h3 id="2-using-opensquirrels-circuitbuilder">2. Using OpenSquirrel's <code>CircuitBuilder</code></h3>
+<p>For creation of a circuit through Python, the <code>CircuitBuilder</code> can be used accordingly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">opensquirrel</span> <span class="kn">import</span> <span class="n">CircuitBuilder</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">opensquirrel.squirrel_ir</span> <span class="kn">import</span> <span class="n">Qubit</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Float</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">my_circuit_from_builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">number_of_qubits</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Float</span><span class="p">(</span><span class="mf">0.23</span><span class="p">))</span><span class="o">.</span><span class="n">cnot</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Qubit</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">my_circuit_from_builder</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>version 3.0
+
+qubit[2] q
+
+ry q[0], 0.23
+cnot q[0], q[1]
+</code></pre></div>
+<p>You can naturally use the functionalities available in Python to create your circuit:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">number_of_qubits</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">builder</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>version 3.0
+
+qubit[10] q
+
+h q[0]
+h q[2]
+h q[4]
+h q[6]
+h q[8]
+</code></pre></div>
+<p>For instance, you can generate a quantum fourier transform (QFT) circuit as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">number_of_qubits</span> <span class="o">=</span> <span class="mi">5</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">qft</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">number_of_qubits</span><span class="o">=</span><span class="n">number_of_qubits</span><span class="p">)</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_qubits</span><span class="p">):</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>      <span class="n">qft</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>      <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">number_of_qubits</span><span class="p">):</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>            <span class="n">qft</span><span class="o">.</span><span class="n">crk</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">Int</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">qft</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>version 3.0
+
+qubit[5] q
+
+h q[0]
+crk q[1], q[0], 2
+crk q[2], q[0], 3
+crk q[3], q[0], 4
+crk q[4], q[0], 5
+h q[1]
+crk q[2], q[1], 2
+crk q[3], q[1], 3
+crk q[4], q[1], 4
+h q[2]
+crk q[3], q[2], 2
+crk q[4], q[2], 3
+h q[3]
+crk q[4], q[3], 2
+h q[4]
+</code></pre></div>
+<h3 id="strong-types">Strong types</h3>
+<p>As you can see, gates require <em>strong types</em>. For instance, you cannot do:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="sd">        version 3.0</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="sd">        qubit[2] q</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="sd">        cnot q[0], 3 // The CNOT expects a qubit as second argument.</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="p">)</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Argument #1 passed to gate `cnot` is of type &lt;class &#39;opensquirrel.squirrel_ir.Int&#39;&gt; but should be &lt;class &#39;opensquirrel.squirrel_ir.Qubit&#39;&gt;
+</code></pre></div>
+<p>The issue is that the CNOT expects a qubit as second input argument, where an integer has been provided. By default, OpenSquirrel does not use LibQASM (the cQASM parser library), but will do so soon. You can enable this, which changes the error message:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="sd">        version 3.0</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="sd">        qubit[2] q</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="sd">        cnot q[0], 3 // The CNOT expects a qubit as second argument.</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        <span class="n">use_libqasm</span><span class="o">=</span><span class="kc">True</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="p">)</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Parsing error: Error at &lt;unknown&gt;:5:9..13: failed to resolve overload for cnot with argument pack (qubit, int)
+</code></pre></div>
+<p>The same holds for the <code>CircuitBuilder</code>, <em>i.e.</em>, it also throws an error if arguments are passed of an unexpected type:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">number_of_qubits</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">cnot</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Int</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Wrong argument type for gate `cnot`, got &lt;class &#39;opensquirrel.squirrel_ir.Int&#39;&gt; but expected &lt;class &#39;opensquirrel.squirrel_ir.Qubit&#39;&gt;
+</code></pre></div>
+<h2 id="modifying-a-circuit">Modifying a circuit</h2>
+<h3 id="merging-gates">Merging gates</h3>
+<p>OpenSquirrel can merge consecutive quantum gates. Currently, this is only done for single-qubit gates. The resulting gate is labeled as an "anonymous gate". Since those gates have no name, the placeholder <code>&lt;anonymous-gate&gt;</code> is used instead.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span> <span class="nn">math</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">number_of_qubits</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  <span class="n">builder</span><span class="o">.</span><span class="n">rx</span><span class="p">(</span><span class="n">Qubit</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">Float</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">16</span><span class="p">))</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># Merge single qubit gates</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="n">circuit</span><span class="o">.</span><span class="n">merge_single_qubit_gates</span><span class="p">()</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="n">circuit</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>version 3.0
+
+qubit[1] q
+
+&lt;anonymous-gate&gt;
+</code></pre></div>
+<p>You can inspect what the gate has become in terms of the Bloch sphere rotation it represents:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">circuit</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.141592653589795, phase=0.0)
+</code></pre></div>
+<p>In the above example, OpenSquirrel has merged all the Rx gates together. Yet, for now, OpenSquirrel does not recognize that this results in a single Rx over the cumulated angle of the individual rotations. Moreover, it does not recognize that the result corresponds to the X-gate (up to a global phase difference). At a later stage, we may want OpenSquirrel to recognize the resultant gate in the case it is part of the set of known gates.</p>
+<p>The gate set is, however, not immutable. In the following section, we demonstrate how new gates can be defined and added to the default gate set.</p>
+<h3 id="defining-your-own-quantum-gates">Defining your own quantum gates</h3>
+<p>OpenSquirrel accepts any new gate and requires its definition in terms of a semantic. Creating new gates is done using Python functions, decorators, and one of the following gate semantic classes: <code>BlochSphereRotation</code>, <code>ControlledGate</code>, or <code>MatrixGate</code>.</p>
+<ul>
+<li>The <code>BlochSphereRotation</code> class is used to define an arbitrary single qubit gate. It accepts a qubit, an axis, an angle, and a phase as arguments. Below is shown how the X-gate is defined in the default gate set of OpenSquirrel:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nd">@named_gate</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="n">Qubit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gate</span><span class="p">:</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="k">return</span> <span class="n">BlochSphereRotation</span><span class="p">(</span><span class="n">qubit</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">angle</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+<p>Notice the <code>@named_gate</code> decorator. This <em>tells</em> OpenSquirrel that the function defines a gate and that it should, therefore, have all the nice properties OpenSquirrel expects of it. When you define a gate as such, it also creates a gate in the accompanying cQASM 3.0 parser taking the same arguments as the Python function.</p>
+<ul>
+<li>The <code>ControlledGate</code> class is used to define a multiple qubit gate that comprises a controlled operation. For instance, the CNOT gate is defined in the default gate set of OpenSquirrel as follows:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nd">@named_gate</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">def</span> <span class="nf">cnot</span><span class="p">(</span><span class="n">control</span><span class="p">:</span> <span class="n">Qubit</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Qubit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gate</span><span class="p">:</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="k">return</span> <span class="n">ControlledGate</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">x</span><span class="p">(</span><span class="n">target</span><span class="p">))</span>
+</code></pre></div>
+<ul>
+<li>The <code>MatrixGate</code> class may be used to define a gate in the generic form of a matrix:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@named_gate</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="n">q1</span><span class="p">:</span> <span class="n">Qubit</span><span class="p">,</span> <span class="n">q2</span><span class="p">:</span> <span class="n">Qubit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Gate</span><span class="p">:</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="k">return</span> <span class="n">MatrixGate</span><span class="p">(</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>            <span class="p">[</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>                <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>            <span class="p">]</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>        <span class="p">),</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>        <span class="p">[</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">],</span>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>    <span class="p">)</span>
+</code></pre></div>
+<p>Once you have defined your new quantum gates, you can pass them as a custom <code>gate_set</code> argument to the <code>Circuit</code> object. Here is how to add, <em>e.g.</em>, the Sycamore gate (labeled as <code>syc</code>) on top of the existing default gate set of OpenSquirrel:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="kn">import</span> <span class="nn">cmath</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="kn">from</span> <span class="nn">opensquirrel</span> <span class="kn">import</span> <span class="n">default_gates</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="kn">from</span> <span class="nn">opensquirrel.squirrel_ir</span> <span class="kn">import</span> <span class="n">named_gate</span><span class="p">,</span> <span class="n">MatrixGate</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1"># Definition of the Sycamore gate as a MatrixGate</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="nd">@named_gate</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="k">def</span> <span class="nf">syc</span><span class="p">(</span><span class="n">q1</span><span class="p">:</span> <span class="n">Qubit</span><span class="p">,</span> <span class="n">q2</span><span class="p">:</span> <span class="n">Qubit</span><span class="p">):</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>      <span class="k">return</span> <span class="n">MatrixGate</span><span class="p">(</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>            <span class="n">matrix</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>                <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cmath</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">6</span><span class="p">)]</span>
+<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a>                <span class="p">]),</span>
+<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>            <span class="n">operands</span><span class="o">=</span><span class="p">[</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">]</span>
+<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a>      <span class="p">)</span>
+<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a>
+<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="n">my_extended_gate_set</span> <span class="o">=</span> <span class="n">default_gates</span><span class="o">.</span><span class="n">default_gate_set</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="n">my_extended_gate_set</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">syc</span><span class="p">)</span>
+<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a>
+<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="n">my_sycamore_circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="sd">    qubit[3] q</span>
+<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a>
+<a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="sd">    h q[1]</span>
+<a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a><span class="sd">    syc q[1], q[2]</span>
+<a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a><span class="sd">    cnot q[0], q[1]</span>
+<a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="sd">    &quot;&quot;&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-31" name="__codelineno-13-31" href="#__codelineno-13-31"></a>    <span class="n">gate_set</span><span class="o">=</span><span class="n">my_extended_gate_set</span>
+<a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="gate-decomposition">Gate decomposition</h3>
+<p>OpenSquirrel can decompose the gates of a quantum circuit, given a specific decomposition. OpenSquirrel offers several, so-called, decomposers out of the box, but users can also make their own decomposer and apply them to the circuit. Decompositions can be:
+   1. predefined, or;
+   2. inferred from the gate semantics.</p>
+<h4 id="1-predefined-decomposition">1. Predefined decomposition</h4>
+<p>The first kind of decomposition is when you want to replace a particular gate in the circuit, like the CNOT gate, with a fixed list of gates. It is commonly known that CNOT can be decomposed as H-CZ-H. This decomposition is demonstrated below using a Python <em>lambda function</em>, which requires the same parameters as the gate that is decomposed:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">opensquirrel.default_gates</span> <span class="kn">import</span> <span class="n">cnot</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">cz</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="sd">    qubit[3] q</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="sd">    x q[0:2]  // Note that this notation is expanded in OpenSquirrel.</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="sd">    cnot q[0], q[1]</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="sd">    ry q[2], 6.78</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="p">)</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="n">circuit</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">cnot</span><span class="p">,</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>                <span class="k">lambda</span> <span class="n">control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a>                <span class="p">[</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>                    <span class="n">h</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>                    <span class="n">cz</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span>
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>                    <span class="n">h</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>                <span class="p">]</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a>            <span class="p">)</span>
+<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="n">circuit</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>version 3.0
+
+qubit[3] q
+
+x q[0]
+x q[1]
+x q[2]
+h q[1]
+cz q[0], q[1]
+h q[1]
+ry q[2], 6.78
+</code></pre></div>
+<p>OpenSquirrel will check whether the provided decomposition is correct. For instance, an exception is thrown if we forget the final Hadamard, or H-gate, in our custom-made decomposition:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="sd">    qubit[3] q</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="sd">    x q[0:2]</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="sd">    cnot q[0], q[1]</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="sd">    ry q[2], 6.78</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="p">)</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>  <span class="n">circuit</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">cnot</span><span class="p">,</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>                  <span class="k">lambda</span> <span class="n">control</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>                  <span class="p">[</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>                      <span class="n">h</span><span class="p">(</span><span class="n">target</span><span class="p">),</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>                      <span class="n">cz</span><span class="p">(</span><span class="n">control</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span>
+<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>                  <span class="p">]</span>
+<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a><span class="p">)</span>
+<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a>
+<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a>  <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Replacement for gate cnot does not preserve the quantum state
+</code></pre></div>
+<h4 id="2-inferred-decomposition">2. Inferred decomposition</h4>
+<p>On top of decompositions of a single gate, OpenSquirrel can decompose gates <em>based on their semantics</em>, regardless of name. To give an example, let us decompose an arbitrary single qubit gate into a product of axis rotations ZYZ; note that these are not Y- and Z-gates, but Ry and Rz rotations gates.</p>
+<p>First, we need to figure out the mathmatics behind this decomposition. Let us use quaternions and the Python library for symbolic mathematics <a href="https://www.sympy.org/en/index.html">SymPy</a> for this; it will make things a lot easier. A 3D rotation of angle <span class="arithmatex">\(\alpha\)</span> about the (normalized) axis <span class="arithmatex">\(n=\left(n_x, n_y, n_z \right)\)</span> can be represented by the quaternion <span class="arithmatex">\(q = \cos\left(\alpha/2\right) + \sin\left(\alpha/2\right) \left( n_x i + n_y j + n_z k \right)\)</span>. Since composition of rotations is equivalent to the product of their quaternions, we have to find the angles <span class="arithmatex">\(\theta_1\)</span>, <span class="arithmatex">\(\theta_2\)</span> and <span class="arithmatex">\(\theta_3\)</span> such that</p>
+<div class="arithmatex">\[\begin{align}
+q =
+&amp;\left[ \cos\left(\frac{\theta_1}{2}\right) + k \sin\left(\frac{\theta_1}{2}\right) \right]\\
+&amp;\times\left[ \cos\left(\frac{\theta_2}{2}\right) + j \sin\left(\frac{\theta_2}{2}\right) \right]\\
+&amp;\times\left[ \cos\left(\frac{\theta_3}{2}\right) + k \sin\left(\frac{\theta_3}{2}\right) \right]\ .
+\end{align}
+\]</div>
+<p>Let us expand this last term with SymPy:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="err">!</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">sympy</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sp</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span><span class="p">,</span> <span class="n">theta3</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;theta_1 theta_2 theta_3&quot;</span><span class="p">)</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="n">z1</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">algebras</span><span class="o">.</span><span class="n">Quaternion</span><span class="o">.</span><span class="n">from_axis_angle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">theta1</span><span class="p">)</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="n">y</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">algebras</span><span class="o">.</span><span class="n">Quaternion</span><span class="o">.</span><span class="n">from_axis_angle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">theta2</span><span class="p">)</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="n">z2</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">algebras</span><span class="o">.</span><span class="n">Quaternion</span><span class="o">.</span><span class="n">from_axis_angle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">theta3</span><span class="p">)</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="n">rhs</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">z1</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z2</span><span class="p">))</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="n">rhs</span>
+</code></pre></div>
+<div class="arithmatex">\[ \cos{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{\theta_{1} + \theta_{3}}{2} \right)} + - \sin{\left(\frac{\theta_{2}}{2} \right)} \sin{\left(\frac{\theta_{1} - \theta_{3}}{2} \right)} i + \sin{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{\theta_{1} - \theta_{3}}{2} \right)} j + \sin{\left(\frac{\theta_{1} + \theta_{3}}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} k\]</div>
+<p>Let us change variables and define <span class="arithmatex">\(p\equiv\theta_1 + \theta_3\)</span> and <span class="arithmatex">\(m\equiv\theta_1 - \theta_3\)</span>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">p</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;p m&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="n">rhs_simplified</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">subs</span><span class="p">({</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>    <span class="n">theta1</span> <span class="o">+</span> <span class="n">theta3</span><span class="p">:</span> <span class="n">p</span><span class="p">,</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    <span class="n">theta1</span> <span class="o">-</span> <span class="n">theta3</span><span class="p">:</span> <span class="n">m</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="p">})</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="n">rhs_simplified</span>
+</code></pre></div>
+<div class="arithmatex">\[ \cos{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} + - \sin{\left(\frac{m}{2} \right)} \sin{\left(\frac{\theta_{2}}{2} \right)} i + \sin{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{m}{2} \right)} j + \sin{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} k\]</div>
+<p>The original quaternion <span class="arithmatex">\(q\)</span> can be defined in Sympy accordingly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">alpha</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">symbols</span><span class="p">(</span><span class="s2">&quot;alpha n_x n_y n_z&quot;</span><span class="p">)</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="n">q</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">algebras</span><span class="o">.</span><span class="n">Quaternion</span><span class="o">.</span><span class="n">from_axis_angle</span><span class="p">((</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">),</span> <span class="n">alpha</span><span class="p">)</span><span class="o">.</span><span class="n">subs</span><span class="p">({</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a>    <span class="n">nx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ny</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">nz</span><span class="o">**</span><span class="mi">2</span><span class="p">:</span> <span class="mi">1</span>  <span class="c1"># We assume the axis is normalized.</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="p">})</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="n">q</span>
+</code></pre></div>
+<div class="arithmatex">\[ \cos{\left(\frac{\alpha}{2} \right)} + n_{x} \sin{\left(\frac{\alpha}{2} \right)} i + n_{y} \sin{\left(\frac{\alpha}{2} \right)} j + n_{z} \sin{\left(\frac{\alpha}{2} \right)} k\]</div>
+<p>We get the following system of equations, where the unknowns are <span class="arithmatex">\(p\)</span>, <span class="arithmatex">\(m\)</span>, and <span class="arithmatex">\(\theta_2\)</span>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Math</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="n">display</span><span class="p">(</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>    <span class="n">sp</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">rhs_simplified</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">a</span><span class="p">),</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>    <span class="n">sp</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">rhs_simplified</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">b</span><span class="p">),</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>    <span class="n">sp</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">rhs_simplified</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">c</span><span class="p">),</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>    <span class="n">sp</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">rhs_simplified</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">d</span><span class="p">)</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>    <span class="p">)</span>
+</code></pre></div>
+<div class="arithmatex">\[ \cos{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} = \cos{\left(\frac{\alpha}{2} \right)}\]</div>
+<div class="arithmatex">\[ - \sin{\left(\frac{m}{2} \right)} \sin{\left(\frac{\theta_{2}}{2} \right)} = n_{x} \sin{\left(\frac{\alpha}{2} \right)}\]</div>
+<div class="arithmatex">\[ \sin{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{m}{2} \right)} = n_{y} \sin{\left(\frac{\alpha}{2} \right)}\]</div>
+<div class="arithmatex">\[ \sin{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} = n_{z} \sin{\left(\frac{\alpha}{2} \right)}\]</div>
+<p>This system can be solved using Sympy, but we obtain a rather ugly solution after some computation time:</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># sp.solve([q.a - rhs.a, q.b - rhs.b, q.c - rhs.c, q.d - rhs.d], theta1, theta2, theta3) # Using this we obtain a rather ugly solution after some computation time ...</span>
+</code></pre></div>
+Instead, we assume <span class="arithmatex">\(\sin(p/2) \neq 0\)</span>, such that we can substitute in the first equation <span class="arithmatex">\(\cos\left(\theta_2/2\right)\)</span> with its value computed from the last equation. We find:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">sp</span><span class="o">.</span><span class="n">trigsimp</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">Eq</span><span class="p">(</span><span class="n">rhs_simplified</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">nz</span> <span class="o">*</span> <span class="n">sp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">sp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+</code></pre></div>
+<div class="arithmatex">\[ \frac{n_{z} \sin{\left(\frac{\alpha}{2} \right)}}{\tan{\left(\frac{p}{2} \right)}} = \cos{\left(\frac{\alpha}{2} \right)}\]</div>
+<p>Therefore,</p>
+<div class="arithmatex">\[p=\theta_1+\theta_3=2\arctan\left[n_z\tan\left(\frac{\alpha}{2}\right)\right]\]</div>
+<p>We can then deduce</p>
+<div class="arithmatex">\[\begin{array}{rl}\theta_2 &amp;=2\arccos\left[\cos\left(\frac{\alpha}{2}\right)\cos^{-1}\left(\frac{p}{2}\right)\right] \\ &amp;=2\arccos\left[ \cos\left(\frac{\alpha}{2}\right)\sqrt{1+n_z^2\tan^2\left(\frac{\alpha}{2}\right)}\right] \\ \end{array}\]</div>
+<p>Using the third equation, we can finally infer the value of <span class="arithmatex">\(m\)</span>:</p>
+<div class="arithmatex">\[m=\theta_1-\theta_3=2\arccos\left[\frac{n_y\sin\left(\frac{\alpha}{2}\right)}{\sin\left(\frac{\theta_2}{2}\right)}\right]\]</div>
+<p>Let us put this into code...</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="n">ATOL</span> <span class="o">=</span> <span class="mf">0.0001</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="k">def</span> <span class="nf">theta123</span><span class="p">(</span><span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="sd">    Gives the angles used in the Z-Y-Z decomposition of the Bloch sphere rotation</span>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="sd">    characterized by a rotation around `axis` of angle `alpha`.</span>
+<a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a>
+<a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="sd">    Parameters:</span>
+<a id="__codelineno-23-11" name="__codelineno-23-11" href="#__codelineno-23-11"></a><span class="sd">      alpha: angle of the Bloch sphere rotation</span>
+<a id="__codelineno-23-12" name="__codelineno-23-12" href="#__codelineno-23-12"></a><span class="sd">      axis: _normalized_ axis of the Bloch sphere rotation</span>
+<a id="__codelineno-23-13" name="__codelineno-23-13" href="#__codelineno-23-13"></a>
+<a id="__codelineno-23-14" name="__codelineno-23-14" href="#__codelineno-23-14"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-23-15" name="__codelineno-23-15" href="#__codelineno-23-15"></a><span class="sd">      a triple (theta1, theta2, theta3) corresponding to the decomposition of the</span>
+<a id="__codelineno-23-16" name="__codelineno-23-16" href="#__codelineno-23-16"></a><span class="sd">      arbitrary Bloch sphere rotation into U = rz(theta1) ry(theta2) rz(theta3)</span>
+<a id="__codelineno-23-17" name="__codelineno-23-17" href="#__codelineno-23-17"></a>
+<a id="__codelineno-23-18" name="__codelineno-23-18" href="#__codelineno-23-18"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-23-19" name="__codelineno-23-19" href="#__codelineno-23-19"></a>
+<a id="__codelineno-23-20" name="__codelineno-23-20" href="#__codelineno-23-20"></a>    <span class="c1"># CAUTION: there might be edge cases where this crashes.</span>
+<a id="__codelineno-23-21" name="__codelineno-23-21" href="#__codelineno-23-21"></a>
+<a id="__codelineno-23-22" name="__codelineno-23-22" href="#__codelineno-23-22"></a>    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">axis</span>
+<a id="__codelineno-23-23" name="__codelineno-23-23" href="#__codelineno-23-23"></a>    <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">ny</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">nz</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span><span class="p">,</span> <span class="s2">&quot;Axis needs to be normalized&quot;</span>
+<a id="__codelineno-23-24" name="__codelineno-23-24" href="#__codelineno-23-24"></a>
+<a id="__codelineno-23-25" name="__codelineno-23-25" href="#__codelineno-23-25"></a>    <span class="n">ta2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-23-26" name="__codelineno-23-26" href="#__codelineno-23-26"></a>    <span class="n">theta2</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">nz</span> <span class="o">*</span> <span class="n">ta2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+<a id="__codelineno-23-27" name="__codelineno-23-27" href="#__codelineno-23-27"></a>
+<a id="__codelineno-23-28" name="__codelineno-23-28" href="#__codelineno-23-28"></a>    <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">nz</span> <span class="o">*</span> <span class="n">ta2</span><span class="p">)</span>
+<a id="__codelineno-23-29" name="__codelineno-23-29" href="#__codelineno-23-29"></a>    <span class="n">m</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">ny</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta2</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+<a id="__codelineno-23-30" name="__codelineno-23-30" href="#__codelineno-23-30"></a>
+<a id="__codelineno-23-31" name="__codelineno-23-31" href="#__codelineno-23-31"></a>    <span class="n">theta1</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+<a id="__codelineno-23-32" name="__codelineno-23-32" href="#__codelineno-23-32"></a>    <span class="n">theta3</span> <span class="o">=</span> <span class="n">p</span> <span class="o">-</span> <span class="n">theta1</span>
+<a id="__codelineno-23-33" name="__codelineno-23-33" href="#__codelineno-23-33"></a>
+<a id="__codelineno-23-34" name="__codelineno-23-34" href="#__codelineno-23-34"></a>    <span class="k">return</span> <span class="p">(</span><span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span><span class="p">,</span> <span class="n">theta3</span><span class="p">)</span>
+</code></pre></div>
+<p>Once we have our angles, we can implement the OpenSquirrel decomposition; we will name it the <code>ZYZDecomposer</code>. Implementation is done by inheriting from the <code>Decomposer</code> base class and defining the <code>decompose</code> method, which in turn expects a gate and returns a list of gates. This method is applied internally to all gates of the circuit. Since 2-qubit gates should be left as-is, there is an <code>isinstance</code> check, to skip those. Also note that the axis of a <code>BlochSphereRotation</code> in OpenSquirrel is always normalized internally, and the <em>angle</em> should always be in the range <span class="arithmatex">\([-\pi, \pi]\)</span>.</p>
+<p>Here is what our final ZYZ decomposition looks like:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="kn">from</span> <span class="nn">opensquirrel.squirrel_ir</span> <span class="kn">import</span> <span class="n">Gate</span><span class="p">,</span> <span class="n">BlochSphereRotation</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="kn">from</span> <span class="nn">opensquirrel.replacer</span> <span class="kn">import</span> <span class="n">Decomposer</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="kn">from</span> <span class="nn">opensquirrel.default_gates</span> <span class="kn">import</span> <span class="n">rz</span><span class="p">,</span> <span class="n">ry</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="k">class</span> <span class="nc">ZYZDecomposer</span><span class="p">(</span><span class="n">Decomposer</span><span class="p">):</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a>    <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">BlochSphereRotation</span><span class="p">):</span>
+<a id="__codelineno-24-9" name="__codelineno-24-9" href="#__codelineno-24-9"></a>          <span class="k">return</span> <span class="p">[</span><span class="n">g</span><span class="p">]</span> <span class="c1"># Do nothing.</span>
+<a id="__codelineno-24-10" name="__codelineno-24-10" href="#__codelineno-24-10"></a>
+<a id="__codelineno-24-11" name="__codelineno-24-11" href="#__codelineno-24-11"></a>        <span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span><span class="p">,</span> <span class="n">theta3</span> <span class="o">=</span> <span class="n">theta123</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+<a id="__codelineno-24-12" name="__codelineno-24-12" href="#__codelineno-24-12"></a>
+<a id="__codelineno-24-13" name="__codelineno-24-13" href="#__codelineno-24-13"></a>        <span class="n">z1</span> <span class="o">=</span> <span class="n">rz</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">Float</span><span class="p">(</span><span class="n">theta1</span><span class="p">))</span>
+<a id="__codelineno-24-14" name="__codelineno-24-14" href="#__codelineno-24-14"></a>        <span class="n">y</span> <span class="o">=</span> <span class="n">ry</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">Float</span><span class="p">(</span><span class="n">theta2</span><span class="p">))</span>
+<a id="__codelineno-24-15" name="__codelineno-24-15" href="#__codelineno-24-15"></a>        <span class="n">z2</span> <span class="o">=</span> <span class="n">rz</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">Float</span><span class="p">(</span><span class="n">theta3</span><span class="p">))</span>
+<a id="__codelineno-24-16" name="__codelineno-24-16" href="#__codelineno-24-16"></a>
+<a id="__codelineno-24-17" name="__codelineno-24-17" href="#__codelineno-24-17"></a>        <span class="c1"># Note: written like this, the decomposition doesn&#39;t preserve the global phase, which is fine</span>
+<a id="__codelineno-24-18" name="__codelineno-24-18" href="#__codelineno-24-18"></a>        <span class="c1"># since the global phase is a physically irrelevant artifact of the mathematical</span>
+<a id="__codelineno-24-19" name="__codelineno-24-19" href="#__codelineno-24-19"></a>        <span class="c1"># model we use to describe the quantum system.</span>
+<a id="__codelineno-24-20" name="__codelineno-24-20" href="#__codelineno-24-20"></a>
+<a id="__codelineno-24-21" name="__codelineno-24-21" href="#__codelineno-24-21"></a>        <span class="c1"># Should we want to preserve it, we would need to use a raw BlochSphereRotation, which would then</span>
+<a id="__codelineno-24-22" name="__codelineno-24-22" href="#__codelineno-24-22"></a>        <span class="c1"># be an anonymous gate in the resulting decomposed circuit:</span>
+<a id="__codelineno-24-23" name="__codelineno-24-23" href="#__codelineno-24-23"></a>        <span class="c1"># z2 = BlochSphereRotation(qubit=g.qubit, angle=theta3, axis=(0, 0, 1), phase = g.phase)</span>
+<a id="__codelineno-24-24" name="__codelineno-24-24" href="#__codelineno-24-24"></a>
+<a id="__codelineno-24-25" name="__codelineno-24-25" href="#__codelineno-24-25"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">z1</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z2</span><span class="p">]</span>
+</code></pre></div>
+<p>Once we defined the decomposition function, we can apply it by passing our decomposer to the <code>decompose()</code> method of the circuit. The decomposition of every gate is checked, to see if it preserves the circuit semantics (<em>i.e.</em>, the unitary matrix), so we can sleep on both ears knowing that our circuit/quantum state remains the same.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">circuit_to_decompose</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="sd">    qubit[3] q</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="sd">    h q[0]</span>
+<a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="p">)</span>
+<a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a>
+<a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="n">circuit_to_decompose</span><span class="o">.</span><span class="n">merge_single_qubit_gates</span><span class="p">()</span>
+<a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="n">circuit_to_decompose</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">ZYZDecomposer</span><span class="p">)</span>
+<a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="n">circuit_to_decompose</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>version 3.0
+
+qubit[3] q
+
+rz q[0], 3.1415927
+ry q[0], 1.5707963
+rz q[0], 0.0
+</code></pre></div>
+<p>We get the expected result for the Hadamard gate: H = Y<span class="arithmatex">\(^{1/2}\)</span>Z, one of the canonical decompositions of the Hadamard gate as described in the <a href="https://www.quantum-inspire.com/kbase/hadamard/">Quantum Inspire knowledge base</a>.</p>
+<h2 id="exporting-a-circuit">Exporting a circuit</h2>
+<p>As you have seen in the examples above, you can turn a circuit into a cQASM 3.0 string by simply using the <code>str</code> or <code>__repr__</code> methods. We are aiming to support the possibility to export to other languages as well, <em>e.g.</em>, a OpenQASM 3.0 string, and frameworks, <em>e.g.</em>, a Qiskit quantum circuit.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8d2eff1.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
