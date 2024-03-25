@@ -1930,13 +1930,13 @@ mkdocs = ">=1.0.3"
 
 [[package]]
 name = "mkdocs-material"
-version = "9.5.14"
+version = "9.5.15"
 description = "Documentation that simply works"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mkdocs_material-9.5.14-py3-none-any.whl", hash = "sha256:a45244ac221fda46ecf8337f00ec0e5cb5348ab9ffb203ca2a0c313b0d4dbc27"},
-    {file = "mkdocs_material-9.5.14.tar.gz", hash = "sha256:2a1f8e67cda2587ab93ecea9ba42d0ca61d1d7b5fad8cf690eeaeb39dcd4b9af"},
+    {file = "mkdocs_material-9.5.15-py3-none-any.whl", hash = "sha256:e5c96dec3d19491de49ca643fc1dbb92b278e43cdb816c775bc47db77d9b62fb"},
+    {file = "mkdocs_material-9.5.15.tar.gz", hash = "sha256:39f03cca45e82bf54eb7456b5a18bd252eabfdd67f237a229471484a0a4d4635"},
 ]
 
 [package.dependencies]
@@ -3483,7 +3483,6 @@ qcodes = ">=0.32.0"
 quantify-core = ">=0.7.1"
 rich = {version = "*", extras = ["jupyter"]}
 scipy = "*"
-tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 xxhash = "*"
 zhinst = "21.8.20515"
 zhinst-qcodes = "0.1.4"
@@ -4662,4 +4661,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "c4e9cbc34becb563499afc3016ba07da6494429d8cadceac3822e3a00e2170a6"
+content-hash = "f413fe7087a928dcca911fc2d5f425c1f7f296e7ed6dce435997a632c2664042"
