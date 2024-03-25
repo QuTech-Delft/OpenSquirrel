@@ -13,15 +13,16 @@ class CircuitBuilder(GateLibrary):
     Adds corresponding gate when a method is called. Checks gates are known and called with the right arguments.
     Mainly here to allow for Qiskit-style circuit construction:
 
-    >>> CircuitBuilder(number_of_qubits=3).h(Qubit(0)).cnot(Qubit(0), Qubit(1)).cnot(Qubit(0), Qubit(2)).to_circuit()
-    version 3.0
-    <BLANKLINE>
-    qubit[3] q
-    <BLANKLINE>
-    h q[0]
-    cnot q[0], q[1]
-    cnot q[0], q[2]
-    <BLANKLINE>
+    Example:
+        >>> CircuitBuilder(number_of_qubits=3).h(Qubit(0)).cnot(Qubit(0), Qubit(1)).cnot(Qubit(0), Qubit(2)).to_circuit()
+        version 3.0
+        <BLANKLINE>
+        qubit[3] q
+        <BLANKLINE>
+        h q[0]
+        cnot q[0], q[1]
+        cnot q[0], q[2]
+        <BLANKLINE>
     """
 
     _default_qubit_register_name = "q"

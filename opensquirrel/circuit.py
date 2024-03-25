@@ -34,6 +34,7 @@ class Circuit:
         rz q[0], 1.5707963
         x90 q[0]
         <BLANKLINE>
+
     """
 
     def __init__(self, squirrel_ir: SquirrelIR):
@@ -65,10 +66,7 @@ class Circuit:
             use_libqasm: if True, use libqasm instead of build-in ANTLR parser.
                 Note: those two separate implementations may diverge and libqasm should be taken as reference.
 
-        Returns:
-            A Circuit object corresponding to the input string. Throws on parsing errors.
         """
-
         if use_libqasm:
             libqasm_ir_creator = LibqasmIRCreator(gate_set=gate_set, gate_aliases=gate_aliases)
             return Circuit(libqasm_ir_creator.squirrel_ir_from_string(cqasm3_string))

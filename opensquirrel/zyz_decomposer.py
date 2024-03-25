@@ -8,20 +8,20 @@ from opensquirrel.replacer import Decomposer
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
 
 
-def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float]):
+def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float]) -> Tuple[float, float, float]:
     """
     Gives the angles used in the Z-Y-Z decomposition of the Bloch sphere rotation
     characterized by a rotation around `axis` of angle `alpha`.
 
     Parameters:
-      alpha: angle of the Bloch sphere rotation
-      axis: _normalized_ axis of the Bloch sphere rotation
+        alpha: angle of the Bloch sphere rotation
+        axis: _normalized_ axis of the Bloch sphere rotation
 
     Returns:
-      a triple (theta1, theta2, theta3) corresponding to the decomposition of the
-      arbitrary Bloch sphere rotation into U = rz(theta3) ry(theta2) rz(theta1)
-    """
+        A triple (theta1, theta2, theta3) corresponding to the decomposition of the
+        arbitrary Bloch sphere rotation into U = rz(theta3) ry(theta2) rz(theta1)
 
+    """
     nx, ny, nz = axis
 
     assert abs(nx**2 + ny**2 + nz**2 - 1) < ATOL, "Axis needs to be normalized"

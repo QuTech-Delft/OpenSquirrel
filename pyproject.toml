@@ -37,10 +37,6 @@ numpy = [
     { version = "1.24", python = "<3.9" },
     { version = "^1.26", python = "^3.9" },
 ]
-mkdocs = {extras = ["python"], version = "^1.5.3"}
-mkdocstrings = {extras = ["python"], version = "^0.24.0"}
-mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
-mkdocs-material = "^9.4.12"
 libqasm = "0.5.2"
 pyqt5-qt5=[
     # This package is a transitive dependency of quantify-scheduler.
@@ -59,6 +55,11 @@ quantify-scheduler=[
 black = ">=23.11,<25.0"
 coverage = {extras = ["toml"], version = "^7.3.2"}
 isort = "^5.11.4"
+mkdocs = {extras = ["python"], version = "^1.5.3"}
+mkdocstrings = {extras = ["python"], version = "^0.24.0"}
+mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
+mkdocs-material = "^9.4.12"
+pymdown-extensions = "^10.7.1"
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = "^4.1.0"
 mypy = "^1.7.0"

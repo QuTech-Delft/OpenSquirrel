@@ -5,6 +5,7 @@ from opensquirrel.parsing.antlr.qubit_range_checker import QubitRangeChecker
 from opensquirrel.parsing.antlr.squirrel_error_handler import SquirrelErrorHandler
 from opensquirrel.parsing.antlr.squirrel_ir_creator import SquirrelIRCreator
 from opensquirrel.parsing.antlr.type_checker import TypeChecker
+from opensquirrel.squirrel_ir import SquirrelIR
 
 
 def antlr_tree_from_string(s: str):
@@ -22,7 +23,7 @@ def antlr_tree_from_string(s: str):
     return parser.prog()
 
 
-def type_check_antlr_tree(tree, gate_set, gate_aliases):
+def type_check_antlr_tree(tree, gate_set: list, gate_aliases: dict):
     type_checker = TypeChecker(gate_set, gate_aliases)
     type_checker.visit(tree)  # FIXME: return error instead of throwing?
 
@@ -32,7 +33,7 @@ def check_qubit_ranges_of_antlr_tree(tree):
     qubit_range_checker.visit(tree)  # FIXME: return error instead of throwing?
 
 
-def squirrel_ir_from_string(s: str, gate_set, gate_aliases):
+def squirrel_ir_from_string(s: str, gate_set: list, gate_aliases: dict) -> SquirrelIR:
     """
     ANTLR parsing entrypoint.
     Performs type checking based on provided gate semantics and check that the qubit indices are valid.
