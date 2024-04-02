@@ -10,9 +10,6 @@ import numpy as np
 
 from opensquirrel.common import (
     ATOL,
-    X,
-    Y,
-    Z,
     are_matrices_equivalent_up_to_global_phase,
     normalize_angle,
     normalize_axis,

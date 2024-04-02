@@ -5,7 +5,7 @@ import unittest
 import unittest.mock
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import ccz, cz, h, ry, rz, swap, x
+from opensquirrel.default_gates import CCZ, CZ, H, Ry, Rz, SWAP, X
 from opensquirrel.export import quantify_scheduler_exporter
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Qubit, SquirrelIR
 
@@ -39,10 +39,10 @@ class MockedQuantifyScheduler:
 class QuantifySchedulerExporterTest(unittest.TestCase):
     def test_export(self):
         squirrel_ir = SquirrelIR(number_of_qubits=2, qubit_register_name="test")
-        squirrel_ir.add_gate(x(Qubit(0)))
-        squirrel_ir.add_gate(cz(Qubit(0), Qubit(1)))
-        squirrel_ir.add_gate(rz(Qubit(1), Float(2.34)))
-        squirrel_ir.add_gate(ry(Qubit(2), Float(1.23)))
+        squirrel_ir.add_gate(X(Qubit(0)))
+        squirrel_ir.add_gate(CZ(Qubit(0), Qubit(1)))
+        squirrel_ir.add_gate(Rz(Qubit(1), Float(2.34)))
+        squirrel_ir.add_gate(Ry(Qubit(2), Float(1.23)))
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
             mock_schedule = unittest.mock.MagicMock()
@@ -72,10 +72,10 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
                 quantify_scheduler_exporter.export(squirrel_ir)
 
     def test_gates_not_supported(self):
-        self.check_gate_not_supported(h(Qubit(0)))
-        self.check_gate_not_supported(swap(Qubit(0), Qubit(1)))
+        self.check_gate_not_supported(H(Qubit(0)))
+        self.check_gate_not_supported(SWAP(Qubit(0), Qubit(1)))
         self.check_gate_not_supported(BlochSphereRotation(qubit=Qubit(0), axis=(1, 2, 3), angle=0.9876, phase=2.34))
-        self.check_gate_not_supported(ccz(Qubit(0), Qubit(1), Qubit(2)))
+        self.check_gate_not_supported(CCZ(Qubit(0), Qubit(1), Qubit(2)))
 
 
 class QuantifySchedulerNotInstalledTest(unittest.TestCase):

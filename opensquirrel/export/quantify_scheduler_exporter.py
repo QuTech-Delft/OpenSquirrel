@@ -1,7 +1,7 @@
 import math
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import x, z
+from opensquirrel.default_gates import X, Z
 from opensquirrel.squirrel_ir import (
     BlochSphereRotation,
     ControlledGate,
@@ -54,7 +54,7 @@ class _ScheduleCreator(SquirrelIRVisitor):
         if not isinstance(g.target_gate, BlochSphereRotation):
             raise _unsupported_gates_exception
 
-        if g.target_gate == x(g.target_gate.qubit):
+        if g.target_gate == X(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CNOT(
                     qC=self._get_qubit_string(g.control_qubit), qT=self._get_qubit_string(g.target_gate.qubit)
@@ -62,7 +62,7 @@ class _ScheduleCreator(SquirrelIRVisitor):
             )
             return
 
-        if g.target_gate == z(g.target_gate.qubit):
+        if g.target_gate == Z(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CZ(
                     qC=self._get_qubit_string(g.control_qubit), qT=self._get_qubit_string(g.target_gate.qubit)
