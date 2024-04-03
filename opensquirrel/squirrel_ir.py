@@ -8,12 +8,7 @@ from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 
-from opensquirrel.common import (
-    ATOL,
-    are_matrices_equivalent_up_to_global_phase,
-    normalize_angle,
-    normalize_axis,
-)
+from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle, normalize_axis
 
 
 class SquirrelIRVisitor(ABC):

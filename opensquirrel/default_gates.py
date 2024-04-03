@@ -136,7 +136,29 @@ def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> Gate:
     return ControlledGate(control1, CZ(control2, target))
 
 
-default_gate_set = [H, X, X90, mX90, Y, Y90, mY90, Z, S, Sdag, T, Tdag, Rx, Ry, Rz, CNOT, CZ, CR, CRk, SWAP,
-                    sqrtSWAP, CCZ]
+default_gate_set = [
+    H,
+    X,
+    X90,
+    mX90,
+    Y,
+    Y90,
+    mY90,
+    Z,
+    S,
+    Sdag,
+    T,
+    Tdag,
+    Rx,
+    Ry,
+    Rz,
+    CNOT,
+    CZ,
+    CR,
+    CRk,
+    SWAP,
+    sqrtSWAP,
+    CCZ,
+]
 
 default_gate_aliases = {"Hadamard": H}

@@ -5,7 +5,7 @@ import unittest
 import unittest.mock
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import CCZ, CZ, H, Ry, Rz, SWAP, X
+from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from opensquirrel.export import quantify_scheduler_exporter
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Qubit, SquirrelIR
 

@@ -70,7 +70,6 @@ CRk q[0, 3], q[1, 4], 23
         with self.assertRaisesRegex(Exception, "Error at <unknown file name>:1:30..31: failed to resolve variable 'q'"):
             self.libqasm_ir_creator.squirrel_ir_from_string("""version 3.0; qubit[20] qu; H q[5]""")
 
-
     def test_wrong_gate_argument_number_or_types(self):
         with self.assertRaisesRegex(
             Exception,

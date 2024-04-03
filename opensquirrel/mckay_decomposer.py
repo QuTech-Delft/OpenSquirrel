@@ -4,7 +4,7 @@ from typing import Tuple
 import numpy as np
 
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.default_gates import Rz, X90
+from opensquirrel.default_gates import X90, Rz
 from opensquirrel.replacer import Decomposer
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Qubit, SquirrelIR
 

@@ -118,8 +118,6 @@ Rz qreg[1], 3.1415927
         myCircuit.decompose(decomposer=McKayDecomposer)
         output = str(myCircuit)
 
-        
-
         expected = """version 3.0
 
 qubit[4] q
