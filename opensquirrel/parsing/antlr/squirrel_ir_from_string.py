@@ -5,6 +5,7 @@ from opensquirrel.parsing.antlr.qubit_range_checker import QubitRangeChecker
 from opensquirrel.parsing.antlr.squirrel_error_handler import SquirrelErrorHandler
 from opensquirrel.parsing.antlr.squirrel_ir_creator import SquirrelIRCreator
 from opensquirrel.parsing.antlr.type_checker import TypeChecker
+from opensquirrel.squirrel_ir import SquirrelIR
 
 
 def antlr_tree_from_string(s: str):

@@ -8,15 +8,7 @@ from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 
-from opensquirrel.common import (
-    ATOL,
-    X,
-    Y,
-    Z,
-    are_matrices_equivalent_up_to_global_phase,
-    normalize_angle,
-    normalize_axis,
-)
+from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle, normalize_axis
 
 
 class SquirrelIRVisitor(ABC):
@@ -117,9 +109,8 @@ class Measure(Statement, ABC):
         qubit: Qubit,
         axis: Tuple[float, float, float],
         generator=None,
-        arguments=None,
     ):
-        Measure.__init__(self, generator, arguments)
+        self.generator = generator
         self.qubit: Qubit = qubit
         self.axis = normalize_axis(np.array(axis).astype(np.float64))
 
@@ -130,6 +121,12 @@ class Measure(Statement, ABC):
         if not isinstance(other, Measure):
             return False
         return self.qubit == other.qubit and self.axis == other.axis
+
+    def accept(self, visitor: SquirrelIRVisitor):
+        visitor.visit_measure(self)
+
+    def get_qubit_operands(self) -> List[Qubit]:
+        return [self.qubit]
 
 
 class Gate(Statement, ABC):

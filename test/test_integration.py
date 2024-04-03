@@ -19,11 +19,11 @@ class IntegrationTest(unittest.TestCase):
 
                 qubit[3] qreg
 
-                ry qreg[0], 1.23
-                RY qreg[1], 2.34           // Aliases for gates can be defined, here ry == RY
-                cnot qreg[0], qreg[1]
-                rx qreg[0], -2.3
-                ry qreg[1], -3.14
+                Ry qreg[0], 1.23
+                Ry qreg[1], 2.34
+                CNOT qreg[0], qreg[1]
+                Rx qreg[0], -2.3
+                Ry qreg[1], -3.14
             """
         )
 
@@ -35,11 +35,11 @@ class IntegrationTest(unittest.TestCase):
         #
 
         myCircuit.replace(
-            cnot,
+            CNOT,
             lambda control, target: [
-                h(target),
-                cz(control, target),
-                h(target),
+                H(target),
+                CZ(control, target),
+                H(target),
             ],
         )
 
@@ -59,26 +59,26 @@ class IntegrationTest(unittest.TestCase):
 
 qubit[3] qreg
 
-rz qreg[0], 3.1415927
-x90 qreg[0]
-rz qreg[0], 1.9115927
-x90 qreg[0]
-rz qreg[1], 3.1415927
-x90 qreg[1]
-rz qreg[1], 2.372389
-x90 qreg[1]
-rz qreg[1], 3.1415927
-cz qreg[0], qreg[1]
-rz qreg[0], 1.5707963
-x90 qreg[0]
-rz qreg[0], 0.84159265
-x90 qreg[0]
-rz qreg[0], 1.5707963
-rz qreg[1], 3.1415927
-x90 qreg[1]
-rz qreg[1], 1.572389
-x90 qreg[1]
-rz qreg[1], 3.1415927
+Rz qreg[0], 3.1415927
+X90 qreg[0]
+Rz qreg[0], 1.9115927
+X90 qreg[0]
+Rz qreg[1], 3.1415927
+X90 qreg[1]
+Rz qreg[1], 2.372389
+X90 qreg[1]
+Rz qreg[1], 3.1415927
+CZ qreg[0], qreg[1]
+Rz qreg[0], 1.5707963
+X90 qreg[0]
+Rz qreg[0], 0.84159265
+X90 qreg[0]
+Rz qreg[0], 1.5707963
+Rz qreg[1], 3.1415927
+X90 qreg[1]
+Rz qreg[1], 1.572389
+X90 qreg[1]
+Rz qreg[1], 3.1415927
 """,
         )
 
@@ -87,27 +87,13 @@ rz qreg[1], 3.1415927
             """
                 version 3.0
 
-                qubit[3] qreg;
-                x qreg[0];
-                measure qreg[0];
+                qubit[3] qreg
+                X qreg[0]
+                Ry qreg[1], 2.34
+                CNOT qreg[0], qreg[1]
+                measure qreg[0, 2]
             """,
             use_libqasm=True,
-        )
-
-        #    Decompose CNOT as
-        #
-        #    -----•-----        ------- Z -------
-        #         |        ==           |
-        #    -----⊕----        --- H --•-- H ---
-        #
-
-        myCircuit.replace(
-            cnot,
-            lambda control, target: [
-                h(target),
-                cz(control, target),
-                h(target),
-            ],
         )
 
     def test_qi(self):
@@ -116,28 +102,27 @@ rz qreg[1], 3.1415927
             version 3.0
 
             // This is a single line comment which ends on the newline.
-            // The cQASM string must begin with the version instruction even before any comments.
+            // The cQASM string must begin with the version instruction (apart from any preceding comments).
 
             /* This is a multi-
             line comment block */
 
+            qubit[4] q   // Qubit (register) declaration
 
-            qubit[4] q   //declaration
-
-            //let us create a Bell state on 2 qubits and a |+> state on the third qubit
+            // Let us create a Bell state on 2 qubits and a |+> state on the third qubit
 
             H q[2]
             H q[1]
             H q[0]
-            RZ q[0], 1.5707963
-            RY q[0], -0.2
-            cnot q[1], q[0]
-            RZ q[0], 1.5789
-            cnot q[1], q[0]
-            cnot q[1], q[2]
-            RZ q[1], 2.5707963
-            cr q[2], q[3], 2.123
-            RY q[1], -1.5707963
+            Rz q[0], 1.5707963
+            Ry q[0], -0.2
+            CNOT q[1], q[0]
+            Rz q[0], 1.5789
+            CNOT q[1], q[0]
+            CNOT q[1], q[2]
+            Rz q[1], 2.5707963
+            CR q[2], q[3], 2.123
+            Ry q[1], -1.5707963
 
             """
         )
@@ -151,31 +136,31 @@ rz qreg[1], 3.1415927
 
 qubit[4] q
 
-x90 q[1]
-rz q[1], 1.5707963
-x90 q[1]
-rz q[0], -0.2
-x90 q[0]
-rz q[0], 1.5707963
-x90 q[0]
-rz q[0], 1.5707963
-cnot q[1], q[0]
-rz q[0], -2.3521427
-x90 q[0]
-rz q[0], 3.1415927
-x90 q[0]
-rz q[0], 0.78945
-cnot q[1], q[0]
-x90 q[2]
-rz q[2], 1.5707963
-x90 q[2]
-cnot q[1], q[2]
-cr q[2], q[3], 2.123
-rz q[1], 2.5707963
-x90 q[1]
-rz q[1], 1.5707964
-x90 q[1]
-rz q[1], 3.1415927
+X90 q[1]
+Rz q[1], 1.5707963
+X90 q[1]
+Rz q[0], -0.2
+X90 q[0]
+Rz q[0], 1.5707963
+X90 q[0]
+Rz q[0], 1.5707963
+CNOT q[1], q[0]
+Rz q[0], -2.3521427
+X90 q[0]
+Rz q[0], 3.1415927
+X90 q[0]
+Rz q[0], 0.78945
+CNOT q[1], q[0]
+X90 q[2]
+Rz q[2], 1.5707963
+X90 q[2]
+CNOT q[1], q[2]
+CR q[2], q[3], 2.123
+Rz q[1], 2.5707963
+X90 q[1]
+Rz q[1], 1.5707964
+X90 q[1]
+Rz q[1], 3.1415927
 """
 
         self.assertEqual(output, expected)
@@ -183,13 +168,13 @@ rz q[1], 3.1415927
     def test_libqasm_error(self):
         with self.assertRaisesRegex(
             Exception,
-            r"Parsing error: Error at <unknown>:4:21\.\.23: failed to resolve overload for ry with argument pack \(qubit, real, int\)",
+            r"Parsing error: Error at <unknown file name>:4:21\.\.23: failed to resolve instruction 'Ry' with argument pack \(qubit, float, int\)",
         ):
             Circuit.from_string(
                 """
                     version 3.0
                     qubit[3] qreg
-                    ry qreg[0], 1.23, 1
+                    Ry qreg[0], 1.23, 1
                 """,
                 use_libqasm=True,
             )
@@ -201,11 +186,11 @@ rz q[1], 3.1415927
 
                 qubit[3] qreg
 
-                h qreg[1]
-                cz qreg[0], qreg[1]
-                cnot qreg[0], qreg[1]
-                crk qreg[0], qreg[1], 4
-                h qreg[0]
+                H qreg[1]
+                CZ qreg[0], qreg[1]
+                CNOT qreg[0], qreg[1]
+                CRk qreg[0], qreg[1], 4
+                H qreg[0]
             """
         )
 
@@ -213,11 +198,11 @@ rz q[1], 3.1415927
 
         # Quantify-scheduler prefers CZ.
         myCircuit.replace(
-            cnot,
+            CNOT,
             lambda control, target: [
-                h(target),
-                cz(control, target),
-                h(target),
+                H(target),
+                CZ(control, target),
+                H(target),
             ],
         )
 

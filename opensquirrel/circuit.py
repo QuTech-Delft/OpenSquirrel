@@ -35,6 +35,7 @@ class Circuit:
         rz q[0], 1.5707963
         x90 q[0]
         <BLANKLINE>
+
     """
 
     def __init__(self, squirrel_ir: SquirrelIR):
@@ -50,7 +51,7 @@ class Circuit:
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: [Callable[..., Measure]] = default_measurement_set,
         measurement_aliases: Dict[str, Callable[..., Measure]] = default_measurement_aliases,
-        use_libqasm: bool = False,
+        use_libqasm: bool = True,
     ):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -70,10 +71,8 @@ class Circuit:
             use_libqasm: if True, use libqasm instead of build-in ANTLR parser.
                 Note: those two separate implementations may diverge and libqasm should be taken as reference.
 
-        Returns:
-            A Circuit object corresponding to the input string. Throws on parsing errors.
         """
-
+        print(use_libqasm)
         if use_libqasm:
             libqasm_ir_creator = LibqasmIRCreator(
                 gate_set=gate_set,

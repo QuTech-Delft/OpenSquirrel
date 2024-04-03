@@ -3,10 +3,15 @@
 ::: opensquirrel.circuit
 ::: opensquirrel.circuit_builder
 ::: opensquirrel.circuit_matrix_calculator
+::: opensquirrel.cnot_decomposer
 ::: opensquirrel.common
 ::: opensquirrel.default_gates
+::: opensquirrel.export.quantify_scheduler_exporter
+::: opensquirrel.export_format
 ::: opensquirrel.gate_library
+::: opensquirrel.identity_filter
 ::: opensquirrel.mckay_decomposer
+::: opensquirrel.merger
 ::: opensquirrel.parsing.antlr.generated.CQasm3Lexer
 ::: opensquirrel.parsing.antlr.generated.CQasm3Listener
 ::: opensquirrel.parsing.antlr.generated.CQasm3Parser
@@ -22,4 +27,5 @@
 ::: opensquirrel.squirrel_ir
 ::: opensquirrel.utils.matrix_expander
 ::: opensquirrel.writer
+::: opensquirrel.zyz_decomposer
 
