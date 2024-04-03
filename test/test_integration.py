@@ -88,7 +88,7 @@ Rz qreg[1], 3.1415927
             version 3.0
 
             // This is a single line comment which ends on the newline.
-            // The cQASM string must begin with the version instruction (apart from any preceding comments.
+            // The cQASM string must begin with the version instruction (apart from any preceding comments).
 
             /* This is a multi-
             line comment block */
