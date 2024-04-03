@@ -5,11 +5,12 @@ import numpy as np
 import opensquirrel.parsing.antlr.squirrel_ir_from_string
 from opensquirrel import circuit_matrix_calculator, mckay_decomposer, merger, replacer, writer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
+from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
 from opensquirrel.export import quantify_scheduler_exporter
 from opensquirrel.export_format import ExportFormat
 from opensquirrel.parsing.libqasm.libqasm_ir_creator import LibqasmIRCreator
 from opensquirrel.replacer import Decomposer
-from opensquirrel.squirrel_ir import Gate, SquirrelIR
+from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
 
 
 class Circuit:
@@ -47,6 +48,8 @@ class Circuit:
         cqasm3_string: str,
         gate_set: [Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
+        measurement_set: [Callable[..., Measure]] = default_measurement_set,
+        measurement_aliases: Dict[str, Callable[..., Measure]] = default_measurement_aliases,
         use_libqasm: bool = False,
     ):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
@@ -61,7 +64,9 @@ class Circuit:
         Args:
             cqasm3_string: a cqasm 3 string
             gate_set: an array of gate semantic functions. See default_gates for examples
-            gate_aliases: a dictionary of extra aliases, mapping strings to functions in the gate set
+            gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
+            measurement_set: an array of measurement semantic functions. See default_measurements for examples
+            measurement_aliases: a dictionary of measure aliases, mapping strings to functions in the measurement set
             use_libqasm: if True, use libqasm instead of build-in ANTLR parser.
                 Note: those two separate implementations may diverge and libqasm should be taken as reference.
 
@@ -70,12 +75,21 @@ class Circuit:
         """
 
         if use_libqasm:
-            libqasm_ir_creator = LibqasmIRCreator(gate_set=gate_set, gate_aliases=gate_aliases)
+            libqasm_ir_creator = LibqasmIRCreator(
+                gate_set=gate_set,
+                gate_aliases=gate_aliases,
+                measurement_aliases=measurement_aliases,
+                measurement_set=measurement_set,
+            )
             return Circuit(libqasm_ir_creator.squirrel_ir_from_string(cqasm3_string))
 
         return Circuit(
             opensquirrel.parsing.antlr.squirrel_ir_from_string.squirrel_ir_from_string(
-                cqasm3_string, gate_set=gate_set, gate_aliases=gate_aliases
+                cqasm3_string,
+                gate_set=gate_set,
+                gate_aliases=gate_aliases,
+                measurement_set=measurement_set,
+                measurement_aliases=measurement_aliases,
             )
         )
 

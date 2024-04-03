@@ -82,6 +82,34 @@ rz qreg[1], 3.1415927
 """,
         )
 
+    def test_measurement(self):
+        myCircuit = Circuit.from_string(
+            """
+                version 3.0
+
+                qubit[3] qreg;
+                x qreg[0];
+                measure qreg[0];
+            """,
+            use_libqasm=True,
+        )
+
+        #    Decompose CNOT as
+        #
+        #    -----•-----        ------- Z -------
+        #         |        ==           |
+        #    -----⊕----        --- H --•-- H ---
+        #
+
+        myCircuit.replace(
+            cnot,
+            lambda control, target: [
+                h(target),
+                cz(control, target),
+                h(target),
+            ],
+        )
+
     def test_qi(self):
         myCircuit = Circuit.from_string(
             """

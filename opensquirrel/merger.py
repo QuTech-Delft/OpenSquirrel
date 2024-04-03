@@ -4,7 +4,7 @@ from typing import List, Optional
 import numpy as np
 
 from opensquirrel.common import ATOL
-from opensquirrel.squirrel_ir import BlochSphereRotation, Gate, Qubit, SquirrelIR
+from opensquirrel.squirrel_ir import BlochSphereRotation, Gate, Measure, Qubit, SquirrelIR
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -59,7 +59,7 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
     while statement_index < len(squirrel_ir.statements):
         statement = squirrel_ir.statements[statement_index]
 
-        if not isinstance(statement, Gate):
+        if not isinstance(statement, Gate) or isinstance(statement, Measure):
             # Skip, since statement is not a gate
             statement_index += 1
             continue
