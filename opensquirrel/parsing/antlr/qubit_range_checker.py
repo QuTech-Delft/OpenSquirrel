@@ -26,6 +26,13 @@ class QubitRangeChecker(CQasm3Visitor.CQasm3Visitor):
         if len(qubit_argument_sizes) > 0 and not all(s == qubit_argument_sizes[0] for s in qubit_argument_sizes):
             raise Exception("Invalid gate call with qubit arguments of different sizes")
 
+    def visitMeasurementApplication(self, ctx):
+        visited_args = (self.visit(arg) for arg in ctx.expr())
+        qubit_argument_sizes = [qubit_range_size for qubit_range_size in visited_args if qubit_range_size is not None]
+
+        if len(qubit_argument_sizes) > 0 and not all(s == qubit_argument_sizes[0] for s in qubit_argument_sizes):
+            raise Exception("Invalid gate call with qubit arguments of different sizes")
+
     def visitQubit(self, ctx):
         qubit_index = int(str(ctx.INT()))
         if qubit_index >= self.number_of_qubits:

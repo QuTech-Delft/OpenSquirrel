@@ -4,19 +4,27 @@ import itertools
 import cqasm.v3x as cqasm
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.gate_library import GateLibrary
+from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
+from opensquirrel.operation_library import GateLibrary, MeasurementLibrary
 from opensquirrel.squirrel_ir import Float, Int, Qubit, SquirrelIR
 
 _cqasm_type_to_squirrel_type = {
     cqasm.types.QubitArray: Qubit,
     cqasm.values.ConstInt: Int,
-    cqasm.values.ConstReal: Float,
+    cqasm.values.ConstFloat: Float,
 }
 
 
-class LibqasmIRCreator(GateLibrary):
-    def __init__(self, gate_set=default_gate_set, gate_aliases=default_gate_aliases):
+class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
+    def __init__(
+        self,
+        gate_set=default_gate_set,
+        gate_aliases=default_gate_aliases,
+        measurement_set=default_measurement_set,
+        measurement_aliases=default_measurement_aliases,
+    ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
+        MeasurementLibrary.__init__(self, measurement_set, measurement_aliases)
         self.squirrel_ir = None
 
     @staticmethod
@@ -25,12 +33,12 @@ class LibqasmIRCreator(GateLibrary):
 
     @staticmethod
     def _get_literal(cqasm_literal_expression):
-        assert type(cqasm_literal_expression) in [cqasm.values.ConstInt, cqasm.values.ConstReal]
+        assert type(cqasm_literal_expression) in [cqasm.values.ConstInt, cqasm.values.ConstFloat]
 
         if type(cqasm_literal_expression) == cqasm.values.ConstInt:
             return Int(cqasm_literal_expression.value)
 
-        if type(cqasm_literal_expression) == cqasm.values.ConstReal:
+        if type(cqasm_literal_expression) == cqasm.values.ConstFloat:
             return Float(cqasm_literal_expression.value)
 
     @staticmethod
@@ -76,7 +84,7 @@ class LibqasmIRCreator(GateLibrary):
             return "Q", "V"  # "V" is to allow array notations like q[3, 5, 7] and q[3:6]
 
         if squirrel_type == Float:
-            return "r"
+            return "f"
 
         if squirrel_type == Int:
             return "i"
@@ -96,6 +104,16 @@ class LibqasmIRCreator(GateLibrary):
                 param_types = "".join(set_of_letters)
                 analyzer.register_instruction(generator_f.__name__, param_types)
 
+        for generator_f in self.measurement_set:
+            for set_of_letters in itertools.product(
+                *(
+                    self._get_cqasm_param_type_letters(p.annotation)
+                    for p in inspect.signature(generator_f).parameters.values()
+                )
+            ):
+                param_types = "".join(set_of_letters)
+                analyzer.register_instruction(generator_f.__name__, param_types)
+
         return analyzer
 
     def squirrel_ir_from_string(self, s: str):
@@ -106,18 +124,18 @@ class LibqasmIRCreator(GateLibrary):
         if isinstance(ast, list):
             raise Exception("Parsing error: " + ", ".join(ast))
 
-        if len(ast.variables) != 1 or type(ast.variables[0].typ) != cqasm.types.QubitArray:
-            raise Exception("OpenSquirrel currently supports only a single qubit array variable in cQasm 3.0")
-
-        number_of_qubits = ast.variables[0].typ.size
+        number_of_qubits = ast.qubit_variable_declaration.typ.size
 
         # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
-        qubit_register_name = ast.variables[0].name[2:-1]
+        qubit_register_name = ast.qubit_variable_declaration.name[2:-1]
 
         squirrel_ir = SquirrelIR(number_of_qubits=number_of_qubits, qubit_register_name=qubit_register_name)
 
-        for statement in ast.statements:
-            generator_f = self.get_gate_f(statement.name[2:-1])
+        for statement in ast.block.statements:
+            if "measure" in statement.name[2:-1]:
+                generator_f = self.get_measurement_f(statement.name[2:-1])
+            else:
+                generator_f = self.get_gate_f(statement.name[2:-1])
 
             expanded_squirrel_args = LibqasmIRCreator._get_expanded_squirrel_args(generator_f, statement.operands)
 

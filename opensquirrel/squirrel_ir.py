@@ -8,15 +8,7 @@ from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 
-from opensquirrel.common import (
-    ATOL,
-    X,
-    Y,
-    Z,
-    are_matrices_equivalent_up_to_global_phase,
-    normalize_angle,
-    normalize_axis,
-)
+from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle, normalize_axis
 
 
 class SquirrelIRVisitor(ABC):
@@ -32,7 +24,13 @@ class SquirrelIRVisitor(ABC):
     def visit_qubit(self, qubit: "Qubit"):
         pass
 
+    def visit_bit(self, bit: "Bit"):
+        pass
+
     def visit_gate(self, gate: "Gate"):
+        pass
+
+    def visit_measure(self, measure: "Measure"):
         pass
 
     def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: "BlochSphereRotation"):
@@ -85,8 +83,50 @@ class Qubit(Expression):
         return visitor.visit_qubit(self)
 
 
+@dataclass
+class Bit(Expression):
+    index: int
+
+    def __hash__(self):
+        return hash(self.index)
+
+    def __repr__(self):
+        return f"Bit[{self.index}]"
+
+    def accept(self, visitor: SquirrelIRVisitor):
+        return visitor.visit_bit(self)
+
+
 class Statement(IRNode, ABC):
     pass
+
+
+class Measure(Statement, ABC):
+    generator: Optional[Callable[..., "Measure"]] = None
+
+    def __init__(
+        self,
+        qubit: Qubit,
+        axis: Tuple[float, float, float],
+        generator=None,
+    ):
+        self.generator = generator
+        self.qubit: Qubit = qubit
+        self.axis = normalize_axis(np.array(axis).astype(np.float64))
+
+    def __repr__(self):
+        return f"Measure({self.qubit}, axis={self.axis})"
+
+    def __eq__(self, other):
+        if not isinstance(other, Measure):
+            return False
+        return self.qubit == other.qubit and self.axis == other.axis
+
+    def accept(self, visitor: SquirrelIRVisitor):
+        visitor.visit_measure(self)
+
+    def get_qubit_operands(self) -> List[Qubit]:
+        return [self.qubit]
 
 
 class Gate(Statement, ABC):
@@ -221,7 +261,6 @@ class ControlledGate(Gate):
 
 
 def _compare_gate_classes(g1: Gate, g2: Gate) -> bool:
-
     union_mapping = list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))
 
     from opensquirrel.utils.matrix_expander import get_matrix_after_qubit_remapping
@@ -256,6 +295,30 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     return wrapper
 
 
+def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable[..., Measure]:
+    @wraps(measurement_generator)
+    def wrapper(*args, **kwargs):
+        result = measurement_generator(*args, **kwargs)
+        result.generator = wrapper
+
+        all_args = []
+        arg_index = 0
+        for par in inspect.signature(measurement_generator).parameters.values():
+            if not issubclass(par.annotation, Expression):
+                raise TypeError("Measurement argument types must be expressions")
+
+            if par.name in kwargs:
+                all_args.append(kwargs[par.name])
+            else:
+                all_args.append(args[arg_index])
+                arg_index += 1
+
+        result.arguments = tuple(all_args)
+        return result
+
+    return wrapper
+
+
 @dataclass
 class Comment(Statement):
     str: str
@@ -269,13 +332,23 @@ class Comment(Statement):
 
 class SquirrelIR:
     # This is just a list of gates (for now?)
-    def __init__(self, *, number_of_qubits: int, qubit_register_name: str = "q"):
+    def __init__(
+        self,
+        *,
+        number_of_qubits: int,
+        qubit_register_name: str = "q",
+    ):
         self.number_of_qubits: int = number_of_qubits
         self.statements: List[Statement] = []
         self.qubit_register_name: str = qubit_register_name
+        self.number_of_bits: int = number_of_qubits
+        self.bit_register_name: str = "b"
 
     def add_gate(self, gate: Gate):
         self.statements.append(gate)
+
+    def add_measurement(self, measurement: Measure):
+        self.statements.append(measurement)
 
     def add_comment(self, comment: Comment):
         self.statements.append(comment)
@@ -285,6 +358,12 @@ class SquirrelIR:
             return False
 
         if self.qubit_register_name != other.qubit_register_name:
+            return False
+
+        if self.number_of_bits != other.number_of_qubits:
+            return False
+
+        if self.bit_register_name != other.bit_register_name:
             return False
 
         return self.statements == other.statements

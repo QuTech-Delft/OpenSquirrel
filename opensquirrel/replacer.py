@@ -7,6 +7,7 @@ from opensquirrel.squirrel_ir import (
     ControlledGate,
     Gate,
     MatrixGate,
+    Measure,
     Qubit,
     SquirrelIR,
     SquirrelIRVisitor,
@@ -39,6 +40,10 @@ class _QubitReIndexer(SquirrelIRVisitor):
         control_qubit = Qubit(self.mappings.index(controlled_gate.control_qubit))
         target_gate = controlled_gate.target_gate.accept(self)
         result = ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
+        return result
+
+    def visit_measurement_operation(self, m: Measure):
+        result = Measure(qubit=Qubit(self.mappings.index(m.qubit)), axis=m.axis)
         return result
 
 
