@@ -1,9 +1,9 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
-from opensquirrel import merger
+from opensquirrel.merge import merger
 from opensquirrel.default_gates import *
-from opensquirrel.merger import compose_bloch_sphere_rotations
+from opensquirrel.merge.merger import compose_bloch_sphere_rotations
 from opensquirrel.squirrel_ir import Float, Qubit, SquirrelIR
 
 

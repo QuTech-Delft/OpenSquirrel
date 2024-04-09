@@ -1,6 +1,6 @@
 import unittest
 
-from opensquirrel import writer
+from opensquirrel.export import writer
 from opensquirrel.default_gates import *
 from opensquirrel.squirrel_ir import Comment, Float, Qubit, SquirrelIR
 

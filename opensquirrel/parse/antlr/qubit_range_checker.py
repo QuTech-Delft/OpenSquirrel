@@ -1,4 +1,4 @@
-from opensquirrel.parsing.antlr.generated import CQasm3Visitor
+from opensquirrel.parse.antlr.generated import CQasm3Visitor
 
 
 class QubitRangeChecker(CQasm3Visitor.CQasm3Visitor):

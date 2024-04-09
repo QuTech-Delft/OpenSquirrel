@@ -6,12 +6,13 @@
 ::: opensquirrel.cnot_decomposer
 ::: opensquirrel.common
 ::: opensquirrel.default_gates
+::: opensquirrel.default_measurements
 ::: opensquirrel.export.quantify_scheduler_exporter
 ::: opensquirrel.export_format
-::: opensquirrel.gate_library
 ::: opensquirrel.identity_filter
 ::: opensquirrel.mckay_decomposer
 ::: opensquirrel.merger
+::: opensquirrel.operation_library
 ::: opensquirrel.parsing.antlr.generated.CQasm3Lexer
 ::: opensquirrel.parsing.antlr.generated.CQasm3Listener
 ::: opensquirrel.parsing.antlr.generated.CQasm3Parser

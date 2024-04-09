@@ -1,12 +1,12 @@
 import math
 
-from opensquirrel import merger
+from opensquirrel.merge import merger
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CNOT, Ry, Rz, X
-from opensquirrel.identity_filter import filter_out_identities
-from opensquirrel.replacer import Decomposer
+from opensquirrel.utils.identity_filter import filter_out_identities
+from opensquirrel.decompose.replacer import Decomposer
 from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, Float, Gate
-from opensquirrel.zyz_decomposer import ZYZDecomposer, get_zyz_decomposition_angles
+from opensquirrel.decompose.zyz_decomposer import get_zyz_decomposition_angles
 
 
 class CNOTDecomposer(Decomposer):

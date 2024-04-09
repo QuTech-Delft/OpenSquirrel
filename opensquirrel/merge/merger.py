@@ -1,5 +1,4 @@
-from math import acos, atan2, cos, pi, sin, sqrt
-from typing import List, Optional
+from math import acos, cos, sin
 
 import numpy as np
 

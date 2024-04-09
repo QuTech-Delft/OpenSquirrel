@@ -1,10 +1,10 @@
 import antlr4
 
-from opensquirrel.parsing.antlr.generated import CQasm3Lexer, CQasm3Parser
-from opensquirrel.parsing.antlr.qubit_range_checker import QubitRangeChecker
-from opensquirrel.parsing.antlr.squirrel_error_handler import SquirrelErrorHandler
-from opensquirrel.parsing.antlr.squirrel_ir_creator import SquirrelIRCreator
-from opensquirrel.parsing.antlr.type_checker import TypeChecker
+from opensquirrel.parse.antlr.generated import CQasm3Lexer, CQasm3Parser
+from opensquirrel.parse.antlr.qubit_range_checker import QubitRangeChecker
+from opensquirrel.parse.antlr.squirrel_error_handler import SquirrelErrorHandler
+from opensquirrel.parse.antlr.squirrel_ir_creator import SquirrelIRCreator
+from opensquirrel.parse.antlr.type_checker import TypeChecker
 from opensquirrel.squirrel_ir import SquirrelIR
 
 
@@ -35,7 +35,7 @@ def check_qubit_ranges_of_antlr_tree(tree):
 
 def squirrel_ir_from_string(s: str, gate_set, gate_aliases, measurement_set, measurement_aliases):
     """
-    ANTLR parsing entrypoint.
+    ANTLR parse entrypoint.
     Performs type checking based on provided gate semantics and check that the qubit indices are valid.
     Creates the IR where each gate node is mapped to its semantic function and arguments.
 
@@ -46,7 +46,7 @@ def squirrel_ir_from_string(s: str, gate_set, gate_aliases, measurement_set, mea
         measurement_aliases: Dictionary mapping extra measurement names to their semantic.
 
     Returns:
-        A corresponding SquirrelIR object. Throws in case of parsing error.
+        A corresponding SquirrelIR object. Throws in case of parse error.
     """
     tree = antlr_tree_from_string(s)
 

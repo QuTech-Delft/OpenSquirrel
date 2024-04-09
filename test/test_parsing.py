@@ -3,10 +3,10 @@ import unittest
 import antlr4
 
 from opensquirrel.default_gates import *
-from opensquirrel.parsing.antlr.generated import CQasm3Lexer, CQasm3Parser
-from opensquirrel.parsing.antlr.squirrel_error_handler import SquirrelErrorHandler, SquirrelParseException
-from opensquirrel.parsing.antlr.squirrel_ir_creator import SquirrelIRCreator
-from opensquirrel.parsing.antlr.type_checker import TypeChecker
+from opensquirrel.parse.antlr.generated import CQasm3Lexer, CQasm3Parser
+from opensquirrel.parse.antlr.squirrel_error_handler import SquirrelErrorHandler, SquirrelParseException
+from opensquirrel.parse.antlr.squirrel_ir_creator import SquirrelIRCreator
+from opensquirrel.parse.antlr.type_checker import TypeChecker
 
 
 class ParsingTest(unittest.TestCase):
@@ -77,7 +77,7 @@ class ParsingTest(unittest.TestCase):
         ):
             self.type_check("version 3.0; qubit[1] q; Rx 42., q[0]")
 
-    # FIXME: add comments to IR when parsing?
+    # FIXME: add comments to IR when parse?
 
     def test_simple(self):
         ir = self.get_ir(

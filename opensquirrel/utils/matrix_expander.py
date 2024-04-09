@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 from opensquirrel.common import can1
-from opensquirrel.replacer import _QubitReIndexer
+from opensquirrel.decompose.replacer import _QubitReIndexer
 from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, Gate, Qubit, SquirrelIR, SquirrelIRVisitor
 
 

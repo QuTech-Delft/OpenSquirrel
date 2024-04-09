@@ -3,8 +3,8 @@ from typing import Tuple
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import Ry, Rz
-from opensquirrel.identity_filter import filter_out_identities
-from opensquirrel.replacer import Decomposer
+from opensquirrel.utils.identity_filter import filter_out_identities
+from opensquirrel.decompose.replacer import Decomposer
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
 
 

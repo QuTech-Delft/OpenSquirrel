@@ -3,8 +3,8 @@ import inspect
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
 from opensquirrel.operation_library import GateLibrary, MeasurementLibrary
-from opensquirrel.parsing.antlr.generated import CQasm3Visitor
-from opensquirrel.squirrel_ir import Float, Int, Qubit, Bit, SquirrelIR
+from opensquirrel.parse.antlr.generated import CQasm3Visitor
+from opensquirrel.squirrel_ir import Bit, Float, Int, Qubit, SquirrelIR
 
 
 class SquirrelIRCreator(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Visitor):

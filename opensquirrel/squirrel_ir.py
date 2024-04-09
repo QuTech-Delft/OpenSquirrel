@@ -1,9 +1,7 @@
-import cmath
 import inspect
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import wraps
-from math import cos, sin
 from typing import Callable, List, Optional, Tuple
 
 import numpy as np

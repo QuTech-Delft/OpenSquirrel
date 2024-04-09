@@ -1,7 +1,7 @@
 import unittest
 
-from opensquirrel.parsing.antlr.qubit_range_checker import QubitRangeChecker
-from opensquirrel.parsing.antlr.squirrel_ir_from_string import antlr_tree_from_string
+from opensquirrel.parse.antlr.qubit_range_checker import QubitRangeChecker
+from opensquirrel.parse.antlr.squirrel_ir_from_string import antlr_tree_from_string
 
 
 class QubitRangeCheckerTest(unittest.TestCase):

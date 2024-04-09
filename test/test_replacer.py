@@ -1,8 +1,8 @@
 import unittest
 
-from opensquirrel import replacer
+from opensquirrel.decompose import replacer
 from opensquirrel.default_gates import *
-from opensquirrel.replacer import Decomposer, check_valid_replacement
+from opensquirrel.decompose.replacer import Decomposer, check_valid_replacement
 from opensquirrel.squirrel_ir import Qubit, SquirrelIR
 
 
