@@ -10,8 +10,8 @@ class CircuitBuilderTest(unittest.TestCase):
         print(default_gate_aliases)
         builder = CircuitBuilder(3)
 
-        builder.h(Qubit(0))
-        builder.cnot(Qubit(0), Qubit(1))
+        builder.H(Qubit(0))
+        builder.CNOT(Qubit(0), Qubit(1))
 
         circuit = builder.to_circuit()
 
@@ -20,45 +20,45 @@ class CircuitBuilderTest(unittest.TestCase):
         self.assertEqual(
             circuit.squirrel_ir.statements,
             [
-                h(Qubit(0)),
-                cnot(Qubit(0), Qubit(1)),
+                H(Qubit(0)),
+                CNOT(Qubit(0), Qubit(1)),
             ],
         )
 
     def test_chain(self):
         builder = CircuitBuilder(3)
 
-        circuit = builder.h(Qubit(0)).cnot(Qubit(0), Qubit(1)).to_circuit()
+        circuit = builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).to_circuit()
 
         self.assertEqual(
             circuit.squirrel_ir.statements,
             [
-                h(Qubit(0)),
-                cnot(Qubit(0), Qubit(1)),
+                H(Qubit(0)),
+                CNOT(Qubit(0), Qubit(1)),
             ],
         )
 
     def test_unknown_gate(self):
         builder = CircuitBuilder(3)
 
-        with self.assertRaisesRegex(Exception, "Unknown gate `un`"):
-            builder.un(0)
+        with self.assertRaisesRegex(Exception, "Unknown gate `UN`"):
+            builder.UN(0)
 
     def test_wrong_number_of_arguments(self):
         builder = CircuitBuilder(3)
 
-        with self.assertRaisesRegex(TypeError, r"h\(\) takes 1 positional argument but 2 were given"):
-            builder.h(Qubit(0), Qubit(1))
+        with self.assertRaisesRegex(TypeError, r"H\(\) takes 1 positional argument but 2 were given"):
+            builder.H(Qubit(0), Qubit(1))
 
     def test_wrong_argument_type(self):
         builder = CircuitBuilder(3)
 
         with self.assertRaisesRegex(
             TypeError,
-            "Wrong argument type for gate `h`, got <class 'int'> but expected "
+            "Wrong argument type for gate `H`, got <class 'int'> but expected "
             "<class 'opensquirrel.squirrel_ir.Qubit'>",
         ):
-            builder.h(0)
+            builder.H(0)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import math
 from typing import Tuple
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import ry, rz
+from opensquirrel.default_gates import Ry, Rz
 from opensquirrel.identity_filter import filter_out_identities
 from opensquirrel.replacer import Decomposer
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
@@ -19,7 +19,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float])
 
     Returns:
         A triple (theta1, theta2, theta3) corresponding to the decomposition of the
-        arbitrary Bloch sphere rotation into U = rz(theta3) ry(theta2) rz(theta1)
+        arbitrary Bloch sphere rotation into U = Rz(theta3) Ry(theta2) Rz(theta1)
 
     """
     nx, ny, nz = axis
@@ -82,9 +82,9 @@ class ZYZDecomposer(Decomposer):
 
         theta1, theta2, theta3 = get_zyz_decomposition_angles(g.angle, g.axis)
 
-        z1 = rz(g.qubit, Float(theta1))
-        y = ry(g.qubit, Float(theta2))
-        z2 = rz(g.qubit, Float(theta3))
+        z1 = Rz(g.qubit, Float(theta1))
+        y = Ry(g.qubit, Float(theta2))
+        z2 = Rz(g.qubit, Float(theta3))
 
         # Note: written like this, the decomposition doesn't preserve the global phase, which is fine
         # since the global phase is a physically irrelevant artifact of the mathematical

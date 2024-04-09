@@ -4,7 +4,7 @@ from typing import Tuple
 import numpy as np
 
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.default_gates import rz, x90
+from opensquirrel.default_gates import X90, Rz
 from opensquirrel.replacer import Decomposer
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Qubit, SquirrelIR
 
@@ -46,16 +46,16 @@ class McKayDecomposer(Decomposer):
         decomposed_g = []
 
         if abs(lam) > ATOL:
-            decomposed_g.append(rz(g.qubit, Float(lam)))
+            decomposed_g.append(Rz(g.qubit, Float(lam)))
 
-        decomposed_g.append(x90(g.qubit))
+        decomposed_g.append(X90(g.qubit))
 
         if abs(theta) > ATOL:
-            decomposed_g.append(rz(g.qubit, Float(theta)))
+            decomposed_g.append(Rz(g.qubit, Float(theta)))
 
-        decomposed_g.append(x90(g.qubit))
+        decomposed_g.append(X90(g.qubit))
 
         if abs(phi) > ATOL:
-            decomposed_g.append(rz(g.qubit, Float(phi)))
+            decomposed_g.append(Rz(g.qubit, Float(phi)))
 
         return decomposed_g
