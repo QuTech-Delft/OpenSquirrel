@@ -88,13 +88,52 @@ Rz qreg[1], 3.1415927
                 version 3.0
 
                 qubit[3] qreg
-                X qreg[0]
-                Ry qreg[1], 2.34
-                CNOT qreg[0], qreg[1]
-                measure qreg[0, 2]
+
+                Ry qreg[2], 2.34
+                Rz qreg[0], 1.5707963
+                Ry qreg[0], -0.2
+                CNOT qreg[1], qreg[0]
+                Rz qreg[0], 1.5789
+                CNOT qreg[1], qreg[0]
+                Rz qreg[1], 2.5707963
+                measure qreg[0,2]
             """,
             use_libqasm=True,
         )
+        myCircuit.merge_single_qubit_gates()
+        myCircuit.decompose(decomposer=McKayDecomposer)
+        self.assertEqual(
+            str(myCircuit),
+            """version 3.0
+
+qubit[3] qreg
+
+Rz qreg[0], 1.5707963
+X90 qreg[0]
+Rz qreg[0], 2.9415927
+X90 qreg[0]
+Rz qreg[0], 3.1415927
+CNOT qreg[1], qreg[0]
+Rz qreg[0], -2.3521427
+X90 qreg[0]
+Rz qreg[0], 3.1415927
+X90 qreg[0]
+Rz qreg[0], 0.78945
+CNOT qreg[1], qreg[0]
+Rz qreg[2], 3.1415927
+X90 qreg[2]
+Rz qreg[2], 0.80159265
+X90 qreg[2]
+Rz qreg[1], -1.8561945
+X90 qreg[1]
+Rz qreg[1], 3.1415927
+X90 qreg[1]
+Rz qreg[1], 1.2853981
+measure qreg[0]
+measure qreg[2]
+""",
+        )
+
 
     def test_qi(self):
         myCircuit = Circuit.from_string(
@@ -123,7 +162,6 @@ Rz qreg[1], 3.1415927
             Rz q[1], 2.5707963
             CR q[2], q[3], 2.123
             Ry q[1], -1.5707963
-
             """
         )
 

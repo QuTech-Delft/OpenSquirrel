@@ -72,7 +72,6 @@ class Circuit:
                 Note: those two separate implementations may diverge and libqasm should be taken as reference.
 
         """
-        print(use_libqasm)
         if use_libqasm:
             libqasm_ir_creator = LibqasmIRCreator(
                 gate_set=gate_set,

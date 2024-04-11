@@ -103,19 +103,26 @@ class Statement(IRNode, ABC):
 
 class Measure(Statement, ABC):
     generator: Optional[Callable[..., "Measure"]] = None
+    arguments: Optional[Tuple[Expression, ...]] = None
 
     def __init__(
         self,
         qubit: Qubit,
         axis: Tuple[float, float, float],
         generator=None,
+        arguments=None,
     ):
         self.generator = generator
+        self.arguments = arguments
         self.qubit: Qubit = qubit
         self.axis = normalize_axis(np.array(axis).astype(np.float64))
 
     def __repr__(self):
         return f"Measure({self.qubit}, axis={self.axis})"
+
+    @property
+    def name(self) -> Optional[str]:
+        return self.generator.__name__ if self.generator else "<abstract_measurement>"
 
     def __eq__(self, other):
         if not isinstance(other, Measure):
