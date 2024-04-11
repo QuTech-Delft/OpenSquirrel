@@ -5,10 +5,10 @@ import unittest
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.decompose.cnot_decomposer import CNOTDecomposer
-from opensquirrel.default_gates import *
-from opensquirrel.export.export_format import ExportFormat
 from opensquirrel.decompose.mckay_decomposer import McKayDecomposer
 from opensquirrel.decompose.zyz_decomposer import ZYZDecomposer
+from opensquirrel.default_gates import *
+from opensquirrel.export.export_format import ExportFormat
 
 
 class IntegrationTest(unittest.TestCase):

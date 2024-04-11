@@ -1,8 +1,8 @@
 from math import atan2, cos, pi, sin, sqrt
 
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.default_gates import X90, Rz
 from opensquirrel.decompose.replacer import Decomposer
+from opensquirrel.default_gates import X90, Rz
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
 
 

@@ -4,14 +4,14 @@ import numpy as np
 
 import opensquirrel.parse.antlr.squirrel_ir_from_string
 from opensquirrel import circuit_matrix_calculator
-from opensquirrel.merge import merger
 from opensquirrel.decompose import mckay_decomposer, replacer
+from opensquirrel.decompose.replacer import Decomposer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
 from opensquirrel.export import quantify_scheduler_exporter, writer
 from opensquirrel.export.export_format import ExportFormat
+from opensquirrel.merge import merger
 from opensquirrel.parse.libqasm.libqasm_ir_creator import LibqasmIRCreator
-from opensquirrel.decompose.replacer import Decomposer
 from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
 
 
