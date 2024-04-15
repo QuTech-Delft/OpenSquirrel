@@ -18,15 +18,13 @@ class GateLibrary(OperationLibrary):
 
 
 class MeasurementLibrary(OperationLibrary):
-    def __init__(self, measurement_set, measurement_aliases):
+    def __init__(self, measurement_set):
         self.measurement_set = measurement_set
-        self.measurement_aliases = measurement_aliases
 
     def get_measurement_f(self, measurement_name: str):
         try:
             generator_f = next(f for f in self.measurement_set if f.__name__ == measurement_name)
+            return generator_f
         except StopIteration:
-            if measurement_name not in self.measurement_aliases:
-                raise Exception(f"Unknown measurement `{measurement_name}`")
-            generator_f = self.measurement_aliases[measurement_name]
-        return generator_f
+            raise Exception(f"Unknown measurement `{measurement_name}`")
+
