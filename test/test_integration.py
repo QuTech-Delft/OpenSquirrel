@@ -134,6 +134,72 @@ measure qreg[2]
 """,
         )
 
+    def test_consecutive_measurements(self):
+        myCircuit = Circuit.from_string(
+            """
+                version 3.0
+
+                qubit[3] qreg
+
+                H qreg[0]
+                H qreg[1]
+                H qreg[2]
+                measure qreg[0]
+                measure qreg[1]
+                measure qreg[2]
+            """
+        )
+        myCircuit.merge_single_qubit_gates()
+        myCircuit.decompose(decomposer=McKayDecomposer)
+        self.assertEqual(
+            str(myCircuit),
+            """version 3.0
+
+qubit[3] qreg
+
+X90 qreg[0]
+Rz qreg[0], 1.5707963
+X90 qreg[0]
+X90 qreg[1]
+Rz qreg[1], 1.5707963
+X90 qreg[1]
+X90 qreg[2]
+Rz qreg[2], 1.5707963
+X90 qreg[2]
+measure qreg[0]
+measure qreg[1]
+measure qreg[2]
+""",
+        )
+
+    def test_measure_order(self):
+        myCircuit = Circuit.from_string(
+            """
+                version 3.0
+
+                qubit[2] qreg
+
+                Rz qreg[1], -2.3561945
+                Rz qreg[1], 1.5707963
+                measure qreg[1,0]
+            """
+        )
+        myCircuit.merge_single_qubit_gates()
+        myCircuit.decompose(decomposer=McKayDecomposer)
+        output = str(myCircuit)
+        expected = """version 3.0
+
+qubit[2] qreg
+
+Rz qreg[1], 2.7488936
+X90 qreg[1]
+Rz qreg[1], 3.1415927
+X90 qreg[1]
+Rz qreg[1], -0.3926991
+measure qreg[1]
+measure qreg[0]
+"""
+        self.assertEqual(output, expected)
 
     def test_qi(self):
         myCircuit = Circuit.from_string(

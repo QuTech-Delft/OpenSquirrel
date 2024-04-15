@@ -1,8 +1,8 @@
-class OperationLibrary:
+class InstructionLibrary:
     pass
 
 
-class GateLibrary(OperationLibrary):
+class GateLibrary(InstructionLibrary):
     def __init__(self, gate_set, gate_aliases):
         self.gate_set = gate_set
         self.gate_aliases = gate_aliases
@@ -17,7 +17,7 @@ class GateLibrary(OperationLibrary):
         return generator_f
 
 
-class MeasurementLibrary(OperationLibrary):
+class MeasurementLibrary(InstructionLibrary):
     def __init__(self, measurement_set):
         self.measurement_set = measurement_set
 
@@ -27,4 +27,3 @@ class MeasurementLibrary(OperationLibrary):
             return generator_f
         except StopIteration:
             raise Exception(f"Unknown measurement `{measurement_name}`")
-

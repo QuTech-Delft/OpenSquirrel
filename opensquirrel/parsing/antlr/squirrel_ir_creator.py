@@ -1,10 +1,10 @@
 import inspect
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
-from opensquirrel.operation_library import GateLibrary, MeasurementLibrary
+from opensquirrel.default_measurements import default_measurement_set
+from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
 from opensquirrel.parsing.antlr.generated import CQasm3Visitor
-from opensquirrel.squirrel_ir import Float, Int, Qubit, Bit, SquirrelIR
+from opensquirrel.squirrel_ir import Float, Int, Qubit, SquirrelIR
 
 
 class SquirrelIRCreator(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Visitor):
@@ -19,10 +19,9 @@ class SquirrelIRCreator(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Vis
         gate_set=default_gate_set,
         gate_aliases=default_gate_aliases,
         measurement_set=default_measurement_set,
-        measurement_aliases=default_measurement_aliases,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasurementLibrary.__init__(self, measurement_set, measurement_aliases)
+        MeasurementLibrary.__init__(self, measurement_set)
         self.squirrel_ir = None
 
     def visitProg(self, ctx):
@@ -79,24 +78,13 @@ class SquirrelIRCreator(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Vis
     def visitQubit(self, ctx):
         return [Qubit(int(str(ctx.INT())))]
 
-    def visitBit(self, ctx):
-        return [Bit(int(str(ctx.INT())))]
-
     def visitQubits(self, ctx):
         return list(map(Qubit, map(int, map(str, ctx.INT()))))
-
-    def visitBits(self, ctx):
-        return list(map(Bit, map(int, map(str, ctx.INT()))))
 
     def visitQubitRange(self, ctx):
         first_qubit_index = int(str(ctx.INT(0)))
         last_qubit_index = int(str(ctx.INT(1)))
         return list(map(Qubit, range(first_qubit_index, last_qubit_index + 1)))
-
-    def visitBitRange(self, ctx):
-        first_bit_index = int(str(ctx.INT(0)))
-        last_bit_index = int(str(ctx.INT(1)))
-        return list(map(Bit, range(first_bit_index, last_bit_index + 1)))
 
     def visitFloatLiteral(self, ctx):
         return Float(float(str(ctx.FLOAT())))

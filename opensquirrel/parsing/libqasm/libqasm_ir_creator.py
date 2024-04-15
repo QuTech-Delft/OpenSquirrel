@@ -4,8 +4,8 @@ import itertools
 import cqasm.v3x as cqasm
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
-from opensquirrel.operation_library import GateLibrary, MeasurementLibrary
+from opensquirrel.default_measurements import default_measurement_set
+from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
 from opensquirrel.squirrel_ir import Float, Int, Qubit, SquirrelIR
 
 _cqasm_type_to_squirrel_type = {
@@ -21,10 +21,9 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
         gate_set=default_gate_set,
         gate_aliases=default_gate_aliases,
         measurement_set=default_measurement_set,
-        measurement_aliases=default_measurement_aliases,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasurementLibrary.__init__(self, measurement_set, measurement_aliases)
+        MeasurementLibrary.__init__(self, measurement_set)
         self.squirrel_ir = None
 
     @staticmethod

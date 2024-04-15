@@ -1030,8 +1030,6 @@ class CQasm3Parser(Parser):
 
         def accept(self, visitor: ParseTreeVisitor):
             if hasattr(visitor, "visitGateApplication"):
-                if "measure" in str(self.children[0]).lower():
-                    return visitor.visitMeasurementApplication(self)
                 return visitor.visitGateApplication(self)
             else:
                 return visitor.visitChildren(self)

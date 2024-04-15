@@ -59,7 +59,7 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
     while statement_index < len(squirrel_ir.statements):
         statement = squirrel_ir.statements[statement_index]
 
-        if not isinstance(statement, Gate) and not isinstance(statement,Measure):
+        if not isinstance(statement, Gate) and not isinstance(statement, Measure):
             # Skip, since statement is not a gate or measurement
             statement_index += 1
             continue
@@ -74,7 +74,6 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
             del squirrel_ir.statements[statement_index]
             continue
 
-
         for qubit_operand in statement.get_qubit_operands():
             if not accumulators_per_qubit[qubit_operand].is_identity():
                 squirrel_ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
@@ -87,4 +86,3 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
             squirrel_ir.statements.append(accumulated_bloch_sphere_rotation)
 
     squirrel_ir.statements = sorted(squirrel_ir.statements, key=lambda obj: isinstance(obj, Measure))
-

@@ -1,4 +1,4 @@
-from opensquirrel.squirrel_ir import Comment, Float, Gate, Measure, Int, Qubit, SquirrelIR, SquirrelIRVisitor
+from opensquirrel.squirrel_ir import Comment, Float, Gate, Int, Measure, Qubit, SquirrelIR, SquirrelIRVisitor
 
 
 class _WriterImpl(SquirrelIRVisitor):
@@ -19,7 +19,7 @@ class _WriterImpl(SquirrelIRVisitor):
 
     def visit_measure(self, measurement: Measure):
         formatted_args = (arg.accept(self) for arg in measurement.arguments)
-        self.output += f"{measurement.name} {', '.join(formatted_args)}\n"
+        self.output += f"{measurement.name} {measurement.arguments[0].accept(self)}\n"
 
     def visit_gate(self, gate: Gate):
         if gate.is_anonymous:

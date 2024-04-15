@@ -5,7 +5,7 @@ import numpy as np
 import opensquirrel.parsing.antlr.squirrel_ir_from_string
 from opensquirrel import circuit_matrix_calculator, mckay_decomposer, merger, replacer, writer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
+from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.export import quantify_scheduler_exporter
 from opensquirrel.export_format import ExportFormat
 from opensquirrel.parsing.libqasm.libqasm_ir_creator import LibqasmIRCreator
@@ -50,7 +50,6 @@ class Circuit:
         gate_set: [Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: [Callable[..., Measure]] = default_measurement_set,
-        measurement_aliases: Dict[str, Callable[..., Measure]] = default_measurement_aliases,
         use_libqasm: bool = True,
     ):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
@@ -76,18 +75,13 @@ class Circuit:
             libqasm_ir_creator = LibqasmIRCreator(
                 gate_set=gate_set,
                 gate_aliases=gate_aliases,
-                measurement_aliases=measurement_aliases,
                 measurement_set=measurement_set,
             )
             return Circuit(libqasm_ir_creator.squirrel_ir_from_string(cqasm3_string))
 
         return Circuit(
             opensquirrel.parsing.antlr.squirrel_ir_from_string.squirrel_ir_from_string(
-                cqasm3_string,
-                gate_set=gate_set,
-                gate_aliases=gate_aliases,
-                measurement_set=measurement_set,
-                measurement_aliases=measurement_aliases,
+                cqasm3_string, gate_set=gate_set, gate_aliases=gate_aliases, measurement_set=measurement_set
             )
         )
 

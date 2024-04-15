@@ -43,8 +43,7 @@ class _QubitReIndexer(SquirrelIRVisitor):
         return result
 
     def visit_measurement_operation(self, m: Measure):
-        result = Measure(qubit=Qubit(self.mappings.index(m.qubit)), axis=m.axis)
-        return result
+        raise NotImplementedError("Cannot replace measure operation with list of gates.")
 
 
 def check_valid_replacement(statement, replacement):

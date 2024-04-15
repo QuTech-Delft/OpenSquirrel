@@ -24,9 +24,6 @@ class SquirrelIRVisitor(ABC):
     def visit_qubit(self, qubit: "Qubit"):
         pass
 
-    def visit_bit(self, bit: "Bit"):
-        pass
-
     def visit_gate(self, gate: "Gate"):
         pass
 
@@ -81,20 +78,6 @@ class Qubit(Expression):
 
     def accept(self, visitor: SquirrelIRVisitor):
         return visitor.visit_qubit(self)
-
-
-@dataclass
-class Bit(Expression):
-    index: int
-
-    def __hash__(self):
-        return hash(self.index)
-
-    def __repr__(self):
-        return f"Bit[{self.index}]"
-
-    def accept(self, visitor: SquirrelIRVisitor):
-        return visitor.visit_bit(self)
 
 
 class Statement(IRNode, ABC):
@@ -348,8 +331,6 @@ class SquirrelIR:
         self.number_of_qubits: int = number_of_qubits
         self.statements: List[Statement] = []
         self.qubit_register_name: str = qubit_register_name
-        self.number_of_bits: int = number_of_qubits
-        self.bit_register_name: str = "b"
 
     def add_gate(self, gate: Gate):
         self.statements.append(gate)
@@ -365,12 +346,6 @@ class SquirrelIR:
             return False
 
         if self.qubit_register_name != other.qubit_register_name:
-            return False
-
-        if self.number_of_bits != other.number_of_qubits:
-            return False
-
-        if self.bit_register_name != other.bit_register_name:
             return False
 
         return self.statements == other.statements

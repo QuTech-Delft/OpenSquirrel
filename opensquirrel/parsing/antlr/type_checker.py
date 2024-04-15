@@ -1,10 +1,10 @@
 import inspect
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
-from opensquirrel.operation_library import GateLibrary, MeasurementLibrary
+from opensquirrel.default_measurements import default_measurement_set
+from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
 from opensquirrel.parsing.antlr.generated import CQasm3Visitor
-from opensquirrel.squirrel_ir import Float, Int, Qubit, Bit
+from opensquirrel.squirrel_ir import Float, Int, Qubit
 
 
 class TypeChecker(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Visitor):
@@ -19,10 +19,9 @@ class TypeChecker(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Visitor):
         gate_set=default_gate_set,
         gate_aliases=default_gate_aliases,
         measurement_set=default_measurement_set,
-        measurement_aliases=default_measurement_aliases,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasurementLibrary.__init__(self, measurement_set, measurement_aliases)
+        MeasurementLibrary.__init__(self, measurement_set)
         self.qubit_register_name = None
         self.bit_register_name = None
 
@@ -33,9 +32,6 @@ class TypeChecker(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Visitor):
 
     def visitQubitRegisterDeclaration(self, ctx):
         self.qubit_register_name = str(ctx.ID())
-
-    def visitBitRegisterDeclaration(self, ctx):
-        self.bit_register_name = str(ctx.ID())
 
     def visitGateApplication(self, ctx):
         # Check that the types of the operands match the gate generator function.
@@ -83,35 +79,17 @@ class TypeChecker(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Visitor):
 
         return Qubit
 
-    def visitBit(self, ctx):
-        if str(ctx.ID()) != self.bit_register_name:
-            raise Exception(f"Classical bit register {str(ctx.ID())} not declared")
-
-        return Bit
-
     def visitQubits(self, ctx):
         if str(ctx.ID()) != self.qubit_register_name:
             raise Exception(f"Qubit register {str(ctx.ID())} not declared")
 
         return Qubit
 
-    def visitBits(self, ctx):
-        if str(ctx.ID()) != self.bit_register_name:
-            raise Exception(f"Classical bit register {str(ctx.ID())} not declared")
-
-        return Bit
-
     def visitQubitRange(self, ctx):
         if str(ctx.ID()) != self.qubit_register_name:
             raise Exception(f"Qubit register {str(ctx.ID())} not declared")
 
         return Qubit
-
-    def visitBitRange(self, ctx):
-        if str(ctx.ID()) != self.bit_register_name:
-            raise Exception(f"Bit register {str(ctx.ID())} not declared")
-
-        return Bit
 
     def visitIntLiteral(self, ctx):
         return Int
