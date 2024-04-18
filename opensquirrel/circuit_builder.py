@@ -3,7 +3,7 @@ from typing import Callable, Dict
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.gate_library import GateLibrary
+from opensquirrel.instruction_library import GateLibrary
 from opensquirrel.squirrel_ir import Comment, Gate, Qubit, SquirrelIR
 
 
