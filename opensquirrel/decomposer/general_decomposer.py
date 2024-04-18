@@ -7,7 +7,6 @@ from opensquirrel.squirrel_ir import (
     ControlledGate,
     Gate,
     MatrixGate,
-    Measure,
     Qubit,
     SquirrelIR,
     SquirrelIRVisitor,
@@ -42,10 +41,6 @@ class _QubitReIndexer(SquirrelIRVisitor):
         result = ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
         return result
 
-    def visit_measurement_operation(self, m: Measure):
-        result = Measure(qubit=Qubit(self.mappings.index(m.qubit)), axis=m.axis)
-        return result
-
 
 def check_valid_replacement(statement, replacement):
     expected_qubit_operands = statement.get_qubit_operands()
@@ -53,7 +48,7 @@ def check_valid_replacement(statement, replacement):
     [replacement_qubit_operands.update(g.get_qubit_operands()) for g in replacement]
 
     if set(expected_qubit_operands) != replacement_qubit_operands:
-        raise Exception(f"Replacement for gate {statement.name} does not seem to operate on the right qubits")
+        raise ValueError(f"Replacement for gate {statement.name} does not seem to operate on the right qubits")
 
     from opensquirrel.utils.matrix_expander import get_matrix_after_qubit_remapping
 
@@ -66,7 +61,7 @@ def check_valid_replacement(statement, replacement):
 
 def decompose(squirrel_ir: SquirrelIR, decomposer: Decomposer):
     """Applies `decomposer` to every gate in the circuit, replacing each gate by the output of `decomposer`.
-    When `decomposer` decides to not decompose a gate, it needs to return a list with the intact gate as single element.
+    When `decomposer` decides to not decomposer a gate, it needs to return a list with the intact gate as single element.
     """
     statement_index = 0
     while statement_index < len(squirrel_ir.statements):

@@ -4,8 +4,8 @@ import itertools
 import cqasm.v3x as cqasm
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
-from opensquirrel.operation_library import GateLibrary, MeasurementLibrary
+from opensquirrel.default_measurements import default_measurement_set
+from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
 from opensquirrel.squirrel_ir import Float, Int, Qubit, SquirrelIR
 
 _cqasm_type_to_squirrel_type = {
@@ -21,10 +21,9 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
         gate_set=default_gate_set,
         gate_aliases=default_gate_aliases,
         measurement_set=default_measurement_set,
-        measurement_aliases=default_measurement_aliases,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasurementLibrary.__init__(self, measurement_set, measurement_aliases)
+        MeasurementLibrary.__init__(self, measurement_set)
         self.squirrel_ir = None
 
     @staticmethod
@@ -35,11 +34,13 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
     def _get_literal(cqasm_literal_expression):
         assert type(cqasm_literal_expression) in [cqasm.values.ConstInt, cqasm.values.ConstFloat]
 
-        if type(cqasm_literal_expression) == cqasm.values.ConstInt:
+        if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
             return Int(cqasm_literal_expression.value)
 
-        if type(cqasm_literal_expression) == cqasm.values.ConstFloat:
+        if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
             return Float(cqasm_literal_expression.value)
+
+        return None
 
     @staticmethod
     def _check_cqasm_type(cqasm_expression, expected_squirrel_type):
@@ -89,7 +90,7 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
         if squirrel_type == Int:
             return "i"
 
-        raise Exception("Unsupported type")
+        raise TypeError("Unsupported type")
 
     def _create_analyzer(self):
         without_defaults = True

@@ -1,5 +1,4 @@
-from math import acos, atan2, cos, pi, sin, sqrt
-from typing import List, Optional
+from math import acos, cos, sin
 
 import numpy as np
 
@@ -14,7 +13,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
     Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
     """
-    assert a.qubit == b.qubit, "Cannot merge two BlochSphereRotation's on different qubits"
+    assert a.qubit == b.qubit, "Cannot merger two BlochSphereRotation's on different qubits"
 
     acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
     # This fixes float approximations like 1.0000000000002 which acos doesn't like.
@@ -59,8 +58,8 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
     while statement_index < len(squirrel_ir.statements):
         statement = squirrel_ir.statements[statement_index]
 
-        if not isinstance(statement, Gate) or isinstance(statement, Measure):
-            # Skip, since statement is not a gate
+        if not isinstance(statement, Gate) and not isinstance(statement, Measure):
+            # Skip, since statement is not a gate or measurement
             statement_index += 1
             continue
 
@@ -84,3 +83,5 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
             squirrel_ir.statements.append(accumulated_bloch_sphere_rotation)
+
+    squirrel_ir.statements = sorted(squirrel_ir.statements, key=lambda obj: isinstance(obj, Measure))

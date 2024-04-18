@@ -1,9 +1,7 @@
 import unittest
 
-import numpy as np
-
 from opensquirrel import circuit_matrix_calculator
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase
+from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 
 
 class IREqualityTestBase(unittest.TestCase):

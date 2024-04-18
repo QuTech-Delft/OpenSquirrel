@@ -3,9 +3,7 @@ name = "opensquirrel"
 version = "0.0.5"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
-    "Pablo Le Henaff <p.lehenaff@tudelft.nl>",
-    "Roberto Turrado Camblor <r.turradocamblor@tudelft.nl>",
-    "Chris Elenbaas <chris.elenbaas@tno.nl>"
+    "Quantum Inspire <support@quantum-inspire.com>"
 ]
 license = "Apache-2.0"
 readme = "README.md"
@@ -37,7 +35,31 @@ numpy = [
     { version = "1.24", python = "<3.9" },
     { version = "^1.26", python = "^3.9" },
 ]
-libqasm = "0.6.0"
+libqasm = "0.6.3"
+
+[tool.poetry.group.dev.dependencies]
+black = ">=23.11,<25.0"
+coverage = {extras = ["toml"], version = "^7.3.2"}
+isort = "^5.11.4"
+pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
+pytest-cov = ">=4.1,<6.0"
+mypy = "^1.7.0"
+pylint = "^3.1.0"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = {extras = ["python"], version = "^1.5.3"}
+mkdocstrings = {extras = ["python"], version = "^0.24.0"}
+mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
+mkdocs-material = "^9.4.12"
+pymdown-extensions = "^10.7.1"
+
+[tool.poetry.group.export]
+optional = true
+
+[tool.poetry.group.export.dependencies]
 pyqt5-qt5=[
     # This package is a transitive dependency of quantify-scheduler.
     # The latest version is not portable, therefore it is necessary to pin an older version
@@ -45,24 +67,11 @@ pyqt5-qt5=[
     { version = "5.15.2", python = "<3.10" },
 ]
 quantify-scheduler=[
-    # quantify-scheduler is not released for newer Python versions.
-    # Its presence is only required for exporting opensquirrel circuits to the
-    # Schedule format. Other functionalities do not need it.
+    # quantify-scheduler is not released for newer Python versions, i.e. > 3.9.
+    # Its is only required for exporting opensquirrel circuits to the
+    # Schedule format and testing this functionality.
     { version = "^0.18.0", python = "<3.10" },
 ]
-
-[tool.poetry.group.dev.dependencies]
-black = ">=23.11,<25.0"
-coverage = {extras = ["toml"], version = "^7.3.2"}
-isort = "^5.11.4"
-mkdocs = {extras = ["python"], version = "^1.5.3"}
-mkdocstrings = {extras = ["python"], version = "^0.24.0"}
-mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
-mkdocs-material = "^9.4.12"
-pymdown-extensions = "^10.7.1"
-pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
-pytest-cov = ">=4.1,<6.0"
-mypy = "^1.7.0"
 
 [tool.pytest.ini_options]
 addopts = "-v --cov --cov-report term-missing:skip-covered --cov-report xml"
@@ -94,6 +103,15 @@ line-length = 120
 
 [tool.mypy]
 ignore_missing_imports = true
+
+[tool.pylint]
+ignore = "parsing"
+max-line-length = 120
+disable = ["C0103", "C0114", "C0115", "C0116"]
+           # C0103: name formatting
+           # C0114: missing module docstring
+           # C0115: missing class docstring
+           # C0116: missing function docstring
 
 [build-system]
 requires = ["poetry-core"]

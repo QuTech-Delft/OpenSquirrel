@@ -2,10 +2,10 @@ import math
 from typing import Tuple
 
 from opensquirrel.common import ATOL
+from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Ry, Rz
-from opensquirrel.identity_filter import filter_out_identities
-from opensquirrel.replacer import Decomposer
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
+from opensquirrel.utils.identity_filter import filter_out_identities
 
 
 def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float]) -> Tuple[float, float, float]:
@@ -77,7 +77,7 @@ class ZYZDecomposer(Decomposer):
     @staticmethod
     def decompose(g: Gate) -> [Gate]:
         if not isinstance(g, BlochSphereRotation):
-            # Only decompose single-qubit gates.
+            # Only decomposer single-qubit gates.
             return [g]
 
         theta1, theta2, theta3 = get_zyz_decomposition_angles(g.angle, g.axis)
