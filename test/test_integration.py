@@ -4,11 +4,11 @@ import importlib.util
 import unittest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.decompose.cnot_decomposer import CNOTDecomposer
-from opensquirrel.decompose.mckay_decomposer import McKayDecomposer
-from opensquirrel.decompose.zyz_decomposer import ZYZDecomposer
+from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
+from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.decomposer.zyz_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import *
-from opensquirrel.export.export_format import ExportFormat
+from opensquirrel.exporter.export_format import ExportFormat
 
 
 class IntegrationTest(unittest.TestCase):
@@ -43,7 +43,7 @@ class IntegrationTest(unittest.TestCase):
             ],
         )
 
-        # Do 1q-gate fusion and decompose with McKay decomposition.
+        # Do 1q-gate fusion and decomposer with McKay decomposition.
 
         myCircuit.merge_single_qubit_gates()
 

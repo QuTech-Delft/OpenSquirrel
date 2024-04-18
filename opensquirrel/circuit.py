@@ -3,14 +3,14 @@ from typing import Callable, Dict
 import numpy as np
 
 from opensquirrel import circuit_matrix_calculator
-from opensquirrel.decompose import replacer
-from opensquirrel.decompose.replacer import Decomposer
+from opensquirrel.decomposer import general_decomposer
+from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
-from opensquirrel.export import quantify_scheduler_exporter, writer
-from opensquirrel.export.export_format import ExportFormat
-from opensquirrel.merge import merger
-from opensquirrel.parse.libqasm.libqasm_ir_creator import LibqasmIRCreator
+from opensquirrel.exporter import quantify_scheduler_exporter, writer
+from opensquirrel.exporter.export_format import ExportFormat
+from opensquirrel.merger import general_merger
+from opensquirrel.parser.libqasm.libqasm_ir_creator import LibqasmIRCreator
 from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
 
 
@@ -26,7 +26,7 @@ class Circuit:
         <BLANKLINE>
         h q[0]
         <BLANKLINE>
-        >>> c.decompose(decomposer=mckay_decomposer.McKayDecomposer)
+        >>> c.decomposer(decomposer=mckay_decomposer.McKayDecomposer)
         >>> c
         version 3.0
         <BLANKLINE>
@@ -89,11 +89,11 @@ class Circuit:
         Gates obtained from merging other gates become anonymous gates.
 
         """
-        merger.merge_single_qubit_gates(self.squirrel_ir)
+        general_merger.merge_single_qubit_gates(self.squirrel_ir)
 
     def decompose(self, decomposer: Decomposer):
         """Generic decomposition pass. It applies the given decomposer function to every gate in the circuit."""
-        replacer.decompose(self.squirrel_ir, decomposer)
+        general_decomposer.decompose(self.squirrel_ir, decomposer)
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.
@@ -101,7 +101,7 @@ class Circuit:
         and returns the decomposition as a list of gates.
 
         """
-        replacer.replace(self.squirrel_ir, gate_generator, f)
+        general_decomposer.replace(self.squirrel_ir, gate_generator, f)
 
     def test_get_circuit_matrix(self) -> np.ndarray:
         """Get the (large) unitary matrix corresponding to the circuit.
@@ -120,4 +120,4 @@ class Circuit:
     def export(self, fmt: ExportFormat = None) -> None:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             return quantify_scheduler_exporter.export(self.squirrel_ir)
-        raise ValueError("Unknown export format")
+        raise ValueError("Unknown exporter format")

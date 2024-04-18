@@ -14,8 +14,8 @@ class CircuitBuilder(GateLibrary):
     Mainly here to allow for Qiskit-style circuit construction:
 
     Example:
-        >>> CircuitBuilder(number_of_qubits=3).h(Qubit(0)).cnot(Qubit(0), Qubit(1)).cnot(Qubit(0), \
-        Qubit(2)).to_circuit()
+        >>> CircuitBuilder(number_of_qubits=3).h(Qubit(0)).cnot(Qubit(0), Qubit(1)).cnot(Qubit(0), Qubit(2)). \
+        to_circuit()
         version 3.0
         <BLANKLINE>
         qubit[3] q

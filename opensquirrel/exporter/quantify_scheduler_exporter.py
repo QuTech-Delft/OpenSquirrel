@@ -19,7 +19,7 @@ except Exception as e:
 
 
 _unsupported_gates_exception = Exception(
-    "Cannot export circuit: it contains unsupported gates - decompose them to the "
+    "Cannot exporter circuit: it contains unsupported gates - decomposer them to the "
     "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
 )
 

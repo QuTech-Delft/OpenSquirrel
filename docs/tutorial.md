@@ -515,7 +515,7 @@ Here is what our final ZYZ decomposition looks like:
 
 ```python
 from opensquirrel.squirrel_ir import Gate, BlochSphereRotation
-from opensquirrel.decompose.replacer import Decomposer
+from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import rz, ry
 
 

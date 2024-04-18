@@ -2,8 +2,8 @@ import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
 from opensquirrel.default_gates import *
-from opensquirrel.merge import merger
-from opensquirrel.merge.merger import compose_bloch_sphere_rotations
+from opensquirrel.merger import general_merger
+from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
 from opensquirrel.squirrel_ir import Float, Qubit, SquirrelIR
 
 
@@ -31,7 +31,7 @@ class MergerTest(IREqualityTestBase):
         expected_ir = SquirrelIR(number_of_qubits=2, qubit_register_name="q")
         expected_ir.add_gate(Ry(Qubit(0), Float(1.2345)))
 
-        self.modify_ir_and_check(ir, action=merger.merge_single_qubit_gates, expected_ir=expected_ir)
+        self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
 
         # Check that when no fusion happens, generator and arguments of gates are preserved.
         self.assertEqual(ir.statements[0].generator, Ry)
@@ -45,7 +45,7 @@ class MergerTest(IREqualityTestBase):
 
         expected_ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
 
-        self.modify_ir_and_check(ir, action=merger.merge_single_qubit_gates, expected_ir=expected_ir)
+        self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
 
     def test_two_hadamards_different_qubits(self):
         ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
@@ -56,7 +56,7 @@ class MergerTest(IREqualityTestBase):
         expected_ir.add_gate(H(Qubit(0)))
         expected_ir.add_gate(H(Qubit(2)))
 
-        self.modify_ir_and_check(ir, action=merger.merge_single_qubit_gates, expected_ir=expected_ir)
+        self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
 
     def test_merge_different_qubits(self):
         ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
@@ -73,7 +73,7 @@ class MergerTest(IREqualityTestBase):
         expected_ir.add_gate(Rz(Qubit(1), Float(1.2345)))
         expected_ir.add_gate(Ry(Qubit(2), Float(4.234)))
 
-        self.modify_ir_and_check(ir, action=merger.merge_single_qubit_gates, expected_ir=expected_ir)
+        self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
 
         self.assertTrue(ir.statements[0].is_anonymous)  # When fusion happens, the resulting gate is anonymous.
         self.assertEqual(ir.statements[1].generator, Rz)  # Otherwise it keeps the same generator and arguments.
@@ -97,7 +97,7 @@ class MergerTest(IREqualityTestBase):
         expected_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
         expected_ir.add_gate(Ry(Qubit(0), Float(3.234)))
 
-        self.modify_ir_and_check(ir, action=merger.merge_single_qubit_gates, expected_ir=expected_ir)
+        self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
 
         self.assertTrue(ir.statements[0].is_anonymous)
         self.assertEqual(ir.statements[3].generator, Ry)

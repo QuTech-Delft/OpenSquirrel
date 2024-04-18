@@ -1,7 +1,7 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
-from opensquirrel.decompose.mckay_decomposer import McKayDecomposer
+from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.default_gates import *
 from opensquirrel.squirrel_ir import Float, Qubit
 

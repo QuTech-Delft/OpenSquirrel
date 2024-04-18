@@ -61,7 +61,7 @@ def check_valid_replacement(statement, replacement):
 
 def decompose(squirrel_ir: SquirrelIR, decomposer: Decomposer):
     """Applies `decomposer` to every gate in the circuit, replacing each gate by the output of `decomposer`.
-    When `decomposer` decides to not decompose a gate, it needs to return a list with the intact gate as single element.
+    When `decomposer` decides to not decomposer a gate, it needs to return a list with the intact gate as single element.
     """
     statement_index = 0
     while statement_index < len(squirrel_ir.statements):

@@ -6,7 +6,7 @@ import unittest.mock
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
-from opensquirrel.export import quantify_scheduler_exporter
+from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Qubit, SquirrelIR
 
 
@@ -18,11 +18,11 @@ class FloatEq(float):
 class MockedQuantifyScheduler:
     def __enter__(self):
         self.patch_qs = unittest.mock.patch(
-            "opensquirrel.export.quantify_scheduler_exporter.quantify_scheduler", create=True
+            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler", create=True
         )
 
         self.patch_qs_gates = unittest.mock.patch(
-            "opensquirrel.export.quantify_scheduler_exporter.quantify_scheduler_gates", create=True
+            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates", create=True
         )
 
         with contextlib.ExitStack() as stack:
@@ -68,7 +68,7 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
         squirrel_ir.add_gate(g)
 
         with MockedQuantifyScheduler():
-            with self.assertRaisesRegex(Exception, "Cannot export circuit: it contains unsupported gates"):
+            with self.assertRaisesRegex(Exception, "Cannot exporter circuit: it contains unsupported gates"):
                 quantify_scheduler_exporter.export(squirrel_ir)
 
     def test_gates_not_supported(self):
