@@ -3,7 +3,7 @@ from typing import Callable, Dict
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.operation_library import GateLibrary
+from opensquirrel.instruction_library import GateLibrary
 from opensquirrel.squirrel_ir import Comment, Gate, Qubit, SquirrelIR
 
 
@@ -14,7 +14,8 @@ class CircuitBuilder(GateLibrary):
     Mainly here to allow for Qiskit-style circuit construction:
 
     Example:
-        >>> CircuitBuilder(number_of_qubits=3).h(Qubit(0)).cnot(Qubit(0), Qubit(1)).cnot(Qubit(0), Qubit(2)).to_circuit()
+        >>> CircuitBuilder(number_of_qubits=3).h(Qubit(0)).cnot(Qubit(0), Qubit(1)).cnot(Qubit(0), \
+        Qubit(2)).to_circuit()
         version 3.0
         <BLANKLINE>
         qubit[3] q

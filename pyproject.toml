@@ -3,7 +3,7 @@ name = "opensquirrel"
 version = "0.0.5"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
-    "Quantum Inspire <support@quantum-inspire.com>",
+    "Quantum Inspire <support@quantum-inspire.com>"
 ]
 license = "Apache-2.0"
 readme = "README.md"
@@ -35,7 +35,7 @@ numpy = [
     { version = "1.24", python = "<3.9" },
     { version = "^1.26", python = "^3.9" },
 ]
-libqasm = "0.6.1"
+libqasm = "0.6.3"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23.11,<25.0"
@@ -79,7 +79,7 @@ asyncio_mode = "auto"
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/.tox/**", "opensquirrel/parse/antlr/generated/*"]
+omit = ["tests/*", "**/.tox/**", "opensquirrel/parsing/antlr/generated/*"]
 
 [tool.coverage.report]
 show_missing = true

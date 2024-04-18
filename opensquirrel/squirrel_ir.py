@@ -22,9 +22,6 @@ class SquirrelIRVisitor(ABC):
     def visit_qubit(self, qubit: "Qubit"):
         pass
 
-    def visit_bit(self, bit: "Bit"):
-        pass
-
     def visit_gate(self, gate: "Gate"):
         pass
 
@@ -81,39 +78,32 @@ class Qubit(Expression):
         return visitor.visit_qubit(self)
 
 
-@dataclass
-class Bit(Expression):
-    index: int
-
-    def __hash__(self):
-        return hash(self.index)
-
-    def __repr__(self):
-        return f"Bit[{self.index}]"
-
-    def accept(self, visitor: SquirrelIRVisitor):
-        return visitor.visit_bit(self)
-
-
 class Statement(IRNode, ABC):
     pass
 
 
 class Measure(Statement, ABC):
     generator: Optional[Callable[..., "Measure"]] = None
+    arguments: Optional[Tuple[Expression, ...]] = None
 
     def __init__(
         self,
         qubit: Qubit,
         axis: Tuple[float, float, float],
         generator=None,
+        arguments=None,
     ):
         self.generator = generator
+        self.arguments = arguments
         self.qubit: Qubit = qubit
         self.axis = normalize_axis(np.array(axis).astype(np.float64))
 
     def __repr__(self):
         return f"Measure({self.qubit}, axis={self.axis})"
+
+    @property
+    def name(self) -> Optional[str]:
+        return self.generator.__name__ if self.generator else "<abstract_measurement>"
 
     def __eq__(self, other):
         if not isinstance(other, Measure):
@@ -195,7 +185,7 @@ class BlochSphereRotation(Gate):
 
         if np.allclose(self.axis, other.axis):
             return abs(self.angle - other.angle) < ATOL
-        elif np.allclose(self.axis, -other.axis):
+        if np.allclose(self.axis, -other.axis):
             return abs(self.angle + other.angle) < ATOL
         return False
 
@@ -339,8 +329,6 @@ class SquirrelIR:
         self.number_of_qubits: int = number_of_qubits
         self.statements: List[Statement] = []
         self.qubit_register_name: str = qubit_register_name
-        self.number_of_bits: int = number_of_qubits
-        self.bit_register_name: str = "b"
 
     def add_gate(self, gate: Gate):
         self.statements.append(gate)
@@ -356,12 +344,6 @@ class SquirrelIR:
             return False
 
         if self.qubit_register_name != other.qubit_register_name:
-            return False
-
-        if self.number_of_bits != other.number_of_qubits:
-            return False
-
-        if self.bit_register_name != other.bit_register_name:
             return False
 
         return self.statements == other.statements

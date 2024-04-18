@@ -143,8 +143,8 @@ class MatrixExpander(SquirrelIRVisitor):
 
 def get_matrix(gate: Gate, number_of_qubits: int) -> np.ndarray:
     """
-    Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of qubits.
-    This can be used for, e.g.,
+    Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of
+    qubits. This can be used for, e.g.,
     - testing,
     - permuting the operands of multi-qubit gates,
     - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).

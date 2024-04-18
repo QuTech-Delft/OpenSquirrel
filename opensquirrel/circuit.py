@@ -2,12 +2,11 @@ from typing import Callable, Dict
 
 import numpy as np
 
-import opensquirrel.parse.antlr.squirrel_ir_from_string
 from opensquirrel import circuit_matrix_calculator
-from opensquirrel.decompose import mckay_decomposer, replacer
+from opensquirrel.decompose import replacer
 from opensquirrel.decompose.replacer import Decomposer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_aliases, default_measurement_set
+from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.export import quantify_scheduler_exporter, writer
 from opensquirrel.export.export_format import ExportFormat
 from opensquirrel.merge import merger
@@ -52,8 +51,6 @@ class Circuit:
         gate_set: [Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: [Callable[..., Measure]] = default_measurement_set,
-        measurement_aliases: Dict[str, Callable[..., Measure]] = default_measurement_aliases,
-        use_libqasm: bool = True,
     ):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -69,30 +66,14 @@ class Circuit:
             gate_set: an array of gate semantic functions. See default_gates for examples
             gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
             measurement_set: an array of measurement semantic functions. See default_measurements for examples
-            measurement_aliases: a dictionary of measure aliases, mapping strings to functions in the measurement set
-            use_libqasm: if True, use libqasm instead of build-in ANTLR parser.
-                Note: those two separate implementations may diverge and libqasm should be taken as reference.
 
         """
-        print(use_libqasm)
-        if use_libqasm:
-            libqasm_ir_creator = LibqasmIRCreator(
-                gate_set=gate_set,
-                gate_aliases=gate_aliases,
-                measurement_aliases=measurement_aliases,
-                measurement_set=measurement_set,
-            )
-            return Circuit(libqasm_ir_creator.squirrel_ir_from_string(cqasm3_string))
-
-        return Circuit(
-            opensquirrel.parsing.antlr.squirrel_ir_from_string.squirrel_ir_from_string(
-                cqasm3_string,
-                gate_set=gate_set,
-                gate_aliases=gate_aliases,
-                measurement_set=measurement_set,
-                measurement_aliases=measurement_aliases,
-            )
+        libqasm_ir_creator = LibqasmIRCreator(
+            gate_set=gate_set,
+            gate_aliases=gate_aliases,
+            measurement_set=measurement_set,
         )
+        return Circuit(libqasm_ir_creator.squirrel_ir_from_string(cqasm3_string))
 
     @property
     def number_of_qubits(self) -> int:
@@ -104,22 +85,22 @@ class Circuit:
 
     def merge_single_qubit_gates(self):
         """Merge all consecutive 1-qubit gates in the circuit.
-        Gates obtained from merging other gates become anonymous gates.
-        """
 
+        Gates obtained from merging other gates become anonymous gates.
+
+        """
         merger.merge_single_qubit_gates(self.squirrel_ir)
 
     def decompose(self, decomposer: Decomposer):
-        """Generic decomposition pass. It applies the given decomposer function
-        to every gate in the circuit."""
+        """Generic decomposition pass. It applies the given decomposer function to every gate in the circuit."""
         replacer.decompose(self.squirrel_ir, decomposer)
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.
         `f` is a callable that takes the arguments of the gate that is to be replaced
         and returns the decomposition as a list of gates.
-        """
 
+        """
         replacer.replace(self.squirrel_ir, gate_generator, f)
 
     def test_get_circuit_matrix(self) -> np.ndarray:
@@ -128,17 +109,15 @@ class Circuit:
         * this matrix has 4**n elements, where n is the number of qubits
         * therefore this function is only here for testing purposes on small number of qubits
         * result is stored as a numpy array of complex numbers
-        """
 
+        """
         return circuit_matrix_calculator.get_circuit_matrix(self.squirrel_ir)
 
     def __repr__(self) -> str:
         """Write the circuit to a cQasm3 string."""
-
         return writer.squirrel_ir_to_string(self.squirrel_ir)
 
-    def export(self, format: ExportFormat):
-        if format == ExportFormat.QUANTIFY_SCHEDULER:
+    def export(self, fmt: ExportFormat = None) -> None:
+        if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             return quantify_scheduler_exporter.export(self.squirrel_ir)
-
-        raise Exception("Unknown export format")
+        raise ValueError("Unknown export format")

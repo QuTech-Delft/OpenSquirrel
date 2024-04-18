@@ -1,6 +1,9 @@
 import math
 
-from opensquirrel.squirrel_ir import *
+import numpy as np
+
+from opensquirrel.squirrel_ir import Qubit, Gate, BlochSphereRotation, named_gate, Float, ControlledGate, MatrixGate, \
+    Int
 
 
 @named_gate
