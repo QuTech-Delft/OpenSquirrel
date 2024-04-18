@@ -1,4 +1,7 @@
-class InstructionLibrary:
+from abc import ABC
+
+
+class InstructionLibrary(ABC):
     pass
 
 
@@ -12,7 +15,7 @@ class GateLibrary(InstructionLibrary):
             generator_f = next(f for f in self.gate_set if f.__name__ == gate_name)
         except StopIteration:
             if gate_name not in self.gate_aliases:
-                raise Exception(f"Unknown gate `{gate_name}`")
+                raise ValueError(f"Unknown gate `{gate_name}`")
             generator_f = self.gate_aliases[gate_name]
         return generator_f
 
@@ -26,4 +29,4 @@ class MeasurementLibrary(InstructionLibrary):
             generator_f = next(f for f in self.measurement_set if f.__name__ == measurement_name)
             return generator_f
         except StopIteration:
-            raise Exception(f"Unknown measurement `{measurement_name}`")
+            raise ValueError(f"Unknown measurement `{measurement_name}`")

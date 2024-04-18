@@ -34,11 +34,13 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
     def _get_literal(cqasm_literal_expression):
         assert type(cqasm_literal_expression) in [cqasm.values.ConstInt, cqasm.values.ConstFloat]
 
-        if type(cqasm_literal_expression) == cqasm.values.ConstInt:
+        if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
             return Int(cqasm_literal_expression.value)
 
-        if type(cqasm_literal_expression) == cqasm.values.ConstFloat:
+        if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
             return Float(cqasm_literal_expression.value)
+
+        return None
 
     @staticmethod
     def _check_cqasm_type(cqasm_expression, expected_squirrel_type):
@@ -88,7 +90,7 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
         if squirrel_type == Int:
             return "i"
 
-        raise Exception("Unsupported type")
+        raise TypeError("Unsupported type")
 
     def _create_analyzer(self):
         without_defaults = True

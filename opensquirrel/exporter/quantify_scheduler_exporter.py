@@ -19,7 +19,7 @@ except Exception as e:
 
 
 _unsupported_gates_exception = Exception(
-    "Cannot export circuit: it contains unsupported gates - decompose them to the "
+    "Cannot exporter circuit: it contains unsupported gates - decomposer them to the "
     "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
 )
 
@@ -30,7 +30,7 @@ class _ScheduleCreator(SquirrelIRVisitor):
 
     def __init__(self, qubit_register_name: str):
         self.qubit_register_name = qubit_register_name
-        self.schedule = quantify_scheduler.Schedule(f"Exported OpenSquirrel circuit")
+        self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
         if abs(g.axis[2]) < ATOL:
@@ -78,7 +78,7 @@ def export(squirrel_ir: SquirrelIR):
 
         class QuantifySchedulerNotInstalled:
             def __getattr__(self, attr_name):
-                raise Exception("quantify-scheduler is not installed, or cannot be installed on your system")
+                raise ImportError("quantify-scheduler is not installed, or cannot be installed on your system")
 
         global quantify_scheduler
         quantify_scheduler = QuantifySchedulerNotInstalled()

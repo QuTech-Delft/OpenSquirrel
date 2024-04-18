@@ -17,8 +17,8 @@ class _WriterImpl(SquirrelIRVisitor):
     def visit_float(self, f: Float):
         return f"{f.value:.{self.number_of_significant_digits}}"
 
-    def visit_measure(self, measurement: Measure):
-        self.output += f"{measurement.name} {measurement.arguments[0].accept(self)}\n"
+    def visit_measure(self, measure: Measure):
+        self.output += f"{measure.name} {measure.arguments[0].accept(self)}\n"
 
     def visit_gate(self, gate: Gate):
         if gate.is_anonymous:

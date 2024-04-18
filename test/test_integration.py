@@ -4,11 +4,11 @@ import importlib.util
 import unittest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.cnot_decomposer import CNOTDecomposer
+from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
+from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.decomposer.zyz_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import *
-from opensquirrel.export_format import ExportFormat
-from opensquirrel.mckay_decomposer import McKayDecomposer
-from opensquirrel.zyz_decomposer import ZYZDecomposer
+from opensquirrel.exporter.export_format import ExportFormat
 
 
 class IntegrationTest(unittest.TestCase):
@@ -43,7 +43,7 @@ class IntegrationTest(unittest.TestCase):
             ],
         )
 
-        # Do 1q-gate fusion and decompose with McKay decomposition.
+        # Do 1q-gate fusion and decomposer with McKay decomposition.
 
         myCircuit.merge_single_qubit_gates()
 
@@ -319,9 +319,9 @@ Rz q[1], 3.1415927
             with self.assertRaisesRegex(
                 Exception, "quantify-scheduler is not installed, or cannot be installed on " "your system"
             ):
-                myCircuit.export(format=ExportFormat.QUANTIFY_SCHEDULER)
+                myCircuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
         else:
-            exported_schedule = myCircuit.export(format=ExportFormat.QUANTIFY_SCHEDULER)
+            exported_schedule = myCircuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
             self.assertEqual(exported_schedule.name, "Exported OpenSquirrel circuit")
 

@@ -513,17 +513,17 @@ Once we have our angles, we can implement the OpenSquirrel decomposition; we wil
 
 Here is what our final ZYZ decomposition looks like:
 
-
 ```python
 from opensquirrel.squirrel_ir import Gate, BlochSphereRotation
-from opensquirrel.replacer import Decomposer
+from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import rz, ry
+
 
 class ZYZDecomposer(Decomposer):
 
     def decompose(g: Gate) -> [Gate]:
         if not isinstance(g, BlochSphereRotation):
-          return [g] # Do nothing.
+            return [g]  # Do nothing.
 
         theta1, theta2, theta3 = theta123(g.angle, g.axis)
 

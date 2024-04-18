@@ -1,9 +1,9 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
+from opensquirrel.decomposer.zyz_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import *
 from opensquirrel.squirrel_ir import Float, Qubit
-from opensquirrel.zyz_decomposer import ZYZDecomposer
 
 
 class ZYZDecomposerTest(IREqualityTestBase):

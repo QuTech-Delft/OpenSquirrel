@@ -1,4 +1,4 @@
-from opensquirrel.squirrel_ir import *
+from opensquirrel.squirrel_ir import Measure, Qubit, named_measurement
 
 
 @named_measurement

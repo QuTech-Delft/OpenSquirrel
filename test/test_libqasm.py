@@ -1,7 +1,7 @@
 import unittest
 
 from opensquirrel.default_gates import *
-from opensquirrel.parsing.libqasm.libqasm_ir_creator import LibqasmIRCreator
+from opensquirrel.parser.libqasm.libqasm_ir_creator import LibqasmIRCreator
 
 
 class LibqasmTest(unittest.TestCase):

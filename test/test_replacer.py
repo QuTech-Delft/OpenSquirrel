@@ -1,9 +1,9 @@
 import unittest
 
-from opensquirrel import replacer
+from opensquirrel.decomposer import general_decomposer
+from opensquirrel.decomposer.general_decomposer import Decomposer, check_valid_replacement
 from opensquirrel.default_gates import *
-from opensquirrel.replacer import Decomposer, check_valid_replacement
-from opensquirrel.squirrel_ir import Qubit, SquirrelIR
+from opensquirrel.squirrel_ir import Comment, Qubit, SquirrelIR
 
 
 class ReplacerTest(unittest.TestCase):
@@ -105,7 +105,7 @@ class ReplacerTest(unittest.TestCase):
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
 
-        # A stupid replacer function that adds identities before and after single-qubit gates.
+        # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
             def decompose(self, g: Gate) -> [Gate]:
                 if isinstance(g, BlochSphereRotation):
@@ -113,7 +113,7 @@ class ReplacerTest(unittest.TestCase):
 
                 return [g]
 
-        replacer.decompose(squirrel_ir, decomposer=TestDecomposer())
+        general_decomposer.decompose(squirrel_ir, decomposer=TestDecomposer())
 
         expected_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="test")
 
@@ -130,7 +130,7 @@ class ReplacerTest(unittest.TestCase):
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_comment(Comment("Test comment."))
 
-        replacer.replace(squirrel_ir, H, lambda q: [Y90(q), X(q)])
+        general_decomposer.replace(squirrel_ir, H, lambda q: [Y90(q), X(q)])
 
         expected_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="test")
 

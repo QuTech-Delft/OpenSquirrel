@@ -1,9 +1,9 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
+from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.default_gates import *
-from opensquirrel.mckay_decomposer import McKayDecomposer
-from opensquirrel.squirrel_ir import Float, Qubit, SquirrelIR
+from opensquirrel.squirrel_ir import Float, Qubit
 
 
 class DecomposeMcKayTests(IREqualityTestBase):
