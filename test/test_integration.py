@@ -31,7 +31,7 @@ class IntegrationTest(unittest.TestCase):
         #
         #    -----•-----        ------- Z -------
         #         |        ==           |
-        #    -----⊕----        --- H --•-- H ---
+        #    -----⊕----         --- H --•-- H ---
         #
 
         myCircuit.replace(
@@ -98,7 +98,6 @@ Rz qreg[1], 3.1415927
                 Rz qreg[1], 2.5707963
                 measure qreg[0,2]
             """,
-            use_libqasm=True,
         )
         myCircuit.merge_single_qubit_gates()
         myCircuit.decompose(decomposer=McKayDecomposer)
@@ -280,7 +279,6 @@ Rz q[1], 3.1415927
                     qubit[3] qreg
                     Ry qreg[0], 1.23, 1
                 """,
-                use_libqasm=True,
             )
 
     def test_export_quantify_scheduler(self):

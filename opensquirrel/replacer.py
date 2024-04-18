@@ -7,7 +7,6 @@ from opensquirrel.squirrel_ir import (
     ControlledGate,
     Gate,
     MatrixGate,
-    Measure,
     Qubit,
     SquirrelIR,
     SquirrelIRVisitor,
@@ -41,9 +40,6 @@ class _QubitReIndexer(SquirrelIRVisitor):
         target_gate = controlled_gate.target_gate.accept(self)
         result = ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
         return result
-
-    def visit_measurement_operation(self, m: Measure):
-        raise NotImplementedError("Cannot replace measure operation with list of gates.")
 
 
 def check_valid_replacement(statement, replacement):

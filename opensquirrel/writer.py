@@ -18,7 +18,6 @@ class _WriterImpl(SquirrelIRVisitor):
         return f"{f.value:.{self.number_of_significant_digits}}"
 
     def visit_measure(self, measurement: Measure):
-        formatted_args = (arg.accept(self) for arg in measurement.arguments)
         self.output += f"{measurement.name} {measurement.arguments[0].accept(self)}\n"
 
     def visit_gate(self, gate: Gate):

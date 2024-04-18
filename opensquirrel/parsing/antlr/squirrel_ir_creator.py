@@ -1,27 +1,20 @@
 import inspect
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_set
-from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
+from opensquirrel.gate_library import GateLibrary
 from opensquirrel.parsing.antlr.generated import CQasm3Visitor
 from opensquirrel.squirrel_ir import Float, Int, Qubit, SquirrelIR
 
 
-class SquirrelIRCreator(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Visitor):
+class SquirrelIRCreator(GateLibrary, CQasm3Visitor.CQasm3Visitor):
     """
     This class creates a SquirrelIR object from an ANTLR parse tree.
     It is an instance of the ANTLR abstract syntax tree visitor class.
     Therefore, method names are fixed and based on rule names in the Grammar .g4 file.
     """
 
-    def __init__(
-        self,
-        gate_set=default_gate_set,
-        gate_aliases=default_gate_aliases,
-        measurement_set=default_measurement_set,
-    ):
+    def __init__(self, gate_set=default_gate_set, gate_aliases=default_gate_aliases):
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasurementLibrary.__init__(self, measurement_set)
         self.squirrel_ir = None
 
     def visitProg(self, ctx):
@@ -52,25 +45,6 @@ class SquirrelIRCreator(GateLibrary, MeasurementLibrary, CQasm3Visitor.CQasm3Vis
 
         for individual_args in zip(*expanded_args):
             self.squirrel_ir.add_gate(generator_f(*individual_args))
-
-    def visitMeasurementApplication(self, ctx):
-        measurement_name = str(ctx.ID())
-
-        generator_f = MeasurementLibrary.get_measurement_f(self, measurement_name)
-        parameters = inspect.signature(generator_f).parameters
-
-        number_of_operands = next(
-            len(self.visit(ctx.expr(i))) for i, par in enumerate(parameters.values()) if par.annotation == Qubit
-        )
-
-        # The below is for handling e.g. `cr q[1:3], q[5:7], 1.23`
-        expanded_args = [
-            self.visit(ctx.expr(i)) if par.annotation == Qubit else [self.visit(ctx.expr(i))] * number_of_operands
-            for i, par in enumerate(parameters.values())
-        ]
-
-        for individual_args in zip(*expanded_args):
-            self.squirrel_ir.add_measurement(generator_f(*individual_args))
 
     def visitQubitRegisterDeclaration(self, ctx):
         return int(str(ctx.INT())), str(ctx.ID())
