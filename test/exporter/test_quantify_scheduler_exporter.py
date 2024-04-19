@@ -54,13 +54,14 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
 
             mock_quantify_scheduler_gates.Rxy.assert_has_calls(
                 [
-                    unittest.mock.call(theta=FloatEq(math.pi), phi=FloatEq(0), qubit="test[0]"),
-                    unittest.mock.call(theta=FloatEq(1.23), phi=FloatEq(math.pi / 2), qubit="test[2]"),
+                    unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="test[0]"),
+                    unittest.mock.call(
+                        theta=FloatEq(math.degrees(1.23)), phi=FloatEq(math.degrees(math.pi / 2)), qubit="test[2]"
+                    ),
                 ]
             )
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="test[0]", qT="test[1]")
-            mock_quantify_scheduler_gates.Rz.assert_called_once_with(theta=FloatEq(2.34), qubit="test[1]")
-
+            mock_quantify_scheduler_gates.Rz.assert_called_once_with(theta=FloatEq(math.degrees(2.34)), qubit="test[1]")
             self.assertEqual(mock_schedule.add.call_count, 4)
 
     def check_gate_not_supported(self, g: Gate):

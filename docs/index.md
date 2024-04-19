@@ -18,11 +18,7 @@ The following documentation structure is used: [Diátaxis documentation framewor
 
 ## Authors
 
-- Pablo Le Henaff (<p.lehenaff@tudelft.nl>)
-
-- Roberto Turrado Camblor (<r.turradocamblor@tudelft.nl>)
-
-- Chris Elenbaas (<chris.elenbaas@tno.nl>)
+Quantum Inspire (<support@quantum-inspire.com>)
 
 ## Acknowledgements
 
