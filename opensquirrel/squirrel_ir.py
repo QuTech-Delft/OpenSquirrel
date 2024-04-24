@@ -260,7 +260,7 @@ class MatrixGate(Gate):
             mapping: Mapping with as keys the indices of the original qubits and as values the indices of the qubits
                 after replacement.
         """
-        self.operands = [Qubit[mapping[qubit.index]] for qubit in self.operands]
+        self.operands = [Qubit(mapping[qubit.index]) for qubit in self.operands]
 
 
 class ControlledGate(Gate):

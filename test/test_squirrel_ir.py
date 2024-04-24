@@ -4,6 +4,7 @@ import math
 
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
 from opensquirrel.common import ATOL
 from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, MatrixGate, Measure, Qubit
@@ -182,5 +183,55 @@ class TestBlochSphereRotation:
         ],
     )
     def test_relabel(self, gate: Measure, mapping: dict[int, int], expected_output: Measure) -> None:
+        gate.relabel(mapping)
+        assert gate == expected_output
+
+
+class TestMatrixGate:
+
+    @pytest.fixture(name="gate")
+    def gate_fixture(self) -> MatrixGate:
+        cnot_matrix = np.array(
+            [
+                [1, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 0, 0, 1],
+                [0, 0, 1, 0],
+            ]
+        )
+        cnot_matrix_gate = MatrixGate(cnot_matrix, operands=[Qubit(42), Qubit(100)])
+        return cnot_matrix_gate
+
+    def test_repr(self, gate: MatrixGate):
+        assert (
+            repr(gate)
+            == "MatrixGate(qubits=[Qubit[42], Qubit[100]], matrix=[[1 0 0 0]\n [0 1 0 0]\n [0 0 0 1]\n [0 0 1 0]])"
+        )
+
+    def test_get_qubit_operands(self, gate: MatrixGate) -> None:
+        assert gate.get_qubit_operands() == [Qubit(42), Qubit(100)]
+
+    def test_is_identity(self, gate: MatrixGate) -> None:
+        assert MatrixGate(np.eye(4), operands=[Qubit(42), Qubit(100)]).is_identity()
+        assert not gate.is_identity()
+
+    @pytest.mark.parametrize(
+        "mapping, expected_output",
+        [
+            (
+                {42: 42, 100: 100},
+                MatrixGate(
+                    np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), operands=[Qubit(42), Qubit(100)]
+                ),
+            ),
+            (
+                {42: 100, 100: 42},
+                MatrixGate(
+                    np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), operands=[Qubit(100), Qubit(42)]
+                ),
+            ),
+        ],
+    )
+    def test_relabel(self, gate: MatrixGate, mapping: dict[int, int], expected_output: MatrixGate) -> None:
         gate.relabel(mapping)
         assert gate == expected_output
