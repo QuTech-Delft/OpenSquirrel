@@ -12,6 +12,7 @@ from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.merger import general_merger
 from opensquirrel.parser.libqasm.libqasm_ir_creator import LibqasmIRCreator
 from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
+from opensquirrel.mapper import map_qubits, Mapper
 
 
 class Circuit:
@@ -94,6 +95,16 @@ class Circuit:
     def decompose(self, decomposer: Decomposer):
         """Generic decomposition pass. It applies the given decomposer function to every gate in the circuit."""
         general_decomposer.decompose(self.squirrel_ir, decomposer)
+
+    def map_qubits(self, mapper: Mapper) -> None:
+        """Generic qubit mapper pass.
+
+        Maps the virtual qubits of the circuit to physical qubits of the target hardware.
+
+        Args:
+            mapper: Mapper class to use.
+        """
+        map_qubits(self.squirrel_ir, mapper)
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.
