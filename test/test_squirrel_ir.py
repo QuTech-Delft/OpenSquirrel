@@ -5,6 +5,7 @@ import math
 import numpy as np
 import pytest
 
+from opensquirrel.common import ATOL
 from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, MatrixGate, Measure, Qubit
 
 
@@ -100,7 +101,7 @@ class TestMeasure:
     def measure_fixture(self) -> Measure:
         return Measure(Qubit(42), axis=(0, 0, 1))
 
-    def test_repr_dunder(self, measure: Measure) -> None:
+    def test_repr(self, measure: Measure) -> None:
         expected_repr = "Measure(Qubit[42], axis=[0. 0. 1.])"
         assert repr(measure) == expected_repr
 
@@ -126,3 +127,60 @@ class TestMeasure:
     def test_relabel(self, measure: Measure, mapping: dict[int, int], expected_output: Measure) -> None:
         measure.relabel(mapping)
         assert measure == expected_output
+
+
+class TestBlochSphereRotation:
+
+    @pytest.fixture(name="gate")
+    def gate_fixture(self) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi, phase=math.tau)
+
+    def test_identity(self) -> None:
+        expected_result = BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=0, phase=0)
+        assert BlochSphereRotation.identity(Qubit(42)) == expected_result
+
+    @pytest.mark.parametrize(
+        "other_gate",
+        [
+            BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi, phase=math.tau),
+            BlochSphereRotation(qubit=Qubit(42), axis=(1 + ATOL / 2, 0, 0), angle=math.pi, phase=math.tau),
+            BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi + ATOL / 2, phase=math.tau),
+            BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi, phase=math.tau + ATOL / 2),
+            BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi + math.tau, phase=math.tau),
+        ],
+        ids=["all_equal", "close_axis", "close_angle", "close_phase", "angle+tau"],
+    )
+    def test_equality(self, gate: BlochSphereRotation, other_gate: BlochSphereRotation) -> None:
+        assert gate == other_gate
+
+    @pytest.mark.parametrize(
+        "other_gate",
+        [
+            BlochSphereRotation(qubit=Qubit(43), axis=(1, 0, 0), angle=math.pi, phase=math.tau),
+            BlochSphereRotation(qubit=Qubit(42), axis=(0, 1, 0), angle=math.pi, phase=math.tau),
+            BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=0, phase=math.tau),
+            BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi, phase=1),
+            "test",
+        ],
+        ids=["qubit", "axis", "angle", "phase", "type"],
+    )
+    def test_inequality(self, gate: BlochSphereRotation, other_gate: BlochSphereRotation | str) -> None:
+        assert gate != other_gate
+
+    def test_get_qubit_operands(self, gate: BlochSphereRotation) -> None:
+        assert gate.get_qubit_operands() == [Qubit(42)]
+
+    def test_is_identity(self, gate: BlochSphereRotation) -> bool:
+        assert BlochSphereRotation.identity(42).is_identity()
+        assert not gate.is_identity()
+
+    @pytest.mark.parametrize(
+        "mapping, expected_output",
+        [
+            ({42: 42}, BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi, phase=math.tau)),
+            ({42: 0}, BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 0), angle=math.pi, phase=math.tau)),
+        ],
+    )
+    def test_relabel(self, gate: Measure, mapping: dict[int, int], expected_output: Measure) -> None:
+        gate.relabel(mapping)
+        assert gate == expected_output
