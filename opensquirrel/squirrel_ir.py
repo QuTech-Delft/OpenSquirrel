@@ -111,7 +111,7 @@ class Measure(Statement, ABC):
     def __eq__(self, other):
         if not isinstance(other, Measure):
             return False
-        return self.qubit == other.qubit and self.axis == other.axis
+        return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
 
     def accept(self, visitor: SquirrelIRVisitor):
         visitor.visit_measure(self)
