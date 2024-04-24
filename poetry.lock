@@ -1564,31 +1564,31 @@ test = ["pytest (>=7.4)", "pytest-cov (>=4.1)"]
 
 [[package]]
 name = "libqasm"
-version = "0.6.3"
+version = "0.6.4"
 description = "libQasm Python Package"
 optional = false
 python-versions = "*"
 files = [
-    {file = "libqasm-0.6.3-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:429fab60a9c9fa9bfdc5f5873ae45365be28749427542e66d634b236949b2c75"},
-    {file = "libqasm-0.6.3-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:10c76843ddea523ec964bd5b5ad15463b4c9541158c8f44fd05680707149b3b6"},
-    {file = "libqasm-0.6.3-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:731d095a721977d938cf4663907b742f699f8a877ab4b0ff97bb9f12c82fc886"},
-    {file = "libqasm-0.6.3-cp310-cp310-win_amd64.whl", hash = "sha256:64677c8b59492021aecb506c4af2c7f655ae7c45a3dbc5d4c93f1c82d146d05e"},
-    {file = "libqasm-0.6.3-cp311-cp311-macosx_10_10_universal2.whl", hash = "sha256:c35a1701b05bd057e92a114b4cd98ffbb0ff41e57affeb7d12313a60eacb9d89"},
-    {file = "libqasm-0.6.3-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8874d9e3d011a61b6708c1b1ae41d96f5c1599ad6ff58c046f7b1873cec2abb9"},
-    {file = "libqasm-0.6.3-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:be0c51f99b5b22c80a67bddceeaff437b6257aa1d10b37d0ee8aa979d5039a77"},
-    {file = "libqasm-0.6.3-cp311-cp311-win_amd64.whl", hash = "sha256:328039857c4a05062b5b80ab4e11c70a914aac94f5a9e0161b8681fec14b0835"},
-    {file = "libqasm-0.6.3-cp312-cp312-macosx_10_10_universal2.whl", hash = "sha256:8c3b4cbc18789a742108e20af590e0acd1535c3c31153a52c685f82ef9bc4bf9"},
-    {file = "libqasm-0.6.3-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:ea74096877fcacaf181f99cd03d8f7333b2ec77c03fe8357e68392a587d2caaa"},
-    {file = "libqasm-0.6.3-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:0dd988a9e6da3f43b75f22b8cd7fb7812dcf8bf6f7b16b09f68f201692578566"},
-    {file = "libqasm-0.6.3-cp312-cp312-win_amd64.whl", hash = "sha256:6bd8ffe1cecf1dd0b11d3cec1562f5bffcf7d2f832a99e19411dc18d75186bba"},
-    {file = "libqasm-0.6.3-cp38-cp38-macosx_11_0_x86_64.whl", hash = "sha256:43f6f3f477d209063bdcce02eab2194b7025cda3e0b2a286dd1ad15756e6f9c9"},
-    {file = "libqasm-0.6.3-cp38-cp38-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:d5c8109cc797b5fd188bfcf2516b12855fe1cb984cb09734270e3e2345b75b18"},
-    {file = "libqasm-0.6.3-cp38-cp38-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b651e790006b8feba30d13470ee3e7e9a989a14e3e2bcfce54453a7c4ef45af9"},
-    {file = "libqasm-0.6.3-cp38-cp38-win_amd64.whl", hash = "sha256:d81ea170fef7459e59422e3c6e5d635ec9eb17f99886bf2bc6db0288528897cd"},
-    {file = "libqasm-0.6.3-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:9b609a573588881b924811967f8e5f3baeed349314d4743eb63c0e580d94f212"},
-    {file = "libqasm-0.6.3-cp39-cp39-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:321896621deb16e2dc71ec425169a4ce6d165a34fc729c09aeaa2b4a91a0630d"},
-    {file = "libqasm-0.6.3-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1f4c25c09421c86cbda1bbe640ec95c2fd75dd0d5fe2741526e5452120a79814"},
-    {file = "libqasm-0.6.3-cp39-cp39-win_amd64.whl", hash = "sha256:4ddc2c9276788ec70f25ff158d962b8aa58397a51e3b73a60a3c708fcbbb90db"},
+    {file = "libqasm-0.6.4-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:84f8c9c233f4674b8f02908a443676b7922e4704ccc84ca6757fe323a87ac256"},
+    {file = "libqasm-0.6.4-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:307a8b971867a728b258b822797f308835f136eab2c83ae6745509924999f7d4"},
+    {file = "libqasm-0.6.4-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:0fb29f6e5c4b660a1a105187b4e1911ac86a6b774040c1f7e1d2d633c2ebddbc"},
+    {file = "libqasm-0.6.4-cp310-cp310-win_amd64.whl", hash = "sha256:c3a49020ca02c9b0f3db43ccc6cfe380e4b6fa8767421e338618d520a4c06c19"},
+    {file = "libqasm-0.6.4-cp311-cp311-macosx_10_10_universal2.whl", hash = "sha256:45eca97017e3547301caa478c2bcda56c968ef10e32aa6cb6cdf549a659c14f4"},
+    {file = "libqasm-0.6.4-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:8410cd3e9168a161073883b745508f70a7ee4a3c2b2ece91514220eedbb0c150"},
+    {file = "libqasm-0.6.4-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:1c81a076df618a52abc054e1a088177a82355d57be0b6fa75c7079ddf4f35608"},
+    {file = "libqasm-0.6.4-cp311-cp311-win_amd64.whl", hash = "sha256:2b643aaba79bf00aec4b3ea98749bd0ff4bcfd144680daf148ca2ab17489ed9d"},
+    {file = "libqasm-0.6.4-cp312-cp312-macosx_10_10_universal2.whl", hash = "sha256:628800ba1ad83d13dd691442cdc0d94c03edf2c810a85719aeae688a8d52827a"},
+    {file = "libqasm-0.6.4-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:b49d40efb0606efca484f1ecb233f4f6580346fdf2f9bd3a9ee42e6daa5d118d"},
+    {file = "libqasm-0.6.4-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:96af029d1165a7c9c31846530324f5a9d404d4f0a59dd425bb36a8a31157bb74"},
+    {file = "libqasm-0.6.4-cp312-cp312-win_amd64.whl", hash = "sha256:bf0595d9d0a9abcd4241c4f60f70dddf0058edba481e7608bc1a3674bec9a58b"},
+    {file = "libqasm-0.6.4-cp38-cp38-macosx_11_0_x86_64.whl", hash = "sha256:a7233bb3d0fe821b90ebfc4bb7b0d739a5980b5139f87ae68a37b0f6756d047f"},
+    {file = "libqasm-0.6.4-cp38-cp38-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:e2ec0e5f6c01f0551a49154a840f9f3678d605e30dc66d77179f58fa069488b2"},
+    {file = "libqasm-0.6.4-cp38-cp38-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:576ec84e7b3d1b798c50cda1a18d10cce3b89384e0cbb3fdb3fd43482d3b3945"},
+    {file = "libqasm-0.6.4-cp38-cp38-win_amd64.whl", hash = "sha256:58bce7e3aff9951d7a631dfb0dff1b320f68079b2e7934ea48976b8c9e72b4be"},
+    {file = "libqasm-0.6.4-cp39-cp39-macosx_11_0_x86_64.whl", hash = "sha256:51582ce4dba4447232fdd6a07fbfaed82efd29112d1710f5ea5ab6226f667699"},
+    {file = "libqasm-0.6.4-cp39-cp39-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:08f9a23609c4def5d6b0f9ed2edd0c19e838921275ef9dff0aa4e83c13c1fd28"},
+    {file = "libqasm-0.6.4-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:2a4af71f159db5b7027cb3cc248ea9df5c0bcd05c4426ac16c8157139bb43961"},
+    {file = "libqasm-0.6.4-cp39-cp39-win_amd64.whl", hash = "sha256:bba21b8f9162ef96a7b070a93468d9651ecc9effbdb6c140129123406b63c092"},
 ]
 
 [package.dependencies]
@@ -4699,4 +4699,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "c3767938b8c491fc5659827934bea4ec81961ceda01c2529d31d03a04bbf1ed1"
+content-hash = "7abb8927e0c442c1cd65cba16b58f5d7b0f556502dd98e4a2477e80cd0e9466f"
