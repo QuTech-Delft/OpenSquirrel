@@ -1,13 +1,19 @@
+"""This module contains generic mapping components."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-import networkx as nx
-
-from opensquirrel.squirrel_ir import ControlledGate, Gate, Measure, SquirrelIR
+from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
 
 
-def map_qubits(squirrel_ir: SquirrelIR, mapper: type[Mapper]) -> None:
+def map_qubits(squirrel_ir: SquirrelIR, mapper: Mapper) -> None:
+    """Map the virtual qubits in the `squirrel_ir` to physical qubits using `mapper`.
+
+    Args:
+        squirrel_ir: IR to act on.
+        mapper: Mapping algorithm to use.
+    """
 
     mapping = mapper.map(squirrel_ir)
 
@@ -16,26 +22,16 @@ def map_qubits(squirrel_ir: SquirrelIR, mapper: type[Mapper]) -> None:
             statement.relabel(mapping)
 
 
-def make_interaction_graph(squirrel_ir: SquirrelIR) -> nx.Graph:
-    interaction_graph = nx.Graph()
-    controlled_gates = (statement for statement in squirrel_ir.statements if isinstance(statement, ControlledGate))
-
-    for gate in controlled_gates:
-        target_qubits = gate.target_gate.get_qubit_operands()
-        if len(target_qubits) > 1:
-            raise ValueError(
-                f"The ControlledGate {gate} has multiple target qubits. These must be  decomposed before creating an "
-                "interaction graph."
-            )
-
-        interaction = (gate.control_qubit, target_qubits[0])
-        interaction_graph.add_edge(interaction)
-
-    return interaction_graph
-
-
 class Mapper(ABC):
+    """Base class for the Mapper pass."""
 
     @abstractmethod
     def map(self, squirrel_ir: SquirrelIR) -> dict[int, int]:
-        """Note that the mapper should *not* alter `squirrel_ir`."""
+        """Produce a mapping between thee virtual qubits in the `squirrel_ir` to physical qubits.
+
+        Args:
+            squirrel_ir: IR to map.
+
+        Returns:
+            Dictionary with as keys the virtual qubits and as values the physical qubits.
+        """

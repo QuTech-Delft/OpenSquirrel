@@ -1,3 +1,5 @@
+"""This module contains checks for the ``Mapper`` pass."""
+
 from copy import deepcopy
 
 from opensquirrel.mapper.general_mapper import Mapper
@@ -5,6 +7,14 @@ from opensquirrel.squirrel_ir import BlochSphereRotation, Comment, ControlledGat
 
 
 def check_mapper(mapper: Mapper) -> None:
+    """Check if the `mapper` complies with the OpenSquirrel requirements.
+
+    If an implementation of ``Mapper`` passes these checks it should be compatible with the ``Circuit.map_qubits``
+    method.
+
+    Args:
+        mapper: Mapper to check.
+    """
 
     assert isinstance(mapper, Mapper)
 
@@ -20,6 +30,12 @@ def check_mapper(mapper: Mapper) -> None:
 
 
 def _check_scenario(squirrel_ir: SquirrelIR, mapper: Mapper) -> None:
+    """Check if the given scenario can be mapped.
+
+    Args:
+        squirrel_ir: SquirrelIR containing the scenario to check against.
+        mapping: Mapping to check.
+    """
     squirrel_ir_copy = deepcopy(squirrel_ir)
     mapping = mapper.map(squirrel_ir)
 
