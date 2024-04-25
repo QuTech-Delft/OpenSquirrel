@@ -7,9 +7,9 @@ import networkx as nx
 from opensquirrel.squirrel_ir import ControlledGate, Gate, Measure, SquirrelIR
 
 
-def map_qubits(squirrel_ir: SquirrelIR, mapper: type[Mapper], *args, **kwargs) -> None:
+def map_qubits(squirrel_ir: SquirrelIR, mapper: type[Mapper]) -> None:
 
-    mapping = mapper.map(squirrel_ir, *args, **kwargs)
+    mapping = mapper.map(squirrel_ir)
 
     for statement in squirrel_ir.statements:
         if isinstance(statement, (Gate, Measure)):
@@ -37,5 +37,5 @@ def make_interaction_graph(squirrel_ir: SquirrelIR) -> nx.Graph:
 class Mapper(ABC):
 
     @abstractmethod
-    def map(self, squirrel_ir: SquirrelIR, *args, **kwargs) -> dict[int, int]:
+    def map(self, squirrel_ir: SquirrelIR) -> dict[int, int]:
         """Note that the mapper should *not* alter `squirrel_ir`."""

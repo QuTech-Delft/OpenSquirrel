@@ -4,10 +4,11 @@
 * HardcodedMapper
 """
 
-from opensquirrel.mapper.general_mapper import Mapper
-from opensquirrel.squirrel_ir import SquirrelIR
 from collections.abc import Mapping
 from typing import SupportsInt
+
+from opensquirrel.mapper.general_mapper import Mapper
+from opensquirrel.squirrel_ir import SquirrelIR
 
 
 class IdentityMapper(Mapper):
