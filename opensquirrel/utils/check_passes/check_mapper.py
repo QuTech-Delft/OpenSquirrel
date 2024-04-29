@@ -39,11 +39,11 @@ def _check_scenario(squirrel_ir: SquirrelIR, mapper: Mapper) -> None:
     squirrel_ir_copy = deepcopy(squirrel_ir)
     mapping = mapper.map(squirrel_ir)
 
-    assert squirrel_ir == squirrel_ir_copy, "A Mapper pass should not change the SquirrelIR"
+    assert squirrel_ir == squirrel_ir_copy, "A Mapper pass should not change the SquirrelIR."
     _check_mapping_format(mapping, squirrel_ir.number_of_qubits)
 
 
-def _check_mapping_format(mapping: dict[int, int], n_qubits: int) -> None:
+def _check_mapping_format(mapping: dict[int, int], number_of_qubits: int) -> None:
     """Check if the mapping has the expected format.
 
     Args:
@@ -56,4 +56,4 @@ def _check_mapping_format(mapping: dict[int, int], n_qubits: int) -> None:
     assert set(mapping.keys()) == set(
         mapping.values()
     ), "The set of virtual qubits is not equal to the set of phyical qubits."
-    assert set(range(n_qubits)) == set(mapping.keys()), "Virtual qubits are not labeled correctly."
+    assert set(range(number_of_qubits)) == set(mapping.keys()), "Virtual qubits are not labeled correctly."

@@ -11,8 +11,8 @@ def map_qubits(squirrel_ir: SquirrelIR, mapper: Mapper) -> None:
     """Map the virtual qubits in the `squirrel_ir` to physical qubits using `mapper`.
 
     Args:
-        squirrel_ir: IR to act on.
-        mapper: Mapping algorithm to use.
+        squirrel_ir: IR to apply mapping to.
+        mapper: Mapping pass to use.
     """
 
     mapping = mapper.map(squirrel_ir)
@@ -27,11 +27,11 @@ class Mapper(ABC):
 
     @abstractmethod
     def map(self, squirrel_ir: SquirrelIR) -> dict[int, int]:
-        """Produce a mapping between thee virtual qubits in the `squirrel_ir` to physical qubits.
+        """Produce a mapping from the virtual qubits in the `squirrel_ir` to the physical qubits.
 
         Args:
-            squirrel_ir: IR to map.
+            squirrel_ir: IR to apply mapping to.
 
         Returns:
-            Dictionary with as keys the virtual qubits and as values the physical qubits.
+            Mapping from virtual qubits to physical qubits.
         """

@@ -22,8 +22,8 @@ class IdentityMapper(Mapper):
             squirrel_ir: IR to map.
 
         Returns:
-            Dictionary with as keys the virtual qubits and as values the physical qubits. The dictionary maps each
-            virtual qubit to exactly the same physical qubit.
+            Mapping from virtual qubits to physical qubits. Each virtual qubit is mapped to the physical qubit with
+            the same index.
         """
         return {i: i for i in range(squirrel_ir.number_of_qubits)}
 
@@ -45,13 +45,13 @@ class HardcodedMapper(Mapper):
             raise ValueError("The set of physical qubits is not equal to the set of virtual qubits.")
 
     def map(self, squirrel_ir: SquirrelIR) -> dict[int, int]:
-        """Retrieve tha hardcoded mapping.
+        """Retrieve the hardcoded mapping.
 
         Args:
-            squirrel_ir: IR to map.
+            squirrel_ir: IR to apply mapping to.
 
         Returns:
-            Dictionary with as keys the virtual qubits and as values the physical qubits.
+            Mapping from virtual qubits to physical qubits.
         """
         if set(range(squirrel_ir.number_of_qubits)) != set(self.mapping.keys()):
             raise ValueError("Virtual qubits are not labeled correctly.")

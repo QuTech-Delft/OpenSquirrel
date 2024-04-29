@@ -104,7 +104,7 @@ class Circuit:
         Maps the virtual qubits of the circuit to physical qubits of the target hardware.
 
         Args:
-            mapper: Mapper class to use. If ``None`` (default) is provided, use the ``IdentityMapper``.
+            mapper: Mapper pass to use. If ``None`` (default) is provided, use the ``IdentityMapper``.
         """
         mapper = IdentityMapper() if mapper is None else mapper
         map_qubits(self.squirrel_ir, mapper)

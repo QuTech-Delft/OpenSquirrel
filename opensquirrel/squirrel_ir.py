@@ -123,8 +123,7 @@ class Measure(Statement, ABC):
         """Relabel the qubits using the given mapping.
 
         Args:
-            mapping: Mapping with as keys the indices of the original qubits and as values the indices of the qubits
-                after replacement.
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits after replacement.
         """
         self.qubit = Qubit(mapping[self.qubit.index])
 
@@ -162,7 +161,7 @@ class Gate(Statement, ABC):
         """Relabel the qubits using the given mapping.
 
         Args:
-            mapping: Mapping with as keys the indices of the original qubits and as values the indices of the qubits
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
             after replacement.
         """
 
@@ -223,8 +222,8 @@ class BlochSphereRotation(Gate):
         """Relabel the qubits using the given mapping.
 
         Args:
-            mapping: Mapping with as keys the indices of the original qubits and as values the indices of the qubits
-                after replacement.
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
+            after replacement.
         """
         self.qubit = Qubit(mapping[self.qubit.index])
 
@@ -257,8 +256,8 @@ class MatrixGate(Gate):
         """Relabel the qubits using the given mapping.
 
         Args:
-            mapping: Mapping with as keys the indices of the original qubits and as values the indices of the qubits
-                after replacement.
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
+            after replacement.
         """
         self.operands = [Qubit(mapping[qubit.index]) for qubit in self.operands]
 
@@ -288,8 +287,8 @@ class ControlledGate(Gate):
         """Relabel the qubits using the given mapping.
 
         Args:
-            mapping: Mapping with as keys the indices of the original qubits and as
-                values the indices of the qubits after replacement.
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
+            after replacement.
         """
         self.control_qubit = Qubit(mapping[self.control_qubit.index])
         self.target_gate.relabel(mapping)
