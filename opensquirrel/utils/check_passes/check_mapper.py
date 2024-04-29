@@ -19,14 +19,14 @@ def check_mapper(mapper: Mapper) -> None:
     assert isinstance(mapper, Mapper)
 
     squirrel_ir = SquirrelIR(number_of_qubits=10)
-    _check_scenario(squirrel_ir, deepcopy(mapper))
+    _check_scenario(squirrel_ir, mapper)
 
     squirrel_ir = SquirrelIR(number_of_qubits=10)
     squirrel_ir.add_comment(Comment("comment"))
     squirrel_ir.add_gate(BlochSphereRotation(Qubit(42), (1, 0, 0), 1, 2))
     squirrel_ir.add_gate(ControlledGate(Qubit(42), BlochSphereRotation.identity(Qubit(100))))
     squirrel_ir.add_measurement(Measure(Qubit(42), (0, 0, 1)))
-    _check_scenario(squirrel_ir, deepcopy(mapper))
+    _check_scenario(squirrel_ir, mapper)
 
 
 def _check_scenario(squirrel_ir: SquirrelIR, mapper: Mapper) -> None:
