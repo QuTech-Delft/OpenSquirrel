@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Callable, List
 
@@ -14,9 +16,9 @@ from opensquirrel.squirrel_ir import (
 
 
 class Decomposer(ABC):
-    @staticmethod
+
     @abstractmethod
-    def decompose(gate: Gate) -> [Gate]:
+    def decompose(self, gate: Gate) -> list[Gate]:
         raise NotImplementedError()
 
 
@@ -84,7 +86,7 @@ class _GenericReplacer(Decomposer):
         self.gate_generator = gate_generator
         self.replacement_function = replacement_function
 
-    def decompose(self, g: Gate) -> [Gate]:
+    def decompose(self, g: Gate) -> list[Gate]:
         if g.is_anonymous or g.generator != self.gate_generator:
             return [g]
         return self.replacement_function(*g.arguments)
@@ -92,12 +94,5 @@ class _GenericReplacer(Decomposer):
 
 def replace(squirrel_ir: SquirrelIR, gate_generator: Callable[..., Gate], f):
     """Does the same as decomposer, but only applies to a given gate."""
-
-    def generic_replacer(g: Gate) -> [Gate]:
-        if g.is_anonymous or g.generator != gate_generator:
-            return [g]
-        return f(*g.arguments)
-
     generic_replacer = _GenericReplacer(gate_generator, f)
-
     decompose(squirrel_ir, generic_replacer)

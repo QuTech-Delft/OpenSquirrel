@@ -35,14 +35,14 @@ class _ScheduleCreator(SquirrelIRVisitor):
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
-            theta: float = math.degrees(g.angle)
+            theta = math.degrees(g.angle)
             phi: float = math.degrees(math.atan2(g.axis[1], g.axis[0]))
             self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
-            theta: float = math.degrees(g.angle)
+            theta = math.degrees(g.angle)
             self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 

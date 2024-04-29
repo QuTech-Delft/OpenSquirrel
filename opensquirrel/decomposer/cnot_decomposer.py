@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 
 from opensquirrel.common import ATOL
@@ -17,8 +19,7 @@ class CNOTDecomposer(Decomposer):
     Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
     """
 
-    @staticmethod
-    def decompose(g: Gate) -> [Gate]:
+    def decompose(self, g: Gate) -> list[Gate]:
         if not isinstance(g, ControlledGate):
             # Do nothing:
             # - BlochSphereRotation's are only single-qubit,

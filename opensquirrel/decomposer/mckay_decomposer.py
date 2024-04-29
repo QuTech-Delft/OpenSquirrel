@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from math import atan2, cos, pi, sin, sqrt
 
 from opensquirrel.common import ATOL, normalize_angle
@@ -7,8 +9,8 @@ from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
 
 
 class McKayDecomposer(Decomposer):
-    @staticmethod
-    def decompose(g: Gate) -> [Gate]:
+
+    def decompose(self, g: Gate) -> list[Gate]:
         """Return the McKay decomposition of a 1-qubit gate as a list of gates.
                 gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
 

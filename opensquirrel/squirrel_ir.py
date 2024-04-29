@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import wraps
-from typing import Callable, List, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple
 
 import numpy as np
 
@@ -129,15 +129,18 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
-    # Note: two gates are considered equal even when their generators/arguments are different.
-    generator: Optional[Callable[..., "Gate"]] = None
-    arguments: Optional[Tuple[Expression, ...]] = None
-
-    def __init__(self, generator, arguments):
+    def __init__(
+        self,
+        *args,
+        generator: Optional[Callable[..., "Gate"]] = None,
+        arguments: Optional[Tuple[Expression, ...]] = None,
+        **kwargs,
+    ) -> None:
+        # Note: two gates are considered equal even when their generators/arguments are different.
         self.generator = generator
         self.arguments = arguments
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, Gate):
             return False
         return _compare_gate_classes(self, other)

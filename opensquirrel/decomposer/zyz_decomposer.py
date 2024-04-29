@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 from typing import Tuple
 
@@ -31,6 +33,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float])
     if abs(alpha - math.pi) < ATOL:
         # alpha == pi, math.tan(alpha / 2) is not defined.
 
+        p: float
         if abs(nz) < ATOL:
             theta2 = math.pi
             p = 0
@@ -74,8 +77,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float])
 
 
 class ZYZDecomposer(Decomposer):
-    @staticmethod
-    def decompose(g: Gate) -> [Gate]:
+    def decompose(self, g: Gate) -> list[Gate]:
         if not isinstance(g, BlochSphereRotation):
             # Only decomposer single-qubit gates.
             return [g]

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import inspect
 from typing import Callable, Dict
 
@@ -31,7 +33,7 @@ class CircuitBuilder(GateLibrary):
     def __init__(
         self,
         number_of_qubits: int,
-        gate_set: [Callable[..., Gate]] = default_gate_set,
+        gate_set: list[Gate] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)

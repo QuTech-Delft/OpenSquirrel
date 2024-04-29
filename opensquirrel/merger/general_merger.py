@@ -65,7 +65,7 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
 
         if isinstance(statement, BlochSphereRotation):
             # Accumulate
-            already_accumulated = accumulators_per_qubit.get(statement.qubit)
+            already_accumulated = accumulators_per_qubit[statement.qubit]
 
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
             accumulators_per_qubit[statement.qubit] = composed

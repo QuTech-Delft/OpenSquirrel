@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Dict
+from typing import Callable, Dict, Literal
 
 import numpy as np
 
@@ -51,9 +51,9 @@ class Circuit:
     def from_string(
         cls,
         cqasm3_string: str,
-        gate_set: [Callable[..., Gate]] = default_gate_set,
+        gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
-        measurement_set: [Callable[..., Measure]] = default_measurement_set,
+        measurement_set: list[Callable[..., Measure]] = default_measurement_set,
     ):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -131,7 +131,7 @@ class Circuit:
         """Write the circuit to a cQasm3 string."""
         return writer.squirrel_ir_to_string(self.squirrel_ir)
 
-    def export(self, fmt: ExportFormat = None) -> None:
+    def export(self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None) -> None:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             return quantify_scheduler_exporter.export(self.squirrel_ir)
         raise ValueError("Unknown exporter format")
