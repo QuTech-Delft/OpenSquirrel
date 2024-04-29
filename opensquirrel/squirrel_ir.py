@@ -151,10 +151,20 @@ class Gate(Statement, ABC):
         return self.arguments is None
 
     @abstractmethod
-    def get_qubit_operands(self) -> List[Qubit]: ...
+    def get_qubit_operands(self) -> List[Qubit]:
+        """Get the qubit operands of the Gate.
+
+        Returns:
+            List of qubits on which the Gate operates.
+        """
 
     @abstractmethod
-    def is_identity(self) -> bool: ...
+    def is_identity(self) -> bool:
+        """Check wether the Gate is an identity Gate.
+
+        Returns:
+            Boolean value stating wether the Gate is an identity Gate.
+        """
 
     @abstractmethod
     def relabel(self, mapping: Mapping[int, int]) -> None:
