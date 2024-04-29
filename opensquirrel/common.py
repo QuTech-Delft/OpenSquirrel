@@ -3,6 +3,7 @@ import math
 from typing import Tuple
 
 import numpy as np
+from numpy.typing import ArrayLike, NDArray
 
 ATOL = 0.0000001
 
@@ -16,7 +17,8 @@ def normalize_angle(x: float) -> float:
     return t
 
 
-def normalize_axis(axis: np.ndarray):
+def normalize_axis(axis: ArrayLike) -> NDArray[np.float_]:
+    axis = np.asarray(axis, dtype=np.float_)
     norm = np.linalg.norm(axis)
     axis /= norm
     return axis
@@ -27,7 +29,7 @@ Y = np.array([[0, -1j], [1j, 0]])
 Z = np.array([[1, 0], [0, -1]])
 
 
-def can1(axis: Tuple[float, float, float], angle: float, phase: float = 0) -> np.ndarray:
+def can1(axis: Tuple[float, float, float], angle: float, phase: float = 0) -> NDArray[np.complex_]:
     nx, ny, nz = axis
     norm = math.sqrt(nx**2 + ny**2 + nz**2)
     assert norm > 0.00000001
@@ -40,10 +42,10 @@ def can1(axis: Tuple[float, float, float], angle: float, phase: float = 0) -> np
         math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
     )
 
-    return result
+    return np.asarray(result, dtype=np.complex_)
 
 
-def are_matrices_equivalent_up_to_global_phase(matrix_a: np.ndarray, matrix_b: np.ndarray) -> bool:
+def are_matrices_equivalent_up_to_global_phase(matrix_a: NDArray[np.complex_], matrix_b: NDArray[np.complex_]) -> bool:
     first_non_zero = next(
         (i, j) for i in range(matrix_a.shape[0]) for j in range(matrix_a.shape[1]) if abs(matrix_a[i, j]) > ATOL
     )
