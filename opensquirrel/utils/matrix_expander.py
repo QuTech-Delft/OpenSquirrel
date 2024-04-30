@@ -1,11 +1,22 @@
-import math
+from __future__ import annotations
+
+from collections.abc import Iterable
 from typing import List
 
 import numpy as np
+from numpy.typing import NDArray
 
 from opensquirrel.common import can1
 from opensquirrel.decomposer.general_decomposer import _QubitReIndexer
-from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, Gate, Qubit, SquirrelIR, SquirrelIRVisitor
+from opensquirrel.squirrel_ir import (
+    BlochSphereRotation,
+    ControlledGate,
+    Gate,
+    MatrixGate,
+    Qubit,
+    SquirrelIR,
+    SquirrelIRVisitor,
+)
 
 
 def get_reduced_ket(ket: int, qubits: List[Qubit]) -> int:
@@ -88,10 +99,10 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: List[Qubit]) -> int:
 
 
 class MatrixExpander(SquirrelIRVisitor):
-    def __init__(self, number_of_qubits: int):
+    def __init__(self, number_of_qubits: int) -> None:
         self.number_of_qubits = number_of_qubits
 
-    def visit_bloch_sphere_rotation(self, rot):
+    def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex_]:
         assert rot.qubit.index < self.number_of_qubits
 
         result = np.kron(
@@ -101,7 +112,7 @@ class MatrixExpander(SquirrelIRVisitor):
         assert result.shape == (1 << self.number_of_qubits, 1 << self.number_of_qubits)
         return result
 
-    def visit_controlled_gate(self, gate):
+    def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex_]:
         assert gate.control_qubit.index < self.number_of_qubits
 
         expanded_matrix = gate.target_gate.accept(self)
@@ -109,9 +120,9 @@ class MatrixExpander(SquirrelIRVisitor):
             if col_index & (1 << gate.control_qubit.index) == 0:
                 col[:] = 0
                 col[col_index] = 1
-        return expanded_matrix
+        return np.asarray(expanded_matrix, dtype=np.complex_)
 
-    def visit_matrix_gate(self, gate):
+    def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex_]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as
         #   1, 0, 0, 0
@@ -141,7 +152,7 @@ class MatrixExpander(SquirrelIRVisitor):
         return expanded_matrix
 
 
-def get_matrix(gate: Gate, number_of_qubits: int) -> np.ndarray:
+def get_matrix(gate: Gate, number_of_qubits: int) -> NDArray[np.complex_]:
     """
     Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of
     qubits. This can be used for, e.g.,
@@ -183,10 +194,10 @@ def get_matrix(gate: Gate, number_of_qubits: int) -> np.ndarray:
     """
 
     expander = MatrixExpander(number_of_qubits)
-    return gate.accept(expander)
+    return np.asarray(gate.accept(expander), dtype=np.complex_)
 
 
-def get_matrix_after_qubit_remapping(replacement: List[Gate], qubit_mappings: List[Qubit]):
+def get_matrix_after_qubit_remapping(replacement: Iterable[Gate], qubit_mappings: List[Qubit]) -> NDArray[np.complex_]:
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 
     replacement_ir = SquirrelIR(number_of_qubits=len(qubit_mappings), qubit_register_name="q_temp")
