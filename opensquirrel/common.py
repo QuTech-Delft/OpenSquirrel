@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import cmath
 import math
-from typing import Tuple
+from collections.abc import Iterable
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -29,7 +31,7 @@ Y = np.array([[0, -1j], [1j, 0]])
 Z = np.array([[1, 0], [0, -1]])
 
 
-def can1(axis: Tuple[float, float, float], angle: float, phase: float = 0) -> NDArray[np.complex_]:
+def can1(axis: Iterable[float], angle: float, phase: float = 0) -> NDArray[np.complex_]:
     nx, ny, nz = axis
     norm = math.sqrt(nx**2 + ny**2 + nz**2)
     assert norm > 0.00000001
