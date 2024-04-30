@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import math
+from typing import Any
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
@@ -32,7 +35,7 @@ class _ScheduleCreator(SquirrelIRVisitor):
         self.qubit_register_name = qubit_register_name
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
+    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
             theta = math.degrees(g.angle)
@@ -48,10 +51,10 @@ class _ScheduleCreator(SquirrelIRVisitor):
 
         raise _unsupported_gates_exception
 
-    def visit_matrix_gate(self, g: MatrixGate):
+    def visit_matrix_gate(self, g: MatrixGate) -> None:
         raise _unsupported_gates_exception
 
-    def visit_controlled_gate(self, g: ControlledGate):
+    def visit_controlled_gate(self, g: ControlledGate) -> None:
         if not isinstance(g.target_gate, BlochSphereRotation):
             raise _unsupported_gates_exception
 
@@ -74,11 +77,11 @@ class _ScheduleCreator(SquirrelIRVisitor):
         raise _unsupported_gates_exception
 
 
-def export(squirrel_ir: SquirrelIR):
+def export(squirrel_ir: SquirrelIR) -> "quantify_scheduler.Schedule":
     if "quantify_scheduler" not in globals():
 
         class QuantifySchedulerNotInstalled:
-            def __getattr__(self, attr_name):
+            def __getattr__(self, attr_name: Any) -> None:
                 raise ImportError("quantify-scheduler is not installed, or cannot be installed on your system")
 
         global quantify_scheduler
