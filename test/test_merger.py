@@ -25,10 +25,10 @@ class MergerTest(IREqualityTestBase):
         self.assertEqual(composed, BlochSphereRotation(qubit=q, axis=(1, 1, 0), angle=math.pi))
 
     def test_single_gate(self):
-        ir = SquirrelIR(number_of_qubits=2, qubit_register_name="q")
+        ir = SquirrelIR(qubit_register_size=2, qubit_register_name="q")
         ir.add_gate(Ry(Qubit(0), Float(1.2345)))
 
-        expected_ir = SquirrelIR(number_of_qubits=2, qubit_register_name="q")
+        expected_ir = SquirrelIR(qubit_register_size=2, qubit_register_name="q")
         expected_ir.add_gate(Ry(Qubit(0), Float(1.2345)))
 
         self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
@@ -38,35 +38,35 @@ class MergerTest(IREqualityTestBase):
         self.assertEqual(ir.statements[0].arguments, (Qubit(0), Float(1.2345)))
 
     def test_two_hadamards(self):
-        ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
 
         ir.add_gate(H(Qubit(2)))
         ir.add_gate(H(Qubit(2)))
 
-        expected_ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        expected_ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
 
         self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
 
     def test_two_hadamards_different_qubits(self):
-        ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
         ir.add_gate(H(Qubit(0)))
         ir.add_gate(H(Qubit(2)))
 
-        expected_ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        expected_ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
         expected_ir.add_gate(H(Qubit(0)))
         expected_ir.add_gate(H(Qubit(2)))
 
         self.modify_ir_and_check(ir, action=general_merger.merge_single_qubit_gates, expected_ir=expected_ir)
 
     def test_merge_different_qubits(self):
-        ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
         ir.add_gate(Ry(Qubit(0), Float(math.pi / 2)))
         ir.add_gate(Rx(Qubit(0), Float(math.pi)))
         ir.add_gate(Rz(Qubit(1), Float(1.2345)))
         ir.add_gate(Ry(Qubit(2), Float(1)))
         ir.add_gate(Ry(Qubit(2), Float(3.234)))
 
-        expected_ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        expected_ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
         expected_ir.add_gate(
             BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 1), angle=math.pi)
         )  # This is hadamard with 0 phase...
@@ -81,7 +81,7 @@ class MergerTest(IREqualityTestBase):
         self.assertTrue(ir.statements[2].is_anonymous)
 
     def test_merge_and_flush(self):
-        ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
         ir.add_gate(Ry(Qubit(0), Float(math.pi / 2)))
         ir.add_gate(Rz(Qubit(1), Float(1.5)))
         ir.add_gate(Rx(Qubit(0), Float(math.pi)))
@@ -89,7 +89,7 @@ class MergerTest(IREqualityTestBase):
         ir.add_gate(CNOT(Qubit(0), Qubit(1)))
         ir.add_gate(Ry(Qubit(0), Float(3.234)))
 
-        expected_ir = SquirrelIR(number_of_qubits=4, qubit_register_name="q")
+        expected_ir = SquirrelIR(qubit_register_size=4, qubit_register_name="q")
         expected_ir.add_gate(
             BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 1), angle=math.pi)
         )  # This is hadamard with 0 phase...

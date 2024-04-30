@@ -49,7 +49,7 @@ For creation of a circuit through Python, the `CircuitBuilder` can be used accor
 from opensquirrel import CircuitBuilder
 from opensquirrel.squirrel_ir import Qubit, Int, Float
 
-my_circuit_from_builder = CircuitBuilder(number_of_qubits=2).ry(Qubit(0), Float(0.23)).cnot(Qubit(0), Qubit(1)).to_circuit()
+my_circuit_from_builder = CircuitBuilder(qubit_register_size=2).ry(Qubit(0), Float(0.23)).cnot(Qubit(0), Qubit(1)).to_circuit()
 my_circuit_from_builder
 ```
 
@@ -63,7 +63,7 @@ my_circuit_from_builder
 You can naturally use the functionalities available in Python to create your circuit:
 
 ```python
-builder = CircuitBuilder(number_of_qubits=10)
+builder = CircuitBuilder(qubit_register_size=10)
 for i in range(0, 10, 2):
     builder.h(Qubit(i))
 
@@ -83,11 +83,11 @@ builder.to_circuit()
 For instance, you can generate a quantum fourier transform (QFT) circuit as follows:
 
 ```python
-number_of_qubits = 5
-qft = CircuitBuilder(number_of_qubits=number_of_qubits)
-for i in range(number_of_qubits):
+qubit_register_size = 5
+qft = CircuitBuilder(qubit_register_size)
+for i in range(qubit_register_size):
       qft.h(Qubit(i))
-      for c in range(i + 1, number_of_qubits):
+      for c in range(i + 1, qubit_register_size):
             qft.crk(Qubit(c), Qubit(i), Int(c-i+1))
 
 qft.to_circuit()
@@ -156,7 +156,7 @@ The same holds for the `CircuitBuilder`, _i.e._, it also throws an error if argu
 
 ```python
 try:
-    CircuitBuilder(number_of_qubits=2).cnot(Qubit(0), Int(3))
+    CircuitBuilder(qubit_register_size=2).cnot(Qubit(0), Int(3))
 except Exception as e:
     print(e)
 ```
@@ -172,7 +172,7 @@ OpenSquirrel can merge consecutive quantum gates. Currently, this is only done f
 ```python
 import math
 
-builder = CircuitBuilder(number_of_qubits=1)
+builder = CircuitBuilder(qubit_register_size=1)
 for i in range(16):
   builder.rx(Qubit(0), Float(math.pi / 16))
 

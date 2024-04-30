@@ -100,7 +100,7 @@ class ReplacerTest(unittest.TestCase):
             check_valid_replacement(H(Qubit(9234687)), [Y90(Qubit(9234687)), X(Qubit(9234687)), X(Qubit(9234687))])
 
     def test_replace_generic(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="test")
+        squirrel_ir = SquirrelIR(qubit_register_size=3, qubit_register_name="test")
 
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
@@ -115,7 +115,7 @@ class ReplacerTest(unittest.TestCase):
 
         general_decomposer.decompose(squirrel_ir, decomposer=TestDecomposer())
 
-        expected_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="test")
+        expected_ir = SquirrelIR(qubit_register_size=3, qubit_register_name="test")
 
         expected_ir.add_gate(BlochSphereRotation.identity(Qubit(0)))
         expected_ir.add_gate(H(Qubit(0)))
@@ -125,14 +125,14 @@ class ReplacerTest(unittest.TestCase):
         self.assertEqual(expected_ir, squirrel_ir)
 
     def test_replace(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="test")
+        squirrel_ir = SquirrelIR(qubit_register_size=3, qubit_register_name="test")
 
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_comment(Comment("Test comment."))
 
         general_decomposer.replace(squirrel_ir, H, lambda q: [Y90(q), X(q)])
 
-        expected_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="test")
+        expected_ir = SquirrelIR(qubit_register_size=3, qubit_register_name="test")
 
         expected_ir.add_gate(Y90(Qubit(0)))
         expected_ir.add_gate(X(Qubit(0)))

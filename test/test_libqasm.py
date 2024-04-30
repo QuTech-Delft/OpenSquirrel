@@ -1,7 +1,7 @@
 import unittest
 
 from opensquirrel.default_gates import *
-from opensquirrel.parser.libqasm.libqasm_ir_creator import LibqasmIRCreator
+from opensquirrel.parser.libqasm.libqasm_parser import LibqasmIRCreator
 
 
 class LibqasmTest(unittest.TestCase):
@@ -23,7 +23,7 @@ CRk my_qubits[0], my_qubits[1], 23
         """
         )
 
-        self.assertEqual(ir.number_of_qubits, 2)
+        self.assertEqual(ir.qubit_register_size, 2)
         self.assertEqual(ir.qubit_register_name, "my_qubits")
         self.assertEqual(
             ir.statements,
@@ -49,7 +49,7 @@ CRk q[0, 3], q[1, 4], 23
         """
         )
 
-        self.assertEqual(ir.number_of_qubits, 20)
+        self.assertEqual(ir.qubit_register_size, 20)
         self.assertEqual(ir.qubit_register_name, "q")
         self.assertEqual(
             ir.statements,

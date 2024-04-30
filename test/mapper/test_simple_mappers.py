@@ -16,7 +16,7 @@ class TestIdentityMapper:
         check_mapper(mapper)
 
     def test_mapping(self, mapper: IdentityMapper) -> None:
-        squirrel_ir = SquirrelIR(number_of_qubits=3)
+        squirrel_ir = SquirrelIR(qubit_register_size=3)
         mapping = mapper.map(squirrel_ir)
         assert mapping == {0: 0, 1: 1, 2: 2}
 
@@ -32,7 +32,7 @@ class TestHardcodedMapper:
         check_mapper(mapper)
 
     def test_mapping(self, mapper: HardcodedMapper) -> None:
-        squirrel_ir = SquirrelIR(number_of_qubits=10)
+        squirrel_ir = SquirrelIR(qubit_register_size=10)
         mapping = mapper.map(squirrel_ir)
         assert mapping == {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 0}
 

@@ -19,13 +19,7 @@ class IREqualityTestBase(unittest.TestCase):
         # Store matrix before decompositions.
         expected_matrix = circuit_matrix_calculator.get_circuit_matrix(ir)
 
-        expected_number_of_qubits = ir.number_of_qubits
-        expected_qubit_register_name = ir.qubit_register_name
-
         action(ir)
-
-        self.assertEqual(ir.number_of_qubits, expected_number_of_qubits)
-        self.assertEqual(ir.qubit_register_name, expected_qubit_register_name)
 
         # Get matrix after decompositions.
         actual_matrix = circuit_matrix_calculator.get_circuit_matrix(ir)

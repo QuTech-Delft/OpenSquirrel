@@ -6,16 +6,17 @@ import cqasm.v3x as cqasm
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
+from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import Float, Int, Qubit, SquirrelIR
 
-_cqasm_type_to_squirrel_type = {
+_ast_type_to_ir_type = {
     cqasm.types.QubitArray: Qubit,
     cqasm.values.ConstInt: Int,
     cqasm.values.ConstFloat: Float,
 }
 
 
-class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
+class LibqasmParser(GateLibrary, MeasurementLibrary):
     def __init__(
         self,
         gate_set=default_gate_set,
@@ -43,38 +44,38 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
         return None
 
     @staticmethod
-    def _check_cqasm_type(cqasm_expression, expected_squirrel_type):
-        cqasm_type = (
-            type(cqasm_expression.variable.typ)
-            if isinstance(cqasm_expression, cqasm.values.IndexRef)
-            else type(cqasm_expression)
+    def _check_ast_type(ast_expression, expected_ir_type):
+        ast_type = (
+            type(ast_expression.variable.typ)
+            if isinstance(ast_expression, cqasm.values.IndexRef)
+            else type(ast_expression)
         )
 
-        # The below is already guaranteed by Libqasm, therefore it's just an assert.
-        assert _cqasm_type_to_squirrel_type[cqasm_type] == expected_squirrel_type
+        # The check below is already guaranteed by libqasm, therefore it's just an assert.
+        assert _ast_type_to_ir_type[ast_type] == expected_ir_type
 
     @classmethod
-    def _get_expanded_squirrel_args(cls, generator_f, cqasm_args):
+    def _get_expanded_statement_args(cls, generator_f, ast_args):
         parameters = inspect.signature(generator_f).parameters.values()
 
-        ### The below is already guaranteed by LibQasm, therefore it's just an assert.
-        assert len(parameters) == len(cqasm_args)
-        for cqasm_arg, expected_parameter in zip(cqasm_args, parameters):
-            cls._check_cqasm_type(cqasm_expression=cqasm_arg, expected_squirrel_type=expected_parameter.annotation)
+        ### The check below is already guaranteed by libqasm, therefore it's just an assert.
+        assert len(parameters) == len(ast_args)
+        for ast_arg, expected_parameter in zip(ast_args, parameters):
+            cls._check_ast_type(ast_expression=ast_arg, expected_ir_type=expected_parameter.annotation)
 
         number_of_operands = next(
-            len(cqasm_arg.indices)
-            for cqasm_arg, expected_parameter in zip(cqasm_args, parameters)
+            len(ast_arg.indices)
+            for ast_arg, expected_parameter in zip(ast_args, parameters)
             if expected_parameter.annotation == Qubit
         )
 
         expanded_args = [
             (
-                cls._get_qubits(cqasm_arg)
+                cls._get_qubits(ast_arg)
                 if expected_parameter.annotation == Qubit
-                else [cls._get_literal(cqasm_arg)] * number_of_operands
+                else [cls._get_literal(ast_arg)] * number_of_operands
             )
-            for cqasm_arg, expected_parameter in zip(cqasm_args, parameters)
+            for ast_arg, expected_parameter in zip(ast_args, parameters)
         ]
 
         return zip(*expanded_args)
@@ -94,7 +95,7 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
 
     def _create_analyzer(self):
         without_defaults = True
-        analyzer = cqasm.Analyzer("3.0.0", without_defaults)
+        analyzer = cqasm.Analyzer("3.0", without_defaults)
         for generator_f in self.gate_set:
             for set_of_letters in itertools.product(
                 *(
@@ -117,30 +118,38 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
 
         return analyzer
 
-    def squirrel_ir_from_string(self, s: str):
-        analyzer = self._create_analyzer()
+    @staticmethod
+    def _check_analysis_result(self, result):
+        if isinstance(result, list):
+            raise Exception("Parsing error: " + ", ".join(result))
 
-        ast = analyzer.analyze_string(s)
-
-        if isinstance(ast, list):
-            raise Exception("Parsing error: " + ", ".join(ast))
-
-        number_of_qubits = ast.qubit_variable_declaration.typ.size
-
+    @staticmethod
+    def _parse_qubit_register(self, ast):
         # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
+        qubit_register_size = ast.qubit_variable_declaration.typ.size
         qubit_register_name = ast.qubit_variable_declaration.name[2:-1]
+        return [qubit_register_size, qubit_register_name]
 
-        squirrel_ir = SquirrelIR(number_of_qubits=number_of_qubits, qubit_register_name=qubit_register_name)
 
+    def from_string(self, s: str):
+        # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
+        analyzer = self._create_analyzer()
+        analysis_result = analyzer.analyze_string(s)
+        LibqasmParser._check_analysis_result(analysis_result)
+
+        # Parse qubit register
+        [qubit_register_size, qubit_register_name] = LibqasmParser._parse_qubit_register(analysis_result)
+        register_manager = RegisterManager(qubit_register_size, qubit_register_name)
+
+        # Parse statements
+        squirrel_ir = SquirrelIR()
         for statement in ast.block.statements:
             if "measure" in statement.name[2:-1]:
                 generator_f = self.get_measurement_f(statement.name[2:-1])
             else:
                 generator_f = self.get_gate_f(statement.name[2:-1])
-
-            expanded_squirrel_args = LibqasmIRCreator._get_expanded_squirrel_args(generator_f, statement.operands)
-
-            for arg_set in expanded_squirrel_args:
+            expanded_args = LibqasmParser._get_expanded_statement_args(generator_f, statement.operands)
+            for arg_set in expanded_args:
                 squirrel_ir.add_gate(generator_f(*arg_set))
 
-        return squirrel_ir
+        return Circuit(register_manager, squirrel_ir)

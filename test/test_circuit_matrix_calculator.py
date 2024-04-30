@@ -7,7 +7,8 @@ from opensquirrel.squirrel_ir import Qubit, SquirrelIR
 
 class CircuitMatrixCalculatorTest(unittest.TestCase):
     def test_hadamard(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=1)
+        register_manager = RegisterManager(qubit_register_size=1)
+        squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(H(Qubit(0)))
 
         self.assertTrue(
@@ -24,14 +25,14 @@ class CircuitMatrixCalculatorTest(unittest.TestCase):
         )
 
     def test_double_hadamard(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=1)
+        squirrel_ir = SquirrelIR(qubit_register_size=1)
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(H(Qubit(0)))
 
         self.assertTrue(np.allclose(circuit_matrix_calculator.get_circuit_matrix(squirrel_ir), np.eye(2)))
 
     def test_triple_hadamard(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=1)
+        squirrel_ir = SquirrelIR(qubit_register_size=1)
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(H(Qubit(0)))
@@ -50,7 +51,7 @@ class CircuitMatrixCalculatorTest(unittest.TestCase):
         )
 
     def test_hadamard_x(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir = SquirrelIR(qubit_register_size=2)
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(X(Qubit(1)))
 
@@ -70,7 +71,7 @@ class CircuitMatrixCalculatorTest(unittest.TestCase):
         )
 
     def test_x_hadamard(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir = SquirrelIR(qubit_register_size=2)
         squirrel_ir.add_gate(H(Qubit(1)))
         squirrel_ir.add_gate(X(Qubit(0)))
 
@@ -90,7 +91,7 @@ class CircuitMatrixCalculatorTest(unittest.TestCase):
         )
 
     def test_cnot(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir = SquirrelIR(qubit_register_size=2)
         squirrel_ir.add_gate(CNOT(Qubit(1), Qubit(0)))
 
         self.assertTrue(
@@ -108,7 +109,7 @@ class CircuitMatrixCalculatorTest(unittest.TestCase):
         )
 
     def test_cnot_reversed(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir = SquirrelIR(qubit_register_size=2)
         squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
 
         self.assertTrue(
@@ -126,7 +127,7 @@ class CircuitMatrixCalculatorTest(unittest.TestCase):
         )
 
     def test_hadamard_cnot(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=2)
+        squirrel_ir = SquirrelIR(qubit_register_size=2)
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
 
@@ -146,7 +147,7 @@ class CircuitMatrixCalculatorTest(unittest.TestCase):
         )
 
     def test_hadamard_cnot_0_2(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=3)
+        squirrel_ir = SquirrelIR(qubit_register_size=3)
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(2)))
 

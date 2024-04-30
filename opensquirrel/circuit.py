@@ -13,7 +13,8 @@ from opensquirrel.exporter import quantify_scheduler_exporter, writer
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.mapper import IdentityMapper, Mapper, map_qubits
 from opensquirrel.merger import general_merger
-from opensquirrel.parser.libqasm.libqasm_ir_creator import LibqasmIRCreator
+from opensquirrel.parser.libqasm.libqasm_parser import LibqasmParser
+from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
 
 
@@ -42,9 +43,10 @@ class Circuit:
 
     """
 
-    def __init__(self, squirrel_ir: SquirrelIR):
-        """Create a circuit object from a SquirrelIR object."""
+    def __init__(self, register_manager: RegisterManager, squirrel_ir: SquirrelIR):
+        """Create a circuit object from a register manager and an IR."""
 
+        self.register_manager = register_manager
         self.squirrel_ir = squirrel_ir
 
     @classmethod
@@ -58,33 +60,41 @@ class Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
-        * type-checking is performed, eliminating qubit indices errors and incoherencies
+        * type-checking is performed, eliminating qubit indices errors and incoherences
         * checks that used gates are supported and mentioned in `gates` with appropriate signatures
         * does not support map or variables, and other things...
         * for example of `gates` dictionary, please look at TestGates.py
 
 
         Args:
-            cqasm3_string: a cqasm 3 string
+            cqasm3_string: a cQASM 3 string
             gate_set: an array of gate semantic functions. See default_gates for examples
             gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
             measurement_set: an array of measurement semantic functions. See default_measurements for examples
 
         """
-        libqasm_ir_creator = LibqasmIRCreator(
+        libqasm_parser = LibqasmParser(
             gate_set=gate_set,
             gate_aliases=gate_aliases,
             measurement_set=measurement_set,
         )
-        return Circuit(libqasm_ir_creator.squirrel_ir_from_string(cqasm3_string))
+        return libqasm_parser.from_string(cqasm3_string)
 
     @property
-    def number_of_qubits(self) -> int:
-        return self.squirrel_ir.number_of_qubits
+    def qubit_register_size(self) -> int:
+        return self.register_manager.register_size
 
     @property
     def qubit_register_name(self) -> str:
-        return self.squirrel_ir.qubit_register_name
+        return self.register_manager.qubit_register_name
+
+    @property
+    def bit_register_size(self) -> int:
+        return self.register_manager.register_size
+
+    @property
+    def bit_register_name(self) -> str:
+        return self.register_manager.bit_register_name
 
     def merge_single_qubit_gates(self):
         """Merge all consecutive 1-qubit gates in the circuit.
@@ -98,16 +108,16 @@ class Circuit:
         """Generic decomposition pass. It applies the given decomposer function to every gate in the circuit."""
         general_decomposer.decompose(self.squirrel_ir, decomposer)
 
-    def map_qubits(self, mapper: Mapper | None = None) -> None:
+    def map(self, mapper: Mapper = None) -> None:
         """Generic qubit mapper pass.
 
-        Maps the virtual qubits of the circuit to physical qubits of the target hardware.
+        Maps the (virtual) qubits of the circuit to physical qubits of the target hardware.
 
         Args:
             mapper: Mapper class to use. If ``None`` (default) is provided, use the ``IdentityMapper``.
         """
-        mapper = IdentityMapper() if mapper is None else mapper
-        map_qubits(self.squirrel_ir, mapper)
+        mapper = IdentityMapper(circuit.qubit_register_size) if mapper is None else mapper
+        register_manager.mapping = mapper.get_map()
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.
@@ -125,13 +135,13 @@ class Circuit:
         * result is stored as a numpy array of complex numbers
 
         """
-        return circuit_matrix_calculator.get_circuit_matrix(self.squirrel_ir)
+        return circuit_matrix_calculator.get_circuit_matrix(self)
 
     def __repr__(self) -> str:
-        """Write the circuit to a cQasm3 string."""
-        return writer.squirrel_ir_to_string(self.squirrel_ir)
+        """Write the circuit to a cQASM 3 string."""
+        return writer.to_string(self)
 
     def export(self, fmt: ExportFormat = None) -> None:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
-            return quantify_scheduler_exporter.export(self.squirrel_ir)
+            return quantify_scheduler_exporter.export(self)
         raise ValueError("Unknown exporter format")

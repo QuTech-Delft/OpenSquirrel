@@ -7,37 +7,35 @@ from opensquirrel.squirrel_ir import Comment, Measure, Qubit, SquirrelIR, Statem
 
 
 class TestMapper:
-
     def test_init(self) -> None:
         with pytest.raises(TypeError):
-            Mapper()
+            Mapper(qubit_register_size=1)
 
     def test_implementation(self) -> None:
-
         class Mapper2(Mapper):
             pass
 
         with pytest.raises(TypeError):
-            Mapper2()
+            Mapper2(qubit_register_size=1)
 
         class Mapper3(Mapper2):
-            def map(self, squirrel_ir: SquirrelIR) -> dict[int, int]:
-                return {0: 0}
+            def __init__(self, qubit_register_size: int) -> None:
+                super().__init__(qubit_register_size, Mapping({0: 0}))
 
-        Mapper3()
+        Mapper3(qubit_register_size=1)
 
 
 class TestMapQubits:
-
-    @pytest.fixture(name="squirrel_ir")
-    def squirrel_ir_fixture(self) -> SquirrelIR:
-        squirrel_ir = SquirrelIR(number_of_qubits=3)
+    @pytest.fixture(name="circuit")
+    def circuit_fixture(self) -> Circuit:
+        register_manager = RegisterManager(qubit_register_size=3)
+        squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
         squirrel_ir.add_gate(CNOT(Qubit(1), Qubit(2)))
         squirrel_ir.add_comment(Comment("Qubit[1]"))
         squirrel_ir.add_measurement(Measure(Qubit(0), axis=(0, 0, 1)))
-        return squirrel_ir
+        return Circuit(register_manager, squirrel_ir)
 
     @pytest.fixture(name="expected_statements")
     def expected_statements_fixture(self) -> list[Statement]:
@@ -49,19 +47,17 @@ class TestMapQubits:
             Measure(Qubit(1), axis=(0, 0, 1)),
         ]
 
-    def test_map_qubits(self, squirrel_ir: SquirrelIR, expected_statements: list[Statement]) -> None:
-        mapper = HardcodedMapper({0: 1, 1: 0, 2: 2})
-        map_qubits(squirrel_ir, mapper)
+    def test_map_qubits(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
+        mapper = HardcodedMapper(circuit.qubit_register_size, Mapping({0: 1, 1: 0, 2: 2}))
+        circuit.map(mapper)
 
         # Check that the circuit is altered as expected
-        mapped_statements = squirrel_ir.statements
+        mapped_statements = circuit.squirrel_ir.statements
         assert mapped_statements == expected_statements
 
-    def test_map_qubits_circuit(self, squirrel_ir: SquirrelIR, expected_statements: list[Statement]) -> None:
-        circuit = Circuit(squirrel_ir)
-
-        mapper = HardcodedMapper({0: 1, 1: 0, 2: 2})
-        circuit.map_qubits(mapper)
+    def test_map_qubits_circuit(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
+        mapper = HardcodedMapper(circuit.qubit_register_size, Mapping({0: 1, 1: 0, 2: 2}))
+        circuit.map(mapper)
 
         # Check that the circuit is altered as expected
         mapped_statements = circuit.squirrel_ir.statements

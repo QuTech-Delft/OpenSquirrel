@@ -367,15 +367,8 @@ class Comment(Statement):
 
 class SquirrelIR:
     # This is just a list of gates (for now?)
-    def __init__(
-        self,
-        *,
-        number_of_qubits: int,
-        qubit_register_name: str = "q",
-    ):
-        self.number_of_qubits: int = number_of_qubits
+    def __init__(self):
         self.statements: List[Statement] = []
-        self.qubit_register_name: str = qubit_register_name
 
     def add_gate(self, gate: Gate):
         self.statements.append(gate)
@@ -387,16 +380,10 @@ class SquirrelIR:
         self.statements.append(comment)
 
     def __eq__(self, other):
-        if self.number_of_qubits != other.number_of_qubits:
-            return False
-
-        if self.qubit_register_name != other.qubit_register_name:
-            return False
-
         return self.statements == other.statements
 
     def __repr__(self):
-        return f"""IR ({self.number_of_qubits} qubits, register {self.qubit_register_name}): {self.statements}"""
+        return f"""IR: {self.statements}"""
 
     def accept(self, visitor: SquirrelIRVisitor):
         for statement in self.statements:

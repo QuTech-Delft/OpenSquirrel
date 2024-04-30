@@ -4,9 +4,11 @@ import math
 import unittest
 import unittest.mock
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from opensquirrel.exporter import quantify_scheduler_exporter
+from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Qubit, SquirrelIR
 
 
@@ -38,7 +40,8 @@ class MockedQuantifyScheduler:
 
 class QuantifySchedulerExporterTest(unittest.TestCase):
     def test_export(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=2, qubit_register_name="test")
+        register_manager = RegisterManager(qubit_register_size=2, qubit_register_name="test")
+        squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(X(Qubit(0)))
         squirrel_ir.add_gate(CZ(Qubit(0), Qubit(1)))
         squirrel_ir.add_gate(Rz(Qubit(1), Float(2.34)))
@@ -48,7 +51,7 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
             mock_schedule = unittest.mock.MagicMock()
             mock_quantify_scheduler.Schedule.return_value = mock_schedule
 
-            quantify_scheduler_exporter.export(squirrel_ir)
+            quantify_scheduler_exporter.export(Circuit(register_manager, squirrel_ir))
 
             mock_quantify_scheduler.Schedule.assert_called_with("Exported OpenSquirrel circuit")
 
@@ -65,12 +68,13 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
             self.assertEqual(mock_schedule.add.call_count, 4)
 
     def check_gate_not_supported(self, g: Gate):
-        squirrel_ir = SquirrelIR(number_of_qubits=20, qubit_register_name="test")
+        register_manager = RegisterManagar(qubit_register_size=20, qubit_register_name="test")
+        squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(g)
 
         with MockedQuantifyScheduler():
             with self.assertRaisesRegex(Exception, "Cannot exporter circuit: it contains unsupported gates"):
-                quantify_scheduler_exporter.export(squirrel_ir)
+                quantify_scheduler_exporter.export(Circuit(register_manager, squirrel_ir))
 
     def test_gates_not_supported(self):
         self.check_gate_not_supported(H(Qubit(0)))

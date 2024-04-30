@@ -3,8 +3,10 @@ from typing import List
 
 import numpy as np
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.common import can1
 from opensquirrel.decomposer.general_decomposer import _QubitReIndexer
+from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, Gate, Qubit, SquirrelIR, SquirrelIRVisitor
 
 
@@ -88,21 +90,21 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: List[Qubit]) -> int:
 
 
 class MatrixExpander(SquirrelIRVisitor):
-    def __init__(self, number_of_qubits: int):
-        self.number_of_qubits = number_of_qubits
+    def __init__(self, qubit_register_size: int):
+        self.qubit_register_size = qubit_register_size
 
     def visit_bloch_sphere_rotation(self, rot):
-        assert rot.qubit.index < self.number_of_qubits
+        assert rot.qubit.index < self.qubit_register_size
 
         result = np.kron(
-            np.kron(np.eye(1 << (self.number_of_qubits - rot.qubit.index - 1)), can1(rot.axis, rot.angle, rot.phase)),
+            np.kron(np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)), can1(rot.axis, rot.angle, rot.phase)),
             np.eye(1 << rot.qubit.index),
         )
-        assert result.shape == (1 << self.number_of_qubits, 1 << self.number_of_qubits)
+        assert result.shape == (1 << self.qubit_register_size, 1 << self.qubit_register_size)
         return result
 
     def visit_controlled_gate(self, gate):
-        assert gate.control_qubit.index < self.number_of_qubits
+        assert gate.control_qubit.index < self.qubit_register_size
 
         expanded_matrix = gate.target_gate.accept(self)
         for col_index, col in enumerate(expanded_matrix.T):
@@ -122,13 +124,13 @@ class MatrixExpander(SquirrelIRVisitor):
         # since qubit #i corresponds to the i-th LEAST significant bit.
         qubit_operands = list(reversed(gate.operands))
 
-        assert all(q.index < self.number_of_qubits for q in qubit_operands)
+        assert all(q.index < self.qubit_register_size for q in qubit_operands)
 
         m = gate.matrix
 
         assert m.shape == (1 << len(qubit_operands), 1 << len(qubit_operands))
 
-        expanded_matrix = np.zeros((1 << self.number_of_qubits, 1 << self.number_of_qubits), dtype=m.dtype)
+        expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
 
         for expanded_matrix_column in range(expanded_matrix.shape[1]):
             small_matrix_col = get_reduced_ket(expanded_matrix_column, qubit_operands)
@@ -137,11 +139,11 @@ class MatrixExpander(SquirrelIRVisitor):
                 expanded_matrix_row = expand_ket(expanded_matrix_column, small_matrix_row, qubit_operands)
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
-        assert expanded_matrix.shape == (1 << self.number_of_qubits, 1 << self.number_of_qubits)
+        assert expanded_matrix.shape == (1 << self.qubit_register_size, 1 << self.qubit_register_size)
         return expanded_matrix
 
 
-def get_matrix(gate: Gate, number_of_qubits: int) -> np.ndarray:
+def get_matrix(gate: Gate, qubit_register_size: int) -> np.ndarray:
     """
     Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of
     qubits. This can be used for, e.g.,
@@ -151,7 +153,7 @@ def get_matrix(gate: Gate, number_of_qubits: int) -> np.ndarray:
 
     Args:
         gate: The gate, including the qubits on which it is operated on.
-        number_of_qubits: The total number of qubits.
+        qubit_register_size: The size of the qubit register.
 
     Examples:
         >>> X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
@@ -182,17 +184,18 @@ def get_matrix(gate: Gate, number_of_qubits: int) -> np.ndarray:
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
 
-    expander = MatrixExpander(number_of_qubits)
+    expander = MatrixExpander(qubit_register_size)
     return gate.accept(expander)
 
 
 def get_matrix_after_qubit_remapping(replacement: List[Gate], qubit_mappings: List[Qubit]):
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 
-    replacement_ir = SquirrelIR(number_of_qubits=len(qubit_mappings), qubit_register_name="q_temp")
+    register_manager = RegisterManager(qubit_register_size=len(qubit_mappings), qubit_register_name="q_temp")
+    replacement_ir = SquirrelIR()
     qubit_remapper = _QubitReIndexer(qubit_mappings)
     for gate in replacement:
         gate_with_remapped_qubits = gate.accept(qubit_remapper)
         replacement_ir.add_gate(gate_with_remapped_qubits)
 
-    return get_circuit_matrix(replacement_ir)
+    return get_circuit_matrix(Circuit(register_manager, replacement_ir))

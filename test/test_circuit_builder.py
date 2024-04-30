@@ -15,7 +15,7 @@ class CircuitBuilderTest(unittest.TestCase):
 
         circuit = builder.to_circuit()
 
-        self.assertEqual(circuit.number_of_qubits, 3)
+        self.assertEqual(circuit.qubit_register_size, 3)
         self.assertEqual(circuit.qubit_register_name, "q")
         self.assertEqual(
             circuit.squirrel_ir.statements,

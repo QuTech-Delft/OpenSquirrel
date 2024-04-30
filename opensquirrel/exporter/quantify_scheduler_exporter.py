@@ -74,7 +74,7 @@ class _ScheduleCreator(SquirrelIRVisitor):
         raise _unsupported_gates_exception
 
 
-def export(squirrel_ir: SquirrelIR):
+def export(circuit: Circuit):
     if "quantify_scheduler" not in globals():
 
         class QuantifySchedulerNotInstalled:
@@ -86,6 +86,6 @@ def export(squirrel_ir: SquirrelIR):
         global quantify_scheduler_gates
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
-    schedule_creator = _ScheduleCreator(squirrel_ir.qubit_register_name)
-    squirrel_ir.accept(schedule_creator)
+    schedule_creator = _ScheduleCreator(circuit.qubit_register_name)
+    circuit.squirrel_ir.accept(schedule_creator)
     return schedule_creator.schedule
