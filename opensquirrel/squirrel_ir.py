@@ -130,7 +130,7 @@ class Measure(Statement, ABC):
 class Gate(Statement, ABC):
     def __init__(
         self,
-        generator: Optional[Callable[..., "Gate"]] = None,
+        generator: Optional[Callable[..., Gate]] = None,
         arguments: Optional[Tuple[Expression, ...]] = None,
         *args: Any,
         **kwargs: Any,

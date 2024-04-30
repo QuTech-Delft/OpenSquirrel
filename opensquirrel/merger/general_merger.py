@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from collections.abc import Callable
 from math import acos, cos, sin
 
 import numpy as np
@@ -44,12 +47,12 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         axis=combined_axis,
         angle=combined_angle,
         phase=combined_phase,
-        generator=generator,
+        generator=generator,  # type: ignore[arg-type]
         arguments=arguments,
     )
 
 
-def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
+def merge_single_qubit_gates(squirrel_ir: SquirrelIR) -> None:
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
         Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(squirrel_ir.number_of_qubits)
     }
