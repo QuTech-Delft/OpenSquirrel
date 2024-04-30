@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import inspect
-from typing import Callable, Dict
+from functools import partial
+from typing import TYPE_CHECKING, Any, Callable, Dict
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.instruction_library import GateLibrary
-from opensquirrel.squirrel_ir import Comment, Gate, Qubit, SquirrelIR
+from opensquirrel.squirrel_ir import Comment, Gate, SquirrelIR
+
+if TYPE_CHECKING:
+    from typing import Self
 
 
 class CircuitBuilder(GateLibrary):
@@ -33,7 +37,7 @@ class CircuitBuilder(GateLibrary):
     def __init__(
         self,
         number_of_qubits: int,
-        gate_set: list[Gate] = default_gate_set,
+        gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
@@ -41,24 +45,27 @@ class CircuitBuilder(GateLibrary):
             number_of_qubits=number_of_qubits, qubit_register_name=self._default_qubit_register_name
         )
 
-    def __getattr__(self, attr):
-        def add_comment(comment_string: str):
-            self.squirrel_ir.add_comment(Comment(comment_string))
-            return self
+    def __getattr__(self, attr: Any) -> Callable[..., Self]:
+        if attr == "comment":
+            return self._add_comment
 
-        def add_this_gate(*args):
-            generator_f = GateLibrary.get_gate_f(self, attr)
-
-            for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
-                if not isinstance(args[i], par.annotation):
-                    raise TypeError(
-                        f"Wrong argument type for gate `{attr}`, got {type(args[i])} but expected {par.annotation}"
-                    )
-
-            self.squirrel_ir.add_gate(generator_f(*args))
-            return self
-
-        return add_comment if attr == "comment" else add_this_gate
+        return partial(self._add_this_gate, attr)
 
     def to_circuit(self) -> Circuit:
         return Circuit(self.squirrel_ir)
+
+    def _add_comment(self, comment_string: str) -> Self:
+        self.squirrel_ir.add_comment(Comment(comment_string))
+        return self
+
+    def _add_this_gate(self, attr: Any, *args: Any) -> Self:
+        generator_f = GateLibrary.get_gate_f(self, attr)
+
+        for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
+            if not isinstance(args[i], par.annotation):
+                raise TypeError(
+                    f"Wrong argument type for gate `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                )
+
+        self.squirrel_ir.add_gate(generator_f(*args))
+        return self
