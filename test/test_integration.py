@@ -47,7 +47,7 @@ class IntegrationTest(unittest.TestCase):
 
         myCircuit.merge_single_qubit_gates()
 
-        myCircuit.decompose(decomposer=McKayDecomposer)
+        myCircuit.decompose(decomposer=McKayDecomposer())
 
         # Write the transformed circuit as a cQasm3 string.
 
@@ -100,7 +100,7 @@ Rz qreg[1], 3.1415927
             """,
         )
         myCircuit.merge_single_qubit_gates()
-        myCircuit.decompose(decomposer=McKayDecomposer)
+        myCircuit.decompose(decomposer=McKayDecomposer())
         self.assertEqual(
             str(myCircuit),
             """version 3.0
@@ -149,7 +149,7 @@ measure qreg[2]
             """
         )
         myCircuit.merge_single_qubit_gates()
-        myCircuit.decompose(decomposer=McKayDecomposer)
+        myCircuit.decompose(decomposer=McKayDecomposer())
         self.assertEqual(
             str(myCircuit),
             """version 3.0
@@ -184,7 +184,7 @@ measure qreg[2]
             """
         )
         myCircuit.merge_single_qubit_gates()
-        myCircuit.decompose(decomposer=McKayDecomposer)
+        myCircuit.decompose(decomposer=McKayDecomposer())
         output = str(myCircuit)
         expected = """version 3.0
 
@@ -232,7 +232,7 @@ measure qreg[0]
 
         myCircuit.merge_single_qubit_gates()
 
-        myCircuit.decompose(decomposer=McKayDecomposer)
+        myCircuit.decompose(decomposer=McKayDecomposer())
         output = str(myCircuit)
 
         expected = """version 3.0
@@ -296,7 +296,7 @@ Rz q[1], 3.1415927
             """
         )
 
-        myCircuit.decompose(decomposer=CNOTDecomposer)
+        myCircuit.decompose(decomposer=CNOTDecomposer())
 
         # Quantify-scheduler prefers CZ.
         myCircuit.replace(
@@ -313,7 +313,7 @@ Rz q[1], 3.1415927
 
         # FIXME: for best gate count we need a Z-XY decomposer.
         # See https://github.com/QuTech-Delft/OpenSquirrel/issues/98
-        myCircuit.decompose(decomposer=ZYZDecomposer)
+        myCircuit.decompose(decomposer=ZYZDecomposer())
 
         if importlib.util.find_spec("quantify_scheduler") is None:
             with self.assertRaisesRegex(
