@@ -8,43 +8,43 @@ from functools import wraps
 from typing import Any, Callable, List, Optional, Tuple
 
 import numpy as np
-from numpy.typing import NDArray
+from numpy.typing import ArrayLike, NDArray
 
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle, normalize_axis
 
 
 class SquirrelIRVisitor(ABC):
-    def visit_comment(self, comment: Comment) -> None:
+    def visit_comment(self, comment: Comment) -> Any:
         pass
 
-    def visit_int(self, i: Int) -> None:
+    def visit_int(self, i: Int) -> Any:
         pass
 
-    def visit_float(self, f: Float) -> None:
+    def visit_float(self, f: Float) -> Any:
         pass
 
-    def visit_qubit(self, qubit: Qubit) -> None:
+    def visit_qubit(self, qubit: Qubit) -> Any:
         pass
 
-    def visit_gate(self, gate: Gate) -> None:
+    def visit_gate(self, gate: Gate) -> Any:
         pass
 
-    def visit_measure(self, measure: Measure) -> None:
+    def visit_measure(self, measure: Measure) -> Any:
         pass
 
-    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> None:
+    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
         pass
 
-    def visit_matrix_gate(self, matrix_gate: MatrixGate) -> None:
+    def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
         pass
 
-    def visit_controlled_gate(self, controlled_gate: ControlledGate) -> None:
+    def visit_controlled_gate(self, controlled_gate: ControlledGate) -> Any:
         pass
 
 
 class IRNode(ABC):
     @abstractmethod
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         pass
 
 
@@ -56,7 +56,7 @@ class Expression(IRNode, ABC):
 class Float(Expression):
     value: float
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         return visitor.visit_float(self)
 
 
@@ -64,7 +64,7 @@ class Float(Expression):
 class Int(Expression):
     value: int
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         return visitor.visit_int(self)
 
 
@@ -78,7 +78,7 @@ class Qubit(Expression):
     def __repr__(self) -> str:
         return f"Qubit[{self.index}]"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         return visitor.visit_qubit(self)
 
 
@@ -183,7 +183,7 @@ class BlochSphereRotation(Gate):
     def __init__(
         self,
         qubit: Qubit,
-        axis: Tuple[float, float, float],
+        axis: ArrayLike,
         angle: float,
         phase: float = 0,
         generator: Optional[Callable[..., BlochSphereRotation]] = None,
@@ -218,7 +218,7 @@ class BlochSphereRotation(Gate):
             return abs(self.angle + other.angle) < ATOL
         return False
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_bloch_sphere_rotation(self)
 
@@ -258,7 +258,7 @@ class MatrixGate(Gate):
     def __repr__(self) -> str:
         return f"MatrixGate(qubits={self.operands}, matrix={self.matrix})"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
@@ -294,7 +294,7 @@ class ControlledGate(Gate):
     def __repr__(self) -> str:
         return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
 
@@ -381,7 +381,7 @@ class Comment(Statement):
     def __post_init__(self) -> None:
         assert "*/" not in self.str, "Comment contains illegal characters"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: SquirrelIRVisitor) -> Any:
         return visitor.visit_comment(self)
 
 

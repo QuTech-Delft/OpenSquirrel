@@ -38,7 +38,7 @@ class CNOTDecomposer(Decomposer):
         # See https://threeplusone.com/pubs/on_gates.pdf
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
-        controlled_rotation_times_x = general_merger.compose_bloch_sphere_rotations(X(target_qubit), g.target_gate)
+        controlled_rotation_times_x = general_merger.compose_bloch_sphere_rotations(X(target_qubit), g.target_gate)  # type: ignore[arg-type]
         theta0_with_x, theta1_with_x, theta2_with_x = get_zyz_decomposition_angles(
             controlled_rotation_times_x.angle, controlled_rotation_times_x.axis
         )

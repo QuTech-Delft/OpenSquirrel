@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterable
 from typing import Tuple
 
 from opensquirrel.common import ATOL
@@ -10,7 +11,7 @@ from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 
-def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float]) -> Tuple[float, float, float]:
+def get_zyz_decomposition_angles(alpha: float, axis: Iterable[float]) -> Tuple[float, float, float]:
     """
     Gives the angles used in the Z-Y-Z decomposition of the Bloch sphere rotation
     characterized by a rotation around `axis` of angle `alpha`.
