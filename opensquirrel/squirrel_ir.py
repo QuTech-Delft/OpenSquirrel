@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import inspect
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import wraps
 from typing import Callable, List, Optional, Tuple
@@ -108,13 +111,21 @@ class Measure(Statement, ABC):
     def __eq__(self, other):
         if not isinstance(other, Measure):
             return False
-        return self.qubit == other.qubit and self.axis == other.axis
+        return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
 
     def accept(self, visitor: SquirrelIRVisitor):
         visitor.visit_measure(self)
 
     def get_qubit_operands(self) -> List[Qubit]:
         return [self.qubit]
+
+    def relabel(self, mapping: Mapping[int, int]) -> None:
+        """Relabel the qubits using the given mapping.
+
+        Args:
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits after replacement.
+        """
+        self.qubit = Qubit(mapping[self.qubit.index])
 
 
 class Gate(Statement, ABC):
@@ -141,11 +152,28 @@ class Gate(Statement, ABC):
 
     @abstractmethod
     def get_qubit_operands(self) -> List[Qubit]:
-        raise NotImplementedError
+        """Get the qubit operands of the Gate.
+
+        Returns:
+            List of qubits on which the Gate operates.
+        """
 
     @abstractmethod
     def is_identity(self) -> bool:
-        raise NotImplementedError
+        """Check wether the Gate is an identity Gate.
+
+        Returns:
+            Boolean value stating wether the Gate is an identity Gate.
+        """
+
+    @abstractmethod
+    def relabel(self, mapping: Mapping[int, int]) -> None:
+        """Relabel the qubits using the given mapping.
+
+        Args:
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
+            after replacement.
+        """
 
 
 class BlochSphereRotation(Gate):
@@ -200,6 +228,15 @@ class BlochSphereRotation(Gate):
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
 
+    def relabel(self, mapping: Mapping[int, int]) -> None:
+        """Relabel the qubits using the given mapping.
+
+        Args:
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
+            after replacement.
+        """
+        self.qubit = Qubit(mapping[self.qubit.index])
+
 
 class MatrixGate(Gate):
     generator: Optional[Callable[..., "MatrixGate"]] = None
@@ -225,6 +262,15 @@ class MatrixGate(Gate):
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(2 ** len(self.operands)))
 
+    def relabel(self, mapping: Mapping[int, int]) -> None:
+        """Relabel the qubits using the given mapping.
+
+        Args:
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
+            after replacement.
+        """
+        self.operands = [Qubit(mapping[qubit.index]) for qubit in self.operands]
+
 
 class ControlledGate(Gate):
     generator: Optional[Callable[..., "ControlledGate"]] = None
@@ -246,6 +292,16 @@ class ControlledGate(Gate):
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
+
+    def relabel(self, mapping: Mapping[int, int]) -> None:
+        """Relabel the qubits using the given mapping.
+
+        Args:
+            mapping: Mapping from the indices of the original qubits to the indices of the qubits
+            after replacement.
+        """
+        self.control_qubit = Qubit(mapping[self.control_qubit.index])
+        self.target_gate.relabel(mapping)
 
 
 def _compare_gate_classes(g1: Gate, g2: Gate) -> bool:

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Callable, Dict
 
 import numpy as np
@@ -9,6 +11,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.exporter import quantify_scheduler_exporter, writer
 from opensquirrel.exporter.export_format import ExportFormat
+from opensquirrel.mapper import IdentityMapper, Mapper, map_qubits
 from opensquirrel.merger import general_merger
 from opensquirrel.parser.libqasm.libqasm_ir_creator import LibqasmIRCreator
 from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
@@ -94,6 +97,17 @@ class Circuit:
     def decompose(self, decomposer: Decomposer):
         """Generic decomposition pass. It applies the given decomposer function to every gate in the circuit."""
         general_decomposer.decompose(self.squirrel_ir, decomposer)
+
+    def map_qubits(self, mapper: Mapper | None = None) -> None:
+        """Generic qubit mapper pass.
+
+        Maps the virtual qubits of the circuit to physical qubits of the target hardware.
+
+        Args:
+            mapper: Mapper pass to use. If ``None`` (default) is provided, use the ``IdentityMapper``.
+        """
+        mapper = IdentityMapper() if mapper is None else mapper
+        map_qubits(self.squirrel_ir, mapper)
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.
