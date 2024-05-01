@@ -32,7 +32,7 @@ qubit[3] myqubitsregister
 qubit[3] myqubitsregister
 
 H myqubitsregister[0]
-CR myqubitsregister[0], myqubitsregister[1], 1.234
+CR(1.234) myqubitsregister[0], myqubitsregister[1]
 """,
         )
 
@@ -49,9 +49,9 @@ CR myqubitsregister[0], myqubitsregister[1], 1.234
 
 qubit[1] q
 
-CR q[0], q[1], 1.234
+CR(1.234) q[0], q[1]
 <anonymous-gate>
-CR q[0], q[1], 1.234
+CR(1.234) q[0], q[1]
 """,
         )
 
@@ -72,7 +72,7 @@ H q[0]
 
 /* My comment */
 
-CR q[0], q[1], 1.234
+CR(1.234) q[0], q[1]
 """,
         )
 
@@ -87,7 +87,7 @@ CR q[0], q[1], 1.234
 
 qubit[3] q
 
-CR q[0], q[1], 1.6546515
+CR(1.6546515) q[0], q[1]
 """,
         )
 
