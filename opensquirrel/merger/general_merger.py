@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-from collections.abc import Callable
 from math import acos, cos, sin
 
 import numpy as np

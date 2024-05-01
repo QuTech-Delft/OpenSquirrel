@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
-from typing import List
 
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.squirrel_ir import (
@@ -24,7 +23,7 @@ class Decomposer(ABC):
 
 
 class _QubitReIndexer(SquirrelIRVisitor):
-    def __init__(self, mappings: List[Qubit]) -> None:
+    def __init__(self, mappings: list[Qubit]) -> None:
         self.mappings = mappings
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
@@ -75,7 +74,7 @@ def decompose(squirrel_ir: SquirrelIR, decomposer: Decomposer) -> None:
             statement_index += 1
             continue
 
-        replacement: List[Gate] = decomposer.decompose(statement)
+        replacement = decomposer.decompose(statement)
 
         check_valid_replacement(statement, replacement)
 

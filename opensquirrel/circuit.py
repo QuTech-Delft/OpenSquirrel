@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Dict, Literal
+from collections.abc import Callable, Mapping
+from typing import TYPE_CHECKING, Any, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -56,7 +57,7 @@ class Circuit:
         cls,
         cqasm3_string: str,
         gate_set: list[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
+        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: list[Callable[..., Measure]] = default_measurement_set,
     ) -> Self:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import inspect
+from collections.abc import Callable, Mapping
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, Dict
+from typing import TYPE_CHECKING, Any
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
@@ -38,7 +39,7 @@ class CircuitBuilder(GateLibrary):
         self,
         number_of_qubits: int,
         gate_set: list[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
+        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         self.squirrel_ir = SquirrelIR(

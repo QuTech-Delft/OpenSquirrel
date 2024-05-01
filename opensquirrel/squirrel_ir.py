@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC, abstractmethod
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -91,9 +91,9 @@ class Measure(Statement, ABC):
     def __init__(
         self,
         qubit: Qubit,
-        axis: Tuple[float, float, float],
-        generator: Optional[Callable[..., "Measure"]] = None,
-        arguments: Optional[Tuple[Expression, ...]] = None,
+        axis: ArrayLike,
+        generator: Callable[..., Measure] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
     ) -> None:
         self.generator = generator
         self.arguments = arguments
@@ -104,7 +104,7 @@ class Measure(Statement, ABC):
         return f"Measure({self.qubit}, axis={self.axis})"
 
     @property
-    def name(self) -> Optional[str]:
+    def name(self) -> str:
         return self.generator.__name__ if self.generator else "<abstract_measurement>"
 
     def __eq__(self, other: object) -> bool:
@@ -115,7 +115,7 @@ class Measure(Statement, ABC):
     def accept(self, visitor: SquirrelIRVisitor) -> None:
         visitor.visit_measure(self)
 
-    def get_qubit_operands(self) -> List[Qubit]:
+    def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
     def relabel(self, mapping: Mapping[int, int]) -> None:
@@ -130,8 +130,8 @@ class Measure(Statement, ABC):
 class Gate(Statement, ABC):
     def __init__(
         self,
-        generator: Optional[Callable[..., Gate]] = None,
-        arguments: Optional[Tuple[Expression, ...]] = None,
+        generator: Callable[..., Gate] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
@@ -145,7 +145,7 @@ class Gate(Statement, ABC):
         return _compare_gate_classes(self, other)
 
     @property
-    def name(self) -> Optional[str]:
+    def name(self) -> str:
         return self.generator.__name__ if self.generator else "<anonymous>"
 
     @property
@@ -153,7 +153,7 @@ class Gate(Statement, ABC):
         return self.arguments is None
 
     @abstractmethod
-    def get_qubit_operands(self) -> List[Qubit]:
+    def get_qubit_operands(self) -> list[Qubit]:
         """Get the qubit operands of the Gate.
 
         Returns:
@@ -186,8 +186,8 @@ class BlochSphereRotation(Gate):
         axis: ArrayLike,
         angle: float,
         phase: float = 0,
-        generator: Optional[Callable[..., BlochSphereRotation]] = None,
-        arguments: Optional[Tuple[Expression, ...]] = None,
+        generator: Callable[..., BlochSphereRotation] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
     ) -> None:
         Gate.__init__(self, generator, arguments)
         self.qubit: Qubit = qubit
@@ -222,7 +222,7 @@ class BlochSphereRotation(Gate):
         visitor.visit_gate(self)
         return visitor.visit_bloch_sphere_rotation(self)
 
-    def get_qubit_operands(self) -> List[Qubit]:
+    def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
     def is_identity(self) -> bool:
@@ -244,9 +244,9 @@ class MatrixGate(Gate):
     def __init__(
         self,
         matrix: NDArray[np.complex_],
-        operands: List[Qubit],
-        generator: Optional[Callable[..., "MatrixGate"]] = None,
-        arguments: Optional[Tuple[Expression, ...]] = None,
+        operands: list[Qubit],
+        generator: Callable[..., MatrixGate] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
     ):
         Gate.__init__(self, generator, arguments)
         assert len(operands) >= 2, "For 1q gates, please use BlochSphereRotation"
@@ -262,7 +262,7 @@ class MatrixGate(Gate):
         visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
-    def get_qubit_operands(self) -> List[Qubit]:
+    def get_qubit_operands(self) -> list[Qubit]:
         return self.operands
 
     def is_identity(self) -> bool:
@@ -284,8 +284,8 @@ class ControlledGate(Gate):
         self,
         control_qubit: Qubit,
         target_gate: Gate,
-        generator: Optional[Callable[..., "ControlledGate"]] = None,
-        arguments: Optional[Tuple[Expression, ...]] = None,
+        generator: Callable[..., ControlledGate] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
     ):
         Gate.__init__(self, generator, arguments)
         self.control_qubit = control_qubit
@@ -298,7 +298,7 @@ class ControlledGate(Gate):
         visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
 
-    def get_qubit_operands(self) -> List[Qubit]:
+    def get_qubit_operands(self) -> list[Qubit]:
         return [self.control_qubit] + self.target_gate.get_qubit_operands()
 
     def is_identity(self) -> bool:
@@ -394,7 +394,7 @@ class SquirrelIR:
         qubit_register_name: str = "q",
     ):
         self.number_of_qubits: int = number_of_qubits
-        self.statements: List[Statement] = []
+        self.statements: list[Statement] = []
         self.qubit_register_name: str = qubit_register_name
 
     def add_gate(self, gate: Gate) -> None:

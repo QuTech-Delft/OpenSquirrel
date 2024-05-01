@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import List
 
 import numpy as np
 from numpy.typing import NDArray
@@ -19,7 +18,7 @@ from opensquirrel.squirrel_ir import (
 )
 
 
-def get_reduced_ket(ket: int, qubits: List[Qubit]) -> int:
+def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
     """
     Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
     where only the given qubits appear, in order.
@@ -54,7 +53,7 @@ def get_reduced_ket(ket: int, qubits: List[Qubit]) -> int:
     return reduced_ket
 
 
-def expand_ket(base_ket: int, reduced_ket: int, qubits: List[Qubit]) -> int:
+def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     """
     Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
     where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.
@@ -197,7 +196,7 @@ def get_matrix(gate: Gate, number_of_qubits: int) -> NDArray[np.complex_]:
     return np.asarray(gate.accept(expander), dtype=np.complex_)
 
 
-def get_matrix_after_qubit_remapping(replacement: Iterable[Gate], qubit_mappings: List[Qubit]) -> NDArray[np.complex_]:
+def get_matrix_after_qubit_remapping(replacement: Iterable[Gate], qubit_mappings: list[Qubit]) -> NDArray[np.complex_]:
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 
     replacement_ir = SquirrelIR(number_of_qubits=len(qubit_mappings), qubit_register_name="q_temp")

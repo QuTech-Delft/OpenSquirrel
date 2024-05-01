@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import inspect
 import itertools
-from collections.abc import Callable, Collection, Iterator, Mapping
+from collections.abc import Callable, Collection, Mapping
 from typing import Any, overload
 
 import cqasm.v3x as cqasm
-from cqasm.v3x.semantic import Program
-from cqasm.v3x.values import IndexRef
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
@@ -33,7 +31,7 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
         self.squirrel_ir = None
 
     @staticmethod
-    def _get_qubits(cqasm_qubits_expression: IndexRef) -> list[Qubit]:
+    def _get_qubits(cqasm_qubits_expression: cqasm.values.IndexRef) -> list[Qubit]:
         return [Qubit(index.value) for index in cqasm_qubits_expression.indices]
 
     @staticmethod
@@ -134,7 +132,7 @@ class LibqasmIRCreator(GateLibrary, MeasurementLibrary):
     def squirrel_ir_from_string(self, s: str) -> SquirrelIR:
         analyzer = self._create_analyzer()
 
-        ast: list[str] | Program = analyzer.analyze_string(s)
+        ast: list[str] | cqasm.semantic.Program = analyzer.analyze_string(s)
 
         if isinstance(ast, list):
             raise Exception("Parsing error: " + ", ".join(ast))
