@@ -50,14 +50,15 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     )
 
 
-def merge_single_qubit_gates(circcuit: Circuit):
+def merge_single_qubit_gates(circuit: Circuit):
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
         Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(circuit.qubit_register_size)
     }
 
+    squirrel_ir = circuit.squirrel_ir
     statement_index = 0
-    while statement_index < len(circuit.squirrel_ir.statements):
-        statement = circuit.squirrel_ir.statements[statement_index]
+    while statement_index < len(squirrel_ir.statements):
+        statement = squirrel_ir.statements[statement_index]
 
         if not isinstance(statement, Gate) and not isinstance(statement, Measure):
             # Skip, since statement is not a gate or measurement
@@ -71,18 +72,18 @@ def merge_single_qubit_gates(circcuit: Circuit):
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
             accumulators_per_qubit[statement.qubit] = composed
 
-            del circuit.squirrel_ir.statements[statement_index]
+            del squirrel_ir.statements[statement_index]
             continue
 
         for qubit_operand in statement.get_qubit_operands():
             if not accumulators_per_qubit[qubit_operand].is_identity():
-                circuit.squirrel_ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
+                squirrel_ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
                 accumulators_per_qubit[qubit_operand] = BlochSphereRotation.identity(qubit_operand)
                 statement_index += 1
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
-            circuit.squirrel_ir.statements.append(accumulated_bloch_sphere_rotation)
+            squirrel_ir.statements.append(accumulated_bloch_sphere_rotation)
 
-    circuit.squirrel_ir.statements = sorted(circuit.squirrel_ir.statements, key=lambda obj: isinstance(obj, Measure))
+    squirrel_ir.statements = sorted(squirrel_ir.statements, key=lambda obj: isinstance(obj, Measure))

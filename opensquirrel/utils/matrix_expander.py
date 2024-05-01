@@ -191,7 +191,7 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> np.ndarray:
 def get_matrix_after_qubit_remapping(replacement: List[Gate], qubit_mappings: List[Qubit]):
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 
-    register_manager = RegisterManager(qubit_register_size=len(qubit_mappings), qubit_register_name="q_temp")
+    register_manager = RegisterManager(qubit_register_size=len(qubit_mappings))
     replacement_ir = SquirrelIR()
     qubit_remapper = _QubitReIndexer(qubit_mappings)
     for gate in replacement:

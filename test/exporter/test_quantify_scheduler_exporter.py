@@ -40,7 +40,7 @@ class MockedQuantifyScheduler:
 
 class QuantifySchedulerExporterTest(unittest.TestCase):
     def test_export(self):
-        register_manager = RegisterManager(qubit_register_size=2, qubit_register_name="test")
+        register_manager = RegisterManager(qubit_register_size=2)
         squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(X(Qubit(0)))
         squirrel_ir.add_gate(CZ(Qubit(0), Qubit(1)))
@@ -68,7 +68,7 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
             self.assertEqual(mock_schedule.add.call_count, 4)
 
     def check_gate_not_supported(self, g: Gate):
-        register_manager = RegisterManagar(qubit_register_size=20, qubit_register_name="test")
+        register_manager = RegisterManagar(qubit_register_size=20)
         squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(g)
 

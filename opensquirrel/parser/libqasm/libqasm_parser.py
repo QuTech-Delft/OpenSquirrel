@@ -119,26 +119,27 @@ class LibqasmParser(GateLibrary, MeasurementLibrary):
         return analyzer
 
     @staticmethod
-    def _check_analysis_result(self, result):
+    def _check_analysis_result(result):
         if isinstance(result, list):
             raise Exception("Parsing error: " + ", ".join(result))
 
     @staticmethod
-    def _parse_qubit_register(self, ast):
+    def _parse_qubit_register(ast):
         # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
         qubit_register_size = ast.qubit_variable_declaration.typ.size
         qubit_register_name = ast.qubit_variable_declaration.name[2:-1]
         return [qubit_register_size, qubit_register_name]
 
 
-    def from_string(self, s: str):
+    def circuit_from_string(self, s: str):
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
         analyzer = self._create_analyzer()
         analysis_result = analyzer.analyze_string(s)
         LibqasmParser._check_analysis_result(analysis_result)
+        ast = analysis_result
 
         # Parse qubit register
-        [qubit_register_size, qubit_register_name] = LibqasmParser._parse_qubit_register(analysis_result)
+        [qubit_register_size, qubit_register_name] = LibqasmParser._parse_qubit_register(ast)
         register_manager = RegisterManager(qubit_register_size, qubit_register_name)
 
         # Parse statements

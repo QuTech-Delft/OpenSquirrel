@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from copy import deepcopy
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.mapper.general_mapper import Mapper
-from opensquirrel.mapping import Mapping
+from opensquirrel.mapper.mapping import Mapping
 from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import BlochSphereRotation, Comment, ControlledGate, Measure, Qubit, SquirrelIR
 

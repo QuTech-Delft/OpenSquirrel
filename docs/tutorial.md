@@ -125,24 +125,6 @@ try:
         qubit[2] q
 
         cnot q[0], 3 // The CNOT expects a qubit as second argument.
-        """
-    )
-except Exception as e:
-    print(e)
-```
-
-    Argument #1 passed to gate `cnot` is of type <class 'opensquirrel.squirrel_ir.Int'> but should be <class 'opensquirrel.squirrel_ir.Qubit'>
-
-The issue is that the CNOT expects a qubit as second input argument, where an integer has been provided. By default, OpenSquirrel does not use LibQASM (the cQASM parser library), but will do so soon. You can enable this, which changes the error message:
-
-```python
-try:
-    Circuit.from_string(
-        """
-        version 3.0
-        qubit[2] q
-
-        cnot q[0], 3 // The CNOT expects a qubit as second argument.
         """,
         use_libqasm=True
     )
@@ -151,6 +133,8 @@ except Exception as e:
 ```
 
     Parsing error: Error at <unknown>:5:9..13: failed to resolve overload for cnot with argument pack (qubit, int)
+
+The issue is that the CNOT expects a qubit as second input argument, where an integer has been provided.
 
 The same holds for the `CircuitBuilder`, _i.e._, it also throws an error if arguments are passed of an unexpected type:
 

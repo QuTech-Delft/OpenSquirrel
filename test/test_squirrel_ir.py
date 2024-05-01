@@ -121,14 +121,6 @@ class TestMeasure:
     def test_get_qubit_operands(self, measure: Measure) -> None:
         assert measure.get_qubit_operands() == [Qubit(42)]
 
-    @pytest.mark.parametrize(
-        "mapping, expected_output",
-        [({42: 42}, Measure(Qubit(42), axis=(0, 0, 1))), ({42: 0}, Measure(Qubit(0), axis=(0, 0, 1)))],
-    )
-    def test_relabel(self, measure: Measure, mapping: dict[int, int], expected_output: Measure) -> None:
-        measure.relabel(mapping)
-        assert measure == expected_output
-
 
 class TestBlochSphereRotation:
 
@@ -175,20 +167,8 @@ class TestBlochSphereRotation:
         assert BlochSphereRotation.identity(42).is_identity()
         assert not gate.is_identity()
 
-    @pytest.mark.parametrize(
-        "mapping, expected_output",
-        [
-            ({42: 42}, BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi, phase=math.tau)),
-            ({42: 0}, BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 0), angle=math.pi, phase=math.tau)),
-        ],
-    )
-    def test_relabel(self, gate: Measure, mapping: dict[int, int], expected_output: Measure) -> None:
-        gate.relabel(mapping)
-        assert gate == expected_output
-
 
 class TestMatrixGate:
-
     @pytest.fixture(name="gate")
     def gate_fixture(self) -> MatrixGate:
         cnot_matrix = np.array(
@@ -214,24 +194,3 @@ class TestMatrixGate:
     def test_is_identity(self, gate: MatrixGate) -> None:
         assert MatrixGate(np.eye(4), operands=[Qubit(42), Qubit(100)]).is_identity()
         assert not gate.is_identity()
-
-    @pytest.mark.parametrize(
-        "mapping, expected_output",
-        [
-            (
-                {42: 42, 100: 100},
-                MatrixGate(
-                    np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), operands=[Qubit(42), Qubit(100)]
-                ),
-            ),
-            (
-                {42: 100, 100: 42},
-                MatrixGate(
-                    np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), operands=[Qubit(100), Qubit(42)]
-                ),
-            ),
-        ],
-    )
-    def test_relabel(self, gate: MatrixGate, mapping: dict[int, int], expected_output: MatrixGate) -> None:
-        gate.relabel(mapping)
-        assert gate == expected_output

@@ -11,7 +11,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.exporter import quantify_scheduler_exporter, writer
 from opensquirrel.exporter.export_format import ExportFormat
-from opensquirrel.mapper import IdentityMapper, Mapper, map_qubits
+from opensquirrel.mapper import IdentityMapper, Mapper
 from opensquirrel.merger import general_merger
 from opensquirrel.parser.libqasm.libqasm_parser import LibqasmParser
 from opensquirrel.register_manager import RegisterManager
@@ -78,7 +78,7 @@ class Circuit:
             gate_aliases=gate_aliases,
             measurement_set=measurement_set,
         )
-        return libqasm_parser.from_string(cqasm3_string)
+        return libqasm_parser.circuit_from_string(cqasm3_string)
 
     @property
     def qubit_register_size(self) -> int:
@@ -116,8 +116,8 @@ class Circuit:
         Args:
             mapper: Mapper pass to use. If ``None`` (default) is provided, use the ``IdentityMapper``.
         """
-        mapper = IdentityMapper(circuit.qubit_register_size) if mapper is None else mapper
-        register_manager.mapping = mapper.get_map()
+        mapper = IdentityMapper(qubit_register_size) if mapper is None else mapper
+        squirrel_ir.register_manager.mapping = mapper.get_map()
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.
@@ -139,7 +139,7 @@ class Circuit:
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
-        return writer.to_string(self)
+        return writer.circuit_to_string(self)
 
     def export(self, fmt: ExportFormat = None) -> None:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:

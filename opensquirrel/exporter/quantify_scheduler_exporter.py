@@ -1,15 +1,9 @@
 import math
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
-from opensquirrel.squirrel_ir import (
-    BlochSphereRotation,
-    ControlledGate,
-    MatrixGate,
-    Qubit,
-    SquirrelIR,
-    SquirrelIRVisitor,
-)
+from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, MatrixGate, Qubit, SquirrelIRVisitor
 
 try:
     import quantify_scheduler

@@ -14,14 +14,16 @@ class RegisterManager:
 
     def __init__(
         self,
-        register_size: int,
+        qubit_register_size: int,
+        bit_register_size: int,
         qubit_register_name: str = _default_qubit_register_name,
         bit_register_name: str = _default_bit_register_name
     ) -> None:
-        self.register_size = register_size
+        self.qubit_register_size = qubit_register_size
+        self.bit_register_size = bit_register_size
         self.qubit_register_name = qubit_register_name
         self.bit_register_name = bit_register_name
-        self.mapping = IdentityMapper(register_size).get_map()
+        self.mapping = IdentityMapper(register_size).get_mapping()
 
     def get_physical_qubit_index(self, qubit_index: QubitIndex):
         return self.mapping.data[qubit_index]
