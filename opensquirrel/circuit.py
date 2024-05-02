@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, Dict
-
 import numpy as np
+from typing import Callable, Dict
 
 from opensquirrel.decomposer import general_decomposer
 from opensquirrel.decomposer.general_decomposer import Decomposer

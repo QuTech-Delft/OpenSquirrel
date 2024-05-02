@@ -4,7 +4,6 @@ from opensquirrel.squirrel_ir import Gate, SquirrelIR
 
 
 def make_interaction_graph(squirrel_ir: SquirrelIR) -> nx.Graph:
-
     interaction_graph = nx.Graph()
     gates = (statement for statement in squirrel_ir.statements if isinstance(statement, Gate))
 

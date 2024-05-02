@@ -75,7 +75,7 @@ def decompose(squirrel_ir: SquirrelIR, decomposer: Decomposer):
 
         check_valid_replacement(statement, replacement)
 
-        squirrel_ir.statements[statement_index : statement_index + 1] = replacement
+        squirrel_ir.statements[statement_index: statement_index + 1] = replacement
         statement_index += len(replacement)
 
 

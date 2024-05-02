@@ -1,7 +1,6 @@
+import cqasm.v3x as cqasm
 import inspect
 import itertools
-
-import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
@@ -130,7 +129,6 @@ class Parser(GateLibrary, MeasurementLibrary):
         qubit_register_size = ast.qubit_variable_declaration.typ.size
         qubit_register_name = ast.qubit_variable_declaration.name[2:-1]
         return [qubit_register_size, qubit_register_name]
-
 
     def circuit_from_string(self, s: str):
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages

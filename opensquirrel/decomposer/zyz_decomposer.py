@@ -24,7 +24,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float])
     """
     nx, ny, nz = axis
 
-    assert abs(nx**2 + ny**2 + nz**2 - 1) < ATOL, "Axis needs to be normalized"
+    assert abs(nx ** 2 + ny ** 2 + nz ** 2 - 1) < ATOL, "Axis needs to be normalized"
 
     assert -math.pi + ATOL < alpha <= math.pi + ATOL, "Angle needs to be normalized"
 
@@ -43,7 +43,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float])
             if abs(nz - 1) < ATOL or abs(nz + 1) < ATOL:
                 m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
             else:
-                m = 2 * math.acos(ny / math.sqrt(1 - nz**2))
+                m = 2 * math.acos(ny / math.sqrt(1 - nz ** 2))
 
     else:
         p = 2 * math.atan2(nz * math.sin(alpha / 2), math.cos(alpha / 2))

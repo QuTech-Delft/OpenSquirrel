@@ -11,7 +11,6 @@ try:
 except Exception as e:
     pass
 
-
 _unsupported_gates_exception = Exception(
     "Cannot exporter circuit: it contains unsupported gates - decomposer them to the "
     "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
@@ -70,7 +69,6 @@ class _ScheduleCreator(SquirrelIRVisitor):
 
 def export(circuit: Circuit):
     if "quantify_scheduler" not in globals():
-
         class QuantifySchedulerNotInstalled:
             def __getattr__(self, attr_name):
                 raise ImportError("quantify-scheduler is not installed, or cannot be installed on your system")
