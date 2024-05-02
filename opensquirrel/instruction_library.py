@@ -2,7 +2,7 @@ from abc import ABC
 
 
 class InstructionLibrary(ABC):
-    pass
+    """Abstract base class for instruction libraries."""
 
 
 class GateLibrary(InstructionLibrary):
@@ -13,9 +13,9 @@ class GateLibrary(InstructionLibrary):
     def get_gate_f(self, gate_name: str):
         try:
             generator_f = next(f for f in self.gate_set if f.__name__ == gate_name)
-        except StopIteration:
+        except StopIteration as exc:
             if gate_name not in self.gate_aliases:
-                raise ValueError(f"Unknown gate `{gate_name}`")
+                raise ValueError(f"Unknown instruction `{gate_name}`") from exc
             generator_f = self.gate_aliases[gate_name]
         return generator_f
 
@@ -28,5 +28,5 @@ class MeasurementLibrary(InstructionLibrary):
         try:
             generator_f = next(f for f in self.measurement_set if f.__name__ == measurement_name)
             return generator_f
-        except StopIteration:
-            raise ValueError(f"Unknown measurement `{measurement_name}`")
+        except StopIteration as exc:
+            raise ValueError(f"Unknown instruction `{measurement_name}`") from exc
