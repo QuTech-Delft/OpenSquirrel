@@ -4,8 +4,6 @@ from typing import List
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import can1
-from opensquirrel.decomposer.general_decomposer import _QubitReIndexer
-from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, Gate, Qubit, SquirrelIR, SquirrelIRVisitor
 
 
@@ -186,16 +184,3 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> np.ndarray:
 
     expander = MatrixExpander(qubit_register_size)
     return gate.accept(expander)
-
-
-def get_matrix_after_qubit_remapping(replacement: List[Gate], qubit_mappings: List[Qubit]):
-    from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-
-    register_manager = RegisterManager(qubit_register_size=len(qubit_mappings))
-    replacement_ir = SquirrelIR()
-    qubit_remapper = _QubitReIndexer(qubit_mappings)
-    for gate in replacement:
-        gate_with_remapped_qubits = gate.accept(qubit_remapper)
-        replacement_ir.add_gate(gate_with_remapped_qubits)
-
-    return get_circuit_matrix(Circuit(register_manager, replacement_ir))

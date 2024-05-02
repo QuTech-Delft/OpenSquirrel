@@ -118,14 +118,6 @@ class Measure(Statement, ABC):
     def get_qubit_operands(self) -> List[Qubit]:
         return [self.qubit]
 
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits after replacement.
-        """
-        self.qubit = Qubit(mapping[self.qubit.index])
-
 
 class Gate(Statement, ABC):
     # Note: two gates are considered equal even when their generators/arguments are different.
@@ -163,15 +155,6 @@ class Gate(Statement, ABC):
 
         Returns:
             Boolean value stating wether the Gate is an identity Gate.
-        """
-
-    @abstractmethod
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
         """
 
 
@@ -227,15 +210,6 @@ class BlochSphereRotation(Gate):
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
 
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.qubit = Qubit(mapping[self.qubit.index])
-
 
 class MatrixGate(Gate):
     generator: Optional[Callable[..., "MatrixGate"]] = None
@@ -261,15 +235,6 @@ class MatrixGate(Gate):
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(2 ** len(self.operands)))
 
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.operands = [Qubit(mapping[qubit.index]) for qubit in self.operands]
-
 
 class ControlledGate(Gate):
     generator: Optional[Callable[..., "ControlledGate"]] = None
@@ -292,24 +257,15 @@ class ControlledGate(Gate):
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
 
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.control_qubit = Qubit(mapping[self.control_qubit.index])
-        self.target_gate.relabel(mapping)
-
 
 def _compare_gate_classes(g1: Gate, g2: Gate) -> bool:
-    union_mapping = list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))
+    union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
 
-    from opensquirrel.utils.matrix_expander import get_matrix_after_qubit_remapping
+    from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
+    from opensquirrel.reindexer import get_reindexed_circuit
 
-    matrix_g1 = get_matrix_after_qubit_remapping([g1], union_mapping)
-    matrix_g2 = get_matrix_after_qubit_remapping([g2], union_mapping)
+    matrix_g1 = get_circuit_matrix(get_reindexed_circuit([g1], union_mapping))
+    matrix_g2 = get_circuit_matrix(get_reindexed_circuit([g2], union_mapping))
 
     return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
 
