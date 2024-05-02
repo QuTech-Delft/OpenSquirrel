@@ -3,8 +3,8 @@ from opensquirrel.mapper import Mapper
 
 class RegisterManager:
     """The RegisterManager class holds:
-       - the (virtual) qubit and bit registers size and names, and
-       - the mapping between the (virtual) qubit register and the physical qubit register.
+    - the (virtual) qubit and bit registers size and names, and
+    - the mapping between the (virtual) qubit register and the physical qubit register.
     """
 
     _default_qubit_register_name = "q"
@@ -14,7 +14,7 @@ class RegisterManager:
         self,
         qubit_register_size: int,
         qubit_register_name: str = _default_qubit_register_name,
-        bit_register_name: str = _default_bit_register_name
+        bit_register_name: str = _default_bit_register_name,
     ) -> None:
         self.qubit_register_size = qubit_register_size
         self.bit_register_size = qubit_register_size

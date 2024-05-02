@@ -69,6 +69,7 @@ class _ScheduleCreator(SquirrelIRVisitor):
 
 def export(circuit: Circuit):
     if "quantify_scheduler" not in globals():
+
         class QuantifySchedulerNotInstalled:
             def __getattr__(self, attr_name):
                 raise ImportError("quantify-scheduler is not installed, or cannot be installed on your system")

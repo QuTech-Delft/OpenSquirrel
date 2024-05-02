@@ -46,7 +46,7 @@ def decompose(squirrel_ir: SquirrelIR, decomposer: Decomposer):
         replacement_gates: List[Gate] = decomposer.decompose(statement)
         check_gate_replacement(gate, replacement_gates)
 
-        squirrel_ir.statements[statement_index: statement_index + 1] = replacement_gates
+        squirrel_ir.statements[statement_index : statement_index + 1] = replacement_gates
         statement_index += len(replacement_gates)
 
 

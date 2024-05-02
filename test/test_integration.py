@@ -74,7 +74,8 @@ X90 q[1]
 Rz q[1], 1.572389
 X90 q[1]
 Rz q[1], 3.1415927
-""")
+""",
+        )
 
     def test_measurement(self):
         circuit = Circuit.from_string(
@@ -124,7 +125,8 @@ X90 q[1]
 Rz q[1], 1.2853981
 measure q[0]
 measure q[2]
-""")
+""",
+        )
 
     def test_consecutive_measurements(self):
         circuit = Circuit.from_string(
@@ -161,7 +163,7 @@ X90 q[2]
 measure q[0]
 measure q[1]
 measure q[2]
-"""
+""",
         )
 
     def test_measure_order(self):
@@ -191,7 +193,8 @@ X90 q[1]
 Rz q[1], -0.3926991
 measure q[1]
 measure q[0]
-""")
+""",
+        )
 
     def test_qi(self):
         circuit = Circuit.from_string(
@@ -257,7 +260,8 @@ X90 q[1]
 Rz q[1], 1.5707964
 X90 q[1]
 Rz q[1], 3.1415927
-""")
+""",
+        )
 
     def test_libqasm_error(self):
         with self.assertRaisesRegex(

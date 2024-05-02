@@ -10,7 +10,7 @@ class LibqasmTest(unittest.TestCase):
 
     def test_simple(self):
         circuit = self.parser.circuit_from_string(
-"""
+            """
 version 3.0
 
 qubit[2] q
@@ -20,7 +20,8 @@ Ry q[1], 1.234
 CNOT q[0], q[1]
 CR q[1], q[0], 5.123
 CRk q[0], q[1], 23
-""")
+"""
+        )
 
         self.assertEqual(circuit.qubit_register_size, 2)
         self.assertEqual(circuit.qubit_register_name, "q")
@@ -37,7 +38,7 @@ CRk q[0], q[1], 23
 
     def test_sgmq(self):
         circuit = self.parser.circuit_from_string(
-"""
+            """
 version 3.0
 
 qubit[20] q
@@ -45,7 +46,8 @@ qubit[20] q
 H q[5:9]
 X q[13,17]
 CRk q[0, 3], q[1, 4], 23
-""")
+"""
+        )
 
         self.assertEqual(circuit.qubit_register_size, 20)
         self.assertEqual(circuit.qubit_register_name, "q")

@@ -94,8 +94,9 @@ class MatrixExpander(SquirrelIRVisitor):
         assert rot.qubit.index < self.qubit_register_size
 
         result = np.kron(
-            np.kron(np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)),
-                    can1(rot.axis, rot.angle, rot.phase)),
+            np.kron(
+                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)), can1(rot.axis, rot.angle, rot.phase)
+            ),
             np.eye(1 << rot.qubit.index),
         )
         assert result.shape == (1 << self.qubit_register_size, 1 << self.qubit_register_size)

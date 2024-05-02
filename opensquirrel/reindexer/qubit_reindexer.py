@@ -9,7 +9,7 @@ from opensquirrel.squirrel_ir import (
     MatrixGate,
     Qubit,
     SquirrelIR,
-    SquirrelIRVisitor
+    SquirrelIRVisitor,
 )
 
 

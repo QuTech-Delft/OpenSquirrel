@@ -13,8 +13,9 @@ class WriterTest(unittest.TestCase):
         squirrel_ir = SquirrelIR()
         circuit = Circuit(register_manager, squirrel_ir)
 
-        self.assertEqual(writer.circuit_to_string(circuit),
-"""version 3.0
+        self.assertEqual(
+            writer.circuit_to_string(circuit),
+            """version 3.0
 
 qubit[3] q
 
@@ -25,8 +26,9 @@ qubit[3] q
         squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
         circuit = Circuit(register_manager, squirrel_ir)
 
-        self.assertEqual(writer.circuit_to_string(circuit),
-"""version 3.0
+        self.assertEqual(
+            writer.circuit_to_string(circuit),
+            """version 3.0
 
 qubit[3] q
 
@@ -43,15 +45,17 @@ CR q[0], q[1], 1.234
         squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
         circuit = Circuit(register_manager, squirrel_ir)
 
-        self.assertEqual(writer.circuit_to_string(circuit),
-"""version 3.0
+        self.assertEqual(
+            writer.circuit_to_string(circuit),
+            """version 3.0
 
 qubit[2] q
 
 CR q[0], q[1], 1.234
 <anonymous-gate>
 CR q[0], q[1], 1.234
-""")
+""",
+        )
 
     def test_comment(self):
         register_manager = RegisterManager(qubit_register_size=3)
@@ -61,8 +65,9 @@ CR q[0], q[1], 1.234
         squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
         circuit = Circuit(register_manager, squirrel_ir)
 
-        self.assertEqual(writer.circuit_to_string(circuit),
-"""version 3.0
+        self.assertEqual(
+            writer.circuit_to_string(circuit),
+            """version 3.0
 
 qubit[3] q
 
@@ -80,8 +85,9 @@ CR q[0], q[1], 1.234
         squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.6546514861321684321654)))
         circuit = Circuit(register_manager, squirrel_ir)
 
-        self.assertEqual(writer.circuit_to_string(circuit),
-"""version 3.0
+        self.assertEqual(
+            writer.circuit_to_string(circuit),
+            """version 3.0
 
 qubit[3] q
 

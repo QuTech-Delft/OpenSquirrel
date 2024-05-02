@@ -45,11 +45,11 @@ class Circuit:
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
         from opensquirrel.exporter import writer
+
         return writer.circuit_to_string(self)
 
     def __eq__(self, other):
-        return self.register_manager == other.register_manager and \
-            self.squirrel_ir == other.squirrel_ir
+        return self.register_manager == other.register_manager and self.squirrel_ir == other.squirrel_ir
 
     @classmethod
     def from_string(
@@ -57,7 +57,7 @@ class Circuit:
         cqasm3_string: str,
         gate_set: [Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
-        measurement_set: [Callable[..., Measure]] = default_measurement_set
+        measurement_set: [Callable[..., Measure]] = default_measurement_set,
     ):
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -127,5 +127,6 @@ class Circuit:
     def export(self, fmt: ExportFormat = None) -> None:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             from opensquirrel.exporter import quantify_scheduler_exporter
+
             return quantify_scheduler_exporter.export(self)
         raise ValueError("Unknown exporter format")

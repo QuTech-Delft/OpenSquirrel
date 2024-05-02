@@ -28,7 +28,7 @@ Z = np.array([[1, 0], [0, -1]])
 
 def can1(axis: Tuple[float, float, float], angle: float, phase: float = 0) -> np.ndarray:
     nx, ny, nz = axis
-    norm = math.sqrt(nx ** 2 + ny ** 2 + nz ** 2)
+    norm = math.sqrt(nx**2 + ny**2 + nz**2)
     assert norm > 0.00000001
 
     nx /= norm
