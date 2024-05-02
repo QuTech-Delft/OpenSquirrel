@@ -1,8 +1,8 @@
 import unittest
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import *
 from opensquirrel.exporter import writer
-from opensquirrel.circuit import Circuit
 from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import Comment, Float, Qubit, SquirrelIR
 

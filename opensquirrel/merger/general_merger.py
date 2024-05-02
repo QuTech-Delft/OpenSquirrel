@@ -1,5 +1,6 @@
-import numpy as np
 from math import acos, cos, sin
+
+import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL

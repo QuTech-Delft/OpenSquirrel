@@ -1,6 +1,7 @@
 import math
-import numpy as np
 from typing import List
+
+import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import can1

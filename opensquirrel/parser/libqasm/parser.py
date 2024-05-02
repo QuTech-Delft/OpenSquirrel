@@ -1,6 +1,7 @@
-import cqasm.v3x as cqasm
 import inspect
 import itertools
+
+import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
