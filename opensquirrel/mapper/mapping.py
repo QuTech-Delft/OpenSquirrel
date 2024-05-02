@@ -1,3 +1,6 @@
+from typing import Dict, List
+
+
 class Mapping:
     """A Mapping is a dictionary where:
        - the keys are virtual qubit indices (from 0 to virtual_qubit_register_size-1), and
@@ -10,8 +13,8 @@ class Mapping:
         ValueError: If the mapping is incorrect.
     """
 
-    def __init__(self, physical_qubit_register: list[int]) -> None:
-        self.data: dict[int, int] = dict(enumerate(physical_qubit_register))
+    def __init__(self, physical_qubit_register: List[int]) -> None:
+        self.data: Dict[int, int] = dict(enumerate(physical_qubit_register))
         if (self.data.keys()) != set(self.data.values()):
             raise ValueError("The mapping is incorrect.")
 
