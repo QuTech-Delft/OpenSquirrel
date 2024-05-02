@@ -7,6 +7,11 @@ class RegisterManager:
     - the mapping between the (virtual) qubit register and the physical qubit register.
     """
 
+    # TODO:
+    # In the future, when variables of different types can be defined (e.g. float q)
+    # we will have to prevent a variable being called 'q' or 'b'.
+    # A possible way to do this is to introduce variable name mangling in the IR
+    # (e.g., store 'float q' as 'float _float__q')
     _default_qubit_register_name = "q"
     _default_bit_register_name = "b"
 
