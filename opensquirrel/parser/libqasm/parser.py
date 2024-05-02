@@ -3,6 +3,7 @@ import itertools
 
 import cqasm.v3x as cqasm
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
@@ -16,7 +17,7 @@ _ast_type_to_ir_type = {
 }
 
 
-class LibqasmParser(GateLibrary, MeasurementLibrary):
+class Parser(GateLibrary, MeasurementLibrary):
     def __init__(
         self,
         gate_set=default_gate_set,
@@ -135,11 +136,11 @@ class LibqasmParser(GateLibrary, MeasurementLibrary):
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
         analyzer = self._create_analyzer()
         analysis_result = analyzer.analyze_string(s)
-        LibqasmParser._check_analysis_result(analysis_result)
+        Parser._check_analysis_result(analysis_result)
         ast = analysis_result
 
         # Parse qubit register
-        [qubit_register_size, qubit_register_name] = LibqasmParser._parse_qubit_register(ast)
+        [qubit_register_size, qubit_register_name] = Parser._parse_qubit_register(ast)
         register_manager = RegisterManager(qubit_register_size, qubit_register_name)
 
         # Parse statements
@@ -149,7 +150,7 @@ class LibqasmParser(GateLibrary, MeasurementLibrary):
                 generator_f = self.get_measurement_f(statement.name[2:-1])
             else:
                 generator_f = self.get_gate_f(statement.name[2:-1])
-            expanded_args = LibqasmParser._get_expanded_statement_args(generator_f, statement.operands)
+            expanded_args = Parser._get_expanded_statement_args(generator_f, statement.operands)
             for arg_set in expanded_args:
                 squirrel_ir.add_gate(generator_f(*arg_set))
 

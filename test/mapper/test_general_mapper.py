@@ -4,25 +4,27 @@ import pytest
 
 from opensquirrel import Circuit
 from opensquirrel.default_gates import CNOT, H
-from opensquirrel.mapper import HardcodedMapper, Mapper, map_qubits
+from opensquirrel.mapper import HardcodedMapper, Mapper
+from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import Comment, Measure, Qubit, SquirrelIR, Statement
 
 
 class TestMapper:
     def test_init(self) -> None:
         with pytest.raises(TypeError):
-            Mapper(qubit_register_size=1)
+            Mapper()
 
     def test_implementation(self) -> None:
         class Mapper2(Mapper):
             pass
 
         with pytest.raises(TypeError):
-            Mapper2(qubit_register_size=1)
+            Mapper2()
 
         class Mapper3(Mapper2):
             def __init__(self, qubit_register_size: int) -> None:
-                super().__init__(qubit_register_size, Mapping({0: 0}))
+                super().__init__(qubit_register_size, Mapping([0]))
 
         Mapper3(qubit_register_size=1)
 
@@ -49,18 +51,9 @@ class TestMapQubits:
             Measure(Qubit(1), axis=(0, 0, 1)),
         ]
 
-    def test_map_qubits(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
-        mapper = HardcodedMapper(circuit.qubit_register_size, Mapping({0: 1, 1: 0, 2: 2}))
+    def test_circuit_map(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
+        mapper = HardcodedMapper(circuit.qubit_register_size, Mapping([1, 0, 2]))
         circuit.map(mapper)
 
         # Check that the circuit is altered as expected
-        mapped_statements = circuit.squirrel_ir.statements
-        assert mapped_statements == expected_statements
-
-    def test_map_qubits_circuit(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
-        mapper = HardcodedMapper(circuit.qubit_register_size, Mapping({0: 1, 1: 0, 2: 2}))
-        circuit.map(mapper)
-
-        # Check that the circuit is altered as expected
-        mapped_statements = circuit.squirrel_ir.statements
-        assert mapped_statements == expected_statements
+        assert circuit.register_manager.mapping == mapper.get_mapping()

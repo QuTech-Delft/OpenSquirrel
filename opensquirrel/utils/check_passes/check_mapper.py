@@ -19,7 +19,6 @@ def check_mapper(mapper: Mapper) -> None:
     Args:
         mapper: Mapper to check.
     """
-
     assert isinstance(mapper, Mapper)
 
     register_manager = RegisterManager(qubit_register_size=10)
@@ -45,4 +44,4 @@ def _check_scenario(circuit: Circuit, mapper: Mapper) -> None:
     """
     squirrel_ir_copy = deepcopy(circuit.squirrel_ir)
     circuit.map(mapper)
-    assert squirrel_ir == squirrel_ir_copy, "A Mapper pass should not change the SquirrelIR"
+    assert circuit.squirrel_ir == squirrel_ir_copy, "A Mapper pass should not change the SquirrelIR"

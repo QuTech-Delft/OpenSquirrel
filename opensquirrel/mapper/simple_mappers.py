@@ -4,12 +4,8 @@
 * HardcodedMapper
 """
 
-from __future__ import annotations
-
-from collections.abc import Mapping
-from typing import SupportsInt
-
 from opensquirrel.mapper.general_mapper import Mapper
+from opensquirrel.mapper.mapping import Mapping
 
 
 class IdentityMapper(Mapper):

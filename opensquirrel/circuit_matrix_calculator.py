@@ -19,11 +19,10 @@ class _CircuitMatrixCalculator(SquirrelIRVisitor):
 
 
 def get_circuit_matrix(circuit: Circuit):
+    """Compute the (large) unitary matrix corresponding to the circuit.
+    This matrix has 4**n elements, where n is the number of qubits.
+    Result is stored as a numpy array of complex numbers.
     """
-    Compute the Numpy unitary matrix corresponding to the circuit.
-    The size of this matrix grows exponentially with the number of qubits.
-    """
-
     impl = _CircuitMatrixCalculator(circuit.qubit_register_size)
 
     circuit.squirrel_ir.accept(impl)

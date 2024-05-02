@@ -1,6 +1,7 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import *
 from opensquirrel.merger import general_merger
 from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
@@ -68,7 +69,7 @@ class MergerTest(IREqualityTestBase):
         self.modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
 
     def test_merge_different_qubits(self):
-        register_manager = RegisterManager(qubit_register_size=4,)
+        register_manager = RegisterManager(qubit_register_size=4)
         ir = SquirrelIR()
         ir.add_gate(Ry(Qubit(0), Float(math.pi / 2)))
         ir.add_gate(Rx(Qubit(0), Float(math.pi)))

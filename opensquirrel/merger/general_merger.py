@@ -51,6 +51,10 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
 
 def merge_single_qubit_gates(circuit: Circuit):
+    """Merge all consecutive 1-qubit gates in the circuit.
+
+    Gates obtained from merging other gates become anonymous gates.
+    """
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
         Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(circuit.qubit_register_size)
     }

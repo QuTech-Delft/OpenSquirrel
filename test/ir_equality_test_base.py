@@ -16,7 +16,6 @@ class IREqualityTestBase(unittest.TestCase):
         - the qubit register name(s),
         - the circuit matrix up to a global phase factor.
         """
-
         # Store matrix before decompositions.
         expected_matrix = circuit_matrix_calculator.get_circuit_matrix(circuit)
 

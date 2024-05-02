@@ -1,8 +1,10 @@
 import unittest
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.decomposer import general_decomposer
 from opensquirrel.decomposer.general_decomposer import Decomposer, check_valid_replacement
 from opensquirrel.default_gates import *
+from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import Comment, Qubit, SquirrelIR
 
 
@@ -104,7 +106,7 @@ class ReplacerTest(unittest.TestCase):
         squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        circuit = Ciruit(register_manager, squirrel_ir)
+        circuit = Circuit(register_manager, squirrel_ir)
 
         # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
@@ -129,7 +131,7 @@ class ReplacerTest(unittest.TestCase):
         squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(H(Qubit(0)))
         squirrel_ir.add_comment(Comment("Test comment."))
-        circuit = Ciruit(register_manager, squirrel_ir)
+        circuit = Circuit(register_manager, squirrel_ir)
 
         general_decomposer.replace(squirrel_ir, H, lambda q: [Y90(q), X(q)])
 

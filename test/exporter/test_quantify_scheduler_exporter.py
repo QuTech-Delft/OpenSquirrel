@@ -40,7 +40,7 @@ class MockedQuantifyScheduler:
 
 class QuantifySchedulerExporterTest(unittest.TestCase):
     def test_export(self):
-        register_manager = RegisterManager(qubit_register_size=2)
+        register_manager = RegisterManager(qubit_register_size=3)
         squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(X(Qubit(0)))
         squirrel_ir.add_gate(CZ(Qubit(0), Qubit(1)))
@@ -57,18 +57,18 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
 
             mock_quantify_scheduler_gates.Rxy.assert_has_calls(
                 [
-                    unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="test[0]"),
+                    unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="q[0]"),
                     unittest.mock.call(
-                        theta=FloatEq(math.degrees(1.23)), phi=FloatEq(math.degrees(math.pi / 2)), qubit="test[2]"
+                        theta=FloatEq(math.degrees(1.23)), phi=FloatEq(math.degrees(math.pi / 2)), qubit="q[2]"
                     ),
                 ]
             )
-            mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="test[0]", qT="test[1]")
-            mock_quantify_scheduler_gates.Rz.assert_called_once_with(theta=FloatEq(math.degrees(2.34)), qubit="test[1]")
+            mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
+            mock_quantify_scheduler_gates.Rz.assert_called_once_with(theta=FloatEq(math.degrees(2.34)), qubit="q[1]")
             self.assertEqual(mock_schedule.add.call_count, 4)
 
     def check_gate_not_supported(self, g: Gate):
-        register_manager = RegisterManagar(qubit_register_size=20)
+        register_manager = RegisterManager(qubit_register_size=3)
         squirrel_ir = SquirrelIR()
         squirrel_ir.add_gate(g)
 

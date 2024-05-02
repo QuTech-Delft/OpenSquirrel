@@ -7,10 +7,14 @@ class _WriterImpl(SquirrelIRVisitor):
 
     def __init__(self, register_manager):
         self.register_manager = register_manager
-        self.output = f"""version 3.0\n\nqubit[{self.register_manager.qubit_register_size}] {self.register_manager.qubit_register_name}\n\n"""
+        qubit_register_size = self.register_manager.qubit_register_size
+        qubit_register_name = self.register_manager.qubit_register_name
+        self.output = f"""version 3.0\n\nqubit[{qubit_register_size}] {qubit_register_name}\n\n"""
 
     def visit_qubit(self, qubit: Qubit):
-        return f"{self.register_manager.qubit_register_name}[{self.register_manager.get_physical_qubit_index[qubit.index]}]"
+        qubit_register_name = self.register_manager.qubit_register_name
+        physical_qubit_index = self.register_manager.get_physical_qubit_index(qubit.index)
+        return f"{qubit_register_name}[{physical_qubit_index}]"
 
     def visit_int(self, i: Int):
         return f"{i.value}"
