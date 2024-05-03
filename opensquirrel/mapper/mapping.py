@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 class Mapping:
@@ -24,5 +24,17 @@ class Mapping:
     def __getitem__(self, key: int) -> int:
         return self.data[key]
 
+    def __len__(self) -> int:
+        return len(self.data)
+
     def size(self) -> int:
         return len(self.data)
+
+    def items(self) -> List[Tuple[int, int]]:
+        return self.data.items()
+
+    def keys(self) -> List[int]:
+        return list(self.data.keys())
+
+    def values(self) -> List[int]:
+        return list(self.data.values())

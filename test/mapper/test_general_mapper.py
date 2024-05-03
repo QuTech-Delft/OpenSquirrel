@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 
 import pytest
 
@@ -42,7 +43,7 @@ class TestMapQubits:
         return Circuit(register_manager, squirrel_ir)
 
     @pytest.fixture(name="expected_statements")
-    def expected_statements_fixture(self) -> list[Statement]:
+    def expected_statements_fixture(self) -> List[Statement]:
         return [
             H(Qubit(1)),
             CNOT(Qubit(1), Qubit(0)),
@@ -54,6 +55,4 @@ class TestMapQubits:
     def test_circuit_map(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
         mapper = HardcodedMapper(circuit.qubit_register_size, Mapping([1, 0, 2]))
         circuit.map(mapper)
-
-        # Check that the circuit is altered as expected
-        assert circuit.register_manager.mapping == mapper.get_mapping()
+        assert circuit.squirrel_ir.statements == expected_statements

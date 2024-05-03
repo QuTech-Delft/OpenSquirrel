@@ -114,9 +114,10 @@ class Circuit:
 
     def map(self, mapper: Mapper) -> None:
         """Generic qubit mapper pass.
-        Update the register manager's mapping with a given mapper's mapping.
+        Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
         """
-        self.register_manager.mapping = mapper.get_mapping()
+        from opensquirrel.reindexer import reindex_circuit
+        reindex_circuit(self, mapper.get_mapping())
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.

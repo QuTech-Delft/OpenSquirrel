@@ -114,7 +114,7 @@ class Measure(Statement, ABC):
         return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
 
     def accept(self, visitor: SquirrelIRVisitor):
-        visitor.visit_measure(self)
+        return visitor.visit_measure(self)
 
     def get_qubit_operands(self) -> List[Qubit]:
         return [self.qubit]
@@ -132,7 +132,7 @@ class Gate(Statement, ABC):
     def __eq__(self, other):
         if not isinstance(other, Gate):
             return False
-        return _compare_gate_classes(self, other)
+        return compare_gates(self, other)
 
     @property
     def name(self) -> Optional[str]:
@@ -259,18 +259,6 @@ class ControlledGate(Gate):
         return self.target_gate.is_identity()
 
 
-def _compare_gate_classes(g1: Gate, g2: Gate) -> bool:
-    union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
-
-    from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-    from opensquirrel.reindexer import get_reindexed_circuit
-
-    matrix_g1 = get_circuit_matrix(get_reindexed_circuit([g1], union_mapping))
-    matrix_g2 = get_circuit_matrix(get_reindexed_circuit([g2], union_mapping))
-
-    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
-
-
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     @wraps(gate_generator)
     def wrapper(*args, **kwargs):
@@ -317,6 +305,18 @@ def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable
         return result
 
     return wrapper
+
+
+def compare_gates(g1: Gate, g2: Gate) -> bool:
+    union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
+
+    from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
+    from opensquirrel.reindexer import get_reindexed_circuit
+
+    matrix_g1 = get_circuit_matrix(get_reindexed_circuit([g1], union_mapping))
+    matrix_g2 = get_circuit_matrix(get_reindexed_circuit([g2], union_mapping))
+
+    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
 
 
 @dataclass
