@@ -19,11 +19,11 @@ class IntegrationTest(unittest.TestCase):
 
                 qubit[3] qreg
 
-                Ry qreg[0], 1.23
-                Ry qreg[1], 2.34
+                Ry(1.23) qreg[0]
+                Ry(2.34) qreg[1]
                 CNOT qreg[0], qreg[1]
-                Rx qreg[0], -2.3
-                Ry qreg[1], -3.14
+                Rx(-2.3) qreg[0]
+                Ry(-3.14) qreg[1]
             """
         )
 
@@ -59,26 +59,26 @@ class IntegrationTest(unittest.TestCase):
 
 qubit[3] qreg
 
-Rz qreg[0], 3.1415927
+Rz(3.1415927) qreg[0]
 X90 qreg[0]
-Rz qreg[0], 1.9115927
+Rz(1.9115927) qreg[0]
 X90 qreg[0]
-Rz qreg[1], 3.1415927
+Rz(3.1415927) qreg[1]
 X90 qreg[1]
-Rz qreg[1], 2.372389
+Rz(2.372389) qreg[1]
 X90 qreg[1]
-Rz qreg[1], 3.1415927
+Rz(3.1415927) qreg[1]
 CZ qreg[0], qreg[1]
-Rz qreg[0], 1.5707963
+Rz(1.5707963) qreg[0]
 X90 qreg[0]
-Rz qreg[0], 0.84159265
+Rz(0.84159265) qreg[0]
 X90 qreg[0]
-Rz qreg[0], 1.5707963
-Rz qreg[1], 3.1415927
+Rz(1.5707963) qreg[0]
+Rz(3.1415927) qreg[1]
 X90 qreg[1]
-Rz qreg[1], 1.572389
+Rz(1.572389) qreg[1]
 X90 qreg[1]
-Rz qreg[1], 3.1415927
+Rz(3.1415927) qreg[1]
 """,
         )
 
@@ -89,13 +89,13 @@ Rz qreg[1], 3.1415927
 
                 qubit[3] qreg
 
-                Ry qreg[2], 2.34
-                Rz qreg[0], 1.5707963
-                Ry qreg[0], -0.2
+                Ry(2.34) qreg[2]
+                Rz(1.5707963) qreg[0]
+                Ry(-0.2) qreg[0]
                 CNOT qreg[1], qreg[0]
-                Rz qreg[0], 1.5789
+                Rz(1.5789) qreg[0]
                 CNOT qreg[1], qreg[0]
-                Rz qreg[1], 2.5707963
+                Rz(2.5707963) qreg[1]
                 measure qreg[0,2]
             """,
         )
@@ -107,27 +107,27 @@ Rz qreg[1], 3.1415927
 
 qubit[3] qreg
 
-Rz qreg[0], 1.5707963
+Rz(1.5707963) qreg[0]
 X90 qreg[0]
-Rz qreg[0], 2.9415927
+Rz(2.9415927) qreg[0]
 X90 qreg[0]
-Rz qreg[0], 3.1415927
+Rz(3.1415927) qreg[0]
 CNOT qreg[1], qreg[0]
-Rz qreg[0], -2.3521427
+Rz(-2.3521427) qreg[0]
 X90 qreg[0]
-Rz qreg[0], 3.1415927
+Rz(3.1415927) qreg[0]
 X90 qreg[0]
-Rz qreg[0], 0.78945
+Rz(0.78945) qreg[0]
 CNOT qreg[1], qreg[0]
-Rz qreg[2], 3.1415927
+Rz(3.1415927) qreg[2]
 X90 qreg[2]
-Rz qreg[2], 0.80159265
+Rz(0.80159265) qreg[2]
 X90 qreg[2]
-Rz qreg[1], -1.8561945
+Rz(-1.8561945) qreg[1]
 X90 qreg[1]
-Rz qreg[1], 3.1415927
+Rz(3.1415927) qreg[1]
 X90 qreg[1]
-Rz qreg[1], 1.2853981
+Rz(1.2853981) qreg[1]
 measure qreg[0]
 measure qreg[2]
 """,
@@ -157,13 +157,13 @@ measure qreg[2]
 qubit[3] qreg
 
 X90 qreg[0]
-Rz qreg[0], 1.5707963
+Rz(1.5707963) qreg[0]
 X90 qreg[0]
 X90 qreg[1]
-Rz qreg[1], 1.5707963
+Rz(1.5707963) qreg[1]
 X90 qreg[1]
 X90 qreg[2]
-Rz qreg[2], 1.5707963
+Rz(1.5707963) qreg[2]
 X90 qreg[2]
 measure qreg[0]
 measure qreg[1]
@@ -178,8 +178,8 @@ measure qreg[2]
 
                 qubit[2] qreg
 
-                Rz qreg[1], -2.3561945
-                Rz qreg[1], 1.5707963
+                Rz(-2.3561945) qreg[1]
+                Rz(1.5707963) qreg[1]
                 measure qreg[1,0]
             """
         )
@@ -190,11 +190,11 @@ measure qreg[2]
 
 qubit[2] qreg
 
-Rz qreg[1], 2.7488936
+Rz(2.7488936) qreg[1]
 X90 qreg[1]
-Rz qreg[1], 3.1415927
+Rz(3.1415927) qreg[1]
 X90 qreg[1]
-Rz qreg[1], -0.3926991
+Rz(-0.3926991) qreg[1]
 measure qreg[1]
 measure qreg[0]
 """
@@ -218,15 +218,15 @@ measure qreg[0]
             H q[2]
             H q[1]
             H q[0]
-            Rz q[0], 1.5707963
-            Ry q[0], -0.2
+            Rz(1.5707963) q[0]
+            Ry(-0.2) q[0]
             CNOT q[1], q[0]
-            Rz q[0], 1.5789
+            Rz(1.5789) q[0]
             CNOT q[1], q[0]
             CNOT q[1], q[2]
-            Rz q[1], 2.5707963
-            CR q[2], q[3], 2.123
-            Ry q[1], -1.5707963
+            Rz(2.5707963) q[1]
+            CR(2.123) q[2], q[3]
+            Ry(-1.5707963) q[1]
             """
         )
 
@@ -240,30 +240,30 @@ measure qreg[0]
 qubit[4] q
 
 X90 q[1]
-Rz q[1], 1.5707963
+Rz(1.5707963) q[1]
 X90 q[1]
-Rz q[0], -0.2
+Rz(-0.2) q[0]
 X90 q[0]
-Rz q[0], 1.5707963
+Rz(1.5707963) q[0]
 X90 q[0]
-Rz q[0], 1.5707963
+Rz(1.5707963) q[0]
 CNOT q[1], q[0]
-Rz q[0], -2.3521427
+Rz(-2.3521427) q[0]
 X90 q[0]
-Rz q[0], 3.1415927
+Rz(3.1415927) q[0]
 X90 q[0]
-Rz q[0], 0.78945
+Rz(0.78945) q[0]
 CNOT q[1], q[0]
 X90 q[2]
-Rz q[2], 1.5707963
+Rz(1.5707963) q[2]
 X90 q[2]
 CNOT q[1], q[2]
-CR q[2], q[3], 2.123
-Rz q[1], 2.5707963
+CR(2.123) q[2], q[3]
+Rz(2.5707963) q[1]
 X90 q[1]
-Rz q[1], 1.5707964
+Rz(1.5707964) q[1]
 X90 q[1]
-Rz q[1], 3.1415927
+Rz(3.1415927) q[1]
 """
 
         self.assertEqual(output, expected)
@@ -291,7 +291,7 @@ Rz q[1], 3.1415927
                 H qreg[1]
                 CZ qreg[0], qreg[1]
                 CNOT qreg[0], qreg[1]
-                CRk qreg[0], qreg[1], 4
+                CRk(4) qreg[0], qreg[1]
                 H qreg[0]
             """
         )

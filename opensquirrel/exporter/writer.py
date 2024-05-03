@@ -25,8 +25,12 @@ class _WriterImpl(SquirrelIRVisitor):
             self.output += "<anonymous-gate>\n"
             return
 
-        formatted_args = (arg.accept(self) for arg in gate.arguments)
-        self.output += f"{gate.name} {', '.join(formatted_args)}\n"
+        gate_name = gate.name
+        if any(not isinstance(arg, Qubit) for arg in gate.arguments):
+            params = [arg.accept(self) for arg in gate.arguments if not isinstance(arg, Qubit)]
+            gate_name += f"({', '.join(params)})"
+        qubit_args = (arg.accept(self) for arg in gate.arguments if isinstance(arg, Qubit))
+        self.output += f"{gate_name} {', '.join(qubit_args)}\n"
 
     def visit_comment(self, comment: Comment):
         self.output += f"\n/* {comment.str} */\n\n"
