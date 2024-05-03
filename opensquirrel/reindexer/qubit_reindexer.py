@@ -17,6 +17,20 @@ from opensquirrel.squirrel_ir import (
 
 
 class _QubitReindexer(SquirrelIRVisitor):
+    """
+    Reindex a whole IR.
+
+    Args:
+        qubit_indices: a list of the new indices, e.g. [3, 1, 0, 2]
+
+    Returns:
+         A new IR where the qubit indices are replaced by the values passed in qubit_indices.
+         E.g., for qubit_indices = [3, 1, 0, 2]:
+         - Qubit(index=0) becomes Qubit(index=3),
+         - Qubit(index=1) becomes Qubit(index=1),
+         - Qubit(index=2) becomes Qubit(index=0), and
+         - Qubit(index=3) becomes Qubit(index=2).
+    """
     def __init__(self, qubit_indices: List[int]):
         self.qubit_indices = qubit_indices
 
