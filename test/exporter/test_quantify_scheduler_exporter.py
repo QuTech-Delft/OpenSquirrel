@@ -7,7 +7,7 @@ import unittest.mock
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Qubit, SquirrelIR, Measure
+from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Measure, Qubit, SquirrelIR
 
 
 class FloatEq(float):
@@ -46,7 +46,6 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
         squirrel_ir.add_measurement(Measure(Qubit(0)))
         squirrel_ir.add_measurement(Measure(Qubit(1)))
         squirrel_ir.add_measurement(Measure(Qubit(2)))
-
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
             mock_schedule = unittest.mock.MagicMock()

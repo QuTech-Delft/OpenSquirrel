@@ -6,9 +6,10 @@ from opensquirrel.squirrel_ir import (
     BlochSphereRotation,
     ControlledGate,
     MatrixGate,
+    Measure,
     Qubit,
     SquirrelIR,
-    SquirrelIRVisitor, Measure,
+    SquirrelIRVisitor,
 )
 
 try:

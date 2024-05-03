@@ -34,6 +34,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         <BLANKLINE>
 
     """
+
     def __init__(
         self,
         number_of_qubits: int,
@@ -43,9 +44,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
-        self.squirrel_ir = SquirrelIR(
-            number_of_qubits=number_of_qubits, qubit_register_name="q"
-        )
+        self.squirrel_ir = SquirrelIR(number_of_qubits=number_of_qubits, qubit_register_name="q")
 
     def __getattr__(self, attr):
         def add_comment(comment_string: str):
@@ -68,7 +67,8 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
                 if not isinstance(args[i], par.annotation):
                     raise TypeError(
                         f"Wrong argument type for instruction `{attr}`, got {type(args[i])} but expected"
-                        f" {par.annotation}")
+                        f" {par.annotation}"
+                    )
 
         return add_comment if attr == "comment" else add_instruction
 
