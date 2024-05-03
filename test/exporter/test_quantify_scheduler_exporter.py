@@ -66,7 +66,7 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
             )
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="test[0]", qT="test[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(theta=FloatEq(math.degrees(2.34)), qubit="test[1]")
-            self.assertEqual(mock_schedule.add.call_count, 4)
+            self.assertEqual(mock_schedule.add.call_count, 7)
 
     def check_gate_not_supported(self, g: Gate):
         squirrel_ir = SquirrelIR(number_of_qubits=20, qubit_register_name="test")
