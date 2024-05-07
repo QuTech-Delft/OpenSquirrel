@@ -38,20 +38,20 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
     def __init__(
         self,
         number_of_qubits: int,
-        gate_set: [Callable[..., Gate]] = default_gate_set,
+        gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
-        measurement_set: [Callable[..., Gate]] = default_measurement_set,
+        measurement_set: list[Callable[..., Gate]] = default_measurement_set,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
         self.squirrel_ir = SquirrelIR(number_of_qubits=number_of_qubits, qubit_register_name="q")
 
     def __getattr__(self, attr):
-        def add_comment(comment_string: str):
+        def add_comment(comment_string: str) -> CircuitBuilder:
             self.squirrel_ir.add_comment(Comment(comment_string))
             return self
 
-        def add_instruction(*args):
+        def add_instruction(*args: tuple) -> CircuitBuilder:
             if any(attr == measure.__name__ for measure in self.measurement_set):
                 generator_f = MeasurementLibrary.get_measurement_f(self, attr)
                 _check_generator_f_args(generator_f, args)
