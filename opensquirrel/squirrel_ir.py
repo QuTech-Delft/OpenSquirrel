@@ -92,7 +92,7 @@ class Measure(Statement, ABC):
     def __init__(
         self,
         qubit: Qubit,
-        axis: Tuple[float, float, float],
+        axis: Tuple[float, float, float] = (0, 0, 1),
         generator=None,
         arguments=None,
     ):
