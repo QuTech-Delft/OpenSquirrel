@@ -293,6 +293,7 @@ Rz(3.1415927) q[1]
                 CNOT qreg[0], qreg[1]
                 CRk(4) qreg[0], qreg[1]
                 H qreg[0]
+                measure qreg[0:1]
             """
         )
 
@@ -352,6 +353,8 @@ Rz(3.1415927) q[1]
                     "Rz(-180, 'qreg[0]')",
                     "Rz(-180, 'qreg[1]')",
                     "Rxy(90, 90, 'qreg[1]')",
+                    "Measure qreg[0]",
+                    "Measure qreg[1]",
                 ],
             )
 

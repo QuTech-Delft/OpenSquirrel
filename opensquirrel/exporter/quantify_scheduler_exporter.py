@@ -6,6 +6,7 @@ from opensquirrel.squirrel_ir import (
     BlochSphereRotation,
     ControlledGate,
     MatrixGate,
+    Measure,
     Qubit,
     SquirrelIR,
     SquirrelIRVisitor,
@@ -31,6 +32,10 @@ class _ScheduleCreator(SquirrelIRVisitor):
     def __init__(self, qubit_register_name: str):
         self.qubit_register_name = qubit_register_name
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
+
+    def visit_measure(self, g: Measure):
+        self.schedule.add(quantify_scheduler_gates.Measure(self._get_qubit_string(g.qubit)))
+        return
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
         if abs(g.axis[2]) < ATOL:
