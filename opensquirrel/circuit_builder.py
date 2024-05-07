@@ -1,11 +1,13 @@
+from __future__ import annotations
+
 import inspect
-from typing import Callable, Dict
+from typing import Callable
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
-from opensquirrel.squirrel_ir import Comment, Gate, Qubit, SquirrelIR
+from opensquirrel.squirrel_ir import Comment, Gate, Qubit, SquirrelIR, Measure
 
 
 class CircuitBuilder(GateLibrary, MeasurementLibrary):
@@ -39,8 +41,8 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         self,
         number_of_qubits: int,
         gate_set: list[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
-        measurement_set: list[Callable[..., Gate]] = default_measurement_set,
+        gate_aliases: dict[str, Callable[..., Gate]] = default_gate_aliases,
+        measurement_set: list[Callable[..., Measure]] = default_measurement_set,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
