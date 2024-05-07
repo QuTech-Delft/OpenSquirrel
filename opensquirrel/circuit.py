@@ -116,8 +116,9 @@ class Circuit:
         """Generic qubit mapper pass.
         Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
         """
-        from opensquirrel.reindexer import reindex_circuit
-        reindex_circuit(self, mapper.get_mapping())
+        from opensquirrel.mapper.qubit_remapper import remap_ir
+
+        remap_ir(self, mapper.get_mapping())
 
     def replace(self, gate_generator: Callable[..., Gate], f):
         """Manually replace occurrences of a given gate with a list of gates.

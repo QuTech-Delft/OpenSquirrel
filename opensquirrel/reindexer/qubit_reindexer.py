@@ -21,21 +21,23 @@ class _QubitReindexer(SquirrelIRVisitor):
     Reindex a whole IR.
 
     Args:
-        qubit_indices: a list of the new indices, e.g. [3, 1, 0, 2]
+        qubit_indices: a list of qubit indices, e.g. [3, 1]
 
     Returns:
-         A new IR where the qubit indices are replaced by the values passed in qubit_indices.
-         E.g., for qubit_indices = [3, 1, 0, 2]:
-         - Qubit(index=0) becomes Qubit(index=3),
-         - Qubit(index=1) becomes Qubit(index=1),
-         - Qubit(index=2) becomes Qubit(index=0), and
-         - Qubit(index=3) becomes Qubit(index=2).
+         A new IR where the qubit indices are replaced by their positions in qubit indices.
+         E.g., for mapping = [3, 1]:
+         - Qubit(index=1) becomes Qubit(index=1), and
+         - Qubit(index=3) becomes Qubit(index=0).
     """
+
     def __init__(self, qubit_indices: List[int]):
         self.qubit_indices = qubit_indices
 
     def visit_comment(self, comment: Comment):
         return comment
+
+    def visit_measure(self, measure: Measure):
+        return Measure(qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), axis=measure.axis)
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
         return BlochSphereRotation(
@@ -44,19 +46,12 @@ class _QubitReindexer(SquirrelIRVisitor):
 
     def visit_matrix_gate(self, g: MatrixGate):
         reindexed_operands = [Qubit(self.qubit_indices.index(op.index)) for op in g.operands]
-        result = MatrixGate(matrix=g.matrix, operands=reindexed_operands)
-        return result
+        return MatrixGate(matrix=g.matrix, operands=reindexed_operands)
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate):
         control_qubit = Qubit(self.qubit_indices.index(controlled_gate.control_qubit.index))
         target_gate = controlled_gate.target_gate.accept(self)
-        result = ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
-        return result
-
-    def visit_measure(self, measure: Measure):
-        return Measure(
-            qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), axis=measure.axis
-        )
+        return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
 
 
 def get_reindexed_circuit(replacement_gates: List[Gate], qubit_indices: List[int]) -> Circuit:
@@ -67,12 +62,3 @@ def get_reindexed_circuit(replacement_gates: List[Gate], qubit_indices: List[int
         gate_with_reindexed_qubits = gate.accept(qubit_reindexer)
         replacement_ir.add_gate(gate_with_reindexed_qubits)
     return Circuit(register_manager, replacement_ir)
-
-
-def reindex_circuit(circuit: Circuit, mapping: Mapping) -> None:
-    qubit_reindexer = _QubitReindexer(mapping.values())
-    replacement_ir = SquirrelIR()
-    for statement in circuit.squirrel_ir.statements:
-        statement = statement.accept(qubit_reindexer)
-        replacement_ir.statements.append(statement)
-    circuit.squirrel_ir = replacement_ir

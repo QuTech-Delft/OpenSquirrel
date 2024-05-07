@@ -13,8 +13,7 @@ class _WriterImpl(SquirrelIRVisitor):
 
     def visit_qubit(self, qubit: Qubit):
         qubit_register_name = self.register_manager.qubit_register_name
-        physical_qubit_index = self.register_manager.get_physical_qubit_index(qubit.index)
-        return f"{qubit_register_name}[{physical_qubit_index}]"
+        return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_int(self, i: Int):
         return f"{i.value}"

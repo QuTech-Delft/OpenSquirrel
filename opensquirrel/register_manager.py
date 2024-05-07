@@ -25,7 +25,11 @@ class RegisterManager:
         self.bit_register_size = qubit_register_size
         self.qubit_register_name = qubit_register_name
         self.bit_register_name = bit_register_name
-        self.mapping = Mapper(qubit_register_size).get_mapping()
 
-    def get_physical_qubit_index(self, qubit_index: int) -> int:
-        return self.mapping[qubit_index]
+    def __eq__(self, other):
+        return (
+            self.qubit_register_size == other.qubit_register_size
+            and self.qubit_register_name == other.qubit_register_name
+            and self.bit_register_size == other.bit_register_size
+            and self.bit_register_name == other.bit_register_name
+        )
