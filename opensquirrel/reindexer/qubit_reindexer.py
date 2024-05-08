@@ -33,9 +33,6 @@ class _QubitReindexer(SquirrelIRVisitor):
     def __init__(self, qubit_indices: List[int]):
         self.qubit_indices = qubit_indices
 
-    def visit_comment(self, comment: Comment):
-        return comment
-
     def visit_measure(self, measure: Measure):
         return Measure(qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), axis=measure.axis)
 

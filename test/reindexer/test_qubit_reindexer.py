@@ -1,12 +1,14 @@
+import math
 from typing import List
 
+import numpy as np
 import pytest
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import Y90, X
 from opensquirrel.register_manager import RegisterManager
 from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
-from opensquirrel.squirrel_ir import Gate, Qubit, SquirrelIR
+from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Qubit, SquirrelIR
 
 
 class TestReindexer:
@@ -16,7 +18,22 @@ class TestReindexer:
 
     @pytest.fixture
     def replacement_gates_4(self) -> List[Gate]:
-        return [Y90(Qubit(1)), X(Qubit(3)), Y90(Qubit(0)), X(Qubit(2))]
+        return [
+            Measure(Qubit(1)),
+            BlochSphereRotation(Qubit(3), axis=(0, 0, 1), angle=math.pi),
+            MatrixGate(
+                np.array(
+                    [
+                        [1, 0, 0, 0],
+                        [0, 0, 1, 0],
+                        [0, 1, 0, 0],
+                        [0, 0, 0, 1],
+                    ]
+                ),
+                [Qubit(0), Qubit(3)],
+            ),
+            ControlledGate(Qubit(1), X(Qubit(2))),
+        ]
 
     @pytest.fixture
     def circuit_3_reindexed(self) -> Circuit:
@@ -28,10 +45,22 @@ class TestReindexer:
     @pytest.fixture
     def circuit_4_reindexed(self) -> Circuit:
         squirrel_ir = SquirrelIR()
-        squirrel_ir.add_gate(Y90(Qubit(0)))
-        squirrel_ir.add_gate(X(Qubit(2)))
-        squirrel_ir.add_gate(Y90(Qubit(1)))
-        squirrel_ir.add_gate(X(Qubit(3)))
+        squirrel_ir.add_gate(Measure(Qubit(0)))
+        squirrel_ir.add_gate(BlochSphereRotation(Qubit(2), axis=(0, 0, 1), angle=math.pi))
+        squirrel_ir.add_gate(
+            MatrixGate(
+                np.array(
+                    [
+                        [1, 0, 0, 0],
+                        [0, 0, 1, 0],
+                        [0, 1, 0, 0],
+                        [0, 0, 0, 1],
+                    ]
+                ),
+                [Qubit(1), Qubit(2)],
+            )
+        )
+        squirrel_ir.add_gate(ControlledGate(Qubit(0), X(Qubit(3))))
         return Circuit(RegisterManager(qubit_register_size=4), squirrel_ir)
 
     @pytest.fixture
