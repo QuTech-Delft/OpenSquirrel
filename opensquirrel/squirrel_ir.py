@@ -114,18 +114,10 @@ class Measure(Statement, ABC):
         return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
 
     def accept(self, visitor: SquirrelIRVisitor):
-        visitor.visit_measure(self)
+        return visitor.visit_measure(self)
 
     def get_qubit_operands(self) -> List[Qubit]:
         return [self.qubit]
-
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits after replacement.
-        """
-        self.qubit = Qubit(mapping[self.qubit.index])
 
 
 class Gate(Statement, ABC):
@@ -140,7 +132,7 @@ class Gate(Statement, ABC):
     def __eq__(self, other):
         if not isinstance(other, Gate):
             return False
-        return _compare_gate_classes(self, other)
+        return compare_gates(self, other)
 
     @property
     def name(self) -> Optional[str]:
@@ -164,15 +156,6 @@ class Gate(Statement, ABC):
 
         Returns:
             Boolean value stating wether the Gate is an identity Gate.
-        """
-
-    @abstractmethod
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
         """
 
 
@@ -228,15 +211,6 @@ class BlochSphereRotation(Gate):
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
 
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.qubit = Qubit(mapping[self.qubit.index])
-
 
 class MatrixGate(Gate):
     generator: Optional[Callable[..., "MatrixGate"]] = None
@@ -262,15 +236,6 @@ class MatrixGate(Gate):
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(2 ** len(self.operands)))
 
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.operands = [Qubit(mapping[qubit.index]) for qubit in self.operands]
-
 
 class ControlledGate(Gate):
     generator: Optional[Callable[..., "ControlledGate"]] = None
@@ -292,27 +257,6 @@ class ControlledGate(Gate):
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
-
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.control_qubit = Qubit(mapping[self.control_qubit.index])
-        self.target_gate.relabel(mapping)
-
-
-def _compare_gate_classes(g1: Gate, g2: Gate) -> bool:
-    union_mapping = list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))
-
-    from opensquirrel.utils.matrix_expander import get_matrix_after_qubit_remapping
-
-    matrix_g1 = get_matrix_after_qubit_remapping([g1], union_mapping)
-    matrix_g2 = get_matrix_after_qubit_remapping([g2], union_mapping)
-
-    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
@@ -363,6 +307,18 @@ def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable
     return wrapper
 
 
+def compare_gates(g1: Gate, g2: Gate) -> bool:
+    union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
+
+    from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
+    from opensquirrel.reindexer import get_reindexed_circuit
+
+    matrix_g1 = get_circuit_matrix(get_reindexed_circuit([g1], union_mapping))
+    matrix_g2 = get_circuit_matrix(get_reindexed_circuit([g2], union_mapping))
+
+    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
+
+
 @dataclass
 class Comment(Statement):
     str: str
@@ -376,15 +332,8 @@ class Comment(Statement):
 
 class SquirrelIR:
     # This is just a list of gates (for now?)
-    def __init__(
-        self,
-        *,
-        number_of_qubits: int,
-        qubit_register_name: str = "q",
-    ):
-        self.number_of_qubits: int = number_of_qubits
+    def __init__(self):
         self.statements: List[Statement] = []
-        self.qubit_register_name: str = qubit_register_name
 
     def add_gate(self, gate: Gate):
         self.statements.append(gate)
@@ -396,16 +345,10 @@ class SquirrelIR:
         self.statements.append(comment)
 
     def __eq__(self, other):
-        if self.number_of_qubits != other.number_of_qubits:
-            return False
-
-        if self.qubit_register_name != other.qubit_register_name:
-            return False
-
         return self.statements == other.statements
 
     def __repr__(self):
-        return f"""IR ({self.number_of_qubits} qubits, register {self.qubit_register_name}): {self.statements}"""
+        return f"""IR: {self.statements}"""
 
     def accept(self, visitor: SquirrelIRVisitor):
         for statement in self.statements:

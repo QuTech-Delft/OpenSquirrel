@@ -2,8 +2,9 @@ from math import acos, cos, sin
 
 import numpy as np
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.squirrel_ir import BlochSphereRotation, Gate, Measure, Qubit, SquirrelIR
+from opensquirrel.squirrel_ir import BlochSphereRotation, Gate, Measure, Qubit
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -49,11 +50,16 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     )
 
 
-def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
+def merge_single_qubit_gates(circuit: Circuit):
+    """Merge all consecutive 1-qubit gates in the circuit.
+
+    Gates obtained from merging other gates become anonymous gates.
+    """
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
-        Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(squirrel_ir.number_of_qubits)
+        Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(circuit.qubit_register_size)
     }
 
+    squirrel_ir = circuit.squirrel_ir
     statement_index = 0
     while statement_index < len(squirrel_ir.statements):
         statement = squirrel_ir.statements[statement_index]

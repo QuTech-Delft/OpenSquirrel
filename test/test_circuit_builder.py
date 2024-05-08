@@ -17,7 +17,7 @@ class TestCircuitBuilder:
 
         circuit = builder.to_circuit()
 
-        assert circuit.number_of_qubits == 2
+        assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
         assert circuit.squirrel_ir.statements == [
             Comment("A single line comment."),
@@ -31,7 +31,7 @@ class TestCircuitBuilder:
 
         circuit = builder.to_circuit()
 
-        assert circuit.number_of_qubits == 1
+        assert circuit.qubit_register_size == 1
         assert circuit.qubit_register_name == "q"
         assert circuit.squirrel_ir.statements == [
             Measure(Qubit(0)),
@@ -47,7 +47,7 @@ class TestCircuitBuilder:
 
         circuit = builder.to_circuit()
 
-        assert circuit.number_of_qubits == 2
+        assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
         assert circuit.squirrel_ir.statements == [
             H(Qubit(0)),

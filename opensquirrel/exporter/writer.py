@@ -1,15 +1,19 @@
-from opensquirrel.squirrel_ir import Comment, Float, Gate, Int, Measure, Qubit, SquirrelIR, SquirrelIRVisitor
+from opensquirrel.circuit import Circuit
+from opensquirrel.squirrel_ir import Comment, Float, Gate, Int, Measure, Qubit, SquirrelIRVisitor
 
 
 class _WriterImpl(SquirrelIRVisitor):
     number_of_significant_digits = 8
 
-    def __init__(self, number_of_qubits, qubit_register_name):
-        self.qubit_register_name = qubit_register_name
-        self.output = f"""version 3.0\n\nqubit[{number_of_qubits}] {qubit_register_name}\n\n"""
+    def __init__(self, register_manager):
+        self.register_manager = register_manager
+        qubit_register_size = self.register_manager.qubit_register_size
+        qubit_register_name = self.register_manager.qubit_register_name
+        self.output = f"""version 3.0\n\nqubit[{qubit_register_size}] {qubit_register_name}\n\n"""
 
     def visit_qubit(self, qubit: Qubit):
-        return f"{self.qubit_register_name}[{qubit.index}]"
+        qubit_register_name = self.register_manager.qubit_register_name
+        return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_int(self, i: Int):
         return f"{i.value}"
@@ -36,9 +40,9 @@ class _WriterImpl(SquirrelIRVisitor):
         self.output += f"\n/* {comment.str} */\n\n"
 
 
-def squirrel_ir_to_string(squirrel_ir: SquirrelIR):
-    writer_impl = _WriterImpl(squirrel_ir.number_of_qubits, squirrel_ir.qubit_register_name)
+def circuit_to_string(circuit: Circuit):
+    writer_impl = _WriterImpl(circuit.register_manager)
 
-    squirrel_ir.accept(writer_impl)
+    circuit.squirrel_ir.accept(writer_impl)
 
     return writer_impl.output

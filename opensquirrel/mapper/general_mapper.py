@@ -2,36 +2,20 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-
-from opensquirrel.squirrel_ir import Gate, Measure, SquirrelIR
+from opensquirrel.mapper.mapping import Mapping
 
 
-def map_qubits(squirrel_ir: SquirrelIR, mapper: Mapper) -> None:
-    """Map the virtual qubits in the `squirrel_ir` to physical qubits using `mapper`.
-
-    Args:
-        squirrel_ir: IR to apply mapping to.
-        mapper: Mapping pass to use.
-    """
-
-    mapping = mapper.map(squirrel_ir)
-
-    for statement in squirrel_ir.statements:
-        if isinstance(statement, (Gate, Measure)):
-            statement.relabel(mapping)
-
-
-class Mapper(ABC):
+class Mapper:
     """Base class for the Mapper pass."""
 
-    @abstractmethod
-    def map(self, squirrel_ir: SquirrelIR) -> dict[int, int]:
-        """Produce a mapping from the virtual qubits in the `squirrel_ir` to the physical qubits.
+    def __init__(self, qubit_register_size: int, mapping: Mapping | None = None) -> None:
+        """Use ``IdentityMapper`` as the fallback case for ``Mapper``"""
+        physical_qubit_register = range(qubit_register_size)
+        self.mapping = mapping if mapping is not None else Mapping(physical_qubit_register)
 
-        Args:
-            squirrel_ir: IR to apply mapping to.
+        if qubit_register_size != self.mapping.size():
+            raise ValueError("Qubit register size and mapping size differ.")
 
-        Returns:
-            Mapping from virtual qubits to physical qubits.
-        """
+    def get_mapping(self) -> Mapping:
+        """Get mapping."""
+        return self.mapping
