@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opensquirrel"
-version = "0.0.5"
+version = "0.0.9"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
     "Quantum Inspire <support@quantum-inspire.com>"
@@ -35,7 +35,7 @@ numpy = [
     { version = "1.24", python = "<3.9" },
     { version = "^1.26", python = "^3.9" },
 ]
-libqasm = "0.6.5"
+libqasm = "0.6.6"
 networkx = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
