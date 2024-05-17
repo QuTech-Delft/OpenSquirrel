@@ -29,8 +29,13 @@ class Parser(GateLibrary, MeasurementLibrary):
         self.squirrel_ir = None
 
     @staticmethod
-    def _get_qubits(cqasm_qubits_expression):
-        return [Qubit(index.value) for index in cqasm_qubits_expression.indices]
+    def _get_qubits(ast_qubit_expression):
+        ret = []
+        if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
+            ret = [Qubit(index) for index in register_manager.get_qubit_range(ast_qubit_expression.variable.name)]
+        if isinstance(ast_qubit_expression, cqasm.IndexRef):
+            ret = [Qubit(index) for index in register_manager.get_qubit_indices(ast_qubit_expression.variable.name, ast_qubit_expression.indices)]
+        return ret
 
     @staticmethod
     def _get_literal(cqasm_literal_expression):
@@ -72,9 +77,9 @@ class Parser(GateLibrary, MeasurementLibrary):
 
         expanded_args = [
             (
-                cls._get_qubits(ast_arg)
-                if expected_parameter.annotation == Qubit
-                else [cls._get_literal(ast_arg)] * number_of_operands
+                cls._get_qubits(ast_arg) if expected_parameter.annotation == Qubit
+                else [cls._get_literal(ast_arg)] * number_of_operands if not expected_parameter.annotation == Bit
+                else None
             )
             for ast_arg, expected_parameter in zip(ast_args, parameters)
         ]
@@ -85,6 +90,9 @@ class Parser(GateLibrary, MeasurementLibrary):
     def _get_cqasm_param_type_letters(squirrel_type):
         if squirrel_type == Qubit:
             return "Q", "V"  # "V" is to allow array notations like q[3, 5, 7] and q[3:6]
+
+        if squirrel_type == Bit:
+            return "B", "W"  # "W" is to allow array notations like b[3, 5, 7] and b[3:6]
 
         if squirrel_type == Float:
             return "f"
@@ -125,11 +133,9 @@ class Parser(GateLibrary, MeasurementLibrary):
             raise Exception("Parsing error: " + ", ".join(result))
 
     @staticmethod
-    def _parse_qubit_register(ast):
+    def _parse_ast_string(string):
         # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
-        qubit_register_size = ast.qubit_variable_declaration.typ.size
-        qubit_register_name = ast.qubit_variable_declaration.name[2:-1]
-        return [qubit_register_size, qubit_register_name]
+        return string[2:-1]
 
     def circuit_from_string(self, s: str):
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
@@ -138,17 +144,17 @@ class Parser(GateLibrary, MeasurementLibrary):
         Parser._check_analysis_result(analysis_result)
         ast = analysis_result
 
-        # Parse qubit register
-        [qubit_register_size, qubit_register_name] = Parser._parse_qubit_register(ast)
-        register_manager = RegisterManager(qubit_register_size, qubit_register_name)
+        # Create RegisterManager
+        register_manager = RegisterManager(ast)
 
         # Parse statements
         squirrel_ir = SquirrelIR()
         for statement in ast.block.statements:
-            if "measure" in statement.name[2:-1]:
-                generator_f = self.get_measurement_f(statement.name[2:-1])
+            statement_name =  parse_ast_string_(statement.name)
+            if "measure" in statement_name:
+                generator_f = self.get_measurement_f(statement_name)
             else:
-                generator_f = self.get_gate_f(statement.name[2:-1])
+                generator_f = self.get_gate_f(statement_name)
             expanded_args = Parser._get_expanded_statement_args(generator_f, statement.operands)
             for arg_set in expanded_args:
                 squirrel_ir.add_gate(generator_f(*arg_set))

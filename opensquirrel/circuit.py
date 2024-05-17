@@ -91,14 +91,6 @@ class Circuit:
     def qubit_register_name(self) -> str:
         return self.register_manager.qubit_register_name
 
-    @property
-    def bit_register_size(self) -> int:
-        return self.register_manager.bit_register_size
-
-    @property
-    def bit_register_name(self) -> str:
-        return self.register_manager.bit_register_name
-
     def merge_single_qubit_gates(self):
         """Merge all consecutive 1-qubit gates in the circuit.
 
