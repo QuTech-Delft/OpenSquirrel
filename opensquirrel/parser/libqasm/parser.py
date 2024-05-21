@@ -38,21 +38,19 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @staticmethod
     def _type_of(ast_expression):
-        return (
-            type(ast_expression.variable.typ)
-            if isinstance(ast_expression, cqasm.values.IndexRef) or isinstance(ast_expression, cqasm.values.VariableRef)
-            else type(ast_expression)
-        )
+        if isinstance(ast_expression, cqasm.values.IndexRef) or isinstance(ast_expression, cqasm.values.VariableRef):
+            return type(ast_expression.variable.typ)
+        else:
+            return type(ast_expression)
 
     @staticmethod
     def _size_of(ast_expression) -> int:
-        return (
-            len(ast_expression.indices)
-            if isinstance(ast_expression, cqasm.values.IndexRef)
-            else int(ast_expression.variable.typ.size)
-            if isinstance(ast_expression, cqasm.values.VariableRef)
-            else 1
-        )
+        if isinstance(ast_expression, cqasm.values.IndexRef):
+            return len(ast_expression.indices)
+        elif isinstance(ast_expression, cqasm.values.VariableRef):
+            return int(ast_expression.variable.typ.size)
+        else:
+            return 1
 
     @staticmethod
     def _is_qubit_type(ast_expression):
