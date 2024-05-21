@@ -10,12 +10,6 @@ from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
 from opensquirrel.register_manager import RegisterManager
 from opensquirrel.squirrel_ir import Float, Int, Qubit, SquirrelIR
 
-_ast_type_to_ir_type = {
-    cqasm.types.QubitArray: Qubit,
-    cqasm.values.ConstInt: Int,
-    cqasm.values.ConstFloat: Float,
-}
-
 
 class Parser(GateLibrary, MeasurementLibrary):
     def __init__(
@@ -29,70 +23,66 @@ class Parser(GateLibrary, MeasurementLibrary):
         self.squirrel_ir = None
 
     @staticmethod
-    def _get_qubits(ast_qubit_expression):
-        ret = []
-        if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
-            ret = [Qubit(index) for index in register_manager.get_qubit_range(ast_qubit_expression.variable.name)]
-        if isinstance(ast_qubit_expression, cqasm.IndexRef):
-            ret = [Qubit(index) for index in register_manager.get_qubit_indices(ast_qubit_expression.variable.name, ast_qubit_expression.indices)]
-        return ret
+    def _parse_ast_string(string):
+        # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
+        return string[2:-1]
 
     @staticmethod
-    def _get_literal(cqasm_literal_expression):
+    def _ast_literal_to_ir_literal(cqasm_literal_expression):
         assert type(cqasm_literal_expression) in [cqasm.values.ConstInt, cqasm.values.ConstFloat]
-
         if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
             return Int(cqasm_literal_expression.value)
-
         if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
             return Float(cqasm_literal_expression.value)
-
         return None
 
     @staticmethod
-    def _check_ast_type(ast_expression, expected_ir_type):
-        ast_type = (
-            type(ast_expression.variable.typ)
-            if isinstance(ast_expression, cqasm.values.IndexRef)
+    def _get_ast_type(ast_expression):
+        return (
+            type(ast_expression.variable.typ) if isinstance(ast_expression, cqasm.values.IndexRef)
             else type(ast_expression)
         )
 
-        # The check below is already guaranteed by libqasm, therefore it's just an assert.
-        assert _ast_type_to_ir_type[ast_type] == expected_ir_type
+    @staticmethod
+    def _is_qubit_type(ast_expression):
+        ast_type = Parser._get_ast_type(ast_expression)
+        return ast_type == cqasm.types.Qubit or ast_type == cqasm.types.QubitArray
+
+    @staticmethod
+    def _is_bit_type(ast_expression):
+        ast_type = Parser._get_ast_type(ast_expression)
+        return ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray
+
+    @staticmethod
+    def _get_qubits(ast_qubit_expression, register_manager):
+        ret = []
+        variable_name = Parser._parse_ast_string(ast_qubit_expression.variable.name)
+        if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
+            ret = [Qubit(index) for index in register_manager.get_qubit_range(variable_name)]
+        if isinstance(ast_qubit_expression, cqasm.values.IndexRef):
+            indices = [int(i.value) for i in ast_qubit_expression.indices]
+            ret = [Qubit(index) for index in register_manager.get_qubit_indices(variable_name, indices)]
+        return ret
 
     @classmethod
-    def _get_expanded_statement_args(cls, generator_f, ast_args):
-        parameters = inspect.signature(generator_f).parameters.values()
-
-        ### The check below is already guaranteed by libqasm, therefore it's just an assert.
-        assert len(parameters) == len(ast_args)
-        for ast_arg, expected_parameter in zip(ast_args, parameters):
-            cls._check_ast_type(ast_expression=ast_arg, expected_ir_type=expected_parameter.annotation)
-
+    def _get_expanded_statement_args(cls, ast_args, register_manager):
         number_of_operands = next(
-            len(ast_arg.indices)
-            for ast_arg, expected_parameter in zip(ast_args, parameters)
-            if expected_parameter.annotation == Qubit
+            len(ast_arg.indices) for ast_arg in ast_args if Parser._is_qubit_type(ast_arg)
         )
-
-        expanded_args = [
-            (
-                cls._get_qubits(ast_arg) if expected_parameter.annotation == Qubit
-                else [cls._get_literal(ast_arg)] * number_of_operands if not expected_parameter.annotation == Bit
-                else None
-            )
-            for ast_arg, expected_parameter in zip(ast_args, parameters)
-        ]
-
+        expanded_args = []
+        for ast_arg in ast_args:
+            if Parser._is_qubit_type(ast_arg):
+                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
+            elif not Parser._is_bit_type(ast_arg):
+                expanded_args.append([cls._ast_literal_to_ir_literal(ast_arg)] * number_of_operands)
+            else:  # Bit type
+                pass
         return zip(*expanded_args)
 
     @staticmethod
     def _get_cqasm_param_type_letters(squirrel_type):
         if squirrel_type == Qubit:
             return "Q", "V"  # "V" is to allow array notations like q[3, 5, 7] and q[3:6]
-
-        if squirrel_type == Bit:
-            return "B", "W"  # "W" is to allow array notations like b[3, 5, 7] and b[3:6]
 
         if squirrel_type == Float:
             return "f"
@@ -103,39 +93,14 @@ class Parser(GateLibrary, MeasurementLibrary):
         raise TypeError("Unsupported type")
 
     def _create_analyzer(self):
-        without_defaults = True
+        without_defaults = False
         analyzer = cqasm.Analyzer("3.0", without_defaults)
-        for generator_f in self.gate_set:
-            for set_of_letters in itertools.product(
-                *(
-                    self._get_cqasm_param_type_letters(p.annotation)
-                    for p in inspect.signature(generator_f).parameters.values()
-                )
-            ):
-                param_types = "".join(set_of_letters)
-                analyzer.register_instruction(generator_f.__name__, param_types)
-
-        for generator_f in self.measurement_set:
-            for set_of_letters in itertools.product(
-                *(
-                    self._get_cqasm_param_type_letters(p.annotation)
-                    for p in inspect.signature(generator_f).parameters.values()
-                )
-            ):
-                param_types = "".join(set_of_letters)
-                analyzer.register_instruction(generator_f.__name__, param_types)
-
         return analyzer
 
     @staticmethod
     def _check_analysis_result(result):
         if isinstance(result, list):
             raise Exception("Parsing error: " + ", ".join(result))
-
-    @staticmethod
-    def _parse_ast_string(string):
-        # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
-        return string[2:-1]
 
     def circuit_from_string(self, s: str):
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
@@ -145,17 +110,17 @@ class Parser(GateLibrary, MeasurementLibrary):
         ast = analysis_result
 
         # Create RegisterManager
-        register_manager = RegisterManager(ast)
+        register_manager = RegisterManager.from_ast(ast)
 
         # Parse statements
         squirrel_ir = SquirrelIR()
         for statement in ast.block.statements:
-            statement_name =  parse_ast_string_(statement.name)
+            statement_name = self._parse_ast_string(statement.name)
             if "measure" in statement_name:
                 generator_f = self.get_measurement_f(statement_name)
             else:
                 generator_f = self.get_gate_f(statement_name)
-            expanded_args = Parser._get_expanded_statement_args(generator_f, statement.operands)
+            expanded_args = Parser._get_expanded_statement_args(statement.operands, register_manager)
             for arg_set in expanded_args:
                 squirrel_ir.add_gate(generator_f(*arg_set))
 

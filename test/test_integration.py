@@ -83,6 +83,7 @@ Rz(3.1415927) q[1]
                 version 3.0
 
                 qubit[3] q
+                bit[3] b
 
                 Ry(2.34) q[2]
                 Rz(1.5707963) q[0]
@@ -91,7 +92,7 @@ Rz(3.1415927) q[1]
                 Rz(1.5789) q[0]
                 CNOT q[1], q[0]
                 Rz(2.5707963) q[1]
-                measure q[0,2]
+                b[0, 2] = measure q[0,2]
             """,
         )
         circuit.merge_single_qubit_gates()
@@ -131,16 +132,17 @@ measure q[2]
     def test_consecutive_measurements(self):
         circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[3] q
+            qubit[3] q
+            bit[3] b
 
-                H q[0]
-                H q[1]
-                H q[2]
-                measure q[0]
-                measure q[1]
-                measure q[2]
+            H q[0]
+            H q[1]
+            H q[2]
+            b[0] = measure q[0]
+            b[1] = measure q[1]
+            b[2] = measure q[2]
             """
         )
         circuit.merge_single_qubit_gates()
@@ -172,10 +174,11 @@ measure q[2]
                 version 3.0
 
                 qubit[2] q
+                bit[2] b
 
                 Rz(-2.3561945) q[1]
                 Rz(1.5707963) q[1]
-                measure q[1,0]
+                b[1, 0] = measure q[1,0]
             """
         )
         circuit.merge_single_qubit_gates()
@@ -282,13 +285,14 @@ Rz(3.1415927) q[1]
             version 3.0
 
             qubit[3] q
+            bit[3] b
 
             H q[1]
             CZ q[0], q[1]
             CNOT q[0], q[1]
             CRk(4) q[0], q[1]
             H q[0]
-            measure q[0:1]
+            b[0:1] = measure q[0:1]
             """
         )
 
