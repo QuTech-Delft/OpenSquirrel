@@ -37,21 +37,31 @@ class Parser(GateLibrary, MeasurementLibrary):
         return None
 
     @staticmethod
-    def _get_ast_type(ast_expression):
+    def _type_of(ast_expression):
         return (
             type(ast_expression.variable.typ)
-            if isinstance(ast_expression, cqasm.values.IndexRef)
+            if isinstance(ast_expression, cqasm.values.IndexRef) or isinstance(ast_expression, cqasm.values.VariableRef)
             else type(ast_expression)
         )
 
     @staticmethod
+    def _size_of(ast_expression) -> int:
+        return (
+            len(ast_expression.indices)
+            if isinstance(ast_expression, cqasm.values.IndexRef)
+            else int(ast_expression.variable.typ.size)
+            if isinstance(ast_expression, cqasm.values.VariableRef)
+            else 1
+        )
+
+    @staticmethod
     def _is_qubit_type(ast_expression):
-        ast_type = Parser._get_ast_type(ast_expression)
+        ast_type = Parser._type_of(ast_expression)
         return ast_type == cqasm.types.Qubit or ast_type == cqasm.types.QubitArray
 
     @staticmethod
     def _is_bit_type(ast_expression):
-        ast_type = Parser._get_ast_type(ast_expression)
+        ast_type = Parser._type_of(ast_expression)
         return ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray
 
     @staticmethod
@@ -59,7 +69,8 @@ class Parser(GateLibrary, MeasurementLibrary):
         ret = []
         variable_name = Parser._parse_ast_string(ast_qubit_expression.variable.name)
         if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
-            ret = [Qubit(index) for index in register_manager.get_qubit_range(variable_name)]
+            qubit_range = register_manager.get_qubit_range(variable_name)
+            ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
         if isinstance(ast_qubit_expression, cqasm.values.IndexRef):
             indices = [int(i.value) for i in ast_qubit_expression.indices]
             ret = [Qubit(index) for index in register_manager.get_qubit_indices(variable_name, indices)]
@@ -67,7 +78,10 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @classmethod
     def _get_expanded_statement_args(cls, ast_args, register_manager):
-        number_of_operands = next(len(ast_arg.indices) for ast_arg in ast_args if Parser._is_qubit_type(ast_arg))
+        number_of_operands = 0
+        for ast_arg in ast_args:
+            if Parser._is_qubit_type(ast_arg):
+                number_of_operands += Parser._size_of(ast_arg)
         expanded_args = []
         for ast_arg in ast_args:
             if Parser._is_qubit_type(ast_arg):

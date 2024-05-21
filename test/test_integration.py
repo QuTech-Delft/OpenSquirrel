@@ -15,15 +15,15 @@ class IntegrationTest(unittest.TestCase):
     def test_simple(self):
         circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[3] q
+            qubit[3] q
 
-                Ry(1.23) q[0]
-                Ry(2.34) q[1]
-                CNOT q[0], q[1]
-                Rx(-2.3) q[0]
-                Ry(-3.14) q[1]
+            Ry(1.23) q[0]
+            Ry(2.34) q[1]
+            CNOT q[0], q[1]
+            Rx(-2.3) q[0]
+            Ry(-3.14) q[1]
             """
         )
 
@@ -80,19 +80,19 @@ Rz(3.1415927) q[1]
     def test_measurement(self):
         circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[3] q
-                bit[3] b
+            qubit[3] q
+            bit[3] b
 
-                Ry(2.34) q[2]
-                Rz(1.5707963) q[0]
-                Ry(-0.2) q[0]
-                CNOT q[1], q[0]
-                Rz(1.5789) q[0]
-                CNOT q[1], q[0]
-                Rz(2.5707963) q[1]
-                b[0, 2] = measure q[0,2]
+            Ry(2.34) q[2]
+            Rz(1.5707963) q[0]
+            Ry(-0.2) q[0]
+            CNOT q[1], q[0]
+            Rz(1.5789) q[0]
+            CNOT q[1], q[0]
+            Rz(2.5707963) q[1]
+            b[0, 2] = measure q[0,2]
             """,
         )
         circuit.merge_single_qubit_gates()
@@ -171,14 +171,14 @@ measure q[2]
     def test_measure_order(self):
         circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[2] q
-                bit[2] b
+            qubit[2] q
+            bit[2] b
 
-                Rz(-2.3561945) q[1]
-                Rz(1.5707963) q[1]
-                b[1, 0] = measure q[1,0]
+            Rz(-2.3561945) q[1]
+            Rz(1.5707963) q[1]
+            b[1, 0] = measure q[1,0]
             """
         )
         circuit.merge_single_qubit_gates()
@@ -194,6 +194,47 @@ X90 q[1]
 Rz(3.1415927) q[1]
 X90 q[1]
 Rz(-0.3926991) q[1]
+measure q[1]
+measure q[0]
+""",
+        )
+
+    def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions(self):
+        circuit = Circuit.from_string(
+            """
+            version 3.0
+
+            qubit q0
+            bit b0
+            X q0
+            b0 = measure q0
+
+            qubit q1
+            bit b1
+            H q1
+            CNOT q1, q0
+            b1 = measure q1
+            b0 = measure q0
+            """
+        )
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
+
+qubit[2] q
+
+Rz(-1.5707963) q[0]
+X90 q[0]
+X90 q[0]
+Rz(-1.5707963) q[0]
+measure q[0]
+
+X90 q[1]
+Rz(1.5707963) q[1]
+X90 q[1]
+CNOT q[1], q[0]
 measure q[1]
 measure q[0]
 """,
