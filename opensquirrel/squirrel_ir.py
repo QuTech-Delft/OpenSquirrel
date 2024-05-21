@@ -148,6 +148,14 @@ class Gate(Statement, ABC):
 
     @property
     def is_anonymous(self) -> bool:
+        from opensquirrel.default_gates import default_gate_set
+        for _, gate in enumerate(default_gate_set):
+            gate_args = inspect.signature(gate).parameters.values()
+            if len(list(gate_args)) == 1:
+                output_bloch = gate(self.get_qubit_operands())
+                if np.allclose(output_bloch.axis, self.axis) and np.allclose(output_bloch.phase, self.phase):
+                    Gate.__init__(self, gate, self.get_qubit_operands())
+                    return False
         return self.arguments is None
 
     @abstractmethod
@@ -160,10 +168,10 @@ class Gate(Statement, ABC):
 
     @abstractmethod
     def is_identity(self) -> bool:
-        """Check wether the Gate is an identity Gate.
+        """Check whether the Gate is an identity Gate.
 
         Returns:
-            Boolean value stating wether the Gate is an identity Gate.
+            Boolean value stating whether the Gate is an identity Gate.
         """
 
     @abstractmethod

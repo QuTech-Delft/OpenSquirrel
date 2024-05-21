@@ -1,6 +1,7 @@
 from math import acos, cos, sin
 
 import numpy as np
+import math
 
 from opensquirrel.common import ATOL
 from opensquirrel.squirrel_ir import BlochSphereRotation, Gate, Measure, Qubit, SquirrelIR
@@ -24,7 +25,8 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     if abs(sin(combined_angle / 2)) < ATOL:
         return BlochSphereRotation.identity(a.qubit)
 
-    combined_axis = (
+    order_of_magnitude = abs(math.floor(math.log(ATOL, 10)))
+    combined_axis = np.round((
         1
         / sin(combined_angle / 2)
         * (
@@ -32,9 +34,12 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
             + cos(a.angle / 2) * sin(b.angle / 2) * b.axis
             + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
         )
-    )
+    ),order_of_magnitude)
 
-    combined_phase = a.phase + b.phase
+    combined_phase = np.round(
+        a.phase + b.phase,
+        order_of_magnitude
+    )
 
     generator = b.generator if a.is_identity() else a.generator if b.is_identity() else None
     arguments = b.arguments if a.is_identity() else a.arguments if b.is_identity() else None

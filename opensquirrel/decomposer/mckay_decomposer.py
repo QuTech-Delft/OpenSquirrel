@@ -5,7 +5,6 @@ from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import X90, Rz
 from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
 
-
 class McKayDecomposer(Decomposer):
     @staticmethod
     def decompose(g: Gate) -> [Gate]:
@@ -22,6 +21,9 @@ class McKayDecomposer(Decomposer):
 
         if abs(g.angle) < ATOL:
             return []
+
+        if g.name == "Rz" or g.name == "X90":
+            return [g]
 
         # McKay decomposition
 

@@ -355,6 +355,29 @@ Rz(3.1415927) q[1]
                 ],
             )
 
+    def test_H_identity_integration(self):
+        myCircuit = Circuit.from_string(
+            """
+            version 3.0
+
+            qubit[1] q   // Qubit (register) declaration
+
+            Y90 q[0]
+            X q[0]
+
+            """
+        )
+        myCircuit.merge_single_qubit_gates()
+        output = str(myCircuit)
+        expected = """version 3.0
+
+qubit[1] q
+
+H q[0]
+"""
+
+        self.assertEqual(expected,output)
+
 
 if __name__ == "__main__":
     unittest.main()
