@@ -18,17 +18,17 @@ class QubitRange:
 
 class RegisterManager:
     """RegisterManager keeps track of a (virtual) qubit register, i.e., an array of consecutive qubits,
-      and the mappings between the (logical) qubit variable names, as used in an input cQASM program,
-      and the (virtual) qubit register.
+    and the mappings between the (logical) qubit variable names, as used in an input cQASM program,
+    and the (virtual) qubit register.
 
-      For example, given an input program that defines 'qubit[3] q':
-      - variable 'q' is mapped to qubits 0 to 2 in the qubit register, and
-      - positions 0 to 2 in the qubit register are mapped to variable 'q'.
+    For example, given an input program that defines 'qubit[3] q':
+    - variable 'q' is mapped to qubits 0 to 2 in the qubit register, and
+    - positions 0 to 2 in the qubit register are mapped to variable 'q'.
 
-      The mapping of qubit variable names to positions in the qubit register is an implementation detail,
-      i.e., it is not guaranteed that qubit register indices are assigned to qubit variable names in the order
-      these variables are defined in the input program.
-     """
+    The mapping of qubit variable names to positions in the qubit register is an implementation detail,
+    i.e., it is not guaranteed that qubit register indices are assigned to qubit variable names in the order
+    these variables are defined in the input program.
+    """
 
     # TODO:
     # In the future, when variables of different types can be defined (e.g. float q)
@@ -41,7 +41,7 @@ class RegisterManager:
         self,
         qubit_register_size: int,
         variable_name_to_qubit_range: Dict[str, QubitRange] = dict(),
-        qubit_index_to_variable_name: Dict[int, str] = dict()
+        qubit_index_to_variable_name: Dict[int, str] = dict(),
     ) -> None:
         self.qubit_register_size = qubit_register_size
         self.qubit_register_name = self._default_qubit_register_name
@@ -49,10 +49,11 @@ class RegisterManager:
         self.qubit_index_to_variable_name = qubit_index_to_variable_name
 
     def __repr__(self) -> str:
-        return \
-            f"qubit_register_size: {self.qubit_register_size}\n" + \
-            f"variable_name_to_qubit_range: {self.variable_name_to_qubit_range}\n" + \
-            f"qubit_index_to_variable_name: {self.qubit_index_to_variable_name}"
+        return (
+            f"qubit_register_size: {self.qubit_register_size}\n"
+            + f"variable_name_to_qubit_range: {self.variable_name_to_qubit_range}\n"
+            + f"qubit_index_to_variable_name: {self.qubit_index_to_variable_name}"
+        )
 
     @staticmethod
     def _parse_ast_string(string):

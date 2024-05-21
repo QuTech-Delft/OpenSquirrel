@@ -39,7 +39,8 @@ class Parser(GateLibrary, MeasurementLibrary):
     @staticmethod
     def _get_ast_type(ast_expression):
         return (
-            type(ast_expression.variable.typ) if isinstance(ast_expression, cqasm.values.IndexRef)
+            type(ast_expression.variable.typ)
+            if isinstance(ast_expression, cqasm.values.IndexRef)
             else type(ast_expression)
         )
 
@@ -66,9 +67,7 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @classmethod
     def _get_expanded_statement_args(cls, ast_args, register_manager):
-        number_of_operands = next(
-            len(ast_arg.indices) for ast_arg in ast_args if Parser._is_qubit_type(ast_arg)
-        )
+        number_of_operands = next(len(ast_arg.indices) for ast_arg in ast_args if Parser._is_qubit_type(ast_arg))
         expanded_args = []
         for ast_arg in ast_args:
             if Parser._is_qubit_type(ast_arg):
