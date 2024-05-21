@@ -15,6 +15,11 @@ from opensquirrel.squirrel_ir import (
 
 
 @named_gate
+def I(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
+
+
+@named_gate
 def H(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
 
@@ -148,6 +153,7 @@ def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> Gate:
 
 
 default_gate_set = [
+    I,
     H,
     X,
     X90,
