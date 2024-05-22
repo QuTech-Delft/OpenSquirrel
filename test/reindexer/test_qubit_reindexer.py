@@ -6,9 +6,9 @@ import pytest
 
 from open_squirrel.circuit import Circuit
 from open_squirrel.default_gates import Y90, X
+from open_squirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Qubit
 from open_squirrel.register_manager import RegisterManager
 from open_squirrel.reindexer.qubit_reindexer import get_reindexed_circuit
-from open_squirrel.ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Qubit, IR
 
 
 class TestReindexer:

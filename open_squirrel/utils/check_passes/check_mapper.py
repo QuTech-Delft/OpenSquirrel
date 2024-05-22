@@ -5,10 +5,10 @@ from __future__ import annotations
 from copy import deepcopy
 
 from open_squirrel.circuit import Circuit
+from open_squirrel.ir import IR, BlochSphereRotation, Comment, ControlledGate, Measure, Qubit
 from open_squirrel.mapper.general_mapper import Mapper
 from open_squirrel.mapper.mapping import Mapping
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import BlochSphereRotation, Comment, ControlledGate, Measure, Qubit, IR
 
 
 def check_mapper(mapper: Mapper) -> None:

@@ -3,8 +3,8 @@ import unittest
 from open_squirrel import circuit_matrix_calculator
 from open_squirrel.circuit import Circuit
 from open_squirrel.default_gates import *
+from open_squirrel.ir import IR, Qubit
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import Qubit, IR
 
 
 class CircuitMatrixCalculatorTest(unittest.TestCase):

@@ -5,7 +5,7 @@ import numpy as np
 
 from open_squirrel.circuit import Circuit
 from open_squirrel.common import can1
-from open_squirrel.ir import BlochSphereRotation, ControlledGate, Gate, Qubit, IR, IRVisitor
+from open_squirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, Qubit
 
 
 def get_reduced_ket(ket: int, qubits: List[Qubit]) -> int:

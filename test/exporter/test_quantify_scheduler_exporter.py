@@ -8,8 +8,8 @@ from open_squirrel.circuit import Circuit
 from open_squirrel.common import ATOL
 from open_squirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from open_squirrel.exporter import quantify_scheduler_exporter
+from open_squirrel.ir import IR, BlochSphereRotation, Float, Gate, Measure, Qubit
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import BlochSphereRotation, Float, Gate, Measure, Qubit, IR
 
 
 class FloatEq(float):

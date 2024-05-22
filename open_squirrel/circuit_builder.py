@@ -7,8 +7,8 @@ from open_squirrel.circuit import Circuit
 from open_squirrel.default_gates import default_gate_aliases, default_gate_set
 from open_squirrel.default_measurements import default_measurement_set
 from open_squirrel.instruction_library import GateLibrary, MeasurementLibrary
+from open_squirrel.ir import IR, Comment, Gate, Qubit
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import Comment, Gate, Qubit, IR
 
 
 class CircuitBuilder(GateLibrary, MeasurementLibrary):

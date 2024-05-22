@@ -1,7 +1,7 @@
 import numpy as np
 
 from open_squirrel.circuit import Circuit
-from open_squirrel.ir import Comment, Gate, IR, IRVisitor
+from open_squirrel.ir import IR, Comment, Gate, IRVisitor
 from open_squirrel.utils.matrix_expander import get_matrix
 
 

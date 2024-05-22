@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Callable, List
 
 from open_squirrel.common import are_matrices_equivalent_up_to_global_phase
-from open_squirrel.ir import Gate, IR
+from open_squirrel.ir import IR, Gate
 
 
 class Decomposer(ABC):

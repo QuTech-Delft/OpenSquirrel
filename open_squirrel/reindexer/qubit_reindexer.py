@@ -1,19 +1,19 @@
 from typing import List
 
 from open_squirrel.circuit import Circuit
-from open_squirrel.mapper.mapping import Mapping
-from open_squirrel.register_manager import RegisterManager
 from open_squirrel.ir import (
+    IR,
     BlochSphereRotation,
     Comment,
     ControlledGate,
     Gate,
+    IRVisitor,
     MatrixGate,
     Measure,
     Qubit,
-    IR,
-    IRVisitor,
 )
+from open_squirrel.mapper.mapping import Mapping
+from open_squirrel.register_manager import RegisterManager
 
 
 class _QubitReindexer(IRVisitor):

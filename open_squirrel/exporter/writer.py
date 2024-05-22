@@ -1,5 +1,5 @@
 from open_squirrel.circuit import Circuit
-from open_squirrel.ir import Comment, Float, Gate, Int, Measure, Qubit, IRVisitor
+from open_squirrel.ir import Comment, Float, Gate, Int, IRVisitor, Measure, Qubit
 
 
 class _WriterImpl(IRVisitor):

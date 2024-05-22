@@ -9,9 +9,9 @@ from open_squirrel.decomposer.general_decomposer import Decomposer
 from open_squirrel.default_gates import default_gate_aliases, default_gate_set
 from open_squirrel.default_measurements import default_measurement_set
 from open_squirrel.exporter.export_format import ExportFormat
+from open_squirrel.ir import IR, Gate, Measure
 from open_squirrel.mapper import IdentityMapper, Mapper
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import Gate, Measure, IR
 
 
 class Circuit:
