@@ -54,7 +54,7 @@ optional = true
 mkdocs = {extras = ["python"], version = "^1.5.3"}
 mkdocstrings = {extras = ["python"], version = ">=0.24,<0.26"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
-mkdocs-material = "^9.4.12"
+mkdocs-material = "^9.5.24"
 pymdown-extensions = "^10.7.1"
 
 [tool.poetry.group.export]
