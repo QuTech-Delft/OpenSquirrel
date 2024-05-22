@@ -152,10 +152,10 @@ class Gate(Statement, ABC):
 
     @abstractmethod
     def is_identity(self) -> bool:
-        """Check wether the Gate is an identity Gate.
+        """Check whether the Gate is an identity Gate.
 
         Returns:
-            Boolean value stating wether the Gate is an identity Gate.
+            Boolean value stating whether the Gate is an identity Gate.
         """
 
 
