@@ -16,6 +16,7 @@ version 3.0
 qubit[2] q
 
 H q[0]
+I q[0]
 Ry q[1], 1.234
 CNOT q[0], q[1]
 CR q[1], q[0], 5.123
@@ -29,6 +30,7 @@ CRk q[0], q[1], 23
             circuit.squirrel_ir.statements,
             [
                 H(Qubit(0)),
+                I(Qubit(0)),
                 Ry(Qubit(1), Float(1.234)),
                 CNOT(Qubit(0), Qubit(1)),
                 CR(Qubit(1), Qubit(0), Float(5.123)),

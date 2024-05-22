@@ -47,7 +47,7 @@ class IntegrationTest(unittest.TestCase):
         circuit.merge_single_qubit_gates()
         circuit.decompose(decomposer=McKayDecomposer)
 
-        # Write the transformed circuit as a cQasm3 string.
+        # Write the transformed circuit as a cQASM v3 string.
         self.assertEqual(
             str(circuit),
             """version 3.0

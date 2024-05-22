@@ -178,4 +178,7 @@ default_gate_set = [
     CCZ,
 ]
 
-default_gate_aliases = {"Hadamard": H}
+default_gate_aliases = {
+    "Hadamard": H,
+    "Identity": I,
+}

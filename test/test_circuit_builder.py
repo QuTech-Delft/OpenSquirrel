@@ -3,7 +3,7 @@ import re
 import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_gates import CNOT, H
+from opensquirrel.default_gates import CNOT, H, I
 from opensquirrel.squirrel_ir import Comment, Measure, Qubit
 
 
@@ -23,6 +23,18 @@ class TestCircuitBuilder:
             Comment("A single line comment."),
             H(Qubit(0)),
             CNOT(Qubit(0), Qubit(1)),
+        ]
+
+    def test_identity(self):
+        builder = CircuitBuilder(1)
+        builder.I(Qubit(0))
+
+        circuit = builder.to_circuit()
+
+        assert circuit.qubit_register_size == 1
+        assert circuit.qubit_register_name == "q"
+        assert circuit.squirrel_ir.statements == [
+            I(Qubit(0)),
         ]
 
     def test_single_measure(self):
