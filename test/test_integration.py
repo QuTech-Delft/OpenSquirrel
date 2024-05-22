@@ -168,6 +168,43 @@ measure q[2]
 """,
         )
 
+    def test_measurements_unrolling(self):
+        circuit = Circuit.from_string(
+            """
+            version 3.0
+
+            qubit[3] q
+            bit[3] b
+
+            H q[0]
+            H q[1]
+            H q[2]
+            b = measure q
+            """
+        )
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
+
+qubit[3] q
+
+X90 q[0]
+Rz(1.5707963) q[0]
+X90 q[0]
+measure q[0]
+X90 q[1]
+Rz(1.5707963) q[1]
+X90 q[1]
+measure q[1]
+X90 q[2]
+Rz(1.5707963) q[2]
+X90 q[2]
+measure q[2]
+""",
+        )
+
     def test_measure_order(self):
         circuit = Circuit.from_string(
             """
