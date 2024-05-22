@@ -1,6 +1,6 @@
 import networkx as nx
 
-from open_squirrel.ir import Gate, IR
+from open_squirrel.ir import IR, Gate
 
 
 def make_interaction_graph(ir: IR) -> nx.Graph:

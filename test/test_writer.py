@@ -3,8 +3,8 @@ import unittest
 from open_squirrel.circuit import Circuit
 from open_squirrel.default_gates import *
 from open_squirrel.exporter import writer
+from open_squirrel.ir import IR, Comment, Float, Qubit
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import Comment, Float, Qubit, IR
 
 
 class WriterTest(unittest.TestCase):

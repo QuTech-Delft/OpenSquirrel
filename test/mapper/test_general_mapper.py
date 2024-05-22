@@ -6,10 +6,10 @@ import pytest
 
 from open_squirrel import Circuit
 from open_squirrel.default_gates import CNOT, H
+from open_squirrel.ir import IR, Comment, Measure, Qubit, Statement
 from open_squirrel.mapper import HardcodedMapper, Mapper
 from open_squirrel.mapper.mapping import Mapping
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import Comment, Measure, Qubit, IR, Statement
 
 
 class TestMapper:

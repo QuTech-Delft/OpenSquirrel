@@ -4,8 +4,8 @@ from open_squirrel.circuit import Circuit
 from open_squirrel.decomposer import general_decomposer
 from open_squirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
 from open_squirrel.default_gates import *
+from open_squirrel.ir import IR, Comment, Qubit
 from open_squirrel.register_manager import RegisterManager
-from open_squirrel.ir import Comment, Qubit, IR
 
 
 class ReplacerTest(unittest.TestCase):
