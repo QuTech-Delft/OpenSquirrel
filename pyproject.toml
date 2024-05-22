@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "opensquirrel"
+name = "open_squirrel"
 version = "0.0.5"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
@@ -25,7 +25,7 @@ classifiers = [
   'License :: OSI Approved :: Apache Software License'
 ]
 packages = [
-    { include = "opensquirrel" },
+    { include = "open_squirrel" },
 ]
 
 [tool.poetry.dependencies]
@@ -80,7 +80,7 @@ asyncio_mode = "auto"
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/.tox/**", "opensquirrel/parsing/antlr/generated/*"]
+omit = ["tests/*", "**/.tox/**", "open_squirrel/parsing/antlr/generated/*"]
 
 [tool.coverage.report]
 show_missing = true
