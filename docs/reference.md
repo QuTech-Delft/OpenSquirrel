@@ -16,7 +16,7 @@
 ::: opensquirrel.instruction_library
 ::: opensquirrel.merger.general_merger
 ::: opensquirrel.parser.libqasm.libqasm_ir_creator
-::: opensquirrel.squirrel_ir
+::: opensquirrel.ir
 ::: opensquirrel.utils.identity_filter
 ::: opensquirrel.utils.matrix_expander
 

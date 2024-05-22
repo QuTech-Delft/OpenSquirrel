@@ -1,11 +1,11 @@
 import unittest
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.decomposer import general_decomposer
-from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
-from opensquirrel.default_gates import *
-from opensquirrel.register_manager import RegisterManager
-from opensquirrel.squirrel_ir import Comment, Qubit, SquirrelIR
+from open_squirrel.circuit import Circuit
+from open_squirrel.decomposer import general_decomposer
+from open_squirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
+from open_squirrel.default_gates import *
+from open_squirrel.ir import IR, Comment, Qubit
+from open_squirrel.register_manager import RegisterManager
 
 
 class ReplacerTest(unittest.TestCase):
@@ -103,10 +103,10 @@ class ReplacerTest(unittest.TestCase):
 
     def test_replace_generic(self):
         register_manager = RegisterManager(qubit_register_size=3)
-        squirrel_ir = SquirrelIR()
-        squirrel_ir.add_gate(H(Qubit(0)))
-        squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        circuit = Circuit(register_manager, squirrel_ir)
+        ir = IR()
+        ir.add_gate(H(Qubit(0)))
+        ir.add_gate(CNOT(Qubit(0), Qubit(1)))
+        circuit = Circuit(register_manager, ir)
 
         # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
@@ -115,9 +115,9 @@ class ReplacerTest(unittest.TestCase):
                     return [BlochSphereRotation.identity(g.qubit), g, BlochSphereRotation.identity(g.qubit)]
                 return [g]
 
-        general_decomposer.decompose(squirrel_ir, decomposer=TestDecomposer())
+        general_decomposer.decompose(ir, decomposer=TestDecomposer())
 
-        expected_ir = SquirrelIR()
+        expected_ir = IR()
         expected_ir.add_gate(BlochSphereRotation.identity(Qubit(0)))
         expected_ir.add_gate(H(Qubit(0)))
         expected_ir.add_gate(BlochSphereRotation.identity(Qubit(0)))
@@ -128,14 +128,14 @@ class ReplacerTest(unittest.TestCase):
 
     def test_replace(self):
         register_manager = RegisterManager(qubit_register_size=3)
-        squirrel_ir = SquirrelIR()
-        squirrel_ir.add_gate(H(Qubit(0)))
-        squirrel_ir.add_comment(Comment("Test comment."))
-        circuit = Circuit(register_manager, squirrel_ir)
+        ir = IR()
+        ir.add_gate(H(Qubit(0)))
+        ir.add_comment(Comment("Test comment."))
+        circuit = Circuit(register_manager, ir)
 
-        general_decomposer.replace(squirrel_ir, H, lambda q: [Y90(q), X(q)])
+        general_decomposer.replace(ir, H, lambda q: [Y90(q), X(q)])
 
-        expected_ir = SquirrelIR()
+        expected_ir = IR()
         expected_ir.add_gate(Y90(Qubit(0)))
         expected_ir.add_gate(X(Qubit(0)))
         expected_ir.add_comment(Comment("Test comment."))

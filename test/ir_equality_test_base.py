@@ -1,8 +1,8 @@
 import unittest
 
-from opensquirrel import circuit_matrix_calculator
-from opensquirrel.circuit import Circuit
-from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
+from open_squirrel import circuit_matrix_calculator
+from open_squirrel.circuit import Circuit
+from open_squirrel.common import are_matrices_equivalent_up_to_global_phase
 
 
 class IREqualityTestBase(unittest.TestCase):

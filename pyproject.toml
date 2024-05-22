@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "opensquirrel"
+name = "open_squirrel"
 version = "0.0.5"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
@@ -25,7 +25,7 @@ classifiers = [
   'License :: OSI Approved :: Apache Software License'
 ]
 packages = [
-    { include = "opensquirrel" },
+    { include = "open_squirrel" },
 ]
 
 [tool.poetry.dependencies]
@@ -35,7 +35,7 @@ numpy = [
     { version = "1.24", python = "<3.9" },
     { version = "^1.26", python = "^3.9" },
 ]
-libqasm = "0.6.5"
+libqasm = "0.6.6"
 networkx = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
@@ -69,7 +69,7 @@ pyqt5-qt5=[
 ]
 quantify-scheduler=[
     # quantify-scheduler is not released for newer Python versions, i.e. > 3.9.
-    # Its is only required for exporting opensquirrel circuits to the
+    # Its is only required for exporting open_squirrel circuits to the
     # Schedule format and testing this functionality.
     { version = "^0.18.0", python = "<3.10" },
 ]
@@ -80,7 +80,7 @@ asyncio_mode = "auto"
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/.tox/**", "opensquirrel/parsing/antlr/generated/*"]
+omit = ["tests/*", "**/.tox/**", "open_squirrel/parsing/antlr/generated/*"]
 
 [tool.coverage.report]
 show_missing = true

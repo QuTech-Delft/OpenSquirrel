@@ -22,7 +22,7 @@ It is developed in modern Python and follows best practices.
 ## Installation
 
 ```shell
-$ pip install opensquirrel
+$ pip install open_squirrel
 ```
 
 
