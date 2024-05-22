@@ -1,12 +1,12 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import *
-from opensquirrel.merger import general_merger
-from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
-from opensquirrel.register_manager import RegisterManager
-from opensquirrel.squirrel_ir import Float, Qubit, SquirrelIR
+from open_squirrel.circuit import Circuit
+from open_squirrel.default_gates import *
+from open_squirrel.merger import general_merger
+from open_squirrel.merger.general_merger import compose_bloch_sphere_rotations
+from open_squirrel.register_manager import RegisterManager
+from open_squirrel.ir import Float, Qubit, IR
 
 
 class MergerTest(IREqualityTestBase):
@@ -28,11 +28,11 @@ class MergerTest(IREqualityTestBase):
 
     def test_single_gate(self):
         register_manager = RegisterManager(qubit_register_size=2)
-        ir = SquirrelIR()
+        ir = IR()
         ir.add_gate(Ry(Qubit(0), Float(1.2345)))
         circuit = Circuit(register_manager, ir)
 
-        expected_ir = SquirrelIR()
+        expected_ir = IR()
         expected_ir.add_gate(Ry(Qubit(0), Float(1.2345)))
         expected_circuit = Circuit(register_manager, expected_ir)
 
@@ -44,24 +44,24 @@ class MergerTest(IREqualityTestBase):
 
     def test_two_hadamards(self):
         register_manager = RegisterManager(qubit_register_size=4)
-        ir = SquirrelIR()
+        ir = IR()
         ir.add_gate(H(Qubit(2)))
         ir.add_gate(H(Qubit(2)))
         circuit = Circuit(register_manager, ir)
 
-        expected_ir = SquirrelIR()
+        expected_ir = IR()
         expected_circuit = Circuit(register_manager, expected_ir)
 
         self.modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
 
     def test_two_hadamards_different_qubits(self):
         register_manager = RegisterManager(qubit_register_size=4)
-        ir = SquirrelIR()
+        ir = IR()
         ir.add_gate(H(Qubit(0)))
         ir.add_gate(H(Qubit(2)))
         circuit = Circuit(register_manager, ir)
 
-        expected_ir = SquirrelIR()
+        expected_ir = IR()
         expected_ir.add_gate(H(Qubit(0)))
         expected_ir.add_gate(H(Qubit(2)))
         expected_circuit = Circuit(register_manager, expected_ir)
@@ -70,7 +70,7 @@ class MergerTest(IREqualityTestBase):
 
     def test_merge_different_qubits(self):
         register_manager = RegisterManager(qubit_register_size=4)
-        ir = SquirrelIR()
+        ir = IR()
         ir.add_gate(Ry(Qubit(0), Float(math.pi / 2)))
         ir.add_gate(Rx(Qubit(0), Float(math.pi)))
         ir.add_gate(Rz(Qubit(1), Float(1.2345)))
@@ -78,7 +78,7 @@ class MergerTest(IREqualityTestBase):
         ir.add_gate(Ry(Qubit(2), Float(3.234)))
         circuit = Circuit(register_manager, ir)
 
-        expected_ir = SquirrelIR()
+        expected_ir = IR()
         expected_ir.add_gate(
             BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 1), angle=math.pi)
         )  # This is hadamard with 0 phase...
@@ -95,7 +95,7 @@ class MergerTest(IREqualityTestBase):
 
     def test_merge_and_flush(self):
         register_manager = RegisterManager(qubit_register_size=4)
-        ir = SquirrelIR()
+        ir = IR()
         ir.add_gate(Ry(Qubit(0), Float(math.pi / 2)))
         ir.add_gate(Rz(Qubit(1), Float(1.5)))
         ir.add_gate(Rx(Qubit(0), Float(math.pi)))
@@ -104,7 +104,7 @@ class MergerTest(IREqualityTestBase):
         ir.add_gate(Ry(Qubit(0), Float(3.234)))
         circuit = Circuit(register_manager, ir)
 
-        expected_ir = SquirrelIR()
+        expected_ir = IR()
         expected_ir.add_gate(
             BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 1), angle=math.pi)
         )  # This is hadamard with 0 phase...

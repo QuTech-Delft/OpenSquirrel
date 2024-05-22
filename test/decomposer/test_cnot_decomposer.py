@@ -1,9 +1,9 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
-from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.default_gates import *
-from opensquirrel.squirrel_ir import Float, Qubit
+from open_squirrel.decomposer.cnot_decomposer import CNOTDecomposer
+from open_squirrel.default_gates import *
+from open_squirrel.ir import Float, Qubit
 
 
 class CNOTDecomposerTest(IREqualityTestBase):

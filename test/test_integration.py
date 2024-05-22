@@ -3,12 +3,12 @@
 import importlib.util
 import unittest
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
-from opensquirrel.decomposer.zyz_decomposer import ZYZDecomposer
-from opensquirrel.default_gates import *
-from opensquirrel.exporter.export_format import ExportFormat
+from open_squirrel.circuit import Circuit
+from open_squirrel.decomposer.cnot_decomposer import CNOTDecomposer
+from open_squirrel.decomposer.mckay_decomposer import McKayDecomposer
+from open_squirrel.decomposer.zyz_decomposer import ZYZDecomposer
+from open_squirrel.default_gates import *
+from open_squirrel.exporter.export_format import ExportFormat
 
 
 class IntegrationTest(unittest.TestCase):

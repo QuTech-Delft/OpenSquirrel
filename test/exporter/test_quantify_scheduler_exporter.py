@@ -4,12 +4,12 @@ import math
 import unittest
 import unittest.mock
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.common import ATOL
-from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
-from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.register_manager import RegisterManager
-from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate, Measure, Qubit, SquirrelIR
+from open_squirrel.circuit import Circuit
+from open_squirrel.common import ATOL
+from open_squirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
+from open_squirrel.exporter import quantify_scheduler_exporter
+from open_squirrel.register_manager import RegisterManager
+from open_squirrel.ir import BlochSphereRotation, Float, Gate, Measure, Qubit, IR
 
 
 class FloatEq(float):
@@ -20,11 +20,11 @@ class FloatEq(float):
 class MockedQuantifyScheduler:
     def __enter__(self):
         self.patch_qs = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler", create=True
+            "open_squirrel.exporter.quantify_scheduler_exporter.quantify_scheduler", create=True
         )
 
         self.patch_qs_gates = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates", create=True
+            "open_squirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates", create=True
         )
 
         with contextlib.ExitStack() as stack:
@@ -41,20 +41,20 @@ class MockedQuantifyScheduler:
 class QuantifySchedulerExporterTest(unittest.TestCase):
     def test_export(self):
         register_manager = RegisterManager(qubit_register_size=3)
-        squirrel_ir = SquirrelIR()
-        squirrel_ir.add_gate(X(Qubit(0)))
-        squirrel_ir.add_gate(CZ(Qubit(0), Qubit(1)))
-        squirrel_ir.add_gate(Rz(Qubit(1), Float(2.34)))
-        squirrel_ir.add_gate(Ry(Qubit(2), Float(1.23)))
-        squirrel_ir.add_measurement(Measure(Qubit(0)))
-        squirrel_ir.add_measurement(Measure(Qubit(1)))
-        squirrel_ir.add_measurement(Measure(Qubit(2)))
+        ir = IR()
+        ir.add_gate(X(Qubit(0)))
+        ir.add_gate(CZ(Qubit(0), Qubit(1)))
+        ir.add_gate(Rz(Qubit(1), Float(2.34)))
+        ir.add_gate(Ry(Qubit(2), Float(1.23)))
+        ir.add_measurement(Measure(Qubit(0)))
+        ir.add_measurement(Measure(Qubit(1)))
+        ir.add_measurement(Measure(Qubit(2)))
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
             mock_schedule = unittest.mock.MagicMock()
             mock_quantify_scheduler.Schedule.return_value = mock_schedule
 
-            quantify_scheduler_exporter.export(Circuit(register_manager, squirrel_ir))
+            quantify_scheduler_exporter.export(Circuit(register_manager, ir))
 
             mock_quantify_scheduler.Schedule.assert_called_with("Exported OpenSquirrel circuit")
 
@@ -72,12 +72,12 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
 
     def check_gate_not_supported(self, g: Gate):
         register_manager = RegisterManager(qubit_register_size=3)
-        squirrel_ir = SquirrelIR()
-        squirrel_ir.add_gate(g)
+        ir = IR()
+        ir.add_gate(g)
 
         with MockedQuantifyScheduler():
             with self.assertRaisesRegex(Exception, "Cannot exporter circuit: it contains unsupported gates"):
-                quantify_scheduler_exporter.export(Circuit(register_manager, squirrel_ir))
+                quantify_scheduler_exporter.export(Circuit(register_manager, ir))
 
     def test_gates_not_supported(self):
         self.check_gate_not_supported(H(Qubit(0)))

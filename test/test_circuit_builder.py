@@ -2,9 +2,9 @@ import re
 
 import pytest
 
-from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_gates import CNOT, H, I
-from opensquirrel.squirrel_ir import Comment, Measure, Qubit
+from open_squirrel.circuit_builder import CircuitBuilder
+from open_squirrel.default_gates import CNOT, H, I
+from open_squirrel.ir import Comment, Measure, Qubit
 
 
 class TestCircuitBuilder:
@@ -19,7 +19,7 @@ class TestCircuitBuilder:
 
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
-        assert circuit.squirrel_ir.statements == [
+        assert circuit.ir.statements == [
             Comment("A single line comment."),
             H(Qubit(0)),
             CNOT(Qubit(0), Qubit(1)),
@@ -33,7 +33,7 @@ class TestCircuitBuilder:
 
         assert circuit.qubit_register_size == 1
         assert circuit.qubit_register_name == "q"
-        assert circuit.squirrel_ir.statements == [
+        assert circuit.ir.statements == [
             I(Qubit(0)),
         ]
 
@@ -45,7 +45,7 @@ class TestCircuitBuilder:
 
         assert circuit.qubit_register_size == 1
         assert circuit.qubit_register_name == "q"
-        assert circuit.squirrel_ir.statements == [
+        assert circuit.ir.statements == [
             Measure(Qubit(0)),
         ]
 
@@ -61,7 +61,7 @@ class TestCircuitBuilder:
 
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
-        assert circuit.squirrel_ir.statements == [
+        assert circuit.ir.statements == [
             H(Qubit(0)),
             CNOT(Qubit(0), Qubit(1)),
             Measure(Qubit(0)),
@@ -73,7 +73,7 @@ class TestCircuitBuilder:
 
         circuit = builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).to_circuit()
 
-        assert circuit.squirrel_ir.statements == [
+        assert circuit.ir.statements == [
             H(Qubit(0)),
             CNOT(Qubit(0), Qubit(1)),
         ]
@@ -99,6 +99,6 @@ class TestCircuitBuilder:
             builder.H(0)
         assert re.search(
             "Wrong argument type for instruction `H`, got <class 'int'> but expected <class "
-            "'opensquirrel.squirrel_ir.Qubit'>",
+            "'open_squirrel.ir.Qubit'>",
             str(exception_info.value),
         )

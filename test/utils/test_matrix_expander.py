@@ -3,8 +3,8 @@ import unittest
 
 import numpy as np
 
-from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, MatrixGate, Qubit
-from opensquirrel.utils import matrix_expander
+from open_squirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, Qubit
+from open_squirrel.utils import matrix_expander
 
 
 class MatrixExpanderTest(unittest.TestCase):

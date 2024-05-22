@@ -4,12 +4,12 @@ from typing import List
 
 import pytest
 
-from opensquirrel import Circuit
-from opensquirrel.default_gates import CNOT, H
-from opensquirrel.mapper import HardcodedMapper, Mapper
-from opensquirrel.mapper.mapping import Mapping
-from opensquirrel.register_manager import RegisterManager
-from opensquirrel.squirrel_ir import Comment, Measure, Qubit, SquirrelIR, Statement
+from open_squirrel import Circuit
+from open_squirrel.default_gates import CNOT, H
+from open_squirrel.mapper import HardcodedMapper, Mapper
+from open_squirrel.mapper.mapping import Mapping
+from open_squirrel.register_manager import RegisterManager
+from open_squirrel.ir import Comment, Measure, Qubit, IR, Statement
 
 
 class TestMapper:
@@ -35,13 +35,13 @@ class TestMapQubits:
     @pytest.fixture(name="circuit")
     def circuit_fixture(self) -> Circuit:
         register_manager = RegisterManager(qubit_register_size=3)
-        squirrel_ir = SquirrelIR()
-        squirrel_ir.add_gate(H(Qubit(0)))
-        squirrel_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        squirrel_ir.add_gate(CNOT(Qubit(1), Qubit(2)))
-        squirrel_ir.add_comment(Comment("Qubit[1]"))
-        squirrel_ir.add_measurement(Measure(Qubit(0), axis=(0, 0, 1)))
-        return Circuit(register_manager, squirrel_ir)
+        ir = IR()
+        ir.add_gate(H(Qubit(0)))
+        ir.add_gate(CNOT(Qubit(0), Qubit(1)))
+        ir.add_gate(CNOT(Qubit(1), Qubit(2)))
+        ir.add_comment(Comment("Qubit[1]"))
+        ir.add_measurement(Measure(Qubit(0), axis=(0, 0, 1)))
+        return Circuit(register_manager, ir)
 
     @pytest.fixture(name="expected_statements")
     def expected_statements_fixture(self) -> List[Statement]:
@@ -56,4 +56,4 @@ class TestMapQubits:
     def test_circuit_map(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
         mapper = HardcodedMapper(circuit.qubit_register_size, Mapping([1, 0, 2]))
         circuit.map(mapper)
-        assert circuit.squirrel_ir.statements == expected_statements
+        assert circuit.ir.statements == expected_statements

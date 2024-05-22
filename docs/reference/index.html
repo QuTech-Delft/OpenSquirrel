@@ -2,90 +2,90 @@
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
-    
+
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
+
+
+
         <link rel="canonical" href="http://127.0.0.1:8000/C%3A/Users/elenbaascpc/projects/qi2/OpenSquirrel/OpenSquirrel/docs/reference/">
-      
-      
-      
-      
+
+
+
+
       <link rel="icon" href="../../../../../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.18">
-    
-    
-      
+
+
+
         <title>Reference - OpenSquirrel</title>
-      
-    
-    
+
+
+
       <link rel="stylesheet" href="../../../../../../../../../assets/stylesheets/main.66ac8b77.min.css">
-      
-      
 
 
-    
-    
-      
-    
-    
-      
-        
-        
+
+
+
+
+
+
+
+
+
+
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-      <link rel="stylesheet" href="../../../../../../../../../assets/_mkdocstrings.css">
-    
-    <script>__md_scope=new URL("../../../../../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
 
-    
-    
-    
+
+
+      <link rel="stylesheet" href="../../../../../../../../../assets/_mkdocstrings.css">
+
+    <script>__md_scope=new URL("../../../../../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+
+
+
+
+
+
   </head>
-  
-  
+
+
     <body dir="ltr">
-  
-    
+
+
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
-      
-        
-        <a href="#opensquirrel.circuit" class="md-skip">
+
+
+        <a href="#open_squirrel.circuit" class="md-skip">
           Skip to content
         </a>
-      
+
     </div>
     <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
 
-  
+    </div>
+
+
+
+
+
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../../../../../../../../.." title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
-      
-  
+
+
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      
+
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
@@ -97,21 +97,21 @@
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
-            
+
               Reference
-            
+
           </span>
         </div>
       </div>
     </div>
-    
-    
+
+
       <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
+
+
+
       <label class="md-header__button md-icon" for="__search">
-        
+
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
@@ -120,19 +120,19 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        
+
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
-        
+
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
-        
+
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
+
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
-      
+
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -146,524 +146,524 @@
     </div>
   </div>
 </div>
-    
-    
+
+
   </nav>
-  
+
 </header>
-    
+
     <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
+
+
+
+
+
+
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
-          
-            
-              
+
+
+
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+
 
 
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../../../../../../../../.." title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
-      
-  
+
+
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     OpenSquirrel
   </label>
-  
+
   <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-  
-  
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../../../../../../../.." class="md-nav__link">
-        
-  
+
+
   <span class="md-ellipsis">
     OpenSquirrel
   </span>
-  
+
 
       </a>
     </li>
-  
 
-    
-      
-      
-  
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../../../../../../../../tutorial/" class="md-nav__link">
-        
-  
+
+
   <span class="md-ellipsis">
     Tutorial
   </span>
-  
+
 
       </a>
     </li>
-  
 
-    
-      
-      
-  
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../../../../../../../../how-to-guides/" class="md-nav__link">
-        
-  
+
+
   <span class="md-ellipsis">
     How-To Guides
   </span>
-  
+
 
       </a>
     </li>
-  
 
-    
-      
-      
-  
-  
-  
-  
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../../../../../../../../../reference/" class="md-nav__link">
-        
-  
+
+
   <span class="md-ellipsis">
     Reference
   </span>
-  
+
 
       </a>
     </li>
-  
 
-    
+
+
   </ul>
 </nav>
                   </div>
                 </div>
               </div>
-            
-            
-              
+
+
+
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    
+
 
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
+
+
+
+
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.circuit" class="md-nav__link">
+  <a href="#open_squirrel.circuit" class="md-nav__link">
     <span class="md-ellipsis">
       circuit
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit" class="md-nav__link">
     <span class="md-ellipsis">
       Circuit
     </span>
   </a>
-  
+
     <nav class="md-nav" aria-label="Circuit">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit.__init__" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       __init__
     </span>
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit.__repr__" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit.__repr__" class="md-nav__link">
     <span class="md-ellipsis">
       __repr__
     </span>
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit.decompose" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit.decompose" class="md-nav__link">
     <span class="md-ellipsis">
       decompose
     </span>
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit.from_string" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit.from_string" class="md-nav__link">
     <span class="md-ellipsis">
       from_string
     </span>
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit.merge_single_qubit_gates" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit.merge_single_qubit_gates" class="md-nav__link">
     <span class="md-ellipsis">
       merge_single_qubit_gates
     </span>
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit.replace" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit.replace" class="md-nav__link">
     <span class="md-ellipsis">
       replace
     </span>
   </a>
-  
+
 </li>
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.circuit.Circuit.test_get_circuit_matrix" class="md-nav__link">
+  <a href="#open_squirrel.circuit.Circuit.test_get_circuit_matrix" class="md-nav__link">
     <span class="md-ellipsis">
       test_get_circuit_matrix
     </span>
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.circuit_builder" class="md-nav__link">
+  <a href="#open_squirrel.circuit_builder" class="md-nav__link">
     <span class="md-ellipsis">
       circuit_builder
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.circuit_builder.CircuitBuilder" class="md-nav__link">
+  <a href="#open_squirrel.circuit_builder.CircuitBuilder" class="md-nav__link">
     <span class="md-ellipsis">
       CircuitBuilder
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.circuit_matrix_calculator" class="md-nav__link">
+  <a href="#open_squirrel.circuit_matrix_calculator" class="md-nav__link">
     <span class="md-ellipsis">
       circuit_matrix_calculator
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.circuit_matrix_calculator.get_circuit_matrix" class="md-nav__link">
+  <a href="#open_squirrel.circuit_matrix_calculator.get_circuit_matrix" class="md-nav__link">
     <span class="md-ellipsis">
       get_circuit_matrix
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.common" class="md-nav__link">
+  <a href="#open_squirrel.common" class="md-nav__link">
     <span class="md-ellipsis">
       common
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.cnot_decomposer" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.cnot_decomposer" class="md-nav__link">
     <span class="md-ellipsis">
       cnot_decomposer
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.cnot_decomposer.CNOTDecomposer" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.cnot_decomposer.CNOTDecomposer" class="md-nav__link">
     <span class="md-ellipsis">
       CNOTDecomposer
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.general_decomposer" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.general_decomposer" class="md-nav__link">
     <span class="md-ellipsis">
       general_decomposer
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.general_decomposer.decompose" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.general_decomposer.decompose" class="md-nav__link">
     <span class="md-ellipsis">
       decompose
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.general_decomposer.replace" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.general_decomposer.replace" class="md-nav__link">
     <span class="md-ellipsis">
       replace
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.mckay_decomposer" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.mckay_decomposer" class="md-nav__link">
     <span class="md-ellipsis">
       mckay_decomposer
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.mckay_decomposer.McKayDecomposer" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.mckay_decomposer.McKayDecomposer" class="md-nav__link">
     <span class="md-ellipsis">
       McKayDecomposer
     </span>
   </a>
-  
+
     <nav class="md-nav" aria-label="McKayDecomposer">
       <ul class="md-nav__list">
-        
+
           <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.mckay_decomposer.McKayDecomposer.decompose" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.mckay_decomposer.McKayDecomposer.decompose" class="md-nav__link">
     <span class="md-ellipsis">
       decompose
     </span>
   </a>
-  
+
 </li>
-        
+
       </ul>
     </nav>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.zyz_decomposer" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.zyz_decomposer" class="md-nav__link">
     <span class="md-ellipsis">
       zyz_decomposer
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.decomposer.zyz_decomposer.get_zyz_decomposition_angles" class="md-nav__link">
+  <a href="#open_squirrel.decomposer.zyz_decomposer.get_zyz_decomposition_angles" class="md-nav__link">
     <span class="md-ellipsis">
       get_zyz_decomposition_angles
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.default_gates" class="md-nav__link">
+  <a href="#open_squirrel.default_gates" class="md-nav__link">
     <span class="md-ellipsis">
       default_gates
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.default_measurements" class="md-nav__link">
+  <a href="#open_squirrel.default_measurements" class="md-nav__link">
     <span class="md-ellipsis">
       default_measurements
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.exporter.export_format" class="md-nav__link">
+  <a href="#open_squirrel.exporter.export_format" class="md-nav__link">
     <span class="md-ellipsis">
       export_format
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.exporter.quantify_scheduler_exporter" class="md-nav__link">
+  <a href="#open_squirrel.exporter.quantify_scheduler_exporter" class="md-nav__link">
     <span class="md-ellipsis">
       quantify_scheduler_exporter
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.exporter.writer" class="md-nav__link">
+  <a href="#open_squirrel.exporter.writer" class="md-nav__link">
     <span class="md-ellipsis">
       writer
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.instruction_library" class="md-nav__link">
+  <a href="#open_squirrel.instruction_library" class="md-nav__link">
     <span class="md-ellipsis">
       instruction_library
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.merger.general_merger" class="md-nav__link">
+  <a href="#open_squirrel.merger.general_merger" class="md-nav__link">
     <span class="md-ellipsis">
       general_merger
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.merger.general_merger.compose_bloch_sphere_rotations" class="md-nav__link">
+  <a href="#open_squirrel.merger.general_merger.compose_bloch_sphere_rotations" class="md-nav__link">
     <span class="md-ellipsis">
       compose_bloch_sphere_rotations
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.parser.libqasm.libqasm_ir_creator" class="md-nav__link">
+  <a href="#open_squirrel.parser.libqasm.libqasm_ir_creator" class="md-nav__link">
     <span class="md-ellipsis">
       libqasm_ir_creator
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.squirrel_ir" class="md-nav__link">
+  <a href="#open_squirrel.ir" class="md-nav__link">
     <span class="md-ellipsis">
-      squirrel_ir
+      ir
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.utils.identity_filter" class="md-nav__link">
+  <a href="#open_squirrel.utils.identity_filter" class="md-nav__link">
     <span class="md-ellipsis">
       identity_filter
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.utils.matrix_expander" class="md-nav__link">
+  <a href="#open_squirrel.utils.matrix_expander" class="md-nav__link">
     <span class="md-ellipsis">
       matrix_expander
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.utils.matrix_expander.expand_ket" class="md-nav__link">
+  <a href="#open_squirrel.utils.matrix_expander.expand_ket" class="md-nav__link">
     <span class="md-ellipsis">
       expand_ket
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.utils.matrix_expander.get_matrix" class="md-nav__link">
+  <a href="#open_squirrel.utils.matrix_expander.get_matrix" class="md-nav__link">
     <span class="md-ellipsis">
       get_matrix
     </span>
   </a>
-  
+
 </li>
-      
+
         <li class="md-nav__item">
-  <a href="#opensquirrel.utils.matrix_expander.get_reduced_ket" class="md-nav__link">
+  <a href="#open_squirrel.utils.matrix_expander.get_reduced_ket" class="md-nav__link">
     <span class="md-ellipsis">
       get_reduced_ket
     </span>
   </a>
-  
+
 </li>
-      
+
     </ul>
-  
+
 </nav>
                   </div>
                 </div>
               </div>
-            
-          
-          
+
+
+
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
-                
-                  
+
+
 
 
   <h1>Reference</h1>
@@ -676,10 +676,10 @@
 
 
 
-<a id="opensquirrel.circuit"></a>
+<a id="open_squirrel.circuit"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -694,7 +694,7 @@
 
 
 
-<h2 id="opensquirrel.circuit.Circuit" class="doc doc-heading">
+<h2 id="open_squirrel.circuit.Circuit" class="doc doc-heading">
           <code>Circuit</code>
 
 
@@ -703,7 +703,7 @@
 
   <div class="doc doc-contents ">
 
-  
+
       <p>The Circuit class is the only interface to access OpenSquirrel's features.</p>
 
 
@@ -729,7 +729,7 @@
 </code></pre></div>
 
             <details class="quote">
-              <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+              <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-17"> 17</a></span>
 <span class="normal"><a href="#__codelineno-0-18"> 18</a></span>
 <span class="normal"><a href="#__codelineno-0-19"> 19</a></span>
@@ -861,10 +861,10 @@
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-41" name="__codelineno-0-41"></a>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">squirrel_ir</span><span class="p">:</span> <span class="n">SquirrelIR</span><span class="p">):</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a circuit object from a SquirrelIR object.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">):</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a circuit object from a IR object.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span> <span class="o">=</span> <span class="n">squirrel_ir</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ir</span> <span class="o">=</span> <span class="n">ir</span>
 <a id="__codelineno-0-46" name="__codelineno-0-46"></a>
 <a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="nd">@classmethod</span>
 <a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span>
@@ -895,15 +895,15 @@
 <a id="__codelineno-0-73" name="__codelineno-0-73"></a>            <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span><span class="p">,</span>
 <a id="__codelineno-0-74" name="__codelineno-0-74"></a>            <span class="n">measurement_set</span><span class="o">=</span><span class="n">measurement_set</span><span class="p">,</span>
 <a id="__codelineno-0-75" name="__codelineno-0-75"></a>        <span class="p">)</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">libqasm_ir_creator</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">))</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">libqasm_ir_creator</span><span class="o">.</span><span class="n">ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">))</span>
 <a id="__codelineno-0-77" name="__codelineno-0-77"></a>
 <a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="nd">@property</span>
 <a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="k">def</span> <span class="nf">number_of_qubits</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="o">.</span><span class="n">number_of_qubits</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">number_of_qubits</span>
 <a id="__codelineno-0-81" name="__codelineno-0-81"></a>
 <a id="__codelineno-0-82" name="__codelineno-0-82"></a>    <span class="nd">@property</span>
 <a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">def</span> <span class="nf">qubit_register_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="o">.</span><span class="n">qubit_register_name</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">qubit_register_name</span>
 <a id="__codelineno-0-85" name="__codelineno-0-85"></a>
 <a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="k">def</span> <span class="nf">merge_single_qubit_gates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Merge all consecutive 1-qubit gates in the circuit.</span>
@@ -911,11 +911,11 @@
 <a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">        Gates obtained from merging other gates become anonymous gates.</span>
 <a id="__codelineno-0-90" name="__codelineno-0-90"></a>
 <a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">        &quot;&quot;&quot;</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="n">merger</span><span class="o">.</span><span class="n">merge_single_qubit_gates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>        <span class="n">merger</span><span class="o">.</span><span class="n">merge_single_qubit_gates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 <a id="__codelineno-0-93" name="__codelineno-0-93"></a>
 <a id="__codelineno-0-94" name="__codelineno-0-94"></a>    <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">:</span> <span class="n">Decomposer</span><span class="p">):</span>
 <a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Generic decomposition pass. It applies the given decomposer function to every gate in the circuit.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>        <span class="n">replacer</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>        <span class="n">replacer</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
 <a id="__codelineno-0-97" name="__codelineno-0-97"></a>
 <a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">],</span> <span class="n">f</span><span class="p">):</span>
 <a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Manually replace occurrences of a given gate with a list of gates.</span>
@@ -923,7 +923,7 @@
 <a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">        and returns the decomposition as a list of gates.</span>
 <a id="__codelineno-0-102" name="__codelineno-0-102"></a>
 <a id="__codelineno-0-103" name="__codelineno-0-103"></a><span class="sd">        &quot;&quot;&quot;</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="n">replacer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="n">replacer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 <a id="__codelineno-0-105" name="__codelineno-0-105"></a>
 <a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="k">def</span> <span class="nf">test_get_circuit_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <a id="__codelineno-0-107" name="__codelineno-0-107"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the (large) unitary matrix corresponding to the circuit.</span>
@@ -933,20 +933,20 @@
 <a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="sd">        * result is stored as a numpy array of complex numbers</span>
 <a id="__codelineno-0-112" name="__codelineno-0-112"></a>
 <a id="__codelineno-0-113" name="__codelineno-0-113"></a><span class="sd">        &quot;&quot;&quot;</span>
-<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="k">return</span> <span class="n">circuit_matrix_calculator</span><span class="o">.</span><span class="n">get_circuit_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="k">return</span> <span class="n">circuit_matrix_calculator</span><span class="o">.</span><span class="n">get_circuit_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 <a id="__codelineno-0-115" name="__codelineno-0-115"></a>
 <a id="__codelineno-0-116" name="__codelineno-0-116"></a>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <a id="__codelineno-0-117" name="__codelineno-0-117"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the circuit to a cQasm3 string.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-118" name="__codelineno-0-118"></a>        <span class="k">return</span> <span class="n">writer</span><span class="o">.</span><span class="n">squirrel_ir_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a>        <span class="k">return</span> <span class="n">writer</span><span class="o">.</span><span class="n">ir_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 <a id="__codelineno-0-119" name="__codelineno-0-119"></a>
 <a id="__codelineno-0-120" name="__codelineno-0-120"></a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="p">:</span> <span class="n">ExportFormat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-121" name="__codelineno-0-121"></a>        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="n">ExportFormat</span><span class="o">.</span><span class="n">QUANTIFY_SCHEDULER</span><span class="p">:</span>
-<a id="__codelineno-0-122" name="__codelineno-0-122"></a>            <span class="k">return</span> <span class="n">quantify_scheduler_exporter</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-122" name="__codelineno-0-122"></a>            <span class="k">return</span> <span class="n">quantify_scheduler_exporter</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 <a id="__codelineno-0-123" name="__codelineno-0-123"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown exporter format&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -963,25 +963,25 @@
 
 
 
-<h3 id="opensquirrel.circuit.Circuit.__init__" class="doc doc-heading">
-          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">)</span></code>
+<h3 id="open_squirrel.circuit.Circuit.__init__" class="doc doc-heading">
+          <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
-  
-      <p>Create a circuit object from a SquirrelIR object.</p>
+
+      <p>Create a circuit object from a IR object.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-42">42</a></span>
 <span class="normal"><a href="#__codelineno-0-43">43</a></span>
 <span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">squirrel_ir</span><span class="p">:</span> <span class="n">SquirrelIR</span><span class="p">):</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a circuit object from a SquirrelIR object.&quot;&quot;&quot;</span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">):</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a circuit object from a IR object.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span> <span class="o">=</span> <span class="n">squirrel_ir</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">ir</span> <span class="o">=</span> <span class="n">ir</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -993,23 +993,23 @@
 
 
 
-<h3 id="opensquirrel.circuit.Circuit.__repr__" class="doc doc-heading">
+<h3 id="open_squirrel.circuit.Circuit.__repr__" class="doc doc-heading">
           <code class="highlight language-python"><span class="fm">__repr__</span><span class="p">()</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Write the circuit to a cQasm3 string.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-116">116</a></span>
 <span class="normal"><a href="#__codelineno-0-117">117</a></span>
 <span class="normal"><a href="#__codelineno-0-118">118</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-116" name="__codelineno-0-116"></a><span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <a id="__codelineno-0-117" name="__codelineno-0-117"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the circuit to a cQasm3 string.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-118" name="__codelineno-0-118"></a>    <span class="k">return</span> <span class="n">writer</span><span class="o">.</span><span class="n">squirrel_ir_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a>    <span class="k">return</span> <span class="n">writer</span><span class="o">.</span><span class="n">ir_to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1021,23 +1021,23 @@
 
 
 
-<h3 id="opensquirrel.circuit.Circuit.decompose" class="doc doc-heading">
+<h3 id="open_squirrel.circuit.Circuit.decompose" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="p">)</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Generic decomposition pass. It applies the given decomposer function to every gate in the circuit.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-94">94</a></span>
 <span class="normal"><a href="#__codelineno-0-95">95</a></span>
 <span class="normal"><a href="#__codelineno-0-96">96</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">:</span> <span class="n">Decomposer</span><span class="p">):</span>
 <a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic decomposition pass. It applies the given decomposer function to every gate in the circuit.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="n">replacer</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="n">replacer</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1049,9 +1049,9 @@
 
 
 
-<h3 id="opensquirrel.circuit.Circuit.from_string" class="doc doc-heading">
+<h3 id="open_squirrel.circuit.Circuit.from_string" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">,</span> <span class="n">gate_set</span><span class="o">=</span><span class="n">default_gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="o">=</span><span class="n">default_gate_aliases</span><span class="p">,</span> <span class="n">measurement_set</span><span class="o">=</span><span class="n">default_measurement_set</span><span class="p">)</span></code>
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
@@ -1060,7 +1060,7 @@
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
 the <code>gates</code> argument.</p>
 <ul>
@@ -1100,7 +1100,7 @@ the <code>gates</code> argument.</p>
         <tr>
           <td><code>gate_set</code></td>
           <td>
-                <code>[<span title="typing.Callable">Callable</span>[..., <span title="opensquirrel.squirrel_ir.Gate">Gate</span>]]</code>
+                <code>[<span title="typing.Callable">Callable</span>[..., <span title="open_squirrel.ir.Gate">Gate</span>]]</code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -1108,13 +1108,13 @@ the <code>gates</code> argument.</p>
             </div>
           </td>
           <td>
-                <code><span title="opensquirrel.default_gates.default_gate_set">default_gate_set</span></code>
+                <code><span title="open_squirrel.default_gates.default_gate_set">default_gate_set</span></code>
           </td>
         </tr>
         <tr>
           <td><code>gate_aliases</code></td>
           <td>
-                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>[..., <span title="opensquirrel.squirrel_ir.Gate">Gate</span>]]</code>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>[..., <span title="open_squirrel.ir.Gate">Gate</span>]]</code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -1122,13 +1122,13 @@ the <code>gates</code> argument.</p>
             </div>
           </td>
           <td>
-                <code><span title="opensquirrel.default_gates.default_gate_aliases">default_gate_aliases</span></code>
+                <code><span title="open_squirrel.default_gates.default_gate_aliases">default_gate_aliases</span></code>
           </td>
         </tr>
         <tr>
           <td><code>measurement_set</code></td>
           <td>
-                <code>[<span title="typing.Callable">Callable</span>[..., <span title="opensquirrel.squirrel_ir.Measure">Measure</span>]]</code>
+                <code>[<span title="typing.Callable">Callable</span>[..., <span title="open_squirrel.ir.Measure">Measure</span>]]</code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -1136,14 +1136,14 @@ the <code>gates</code> argument.</p>
             </div>
           </td>
           <td>
-                <code><span title="opensquirrel.default_measurements.default_measurement_set">default_measurement_set</span></code>
+                <code><span title="open_squirrel.default_measurements.default_measurement_set">default_measurement_set</span></code>
           </td>
         </tr>
     </tbody>
   </table>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-47">47</a></span>
 <span class="normal"><a href="#__codelineno-0-48">48</a></span>
 <span class="normal"><a href="#__codelineno-0-49">49</a></span>
@@ -1202,7 +1202,7 @@ the <code>gates</code> argument.</p>
 <a id="__codelineno-0-73" name="__codelineno-0-73"></a>        <span class="n">gate_aliases</span><span class="o">=</span><span class="n">gate_aliases</span><span class="p">,</span>
 <a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="n">measurement_set</span><span class="o">=</span><span class="n">measurement_set</span><span class="p">,</span>
 <a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="p">)</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">libqasm_ir_creator</span><span class="o">.</span><span class="n">squirrel_ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">))</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">libqasm_ir_creator</span><span class="o">.</span><span class="n">ir_from_string</span><span class="p">(</span><span class="n">cqasm3_string</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1214,19 +1214,19 @@ the <code>gates</code> argument.</p>
 
 
 
-<h3 id="opensquirrel.circuit.Circuit.merge_single_qubit_gates" class="doc doc-heading">
+<h3 id="open_squirrel.circuit.Circuit.merge_single_qubit_gates" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">merge_single_qubit_gates</span><span class="p">()</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Merge all consecutive 1-qubit gates in the circuit.</p>
 <p>Gates obtained from merging other gates become anonymous gates.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-86">86</a></span>
 <span class="normal"><a href="#__codelineno-0-87">87</a></span>
 <span class="normal"><a href="#__codelineno-0-88">88</a></span>
@@ -1239,7 +1239,7 @@ the <code>gates</code> argument.</p>
 <a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">    Gates obtained from merging other gates become anonymous gates.</span>
 <a id="__codelineno-0-90" name="__codelineno-0-90"></a>
 <a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="n">merger</span><span class="o">.</span><span class="n">merge_single_qubit_gates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="n">merger</span><span class="o">.</span><span class="n">merge_single_qubit_gates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1251,20 +1251,20 @@ the <code>gates</code> argument.</p>
 
 
 
-<h3 id="opensquirrel.circuit.Circuit.replace" class="doc doc-heading">
+<h3 id="open_squirrel.circuit.Circuit.replace" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">replace</span><span class="p">(</span><span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Manually replace occurrences of a given gate with a list of gates.
 <code>f</code> is a callable that takes the arguments of the gate that is to be replaced
 and returns the decomposition as a list of gates.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
 <span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
 <span class="normal"><a href="#__codelineno-0-100">100</a></span>
@@ -1277,7 +1277,7 @@ and returns the decomposition as a list of gates.</p>
 <a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">    and returns the decomposition as a list of gates.</span>
 <a id="__codelineno-0-102" name="__codelineno-0-102"></a>
 <a id="__codelineno-0-103" name="__codelineno-0-103"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">replacer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">replacer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1289,14 +1289,14 @@ and returns the decomposition as a list of gates.</p>
 
 
 
-<h3 id="opensquirrel.circuit.Circuit.test_get_circuit_matrix" class="doc doc-heading">
+<h3 id="open_squirrel.circuit.Circuit.test_get_circuit_matrix" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">test_get_circuit_matrix</span><span class="p">()</span></code>
 
 </h3>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Get the (large) unitary matrix corresponding to the circuit.</p>
 <ul>
 <li>this matrix has 4**n elements, where n is the number of qubits</li>
@@ -1305,7 +1305,7 @@ and returns the decomposition as a list of gates.</p>
 </ul>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-106">106</a></span>
 <span class="normal"><a href="#__codelineno-0-107">107</a></span>
 <span class="normal"><a href="#__codelineno-0-108">108</a></span>
@@ -1322,7 +1322,7 @@ and returns the decomposition as a list of gates.</p>
 <a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="sd">    * result is stored as a numpy array of complex numbers</span>
 <a id="__codelineno-0-112" name="__codelineno-0-112"></a>
 <a id="__codelineno-0-113" name="__codelineno-0-113"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="k">return</span> <span class="n">circuit_matrix_calculator</span><span class="o">.</span><span class="n">get_circuit_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="k">return</span> <span class="n">circuit_matrix_calculator</span><span class="o">.</span><span class="n">get_circuit_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1351,10 +1351,10 @@ and returns the decomposition as a list of gates.</p>
 
 
 
-<a id="opensquirrel.circuit_builder"></a>
+<a id="open_squirrel.circuit_builder"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1369,7 +1369,7 @@ and returns the decomposition as a list of gates.</p>
 
 
 
-<h2 id="opensquirrel.circuit_builder.CircuitBuilder" class="doc doc-heading">
+<h2 id="open_squirrel.circuit_builder.CircuitBuilder" class="doc doc-heading">
           <code>CircuitBuilder</code>
 
 
@@ -1378,9 +1378,9 @@ and returns the decomposition as a list of gates.</p>
 
   <div class="doc doc-contents ">
           <p class="doc doc-class-bases">
-            Bases: <code><span title="opensquirrel.instruction_library.GateLibrary">GateLibrary</span></code></p>
+            Bases: <code><span title="open_squirrel.instruction_library.GateLibrary">GateLibrary</span></code></p>
 
-  
+
       <p>A class using the builder pattern to make construction of circuits easy from Python.
 Adds corresponding gate when a method is called. Checks gates are known and called with the right arguments.
 Mainly here to allow for Qiskit-style circuit construction:</p>
@@ -1404,7 +1404,7 @@ cnot q[0], q[2]
 </blockquote>
 </details>
             <details class="quote">
-              <summary>Source code in <code>opensquirrel\circuit_builder.py</code></summary>
+              <summary>Source code in <code>open_squirrel\circuit_builder.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
@@ -1485,13 +1485,13 @@ cnot q[0], q[2]
 <a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="n">gate_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">]]</span> <span class="o">=</span> <span class="n">default_gate_aliases</span><span class="p">,</span>
 <a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="p">):</span>
 <a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="n">GateLibrary</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate_set</span><span class="p">,</span> <span class="n">gate_aliases</span><span class="p">)</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span> <span class="o">=</span> <span class="n">SquirrelIR</span><span class="p">(</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">(</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a>            <span class="n">number_of_qubits</span><span class="o">=</span><span class="n">number_of_qubits</span><span class="p">,</span> <span class="n">qubit_register_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_qubit_register_name</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="p">)</span>
 <a id="__codelineno-0-41" name="__codelineno-0-41"></a>
 <a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="k">def</span> <span class="nf">add_comment</span><span class="p">(</span><span class="n">comment_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="o">.</span><span class="n">add_comment</span><span class="p">(</span><span class="n">Comment</span><span class="p">(</span><span class="n">comment_string</span><span class="p">))</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">add_comment</span><span class="p">(</span><span class="n">Comment</span><span class="p">(</span><span class="n">comment_string</span><span class="p">))</span>
 <a id="__codelineno-0-45" name="__codelineno-0-45"></a>            <span class="k">return</span> <span class="bp">self</span>
 <a id="__codelineno-0-46" name="__codelineno-0-46"></a>
 <a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="k">def</span> <span class="nf">add_this_gate</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -1503,17 +1503,17 @@ cnot q[0], q[2]
 <a id="__codelineno-0-53" name="__codelineno-0-53"></a>                        <span class="sa">f</span><span class="s2">&quot;Wrong argument type for gate `</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">`, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">}</span><span class="s2"> but expected </span><span class="si">{</span><span class="n">par</span><span class="o">.</span><span class="n">annotation</span><span class="si">}</span><span class="s2">&quot;</span>
 <a id="__codelineno-0-54" name="__codelineno-0-54"></a>                    <span class="p">)</span>
 <a id="__codelineno-0-55" name="__codelineno-0-55"></a>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">generator_f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">generator_f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">))</span>
 <a id="__codelineno-0-57" name="__codelineno-0-57"></a>            <span class="k">return</span> <span class="bp">self</span>
 <a id="__codelineno-0-58" name="__codelineno-0-58"></a>
 <a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="k">return</span> <span class="n">add_comment</span> <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">&quot;comment&quot;</span> <span class="k">else</span> <span class="n">add_this_gate</span>
 <a id="__codelineno-0-60" name="__codelineno-0-60"></a>
 <a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="k">def</span> <span class="nf">to_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Circuit</span><span class="p">:</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">squirrel_ir</span><span class="p">)</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1547,10 +1547,10 @@ cnot q[0], q[2]
 
 
 
-<a id="opensquirrel.circuit_matrix_calculator"></a>
+<a id="open_squirrel.circuit_matrix_calculator"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1567,19 +1567,19 @@ cnot q[0], q[2]
 
 
 
-<h2 id="opensquirrel.circuit_matrix_calculator.get_circuit_matrix" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">get_circuit_matrix</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">)</span></code>
+<h2 id="open_squirrel.circuit_matrix_calculator.get_circuit_matrix" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">get_circuit_matrix</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Compute the Numpy unitary matrix corresponding to the circuit.
 The size of this matrix grows exponentially with the number of qubits.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\circuit_matrix_calculator.py</code></summary>
+            <summary>Source code in <code>open_squirrel\circuit_matrix_calculator.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-20">20</a></span>
 <span class="normal"><a href="#__codelineno-0-21">21</a></span>
 <span class="normal"><a href="#__codelineno-0-22">22</a></span>
@@ -1590,15 +1590,15 @@ The size of this matrix grows exponentially with the number of qubits.</p>
 <span class="normal"><a href="#__codelineno-0-27">27</a></span>
 <span class="normal"><a href="#__codelineno-0-28">28</a></span>
 <span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="k">def</span> <span class="nf">get_circuit_matrix</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">:</span> <span class="n">SquirrelIR</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="k">def</span> <span class="nf">get_circuit_matrix</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">):</span>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    Compute the Numpy unitary matrix corresponding to the circuit.</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    The size of this matrix grows exponentially with the number of qubits.</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">impl</span> <span class="o">=</span> <span class="n">_CircuitMatrixCalculator</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="o">.</span><span class="n">number_of_qubits</span><span class="p">)</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">impl</span> <span class="o">=</span> <span class="n">_CircuitMatrixCalculator</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">number_of_qubits</span><span class="p">)</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27"></a>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">squirrel_ir</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">impl</span><span class="p">)</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">impl</span><span class="p">)</span>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a>
 <a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="k">return</span> <span class="n">impl</span><span class="o">.</span><span class="n">matrix</span>
 </code></pre></div></td></tr></table></div>
@@ -1619,10 +1619,10 @@ The size of this matrix grows exponentially with the number of qubits.</p>
 
 
 
-<a id="opensquirrel.common"></a>
+<a id="open_squirrel.common"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1646,10 +1646,10 @@ The size of this matrix grows exponentially with the number of qubits.</p>
 
 
 
-<a id="opensquirrel.decomposer.cnot_decomposer"></a>
+<a id="open_squirrel.decomposer.cnot_decomposer"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1664,7 +1664,7 @@ The size of this matrix grows exponentially with the number of qubits.</p>
 
 
 
-<h2 id="opensquirrel.decomposer.cnot_decomposer.CNOTDecomposer" class="doc doc-heading">
+<h2 id="open_squirrel.decomposer.cnot_decomposer.CNOTDecomposer" class="doc doc-heading">
           <code>CNOTDecomposer</code>
 
 
@@ -1673,15 +1673,15 @@ The size of this matrix grows exponentially with the number of qubits.</p>
 
   <div class="doc doc-contents ">
           <p class="doc doc-class-bases">
-            Bases: <code><span title="opensquirrel.decomposer.general_decomposer.Decomposer">Decomposer</span></code></p>
+            Bases: <code><span title="open_squirrel.decomposer.general_decomposer.Decomposer">Decomposer</span></code></p>
 
-  
+
       <p>Decomposes 2-qubit controlled unitary gates to CNOT + Rz/Ry.
 Applying single-qubit gate fusion after this pass might be beneficial.</p>
 <p>Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"</p>
 
             <details class="quote">
-              <summary>Source code in <code>opensquirrel\decomposer\cnot_decomposer.py</code></summary>
+              <summary>Source code in <code>open_squirrel\decomposer\cnot_decomposer.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-12">12</a></span>
 <span class="normal"><a href="#__codelineno-0-13">13</a></span>
 <span class="normal"><a href="#__codelineno-0-14">14</a></span>
@@ -1824,7 +1824,7 @@ Applying single-qubit gate fusion after this pass might be beneficial.</p>
 </code></pre></div></td></tr></table></div>
             </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1858,10 +1858,10 @@ Applying single-qubit gate fusion after this pass might be beneficial.</p>
 
 
 
-<a id="opensquirrel.decomposer.general_decomposer"></a>
+<a id="open_squirrel.decomposer.general_decomposer"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -1878,19 +1878,19 @@ Applying single-qubit gate fusion after this pass might be beneficial.</p>
 
 
 
-<h2 id="opensquirrel.decomposer.general_decomposer.decompose" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">decompose</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span></code>
+<h2 id="open_squirrel.decomposer.general_decomposer.decompose" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">decompose</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Applies <code>decomposer</code> to every gate in the circuit, replacing each gate by the output of <code>decomposer</code>.
 When <code>decomposer</code> decides to not decomposer a gate, it needs to return a list with the intact gate as single element.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\decomposer\general_decomposer.py</code></summary>
+            <summary>Source code in <code>open_squirrel\decomposer\general_decomposer.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-62">62</a></span>
 <span class="normal"><a href="#__codelineno-0-63">63</a></span>
 <span class="normal"><a href="#__codelineno-0-64">64</a></span>
@@ -1908,13 +1908,13 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 <span class="normal"><a href="#__codelineno-0-76">76</a></span>
 <span class="normal"><a href="#__codelineno-0-77">77</a></span>
 <span class="normal"><a href="#__codelineno-0-78">78</a></span>
-<span class="normal"><a href="#__codelineno-0-79">79</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">:</span> <span class="n">SquirrelIR</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">:</span> <span class="n">Decomposer</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-79">79</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">:</span> <span class="n">Decomposer</span><span class="p">):</span>
 <a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies `decomposer` to every gate in the circuit, replacing each gate by the output of `decomposer`.</span>
 <a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    When `decomposer` decides to not decomposer a gate, it needs to return a list with the intact gate as single element.</span>
 <a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="n">statement_index</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">while</span> <span class="n">statement_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="o">.</span><span class="n">statements</span><span class="p">):</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="n">statement</span> <span class="o">=</span> <span class="n">squirrel_ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_index</span><span class="p">]</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">while</span> <span class="n">statement_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">):</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="n">statement</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_index</span><span class="p">]</span>
 <a id="__codelineno-0-69" name="__codelineno-0-69"></a>
 <a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Gate</span><span class="p">):</span>
 <a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="n">statement_index</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -1924,7 +1924,7 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 <a id="__codelineno-0-75" name="__codelineno-0-75"></a>
 <a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="n">check_valid_replacement</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">replacement</span><span class="p">)</span>
 <a id="__codelineno-0-77" name="__codelineno-0-77"></a>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="n">squirrel_ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_index</span> <span class="p">:</span> <span class="n">statement_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">replacement</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_index</span> <span class="p">:</span> <span class="n">statement_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">replacement</span>
 <a id="__codelineno-0-79" name="__codelineno-0-79"></a>        <span class="n">statement_index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">replacement</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
@@ -1937,18 +1937,18 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
 
 
-<h2 id="opensquirrel.decomposer.general_decomposer.replace" class="doc doc-heading">
-          <code class="highlight language-python"><span class="n">replace</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></code>
+<h2 id="open_squirrel.decomposer.general_decomposer.replace" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">replace</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Does the same as decomposer, but only applies to a given gate.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\decomposer\general_decomposer.py</code></summary>
+            <summary>Source code in <code>open_squirrel\decomposer\general_decomposer.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
 <span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
 <span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
@@ -1959,7 +1959,7 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 <span class="normal"><a href="#__codelineno-0-100">100</a></span>
 <span class="normal"><a href="#__codelineno-0-101">101</a></span>
 <span class="normal"><a href="#__codelineno-0-102">102</a></span>
-<span class="normal"><a href="#__codelineno-0-103">103</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">:</span> <span class="n">SquirrelIR</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">],</span> <span class="n">f</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-103">103</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">,</span> <span class="n">gate_generator</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Gate</span><span class="p">],</span> <span class="n">f</span><span class="p">):</span>
 <a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Does the same as decomposer, but only applies to a given gate.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-95" name="__codelineno-0-95"></a>
 <a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="k">def</span> <span class="nf">generic_replacer</span><span class="p">(</span><span class="n">g</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
@@ -1969,7 +1969,7 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 <a id="__codelineno-0-100" name="__codelineno-0-100"></a>
 <a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="n">generic_replacer</span> <span class="o">=</span> <span class="n">_GenericReplacer</span><span class="p">(</span><span class="n">gate_generator</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 <a id="__codelineno-0-102" name="__codelineno-0-102"></a>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="n">decompose</span><span class="p">(</span><span class="n">squirrel_ir</span><span class="p">,</span> <span class="n">generic_replacer</span><span class="p">)</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="n">decompose</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">generic_replacer</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
@@ -1988,10 +1988,10 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
 
 
-<a id="opensquirrel.decomposer.mckay_decomposer"></a>
+<a id="open_squirrel.decomposer.mckay_decomposer"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2006,7 +2006,7 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
 
 
-<h2 id="opensquirrel.decomposer.mckay_decomposer.McKayDecomposer" class="doc doc-heading">
+<h2 id="open_squirrel.decomposer.mckay_decomposer.McKayDecomposer" class="doc doc-heading">
           <code>McKayDecomposer</code>
 
 
@@ -2015,11 +2015,11 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
   <div class="doc doc-contents ">
           <p class="doc doc-class-bases">
-            Bases: <code><span title="opensquirrel.decomposer.general_decomposer.Decomposer">Decomposer</span></code></p>
+            Bases: <code><span title="open_squirrel.decomposer.general_decomposer.Decomposer">Decomposer</span></code></p>
 
 
             <details class="quote">
-              <summary>Source code in <code>opensquirrel\decomposer\mckay_decomposer.py</code></summary>
+              <summary>Source code in <code>open_squirrel\decomposer\mckay_decomposer.py</code></summary>
               <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
@@ -2122,7 +2122,7 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 </code></pre></div></td></tr></table></div>
             </details>
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2139,9 +2139,9 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
 
 
-<h3 id="opensquirrel.decomposer.mckay_decomposer.McKayDecomposer.decompose" class="doc doc-heading">
+<h3 id="open_squirrel.decomposer.mckay_decomposer.McKayDecomposer.decompose" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">decompose</span><span class="p">(</span><span class="n">g</span><span class="p">)</span></code>
-  
+
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
   </span>
@@ -2150,7 +2150,7 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Return the McKay decomposition of a 1-qubit gate as a list of gates.
         gate   ----&gt;    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz</p>
 <p>The global phase is deemed <em>irrelevant</em>, therefore a simulator backend might produce different output
@@ -2158,7 +2158,7 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 <p>Relevant literature: https://arxiv.org/abs/1612.00858</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\decomposer\mckay_decomposer.py</code></summary>
+            <summary>Source code in <code>open_squirrel\decomposer\mckay_decomposer.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
@@ -2284,10 +2284,10 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
 
 
-<a id="opensquirrel.decomposer.zyz_decomposer"></a>
+<a id="open_squirrel.decomposer.zyz_decomposer"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2304,14 +2304,14 @@ When <code>decomposer</code> decides to not decomposer a gate, it needs to retur
 
 
 
-<h2 id="opensquirrel.decomposer.zyz_decomposer.get_zyz_decomposition_angles" class="doc doc-heading">
+<h2 id="open_squirrel.decomposer.zyz_decomposer.get_zyz_decomposition_angles" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">get_zyz_decomposition_angles</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Gives the angles used in the Z-Y-Z decomposition of the Bloch sphere rotation
 characterized by a rotation around <code>axis</code> of angle <code>alpha</code>.</p>
 
@@ -2394,7 +2394,7 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
   </table>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\decomposer\zyz_decomposer.py</code></summary>
+            <summary>Source code in <code>open_squirrel\decomposer\zyz_decomposer.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
 <span class="normal"><a href="#__codelineno-0-13">13</a></span>
@@ -2538,10 +2538,10 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<a id="opensquirrel.default_gates"></a>
+<a id="open_squirrel.default_gates"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2565,10 +2565,10 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<a id="opensquirrel.default_measurements"></a>
+<a id="open_squirrel.default_measurements"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2592,10 +2592,10 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<a id="opensquirrel.exporter.export_format"></a>
+<a id="open_squirrel.exporter.export_format"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2619,10 +2619,10 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<a id="opensquirrel.exporter.quantify_scheduler_exporter"></a>
+<a id="open_squirrel.exporter.quantify_scheduler_exporter"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2646,10 +2646,10 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<a id="opensquirrel.exporter.writer"></a>
+<a id="open_squirrel.exporter.writer"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2673,10 +2673,10 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<a id="opensquirrel.instruction_library"></a>
+<a id="open_squirrel.instruction_library"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2700,10 +2700,10 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<a id="opensquirrel.merger.general_merger"></a>
+<a id="open_squirrel.merger.general_merger"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2720,21 +2720,21 @@ characterized by a rotation around <code>axis</code> of angle <code>alpha</code>
 
 
 
-<h2 id="opensquirrel.merger.general_merger.compose_bloch_sphere_rotations" class="doc doc-heading">
+<h2 id="open_squirrel.merger.general_merger.compose_bloch_sphere_rotations" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
 The first rotation is applied and then the second.
 The resulting gate is anonymous except if <code>a</code> is the identity and <code>b</code> is not anonymous, or vice versa.</p>
 <p>Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.</p>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\merger\general_merger.py</code></summary>
+            <summary>Source code in <code>open_squirrel\merger\general_merger.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
@@ -2834,10 +2834,10 @@ The resulting gate is anonymous except if <code>a</code> is the identity and <co
 
 
 
-<a id="opensquirrel.parser.libqasm.libqasm_ir_creator"></a>
+<a id="open_squirrel.parser.libqasm.libqasm_ir_creator"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2861,10 +2861,10 @@ The resulting gate is anonymous except if <code>a</code> is the identity and <co
 
 
 
-<a id="opensquirrel.squirrel_ir"></a>
+<a id="open_squirrel.ir"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2888,10 +2888,10 @@ The resulting gate is anonymous except if <code>a</code> is the identity and <co
 
 
 
-<a id="opensquirrel.utils.identity_filter"></a>
+<a id="open_squirrel.utils.identity_filter"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2915,10 +2915,10 @@ The resulting gate is anonymous except if <code>a</code> is the identity and <co
 
 
 
-<a id="opensquirrel.utils.matrix_expander"></a>
+<a id="open_squirrel.utils.matrix_expander"></a>
   <div class="doc doc-contents first">
 
-  
+
 
   <div class="doc doc-children">
 
@@ -2935,14 +2935,14 @@ The resulting gate is anonymous except if <code>a</code> is the identity and <co
 
 
 
-<h2 id="opensquirrel.utils.matrix_expander.expand_ket" class="doc doc-heading">
+<h2 id="open_squirrel.utils.matrix_expander.expand_ket" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">expand_ket</span><span class="p">(</span><span class="n">base_ket</span><span class="p">,</span> <span class="n">reduced_ket</span><span class="p">,</span> <span class="n">qubits</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
 where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.
 Roughly equivalent to the <code>pdep</code> assembly instruction (bits deposit).</p>
@@ -2993,7 +2993,7 @@ Roughly equivalent to the <code>pdep</code> assembly instruction (bits deposit).
         <tr>
           <td><code>qubits</code></td>
           <td>
-                <code><span title="typing.List">List</span>[<span title="opensquirrel.squirrel_ir.Qubit">Qubit</span>]</code>
+                <code><span title="typing.List">List</span>[<span title="open_squirrel.ir.Qubit">Qubit</span>]</code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -3055,7 +3055,7 @@ Roughly equivalent to the <code>pdep</code> assembly instruction (bits deposit).
 </code></pre></div>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\utils\matrix_expander.py</code></summary>
+            <summary>Source code in <code>open_squirrel\utils\matrix_expander.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-46">46</a></span>
 <span class="normal"><a href="#__codelineno-0-47">47</a></span>
 <span class="normal"><a href="#__codelineno-0-48">48</a></span>
@@ -3150,14 +3150,14 @@ Roughly equivalent to the <code>pdep</code> assembly instruction (bits deposit).
 
 
 
-<h2 id="opensquirrel.utils.matrix_expander.get_matrix" class="doc doc-heading">
+<h2 id="open_squirrel.utils.matrix_expander.get_matrix" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">number_of_qubits</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of
 qubits. This can be used for, e.g.,
 - testing,
@@ -3180,7 +3180,7 @@ qubits. This can be used for, e.g.,
         <tr>
           <td><code>gate</code></td>
           <td>
-                <code><span title="opensquirrel.squirrel_ir.Gate">Gate</span></code>
+                <code><span title="open_squirrel.ir.Gate">Gate</span></code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -3240,7 +3240,7 @@ qubits. This can be used for, e.g.,
 </code></pre></div>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\utils\matrix_expander.py</code></summary>
+            <summary>Source code in <code>open_squirrel\utils\matrix_expander.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-144">144</a></span>
 <span class="normal"><a href="#__codelineno-0-145">145</a></span>
 <span class="normal"><a href="#__codelineno-0-146">146</a></span>
@@ -3337,14 +3337,14 @@ qubits. This can be used for, e.g.,
 
 
 
-<h2 id="opensquirrel.utils.matrix_expander.get_reduced_ket" class="doc doc-heading">
+<h2 id="open_squirrel.utils.matrix_expander.get_reduced_ket" class="doc doc-heading">
           <code class="highlight language-python"><span class="n">get_reduced_ket</span><span class="p">(</span><span class="n">ket</span><span class="p">,</span> <span class="n">qubits</span><span class="p">)</span></code>
 
 </h2>
 
 
   <div class="doc doc-contents ">
-  
+
       <p>Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
 where only the given qubits appear, in order.
 Roughly equivalent to the <code>pext</code> assembly instruction (bits extraction).</p>
@@ -3380,7 +3380,7 @@ Roughly equivalent to the <code>pext</code> assembly instruction (bits extractio
         <tr>
           <td><code>qubits</code></td>
           <td>
-                <code><span title="typing.List">List</span>[<span title="opensquirrel.squirrel_ir.Qubit">Qubit</span>]</code>
+                <code><span title="typing.List">List</span>[<span title="open_squirrel.ir.Qubit">Qubit</span>]</code>
           </td>
           <td>
             <div class="doc-md-description">
@@ -3436,7 +3436,7 @@ Roughly equivalent to the <code>pext</code> assembly instruction (bits extractio
 </code></pre></div>
 
           <details class="quote">
-            <summary>Source code in <code>opensquirrel\utils\matrix_expander.py</code></summary>
+            <summary>Source code in <code>open_squirrel\utils\matrix_expander.py</code></summary>
             <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-11">11</a></span>
 <span class="normal"><a href="#__codelineno-0-12">12</a></span>
 <span class="normal"><a href="#__codelineno-0-13">13</a></span>
@@ -3527,51 +3527,51 @@ Roughly equivalent to the <code>pext</code> assembly instruction (bits extractio
 
 
 
-                
+
               </article>
             </div>
-          
-          
+
+
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
-        
+
       </main>
-      
+
         <footer class="md-footer">
-  
+
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
-  
-  
+
+
     Made with
     <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
       Material for MkDocs
     </a>
-  
+
 </div>
-      
+
     </div>
   </div>
 </footer>
-      
+
     </div>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    
-    
+
+
     <script id="__config" type="application/json">{"base": "../../../../../../../../..", "features": [], "search": "../../../../../../../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
-    
-    
+
+
       <script src="../../../../../../../../../assets/javascripts/bundle.3220b9d7.min.js"></script>
-      
+
         <script src="../../../../../../../../../javascripts/mathjax.js"></script>
-      
+
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-      
+
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-      
-    
+
+
   </body>
 </html>
