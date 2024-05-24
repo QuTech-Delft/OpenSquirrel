@@ -137,6 +137,25 @@ class Gate(Statement, ABC):
         self.generator = generator
         self.arguments = arguments
 
+    def _check_is_anonymous(self) -> bool:
+        """A check to verify if BlochSphereRotation is a pre-defined single qubit gate.
+
+        Returns:
+            Whether the BlochSphereRotation reflects a gate or not (is an anonymous gate).
+        """
+        if self.arguments is not None:
+            return False
+        from opensquirrel.default_gates import default_gate_set
+
+        for _, gate in enumerate(default_gate_set):
+            gate_args = inspect.signature(gate).parameters.values()
+            if len(list(gate_args)) == 1:
+                output_bloch = gate(self.get_qubit_operands())
+                if np.allclose(output_bloch.axis, self.axis) and np.allclose(output_bloch.phase, self.phase):
+                    Gate.__init__(self, gate, self.get_qubit_operands())
+                    return False
+        return True
+
     def __eq__(self, other):
         if not isinstance(other, Gate):
             return False
@@ -148,15 +167,7 @@ class Gate(Statement, ABC):
 
     @property
     def is_anonymous(self) -> bool:
-        from opensquirrel.default_gates import default_gate_set
-        for _, gate in enumerate(default_gate_set):
-            gate_args = inspect.signature(gate).parameters.values()
-            if len(list(gate_args)) == 1:
-                output_bloch = gate(self.get_qubit_operands())
-                if np.allclose(output_bloch.axis, self.axis) and np.allclose(output_bloch.phase, self.phase):
-                    Gate.__init__(self, gate, self.get_qubit_operands())
-                    return False
-        return self.arguments is None
+        return self._check_is_anonymous()
 
     @abstractmethod
     def get_qubit_operands(self) -> List[Qubit]:

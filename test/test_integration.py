@@ -52,7 +52,6 @@ class IntegrationTest(unittest.TestCase):
         # Write the transformed circuit as a cQasm3 string.
 
         output = str(myCircuit)
-
         self.assertEqual(
             output,
             """version 3.0
@@ -76,7 +75,7 @@ X90 qreg[0]
 Rz(1.5707963) qreg[0]
 Rz(3.1415927) qreg[1]
 X90 qreg[1]
-Rz(1.572389) qreg[1]
+Rz(1.5723889) qreg[1]
 X90 qreg[1]
 Rz(3.1415927) qreg[1]
 """,
@@ -111,23 +110,15 @@ Rz(1.5707963) qreg[0]
 X90 qreg[0]
 Rz(2.9415927) qreg[0]
 X90 qreg[0]
-Rz(3.1415927) qreg[0]
+Rz(3.1415926) qreg[0]
 CNOT qreg[1], qreg[0]
-Rz(-2.3521427) qreg[0]
-X90 qreg[0]
-Rz(3.1415927) qreg[0]
-X90 qreg[0]
-Rz(0.78945) qreg[0]
+Rz(1.5789) qreg[0]
 CNOT qreg[1], qreg[0]
 Rz(3.1415927) qreg[2]
 X90 qreg[2]
 Rz(0.80159265) qreg[2]
 X90 qreg[2]
-Rz(-1.8561945) qreg[1]
-X90 qreg[1]
-Rz(3.1415927) qreg[1]
-X90 qreg[1]
-Rz(1.2853981) qreg[1]
+Rz(2.5707963) qreg[1]
 measure qreg[0]
 measure qreg[2]
 """,
@@ -234,7 +225,6 @@ measure qreg[0]
 
         myCircuit.decompose(decomposer=McKayDecomposer)
         output = str(myCircuit)
-
         expected = """version 3.0
 
 qubit[4] q
@@ -242,26 +232,22 @@ qubit[4] q
 X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
-Rz(-0.2) q[0]
+Rz(-0.20000005) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
 CNOT q[1], q[0]
-Rz(-2.3521427) q[0]
-X90 q[0]
-Rz(3.1415927) q[0]
-X90 q[0]
-Rz(0.78945) q[0]
+Rz(1.5789) q[0]
 CNOT q[1], q[0]
 X90 q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
 CNOT q[1], q[2]
 CR(2.123) q[2], q[3]
-Rz(2.5707963) q[1]
+Rz(2.5707962) q[1]
 X90 q[1]
-Rz(1.5707964) q[1]
+Rz(1.5707963) q[1]
 X90 q[1]
 Rz(3.1415927) q[1]
 """
@@ -376,7 +362,7 @@ qubit[1] q
 H q[0]
 """
 
-        self.assertEqual(expected,output)
+        self.assertEqual(expected, output)
 
 
 if __name__ == "__main__":
