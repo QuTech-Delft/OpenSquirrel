@@ -2,12 +2,12 @@ from typing import List
 
 import pytest
 
-from open_squirrel.circuit import Circuit
-from open_squirrel.default_gates import CNOT, H, X, Y
-from open_squirrel.ir import IR, Qubit
-from open_squirrel.mapper.mapping import Mapping
-from open_squirrel.mapper.qubit_remapper import get_remapped_ir, remap_ir
-from open_squirrel.register_manager import RegisterManager
+from opensquirrel.circuit import Circuit
+from opensquirrel.default_gates import CNOT, H, X, Y
+from opensquirrel.ir import IR, Qubit
+from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.mapper.qubit_remapper import get_remapped_ir, remap_ir
+from opensquirrel.register_manager import RegisterManager
 
 
 class TestRemapper:

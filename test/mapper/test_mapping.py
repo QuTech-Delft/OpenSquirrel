@@ -1,6 +1,6 @@
 import pytest
 
-from open_squirrel.mapper.mapping import Mapping
+from opensquirrel.mapper.mapping import Mapping
 
 
 class TestMapping:

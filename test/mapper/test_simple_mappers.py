@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from open_squirrel.mapper import HardcodedMapper, IdentityMapper
-from open_squirrel.mapper.mapping import Mapping
-from open_squirrel.utils.check_passes import check_mapper
+from opensquirrel.mapper import HardcodedMapper, IdentityMapper
+from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.utils.check_passes import check_mapper
 
 
 class TestIdentityMapper:

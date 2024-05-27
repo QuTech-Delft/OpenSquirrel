@@ -6,8 +6,8 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from open_squirrel.common import ATOL
-from open_squirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, Measure, Qubit
+from opensquirrel.common import ATOL
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, Measure, Qubit
 
 
 class TestIR:
