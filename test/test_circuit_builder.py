@@ -2,9 +2,9 @@ import re
 
 import pytest
 
-from open_squirrel.circuit_builder import CircuitBuilder
-from open_squirrel.default_gates import CNOT, H, I
-from open_squirrel.ir import Comment, Measure, Qubit
+from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.default_gates import CNOT, H, I
+from opensquirrel.ir import Comment, Measure, Qubit
 
 
 class TestCircuitBuilder:
@@ -99,6 +99,6 @@ class TestCircuitBuilder:
             builder.H(0)
         assert re.search(
             "Wrong argument type for instruction `H`, got <class 'int'> but expected <class "
-            "'open_squirrel.ir.Qubit'>",
+            "'opensquirrel.ir.Qubit'>",
             str(exception_info.value),
         )

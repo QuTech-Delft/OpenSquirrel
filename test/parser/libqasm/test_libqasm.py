@@ -1,7 +1,7 @@
 import unittest
 
-from open_squirrel.default_gates import *
-from open_squirrel.parser.libqasm.parser import Parser
+from opensquirrel.default_gates import *
+from opensquirrel.parser.libqasm.parser import Parser
 
 
 class LibqasmTest(unittest.TestCase):

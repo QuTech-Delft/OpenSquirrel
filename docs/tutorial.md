@@ -9,7 +9,7 @@ OpenSquirrel is available through the Python Package Index ([PyPI](<https://pypi
 install
 opensquirrel
 
-import open_squirrel
+import opensquirrel
 ```
 
 ## Creating a circuit
@@ -21,7 +21,7 @@ OpenSquirrel's entrypoint is the `Circuit`, which represents a quantum circuit. 
 ### 1. From a cQASM 3.0 string
 
 ```python
-from open_squirrel import Circuit
+from opensquirrel import Circuit
 
 my_circuit = Circuit.from_string(
     """
@@ -48,8 +48,8 @@ my_circuit
 For creation of a circuit through Python, the `CircuitBuilder` can be used accordingly:
 
 ```python
-from open_squirrel import CircuitBuilder
-from open_squirrel.ir import Qubit, Int, Float
+from opensquirrel import CircuitBuilder
+from opensquirrel.ir import Qubit, Int, Float
 
 my_circuit_from_builder = CircuitBuilder(qubit_register_size=2).ry(Qubit(0), Float(0.23)).cnot(Qubit(0),
                                                                                                Qubit(1)).to_circuit()
@@ -148,7 +148,7 @@ except Exception as e:
     print(e)
 ```
 
-    Wrong argument type for gate `cnot`, got <class 'open_squirrel.ir.Int'> but expected <class 'open_squirrel.ir.Qubit'>
+    Wrong argument type for gate `cnot`, got <class 'opensquirrel.ir.Int'> but expected <class 'opensquirrel.ir.Qubit'>
 
 ## Modifying a circuit
 
@@ -233,8 +233,8 @@ Once you have defined your new quantum gates, you can pass them as a custom `gat
 ```python
 import numpy as np
 import cmath
-from open_squirrel import default_gates
-from open_squirrel.ir import named_gate, MatrixGate
+from opensquirrel import default_gates
+from opensquirrel.ir import named_gate, MatrixGate
 
 
 # Definition of the Sycamore gate as a MatrixGate
@@ -278,7 +278,7 @@ OpenSquirrel can decompose the gates of a quantum circuit, given a specific deco
 The first kind of decomposition is when you want to replace a particular gate in the circuit, like the CNOT gate, with a fixed list of gates. It is commonly known that CNOT can be decomposed as H-CZ-H. This decomposition is demonstrated below using a Python _lambda function_, which requires the same parameters as the gate that is decomposed:
 
 ```python
-from open_squirrel.default_gates import cnot, h, cz
+from opensquirrel.default_gates import cnot, h, cz
 
 circuit = Circuit.from_string(
     """
@@ -503,9 +503,9 @@ Once we have our angles, we can implement the OpenSquirrel decomposition; we wil
 Here is what our final ZYZ decomposition looks like:
 
 ```python
-from open_squirrel.ir import Gate, BlochSphereRotation
-from open_squirrel.decomposer.general_decomposer import Decomposer
-from open_squirrel.default_gates import rz, ry
+from opensquirrel.ir import Gate, BlochSphereRotation
+from opensquirrel.decomposer.general_decomposer import Decomposer
+from opensquirrel.default_gates import rz, ry
 
 
 class ZYZDecomposer(Decomposer):
