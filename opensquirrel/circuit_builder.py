@@ -59,7 +59,7 @@ class CircuitBuilder(GateLibrary):
         self.squirrel_ir.add_comment(Comment(comment_string))
         return self
 
-    def _add_this_gate(self, attr: Any, *args: Any) -> Self:
+    def _add_this_gate(self, attr: str, *args: Any) -> Self:
         generator_f = GateLibrary.get_gate_f(self, attr)
 
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
