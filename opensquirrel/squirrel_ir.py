@@ -231,19 +231,17 @@ class BlochSphereRotation(Gate):
     def get_default_bloch(self) -> BlochSphereRotation | None:
         """A check to verify if this BlochSphereRotation is close to a default BlochSphereRotation.
 
+        Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
+
         Returns:
              A default BlockSphereRotation if this BlochSphereRotation is close to it, or None otherwise.
         """
-        from opensquirrel.default_gates import default_bloch_sphere_rotations
+        from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
 
-        for _, gate_function in enumerate(default_bloch_sphere_rotations):
-            try:
-                gate = gate_function(*self.get_qubit_operands())
-            except TypeError:
-                pass
-            else:
-                if np.allclose(gate.axis, self.axis) and np.allclose(gate.phase, self.phase):
-                    return gate
+        for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
+            gate = gate_function(*self.get_qubit_operands())
+            if np.allclose(gate.axis, self.axis) and np.allclose(gate.phase, self.phase):
+                return gate
         return None
 
     def relabel(self, mapping: Mapping[int, int]) -> None:
