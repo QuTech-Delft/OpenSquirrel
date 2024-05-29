@@ -234,17 +234,16 @@ class BlochSphereRotation(Gate):
         Returns:
              A default BlockSphereRotation if this BlochSphereRotation is close to it, or None otherwise.
         """
-        from opensquirrel.default_gates import default_gate_set
+        from opensquirrel.default_gates import default_bloch_sphere_rotations
 
-        for _, gate_function in enumerate(default_gate_set):
+        for _, gate_function in enumerate(default_bloch_sphere_rotations):
             try:
                 gate = gate_function(*self.get_qubit_operands())
             except TypeError:
                 pass
             else:
-                if isinstance(gate, BlochSphereRotation):
-                    if np.allclose(gate.axis, self.axis) and np.allclose(gate.phase, self.phase):
-                        return gate
+                if np.allclose(gate.axis, self.axis) and np.allclose(gate.phase, self.phase):
+                    return gate
         return None
 
     def relabel(self, mapping: Mapping[int, int]) -> None:

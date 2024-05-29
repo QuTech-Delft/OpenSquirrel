@@ -147,7 +147,7 @@ def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> Gate:
     return ControlledGate(control1, CZ(control2, target))
 
 
-default_gate_set = [
+default_bloch_sphere_rotations = [
     H,
     X,
     X90,
@@ -163,6 +163,9 @@ default_gate_set = [
     Rx,
     Ry,
     Rz,
+]
+default_gate_set = [
+    *default_bloch_sphere_rotations,
     CNOT,
     CZ,
     CR,
