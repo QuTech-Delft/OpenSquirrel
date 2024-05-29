@@ -1,15 +1,9 @@
 import math
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
-from opensquirrel.squirrel_ir import (
-    BlochSphereRotation,
-    ControlledGate,
-    MatrixGate,
-    Qubit,
-    SquirrelIR,
-    SquirrelIRVisitor,
-)
+from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit
 
 try:
     import quantify_scheduler
@@ -17,20 +11,23 @@ try:
 except Exception as e:
     pass
 
-
 _unsupported_gates_exception = Exception(
     "Cannot exporter circuit: it contains unsupported gates - decomposer them to the "
     "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
 )
 
 
-class _ScheduleCreator(SquirrelIRVisitor):
+class _ScheduleCreator(IRVisitor):
     def _get_qubit_string(self, q: Qubit) -> str:
         return f"{self.qubit_register_name}[{q.index}]"
 
     def __init__(self, qubit_register_name: str):
         self.qubit_register_name = qubit_register_name
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
+
+    def visit_measure(self, g: Measure):
+        self.schedule.add(quantify_scheduler_gates.Measure(self._get_qubit_string(g.qubit)))
+        return
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
         if abs(g.axis[2]) < ATOL:
@@ -74,7 +71,7 @@ class _ScheduleCreator(SquirrelIRVisitor):
         raise _unsupported_gates_exception
 
 
-def export(squirrel_ir: SquirrelIR):
+def export(circuit: Circuit):
     if "quantify_scheduler" not in globals():
 
         class QuantifySchedulerNotInstalled:
@@ -86,6 +83,6 @@ def export(squirrel_ir: SquirrelIR):
         global quantify_scheduler_gates
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
-    schedule_creator = _ScheduleCreator(squirrel_ir.qubit_register_name)
-    squirrel_ir.accept(schedule_creator)
+    schedule_creator = _ScheduleCreator(circuit.qubit_register_name)
+    circuit.ir.accept(schedule_creator)
     return schedule_creator.schedule
