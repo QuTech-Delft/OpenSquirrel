@@ -240,7 +240,7 @@ class BlochSphereRotation(Gate):
 
         for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
             gate = gate_function(*self.get_qubit_operands())
-            if np.allclose(gate.axis, self.axis) and np.allclose(gate.phase, self.phase):
+            if np.allclose(gate.axis, self.axis) and np.allclose(gate.angle, self.angle) and np.allclose(gate.phase, self.phase):
                 return gate
         return None
 
