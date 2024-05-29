@@ -251,7 +251,6 @@ Rz(1.5707963) q[1]
 X90 q[1]
 Rz(3.1415927) q[1]
 """
-
         self.assertEqual(output, expected)
 
     def test_libqasm_error(self):
@@ -350,7 +349,6 @@ Rz(3.1415927) q[1]
 
             Y90 q[0]
             X q[0]
-
             """
         )
         myCircuit.merge_single_qubit_gates()
@@ -361,7 +359,6 @@ qubit[1] q
 
 H q[0]
 """
-
         self.assertEqual(expected, output)
 
 

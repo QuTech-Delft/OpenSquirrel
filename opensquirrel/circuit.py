@@ -39,7 +39,6 @@ class Circuit:
         rz q[0], 1.5707963
         x90 q[0]
         <BLANKLINE>
-
     """
 
     def __init__(self, squirrel_ir: SquirrelIR):
@@ -63,13 +62,11 @@ class Circuit:
         * does not support map or variables, and other things...
         * for example of `gates` dictionary, please look at TestGates.py
 
-
         Args:
             cqasm3_string: a cqasm 3 string
             gate_set: an array of gate semantic functions. See default_gates for examples
             gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
             measurement_set: an array of measurement semantic functions. See default_measurements for examples
-
         """
         libqasm_ir_creator = LibqasmIRCreator(
             gate_set=gate_set,
@@ -90,7 +87,6 @@ class Circuit:
         """Merge all consecutive 1-qubit gates in the circuit.
 
         Gates obtained from merging other gates become anonymous gates.
-
         """
         general_merger.merge_single_qubit_gates(self.squirrel_ir)
 
@@ -113,7 +109,6 @@ class Circuit:
         """Manually replace occurrences of a given gate with a list of gates.
         `f` is a callable that takes the arguments of the gate that is to be replaced
         and returns the decomposition as a list of gates.
-
         """
         general_decomposer.replace(self.squirrel_ir, gate_generator, f)
 
@@ -123,7 +118,6 @@ class Circuit:
         * this matrix has 4**n elements, where n is the number of qubits
         * therefore this function is only here for testing purposes on small number of qubits
         * result is stored as a numpy array of complex numbers
-
         """
         return circuit_matrix_calculator.get_circuit_matrix(self.squirrel_ir)
 

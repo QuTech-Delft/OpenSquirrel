@@ -87,6 +87,9 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR):
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
+            default_bloch = accumulated_bloch_sphere_rotation.get_default_bloch()
+            if default_bloch is not None:
+                accumulated_bloch_sphere_rotation = default_bloch
             squirrel_ir.statements.append(accumulated_bloch_sphere_rotation)
 
     squirrel_ir.statements = sorted(squirrel_ir.statements, key=lambda obj: isinstance(obj, Measure))
