@@ -54,6 +54,29 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     )
 
 
+def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
+    """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
+     It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
+
+    Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
+
+    Returns:
+         A default BlockSphereRotation if this BlochSphereRotation is close to it,
+         or the input BlochSphereRotation otherwise.
+    """
+    from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
+
+    for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
+        gate = gate_function(*bsr.get_qubit_operands())
+        if (
+            np.allclose(gate.axis, bsr.axis)
+            and np.allclose(gate.angle, bsr.angle)
+            and np.allclose(gate.phase, bsr.phase)
+        ):
+            return gate
+    return bsr
+
+
 def merge_single_qubit_gates(circuit: Circuit):
     """Merge all consecutive 1-qubit gates in the circuit.
 
@@ -92,5 +115,6 @@ def merge_single_qubit_gates(circuit: Circuit):
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
-            accumulated_bloch_sphere_rotation.wrap_with_default_bloch()
+            if accumulated_bloch_sphere_rotation.is_anonymous:
+                accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
             ir.statements.append(accumulated_bloch_sphere_rotation)
