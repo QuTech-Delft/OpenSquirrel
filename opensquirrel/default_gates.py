@@ -2,16 +2,12 @@ import math
 
 import numpy as np
 
-from opensquirrel.squirrel_ir import (
-    BlochSphereRotation,
-    ControlledGate,
-    Float,
-    Gate,
-    Int,
-    MatrixGate,
-    Qubit,
-    named_gate,
-)
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, Qubit, named_gate
+
+
+@named_gate
+def I(q: Qubit) -> Gate:
+    return BlochSphereRotation.identity(q)
 
 
 @named_gate
@@ -147,7 +143,8 @@ def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> Gate:
     return ControlledGate(control1, CZ(control2, target))
 
 
-default_gate_set = [
+default_bloch_sphere_rotations_without_params = [
+    I,
     H,
     X,
     X90,
@@ -160,9 +157,15 @@ default_gate_set = [
     Sdag,
     T,
     Tdag,
+]
+default_bloch_sphere_rotations = [
+    *default_bloch_sphere_rotations_without_params,
     Rx,
     Ry,
     Rz,
+]
+default_gate_set = [
+    *default_bloch_sphere_rotations,
     CNOT,
     CZ,
     CR,
@@ -172,4 +175,7 @@ default_gate_set = [
     CCZ,
 ]
 
-default_gate_aliases = {"Hadamard": H}
+default_gate_aliases = {
+    "Hadamard": H,
+    "Identity": I,
+}

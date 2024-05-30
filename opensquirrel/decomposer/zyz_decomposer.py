@@ -4,7 +4,7 @@ from typing import Tuple
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Ry, Rz
-from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 

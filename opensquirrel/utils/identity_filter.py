@@ -1,4 +1,4 @@
-from opensquirrel.squirrel_ir import Gate
+from opensquirrel.ir import Gate
 
 
 def filter_out_identities(l: [Gate]):

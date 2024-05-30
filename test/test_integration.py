@@ -13,17 +13,17 @@ from opensquirrel.exporter.export_format import ExportFormat
 
 class IntegrationTest(unittest.TestCase):
     def test_simple(self):
-        myCircuit = Circuit.from_string(
+        circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[3] qreg
+            qubit[3] q
 
-                Ry(1.23) qreg[0]
-                Ry(2.34) qreg[1]
-                CNOT qreg[0], qreg[1]
-                Rx(-2.3) qreg[0]
-                Ry(-3.14) qreg[1]
+            Ry(1.23) q[0]
+            Ry(2.34) q[1]
+            CNOT q[0], q[1]
+            Rx(-2.3) q[0]
+            Ry(-3.14) q[1]
             """
         )
 
@@ -34,7 +34,7 @@ class IntegrationTest(unittest.TestCase):
         #    -----⊕----         --- H --•-- H ---
         #
 
-        myCircuit.replace(
+        circuit.replace(
             CNOT,
             lambda control, target: [
                 H(target),
@@ -44,155 +44,232 @@ class IntegrationTest(unittest.TestCase):
         )
 
         # Do 1q-gate fusion and decomposer with McKay decomposition.
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
 
-        myCircuit.merge_single_qubit_gates()
-
-        myCircuit.decompose(decomposer=McKayDecomposer)
-
-        # Write the transformed circuit as a cQasm3 string.
-
-        output = str(myCircuit)
+        # Write the transformed circuit as a cQASM v3 string.
         self.assertEqual(
-            output,
+            str(circuit),
             """version 3.0
 
-qubit[3] qreg
+qubit[3] q
 
-Rz(3.1415927) qreg[0]
-X90 qreg[0]
-Rz(1.9115927) qreg[0]
-X90 qreg[0]
-Rz(3.1415927) qreg[1]
-X90 qreg[1]
-Rz(2.372389) qreg[1]
-X90 qreg[1]
-Rz(3.1415927) qreg[1]
-CZ qreg[0], qreg[1]
-Rz(1.5707963) qreg[0]
-X90 qreg[0]
-Rz(0.84159265) qreg[0]
-X90 qreg[0]
-Rz(1.5707963) qreg[0]
-Rz(3.1415927) qreg[1]
-X90 qreg[1]
-Rz(1.5723889) qreg[1]
-X90 qreg[1]
-Rz(3.1415927) qreg[1]
+Rz(3.1415927) q[0]
+X90 q[0]
+Rz(1.9115927) q[0]
+X90 q[0]
+Rz(3.1415927) q[1]
+X90 q[1]
+Rz(2.372389) q[1]
+X90 q[1]
+Rz(3.1415927) q[1]
+CZ q[0], q[1]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(0.84159265) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
+Rz(3.1415927) q[1]
+X90 q[1]
+Rz(1.5723889) q[1]
+X90 q[1]
+Rz(3.1415927) q[1]
 """,
         )
 
     def test_measurement(self):
-        myCircuit = Circuit.from_string(
+        circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[3] qreg
+            qubit[3] q
+            bit[3] b
 
-                Ry(2.34) qreg[2]
-                Rz(1.5707963) qreg[0]
-                Ry(-0.2) qreg[0]
-                CNOT qreg[1], qreg[0]
-                Rz(1.5789) qreg[0]
-                CNOT qreg[1], qreg[0]
-                Rz(2.5707963) qreg[1]
-                measure qreg[0,2]
+            Ry(2.34) q[2]
+            Rz(1.5707963) q[0]
+            Ry(-0.2) q[0]
+            CNOT q[1], q[0]
+            Rz(1.5789) q[0]
+            CNOT q[1], q[0]
+            Rz(2.5707963) q[1]
+            b[0, 2] = measure q[0, 2]
             """,
         )
-        myCircuit.merge_single_qubit_gates()
-        myCircuit.decompose(decomposer=McKayDecomposer)
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
         self.assertEqual(
-            str(myCircuit),
+            str(circuit),
             """version 3.0
 
-qubit[3] qreg
+qubit[3] q
 
-Rz(1.5707963) qreg[0]
-X90 qreg[0]
-Rz(2.9415927) qreg[0]
-X90 qreg[0]
-Rz(3.1415926) qreg[0]
-CNOT qreg[1], qreg[0]
-Rz(1.5789) qreg[0]
-CNOT qreg[1], qreg[0]
-Rz(3.1415927) qreg[2]
-X90 qreg[2]
-Rz(0.80159265) qreg[2]
-X90 qreg[2]
-Rz(2.5707963) qreg[1]
-measure qreg[0]
-measure qreg[2]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(2.9415927) q[0]
+X90 q[0]
+Rz(3.1415926) q[0]
+CNOT q[1], q[0]
+Rz(1.5789) q[0]
+CNOT q[1], q[0]
+measure q[0]
+Rz(3.1415927) q[2]
+X90 q[2]
+Rz(0.80159265) q[2]
+X90 q[2]
+measure q[2]
+Rz(2.5707963) q[1]
 """,
         )
 
     def test_consecutive_measurements(self):
-        myCircuit = Circuit.from_string(
+        circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[3] qreg
+            qubit[3] q
+            bit[3] b
 
-                H qreg[0]
-                H qreg[1]
-                H qreg[2]
-                measure qreg[0]
-                measure qreg[1]
-                measure qreg[2]
+            H q[0]
+            H q[1]
+            H q[2]
+            b[0] = measure q[0]
+            b[1] = measure q[1]
+            b[2] = measure q[2]
             """
         )
-        myCircuit.merge_single_qubit_gates()
-        myCircuit.decompose(decomposer=McKayDecomposer)
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
         self.assertEqual(
-            str(myCircuit),
+            str(circuit),
             """version 3.0
 
-qubit[3] qreg
+qubit[3] q
 
-X90 qreg[0]
-Rz(1.5707963) qreg[0]
-X90 qreg[0]
-X90 qreg[1]
-Rz(1.5707963) qreg[1]
-X90 qreg[1]
-X90 qreg[2]
-Rz(1.5707963) qreg[2]
-X90 qreg[2]
-measure qreg[0]
-measure qreg[1]
-measure qreg[2]
+X90 q[0]
+Rz(1.5707963) q[0]
+X90 q[0]
+measure q[0]
+X90 q[1]
+Rz(1.5707963) q[1]
+X90 q[1]
+measure q[1]
+X90 q[2]
+Rz(1.5707963) q[2]
+X90 q[2]
+measure q[2]
+""",
+        )
+
+    def test_measurements_unrolling(self):
+        circuit = Circuit.from_string(
+            """
+            version 3.0
+
+            qubit[3] q
+            bit[3] b
+
+            H q[0]
+            H q[1]
+            H q[2]
+            b = measure q
+            """
+        )
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
+
+qubit[3] q
+
+X90 q[0]
+Rz(1.5707963) q[0]
+X90 q[0]
+measure q[0]
+X90 q[1]
+Rz(1.5707963) q[1]
+X90 q[1]
+measure q[1]
+X90 q[2]
+Rz(1.5707963) q[2]
+X90 q[2]
+measure q[2]
 """,
         )
 
     def test_measure_order(self):
-        myCircuit = Circuit.from_string(
+        circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[2] qreg
+            qubit[2] q
+            bit[2] b
 
-                Rz(-2.3561945) qreg[1]
-                Rz(1.5707963) qreg[1]
-                measure qreg[1,0]
+            Rz(-2.3561945) q[1]
+            Rz(1.5707963) q[1]
+            b[1, 0] = measure q[1, 0]
             """
         )
-        myCircuit.merge_single_qubit_gates()
-        myCircuit.decompose(decomposer=McKayDecomposer)
-        output = str(myCircuit)
-        expected = """version 3.0
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
 
-qubit[2] qreg
+qubit[2] q
 
-Rz(2.7488936) qreg[1]
-X90 qreg[1]
-Rz(3.1415927) qreg[1]
-X90 qreg[1]
-Rz(-0.3926991) qreg[1]
-measure qreg[1]
-measure qreg[0]
-"""
-        self.assertEqual(output, expected)
+Rz(2.7488936) q[1]
+X90 q[1]
+Rz(3.1415927) q[1]
+X90 q[1]
+Rz(-0.3926991) q[1]
+measure q[1]
+measure q[0]
+""",
+        )
+
+    def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions(self):
+        circuit = Circuit.from_string(
+            """
+            version 3.0
+
+            qubit q0
+            bit b0
+            X q0
+            b0 = measure q0
+
+            qubit q1
+            bit b1
+            H q1
+            CNOT q1, q0
+            b1 = measure q1
+            b0 = measure q0
+            """
+        )
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
+
+qubit[2] q
+
+Rz(-1.5707963) q[0]
+X90 q[0]
+X90 q[0]
+Rz(-1.5707963) q[0]
+measure q[0]
+X90 q[1]
+Rz(1.5707963) q[1]
+X90 q[1]
+CNOT q[1], q[0]
+measure q[1]
+measure q[0]
+""",
+        )
 
     def test_qi(self):
-        myCircuit = Circuit.from_string(
+        circuit = Circuit.from_string(
             """
             version 3.0
 
@@ -202,7 +279,7 @@ measure qreg[0]
             /* This is a multi-
             line comment block */
 
-            qubit[4] q   // Qubit (register) declaration
+            qubit[4] q
 
             // Let us create a Bell state on 2 qubits and a |+> state on the third qubit
 
@@ -221,11 +298,12 @@ measure qreg[0]
             """
         )
 
-        myCircuit.merge_single_qubit_gates()
+        circuit.merge_single_qubit_gates()
+        circuit.decompose(decomposer=McKayDecomposer)
 
-        myCircuit.decompose(decomposer=McKayDecomposer)
-        output = str(myCircuit)
-        expected = """version 3.0
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
 
 qubit[4] q
 
@@ -250,42 +328,43 @@ X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(3.1415927) q[1]
-"""
-
-        self.assertEqual(output, expected)
+""",
+        )
 
     def test_libqasm_error(self):
         with self.assertRaisesRegex(
             Exception,
-            r"Parsing error: Error at <unknown file name>:4:21\.\.23: failed to resolve instruction 'Ry' with argument pack \(qubit, float, int\)",
+            r"Parsing error: Error at <unknown file name>:4:17\.\.19: failed to resolve instruction 'Ry' with argument pack \(qubit, float, int\)",
         ):
             Circuit.from_string(
                 """
-                    version 3.0
-                    qubit[3] qreg
-                    Ry qreg[0], 1.23, 1
+                version 3.0
+                qubit[3] q
+                Ry q[0], 1.23, 1
                 """,
             )
 
     def test_export_quantify_scheduler(self):
-        myCircuit = Circuit.from_string(
+        circuit = Circuit.from_string(
             """
-                version 3.0
+            version 3.0
 
-                qubit[3] qreg
+            qubit[3] q
+            bit[3] b
 
-                H qreg[1]
-                CZ qreg[0], qreg[1]
-                CNOT qreg[0], qreg[1]
-                CRk(4) qreg[0], qreg[1]
-                H qreg[0]
+            H q[1]
+            CZ q[0], q[1]
+            CNOT q[0], q[1]
+            CRk(4) q[0], q[1]
+            H q[0]
+            b[0:1] = measure q[0:1]
             """
         )
 
-        myCircuit.decompose(decomposer=CNOTDecomposer)
+        circuit.decompose(decomposer=CNOTDecomposer)
 
         # Quantify-scheduler prefers CZ.
-        myCircuit.replace(
+        circuit.replace(
             CNOT,
             lambda control, target: [
                 H(target),
@@ -295,19 +374,19 @@ Rz(3.1415927) q[1]
         )
 
         # Reduce gate count by single-qubit gate fusion.
-        myCircuit.merge_single_qubit_gates()
+        circuit.merge_single_qubit_gates()
 
         # FIXME: for best gate count we need a Z-XY decomposer.
         # See https://github.com/QuTech-Delft/OpenSquirrel/issues/98
-        myCircuit.decompose(decomposer=ZYZDecomposer)
+        circuit.decompose(decomposer=ZYZDecomposer)
 
         if importlib.util.find_spec("quantify_scheduler") is None:
             with self.assertRaisesRegex(
                 Exception, "quantify-scheduler is not installed, or cannot be installed on " "your system"
             ):
-                myCircuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
         else:
-            exported_schedule = myCircuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            exported_schedule = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
             self.assertEqual(exported_schedule.name, "Exported OpenSquirrel circuit")
 
@@ -319,50 +398,51 @@ Rz(3.1415927) q[1]
             self.assertEqual(
                 operations,
                 [
-                    "Rz(-180, 'qreg[1]')",
-                    "Rxy(90, 90, 'qreg[1]')",
-                    "CZ (qreg[0], qreg[1])",
-                    "Rz(-180, 'qreg[1]')",
-                    "Rxy(90, 90, 'qreg[1]')",
-                    "CZ (qreg[0], qreg[1])",
-                    "Rz(90, 'qreg[1]')",
-                    "Rxy(11.25, 90, 'qreg[1]')",
-                    "Rz(-90, 'qreg[1]')",
-                    "CZ (qreg[0], qreg[1])",
-                    "Rz(90, 'qreg[1]')",
-                    "Rxy(-11.25, 90, 'qreg[1]')",
-                    "Rz(-90, 'qreg[1]')",
-                    "CZ (qreg[0], qreg[1])",
-                    "Rz(11.25, 'qreg[0]')",
-                    "Rxy(-90, 90, 'qreg[0]')",
-                    "Rz(-180, 'qreg[0]')",
-                    "Rz(-180, 'qreg[1]')",
-                    "Rxy(90, 90, 'qreg[1]')",
+                    "Rz(-180, 'q[1]')",
+                    "Rxy(90, 90, 'q[1]')",
+                    "CZ (q[0], q[1])",
+                    "Rz(-180, 'q[1]')",
+                    "Rxy(90, 90, 'q[1]')",
+                    "CZ (q[0], q[1])",
+                    "Rz(90, 'q[1]')",
+                    "Rxy(11.25, 90, 'q[1]')",
+                    "Rz(-90, 'q[1]')",
+                    "CZ (q[0], q[1])",
+                    "Rz(90, 'q[1]')",
+                    "Rxy(-11.25, 90, 'q[1]')",
+                    "Rz(-90, 'q[1]')",
+                    "CZ (q[0], q[1])",
+                    "Rz(11.25, 'q[0]')",
+                    "Rxy(-90, 90, 'q[0]')",
+                    "Rz(-180, 'q[0]')",
+                    "Rz(-180, 'q[1]')",
+                    "Rxy(90, 90, 'q[1]')",
+                    "Measure q[0]",
+                    "Measure q[1]",
                 ],
             )
 
-    def test_H_identity_integration(self):
-        myCircuit = Circuit.from_string(
+    def test_merge_y90_x_to_h(self):
+        circuit = Circuit.from_string(
             """
             version 3.0
 
-            qubit[1] q   // Qubit (register) declaration
+            qubit q
 
-            Y90 q[0]
-            X q[0]
-
+            Y90 q
+            X q
             """
         )
-        myCircuit.merge_single_qubit_gates()
-        output = str(myCircuit)
-        expected = """version 3.0
+        circuit.merge_single_qubit_gates()
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
 
 qubit[1] q
 
 H q[0]
-"""
-
-        self.assertEqual(expected, output)
+""",
+        )
 
 
 if __name__ == "__main__":
