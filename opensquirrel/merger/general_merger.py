@@ -1,4 +1,4 @@
-from math import acos, cos, sin
+from math import acos, cos, floor, log, sin
 
 import numpy as np
 
@@ -25,17 +25,21 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     if abs(sin(combined_angle / 2)) < ATOL:
         return BlochSphereRotation.identity(a.qubit)
 
-    combined_axis = (
-        1
-        / sin(combined_angle / 2)
-        * (
-            sin(a.angle / 2) * cos(b.angle / 2) * a.axis
-            + cos(a.angle / 2) * sin(b.angle / 2) * b.axis
-            + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
-        )
+    order_of_magnitude = abs(floor(log(ATOL, 10)))
+    combined_axis = np.round(
+        (
+            1
+            / sin(combined_angle / 2)
+            * (
+                sin(a.angle / 2) * cos(b.angle / 2) * a.axis
+                + cos(a.angle / 2) * sin(b.angle / 2) * b.axis
+                + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
+            )
+        ),
+        order_of_magnitude,
     )
 
-    combined_phase = a.phase + b.phase
+    combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
 
     generator = b.generator if a.is_identity() else a.generator if b.is_identity() else None
     arguments = b.arguments if a.is_identity() else a.arguments if b.is_identity() else None
@@ -48,6 +52,29 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         generator=generator,
         arguments=arguments,
     )
+
+
+def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
+    """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
+     It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
+
+    Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
+
+    Returns:
+         A default BlockSphereRotation if this BlochSphereRotation is close to it,
+         or the input BlochSphereRotation otherwise.
+    """
+    from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
+
+    for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
+        gate = gate_function(*bsr.get_qubit_operands())
+        if (
+            np.allclose(gate.axis, bsr.axis)
+            and np.allclose(gate.angle, bsr.angle)
+            and np.allclose(gate.phase, bsr.phase)
+        ):
+            return gate
+    return bsr
 
 
 def merge_single_qubit_gates(circuit: Circuit):
@@ -88,4 +115,6 @@ def merge_single_qubit_gates(circuit: Circuit):
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
+            if accumulated_bloch_sphere_rotation.is_anonymous:
+                accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
             ir.statements.append(accumulated_bloch_sphere_rotation)

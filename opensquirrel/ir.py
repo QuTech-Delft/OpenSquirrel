@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC, abstractmethod
-from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import wraps
 from typing import Callable, List, Optional, Tuple
@@ -136,7 +135,7 @@ class Gate(Statement, ABC):
 
     @property
     def name(self) -> Optional[str]:
-        return self.generator.__name__ if self.generator else "<anonymous>"
+        return self.generator.__name__ if self.generator else "<anonymous-gate>"
 
     @property
     def is_anonymous(self) -> bool:

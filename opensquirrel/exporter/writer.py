@@ -25,11 +25,10 @@ class _WriterImpl(IRVisitor):
         self.output += f"{measure.name} {measure.arguments[0].accept(self)}\n"
 
     def visit_gate(self, gate: Gate):
-        if gate.is_anonymous:
-            self.output += "<anonymous-gate>\n"
-            return
-
         gate_name = gate.name
+        if gate.is_anonymous:
+            self.output += f"{gate_name}\n"
+            return
         if any(not isinstance(arg, Qubit) for arg in gate.arguments):
             params = [arg.accept(self) for arg in gate.arguments if not isinstance(arg, Qubit)]
             gate_name += f"({', '.join(params)})"

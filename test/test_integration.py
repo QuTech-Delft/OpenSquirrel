@@ -71,7 +71,7 @@ X90 q[0]
 Rz(1.5707963) q[0]
 Rz(3.1415927) q[1]
 X90 q[1]
-Rz(1.572389) q[1]
+Rz(1.5723889) q[1]
 X90 q[1]
 Rz(3.1415927) q[1]
 """,
@@ -107,13 +107,9 @@ Rz(1.5707963) q[0]
 X90 q[0]
 Rz(2.9415927) q[0]
 X90 q[0]
-Rz(3.1415927) q[0]
+Rz(3.1415926) q[0]
 CNOT q[1], q[0]
-Rz(-2.3521427) q[0]
-X90 q[0]
-Rz(3.1415927) q[0]
-X90 q[0]
-Rz(0.78945) q[0]
+Rz(1.5789) q[0]
 CNOT q[1], q[0]
 measure q[0]
 Rz(3.1415927) q[2]
@@ -121,11 +117,7 @@ X90 q[2]
 Rz(0.80159265) q[2]
 X90 q[2]
 measure q[2]
-Rz(-1.8561945) q[1]
-X90 q[1]
-Rz(3.1415927) q[1]
-X90 q[1]
-Rz(1.2853981) q[1]
+Rz(2.5707963) q[1]
 """,
         )
 
@@ -287,7 +279,7 @@ measure q[0]
             /* This is a multi-
             line comment block */
 
-            qubit[4] q   // Qubit (register) declaration
+            qubit[4] q
 
             // Let us create a Bell state on 2 qubits and a |+> state on the third qubit
 
@@ -318,26 +310,22 @@ qubit[4] q
 X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
-Rz(-0.2) q[0]
+Rz(-0.20000005) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
 CNOT q[1], q[0]
-Rz(-2.3521427) q[0]
-X90 q[0]
-Rz(3.1415927) q[0]
-X90 q[0]
-Rz(0.78945) q[0]
+Rz(1.5789) q[0]
 CNOT q[1], q[0]
 X90 q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
 CNOT q[1], q[2]
 CR(2.123) q[2], q[3]
-Rz(2.5707963) q[1]
+Rz(2.5707962) q[1]
 X90 q[1]
-Rz(1.5707964) q[1]
+Rz(1.5707963) q[1]
 X90 q[1]
 Rz(3.1415927) q[1]
 """,
@@ -433,6 +421,28 @@ Rz(3.1415927) q[1]
                     "Measure q[1]",
                 ],
             )
+
+    def test_merge_y90_x_to_h(self):
+        circuit = Circuit.from_string(
+            """
+            version 3.0
+
+            qubit q
+
+            Y90 q
+            X q
+            """
+        )
+        circuit.merge_single_qubit_gates()
+        self.assertEqual(
+            str(circuit),
+            """version 3.0
+
+qubit[1] q
+
+H q[0]
+""",
+        )
 
 
 if __name__ == "__main__":
