@@ -210,28 +210,6 @@ class BlochSphereRotation(Gate):
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
 
-    def wrap_with_default_bloch(self) -> BlochSphereRotation:
-        """This function attempts to wrap a BlochSphereRotation to a defined default BlochSphereRotation by checking if
-         it is close to a default BlochSphereRotation.
-
-        Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
-
-        Returns:
-             A default BlockSphereRotation if this BlochSphereRotation is close to it, or the initial
-             BlochSphereRotation.
-        """
-        from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
-
-        for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
-            gate = gate_function(*self.get_qubit_operands())
-            if (
-                np.allclose(gate.axis, self.axis)
-                and np.allclose(gate.angle, self.angle)
-                and np.allclose(gate.phase, self.phase)
-            ):
-                return gate
-        return self
-
 
 class MatrixGate(Gate):
     generator: Optional[Callable[..., "MatrixGate"]] = None
