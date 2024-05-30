@@ -14,7 +14,8 @@ class McKayDecomposer(Decomposer):
 
         The global phase is deemed _irrelevant_, therefore a simulator backend might produce different output.
         The results should be equivalent modulo global phase.
-        Notice that, if the gate is Rz or X90, it will not be decomposed further.
+        Notice that, if the gate is Rz or X90, it will not be decomposed further, since they are natively used
+        in the McKay decomposition.
 
         Relevant literature: https://arxiv.org/abs/1612.00858
         """
