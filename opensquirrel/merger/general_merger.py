@@ -92,7 +92,5 @@ def merge_single_qubit_gates(circuit: Circuit):
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
-            default_bloch = accumulated_bloch_sphere_rotation.get_default_bloch()
-            if default_bloch is not None:
-                accumulated_bloch_sphere_rotation = default_bloch
+            accumulated_bloch_sphere_rotation.wrap_with_default_bloch()
             ir.statements.append(accumulated_bloch_sphere_rotation)
