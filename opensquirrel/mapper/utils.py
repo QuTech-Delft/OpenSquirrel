@@ -1,12 +1,11 @@
 import networkx as nx
 
-from opensquirrel.squirrel_ir import Gate, SquirrelIR
+from opensquirrel.ir import IR, Gate
 
 
-def make_interaction_graph(squirrel_ir: SquirrelIR) -> nx.Graph:
-
+def make_interaction_graph(ir: IR) -> nx.Graph:
     interaction_graph = nx.Graph()
-    gates = (statement for statement in squirrel_ir.statements if isinstance(statement, Gate))
+    gates = (statement for statement in ir.statements if isinstance(statement, Gate))
 
     for gate in gates:
         target_qubits = gate.get_qubit_operands()

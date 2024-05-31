@@ -13,7 +13,7 @@ from numpy.typing import ArrayLike, NDArray
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle, normalize_axis
 
 
-class SquirrelIRVisitor(ABC):
+class IRVisitor(ABC):
     def visit_comment(self, comment: Comment) -> Any:
         pass
 
@@ -44,7 +44,7 @@ class SquirrelIRVisitor(ABC):
 
 class IRNode(ABC):
     @abstractmethod
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         pass
 
 
@@ -56,7 +56,7 @@ class Expression(IRNode, ABC):
 class Float(Expression):
     value: float
 
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
 
 
@@ -64,7 +64,7 @@ class Float(Expression):
 class Int(Expression):
     value: int
 
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
 
 
@@ -78,7 +78,7 @@ class Qubit(Expression):
     def __repr__(self) -> str:
         return f"Qubit[{self.index}]"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_qubit(self)
 
 
@@ -91,7 +91,7 @@ class Measure(Statement, ABC):
     def __init__(
         self,
         qubit: Qubit,
-        axis: ArrayLike,
+        axis: ArrayLike = (0, 0, 1),
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
@@ -112,19 +112,11 @@ class Measure(Statement, ABC):
             return False
         return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
-        visitor.visit_measure(self)
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_measure(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
-
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits after replacement.
-        """
-        self.qubit = Qubit(mapping[self.qubit.index])
 
 
 class Gate(Statement, ABC):
@@ -142,11 +134,11 @@ class Gate(Statement, ABC):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Gate):
             return False
-        return _compare_gate_classes(self, other)
+        return compare_gates(self, other)
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<anonymous>"
+        return self.generator.__name__ if self.generator else "<anonymous-gate>"
 
     @property
     def is_anonymous(self) -> bool:
@@ -162,19 +154,10 @@ class Gate(Statement, ABC):
 
     @abstractmethod
     def is_identity(self) -> bool:
-        """Check wether the Gate is an identity Gate.
+        """Check whether the Gate is an identity Gate.
 
         Returns:
-            Boolean value stating wether the Gate is an identity Gate.
-        """
-
-    @abstractmethod
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
+            Boolean value stating whether the Gate is an identity Gate.
         """
 
 
@@ -218,7 +201,7 @@ class BlochSphereRotation(Gate):
             return abs(self.angle + other.angle) < ATOL
         return False
 
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_bloch_sphere_rotation(self)
 
@@ -228,15 +211,6 @@ class BlochSphereRotation(Gate):
     def is_identity(self) -> bool:
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
-
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.qubit = Qubit(mapping[self.qubit.index])
 
 
 class MatrixGate(Gate):
@@ -258,7 +232,7 @@ class MatrixGate(Gate):
     def __repr__(self) -> str:
         return f"MatrixGate(qubits={self.operands}, matrix={self.matrix})"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
@@ -267,15 +241,6 @@ class MatrixGate(Gate):
 
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(2 ** len(self.operands)))
-
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.operands = [Qubit(mapping[qubit.index]) for qubit in self.operands]
 
 
 class ControlledGate(Gate):
@@ -294,7 +259,7 @@ class ControlledGate(Gate):
     def __repr__(self) -> str:
         return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
 
@@ -303,27 +268,6 @@ class ControlledGate(Gate):
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
-
-    def relabel(self, mapping: Mapping[int, int]) -> None:
-        """Relabel the qubits using the given mapping.
-
-        Args:
-            mapping: Mapping from the indices of the original qubits to the indices of the qubits
-            after replacement.
-        """
-        self.control_qubit = Qubit(mapping[self.control_qubit.index])
-        self.target_gate.relabel(mapping)
-
-
-def _compare_gate_classes(g1: Gate, g2: Gate) -> bool:
-    union_mapping = list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))
-
-    from opensquirrel.utils.matrix_expander import get_matrix_after_qubit_remapping
-
-    matrix_g1 = get_matrix_after_qubit_remapping([g1], union_mapping)
-    matrix_g2 = get_matrix_after_qubit_remapping([g2], union_mapping)
-
-    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
@@ -374,6 +318,18 @@ def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable
     return wrapper
 
 
+def compare_gates(g1: Gate, g2: Gate) -> bool:
+    union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
+
+    from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
+    from opensquirrel.reindexer import get_reindexed_circuit
+
+    matrix_g1 = get_circuit_matrix(get_reindexed_circuit([g1], union_mapping))
+    matrix_g2 = get_circuit_matrix(get_reindexed_circuit([g2], union_mapping))
+
+    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
+
+
 @dataclass
 class Comment(Statement):
     str: str
@@ -381,21 +337,14 @@ class Comment(Statement):
     def __post_init__(self) -> None:
         assert "*/" not in self.str, "Comment contains illegal characters"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)
 
 
-class SquirrelIR:
+class IR:
     # This is just a list of gates (for now?)
-    def __init__(
-        self,
-        *,
-        number_of_qubits: int,
-        qubit_register_name: str = "q",
-    ):
-        self.number_of_qubits: int = number_of_qubits
+    def __init__(self):
         self.statements: list[Statement] = []
-        self.qubit_register_name: str = qubit_register_name
 
     def add_gate(self, gate: Gate) -> None:
         self.statements.append(gate)
@@ -407,20 +356,14 @@ class SquirrelIR:
         self.statements.append(comment)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, SquirrelIR):
-            return False
-
-        if self.number_of_qubits != other.number_of_qubits:
-            return False
-
-        if self.qubit_register_name != other.qubit_register_name:
+        if not isinstance(other, IR):
             return False
 
         return self.statements == other.statements
 
     def __repr__(self) -> str:
-        return f"""IR ({self.number_of_qubits} qubits, register {self.qubit_register_name}): {self.statements}"""
+        return f"IR: {self.statements}"
 
-    def accept(self, visitor: SquirrelIRVisitor) -> None:
+    def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:
             statement.accept(visitor)

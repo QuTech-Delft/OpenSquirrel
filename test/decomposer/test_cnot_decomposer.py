@@ -3,7 +3,7 @@ from test.ir_equality_test_base import IREqualityTestBase
 
 from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.default_gates import *
-from opensquirrel.squirrel_ir import Float, Qubit
+from opensquirrel.ir import Float, Qubit
 
 
 class CNOTDecomposerTest(IREqualityTestBase):

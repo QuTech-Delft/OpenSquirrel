@@ -1,69 +1,72 @@
 import unittest
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import *
 from opensquirrel.exporter import writer
-from opensquirrel.squirrel_ir import Comment, Float, Qubit, SquirrelIR
+from opensquirrel.ir import IR, Comment, Float, Qubit
+from opensquirrel.register_manager import RegisterManager
 
 
 class WriterTest(unittest.TestCase):
     def test_write(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="myqubitsregister")
-
-        written = writer.squirrel_ir_to_string(squirrel_ir)
+        register_manager = RegisterManager(qubit_register_size=3)
+        ir = IR()
+        circuit = Circuit(register_manager, ir)
 
         self.assertEqual(
-            written,
+            writer.circuit_to_string(circuit),
             """version 3.0
 
-qubit[3] myqubitsregister
+qubit[3] q
 
 """,
         )
 
-        squirrel_ir.add_gate(H(Qubit(0)))
-        squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
-
-        written = writer.squirrel_ir_to_string(squirrel_ir)
+        ir.add_gate(H(Qubit(0)))
+        ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
+        circuit = Circuit(register_manager, ir)
 
         self.assertEqual(
-            written,
+            writer.circuit_to_string(circuit),
             """version 3.0
 
-qubit[3] myqubitsregister
+qubit[3] q
 
-H myqubitsregister[0]
-CR myqubitsregister[0], myqubitsregister[1], 1.234
+H q[0]
+CR(1.234) q[0], q[1]
 """,
         )
 
     def test_anonymous_gate(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=1, qubit_register_name="q")
-
-        squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
-        squirrel_ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
-        squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
+        register_manager = RegisterManager(qubit_register_size=2)
+        ir = IR()
+        ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
+        ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
+        ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
+        circuit = Circuit(register_manager, ir)
 
         self.assertEqual(
-            writer.squirrel_ir_to_string(squirrel_ir),
+            writer.circuit_to_string(circuit),
             """version 3.0
 
-qubit[1] q
+qubit[2] q
 
-CR q[0], q[1], 1.234
+CR(1.234) q[0], q[1]
 <anonymous-gate>
-CR q[0], q[1], 1.234
+CR(1.234) q[0], q[1]
 """,
         )
 
     def test_comment(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="q")
-
-        squirrel_ir.add_gate(H(Qubit(0)))
-        squirrel_ir.add_comment(Comment("My comment"))
-        squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
+        register_manager = RegisterManager(qubit_register_size=3)
+        ir = IR()
+        ir.add_gate(H(Qubit(0)))
+        ir.add_comment(Comment("My comment"))
+        ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
+        circuit = Circuit(register_manager, ir)
 
         self.assertEqual(
-            writer.squirrel_ir_to_string(squirrel_ir),
+            writer.circuit_to_string(circuit),
             """version 3.0
 
 qubit[3] q
@@ -72,22 +75,23 @@ H q[0]
 
 /* My comment */
 
-CR q[0], q[1], 1.234
+CR(1.234) q[0], q[1]
 """,
         )
 
     def test_cap_significant_digits(self):
-        squirrel_ir = SquirrelIR(number_of_qubits=3, qubit_register_name="q")
-
-        squirrel_ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.6546514861321684321654)))
+        register_manager = RegisterManager(qubit_register_size=3)
+        ir = IR()
+        ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.6546514861321684321654)))
+        circuit = Circuit(register_manager, ir)
 
         self.assertEqual(
-            writer.squirrel_ir_to_string(squirrel_ir),
+            writer.circuit_to_string(circuit),
             """version 3.0
 
 qubit[3] q
 
-CR q[0], q[1], 1.6546515
+CR(1.6546515) q[0], q[1]
 """,
         )
 

@@ -5,7 +5,7 @@ from math import atan2, cos, pi, sin, sqrt
 from opensquirrel.common import ATOL, normalize_angle
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import X90, Rz
-from opensquirrel.squirrel_ir import BlochSphereRotation, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, Float, Gate
 
 
 class McKayDecomposer(Decomposer):
@@ -14,8 +14,10 @@ class McKayDecomposer(Decomposer):
         """Return the McKay decomposition of a 1-qubit gate as a list of gates.
                 gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
 
-        The global phase is deemed _irrelevant_, therefore a simulator backend might produce different output
-            for the input and output - the results should be equivalent modulo global phase.
+        The global phase is deemed _irrelevant_, therefore a simulator backend might produce different output.
+        The results should be equivalent modulo global phase.
+        Notice that, if the gate is Rz or X90, it will not be decomposed further, since they are natively used
+        in the McKay decomposition.
 
         Relevant literature: https://arxiv.org/abs/1612.00858
         """
@@ -24,6 +26,9 @@ class McKayDecomposer(Decomposer):
 
         if abs(g.angle) < ATOL:
             return []
+
+        if g.name == "Rz" or g.name == "X90":
+            return [g]
 
         # McKay decomposition
 

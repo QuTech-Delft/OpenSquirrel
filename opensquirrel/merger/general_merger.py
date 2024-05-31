@@ -1,9 +1,10 @@
-from math import acos, cos, sin
+from math import acos, cos, floor, log, sin
 
 import numpy as np
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.squirrel_ir import BlochSphereRotation, Gate, Measure, Qubit, SquirrelIR
+from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -24,17 +25,21 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     if abs(sin(combined_angle / 2)) < ATOL:
         return BlochSphereRotation.identity(a.qubit)
 
-    combined_axis = (
-        1
-        / sin(combined_angle / 2)
-        * (
-            sin(a.angle / 2) * cos(b.angle / 2) * a.axis
-            + cos(a.angle / 2) * sin(b.angle / 2) * b.axis
-            + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
-        )
+    order_of_magnitude = abs(floor(log(ATOL, 10)))
+    combined_axis = np.round(
+        (
+            1
+            / sin(combined_angle / 2)
+            * (
+                sin(a.angle / 2) * cos(b.angle / 2) * a.axis
+                + cos(a.angle / 2) * sin(b.angle / 2) * b.axis
+                + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
+            )
+        ),
+        order_of_magnitude,
     )
 
-    combined_phase = a.phase + b.phase
+    combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
 
     generator = b.generator if a.is_identity() else a.generator if b.is_identity() else None
     arguments = b.arguments if a.is_identity() else a.arguments if b.is_identity() else None
@@ -49,14 +54,42 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     )
 
 
-def merge_single_qubit_gates(squirrel_ir: SquirrelIR) -> None:
+def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
+    """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
+     It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
+
+    Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
+
+    Returns:
+         A default BlockSphereRotation if this BlochSphereRotation is close to it,
+         or the input BlochSphereRotation otherwise.
+    """
+    from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
+
+    for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
+        gate = gate_function(*bsr.get_qubit_operands())
+        if (
+            np.allclose(gate.axis, bsr.axis)
+            and np.allclose(gate.angle, bsr.angle)
+            and np.allclose(gate.phase, bsr.phase)
+        ):
+            return gate
+    return bsr
+
+
+def merge_single_qubit_gates(circuit: Circuit) -> None:
+    """Merge all consecutive 1-qubit gates in the circuit.
+
+    Gates obtained from merging other gates become anonymous gates.
+    """
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
-        Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(squirrel_ir.number_of_qubits)
+        Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(circuit.qubit_register_size)
     }
 
+    ir = circuit.ir
     statement_index = 0
-    while statement_index < len(squirrel_ir.statements):
-        statement = squirrel_ir.statements[statement_index]
+    while statement_index < len(ir.statements):
+        statement = ir.statements[statement_index]
 
         if not isinstance(statement, Gate) and not isinstance(statement, Measure):
             # Skip, since statement is not a gate or measurement
@@ -70,18 +103,18 @@ def merge_single_qubit_gates(squirrel_ir: SquirrelIR) -> None:
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
             accumulators_per_qubit[statement.qubit] = composed
 
-            del squirrel_ir.statements[statement_index]
+            del ir.statements[statement_index]
             continue
 
         for qubit_operand in statement.get_qubit_operands():
             if not accumulators_per_qubit[qubit_operand].is_identity():
-                squirrel_ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
+                ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
                 accumulators_per_qubit[qubit_operand] = BlochSphereRotation.identity(qubit_operand)
                 statement_index += 1
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
-            squirrel_ir.statements.append(accumulated_bloch_sphere_rotation)
-
-    squirrel_ir.statements = sorted(squirrel_ir.statements, key=lambda obj: isinstance(obj, Measure))
+            if accumulated_bloch_sphere_rotation.is_anonymous:
+                accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
+            ir.statements.append(accumulated_bloch_sphere_rotation)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from opensquirrel.squirrel_ir import Gate
+from opensquirrel.ir import Gate
 
 
 def filter_out_identities(l: list[Gate]) -> list[Gate]:
