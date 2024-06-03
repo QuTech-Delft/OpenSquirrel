@@ -1,4 +1,4 @@
-We recommend to work on a feature branch and pull request from there.
+We recommend working on a feature branch and pull request from there.
 
 ## Create a feature branch
 
