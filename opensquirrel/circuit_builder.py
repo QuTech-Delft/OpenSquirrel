@@ -9,7 +9,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
-from opensquirrel.ir import IR, Comment, Gate, Qubit
+from opensquirrel.ir import IR, Comment, Gate, Measure
 from opensquirrel.register_manager import RegisterManager
 
 if TYPE_CHECKING:
@@ -72,7 +72,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             self.ir.add_measurement(generator_f(*args))
         else:
             generator_f = GateLibrary.get_gate_f(self, attr)
-            self._check_generator_f_args(generator_f, args)
+            self._check_generator_f_args(generator_f, attr, args)
             self.ir.add_gate(generator_f(*args))
         return self
 

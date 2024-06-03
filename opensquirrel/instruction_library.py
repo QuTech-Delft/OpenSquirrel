@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from collections.abc import Callable, Iterable, Mapping
 
-from opensquirrel.squirrel_ir import Gate, Measure
+from opensquirrel.ir import Gate, Measure
 
 
 class InstructionLibrary(ABC):

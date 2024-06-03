@@ -7,7 +7,6 @@ from numpy.typing import NDArray
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import can1
-from opensquirrel.decomposer.general_decomposer import _QubitReIndexer
 from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
 
 
