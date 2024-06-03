@@ -343,7 +343,7 @@ class Comment(Statement):
 
 class IR:
     # This is just a list of gates (for now?)
-    def __init__(self):
+    def __init__(self) -> None:
         self.statements: list[Statement] = []
 
     def add_gate(self, gate: Gate) -> None:
