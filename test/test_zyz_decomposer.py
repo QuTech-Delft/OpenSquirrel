@@ -1,16 +1,16 @@
 import unittest
 from test.ir_equality_test_base import IREqualityTestBase
 
+from opensquirrel.decomposer.zyz_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import *
-from opensquirrel.squirrel_ir import Float, Qubit, SquirrelIR
-from opensquirrel.zyz_decomposer import ZYZDecomposer
+from opensquirrel.ir import Float, Qubit
 
 
 class ZYZDecomposerTest(IREqualityTestBase):
     def test_ignores_2q_gates(self):
-        self.assertEqual(ZYZDecomposer.decompose(cnot(Qubit(0), Qubit(1))), [cnot(Qubit(0), Qubit(1))])
+        self.assertEqual(ZYZDecomposer.decompose(CNOT(Qubit(0), Qubit(1))), [CNOT(Qubit(0), Qubit(1))])
         self.assertEqual(
-            ZYZDecomposer.decompose(cr(Qubit(2), Qubit(3), Float(2.123))), [cr(Qubit(2), Qubit(3), Float(2.123))]
+            ZYZDecomposer.decompose(CR(Qubit(2), Qubit(3), Float(2.123))), [CR(Qubit(2), Qubit(3), Float(2.123))]
         )
 
     def test_identity_empty_decomposition(self):
@@ -18,62 +18,62 @@ class ZYZDecomposerTest(IREqualityTestBase):
 
     def test_x(self):
         self.assertEqual(
-            ZYZDecomposer.decompose(x(Qubit(0))),
+            ZYZDecomposer.decompose(X(Qubit(0))),
             [
-                z90(Qubit(0)),
-                ry(Qubit(0), Float(math.pi)),
-                zm90(Qubit(0)),
+                S(Qubit(0)),
+                Ry(Qubit(0), Float(math.pi)),
+                Sdag(Qubit(0)),
             ],
         )
 
     def test_x_arbitrary(self):
         self.assertEqual(
-            ZYZDecomposer.decompose(rx(Qubit(0), Float(0.9))),
+            ZYZDecomposer.decompose(Rx(Qubit(0), Float(0.9))),
             [
-                z90(Qubit(0)),
-                ry(Qubit(0), Float(0.9)),
-                zm90(Qubit(0)),
+                S(Qubit(0)),
+                Ry(Qubit(0), Float(0.9)),
+                Sdag(Qubit(0)),
             ],
         )
 
     def test_y(self):
         self.assertEqual(
-            ZYZDecomposer.decompose(y(Qubit(0))),
+            ZYZDecomposer.decompose(Y(Qubit(0))),
             [
-                ry(Qubit(0), Float(math.pi)),
+                Ry(Qubit(0), Float(math.pi)),
             ],
         )
 
     def test_y_arbitrary(self):
         self.assertEqual(
-            ZYZDecomposer.decompose(ry(Qubit(0), Float(0.9))),
+            ZYZDecomposer.decompose(Ry(Qubit(0), Float(0.9))),
             [
-                ry(Qubit(0), Float(0.9)),
+                Ry(Qubit(0), Float(0.9)),
             ],
         )
 
     def test_z(self):
         self.assertEqual(
-            ZYZDecomposer.decompose(z(Qubit(0))),
+            ZYZDecomposer.decompose(Z(Qubit(0))),
             [
-                rz(Qubit(0), Float(math.pi)),
+                Rz(Qubit(0), Float(math.pi)),
             ],
         )
 
     def test_z_arbitrary(self):
         self.assertEqual(
-            ZYZDecomposer.decompose(rz(Qubit(0), Float(0.123))),
+            ZYZDecomposer.decompose(Rz(Qubit(0), Float(0.123))),
             [
-                rz(Qubit(0), Float(0.123)),
+                Rz(Qubit(0), Float(0.123)),
             ],
         )
 
     def test_hadamard(self):
         self.assertEqual(
-            ZYZDecomposer.decompose(h(Qubit(0))),
+            ZYZDecomposer.decompose(H(Qubit(0))),
             [
-                rz(Qubit(0), Float(math.pi)),
-                ry(Qubit(0), Float(math.pi / 2)),
+                Rz(Qubit(0), Float(math.pi)),
+                Ry(Qubit(0), Float(math.pi / 2)),
             ],
         )
 
@@ -81,9 +81,9 @@ class ZYZDecomposerTest(IREqualityTestBase):
         self.assertEqual(
             ZYZDecomposer.decompose(BlochSphereRotation(qubit=Qubit(0), angle=5.21, axis=(1, 2, 3), phase=0.324)),
             [
-                rz(Qubit(0), Float(0.018644578210710527)),
-                ry(Qubit(0), Float(-0.6209410696845807)),
-                rz(Qubit(0), Float(-0.9086506397909061)),
+                Rz(Qubit(0), Float(0.018644578210710527)),
+                Ry(Qubit(0), Float(-0.6209410696845807)),
+                Rz(Qubit(0), Float(-0.9086506397909061)),
             ],
         )
 

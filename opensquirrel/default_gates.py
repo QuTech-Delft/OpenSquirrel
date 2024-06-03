@@ -1,93 +1,115 @@
 import math
 
-from opensquirrel.squirrel_ir import *
+import numpy as np
+
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, Qubit, named_gate
 
 
 @named_gate
-def h(q: Qubit) -> Gate:
+def I(q: Qubit) -> Gate:
+    return BlochSphereRotation.identity(q)
+
+
+@named_gate
+def H(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def x(q: Qubit) -> Gate:
+def X(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def x90(q: Qubit) -> Gate:
+def X90(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def xm90(q: Qubit) -> Gate:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=-math.pi / 2, phase=0)
+def mX90(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0)
 
 
 @named_gate
-def y(q: Qubit) -> Gate:
+def Y(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def y90(q: Qubit) -> Gate:
+def Y90(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def z(q: Qubit) -> Gate:
+def mY90(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=-math.pi / 2, phase=0)
+
+
+@named_gate
+def Z(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def z90(q: Qubit) -> Gate:
+def S(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def zm90(q: Qubit) -> Gate:
+def Sdag(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 2, phase=0)
 
 
 @named_gate
-def rx(q: Qubit, theta: Float) -> Gate:
+def T(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 4, phase=0)
+
+
+@named_gate
+def Tdag(q: Qubit) -> Gate:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 4, phase=0)
+
+
+@named_gate
+def Rx(q: Qubit, theta: Float) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=theta.value, phase=0)
 
 
 @named_gate
-def ry(q: Qubit, theta: Float) -> Gate:
+def Ry(q: Qubit, theta: Float) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=theta.value, phase=0)
 
 
 @named_gate
-def rz(q: Qubit, theta: Float) -> Gate:
+def Rz(q: Qubit, theta: Float) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=theta.value, phase=0)
 
 
 @named_gate
-def cnot(control: Qubit, target: Qubit) -> Gate:
-    return ControlledGate(control, x(target))
+def CNOT(control: Qubit, target: Qubit) -> Gate:
+    return ControlledGate(control, X(target))
 
 
 @named_gate
-def cz(control: Qubit, target: Qubit) -> Gate:
-    return ControlledGate(control, z(target))
+def CZ(control: Qubit, target: Qubit) -> Gate:
+    return ControlledGate(control, Z(target))
 
 
 @named_gate
-def cr(control: Qubit, target: Qubit, theta: Float) -> Gate:
+def CR(control: Qubit, target: Qubit, theta: Float) -> Gate:
     return ControlledGate(
         control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2)
     )
 
 
 @named_gate
-def crk(control: Qubit, target: Qubit, k: Int) -> Gate:
+def CRk(control: Qubit, target: Qubit, k: Int) -> Gate:
     theta = 2 * math.pi / (2**k.value)
     return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
 
 
 @named_gate
-def swap(q1: Qubit, q2: Qubit) -> Gate:
+def SWAP(q1: Qubit, q2: Qubit) -> Gate:
     return MatrixGate(
         np.array(
             [
@@ -102,7 +124,7 @@ def swap(q1: Qubit, q2: Qubit) -> Gate:
 
 
 @named_gate
-def sqrt_swap(q1: Qubit, q2: Qubit) -> Gate:
+def sqrtSWAP(q1: Qubit, q2: Qubit) -> Gate:
     return MatrixGate(
         np.array(
             [
@@ -117,9 +139,43 @@ def sqrt_swap(q1: Qubit, q2: Qubit) -> Gate:
 
 
 @named_gate
-def ccz(control1: Qubit, control2: Qubit, target: Qubit) -> Gate:
-    return ControlledGate(control1, cz(control2, target))
+def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> Gate:
+    return ControlledGate(control1, CZ(control2, target))
 
 
-default_gate_set = [h, x, x90, xm90, y, y90, z, z90, zm90, cz, cr, crk, cnot, rx, ry, rz, x, swap, sqrt_swap, ccz]
-default_gate_aliases = {"X": x, "RX": rx, "RY": ry, "RZ": rz, "Hadamard": h, "H": h}
+default_bloch_sphere_rotations_without_params = [
+    I,
+    H,
+    X,
+    X90,
+    mX90,
+    Y,
+    Y90,
+    mY90,
+    Z,
+    S,
+    Sdag,
+    T,
+    Tdag,
+]
+default_bloch_sphere_rotations = [
+    *default_bloch_sphere_rotations_without_params,
+    Rx,
+    Ry,
+    Rz,
+]
+default_gate_set = [
+    *default_bloch_sphere_rotations,
+    CNOT,
+    CZ,
+    CR,
+    CRk,
+    SWAP,
+    sqrtSWAP,
+    CCZ,
+]
+
+default_gate_aliases = {
+    "Hadamard": H,
+    "Identity": I,
+}

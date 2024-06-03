@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from opensquirrel.squirrel_ir import BlochSphereRotation, ControlledGate, MatrixGate, Qubit
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, Qubit
 from opensquirrel.utils import matrix_expander
 
 
