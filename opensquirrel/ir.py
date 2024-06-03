@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import wraps
 from typing import Any, overload
@@ -291,7 +291,11 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         all_args = []
         arg_index = 0
         for par in inspect.signature(gate_generator).parameters.values():
-            if not issubclass(par.annotation, Expression):
+            if isinstance(par.annotation, str):
+                subclass_names = [subclass.__name__ for subclass in Expression.__subclasses__()]
+                if par.annotation not in subclass_names:
+                    raise TypeError("Gate argument types must be expressions")
+            elif not issubclass(par.annotation, Expression):
                 raise TypeError("Gate argument types must be expressions")
 
             if par.name in kwargs:

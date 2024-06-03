@@ -79,7 +79,12 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
     @staticmethod
     def _check_generator_f_args(generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]) -> None:
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
-            if not isinstance(args[i], par.annotation):
+            if isinstance(par.annotation, str):
+                if args[i].__class__.__name__ != par.annotation:
+                    raise TypeError(
+                        f"Wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                    )
+            elif not isinstance(args[i], par.annotation):
                 raise TypeError(
                     f"Wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
                 )

@@ -1,9 +1,15 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.ir import IR, Comment, Gate, IRVisitor
+from opensquirrel.ir import Comment, Gate, IRVisitor
 from opensquirrel.utils.matrix_expander import get_matrix
+
+if TYPE_CHECKING:
+    from opensquirrel.circuit import Circuit
 
 
 class _CircuitMatrixCalculator(IRVisitor):

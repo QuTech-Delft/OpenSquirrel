@@ -1,11 +1,12 @@
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Comment, Float, Gate, Int, IRVisitor, Measure, Qubit
+from opensquirrel.register_manager import RegisterManager
 
 
 class _WriterImpl(IRVisitor):
     number_of_significant_digits = 8
 
-    def __init__(self, register_manager) -> None:
+    def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
         qubit_register_size = self.register_manager.qubit_register_size
         qubit_register_name = self.register_manager.qubit_register_name

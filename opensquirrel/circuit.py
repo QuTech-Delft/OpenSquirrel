@@ -3,16 +3,13 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any, Literal
 
-import numpy as np
-from numpy.typing import NDArray
-
 from opensquirrel.decomposer import general_decomposer
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import IR, Gate, Measure
-from opensquirrel.mapper import IdentityMapper, Mapper
+from opensquirrel.mapper import Mapper
 from opensquirrel.register_manager import RegisterManager
 
 if TYPE_CHECKING:

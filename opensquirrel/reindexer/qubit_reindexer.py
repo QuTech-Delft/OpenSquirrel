@@ -1,21 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (
-    IR,
-    BlochSphereRotation,
-    Comment,
-    ControlledGate,
-    Gate,
-    IRVisitor,
-    MatrixGate,
-    Measure,
-    Qubit,
-)
-from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Measure, Qubit
 from opensquirrel.register_manager import RegisterManager
+
+if TYPE_CHECKING:
+    from opensquirrel.circuit import Circuit
 
 
 class _QubitReindexer(IRVisitor):
@@ -54,6 +46,8 @@ class _QubitReindexer(IRVisitor):
 
 
 def get_reindexed_circuit(replacement_gates: Iterable[Gate], qubit_indices: list[int]) -> Circuit:
+    from opensquirrel.circuit import Circuit
+
     qubit_reindexer = _QubitReindexer(qubit_indices)
     register_manager = RegisterManager(qubit_register_size=len(qubit_indices))
     replacement_ir = IR()
