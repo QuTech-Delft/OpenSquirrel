@@ -10,7 +10,7 @@ class Mapper:
 
     def __init__(self, qubit_register_size: int, mapping: Mapping | None = None) -> None:
         """Use ``IdentityMapper`` as the fallback case for ``Mapper``"""
-        physical_qubit_register = range(qubit_register_size)
+        physical_qubit_register = list(range(qubit_register_size))
         self.mapping = mapping if mapping is not None else Mapping(physical_qubit_register)
 
         if qubit_register_size != self.mapping.size():
