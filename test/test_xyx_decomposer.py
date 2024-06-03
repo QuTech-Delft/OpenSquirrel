@@ -20,11 +20,7 @@ class ZYZDecomposerTest(IREqualityTestBase):
     def test_s_gate(self):
         self.assertEqual(
             XYXDecomposer.decompose(S(Qubit(0))),
-            [
-                Rx(Qubit(0), Float(math.pi / 2)),
-                Ry(Qubit(0), Float(math.pi / 2)),
-                Rx(Qubit(0), Float(- math.pi / 2))
-            ],
+            [Rx(Qubit(0), Float(math.pi / 2)), Ry(Qubit(0), Float(math.pi / 2)), Rx(Qubit(0), Float(-math.pi / 2))],
         )
 
     def test_arbitrary(self):
@@ -60,6 +56,7 @@ class ZYZDecomposerTest(IREqualityTestBase):
                 Ry(Qubit(0), Float(math.pi)),
             ],
         )
+
 
 if __name__ == "__main__":
     unittest.main()
