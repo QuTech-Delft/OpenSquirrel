@@ -4,12 +4,16 @@ We recommend to work on a feature branch and pull request from there.
 
 Make sure your environment contains all the updated versions of the dependencies.
 
+From an OpenSquirrel checkout:
+
 ```
 $ poetry shell
 $ poetry install
 ```
 
 And that you base your feature branch off an updated `develop`.
+
+From a `poetry` shell (started from an OpenSquirrel checkout):
 
 ```
 $ git checkout develop
@@ -22,6 +26,8 @@ $ git branch <feature branch name>
 ## Before creating the pull request
 
 Make sure the tests and the following linters pass.
+
+From a `poetry` shell (started from an OpenSquirrel checkout):
 
 ```
 $ pytest -vv
