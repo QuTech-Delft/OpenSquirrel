@@ -4,6 +4,7 @@ import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
+from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
 from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit
 
 
@@ -64,9 +65,7 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
          A default BlockSphereRotation if this BlochSphereRotation is close to it,
          or the input BlochSphereRotation otherwise.
     """
-    from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
-
-    for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
+    for gate_function in default_bloch_sphere_rotations_without_params:
         gate = gate_function(*bsr.get_qubit_operands())
         if (
             np.allclose(gate.axis, bsr.axis)
