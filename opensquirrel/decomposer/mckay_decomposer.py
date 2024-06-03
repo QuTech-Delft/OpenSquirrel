@@ -47,7 +47,7 @@ class McKayDecomposer(Decomposer):
         phi = normalize_angle(phi)
         theta = normalize_angle(theta)
 
-        decomposed_g = []
+        decomposed_g: list[Gate] = []
 
         if abs(lam) > ATOL:
             decomposed_g.append(Rz(g.qubit, Float(lam)))
