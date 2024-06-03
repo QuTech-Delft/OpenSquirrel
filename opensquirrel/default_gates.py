@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import math
+from collections.abc import Callable
 
 import numpy as np
 
@@ -6,7 +9,7 @@ from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, In
 
 
 @named_gate
-def I(q: Qubit) -> Gate:
+def I(q: Qubit) -> BlochSphereRotation:
     return BlochSphereRotation.identity(q)
 
 
@@ -143,6 +146,7 @@ def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> ControlledGate:
     return ControlledGate(control1, CZ(control2, target))
 
 
+default_bloch_sphere_rotations_without_params: list[Callable[[Qubit], BlochSphereRotation]]
 default_bloch_sphere_rotations_without_params = [
     I,
     H,
@@ -158,12 +162,16 @@ default_bloch_sphere_rotations_without_params = [
     T,
     Tdag,
 ]
+default_bloch_sphere_rotations: list[
+    Callable[[Qubit], BlochSphereRotation] | Callable[[Qubit, Float], BlochSphereRotation]
+]
 default_bloch_sphere_rotations = [
     *default_bloch_sphere_rotations_without_params,
     Rx,
     Ry,
     Rz,
 ]
+default_gate_set: list[Callable[..., Gate]]
 default_gate_set = [
     *default_bloch_sphere_rotations,
     CNOT,

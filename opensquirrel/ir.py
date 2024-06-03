@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any
+from typing import Any, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -268,6 +268,18 @@ class ControlledGate(Gate):
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
+
+
+@overload
+def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
+
+
+@overload
+def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
+
+
+@overload
+def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
