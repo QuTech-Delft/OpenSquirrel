@@ -62,7 +62,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         return partial(self._add_instruction, attr)
 
     def _add_comment(self, comment_string: str) -> Self:
-        self.squirrel_ir.add_comment(Comment(comment_string))
+        self.ir.add_comment(Comment(comment_string))
         return self
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
