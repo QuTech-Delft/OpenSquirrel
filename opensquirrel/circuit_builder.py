@@ -67,17 +67,17 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
         if any(attr == measure.__name__ for measure in self.measurement_set):
-            generator_f = MeasurementLibrary.get_measurement_f(self, attr)
-            self._check_generator_f_args(generator_f, attr, args)
-            self.ir.add_measurement(generator_f(*args))
+            generator_f_measure = MeasurementLibrary.get_measurement_f(self, attr)
+            self._check_generator_f_args(generator_f_measure, attr, args)
+            self.ir.add_measurement(generator_f_measure(*args))
         else:
-            generator_f = GateLibrary.get_gate_f(self, attr)
-            self._check_generator_f_args(generator_f, attr, args)
-            self.ir.add_gate(generator_f(*args))
+            generator_f_gate = GateLibrary.get_gate_f(self, attr)
+            self._check_generator_f_args(generator_f_gate, attr, args)
+            self.ir.add_gate(generator_f_gate(*args))
         return self
 
     @staticmethod
-    def _check_generator_f_args(generator_f, attr, args) -> None:
+    def _check_generator_f_args(generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]) -> None:
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             if not isinstance(args[i], par.annotation):
                 raise TypeError(
