@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import cast
 
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.circuit import Circuit
 from opensquirrel.common import can1
-from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
@@ -186,4 +186,4 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex_]:
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
     expander = MatrixExpander(qubit_register_size)
-    return gate.accept(expander)
+    return cast(NDArray[np.complex_], gate.accept(expander))
