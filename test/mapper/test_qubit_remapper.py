@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from opensquirrel.circuit import Circuit
