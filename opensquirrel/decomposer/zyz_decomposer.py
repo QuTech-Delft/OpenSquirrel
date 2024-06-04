@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import math
-from typing import Tuple
+from collections.abc import Iterable
 
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
@@ -8,7 +10,7 @@ from opensquirrel.ir import BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 
-def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float]) -> Tuple[float, float, float]:
+def get_zyz_decomposition_angles(alpha: float, axis: Iterable[float]) -> tuple[float, float, float]:
     """
     Gives the angles used in the Z-Y-Z decomposition of the Bloch sphere rotation
     characterized by a rotation around `axis` of angle `alpha`.
@@ -31,6 +33,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float])
     if abs(alpha - math.pi) < ATOL:
         # alpha == pi, math.tan(alpha / 2) is not defined.
 
+        p: float
         if abs(nz) < ATOL:
             theta2 = math.pi
             p = 0
@@ -74,8 +77,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Tuple[float, float, float])
 
 
 class ZYZDecomposer(Decomposer):
-    @staticmethod
-    def decompose(g: Gate) -> [Gate]:
+    def decompose(self, g: Gate) -> list[Gate]:
         if not isinstance(g, BlochSphereRotation):
             # Only decomposer single-qubit gates.
             return [g]

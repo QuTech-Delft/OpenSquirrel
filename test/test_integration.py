@@ -45,7 +45,7 @@ class IntegrationTest(unittest.TestCase):
 
         # Do 1q-gate fusion and decomposer with McKay decomposition.
         circuit.merge_single_qubit_gates()
-        circuit.decompose(decomposer=McKayDecomposer)
+        circuit.decompose(decomposer=McKayDecomposer())
 
         # Write the transformed circuit as a cQASM v3 string.
         self.assertEqual(
@@ -96,7 +96,7 @@ Rz(3.1415927) q[1]
             """,
         )
         circuit.merge_single_qubit_gates()
-        circuit.decompose(decomposer=McKayDecomposer)
+        circuit.decompose(decomposer=McKayDecomposer())
         self.assertEqual(
             str(circuit),
             """version 3.0
@@ -138,7 +138,7 @@ Rz(2.5707963) q[1]
             """
         )
         circuit.merge_single_qubit_gates()
-        circuit.decompose(decomposer=McKayDecomposer)
+        circuit.decompose(decomposer=McKayDecomposer())
         self.assertEqual(
             str(circuit),
             """version 3.0
@@ -175,7 +175,7 @@ measure q[2]
             """
         )
         circuit.merge_single_qubit_gates()
-        circuit.decompose(decomposer=McKayDecomposer)
+        circuit.decompose(decomposer=McKayDecomposer())
         self.assertEqual(
             str(circuit),
             """version 3.0
@@ -211,7 +211,7 @@ measure q[2]
             """
         )
         circuit.merge_single_qubit_gates()
-        circuit.decompose(decomposer=McKayDecomposer)
+        circuit.decompose(decomposer=McKayDecomposer())
         self.assertEqual(
             str(circuit),
             """version 3.0
@@ -247,7 +247,7 @@ measure q[0]
             """
         )
         circuit.merge_single_qubit_gates()
-        circuit.decompose(decomposer=McKayDecomposer)
+        circuit.decompose(decomposer=McKayDecomposer())
         self.assertEqual(
             str(circuit),
             """version 3.0
@@ -299,7 +299,7 @@ measure q[0]
         )
 
         circuit.merge_single_qubit_gates()
-        circuit.decompose(decomposer=McKayDecomposer)
+        circuit.decompose(decomposer=McKayDecomposer())
 
         self.assertEqual(
             str(circuit),
@@ -361,7 +361,7 @@ Rz(3.1415927) q[1]
             """
         )
 
-        circuit.decompose(decomposer=CNOTDecomposer)
+        circuit.decompose(decomposer=CNOTDecomposer())
 
         # Quantify-scheduler prefers CZ.
         circuit.replace(
@@ -378,7 +378,7 @@ Rz(3.1415927) q[1]
 
         # FIXME: for best gate count we need a Z-XY decomposer.
         # See https://github.com/QuTech-Delft/OpenSquirrel/issues/98
-        circuit.decompose(decomposer=ZYZDecomposer)
+        circuit.decompose(decomposer=ZYZDecomposer())
 
         if importlib.util.find_spec("quantify_scheduler") is None:
             with self.assertRaisesRegex(

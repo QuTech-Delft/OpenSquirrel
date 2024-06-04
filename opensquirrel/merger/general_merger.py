@@ -4,6 +4,7 @@ import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
+from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
 from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit
 
 
@@ -49,7 +50,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         axis=combined_axis,
         angle=combined_angle,
         phase=combined_phase,
-        generator=generator,
+        generator=generator,  # type: ignore[arg-type]
         arguments=arguments,
     )
 
@@ -64,9 +65,7 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
          A default BlockSphereRotation if this BlochSphereRotation is close to it,
          or the input BlochSphereRotation otherwise.
     """
-    from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
-
-    for _, gate_function in enumerate(default_bloch_sphere_rotations_without_params):
+    for gate_function in default_bloch_sphere_rotations_without_params:
         gate = gate_function(*bsr.get_qubit_operands())
         if (
             np.allclose(gate.axis, bsr.axis)
@@ -77,7 +76,7 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     return bsr
 
 
-def merge_single_qubit_gates(circuit: Circuit):
+def merge_single_qubit_gates(circuit: Circuit) -> None:
     """Merge all consecutive 1-qubit gates in the circuit.
 
     Gates obtained from merging other gates become anonymous gates.
@@ -98,7 +97,7 @@ def merge_single_qubit_gates(circuit: Circuit):
 
         if isinstance(statement, BlochSphereRotation):
             # Accumulate
-            already_accumulated = accumulators_per_qubit.get(statement.qubit)
+            already_accumulated = accumulators_per_qubit[statement.qubit]
 
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
             accumulators_per_qubit[statement.qubit] = composed

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import unittest
 
 from opensquirrel.circuit import Circuit
@@ -110,7 +112,7 @@ class ReplacerTest(unittest.TestCase):
 
         # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
-            def decompose(self, g: Gate) -> [Gate]:
+            def decompose(self, g: Gate) -> list[Gate]:
                 if isinstance(g, BlochSphereRotation):
                     return [BlochSphereRotation.identity(g.qubit), g, BlochSphereRotation.identity(g.qubit)]
                 return [g]

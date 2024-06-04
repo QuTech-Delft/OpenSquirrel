@@ -31,29 +31,29 @@ class _QubitRemapper(IRVisitor):
          - Qubit(index=3) becomes Qubit(index=2).
     """
 
-    def __init__(self, mapping: Mapping):
+    def __init__(self, mapping: Mapping) -> None:
         self.mapping = mapping
 
-    def visit_comment(self, comment: Comment):
+    def visit_comment(self, comment: Comment) -> Comment:
         return comment
 
-    def visit_qubit(self, qubit: Qubit):
+    def visit_qubit(self, qubit: Qubit) -> Qubit:
         qubit.index = self.mapping[qubit.index]
         return qubit
 
-    def visit_measure(self, measure: Measure):
+    def visit_measure(self, measure: Measure) -> Measure:
         measure.qubit.accept(self)
         return measure
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
+    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         g.qubit.accept(self)
         return g
 
-    def visit_matrix_gate(self, g: MatrixGate):
+    def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
         [op.accept(self) for op in g.operands]
         return g
 
-    def visit_controlled_gate(self, controlled_gate: ControlledGate):
+    def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
         controlled_gate.control_qubit.accept(self)
         controlled_gate.target_gate.accept(self)
         return controlled_gate

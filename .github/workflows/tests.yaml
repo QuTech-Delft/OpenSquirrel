@@ -23,7 +23,7 @@ jobs:
       - name: Install tox
         run: pip install tox
       - name: run tox lint and type
-        run: tox -e lint #,type
+        run: tox -e lint,type
   unit-test:
     name: Unit testing
     needs: lint
