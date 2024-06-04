@@ -12,9 +12,6 @@ from opensquirrel.ir import IR, Gate, Measure
 from opensquirrel.mapper import Mapper
 from opensquirrel.register_manager import RegisterManager
 
-if TYPE_CHECKING:
-    from typing import Self
-
 
 class Circuit:
     """The Circuit class is the only interface to access OpenSquirrel's features.
@@ -51,7 +48,9 @@ class Circuit:
 
         return writer.circuit_to_string(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Circuit):
+            return False
         return self.register_manager == other.register_manager and self.ir == other.ir
 
     @classmethod
@@ -61,7 +60,7 @@ class Circuit:
         gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: list[Callable[..., Measure]] = default_measurement_set,
-    ) -> Self:
+    ) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
