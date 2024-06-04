@@ -106,6 +106,10 @@ class Measure(Statement, ABC):
     @property
     def name(self) -> str:
         return self.generator.__name__ if self.generator else "<abstract_measurement>"
+    
+    @property
+    def is_abstract(self) -> bool:
+        return self.arguments is None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Measure):
