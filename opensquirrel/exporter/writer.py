@@ -26,7 +26,7 @@ class _WriterImpl(IRVisitor):
         if measure.is_abstract:
             self.output += f"{measure.name}\n"
             return
-        self.output += f"{measure.name} {measure.arguments[0].accept(self)}\n" # type: ignore[index]
+        self.output += f"{measure.name} {measure.arguments[0].accept(self)}\n"  # type: ignore[index]
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name
@@ -36,7 +36,7 @@ class _WriterImpl(IRVisitor):
         if any(not isinstance(arg, Qubit) for arg in gate.arguments):  # type: ignore[union-attr]
             params = [arg.accept(self) for arg in gate.arguments if not isinstance(arg, Qubit)]  # type: ignore[union-attr]
             gate_name += f"({', '.join(params)})"
-        qubit_args = (arg.accept(self) for arg in gate.arguments if isinstance(arg, Qubit)) # type: ignore[union-attr]
+        qubit_args = (arg.accept(self) for arg in gate.arguments if isinstance(arg, Qubit))  # type: ignore[union-attr]
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"
 
     def visit_comment(self, comment: Comment) -> None:

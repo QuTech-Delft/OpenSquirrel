@@ -1,12 +1,16 @@
+from __future__ import annotations
+
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import TYPE_CHECKING, Any
 
 import cqasm.v3x as cqasm
 
-from opensquirrel.mapper import Mapper
+if TYPE_CHECKING:
+    from typing import Self
 
 
-def is_qubit_type(variable):
+def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
     return isinstance(variable.typ, cqasm.types.Qubit) or isinstance(variable.typ, cqasm.types.QubitArray)
 
 
@@ -40,8 +44,8 @@ class RegisterManager:
     def __init__(
         self,
         qubit_register_size: int,
-        variable_name_to_qubit_range: Dict[str, QubitRange] = dict(),
-        qubit_index_to_variable_name: Dict[int, str] = dict(),
+        variable_name_to_qubit_range: dict[str, QubitRange] = dict(),
+        qubit_index_to_variable_name: dict[int, str] = dict(),
     ) -> None:
         self.qubit_register_size = qubit_register_size
         self.qubit_register_name = self._default_qubit_register_name
@@ -51,20 +55,20 @@ class RegisterManager:
     def __repr__(self) -> str:
         return (
             f"qubit_register_size: {self.qubit_register_size}\n"
-            + f"variable_name_to_qubit_range: {self.variable_name_to_qubit_range}\n"
-            + f"qubit_index_to_variable_name: {self.qubit_index_to_variable_name}"
+            f"variable_name_to_qubit_range: {self.variable_name_to_qubit_range}\n"
+            f"qubit_index_to_variable_name: {self.qubit_index_to_variable_name}"
         )
 
     @staticmethod
-    def _parse_ast_string(string):
+    def _parse_ast_string(string: str) -> str:
         # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
         return string[2:-1]
 
     @classmethod
-    def from_ast(cls, ast):
+    def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
         qubit_register_size: int = 0
-        variable_name_to_qubit_range: Dict[str, QubitRange] = dict()
-        qubit_index_to_variable_name: Dict[int, str] = dict()
+        variable_name_to_qubit_range: dict[str, QubitRange] = dict()
+        qubit_index_to_variable_name: dict[int, str] = dict()
 
         qubit_variables = [v for v in ast.variables if is_qubit_type(v)]
         qubit_register_size = sum([qv.typ.size for qv in qubit_variables])
@@ -78,7 +82,9 @@ class RegisterManager:
                 current_qubit_index += 1
         return cls(qubit_register_size, variable_name_to_qubit_range, qubit_index_to_variable_name)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, RegisterManager):
+            return False
         return (
             self.qubit_register_size == other.qubit_register_size
             and self.qubit_register_name == other.qubit_register_name
@@ -92,7 +98,7 @@ class RegisterManager:
     def get_qubit_range(self, variable_name: str) -> QubitRange:
         return self.variable_name_to_qubit_range[variable_name]
 
-    def get_qubit_indices(self, variable_name: str, indices: List[int]) -> List[int]:
+    def get_qubit_indices(self, variable_name: str, indices: Iterable[int]) -> list[int]:
         start_index = self.get_qubit_range(variable_name).first
         return [start_index + i for i in indices]
 
