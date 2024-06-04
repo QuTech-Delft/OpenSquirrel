@@ -48,12 +48,12 @@ You can choose the Python interpreter from the `poetry` environment.
 - Select `Poetry Environment`, and then `Existing environment`.
 - Click on `...` to navigate to the `Interpreter` binary.
 
-## Debugging (PyCharm)
+## Running/Debugging tests (PyCharm)
 
-To run all tests:
+To run/debug all tests:
 
 - Right-click on the `test` folder of the Project tree.
-- Click `Debug 'pytest' in test`.
+- Click `Run 'pytest' in test` or `Debug 'pytest' in test`.
 
 This will also create a `Run/Debug Configuration`.
 
