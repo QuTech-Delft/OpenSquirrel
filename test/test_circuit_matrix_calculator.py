@@ -52,15 +52,7 @@ def test_hadamard_x() -> None:
 
     np.testing.assert_almost_equal(
         circuit_matrix_calculator.get_circuit_matrix(circuit),
-        math.sqrt(0.5)
-        * np.array(
-            [
-                [0, 0, 1, 1],
-                [0, 0, 1, -1],
-                [1, 1, 0, 0],
-                [1, -1, 0, 0],
-            ]
-        ),
+        math.sqrt(0.5) * np.array([[0, 0, 1, 1], [0, 0, 1, -1], [1, 1, 0, 0], [1, -1, 0, 0]]),
     )
 
 
@@ -73,15 +65,7 @@ def test_x_hadamard() -> None:
 
     np.testing.assert_almost_equal(
         circuit_matrix_calculator.get_circuit_matrix(circuit),
-        math.sqrt(0.5)
-        * np.array(
-            [
-                [0, 1, 0, 1],
-                [1, 0, 1, 0],
-                [0, 1, 0, -1],
-                [1, 0, -1, 0],
-            ]
-        ),
+        math.sqrt(0.5) * np.array([[0, 1, 0, 1], [1, 0, 1, 0], [0, 1, 0, -1], [1, 0, -1, 0]]),
     )
 
 
@@ -92,13 +76,7 @@ def test_cnot() -> None:
     circuit = Circuit(register_manager, ir)
 
     np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit),
-        [
-            [1, 0, 0, 0],
-            [0, 1, 0, 0],
-            [0, 0, 0, 1],
-            [0, 0, 1, 0],
-        ],
+        circuit_matrix_calculator.get_circuit_matrix(circuit), [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]
     )
 
 
@@ -109,15 +87,7 @@ def test_cnot_reversed() -> None:
     circuit = Circuit(register_manager, ir)
 
     np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit),
-        np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, 0, 1],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-            ]
-        ),
+        circuit_matrix_calculator.get_circuit_matrix(circuit), [[1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0]]
     )
 
 
@@ -130,15 +100,7 @@ def test_hadamard_cnot() -> None:
 
     np.testing.assert_almost_equal(
         circuit_matrix_calculator.get_circuit_matrix(circuit),
-        math.sqrt(0.5)
-        * np.array(
-            [
-                [1, 1, 0, 0],
-                [0, 0, 1, -1],
-                [0, 0, 1, 1],
-                [1, -1, 0, 0],
-            ]
-        ),
+        math.sqrt(0.5) * np.array([[1, 1, 0, 0], [0, 0, 1, -1], [0, 0, 1, 1], [1, -1, 0, 0]]),
     )
 
 
@@ -149,7 +111,6 @@ def test_hadamard_cnot_0_2() -> None:
     ir.add_gate(CNOT(Qubit(0), Qubit(2)))
     circuit = Circuit(register_manager, ir)
 
-    print(circuit_matrix_calculator.get_circuit_matrix(circuit))
     np.testing.assert_almost_equal(
         circuit_matrix_calculator.get_circuit_matrix(circuit),
         math.sqrt(0.5)
