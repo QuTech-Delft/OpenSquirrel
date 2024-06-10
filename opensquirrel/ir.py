@@ -8,9 +8,9 @@ from functools import wraps
 from typing import Any, Sequence, TypeAlias, cast, overload
 
 import numpy as np
-from numpy.typing import ArrayLike, NDArray
+from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle, normalize_axis
+from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
 
 class IRVisitor(ABC):
@@ -99,8 +99,8 @@ class Axis(Sequence[np.float64], Expression):
     def axis(self, axis: AxisLike) -> None:
         self._axis = self._parse_axislike(axis)
 
-    @staticmethod
-    def _parse_axislike(axis: AxisLike) -> NDArray[np.float64]:
+    @classmethod
+    def _parse_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
         if isinstance(axis, Axis):
             return axis.axis
 
@@ -113,7 +113,11 @@ class Axis(Sequence[np.float64], Expression):
             raise ValueError(
                 f"Axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}."
             )
-        return normalize_axis(axis)
+        return cls._normalize_axis(axis)
+
+    @staticmethod
+    def _normalize_axis(axis: NDArray[np.float64]) -> NDArray[np.float64]:
+        return axis / np.linalg.norm(axis)
 
     def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
         return cast(np.float64, self.axis[index])
@@ -137,14 +141,14 @@ class Measure(Statement, ABC):
     def __init__(
         self,
         qubit: Qubit,
-        axis: ArrayLike = (0, 0, 1),
+        axis: AxisLike = (0, 0, 1),
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
         self.generator = generator
         self.arguments = arguments
         self.qubit: Qubit = qubit
-        self.axis = normalize_axis(np.array(axis).astype(np.float64))
+        self.axis = Axis(axis)
 
     def __repr__(self) -> str:
         return f"Measure({self.qubit}, axis={self.axis})"
@@ -216,7 +220,7 @@ class BlochSphereRotation(Gate):
     def __init__(
         self,
         qubit: Qubit,
-        axis: ArrayLike,
+        axis: AxisLike,
         angle: float,
         phase: float = 0,
         generator: Callable[..., BlochSphereRotation] | None = None,
@@ -224,7 +228,7 @@ class BlochSphereRotation(Gate):
     ) -> None:
         Gate.__init__(self, generator, arguments)
         self.qubit: Qubit = qubit
-        self.axis = normalize_axis(np.array(axis).astype(np.float64))
+        self.axis = Axis(axis)
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
 
@@ -245,11 +249,14 @@ class BlochSphereRotation(Gate):
         if abs(self.phase - other.phase) > ATOL:
             return False
 
-        if np.allclose(self.axis, other.axis):
+        if np.allclose(self.axis.axis, other.axis.axis):
             return abs(self.angle - other.angle) < ATOL
-        if np.allclose(self.axis, -other.axis):
+        if np.allclose(self.axis.axis, -other.axis.axis):
             return abs(self.angle + other.angle) < ATOL
         return False
+
+    def __array__(self, dtype: DTypeLike = None, copy: bool | None = None) -> NDArray[Any]:
+        return np.array(self.axis, dtype=dtype, copy=copy)
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)

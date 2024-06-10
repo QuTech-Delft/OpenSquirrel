@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import cmath
+import math
 from collections.abc import Iterable
 from typing import cast
 
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.common import can1
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
@@ -143,6 +144,21 @@ class MatrixExpander(IRVisitor):
 
         assert expanded_matrix.shape == (1 << self.qubit_register_size, 1 << self.qubit_register_size)
         return expanded_matrix
+
+
+X = np.array([[0, 1], [1, 0]])
+Y = np.array([[0, -1j], [1j, 0]])
+Z = np.array([[1, 0], [0, -1]])
+
+
+def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex_]:
+    nx, ny, nz = Axis(axis)
+
+    result = cmath.rect(1, phase) * (
+        math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
+    )
+
+    return np.asarray(result, dtype=np.complex_)
 
 
 def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex_]:
