@@ -134,6 +134,11 @@ class Axis(Sequence[np.float64], Expression):
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_axis(self)
 
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Axis):
+            return False
+        return np.array_equal(self, other)
+
 
 class Statement(IRNode, ABC):
     pass

@@ -62,6 +62,17 @@ class TestAxis:
     def test_repr(self, axis: Axis) -> None:
         assert repr(axis) == "Axis[1. 0. 0.]"
 
+    def test_array(self, axis: Axis) -> None:
+        np.testing.assert_array_equal(axis, [1, 0, 0])
+
+    @pytest.mark.parametrize("other", [Axis(1, 0, 0), Axis([1, 0, 0]), Axis([[1], [0], [0]])])
+    def test_eq_true(self, axis: Axis, other: Any) -> None:
+        assert axis == other
+
+    @pytest.mark.parametrize("other", ["test", Axis(0, 1, 0)])
+    def test_eq_false(self, axis: Axis, other: Any) -> None:
+        assert axis != other
+
 
 class TestIR:
     def test_cnot_equality(self) -> None:
