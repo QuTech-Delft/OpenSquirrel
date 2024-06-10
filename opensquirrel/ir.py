@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC, abstractmethod
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import wraps
 from typing import Any, overload
@@ -80,6 +80,39 @@ class Qubit(Expression):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_qubit(self)
+
+
+class Axis(Sequence, Expression):
+
+    def __init__(self, axis: ArrayLike) -> None:
+        self.axis = axis
+
+    @property
+    def axis(self) -> NDArray[np.float_]:
+        return self._axis
+
+    @axis.setter
+    def axis(self, axis: ArrayLike) -> None:
+        try:
+            axis = np.asfarray(axis)
+        except (ValueError, TypeError) as e:
+            raise TypeError("Axis requires an ArrayLike") from e
+        axis = axis.flatten()
+        if len(axis) != 3:
+            raise ValueError(
+                f"Axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}."
+            )
+        axis = normalize_axis(axis)
+        self._axis = axis
+
+    def __getitem__(self, index: int) -> np.float_:
+        return self.axis[index]
+
+    def __len__(self) -> int:
+        return len(self.axis)
+
+    def accept(self) -> str:
+        return str(self.axis)
 
 
 class Statement(IRNode, ABC):
