@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from typing import TYPE_CHECKING, Any, Literal
+from typing import Any, Literal
 
 from opensquirrel.decomposer import general_decomposer
 from opensquirrel.decomposer.general_decomposer import Decomposer
