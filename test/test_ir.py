@@ -16,7 +16,7 @@ class TestAxis:
 
     @pytest.fixture(name="axis")
     def axis_fixture(self) -> Axis:
-        return Axis((1, 0, 0))
+        return Axis(1, 0, 0)
 
     @pytest.mark.parametrize("expected_class", [Sequence, Expression])
     def test_inheritance(self, axis: Axis, expected_class: type[Any]) -> None:
@@ -25,7 +25,9 @@ class TestAxis:
     def test_axis_getter(self, axis: Axis) -> None:
         np.testing.assert_array_equal(axis.axis, [1, 0, 0])
 
-    @pytest.mark.parametrize("new_axis, expected_axis", [([0, 0, 1], [0, 0, 1]), ([0, 3, 4], [0, 3 / 5, 4 / 5])])
+    @pytest.mark.parametrize(
+        "new_axis, expected_axis", [([0, 0, 1], [0, 0, 1]), ([0, 3, 4], [0, 3 / 5, 4 / 5]), (Axis(0, 1, 0), [0, 1, 0])]
+    )
     def test_axis_setter_no_error(self, axis: Axis, new_axis: ArrayLike, expected_axis: ArrayLike) -> None:
         axis.axis = new_axis
         np.testing.assert_array_equal(axis.axis, expected_axis)

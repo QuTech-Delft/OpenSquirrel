@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Sequence, TypeAlias, overload
+from typing import Any, Sequence, TypeAlias, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -87,8 +87,9 @@ class Qubit(Expression):
 
 class Axis(Sequence[np.float64], Expression):
 
-    def __init__(self, axis: AxisLike) -> None:
-        self._axis = self._parse_axislike(axis)
+    def __init__(self, *axis: AxisLike) -> None:
+        axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
+        self._axis = self._parse_axislike(axis_to_parse)
 
     @property
     def axis(self) -> NDArray[np.float64]:
@@ -115,7 +116,7 @@ class Axis(Sequence[np.float64], Expression):
         return normalize_axis(axis)
 
     def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
-        return self.axis[index]  # type: ignore[no-any-return]
+        return cast(np.float64, self.axis[index])
 
     def __len__(self) -> int:
         return 3
