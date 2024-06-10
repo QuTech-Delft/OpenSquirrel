@@ -109,7 +109,7 @@ class Axis(Sequence, Expression):
         return self.axis[index]
 
     def __len__(self) -> int:
-        return len(self.axis)
+        return 3
 
     def accept(self) -> str:
         return str(self.axis)
