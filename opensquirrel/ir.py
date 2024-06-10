@@ -128,6 +128,9 @@ class Axis(Sequence[np.float64], Expression):
     def __repr__(self) -> str:
         return f"Axis{self.axis}"
 
+    def __array__(self, dtype: DTypeLike = None, copy: bool = True) -> NDArray[Any]:
+        return np.array(self.axis, dtype=dtype, copy=copy)
+
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_axis(self)
 
@@ -254,9 +257,6 @@ class BlochSphereRotation(Gate):
         if np.allclose(self.axis.axis, -other.axis.axis):
             return abs(self.angle + other.angle) < ATOL
         return False
-
-    def __array__(self, dtype: DTypeLike = None, copy: bool | None = None) -> NDArray[Any]:
-        return np.array(self.axis, dtype=dtype, copy=copy)
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
