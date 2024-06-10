@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Sequence
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, overload
+from typing import Any, Sequence, TypeAlias, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
@@ -27,6 +27,9 @@ class IRVisitor(ABC):
         pass
 
     def visit_gate(self, gate: Gate) -> Any:
+        pass
+
+    def visit_axis(self, axis: Axis) -> Any:
         pass
 
     def visit_measure(self, measure: Measure) -> Any:
@@ -82,17 +85,24 @@ class Qubit(Expression):
         return visitor.visit_qubit(self)
 
 
-class Axis(Sequence, Expression):
+class Axis(Sequence[np.float64], Expression):
 
-    def __init__(self, axis: ArrayLike) -> None:
-        self.axis = axis
+    def __init__(self, axis: AxisLike) -> None:
+        self._axis = self._parse_axislike(axis)
 
     @property
-    def axis(self) -> NDArray[np.float_]:
+    def axis(self) -> NDArray[np.float64]:
         return self._axis
 
     @axis.setter
-    def axis(self, axis: ArrayLike) -> None:
+    def axis(self, axis: AxisLike) -> None:
+        self._axis = self._parse_axislike(axis)
+
+    @staticmethod
+    def _parse_axislike(axis: AxisLike) -> NDArray[np.float64]:
+        if isinstance(axis, Axis):
+            return axis.axis
+
         try:
             axis = np.asfarray(axis)
         except (ValueError, TypeError) as e:
@@ -102,17 +112,19 @@ class Axis(Sequence, Expression):
             raise ValueError(
                 f"Axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}."
             )
-        axis = normalize_axis(axis)
-        self._axis = axis
+        return normalize_axis(axis)
 
-    def __getitem__(self, index: int) -> np.float_:
-        return self.axis[index]
+    def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
+        return self.axis[index]  # type: ignore[no-any-return]
 
     def __len__(self) -> int:
         return 3
 
-    def accept(self) -> str:
-        return str(self.axis)
+    def __repr__(self) -> str:
+        return f"Axis{self.axis}"
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_axis(self)
 
 
 class Statement(IRNode, ABC):
@@ -420,3 +432,7 @@ class IR:
     def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:
             statement.accept(visitor)
+
+
+# Type Aliases
+AxisLike: TypeAlias = ArrayLike | Axis

@@ -57,8 +57,8 @@ class TestAxis:
     def test_len(self, axis: Axis) -> None:
         assert len(axis) == 3
 
-    def test_accept(self, axis: Axis) -> None:
-        assert axis.accept() == "[1. 0. 0.]"
+    def test_repr(self, axis: Axis) -> None:
+        assert repr(axis) == "Axis[1. 0. 0.]"
 
 
 class TestIR:
