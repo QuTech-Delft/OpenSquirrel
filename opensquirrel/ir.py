@@ -489,10 +489,5 @@ class IR:
             statement.accept(visitor)
 
 
-try:
-    from typing import TypeAlias
-
-    # Type Aliases
-    AxisLike: TypeAlias = ArrayLike | Axis
-except ImportError:
-    AxisLike = ArrayLike | Axis
+# Type Aliases
+AxisLike = ArrayLike | Axis
