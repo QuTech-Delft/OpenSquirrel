@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Sequence, cast, overload
+from typing import Any, Sequence, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -489,8 +489,10 @@ class IR:
             statement.accept(visitor)
 
 
-if TYPE_CHECKING:
+try:
     from typing import TypeAlias
 
     # Type Aliases
     AxisLike: TypeAlias = ArrayLike | Axis
+except ImportError:
+    AxisLike = ArrayLike | Axis
