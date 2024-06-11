@@ -29,7 +29,16 @@ class _ScheduleCreator(IRVisitor):
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_measure(self, g: Measure) -> None:
-        self.schedule.add(quantify_scheduler_gates.Measure(self._get_qubit_string(g.qubit)))
+        qubit_index = g.qubit.index
+        self.schedule.add(
+            quantify_scheduler_gates.Measure(
+                self._get_qubit_string(g.qubit),
+                acq_channel=qubit_index,
+                acq_index=qubit_index,
+                acq_protocol="ThresholdedAcquisition",
+            )
+        )
+        return
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
         if abs(g.axis[2]) < ATOL:

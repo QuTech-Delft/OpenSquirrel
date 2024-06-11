@@ -10,6 +10,7 @@ from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.decomposer.zyz_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H
 from opensquirrel.exporter.export_format import ExportFormat
+from opensquirrel.ir import Measure
 
 
 def test_simple() -> None:
@@ -426,6 +427,17 @@ def test_export_quantify_scheduler() -> None:
             "Measure q[0]",
             "Measure q[1]",
         ]
+
+        ir_measurements = [instruction for instruction in circuit.ir.statements if isinstance(
+            instruction, Measure)]
+        qs_measurements = [operation.data["gate_info"] for operation in exported_schedule.operations.values()
+                           if operation.data["gate_info"]["operation_type"] == "measure"]
+
+        for i, ir_measurement in enumerate(ir_measurements):
+            qubit_index = ir_measurement.qubit.index
+            assert qs_measurements[i]["acq_channel_override"] == qubit_index
+            assert qs_measurements[i]["acq_index"] == qubit_index
+            assert qs_measurements[i]["acq_protocol"] == "ThresholdedAcquisition"
 
 
 def test_merge_y90_x_to_h() -> None:
