@@ -86,21 +86,46 @@ class Qubit(Expression):
 
 
 class Axis(Sequence[np.float64], Expression):
+    """The ``Axis`` object parses and stores a vector containing 3 elements.
+
+    The input vector is always normalized before it is stored.
+    """
 
     def __init__(self, *axis: AxisLike) -> None:
+        """Init of the ``Axis`` object.
+
+        axis: An ``AxisLike`` to create the axis from.
+        """
         axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
-        self._axis = self._parse_axislike(axis_to_parse)
+        self._axis = self._parse_and_validate_axislike(axis_to_parse)
 
     @property
     def axis(self) -> NDArray[np.float64]:
+        """The ``Axis`` data saved as a 1D-Array with 3 elements."""
         return self._axis
 
     @axis.setter
     def axis(self, axis: AxisLike) -> None:
-        self._axis = self._parse_axislike(axis)
+        """Parse and set a new axis.
+
+        Args:
+            axis: An ``AxisLike`` to create the axis from.
+        """
+        self._axis = self._parse_and_validate_axislike(axis)
 
     @classmethod
-    def _parse_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
+    def _parse_and_validate_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
+        """Parse and validate an ``AxisLike``.
+
+        Check if the `axis` can be cast to a 1DArray of length 3, raise an error
+        otherwise. After casting to an array, the axis is normalized.
+
+        Args:
+            axis: ``AxisLike`` to validate and parse.
+
+        Returns:
+            Parsed axis represented as a 1DArray of length 3.
+        """
         if isinstance(axis, Axis):
             return axis.axis
 
@@ -117,24 +142,41 @@ class Axis(Sequence[np.float64], Expression):
 
     @staticmethod
     def _normalize_axis(axis: NDArray[np.float64]) -> NDArray[np.float64]:
+        """Normalize a NDArray.
+
+        Args:
+            axis: NDArray to normalize.
+
+        Returns:
+            Normalized NDArray.
+        """
         return axis / np.linalg.norm(axis)
 
     def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
+        """Get the item at `index`."""
         return cast(np.float64, self.axis[index])
 
     def __len__(self) -> int:
+        """Length of the axis, which is always 3."""
         return 3
 
     def __repr__(self) -> str:
+        """String representation of the ``Axis``."""
         return f"Axis{self.axis}"
 
     def __array__(self, dtype: DTypeLike = None, copy: bool = True) -> NDArray[Any]:
+        """Convert the ``Axis`` data to an array."""
         return np.array(self.axis, dtype=dtype, copy=copy)
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accept the ``Axis``."""
         return visitor.visit_axis(self)
 
     def __eq__(self, other: Any) -> bool:
+        """Check if `self` is equal to other.
+
+        Two ``Axis`` objects are considered equal if their axes are equal.
+        """
         if not isinstance(other, Axis):
             return False
         return np.array_equal(self, other)
