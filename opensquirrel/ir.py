@@ -488,6 +488,7 @@ class IR:
         for statement in self.statements:
             statement.accept(visitor)
 
+
 if TYPE_CHECKING:
     from typing import TypeAlias
 
