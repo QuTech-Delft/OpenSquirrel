@@ -295,13 +295,6 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         all_args = []
         arg_index = 0
         for par in inspect.signature(gate_generator).parameters.values():
-            if isinstance(par.annotation, str):
-                subclass_names = [subclass.__name__ for subclass in Expression.__subclasses__()]
-                if par.annotation not in subclass_names:
-                    raise TypeError("Gate argument types must be expressions")
-            elif not issubclass(par.annotation, Expression):
-                raise TypeError("Gate argument types must be expressions")
-
             if par.name in kwargs:
                 all_args.append(kwargs[par.name])
             else:
@@ -323,9 +316,6 @@ def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable
         all_args = []
         arg_index = 0
         for par in inspect.signature(measurement_generator).parameters.values():
-            if not issubclass(par.annotation, Expression):
-                raise TypeError("Measurement argument types must be expressions")
-
             if par.name in kwargs:
                 all_args.append(kwargs[par.name])
             else:
