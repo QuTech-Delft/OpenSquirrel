@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Sequence, cast, overload
+from typing import Any, Sequence, Union, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -490,4 +490,4 @@ class IR:
 
 
 # Type Aliases
-AxisLike = ArrayLike | Axis
+AxisLike = Union[ArrayLike, Axis]
