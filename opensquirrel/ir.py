@@ -91,6 +91,8 @@ class Axis(Sequence[np.float64], Expression):
     The input vector is always normalized before it is stored.
     """
 
+    _len = 3
+
     def __init__(self, *axis: AxisLike) -> None:
         """Init of the ``Axis`` object.
 
@@ -158,7 +160,7 @@ class Axis(Sequence[np.float64], Expression):
 
     def __len__(self) -> int:
         """Length of the axis, which is always 3."""
-        return 3
+        return self._len
 
     def __repr__(self) -> str:
         """String representation of the ``Axis``."""
