@@ -97,21 +97,21 @@ class Axis(Sequence[np.float64], Expression):
         axis: An ``AxisLike`` to create the axis from.
         """
         axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
-        self._axis = self._parse_and_validate_axislike(axis_to_parse)
+        self._value = self._parse_and_validate_axislike(axis_to_parse)
 
     @property
-    def axis(self) -> NDArray[np.float64]:
+    def value(self) -> NDArray[np.float64]:
         """The ``Axis`` data saved as a 1D-Array with 3 elements."""
-        return self._axis
+        return self._value
 
-    @axis.setter
-    def axis(self, axis: AxisLike) -> None:
+    @value.setter
+    def value(self, axis: AxisLike) -> None:
         """Parse and set a new axis.
 
         Args:
             axis: An ``AxisLike`` to create the axis from.
         """
-        self._axis = self._parse_and_validate_axislike(axis)
+        self._value = self._parse_and_validate_axislike(axis)
 
     @classmethod
     def _parse_and_validate_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
@@ -127,7 +127,7 @@ class Axis(Sequence[np.float64], Expression):
             Parsed axis represented as a 1DArray of length 3.
         """
         if isinstance(axis, Axis):
-            return axis.axis
+            return axis.value
 
         try:
             axis = np.asfarray(axis)
@@ -154,7 +154,7 @@ class Axis(Sequence[np.float64], Expression):
 
     def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
         """Get the item at `index`."""
-        return cast(np.float64, self.axis[index])
+        return cast(np.float64, self.value[index])
 
     def __len__(self) -> int:
         """Length of the axis, which is always 3."""
@@ -162,11 +162,11 @@ class Axis(Sequence[np.float64], Expression):
 
     def __repr__(self) -> str:
         """String representation of the ``Axis``."""
-        return f"Axis{self.axis}"
+        return f"Axis{self.value}"
 
     def __array__(self, dtype: DTypeLike = None, copy: bool = True) -> NDArray[Any]:
         """Convert the ``Axis`` data to an array."""
-        return np.array(self.axis, dtype=dtype, copy=copy)
+        return np.array(self.value, dtype=dtype, copy=copy)
 
     def accept(self, visitor: IRVisitor) -> Any:
         """Accept the ``Axis``."""
@@ -299,9 +299,9 @@ class BlochSphereRotation(Gate):
         if abs(self.phase - other.phase) > ATOL:
             return False
 
-        if np.allclose(self.axis.axis, other.axis.axis):
+        if np.allclose(self.axis, other.axis):
             return abs(self.angle - other.angle) < ATOL
-        if np.allclose(self.axis.axis, -other.axis.axis):
+        if np.allclose(self.axis, -other.axis.value):
             return abs(self.angle + other.angle) < ATOL
         return False
 

@@ -23,14 +23,19 @@ class TestAxis:
         assert isinstance(axis, expected_class)
 
     def test_axis_getter(self, axis: Axis) -> None:
-        np.testing.assert_array_equal(axis.axis, [1, 0, 0])
+        np.testing.assert_array_equal(axis.value, [1, 0, 0])
 
     @pytest.mark.parametrize(
-        "new_axis, expected_axis", [([0, 0, 1], [0, 0, 1]), ([0, 3, 4], [0, 3 / 5, 4 / 5]), (Axis(0, 1, 0), [0, 1, 0])]
+        "new_axis, expected_axis",
+        [
+            ([0, 0, 1], [0, 0, 1]),
+            ([0, 3, 4], [0, 3 / 5, 4 / 5]),
+            (Axis(0, 1, 0), [0, 1, 0]),
+        ],
     )
     def test_axis_setter_no_error(self, axis: Axis, new_axis: ArrayLike, expected_axis: ArrayLike) -> None:
-        axis.axis = new_axis
-        np.testing.assert_array_equal(axis.axis, expected_axis)
+        axis.value = new_axis
+        np.testing.assert_array_equal(axis, expected_axis)
 
     @pytest.mark.parametrize(
         "erroneous_axis, expected_error, expected_error_message",
@@ -49,7 +54,7 @@ class TestAxis:
         self, axis: Axis, erroneous_axis: Any, expected_error: type[Exception], expected_error_message: str
     ) -> None:
         with pytest.raises(expected_error, match=expected_error_message):
-            axis.axis = erroneous_axis
+            axis.value = erroneous_axis
 
     def test_get_item(self, axis: Axis) -> None:
         assert axis[0] == 1
