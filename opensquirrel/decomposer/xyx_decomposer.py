@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from opensquirrel.default_gates import Rx, Ry
 from opensquirrel.decomposer.aba_decomposer import ABADecomposer
+from opensquirrel.default_gates import Rx, Ry
 
 
 class XYXDecomposer(ABADecomposer):
