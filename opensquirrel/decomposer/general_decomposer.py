@@ -10,7 +10,6 @@ from opensquirrel.reindexer import get_reindexed_circuit
 
 
 class Decomposer(ABC):
-
     @abstractmethod
     def decompose(self, gate: Gate) -> list[Gate]:
         raise NotImplementedError()

@@ -166,7 +166,6 @@ class Gate(Statement, ABC):
 
 
 class BlochSphereRotation(Gate):
-
     def __init__(
         self,
         qubit: Qubit,
