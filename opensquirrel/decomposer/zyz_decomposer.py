@@ -10,5 +10,5 @@ class ZYZDecomposer(ABADecomposer):
     def __init__(self):
         ABADecomposer.__init__(self, Rz, Ry)
 
-    def get_zyz_decomposition_angles(alpha: float, axis: Iterable[float]) -> tuple[float, float, float]:
+    def get_decomposition_angles(self, alpha: float, axis: Iterable[float]) -> tuple[float, float, float]:
         return ABADecomposer.get_decomposition_angles(alpha, axis)

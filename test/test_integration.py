@@ -361,7 +361,7 @@ Rz(3.1415927) q[1]
             """
         )
 
-        circuit.decompose(decomposer=CNOTDecomposer)
+        circuit.decompose(decomposer=CNOTDecomposer())
 
         # Quantify-scheduler prefers CZ.
         circuit.replace(
@@ -378,7 +378,7 @@ Rz(3.1415927) q[1]
 
         # FIXME: for best gate count we need a Z-XY decomposer.
         # See https://github.com/QuTech-Delft/OpenSquirrel/issues/98
-        circuit.decompose(decomposer=ZYZDecomposer)
+        circuit.decompose(decomposer=ZYZDecomposer())
 
         if importlib.util.find_spec("quantify_scheduler") is None:
             with self.assertRaisesRegex(
