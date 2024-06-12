@@ -13,7 +13,6 @@ from opensquirrel.ir import Axis, BlochSphereRotation, ControlledGate, Expressio
 
 
 class TestAxis:
-
     @pytest.fixture(name="axis")
     def axis_fixture(self) -> Axis:
         return Axis(1, 0, 0)
