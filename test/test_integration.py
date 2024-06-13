@@ -428,10 +428,12 @@ def test_export_quantify_scheduler() -> None:
             "Measure q[1]",
         ]
 
-        ir_measurements = [instruction for instruction in circuit.ir.statements if isinstance(
-            instruction, Measure)]
-        qs_measurements = [operation.data["gate_info"] for operation in exported_schedule.operations.values()
-                           if operation.data["gate_info"]["operation_type"] == "measure"]
+        ir_measurements = [instruction for instruction in circuit.ir.statements if isinstance(instruction, Measure)]
+        qs_measurements = [
+            operation.data["gate_info"]
+            for operation in exported_schedule.operations.values()
+            if operation.data["gate_info"]["operation_type"] == "measure"
+        ]
 
         for i, ir_measurement in enumerate(ir_measurements):
             qubit_index = ir_measurement.qubit.index
