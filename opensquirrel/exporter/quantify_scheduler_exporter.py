@@ -19,7 +19,7 @@ _unsupported_gates_exception = Exception(
     "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
 )
 
-DEGREE_PRECISION = 5
+DEG_PRECISION = 5
 
 
 class _ScheduleCreator(IRVisitor):
@@ -50,14 +50,14 @@ class _ScheduleCreator(IRVisitor):
         # quantify-scheduler exporter to fail.
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
-            theta = round(math.degrees(g.angle), DEGREE_PRECISION)
-            phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), DEGREE_PRECISION)
+            theta = round(math.degrees(g.angle), DEG_PRECISION)
+            phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), DEG_PRECISION)
             self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
-            theta = round(math.degrees(g.angle), DEGREE_PRECISION)
+            theta = round(math.degrees(g.angle), DEG_PRECISION)
             self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 

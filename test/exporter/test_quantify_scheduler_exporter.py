@@ -9,6 +9,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from opensquirrel.exporter import quantify_scheduler_exporter
+from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION
 from opensquirrel.ir import IR, BlochSphereRotation, Float, Gate, Measure, Qubit
 from opensquirrel.register_manager import RegisterManager
 
@@ -63,12 +64,16 @@ class TestQuantifySchedulerExporter:
                 [
                     unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="q[0]"),
                     unittest.mock.call(
-                        theta=FloatEq(math.degrees(1.23)), phi=FloatEq(math.degrees(math.pi / 2)), qubit="q[2]"
+                        theta=FloatEq(round(math.degrees(1.23), DEG_PRECISION)),
+                        phi=FloatEq(math.degrees(math.pi / 2)),
+                        qubit="q[2]",
                     ),
                 ]
             )
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
-            mock_quantify_scheduler_gates.Rz.assert_called_once_with(theta=FloatEq(math.degrees(2.34)), qubit="q[1]")
+            mock_quantify_scheduler_gates.Rz.assert_called_once_with(
+                theta=FloatEq(round(math.degrees(2.34), DEG_PRECISION)), qubit="q[1]"
+            )
             assert mock_schedule.add.call_count == 7
 
     def check_gate_not_supported(self, g: Gate) -> None:
