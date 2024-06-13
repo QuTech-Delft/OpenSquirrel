@@ -97,8 +97,11 @@ class TestCircuitBuilder:
 
         with pytest.raises(Exception) as exception_info:
             builder.H(0)
+
         assert re.search(
-            "Wrong argument type for instruction `H`, got <class 'int'> but expected <class "
-            "'opensquirrel.ir.Qubit'>",
+            "Wrong argument type for instruction `H`, got <class 'int'> but expected <class 'opensquirrel.ir.Qubit'>",
+            str(exception_info.value),
+        ) or re.search(
+            "Wrong argument type for instruction `H`, got <class 'int'> but expected Qubit",
             str(exception_info.value),
         )

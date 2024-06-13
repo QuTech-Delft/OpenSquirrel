@@ -1,8 +1,9 @@
 import contextlib
 import importlib.util
 import math
-import unittest
 import unittest.mock
+
+import pytest
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
@@ -38,7 +39,7 @@ class MockedQuantifyScheduler:
         self._stack.__exit__(exc_type, exc_value, exc_traceback)
 
 
-class QuantifySchedulerExporterTest(unittest.TestCase):
+class TestQuantifySchedulerExporter:
     def test_export(self):
         register_manager = RegisterManager(qubit_register_size=3)
         ir = IR()
@@ -68,15 +69,15 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
             )
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(theta=FloatEq(math.degrees(2.34)), qubit="q[1]")
-            self.assertEqual(mock_schedule.add.call_count, 7)
+            assert mock_schedule.add.call_count == 7
 
-    def check_gate_not_supported(self, g: Gate):
+    def check_gate_not_supported(self, g: Gate) -> None:
         register_manager = RegisterManager(qubit_register_size=3)
         ir = IR()
         ir.add_gate(g)
 
         with MockedQuantifyScheduler():
-            with self.assertRaisesRegex(Exception, "Cannot exporter circuit: it contains unsupported gates"):
+            with pytest.raises(Exception, match="Cannot exporter circuit: it contains unsupported gates"):
                 quantify_scheduler_exporter.export(Circuit(register_manager, ir))
 
     def test_gates_not_supported(self):
@@ -86,12 +87,10 @@ class QuantifySchedulerExporterTest(unittest.TestCase):
         self.check_gate_not_supported(CCZ(Qubit(0), Qubit(1), Qubit(2)))
 
 
-class QuantifySchedulerNotInstalledTest(unittest.TestCase):
-    @unittest.skipIf(
-        importlib.util.find_spec("quantify_scheduler") is not None, reason="quantify_scheduler is installed"
-    )
-    def test_quantify_scheduler_not_installed(self):
-        with self.assertRaisesRegex(
-            Exception, "quantify-scheduler is not installed, or cannot be installed on your system"
-        ):
-            quantify_scheduler_exporter.export(unittest.mock.MagicMock())
+@pytest.mark.skipif(
+    importlib.util.find_spec("quantify_scheduler") is not None, reason="quantify_scheduler is installed"
+)
+def test_quantify_scheduler_not_installed() -> None:
+    empty_circuit = Circuit(RegisterManager(1), IR())
+    with pytest.raises(Exception, match="quantify-scheduler is not installed, or cannot be installed on your system"):
+        quantify_scheduler_exporter.export(empty_circuit)

@@ -1,14 +1,17 @@
+from __future__ import annotations
+
+import cmath
 import math
-from typing import List
+from collections.abc import Iterable
+from typing import cast
 
 import numpy as np
+from numpy.typing import NDArray
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.common import can1
-from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, Qubit
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
 
 
-def get_reduced_ket(ket: int, qubits: List[Qubit]) -> int:
+def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
     """
     Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
     where only the given qubits appear, in order.
@@ -43,7 +46,7 @@ def get_reduced_ket(ket: int, qubits: List[Qubit]) -> int:
     return reduced_ket
 
 
-def expand_ket(base_ket: int, reduced_ket: int, qubits: List[Qubit]) -> int:
+def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     """
     Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
     where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.
@@ -88,10 +91,10 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: List[Qubit]) -> int:
 
 
 class MatrixExpander(IRVisitor):
-    def __init__(self, qubit_register_size: int):
+    def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
-    def visit_bloch_sphere_rotation(self, rot):
+    def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex_]:
         assert rot.qubit.index < self.qubit_register_size
 
         result = np.kron(
@@ -103,7 +106,7 @@ class MatrixExpander(IRVisitor):
         assert result.shape == (1 << self.qubit_register_size, 1 << self.qubit_register_size)
         return result
 
-    def visit_controlled_gate(self, gate):
+    def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex_]:
         assert gate.control_qubit.index < self.qubit_register_size
 
         expanded_matrix = gate.target_gate.accept(self)
@@ -111,9 +114,9 @@ class MatrixExpander(IRVisitor):
             if col_index & (1 << gate.control_qubit.index) == 0:
                 col[:] = 0
                 col[col_index] = 1
-        return expanded_matrix
+        return np.asarray(expanded_matrix, dtype=np.complex_)
 
-    def visit_matrix_gate(self, gate):
+    def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex_]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as
         #   1, 0, 0, 0
@@ -143,7 +146,22 @@ class MatrixExpander(IRVisitor):
         return expanded_matrix
 
 
-def get_matrix(gate: Gate, qubit_register_size: int) -> np.ndarray:
+X = np.array([[0, 1], [1, 0]])
+Y = np.array([[0, -1j], [1j, 0]])
+Z = np.array([[1, 0], [0, -1]])
+
+
+def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex_]:
+    nx, ny, nz = Axis(axis)
+
+    result = cmath.rect(1, phase) * (
+        math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
+    )
+
+    return np.asarray(result, dtype=np.complex_)
+
+
+def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex_]:
     """
     Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of
     qubits. This can be used for, e.g.,
@@ -183,6 +201,5 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> np.ndarray:
                [0, 0, 1, 0, 0, 0, 0, 0],
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
-
     expander = MatrixExpander(qubit_register_size)
-    return gate.accept(expander)
+    return cast(NDArray[np.complex_], gate.accept(expander))
