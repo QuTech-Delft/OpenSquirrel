@@ -5,12 +5,12 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, overload
+from typing import Any, Sequence, Union, cast, overload
 
 import numpy as np
-from numpy.typing import ArrayLike, NDArray
+from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle, normalize_axis
+from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
 
 class IRVisitor(ABC):
@@ -27,6 +27,9 @@ class IRVisitor(ABC):
         pass
 
     def visit_gate(self, gate: Gate) -> Any:
+        pass
+
+    def visit_axis(self, axis: Axis) -> Any:
         pass
 
     def visit_measure(self, measure: Measure) -> Any:
@@ -82,6 +85,105 @@ class Qubit(Expression):
         return visitor.visit_qubit(self)
 
 
+class Axis(Sequence[np.float64], Expression):
+    """The ``Axis`` object parses and stores a vector containing 3 elements.
+
+    The input vector is always normalized before it is stored.
+    """
+
+    _len = 3
+
+    def __init__(self, *axis: AxisLike) -> None:
+        """Init of the ``Axis`` object.
+
+        axis: An ``AxisLike`` to create the axis from.
+        """
+        axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
+        self._value = self._parse_and_validate_axislike(axis_to_parse)
+
+    @property
+    def value(self) -> NDArray[np.float64]:
+        """The ``Axis`` data saved as a 1D-Array with 3 elements."""
+        return self._value
+
+    @value.setter
+    def value(self, axis: AxisLike) -> None:
+        """Parse and set a new axis.
+
+        Args:
+            axis: An ``AxisLike`` to create the axis from.
+        """
+        self._value = self._parse_and_validate_axislike(axis)
+
+    @classmethod
+    def _parse_and_validate_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
+        """Parse and validate an ``AxisLike``.
+
+        Check if the `axis` can be cast to a 1DArray of length 3, raise an error
+        otherwise. After casting to an array, the axis is normalized.
+
+        Args:
+            axis: ``AxisLike`` to validate and parse.
+
+        Returns:
+            Parsed axis represented as a 1DArray of length 3.
+        """
+        if isinstance(axis, Axis):
+            return axis.value
+
+        try:
+            axis = np.asfarray(axis)
+        except (ValueError, TypeError) as e:
+            raise TypeError("Axis requires an ArrayLike") from e
+        axis = axis.flatten()
+        if len(axis) != 3:
+            raise ValueError(
+                f"Axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}."
+            )
+        return cls._normalize_axis(axis)
+
+    @staticmethod
+    def _normalize_axis(axis: NDArray[np.float64]) -> NDArray[np.float64]:
+        """Normalize a NDArray.
+
+        Args:
+            axis: NDArray to normalize.
+
+        Returns:
+            Normalized NDArray.
+        """
+        return axis / np.linalg.norm(axis)
+
+    def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
+        """Get the item at `index`."""
+        return cast(np.float64, self.value[index])
+
+    def __len__(self) -> int:
+        """Length of the axis, which is always 3."""
+        return self._len
+
+    def __repr__(self) -> str:
+        """String representation of the ``Axis``."""
+        return f"Axis{self.value}"
+
+    def __array__(self, dtype: DTypeLike = None, copy: bool = True) -> NDArray[Any]:
+        """Convert the ``Axis`` data to an array."""
+        return np.array(self.value, dtype=dtype, copy=copy)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accept the ``Axis``."""
+        return visitor.visit_axis(self)
+
+    def __eq__(self, other: Any) -> bool:
+        """Check if `self` is equal to other.
+
+        Two ``Axis`` objects are considered equal if their axes are equal.
+        """
+        if not isinstance(other, Axis):
+            return False
+        return np.array_equal(self, other)
+
+
 class Statement(IRNode, ABC):
     pass
 
@@ -91,14 +193,14 @@ class Measure(Statement, ABC):
     def __init__(
         self,
         qubit: Qubit,
-        axis: ArrayLike = (0, 0, 1),
+        axis: AxisLike = (0, 0, 1),
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
         self.generator = generator
         self.arguments = arguments
         self.qubit: Qubit = qubit
-        self.axis = normalize_axis(np.array(axis).astype(np.float64))
+        self.axis = Axis(axis)
 
     def __repr__(self) -> str:
         return f"Measure({self.qubit}, axis={self.axis})"
@@ -170,7 +272,7 @@ class BlochSphereRotation(Gate):
     def __init__(
         self,
         qubit: Qubit,
-        axis: ArrayLike,
+        axis: AxisLike,
         angle: float,
         phase: float = 0,
         generator: Callable[..., BlochSphereRotation] | None = None,
@@ -178,7 +280,7 @@ class BlochSphereRotation(Gate):
     ) -> None:
         Gate.__init__(self, generator, arguments)
         self.qubit: Qubit = qubit
-        self.axis = normalize_axis(np.array(axis).astype(np.float64))
+        self.axis = Axis(axis)
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
 
@@ -201,7 +303,7 @@ class BlochSphereRotation(Gate):
 
         if np.allclose(self.axis, other.axis):
             return abs(self.angle - other.angle) < ATOL
-        if np.allclose(self.axis, -other.axis):
+        if np.allclose(self.axis, -other.axis.value):
             return abs(self.angle + other.angle) < ATOL
         return False
 
@@ -377,3 +479,7 @@ class IR:
     def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:
             statement.accept(visitor)
+
+
+# Type Aliases
+AxisLike = Union[ArrayLike, Axis]

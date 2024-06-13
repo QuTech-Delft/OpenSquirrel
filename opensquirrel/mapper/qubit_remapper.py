@@ -1,5 +1,3 @@
-from typing import List
-
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
     IR,

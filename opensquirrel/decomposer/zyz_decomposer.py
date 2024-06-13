@@ -1,32 +1,29 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Iterable
 
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 
-def get_zyz_decomposition_angles(alpha: float, axis: Iterable[float]) -> tuple[float, float, float]:
+def get_zyz_decomposition_angles(alpha: float, axis: AxisLike) -> tuple[float, float, float]:
     """
     Gives the angles used in the Z-Y-Z decomposition of the Bloch sphere rotation
     characterized by a rotation around `axis` of angle `alpha`.
 
     Parameters:
-        alpha: angle of the Bloch sphere rotation
-        axis: _normalized_ axis of the Bloch sphere rotation
+        alpha: angle of the Bloch sphere rotation.
+        axis: AxisLike object of the Bloch sphere rotation.
 
     Returns:
         A triple (theta1, theta2, theta3) corresponding to the decomposition of the
         arbitrary Bloch sphere rotation into U = Rz(theta3) Ry(theta2) Rz(theta1)
 
     """
-    nx, ny, nz = axis
-
-    assert abs(nx**2 + ny**2 + nz**2 - 1) < ATOL, "Axis needs to be normalized"
+    _, ny, nz = Axis(axis)
 
     assert -math.pi + ATOL < alpha <= math.pi + ATOL, "Angle needs to be normalized"
 
@@ -62,7 +59,7 @@ def get_zyz_decomposition_angles(alpha: float, axis: Iterable[float]) -> tuple[f
         if abs(math.sin(theta2 / 2)) < ATOL:
             m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
         else:
-            acos_argument = ny * math.sin(alpha / 2) / math.sin(theta2 / 2)
+            acos_argument = float(ny) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
             # This fixes float approximations like 1.0000000000002 which acos doesn't like.
             acos_argument = max(min(acos_argument, 1.0), -1.0)

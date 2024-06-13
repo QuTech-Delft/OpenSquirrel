@@ -32,8 +32,8 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
             1
             / sin(combined_angle / 2)
             * (
-                sin(a.angle / 2) * cos(b.angle / 2) * a.axis
-                + cos(a.angle / 2) * sin(b.angle / 2) * b.axis
+                sin(a.angle / 2) * cos(b.angle / 2) * a.axis.value
+                + cos(a.angle / 2) * sin(b.angle / 2) * b.axis.value
                 + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
             )
         ),
