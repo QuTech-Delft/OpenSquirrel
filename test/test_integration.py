@@ -422,9 +422,9 @@ def test_export_quantify_scheduler() -> None:
             "Rz(11.25, 'q[0]')",
             "Rxy(-90, 90, 'q[0]')",
             "Rz(-180, 'q[0]')",
+            "Measure q[0]",
             "Rz(-180, 'q[1]')",
             "Rxy(90, 90, 'q[1]')",
-            "Measure q[0]",
             "Measure q[1]",
         ]
 
