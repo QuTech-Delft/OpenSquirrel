@@ -13,7 +13,7 @@ from opensquirrel.ir import IR, Comment, Gate, Measure
 from opensquirrel.register_manager import RegisterManager
 
 if TYPE_CHECKING:
-    from typing import Self
+    from typing_extensions import Self
 
 
 class CircuitBuilder(GateLibrary, MeasurementLibrary):

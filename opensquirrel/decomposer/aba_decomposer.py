@@ -45,7 +45,7 @@ class ABADecomposer(Decomposer, ABC):
         axis = Axis(axis)
 
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
-            ValueError("Angle needs to be normalized")
+            raise ValueError("Angle needs to be normalized")
 
         if abs(alpha - math.pi) < ATOL:
             # alpha == pi, math.tan(alpha / 2) is not defined.
@@ -79,7 +79,7 @@ class ABADecomposer(Decomposer, ABC):
             if abs(math.sin(theta2 / 2)) < ATOL:
                 m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
             else:
-                acos_argument = axis[self.index_b] * math.sin(alpha / 2) / math.sin(theta2 / 2)
+                acos_argument = float(axis[self.index_b]) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
                 # This fixes float approximations like 1.0000000000002 which acos doesn't like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)
@@ -114,11 +114,11 @@ class ABADecomposer(Decomposer, ABC):
 
 class XYXDecomposer(ABADecomposer):
     @property
-    def ra(self):
+    def ra(self) -> Callable[..., BlochSphereRotation]:
         return Rx
 
     @property
-    def rb(self):
+    def rb(self) -> Callable[..., BlochSphereRotation]:
         return Ry
 
 
@@ -148,7 +148,7 @@ class YZYDecomposer(ABADecomposer):
         return Ry
 
     @property
-    def rb(self):
+    def rb(self) -> Callable[..., BlochSphereRotation]:
         return Rz
 
 
