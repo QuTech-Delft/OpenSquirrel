@@ -32,12 +32,11 @@ class _ScheduleCreator(IRVisitor):
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_measure(self, g: Measure) -> None:
-        qubit_index = g.qubit.index
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(g.qubit),
-                acq_channel=qubit_index,
-                acq_index=qubit_index,
+                acq_channel=g.qubit.index,
+                acq_index=g.qubit.index,
                 acq_protocol="ThresholdedAcquisition",
             )
         )
