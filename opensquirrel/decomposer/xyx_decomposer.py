@@ -80,7 +80,7 @@ class XYXDecomposer(Decomposer):
             # Only decomposer single-qubit gates.
             return [g]
 
-        theta1, theta2, theta3 = get_xyx_decomposition_angles(g.angle, g.axis)
+        theta1, theta2, theta3 = XYXDecomposer().get_decomposition_angles(g.angle, g.axis)
 
         x1 = Rx(g.qubit, Float(theta1))
         y = Ry(g.qubit, Float(theta2))

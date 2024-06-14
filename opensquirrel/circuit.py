@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, Dict
-
-import numpy as np
+from collections.abc import Callable, Mapping
+from typing import Any, Literal
 
 from opensquirrel.decomposer import general_decomposer
 from opensquirrel.decomposer.general_decomposer import Decomposer
@@ -10,7 +9,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import IR, Gate, Measure
-from opensquirrel.mapper import IdentityMapper, Mapper
+from opensquirrel.mapper import Mapper
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -38,7 +37,7 @@ class Circuit:
         <BLANKLINE>
     """
 
-    def __init__(self, register_manager: RegisterManager, ir: IR):
+    def __init__(self, register_manager: RegisterManager, ir: IR) -> None:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
@@ -49,17 +48,19 @@ class Circuit:
 
         return writer.circuit_to_string(self)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Circuit):
+            return False
         return self.register_manager == other.register_manager and self.ir == other.ir
 
     @classmethod
     def from_string(
         cls,
         cqasm3_string: str,
-        gate_set: [Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Dict[str, Callable[..., Gate]] = default_gate_aliases,
-        measurement_set: [Callable[..., Measure]] = default_measurement_set,
-    ):
+        gate_set: list[Callable[..., Gate]] = default_gate_set,
+        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
+        measurement_set: list[Callable[..., Measure]] = default_measurement_set,
+    ) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
@@ -91,7 +92,7 @@ class Circuit:
     def qubit_register_name(self) -> str:
         return self.register_manager.qubit_register_name
 
-    def merge_single_qubit_gates(self):
+    def merge_single_qubit_gates(self) -> None:
         """Merge all consecutive 1-qubit gates in the circuit.
 
         Gates obtained from merging other gates become anonymous gates.
@@ -100,7 +101,7 @@ class Circuit:
 
         general_merger.merge_single_qubit_gates(self)
 
-    def decompose(self, decomposer: Decomposer):
+    def decompose(self, decomposer: Decomposer) -> None:
         """Generic decomposition pass. It applies the given decomposer function to every gate in the circuit."""
         general_decomposer.decompose(self.ir, decomposer)
 
@@ -112,14 +113,14 @@ class Circuit:
 
         remap_ir(self, mapper.get_mapping())
 
-    def replace(self, gate_generator: Callable[..., Gate], f):
+    def replace(self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
         `f` is a callable that takes the arguments of the gate that is to be replaced
         and returns the decomposition as a list of gates.
         """
         general_decomposer.replace(self.ir, gate_generator, f)
 
-    def export(self, fmt: ExportFormat = None) -> None:
+    def export(self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             from opensquirrel.exporter import quantify_scheduler_exporter
 

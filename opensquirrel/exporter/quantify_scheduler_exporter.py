@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import math
+from typing import Any
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
@@ -25,30 +28,29 @@ class _ScheduleCreator(IRVisitor):
         self.qubit_register_name = qubit_register_name
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
-    def visit_measure(self, g: Measure):
+    def visit_measure(self, g: Measure) -> None:
         self.schedule.add(quantify_scheduler_gates.Measure(self._get_qubit_string(g.qubit)))
-        return
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation):
+    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
-            theta: float = math.degrees(g.angle)
+            theta = math.degrees(g.angle)
             phi: float = math.degrees(math.atan2(g.axis[1], g.axis[0]))
             self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
-            theta: float = math.degrees(g.angle)
+            theta = math.degrees(g.angle)
             self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
         raise _unsupported_gates_exception
 
-    def visit_matrix_gate(self, g: MatrixGate):
+    def visit_matrix_gate(self, g: MatrixGate) -> None:
         raise _unsupported_gates_exception
 
-    def visit_controlled_gate(self, g: ControlledGate):
+    def visit_controlled_gate(self, g: ControlledGate) -> None:
         if not isinstance(g.target_gate, BlochSphereRotation):
             raise _unsupported_gates_exception
 
@@ -71,11 +73,11 @@ class _ScheduleCreator(IRVisitor):
         raise _unsupported_gates_exception
 
 
-def export(circuit: Circuit):
+def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
     if "quantify_scheduler" not in globals():
 
         class QuantifySchedulerNotInstalled:
-            def __getattr__(self, attr_name):
+            def __getattr__(self, attr_name: Any) -> None:
                 raise ImportError("quantify-scheduler is not installed, or cannot be installed on your system")
 
         global quantify_scheduler

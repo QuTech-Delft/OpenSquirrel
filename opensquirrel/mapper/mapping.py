@@ -1,4 +1,6 @@
-from typing import Dict, List, Tuple
+from __future__ import annotations
+
+from typing import Any
 
 
 class Mapping:
@@ -13,12 +15,14 @@ class Mapping:
         ValueError: If the mapping is incorrect.
     """
 
-    def __init__(self, physical_qubit_register: List[int]) -> None:
-        self.data: Dict[int, int] = dict(enumerate(physical_qubit_register))
+    def __init__(self, physical_qubit_register: list[int]) -> None:
+        self.data: dict[int, int] = dict(enumerate(physical_qubit_register))
         if (self.data.keys()) != set(self.data.values()):
             raise ValueError("The mapping is incorrect.")
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Mapping):
+            return False
         return self.data == other.data
 
     def __getitem__(self, key: int) -> int:
@@ -30,11 +34,11 @@ class Mapping:
     def size(self) -> int:
         return len(self.data)
 
-    def items(self) -> List[Tuple[int, int]]:
-        return self.data.items()
+    def items(self) -> list[tuple[int, int]]:
+        return list(self.data.items())
 
-    def keys(self) -> List[int]:
+    def keys(self) -> list[int]:
         return list(self.data.keys())
 
-    def values(self) -> List[int]:
+    def values(self) -> list[int]:
         return list(self.data.values())
