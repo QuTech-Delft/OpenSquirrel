@@ -44,10 +44,10 @@ class _ScheduleCreator(IRVisitor):
         return
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
-        # Note that when adding a rotation gate to the quantify-scheduler Schedule, that there exists an ambiguity with
-        # how quantify-scheduler will store an angle of 180 degrees. Depending on the system the angle may be stored as
-        # either 180 or -180 degrees. This ambiguity has no physical consequences, but may cause the test of the
-        # quantify-scheduler exporter to fail.
+        # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
+        # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
+        # Depending on the system the angle may be stored as either 180 or -180 degrees.
+        # This ambiguity has no physical consequences, but may cause the exporter test fail.
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
             theta = round(math.degrees(g.angle), DEG_PRECISION)
