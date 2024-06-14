@@ -79,7 +79,7 @@ class ZYZDecomposer(Decomposer):
             # Only decomposer single-qubit gates.
             return [g]
 
-        theta1, theta2, theta3 = get_zyz_decomposition_angles(g.angle, g.axis)
+        theta1, theta2, theta3 = ZYZDecomposer().get_decomposition_angles(g.angle, g.axis)
 
         z1 = Rz(g.qubit, Float(theta1))
         y = Ry(g.qubit, Float(theta2))
