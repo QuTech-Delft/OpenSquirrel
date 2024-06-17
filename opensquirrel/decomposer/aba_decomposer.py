@@ -79,7 +79,7 @@ class ABADecomposer(Decomposer, ABC):
             if abs(math.sin(theta2 / 2)) < ATOL:
                 m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
             else:
-                acos_argument = axis[self.index_b] * math.sin(alpha / 2) / math.sin(theta2 / 2)
+                acos_argument = float(axis[self.index_b]) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
                 # This fixes float approximations like 1.0000000000002 which acos doesn't like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)

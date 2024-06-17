@@ -16,7 +16,7 @@ def check_equivalence_up_to_global_phase(matrix_a: NDArray[np.complex_], matrix_
 
 def modify_circuit_and_check(
     circuit: Circuit, action: Callable[[Circuit, Any]], expected_circuit: Circuit | None = None
-):
+) -> None:
     """
     Checks whether the action preserves:
     - the number of qubits,
