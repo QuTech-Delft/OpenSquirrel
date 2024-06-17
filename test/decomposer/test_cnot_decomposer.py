@@ -6,7 +6,7 @@ import pytest
 
 from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.default_gates import CNOT, CZ, SWAP, H, Ry, Rz, X
-from opensquirrel.ir import Float, Gate, Qubit, ControlledGate
+from opensquirrel.ir import ControlledGate, Float, Gate, Qubit
 
 
 @pytest.fixture(name="decomposer")
