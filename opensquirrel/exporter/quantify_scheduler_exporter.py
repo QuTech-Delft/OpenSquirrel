@@ -19,6 +19,7 @@ _unsupported_gates_exception = Exception(
     "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
 )
 
+# Radian to degree conversion outcome precision
 DEG_PRECISION = 5
 
 

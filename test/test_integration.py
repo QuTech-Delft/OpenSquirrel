@@ -436,9 +436,8 @@ def test_export_quantify_scheduler() -> None:
         ]
 
         for i, ir_measurement in enumerate(ir_measurements):
-            qubit_index = ir_measurement.qubit.index
-            assert qs_measurements[i]["acq_channel_override"] == qubit_index
-            assert qs_measurements[i]["acq_index"] == qubit_index
+            assert qs_measurements[i]["acq_channel_override"] == ir_measurement.qubit.index
+            assert qs_measurements[i]["acq_index"] == ir_measurement.qubit.index
             assert qs_measurements[i]["acq_protocol"] == "ThresholdedAcquisition"
 
 
