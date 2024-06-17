@@ -19,8 +19,12 @@ _unsupported_gates_exception = Exception(
     "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
 )
 
+# Radian to degree conversion outcome precision
+DEG_PRECISION = 5
+
 
 class _ScheduleCreator(IRVisitor):
+
     def _get_qubit_string(self, q: Qubit) -> str:
         return f"{self.qubit_register_name}[{q.index}]"
 
@@ -29,19 +33,31 @@ class _ScheduleCreator(IRVisitor):
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_measure(self, g: Measure) -> None:
-        self.schedule.add(quantify_scheduler_gates.Measure(self._get_qubit_string(g.qubit)))
+        self.schedule.add(
+            quantify_scheduler_gates.Measure(
+                self._get_qubit_string(g.qubit),
+                acq_channel=g.qubit.index,
+                acq_index=g.qubit.index,
+                acq_protocol="ThresholdedAcquisition",
+            )
+        )
+        return
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
+        # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
+        # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
+        # Depending on the system the angle may be stored as either 180 or -180 degrees.
+        # This ambiguity has no physical consequences, but may cause the exporter test fail.
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
-            theta = math.degrees(g.angle)
-            phi: float = math.degrees(math.atan2(g.axis[1], g.axis[0]))
+            theta = round(math.degrees(g.angle), DEG_PRECISION)
+            phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), DEG_PRECISION)
             self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
-            theta = math.degrees(g.angle)
+            theta = round(math.degrees(g.angle), DEG_PRECISION)
             self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
