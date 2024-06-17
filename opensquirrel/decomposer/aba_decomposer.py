@@ -2,14 +2,12 @@ from __future__ import annotations
 
 import math
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Iterable
-
-import numpy as np
+from collections.abc import Callable
 
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Rx, Ry, Rz
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate, Qubit
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 
@@ -22,11 +20,11 @@ class ABADecomposer(Decomposer, ABC):
     @abstractmethod
     def rb(self) -> Callable[..., BlochSphereRotation]: ...
 
-    _gate_list: list[str] = [Rx.__name__, Ry.__name__, Rz.__name__]
+    _gate_list: list[Callable[..., BlochSphereRotation]] = [Rx, Ry, Rz]
 
     def __init__(self) -> None:
-        self.index_a = self._gate_list.index(self.ra.__dict__["__wrapped__"].__name__)
-        self.index_b = self._gate_list.index(self.rb.__dict__["__wrapped__"].__name__)
+        self.index_a = self._gate_list.index(self.ra)
+        self.index_b = self._gate_list.index(self.rb)
 
     def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
         """
@@ -45,7 +43,7 @@ class ABADecomposer(Decomposer, ABC):
         axis = Axis(axis)
 
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
-            ValueError("Angle needs to be normalized")
+            raise ValueError("Angle needs to be normalized")
 
         if abs(alpha - math.pi) < ATOL:
             # alpha == pi, math.tan(alpha / 2) is not defined.
@@ -97,9 +95,9 @@ class ABADecomposer(Decomposer, ABC):
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)
-        a1 = self.ra.__dict__["__wrapped__"](g.qubit, Float(theta1))
-        b = self.rb.__dict__["__wrapped__"](g.qubit, Float(theta2))
-        a2 = self.ra.__dict__["__wrapped__"](g.qubit, Float(theta3))
+        a1 = self.ra(g.qubit, Float(theta1))
+        b = self.rb(g.qubit, Float(theta2))
+        a2 = self.ra(g.qubit, Float(theta3))
 
         # Note: written like this, the decomposition doesn't preserve the global phase, which is fine
         # since the global phase is a physically irrelevant artifact of the mathematical
@@ -112,31 +110,61 @@ class ABADecomposer(Decomposer, ABC):
         return filter_out_identities([a1, b, a2])
 
 
-class ZYZDecomposer(ABADecomposer):
-    ra = Rz
-    rb = Ry
-
-
 class XYXDecomposer(ABADecomposer):
-    ra = Rx
-    rb = Ry
+    @property
+    def ra(self) -> Callable[..., BlochSphereRotation]:
+        return Rx
 
-
-class YZYDecomposer(ABADecomposer):
-    ra = Ry
-    rb = Rz
+    @property
+    def rb(self) -> Callable[..., BlochSphereRotation]:
+        return Ry
 
 
 class XZXDecomposer(ABADecomposer):
-    ra = Rx
-    rb = Rz
+    @property
+    def ra(self) -> Callable[..., BlochSphereRotation]:
+        return Rx
+
+    @property
+    def rb(self) -> Callable[..., BlochSphereRotation]:
+        return Rz
 
 
 class YXYDecomposer(ABADecomposer):
-    ra = Ry
-    rb = Rx
+    @property
+    def ra(self) -> Callable[..., BlochSphereRotation]:
+        return Ry
+
+    @property
+    def rb(self) -> Callable[..., BlochSphereRotation]:
+        return Rx
+
+
+class YZYDecomposer(ABADecomposer):
+    @property
+    def ra(self) -> Callable[..., BlochSphereRotation]:
+        return Ry
+
+    @property
+    def rb(self) -> Callable[..., BlochSphereRotation]:
+        return Rz
 
 
 class ZXZDecomposer(ABADecomposer):
-    ra = Rz
-    rb = Rx
+    @property
+    def ra(self) -> Callable[..., BlochSphereRotation]:
+        return Rz
+
+    @property
+    def rb(self) -> Callable[..., BlochSphereRotation]:
+        return Rx
+
+
+class ZYZDecomposer(ABADecomposer):
+    @property
+    def ra(self) -> Callable[..., BlochSphereRotation]:
+        return Rz
+
+    @property
+    def rb(self) -> Callable[..., BlochSphereRotation]:
+        return Ry

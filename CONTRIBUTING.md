@@ -37,6 +37,7 @@ $ pytest -vv
 $ mypy . --strict
 $ poetry run isort .
 $ poetry run black .
+$ poetry run mypy opensquirrel --strict
 ```
 
 ## Setting the Python interpreter (PyCharm)
