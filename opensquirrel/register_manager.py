@@ -62,7 +62,7 @@ class RegisterManager:
         return string[2:-1]
 
     @classmethod
-    def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
+    def from_ast(cls, ast: cqasm.semantic.Program) -> RegisterManager:
         qubit_register_size: int = 0
         variable_name_to_qubit_range: dict[str, QubitRange] = dict()
         qubit_index_to_variable_name: dict[int, str] = dict()

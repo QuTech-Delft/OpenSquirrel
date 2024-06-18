@@ -101,7 +101,7 @@ class ABADecomposer(Decomposer, ABC):
         Returns:
             Three gates, following the A-B-A convention, corresponding to the decomposition of the input gate.
         """
-        if not isinstance(g, BlochSphereRotation) and len(g.get_qubit_operands()) != 1:
+        if not isinstance(g, BlochSphereRotation) or len(g.get_qubit_operands()) != 1:
             # Only decomposer single-qubit gates.
             return [g]
 
