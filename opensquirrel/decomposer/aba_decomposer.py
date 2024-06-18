@@ -1,3 +1,8 @@
+"""
+Module containing classes that inherit from the ABADecomposer class to decompose a circuit into one
+of the Pauli ABA decompositions.
+"""
+
 from __future__ import annotations
 
 import math
@@ -27,8 +32,7 @@ class ABADecomposer(Decomposer, ABC):
         self.index_b = self._gate_list.index(self.rb)
 
     def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
-        """
-        Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
+        """Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
         characterized by a rotation around `axis` of angle `alpha`.
 
         Parameters:
@@ -41,7 +45,8 @@ class ABADecomposer(Decomposer, ABC):
 
         """
         axis = Axis(axis)
-
+        a_axis_value = axis[self.index_a]
+        b_axis_value = axis[self.index_b]
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
             raise ValueError("Angle needs to be normalized")
 
@@ -51,22 +56,22 @@ class ABADecomposer(Decomposer, ABC):
             p: float
             if abs(axis[self.index_a]) < ATOL:
                 theta2 = math.pi
-                p = 0
-                m = 2 * math.acos(axis[self.index_b])
+                p = 0.0
+                m = 2 * math.acos(b_axis_value)
 
             else:
                 p = math.pi
-                theta2 = 2 * math.acos(axis[self.index_a])
+                theta2 = 2 * math.acos(a_axis_value)
 
-                if abs(axis[self.index_a] - 1) < ATOL or abs(axis[self.index_a] + 1) < ATOL:
+                if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
                     m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                 else:
-                    m = 2 * math.acos(axis[self.index_b] / math.sqrt(1 - axis[self.index_a] ** 2))
+                    m = 2 * math.acos(b_axis_value / math.sqrt(1 - a_axis_value**2))
 
         else:
-            p = 2 * math.atan2(axis[self.index_a] * math.sin(alpha / 2), math.cos(alpha / 2))
+            p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
 
-            acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (axis[self.index_a] * math.tan(alpha / 2)) ** 2)
+            acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
 
             # This fixes float approximations like 1.0000000000002 which acos doesn't like.
             acos_argument = max(min(acos_argument, 1.0), -1.0)
@@ -77,7 +82,7 @@ class ABADecomposer(Decomposer, ABC):
             if abs(math.sin(theta2 / 2)) < ATOL:
                 m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
             else:
-                acos_argument = float(axis[self.index_b]) * math.sin(alpha / 2) / math.sin(theta2 / 2)
+                acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
                 # This fixes float approximations like 1.0000000000002 which acos doesn't like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)
@@ -90,7 +95,13 @@ class ABADecomposer(Decomposer, ABC):
         return theta1, theta2, theta3
 
     def decompose(self, g: Gate) -> list[Gate]:
-        if not isinstance(g, BlochSphereRotation):
+        """General A-B-A decomposition function for a single gate.
+        Args:
+            g: gate to decompose.
+        Returns:
+            Three gates, following the A-B-A convention, corresponding to the decomposition of the input gate.
+        """
+        if not isinstance(g, BlochSphereRotation) and len(g.get_qubit_operands()) != 1:
             # Only decomposer single-qubit gates.
             return [g]
 
@@ -99,18 +110,12 @@ class ABADecomposer(Decomposer, ABC):
         b = self.rb(g.qubit, Float(theta2))
         a2 = self.ra(g.qubit, Float(theta3))
 
-        # Note: written like this, the decomposition doesn't preserve the global phase, which is fine
-        # since the global phase is a physically irrelevant artifact of the mathematical
-        # model we use to describe the quantum system.
-
-        # Should we want to preserve it, we would need to use a raw BlochSphereRotation, which would then
-        # be an anonymous gate in the resulting decomposed circuit:
-        # z2 = BlochSphereRotation(qubit=g.qubit, angle=theta3, axis=(0, 0, 1), phase = g.phase)
-
         return filter_out_identities([a1, b, a2])
 
 
 class XYXDecomposer(ABADecomposer):
+    """Class responsible for the X-Y-X decomposition."""
+
     @property
     def ra(self) -> Callable[..., BlochSphereRotation]:
         return Rx
@@ -121,6 +126,8 @@ class XYXDecomposer(ABADecomposer):
 
 
 class XZXDecomposer(ABADecomposer):
+    """Class responsible for the X-Z-X decomposition."""
+
     @property
     def ra(self) -> Callable[..., BlochSphereRotation]:
         return Rx
@@ -131,6 +138,8 @@ class XZXDecomposer(ABADecomposer):
 
 
 class YXYDecomposer(ABADecomposer):
+    """Class responsible for the Y-X-Y decomposition."""
+
     @property
     def ra(self) -> Callable[..., BlochSphereRotation]:
         return Ry
@@ -141,6 +150,8 @@ class YXYDecomposer(ABADecomposer):
 
 
 class YZYDecomposer(ABADecomposer):
+    """Class responsible for the Y-Z-Y decomposition."""
+
     @property
     def ra(self) -> Callable[..., BlochSphereRotation]:
         return Ry
@@ -151,6 +162,8 @@ class YZYDecomposer(ABADecomposer):
 
 
 class ZXZDecomposer(ABADecomposer):
+    """Class responsible for the Z-X-Z decomposition."""
+
     @property
     def ra(self) -> Callable[..., BlochSphereRotation]:
         return Rz
@@ -161,6 +174,8 @@ class ZXZDecomposer(ABADecomposer):
 
 
 class ZYZDecomposer(ABADecomposer):
+    """Class responsible for the Z-Y-Z decomposition."""
+
     @property
     def ra(self) -> Callable[..., BlochSphereRotation]:
         return Rz

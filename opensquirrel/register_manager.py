@@ -6,9 +6,6 @@ from typing import TYPE_CHECKING, Any
 
 import cqasm.v3x as cqasm
 
-if TYPE_CHECKING:
-    from typing_extensions import Self
-
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
     return isinstance(variable.typ, cqasm.types.Qubit) or isinstance(variable.typ, cqasm.types.QubitArray)

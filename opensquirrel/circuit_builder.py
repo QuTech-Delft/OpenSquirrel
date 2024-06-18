@@ -12,9 +12,6 @@ from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
 from opensquirrel.ir import IR, Comment, Gate, Measure
 from opensquirrel.register_manager import RegisterManager
 
-if TYPE_CHECKING:
-    from typing_extensions import Self
-
 
 class CircuitBuilder(GateLibrary, MeasurementLibrary):
     """
