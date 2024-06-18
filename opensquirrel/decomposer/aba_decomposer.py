@@ -1,7 +1,5 @@
-"""
-Module containing classes that inherit from the ABADecomposer class to decompose a circuit into one
-of the Pauli ABA decompositions.
-"""
+""" Module containing classes that inherit from the ABADecomposer class to decompose a circuit into one of the Pauli
+ABA decompositions."""
 
 from __future__ import annotations
 
@@ -101,8 +99,8 @@ class ABADecomposer(Decomposer, ABC):
         Returns:
             Three gates, following the A-B-A convention, corresponding to the decomposition of the input gate.
         """
-        if not isinstance(g, BlochSphereRotation) or len(g.get_qubit_operands()) != 1:
-            # Only decomposer single-qubit gates.
+        if not isinstance(g, BlochSphereRotation):
+            # We only decompose bloch sphere rotations.
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)

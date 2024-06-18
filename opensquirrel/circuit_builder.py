@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 from collections.abc import Callable, Mapping
 from functools import partial
-from typing import TYPE_CHECKING, Any
+from typing import Any, Self
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
@@ -52,17 +52,17 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         self.register_manager = RegisterManager(qubit_register_size)
         self.ir = IR()
 
-    def __getattr__(self, attr: Any) -> Callable[..., CircuitBuilder]:
+    def __getattr__(self, attr: Any) -> Callable[..., Self]:
         if attr == "comment":
             return self._add_comment
 
         return partial(self._add_instruction, attr)
 
-    def _add_comment(self, comment_string: str) -> CircuitBuilder:
+    def _add_comment(self, comment_string: str) -> Self:
         self.ir.add_comment(Comment(comment_string))
         return self
 
-    def _add_instruction(self, attr: str, *args: Any) -> CircuitBuilder:
+    def _add_instruction(self, attr: str, *args: Any) -> Self:
         if any(attr == measure.__name__ for measure in self.measurement_set):
             generator_f_measure = MeasurementLibrary.get_measurement_f(self, attr)
             self._check_generator_f_args(generator_f_measure, attr, args)

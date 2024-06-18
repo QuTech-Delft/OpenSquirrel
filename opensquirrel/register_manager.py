@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import Self, Any
 
 import cqasm.v3x as cqasm
 
@@ -62,7 +62,7 @@ class RegisterManager:
         return string[2:-1]
 
     @classmethod
-    def from_ast(cls, ast: cqasm.semantic.Program) -> RegisterManager:
+    def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
         qubit_register_size: int = 0
         variable_name_to_qubit_range: dict[str, QubitRange] = dict()
         qubit_index_to_variable_name: dict[int, str] = dict()
