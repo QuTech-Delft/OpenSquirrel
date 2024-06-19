@@ -51,7 +51,7 @@ class ABADecomposer(Decomposer, ABC):
         if abs(alpha - math.pi) < ATOL:
             # alpha == pi, math.tan(alpha / 2) is not defined.
 
-            if abs(axis[self.index_a]) < ATOL:
+            if abs(a_axis_value) < ATOL:
                 theta2 = math.pi
                 p = 0.0
                 m = 2 * math.acos(b_axis_value)
