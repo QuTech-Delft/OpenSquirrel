@@ -93,8 +93,10 @@ class ABADecomposer(Decomposer, ABC):
 
     def decompose(self, g: Gate) -> list[Gate]:
         """General A-B-A decomposition function for a single gate.
+
         Args:
             g: gate to decompose.
+
         Returns:
             Three gates, following the A-B-A convention, corresponding to the decomposition of the input gate.
         """
