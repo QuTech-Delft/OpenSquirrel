@@ -3,7 +3,9 @@ from __future__ import annotations
 import inspect
 from collections.abc import Callable, Mapping
 from functools import partial
-from typing import Any, Self
+from typing import Any
+
+from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set

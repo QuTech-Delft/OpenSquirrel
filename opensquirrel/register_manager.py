@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Self, Any
+from typing import Any
 
 import cqasm.v3x as cqasm
+from typing_extensions import Self
 
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
