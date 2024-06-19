@@ -101,7 +101,7 @@ class ABADecomposer(Decomposer, ABC):
             Three gates, following the A-B-A convention, corresponding to the decomposition of the input gate.
         """
         if not isinstance(g, BlochSphereRotation):
-            # We only decompose bloch sphere rotations.
+            # We only decompose Bloch sphere rotations.
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)
