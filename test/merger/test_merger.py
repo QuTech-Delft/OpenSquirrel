@@ -6,7 +6,7 @@ from opensquirrel.default_gates import CNOT, H, Rx, Ry, Rz
 from opensquirrel.ir import IR, BlochSphereRotation, Float, Qubit
 from opensquirrel.merger import general_merger
 from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import QubitRegister, RegisterManager
 
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
@@ -28,7 +28,7 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
 
 
 def test_single_gate() -> None:
-    register_manager = RegisterManager(qubit_register_size=2)
+    register_manager = RegisterManager(QubitRegister(2))
     ir = IR()
     ir.add_gate(Ry(Qubit(0), Float(1.2345)))
     circuit = Circuit(register_manager, ir)
@@ -45,7 +45,7 @@ def test_single_gate() -> None:
 
 
 def test_two_hadamards() -> None:
-    register_manager = RegisterManager(qubit_register_size=4)
+    register_manager = RegisterManager(QubitRegister(4))
     ir = IR()
     ir.add_gate(H(Qubit(2)))
     ir.add_gate(H(Qubit(2)))
@@ -58,7 +58,7 @@ def test_two_hadamards() -> None:
 
 
 def test_two_hadamards_different_qubits() -> None:
-    register_manager = RegisterManager(qubit_register_size=4)
+    register_manager = RegisterManager(QubitRegister(4))
     ir = IR()
     ir.add_gate(H(Qubit(0)))
     ir.add_gate(H(Qubit(2)))
@@ -73,7 +73,7 @@ def test_two_hadamards_different_qubits() -> None:
 
 
 def test_merge_different_qubits() -> None:
-    register_manager = RegisterManager(qubit_register_size=4)
+    register_manager = RegisterManager(QubitRegister(4))
     ir = IR()
     ir.add_gate(Ry(Qubit(0), Float(math.pi / 2)))
     ir.add_gate(Rx(Qubit(0), Float(math.pi)))
@@ -99,7 +99,7 @@ def test_merge_different_qubits() -> None:
 
 
 def test_merge_and_flush() -> None:
-    register_manager = RegisterManager(qubit_register_size=4)
+    register_manager = RegisterManager(QubitRegister(4))
     ir = IR()
     ir.add_gate(Ry(Qubit(0), Float(math.pi / 2)))
     ir.add_gate(Rz(Qubit(1), Float(1.5)))

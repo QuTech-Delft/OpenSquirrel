@@ -10,8 +10,8 @@ from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION
-from opensquirrel.ir import IR, BlochSphereRotation, Float, Gate, Measure, Qubit
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Measure, Qubit
+from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
 class FloatEq(float):
@@ -42,15 +42,15 @@ class MockedQuantifyScheduler:
 
 class TestQuantifySchedulerExporter:
     def test_export(self):
-        register_manager = RegisterManager(qubit_register_size=3)
+        register_manager = RegisterManager(QubitRegister(3), BitRegister(3))
         ir = IR()
         ir.add_gate(X(Qubit(0)))
         ir.add_gate(CZ(Qubit(0), Qubit(1)))
         ir.add_gate(Rz(Qubit(1), Float(2.34)))
         ir.add_gate(Ry(Qubit(2), Float(1.23)))
-        ir.add_measurement(Measure(Qubit(0)))
-        ir.add_measurement(Measure(Qubit(1)))
-        ir.add_measurement(Measure(Qubit(2)))
+        ir.add_measurement(Measure(Bit(0), Qubit(0)))
+        ir.add_measurement(Measure(Bit(1), Qubit(1)))
+        ir.add_measurement(Measure(Bit(2), Qubit(2)))
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
             mock_schedule = unittest.mock.MagicMock()
@@ -77,7 +77,7 @@ class TestQuantifySchedulerExporter:
             assert mock_schedule.add.call_count == 7
 
     def check_gate_not_supported(self, g: Gate) -> None:
-        register_manager = RegisterManager(qubit_register_size=3)
+        register_manager = RegisterManager(QubitRegister(3))
         ir = IR()
         ir.add_gate(g)
 
@@ -96,6 +96,6 @@ class TestQuantifySchedulerExporter:
     importlib.util.find_spec("quantify_scheduler") is not None, reason="quantify_scheduler is installed"
 )
 def test_quantify_scheduler_not_installed() -> None:
-    empty_circuit = Circuit(RegisterManager(1), IR())
+    empty_circuit = Circuit(RegisterManager(QubitRegister(1)), IR())
     with pytest.raises(Exception, match="quantify-scheduler is not installed, or cannot be installed on your system"):
         quantify_scheduler_exporter.export(empty_circuit)

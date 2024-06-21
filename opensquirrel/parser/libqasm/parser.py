@@ -9,7 +9,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
-from opensquirrel.ir import IR, Float, Gate, Int, Measure, Qubit
+from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -76,12 +76,45 @@ class Parser(GateLibrary, MeasurementLibrary):
             qubit_range = register_manager.get_qubit_range(variable_name)
             ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
         if isinstance(ast_qubit_expression, cqasm.values.IndexRef):
-            indices = [int(i.value) for i in ast_qubit_expression.indices]
-            ret = [Qubit(index) for index in register_manager.get_qubit_indices(variable_name, indices)]
+            int_indices = [int(i.value) for i in ast_qubit_expression.indices]
+            indices = [register_manager.get_qubit_index(variable_name, i) for i in int_indices]
+            ret = [Qubit(index) for index in indices]
+        return ret
+
+    @staticmethod
+    def _get_bits(
+        ast_bit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef, register_manager: RegisterManager
+    ) -> list[Bit]:
+        ret = []
+        variable_name = Parser._parse_ast_string(ast_bit_expression.variable.name)
+        if isinstance(ast_bit_expression, cqasm.values.VariableRef):
+            bit_range = register_manager.get_bit_range(variable_name)
+            ret = [Bit(index) for index in range(bit_range.first, bit_range.first + bit_range.size)]
+        if isinstance(ast_bit_expression, cqasm.values.IndexRef):
+            int_indices = [int(i.value) for i in ast_bit_expression.indices]
+            indices = [register_manager.get_bit_index(variable_name, i) for i in int_indices]
+            ret = [Bit(index) for index in indices]
         return ret
 
     @classmethod
-    def _get_expanded_statement_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
+    def _get_expanded_measure_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
+        """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
+        For example: [(Bit(0), Qubit(0)), (Bit(1), Qubit(1))]
+        """
+        expanded_args: list[list[Any]] = []
+        for ast_arg in ast_args:
+            if Parser._is_bit_type(ast_arg):
+                expanded_args.append(cls._get_bits(ast_arg, register_manager))
+            else:
+                assert Parser._is_qubit_type(ast_arg)
+                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
+        return zip(*expanded_args)
+
+    @classmethod
+    def _get_expanded_gate_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
+        """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
+        For example: [(Qubit(0), Float(pi)), (Qubit(1), Float(pi))]
+        """
         number_of_operands = 0
         for ast_arg in ast_args:
             if Parser._is_qubit_type(ast_arg):
@@ -90,10 +123,8 @@ class Parser(GateLibrary, MeasurementLibrary):
         for ast_arg in ast_args:
             if Parser._is_qubit_type(ast_arg):
                 expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-            elif not Parser._is_bit_type(ast_arg):
+            else:
                 expanded_args.append([cls._ast_literal_to_ir_literal(ast_arg)] * number_of_operands)
-            else:  # Bit type
-                pass
         return zip(*expanded_args)
 
     @overload
@@ -102,16 +133,22 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @overload
     @staticmethod
+    def _get_cqasm_param_type_letters(squirrel_type: type[Bit]) -> tuple[str, str]: ...
+
+    @overload
+    @staticmethod
     def _get_cqasm_param_type_letters(squirrel_type: type[Float] | type[Int]) -> str: ...
 
     @staticmethod
-    def _get_cqasm_param_type_letters(squirrel_type: type[Qubit] | type[Float] | type[Int]) -> str | tuple[str, str]:
+    def _get_cqasm_param_type_letters(
+        squirrel_type: type[Qubit] | type[Bit] | type[Float] | type[Int],
+    ) -> str | tuple[str, str]:
         if squirrel_type == Qubit:
             return "Q", "V"  # "V" is to allow array notations like q[3, 5, 7] and q[3:6]
-
+        if squirrel_type == Bit:
+            return "B", "W"  # "W" is to allow array notations like b[3, 5, 7] and b[3:6]
         if squirrel_type == Float:
             return "f"
-
         if squirrel_type == Int:
             return "i"
 
@@ -119,11 +156,11 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     def _create_analyzer(self) -> cqasm.Analyzer:
         # TODO: we are temporarily using the default analyzer,
-        # mainly because there is a misalignment between the AST and the IR measure nodes
-        # The AST currently produces measure nodes with a bit argument,
-        # but the IR doesn't consider yet that bit argument
-        # In the future, we may want to go back to no using the default analyzer again,
-        # so that all gates are registered based on OpenSquirrel's default gate set
+        #   mainly because there is a misalignment between the AST and the IR measure nodes.
+        #   The AST currently produces measure nodes with a bit argument,
+        #   but the IR doesn't consider yet that bit argument.
+        #   In the future, we may want to go back to no using the default analyzer again,
+        #   so that all gates are registered based on OpenSquirrel's default gate set
         without_defaults = False
         analyzer = cqasm.Analyzer("3.0", without_defaults)
         return analyzer
@@ -149,12 +186,12 @@ class Parser(GateLibrary, MeasurementLibrary):
             statement_name = self._parse_ast_string(statement.name)
             if "measure" in statement_name:
                 generator_f_measure = self.get_measurement_f(statement_name)
-                expanded_args = Parser._get_expanded_statement_args(statement.operands, register_manager)
+                expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
                 for arg_set in expanded_args:
                     ir.add_measurement(generator_f_measure(*arg_set))
             else:
                 generator_f_gate = self.get_gate_f(statement_name)
-                expanded_args = Parser._get_expanded_statement_args(statement.operands, register_manager)
+                expanded_args = Parser._get_expanded_gate_args(statement.operands, register_manager)
                 for arg_set in expanded_args:
                     ir.add_gate(generator_f_gate(*arg_set))
 

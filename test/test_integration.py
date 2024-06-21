@@ -104,6 +104,7 @@ def test_measurement() -> None:
         == """version 3.0
 
 qubit[3] q
+bit[3] b
 
 Rz(1.5707963) q[0]
 X90 q[0]
@@ -113,12 +114,12 @@ Rz(3.1415926) q[0]
 CNOT q[1], q[0]
 Rz(1.5789) q[0]
 CNOT q[1], q[0]
-measure q[0]
+b[0] = measure q[0]
 Rz(3.1415927) q[2]
 X90 q[2]
 Rz(0.80159265) q[2]
 X90 q[2]
-measure q[2]
+b[2] = measure q[2]
 Rz(2.5707963) q[1]
 """
     )
@@ -147,19 +148,20 @@ def test_consecutive_measurements() -> None:
         == """version 3.0
 
 qubit[3] q
+bit[3] b
 
 X90 q[0]
 Rz(1.5707963) q[0]
 X90 q[0]
-measure q[0]
+b[0] = measure q[0]
 X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
-measure q[1]
+b[1] = measure q[1]
 X90 q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
-measure q[2]
+b[2] = measure q[2]
 """
     )
 
@@ -185,19 +187,20 @@ def test_measurements_unrolling() -> None:
         == """version 3.0
 
 qubit[3] q
+bit[3] b
 
 X90 q[0]
 Rz(1.5707963) q[0]
 X90 q[0]
-measure q[0]
+b[0] = measure q[0]
 X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
-measure q[1]
+b[1] = measure q[1]
 X90 q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
-measure q[2]
+b[2] = measure q[2]
 """
     )
 
@@ -222,14 +225,15 @@ def test_measure_order() -> None:
         == """version 3.0
 
 qubit[2] q
+bit[2] b
 
 Rz(2.7488936) q[1]
 X90 q[1]
 Rz(3.1415927) q[1]
 X90 q[1]
 Rz(-0.3926991) q[1]
-measure q[1]
-measure q[0]
+b[1] = measure q[1]
+b[0] = measure q[0]
 """
     )
 
@@ -259,18 +263,19 @@ def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions() -
         == """version 3.0
 
 qubit[2] q
+bit[2] b
 
 Rz(-1.5707963) q[0]
 X90 q[0]
 X90 q[0]
 Rz(-1.5707963) q[0]
-measure q[0]
+b[0] = measure q[0]
 X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
 CNOT q[1], q[0]
-measure q[1]
-measure q[0]
+b[1] = measure q[1]
+b[0] = measure q[0]
 """
     )
 

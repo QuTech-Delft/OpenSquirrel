@@ -3,8 +3,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
-from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Measure, Qubit
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.ir import IR, Bit, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Measure, Qubit
+from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -28,7 +28,7 @@ class _QubitReindexer(IRVisitor):
         self.qubit_indices = qubit_indices
 
     def visit_measure(self, measure: Measure) -> Measure:
-        return Measure(qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), axis=measure.axis)
+        return Measure(bit=measure.bit, qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), axis=measure.axis)
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(
@@ -45,11 +45,15 @@ class _QubitReindexer(IRVisitor):
         return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
 
 
-def get_reindexed_circuit(replacement_gates: Iterable[Gate], qubit_indices: list[int]) -> Circuit:
+def get_reindexed_circuit(
+    replacement_gates: Iterable[Gate], qubit_indices: list[int], bit_register_size: int = 0
+) -> Circuit:
     from opensquirrel.circuit import Circuit
 
     qubit_reindexer = _QubitReindexer(qubit_indices)
-    register_manager = RegisterManager(qubit_register_size=len(qubit_indices))
+    qubit_register = QubitRegister(len(qubit_indices))
+    bit_register = BitRegister(bit_register_size)
+    register_manager = RegisterManager(qubit_register, bit_register)
     replacement_ir = IR()
     for gate in replacement_gates:
         gate_with_reindexed_qubits = gate.accept(qubit_reindexer)

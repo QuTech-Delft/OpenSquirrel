@@ -9,7 +9,7 @@ import pytest
 from numpy.typing import ArrayLike
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Axis, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
+from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
 
 
 class TestAxis:
@@ -165,26 +165,28 @@ class TestIR:
 
 
 class TestMeasure:
-
     @pytest.fixture(name="measure")
     def measure_fixture(self) -> Measure:
-        return Measure(Qubit(42), axis=(0, 0, 1))
+        return Measure(Bit(42), Qubit(42), axis=(0, 0, 1))
 
     def test_repr(self, measure: Measure) -> None:
-        expected_repr = "Measure(Qubit[42], axis=Axis[0. 0. 1.])"
+        expected_repr = "Measure(bit=Bit[42], qubit=Qubit[42], axis=Axis[0. 0. 1.])"
         assert repr(measure) == expected_repr
 
     def test_equality(self, measure: Measure) -> None:
-        measure_eq = Measure(Qubit(42), axis=(0, 0, 1))
+        measure_eq = Measure(Bit(42), Qubit(42), axis=(0, 0, 1))
         assert measure == measure_eq
 
     @pytest.mark.parametrize(
         "other_measure",
-        [Measure(Qubit(43), axis=(0, 0, 1)), Measure(Qubit(42), axis=(1, 0, 0)), "test"],
+        [Measure(Bit(43), Qubit(43), axis=(0, 0, 1)), Measure(Bit(42), Qubit(42), axis=(1, 0, 0)), "test"],
         ids=["qubit", "axis", "type"],
     )
     def test_inequality(self, measure: Measure, other_measure: Measure | str) -> None:
         assert measure != other_measure
+
+    def test_get_bit_operands(self, measure: Measure) -> None:
+        assert measure.get_bit_operands() == [Bit(42)]
 
     def test_get_qubit_operands(self, measure: Measure) -> None:
         assert measure.get_qubit_operands() == [Qubit(42)]
