@@ -15,8 +15,8 @@ except Exception as e:
     pass
 
 _unsupported_gates_exception = Exception(
-    "Cannot export circuit: it contains unsupported gates. "
-    "Decompose them to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
+    "Cannot exporter circuit: it contains unsupported gates - decomposer them to the "
+    "Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
 )
 
 # Radian to degree conversion outcome precision

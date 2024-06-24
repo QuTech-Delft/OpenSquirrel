@@ -44,7 +44,7 @@ class Circuit:
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
-        from opensquirrel.writer import writer
+        from opensquirrel.exporter import writer
 
         return writer.circuit_to_string(self)
 
