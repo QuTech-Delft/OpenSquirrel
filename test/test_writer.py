@@ -2,11 +2,11 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import CR, H
 from opensquirrel.exporter import writer
 from opensquirrel.ir import IR, BlochSphereRotation, Comment, Float, Qubit
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import QubitRegister, RegisterManager
 
 
 def test_write() -> None:
-    register_manager = RegisterManager(qubit_register_size=3)
+    register_manager = RegisterManager(QubitRegister(3))
     ir = IR()
     circuit = Circuit(register_manager, ir)
 
@@ -36,7 +36,7 @@ CR(1.234) q[0], q[1]
 
 
 def test_anonymous_gate() -> None:
-    register_manager = RegisterManager(qubit_register_size=2)
+    register_manager = RegisterManager(QubitRegister(2))
     ir = IR()
     ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
     ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
@@ -57,7 +57,7 @@ CR(1.234) q[0], q[1]
 
 
 def test_comment() -> None:
-    register_manager = RegisterManager(qubit_register_size=3)
+    register_manager = RegisterManager(QubitRegister(3))
     ir = IR()
     ir.add_gate(H(Qubit(0)))
     ir.add_comment(Comment("My comment"))
@@ -80,7 +80,7 @@ CR(1.234) q[0], q[1]
 
 
 def test_cap_significant_digits() -> None:
-    register_manager = RegisterManager(qubit_register_size=3)
+    register_manager = RegisterManager(QubitRegister(3))
     ir = IR()
     ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.6546514861321684321654)))
     circuit = Circuit(register_manager, ir)

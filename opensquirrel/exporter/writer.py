@@ -1,5 +1,5 @@
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import Comment, Float, Gate, Int, IRVisitor, Measure, Qubit
+from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -8,12 +8,21 @@ class _WriterImpl(IRVisitor):
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
-        qubit_register_size = self.register_manager.qubit_register_size
-        qubit_register_name = self.register_manager.qubit_register_name
-        self.output = f"""version 3.0\n\nqubit[{qubit_register_size}] {qubit_register_name}\n\n"""
+        qubit_register_size = self.register_manager.get_qubit_register_size()
+        qubit_register_name = self.register_manager.get_qubit_register_name()
+        bit_register_size = self.register_manager.get_bit_register_size()
+        bit_register_name = self.register_manager.get_bit_register_name()
+        self.output = "version 3.0\n\n{}\n{}\n".format(
+            f"qubit[{qubit_register_size}] {qubit_register_name}",
+            f"bit[{bit_register_size}] {bit_register_name}\n" if bit_register_size > 0 else "",
+        )
+
+    def visit_bit(self, bit: Bit) -> str:
+        bit_register_name = self.register_manager.get_bit_register_name()
+        return f"{bit_register_name}[{bit.index}]"
 
     def visit_qubit(self, qubit: Qubit) -> str:
-        qubit_register_name = self.register_manager.qubit_register_name
+        qubit_register_name = self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_int(self, i: Int) -> str:
@@ -26,7 +35,9 @@ class _WriterImpl(IRVisitor):
         if measure.is_abstract:
             self.output += f"{measure.name}\n"
             return
-        self.output += f"{measure.name} {measure.arguments[0].accept(self)}\n"  # type: ignore[index]
+        bit_argument = measure.arguments[1].accept(self)  # type: ignore[index]
+        qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
+        self.output += f"{bit_argument} = {measure.name} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name

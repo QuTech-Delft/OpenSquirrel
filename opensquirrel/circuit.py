@@ -86,15 +86,22 @@ class Circuit:
 
     @property
     def qubit_register_size(self) -> int:
-        return self.register_manager.qubit_register_size
+        return self.register_manager.get_qubit_register_size()
+
+    @property
+    def bit_register_size(self) -> int:
+        return self.register_manager.get_bit_register_size()
 
     @property
     def qubit_register_name(self) -> str:
-        return self.register_manager.qubit_register_name
+        return self.register_manager.get_qubit_register_name()
+
+    @property
+    def bit_register_name(self) -> str:
+        return self.register_manager.get_bit_register_name()
 
     def merge_single_qubit_gates(self) -> None:
         """Merge all consecutive 1-qubit gates in the circuit.
-
         Gates obtained from merging other gates become anonymous gates.
         """
         from opensquirrel.merger import general_merger
@@ -102,7 +109,9 @@ class Circuit:
         general_merger.merge_single_qubit_gates(self)
 
     def decompose(self, decomposer: Decomposer) -> None:
-        """Generic decomposition pass. It applies the given decomposer function to every gate in the circuit."""
+        """Generic decomposition pass.
+        It applies the given decomposer function to every gate in the circuit.
+        """
         general_decomposer.decompose(self.ir, decomposer)
 
     def map(self, mapper: Mapper) -> None:
@@ -115,8 +124,8 @@ class Circuit:
 
     def replace(self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
-        `f` is a callable that takes the arguments of the gate that is to be replaced
-        and returns the decomposition as a list of gates.
+        `f` is a callable that takes the arguments of the gate that is to be replaced and
+        returns the decomposition as a list of gates.
         """
         general_decomposer.replace(self.ir, gate_generator, f)
 
