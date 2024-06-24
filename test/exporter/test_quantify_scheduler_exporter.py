@@ -48,9 +48,9 @@ class TestQuantifySchedulerExporter:
         ir.add_gate(CZ(Qubit(0), Qubit(1)))
         ir.add_gate(Rz(Qubit(1), Float(2.34)))
         ir.add_gate(Ry(Qubit(2), Float(1.23)))
-        ir.add_measurement(Measure(Bit(0), Qubit(0)))
-        ir.add_measurement(Measure(Bit(1), Qubit(1)))
-        ir.add_measurement(Measure(Bit(2), Qubit(2)))
+        ir.add_measurement(Measure(Qubit(0), Bit(0)))
+        ir.add_measurement(Measure(Qubit(1), Bit(1)))
+        ir.add_measurement(Measure(Qubit(2), Bit(2)))
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
             mock_schedule = unittest.mock.MagicMock()

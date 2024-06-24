@@ -208,20 +208,20 @@ class Statement(IRNode, ABC):
 class Measure(Statement, ABC):
     def __init__(
         self,
-        bit: Bit,
         qubit: Qubit,
+        bit: Bit,
         axis: AxisLike = (0, 0, 1),
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
         self.generator = generator
         self.arguments = arguments
-        self.bit: Bit = bit
         self.qubit: Qubit = qubit
+        self.bit: Bit = bit
         self.axis = Axis(axis)
 
     def __repr__(self) -> str:
-        return f"Measure(bit={self.bit}, qubit={self.qubit}, axis={self.axis})"
+        return f"Measure(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
     @property
     def name(self) -> str:
@@ -406,7 +406,6 @@ def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., Matri
 def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
 
 
-# TODO: can we extract the duplicated code for the two wrapper functions below out to a single function?
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     @wraps(gate_generator)
     def wrapper(*args: Any, **kwargs: Any) -> Gate:

@@ -39,14 +39,14 @@ class TestCircuitBuilder:
 
     def test_single_measure(self):
         builder = CircuitBuilder(1, 1)
-        builder.measure(Bit(0), Qubit(0))
+        builder.measure(Qubit(0), Bit(0))
 
         circuit = builder.to_circuit()
 
         assert circuit.qubit_register_size == 1
         assert circuit.qubit_register_name == "q"
         assert circuit.ir.statements == [
-            Measure(Bit(0), Qubit(0)),
+            Measure(Qubit(0), Bit(0)),
         ]
 
     def test_circuit_measure(self):
@@ -54,8 +54,8 @@ class TestCircuitBuilder:
 
         builder.H(Qubit(0))
         builder.CNOT(Qubit(0), Qubit(1))
-        builder.measure(Bit(0), Qubit(0))
-        builder.measure(Bit(1), Qubit(1))
+        builder.measure(Qubit(0), Bit(0))
+        builder.measure(Qubit(1), Bit(1))
 
         circuit = builder.to_circuit()
 
@@ -64,8 +64,8 @@ class TestCircuitBuilder:
         assert circuit.ir.statements == [
             H(Qubit(0)),
             CNOT(Qubit(0), Qubit(1)),
-            Measure(Bit(0), Qubit(0)),
-            Measure(Bit(1), Qubit(1)),
+            Measure(Qubit(0), Bit(0)),
+            Measure(Qubit(1), Bit(1)),
         ]
 
     def test_chain(self):
