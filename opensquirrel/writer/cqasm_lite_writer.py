@@ -26,7 +26,7 @@ class _WriterImpl(IRVisitor):
         if measure.is_abstract:
             self.output += f"{measure.name}\n"
             return
-        self.output += f"{measure.name} {measure.arguments[1].accept(self)}\n"  # type: ignore[index]
+        self.output += f"{measure.name} {measure.arguments[0].accept(self)}\n"  # type: ignore[index]
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name
