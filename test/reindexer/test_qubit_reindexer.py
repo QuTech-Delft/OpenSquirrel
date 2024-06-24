@@ -25,7 +25,7 @@ def replacement_gates_1() -> list[Gate]:
 
 def replacement_gates_2() -> list[Gate]:
     return [
-        Measure(Bit(1), Qubit(1)),
+        Measure(Qubit(1), Bit(1)),
         BlochSphereRotation(Qubit(3), axis=(0, 0, 1), angle=math.pi),
         MatrixGate(np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]), [Qubit(0), Qubit(3)]),
         ControlledGate(Qubit(1), X(Qubit(2))),
@@ -34,7 +34,7 @@ def replacement_gates_2() -> list[Gate]:
 
 def circuit_2_reindexed() -> Circuit:
     ir = IR()
-    ir.add_gate(Measure(Bit(0), Qubit(0)))
+    ir.add_gate(Measure(Qubit(0), Bit(0)))
     ir.add_gate(BlochSphereRotation(Qubit(2), axis=(0, 0, 1), angle=math.pi))
     matrix = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
     ir.add_gate(MatrixGate(matrix, [Qubit(1), Qubit(2)]))

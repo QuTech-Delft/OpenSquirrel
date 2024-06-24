@@ -167,19 +167,19 @@ class TestIR:
 class TestMeasure:
     @pytest.fixture(name="measure")
     def measure_fixture(self) -> Measure:
-        return Measure(Bit(42), Qubit(42), axis=(0, 0, 1))
+        return Measure(Qubit(42), Bit(42), axis=(0, 0, 1))
 
     def test_repr(self, measure: Measure) -> None:
-        expected_repr = "Measure(bit=Bit[42], qubit=Qubit[42], axis=Axis[0. 0. 1.])"
+        expected_repr = "Measure(qubit=Qubit[42], bit=Bit[42], axis=Axis[0. 0. 1.])"
         assert repr(measure) == expected_repr
 
     def test_equality(self, measure: Measure) -> None:
-        measure_eq = Measure(Bit(42), Qubit(42), axis=(0, 0, 1))
+        measure_eq = Measure(Qubit(42), Bit(42), axis=(0, 0, 1))
         assert measure == measure_eq
 
     @pytest.mark.parametrize(
         "other_measure",
-        [Measure(Bit(43), Qubit(43), axis=(0, 0, 1)), Measure(Bit(42), Qubit(42), axis=(1, 0, 0)), "test"],
+        [Measure(Qubit(43), Bit(43), axis=(0, 0, 1)), Measure(Qubit(42), Bit(42), axis=(1, 0, 0)), "test"],
         ids=["qubit", "axis", "type"],
     )
     def test_inequality(self, measure: Measure, other_measure: Measure | str) -> None:

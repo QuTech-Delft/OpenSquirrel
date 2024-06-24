@@ -35,8 +35,8 @@ class _WriterImpl(IRVisitor):
         if measure.is_abstract:
             self.output += f"{measure.name}\n"
             return
-        bit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
-        qubit_argument = measure.arguments[1].accept(self)  # type: ignore[index]
+        bit_argument = measure.arguments[1].accept(self)  # type: ignore[index]
+        qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
         self.output += f"{bit_argument} = {measure.name} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Measure, Qubit
+from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Measure, Qubit
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
@@ -28,7 +28,7 @@ class _QubitReindexer(IRVisitor):
         self.qubit_indices = qubit_indices
 
     def visit_measure(self, measure: Measure) -> Measure:
-        return Measure(bit=measure.bit, qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), axis=measure.axis)
+        return Measure(qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), bit=measure.bit, axis=measure.axis)
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(

@@ -40,7 +40,7 @@ class TestMapQubits:
         ir.add_gate(CNOT(Qubit(0), Qubit(1)))
         ir.add_gate(CNOT(Qubit(1), Qubit(2)))
         ir.add_comment(Comment("Qubit[1]"))
-        ir.add_measurement(Measure(Bit(0), Qubit(0), axis=(0, 0, 1)))
+        ir.add_measurement(Measure(Qubit(0), Bit(0), axis=(0, 0, 1)))
         return Circuit(register_manager, ir)
 
     @pytest.fixture(name="expected_statements")
@@ -50,7 +50,7 @@ class TestMapQubits:
             CNOT(Qubit(1), Qubit(0)),
             CNOT(Qubit(0), Qubit(2)),
             Comment("Qubit[1]"),
-            Measure(Bit(1), Qubit(1), axis=(0, 0, 1)),
+            Measure(Qubit(1), Bit(1), axis=(0, 0, 1)),
         ]
 
     def test_circuit_map(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
