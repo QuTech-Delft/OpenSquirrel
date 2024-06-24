@@ -82,7 +82,7 @@ class TestQuantifySchedulerExporter:
         ir.add_gate(g)
 
         with MockedQuantifyScheduler():
-            with pytest.raises(Exception, match="Cannot exporter circuit: it contains unsupported gates"):
+            with pytest.raises(Exception, match="Cannot export circuit: it contains unsupported gates"):
                 quantify_scheduler_exporter.export(Circuit(register_manager, ir))
 
     def test_gates_not_supported(self):

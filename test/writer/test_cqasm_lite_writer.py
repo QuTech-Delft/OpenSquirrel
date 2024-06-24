@@ -1,8 +1,9 @@
 from opensquirrel.circuit import Circuit
+from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.default_gates import CR, H
-from opensquirrel.exporter import writer
 from opensquirrel.ir import IR, BlochSphereRotation, Comment, Float, Qubit
 from opensquirrel.register_manager import QubitRegister, RegisterManager
+from opensquirrel.writer import cqasm_lite_writer
 
 
 def test_write() -> None:
@@ -11,7 +12,7 @@ def test_write() -> None:
     circuit = Circuit(register_manager, ir)
 
     assert (
-        writer.circuit_to_string(circuit)
+        cqasm_lite_writer.circuit_to_string(circuit)
         == """version 3.0
 
 qubit[3] q
@@ -24,7 +25,7 @@ qubit[3] q
     circuit = Circuit(register_manager, ir)
 
     assert (
-        writer.circuit_to_string(circuit)
+        cqasm_lite_writer.circuit_to_string(circuit)
         == """version 3.0
 
 qubit[3] q
@@ -44,7 +45,7 @@ def test_anonymous_gate() -> None:
     circuit = Circuit(register_manager, ir)
 
     assert (
-        writer.circuit_to_string(circuit)
+        cqasm_lite_writer.circuit_to_string(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -65,7 +66,7 @@ def test_comment() -> None:
     circuit = Circuit(register_manager, ir)
 
     assert (
-        writer.circuit_to_string(circuit)
+        cqasm_lite_writer.circuit_to_string(circuit)
         == """version 3.0
 
 qubit[3] q
@@ -86,11 +87,56 @@ def test_cap_significant_digits() -> None:
     circuit = Circuit(register_manager, ir)
 
     assert (
-        writer.circuit_to_string(circuit)
+        cqasm_lite_writer.circuit_to_string(circuit)
         == """version 3.0
 
 qubit[3] q
 
 CR(1.6546515) q[0], q[1]
+"""
+    )
+
+
+def test_measurement() -> None:
+    circuit = Circuit.from_string(
+        """
+        version 3.0
+
+        qubit[3] q
+        bit[3] b
+
+        Ry(2.34) q[2]
+        Rz(1.5707963) q[0]
+        Ry(-0.2) q[0]
+        CNOT q[1], q[0]
+        Rz(1.5789) q[0]
+        CNOT q[1], q[0]
+        Rz(2.5707963) q[1]
+        b[0, 2] = measure q[0, 2]
+        """,
+    )
+    circuit.merge_single_qubit_gates()
+    circuit.decompose(decomposer=McKayDecomposer())
+    assert (
+        cqasm_lite_writer.circuit_to_string(circuit)
+        == """version 3.0
+
+qubit[3] q
+
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(2.9415927) q[0]
+X90 q[0]
+Rz(3.1415926) q[0]
+CNOT q[1], q[0]
+Rz(1.5789) q[0]
+CNOT q[1], q[0]
+measure q[0]
+Rz(3.1415927) q[2]
+X90 q[2]
+Rz(0.80159265) q[2]
+X90 q[2]
+measure q[2]
+Rz(2.5707963) q[1]
 """
     )
