@@ -67,6 +67,18 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         self.ir.add_comment(Comment(comment_string))
         return self
 
+    def _verify_register_size(self) -> None:
+        current_statement = self.ir.statements[-1]
+        if not isinstance(current_statement, Gate) and not isinstance(current_statement, Measure):
+            return
+        for qubit in current_statement.get_qubit_operands():
+            if qubit.index >= self.register_manager.get_qubit_register_size():
+                raise IndexError("Qubit index does not exist in circuit.")
+        if isinstance(current_statement, Measure):
+            for bit in current_statement.get_bit_operands():
+                if bit.index >= self.register_manager.get_bit_register_size():
+                    raise IndexError("Bit index does not exist in circuit.")
+
     def _add_instruction(self, attr: str, *args: Any) -> Self:
         if any(attr == measure.__name__ for measure in self.measurement_set):
             generator_f_measure = MeasurementLibrary.get_measurement_f(self, attr)
@@ -76,6 +88,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             generator_f_gate = GateLibrary.get_gate_f(self, attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
             self.ir.add_gate(generator_f_gate(*args))
+        self._verify_register_size()
         return self
 
     @staticmethod
