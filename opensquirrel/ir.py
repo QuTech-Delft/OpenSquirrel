@@ -23,6 +23,9 @@ class IRVisitor(ABC):
     def visit_float(self, f: Float) -> Any:
         pass
 
+    def visit_bit(self, qubit: Bit) -> Any:
+        pass
+
     def visit_qubit(self, qubit: Qubit) -> Any:
         pass
 
@@ -69,6 +72,20 @@ class Int(Expression):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
+
+
+@dataclass
+class Bit(Expression):
+    index: int
+
+    def __hash__(self) -> int:
+        return hash(self.index)
+
+    def __repr__(self) -> str:
+        return f"Bit[{self.index}]"
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_bit(self)
 
 
 @dataclass
@@ -189,10 +206,10 @@ class Statement(IRNode, ABC):
 
 
 class Measure(Statement, ABC):
-
     def __init__(
         self,
         qubit: Qubit,
+        bit: Bit,
         axis: AxisLike = (0, 0, 1),
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
@@ -200,10 +217,11 @@ class Measure(Statement, ABC):
         self.generator = generator
         self.arguments = arguments
         self.qubit: Qubit = qubit
+        self.bit: Bit = bit
         self.axis = Axis(axis)
 
     def __repr__(self) -> str:
-        return f"Measure({self.qubit}, axis={self.axis})"
+        return f"Measure(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
     @property
     def name(self) -> str:
@@ -220,6 +238,9 @@ class Measure(Statement, ABC):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_measure(self)
+
+    def get_bit_operands(self) -> list[Bit]:
+        return [self.bit]
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
@@ -268,7 +289,6 @@ class Gate(Statement, ABC):
 
 
 class BlochSphereRotation(Gate):
-
     def __init__(
         self,
         qubit: Qubit,
@@ -320,7 +340,6 @@ class BlochSphereRotation(Gate):
 
 
 class MatrixGate(Gate):
-
     def __init__(
         self,
         matrix: NDArray[np.complex_],
@@ -350,7 +369,6 @@ class MatrixGate(Gate):
 
 
 class ControlledGate(Gate):
-
     def __init__(
         self,
         control_qubit: Qubit,

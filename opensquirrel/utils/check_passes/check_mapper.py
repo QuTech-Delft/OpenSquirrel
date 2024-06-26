@@ -5,10 +5,9 @@ from __future__ import annotations
 from copy import deepcopy
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import IR, BlochSphereRotation, Comment, ControlledGate, Measure, Qubit
+from opensquirrel.ir import IR, Bit, BlochSphereRotation, Comment, ControlledGate, Measure, Qubit
 from opensquirrel.mapper.general_mapper import Mapper
-from opensquirrel.mapper.mapping import Mapping
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
 def check_mapper(mapper: Mapper) -> None:
@@ -21,7 +20,7 @@ def check_mapper(mapper: Mapper) -> None:
     """
     assert isinstance(mapper, Mapper)
 
-    register_manager = RegisterManager(qubit_register_size=10)
+    register_manager = RegisterManager(QubitRegister(10), BitRegister(10))
     ir = IR()
     circuit = Circuit(register_manager, ir)
     _check_scenario(circuit, mapper)
@@ -30,7 +29,7 @@ def check_mapper(mapper: Mapper) -> None:
     ir.add_comment(Comment("comment"))
     ir.add_gate(BlochSphereRotation(Qubit(42), (1, 0, 0), 1, 2))
     ir.add_gate(ControlledGate(Qubit(42), BlochSphereRotation.identity(Qubit(100))))
-    ir.add_measurement(Measure(Qubit(42), (0, 0, 1)))
+    ir.add_measurement(Measure(Qubit(42), Bit(42), (0, 0, 1)))
     Circuit(register_manager, ir)
     _check_scenario(circuit, mapper)
 

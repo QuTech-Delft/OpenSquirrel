@@ -12,7 +12,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
 from opensquirrel.ir import IR, Comment, Gate, Measure
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
 class CircuitBuilder(GateLibrary, MeasurementLibrary):
@@ -24,12 +24,14 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
 
     Args:
         qubit_register_size (int): Size of the qubit register
+        bit_register_size (int): Size of the bit register
         gate_set (list): Supported gates
         gate_aliases (dict): Supported gate aliases
         measurement_set (list): Supported measure instructions
 
     Example:
-        >>> CircuitBuilder(qubit_register_size=3).H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).CNOT(Qubit(0), Qubit(2)). \
+        >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
+        H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).CNOT(Qubit(0), Qubit(2)).\
         to_circuit()
         version 3.0
         <BLANKLINE>
@@ -45,13 +47,14 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
     def __init__(
         self,
         qubit_register_size: int,
+        bit_register_size: int = 0,
         gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: list[Callable[..., Measure]] = default_measurement_set,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
-        self.register_manager = RegisterManager(qubit_register_size)
+        self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
