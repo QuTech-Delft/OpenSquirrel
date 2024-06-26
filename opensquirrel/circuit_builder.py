@@ -78,15 +78,17 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             self.ir.add_gate(generator_f_gate(*args))
         return self
 
-    def _check_qubit_out_of_bounds_access(self, index) -> None:
+    def _check_qubit_out_of_bounds_access(self, index: int) -> None:
         if index >= self.register_manager.get_qubit_register_size():
             raise IndexError("Qubit index is out of bounds")
 
-    def _check_bit_out_of_bounds_access(self, index) -> None:
+    def _check_bit_out_of_bounds_access(self, index: int) -> None:
         if index >= self.register_manager.get_bit_register_size():
             raise IndexError("Bit index is out of bounds")
 
-    def _check_generator_f_args(self, generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]) -> None:
+    def _check_generator_f_args(
+        self, generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]
+    ) -> None:
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             if isinstance(par.annotation, str):
                 if args[i].__class__.__name__ != par.annotation:
@@ -101,7 +103,6 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
                 self._check_qubit_out_of_bounds_access(args[i].index)
             elif args[i].__class__.__name__ == "Bit":
                 self._check_bit_out_of_bounds_access(args[i].index)
-
 
     def to_circuit(self) -> Circuit:
         return Circuit(self.register_manager, self.ir)
