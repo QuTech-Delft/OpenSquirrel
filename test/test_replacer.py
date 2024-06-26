@@ -9,7 +9,7 @@ from opensquirrel.decomposer import general_decomposer
 from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
 from opensquirrel.default_gates import CNOT, Y90, BlochSphereRotation, H, I, Ry, Rz, X, Z, sqrtSWAP
 from opensquirrel.ir import IR, Comment, Float, Gate, Qubit
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import QubitRegister, RegisterManager
 
 
 class TestCheckGateReplacement:
@@ -110,7 +110,7 @@ class TestCheckGateReplacement:
 
 class TestReplacer:
     def test_replace_generic(self):
-        register_manager = RegisterManager(qubit_register_size=3)
+        register_manager = RegisterManager(QubitRegister(3))
         ir = IR()
         ir.add_gate(H(Qubit(0)))
         ir.add_gate(CNOT(Qubit(0), Qubit(1)))
@@ -135,7 +135,7 @@ class TestReplacer:
         assert expected_circuit == circuit
 
     def test_replace(self):
-        register_manager = RegisterManager(qubit_register_size=3)
+        register_manager = RegisterManager(QubitRegister(3))
         ir = IR()
         ir.add_gate(H(Qubit(0)))
         ir.add_comment(Comment("Test comment."))

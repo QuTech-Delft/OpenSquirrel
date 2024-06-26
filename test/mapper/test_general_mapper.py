@@ -6,10 +6,10 @@ import pytest
 
 from opensquirrel import Circuit
 from opensquirrel.default_gates import CNOT, H
-from opensquirrel.ir import IR, Comment, Measure, Qubit, Statement
+from opensquirrel.ir import IR, Bit, Comment, Measure, Qubit, Statement
 from opensquirrel.mapper import HardcodedMapper, Mapper
 from opensquirrel.mapper.mapping import Mapping
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
 class TestMapper:
@@ -34,13 +34,13 @@ class TestMapper:
 class TestMapQubits:
     @pytest.fixture(name="circuit")
     def circuit_fixture(self) -> Circuit:
-        register_manager = RegisterManager(qubit_register_size=3)
+        register_manager = RegisterManager(QubitRegister(3), BitRegister(3))
         ir = IR()
         ir.add_gate(H(Qubit(0)))
         ir.add_gate(CNOT(Qubit(0), Qubit(1)))
         ir.add_gate(CNOT(Qubit(1), Qubit(2)))
         ir.add_comment(Comment("Qubit[1]"))
-        ir.add_measurement(Measure(Qubit(0), axis=(0, 0, 1)))
+        ir.add_measurement(Measure(Qubit(0), Bit(0), axis=(0, 0, 1)))
         return Circuit(register_manager, ir)
 
     @pytest.fixture(name="expected_statements")
@@ -50,7 +50,7 @@ class TestMapQubits:
             CNOT(Qubit(1), Qubit(0)),
             CNOT(Qubit(0), Qubit(2)),
             Comment("Qubit[1]"),
-            Measure(Qubit(1), axis=(0, 0, 1)),
+            Measure(Qubit(1), Bit(1), axis=(0, 0, 1)),
         ]
 
     def test_circuit_map(self, circuit: Circuit, expected_statements: list[Statement]) -> None:
