@@ -78,19 +78,6 @@ class TestCircuitBuilder:
             CNOT(Qubit(0), Qubit(1)),
         ]
 
-    def test_gate_index_error(self):
-        builder = CircuitBuilder(2)
-
-        with pytest.raises(Exception) as exception_info:
-            builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(12)).to_circuit()
-        assert re.search("Qubit index does not exist in circuit.", str(exception_info.value))
-
-    def test_measurement_index_error(self):
-        builder = CircuitBuilder(2, 1)
-        with pytest.raises(Exception) as exception_info:
-            builder.H(Qubit(0)).measure(Qubit(0), Bit(10)).to_circuit()
-        assert re.search("Bit index does not exist in circuit.", str(exception_info.value))
-
     def test_unknown_instruction(self):
         builder = CircuitBuilder(3)
 
@@ -118,3 +105,16 @@ class TestCircuitBuilder:
             "Wrong argument type for instruction `H`, got <class 'int'> but expected Qubit",
             str(exception_info.value),
         )
+
+    def test_gate_index_error(self):
+        builder = CircuitBuilder(2)
+
+        with pytest.raises(IndexError) as exception_info:
+            builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(12)).to_circuit()
+        assert re.search("Qubit index is out of bounds", str(exception_info.value))
+
+    def test_measurement_index_error(self):
+        builder = CircuitBuilder(2, 1)
+        with pytest.raises(IndexError) as exception_info:
+            builder.H(Qubit(0)).measure(Qubit(0), Bit(10)).to_circuit()
+        assert re.search("Bit index is out of bounds", str(exception_info.value))

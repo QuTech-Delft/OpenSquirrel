@@ -67,18 +67,6 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         self.ir.add_comment(Comment(comment_string))
         return self
 
-    def _verify_register_size(self) -> None:
-        current_statement = self.ir.statements[-1]
-        if not isinstance(current_statement, Gate) and not isinstance(current_statement, Measure):
-            return
-        for qubit in current_statement.get_qubit_operands():
-            if qubit.index >= self.register_manager.get_qubit_register_size():
-                raise IndexError("Qubit index does not exist in circuit.")
-        if isinstance(current_statement, Measure):
-            for bit in current_statement.get_bit_operands():
-                if bit.index >= self.register_manager.get_bit_register_size():
-                    raise IndexError("Bit index does not exist in circuit.")
-
     def _add_instruction(self, attr: str, *args: Any) -> Self:
         if any(attr == measure.__name__ for measure in self.measurement_set):
             generator_f_measure = MeasurementLibrary.get_measurement_f(self, attr)
@@ -88,11 +76,17 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             generator_f_gate = GateLibrary.get_gate_f(self, attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
             self.ir.add_gate(generator_f_gate(*args))
-        self._verify_register_size()
         return self
 
-    @staticmethod
-    def _check_generator_f_args(generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]) -> None:
+    def _check_qubit_out_of_bounds_access(self, index) -> None:
+        if index >= self.register_manager.get_qubit_register_size():
+            raise IndexError("Qubit index is out of bounds")
+
+    def _check_bit_out_of_bounds_access(self, index) -> None:
+        if index >= self.register_manager.get_bit_register_size():
+            raise IndexError("Bit index is out of bounds")
+
+    def _check_generator_f_args(self, generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]) -> None:
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             if isinstance(par.annotation, str):
                 if args[i].__class__.__name__ != par.annotation:
@@ -103,6 +97,11 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
                 raise TypeError(
                     f"Wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
                 )
+            if args[i].__class__.__name__ == "Qubit":
+                self._check_qubit_out_of_bounds_access(args[i].index)
+            elif args[i].__class__.__name__ == "Bit":
+                self._check_bit_out_of_bounds_access(args[i].index)
+
 
     def to_circuit(self) -> Circuit:
         return Circuit(self.register_manager, self.ir)
