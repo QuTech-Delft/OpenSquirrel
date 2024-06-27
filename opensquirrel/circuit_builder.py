@@ -11,7 +11,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
-from opensquirrel.ir import IR, Comment, Gate, Measure, Bit, Qubit
+from opensquirrel.ir import IR, Bit, Comment, Gate, Measure, Qubit
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -99,7 +99,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
     def _check_generator_f_args(
         self, generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]
     ) -> None:
-        """ General instruction validation function. The function checks if each instruction has the proper arguments
+        """General instruction validation function. The function checks if each instruction has the proper arguments
         and if the qubit and bits are within the register range.
 
         Args:
