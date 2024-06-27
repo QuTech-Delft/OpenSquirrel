@@ -107,8 +107,6 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             attr: Type of instruction
             args: Arguments parsed into the function
 
-        Returns:
-
         """
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             if isinstance(par.annotation, str):
