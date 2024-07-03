@@ -149,7 +149,7 @@ class Axis(Sequence[np.float64], Expression):
             return axis.value
 
         try:
-            axis = np.asfarray(axis)
+            axis = np.asarray(axis, dtype=float)
         except (ValueError, TypeError) as e:
             raise TypeError("Axis requires an ArrayLike") from e
         axis = axis.flatten()
@@ -342,7 +342,7 @@ class BlochSphereRotation(Gate):
 class MatrixGate(Gate):
     def __init__(
         self,
-        matrix: NDArray[np.complex_],
+        matrix: NDArray[np.complex128],
         operands: list[Qubit],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
