@@ -247,6 +247,9 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
+
+    _sig_digits_repr = 5
+
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,
@@ -265,7 +268,9 @@ class Gate(Statement, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<anonymous-gate>"
+        if self.generator:
+            return self.generator.__name__
+        return self.__repr__()
 
     @property
     def is_anonymous(self) -> bool:
@@ -309,7 +314,9 @@ class BlochSphereRotation(Gate):
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
-        return f"BlochSphereRotation({self.qubit}, axis={self.axis}, angle={self.angle}, phase={self.phase})"
+        sdr = self._sig_digits_repr
+        return (f"BlochSphereRotation({self.qubit}, axis={self.axis}, angle={round(self.angle, sdr)},"
+                f" phase={round(self.phase, sdr)})")
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BlochSphereRotation):
