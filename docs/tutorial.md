@@ -152,20 +152,24 @@ except Exception as e:
 
 ## Modifying a circuit
 
-### Merging gates
+### Merging single qubit gates
 
-OpenSquirrel can merge consecutive quantum gates. Currently, this is only done for single-qubit gates. The resulting gate is labeled as an "anonymous gate". Since those gates have no name, the placeholder `<anonymous-gate>` is used instead.
+All single-qubit gates appearing in a circuit can be merged by applying `merge_single_qubit_gates()` to the circuit.
+Note that multi-qubit gates remain untouched and single-qubit gates are not merged across any multi-qubit gates.
+The gate that results from the merger of single-qubit gates will, in general, comprise an arbitrary rotation and, therefore, not be a known gate.
+In OpenSquirrel an unrecognized gate is deemed _anonymous_.
+When a circuit that contains anonymous gates is written to a cQASM string, the semantic representation of the anonymous gate is exported.
+Note that the semantic representation of an anonymous gate is not compliant cQASM.
 
 ```python
 import math
 
-builder = CircuitBuilder(qubit_register_size=1)
-for i in range(16):
-  builder.rx(Qubit(0), Float(math.pi / 16))
+builder = CircuitBuilder(1)
+for i in range(4):
+    builder.Rx(Qubit(0), Float(math.pi / 4))
 
 circuit = builder.to_circuit()
 
-# Merge single qubit gates
 circuit.merge_single_qubit_gates()
 circuit
 ```
@@ -174,15 +178,7 @@ circuit
 
     qubit[1] q
 
-    <anonymous-gate>
-
-You can inspect what the gate has become in terms of the Bloch sphere rotation it represents:
-
-```python
-circuit.ir.statements[0]
-```
-
-    BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.141592653589795, phase=0.0)
+    BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
 
 In the above example, OpenSquirrel has merged all the Rx gates together. Yet, for now, OpenSquirrel does not recognize that this results in a single Rx over the cumulated angle of the individual rotations. Moreover, it does not recognize that the result corresponds to the X-gate (up to a global phase difference). At a later stage, we may want OpenSquirrel to recognize the resultant gate in the case it is part of the set of known gates.
 
