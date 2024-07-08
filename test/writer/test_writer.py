@@ -1,6 +1,9 @@
+import numpy as np
+
+from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import CR, H
-from opensquirrel.ir import IR, BlochSphereRotation, Comment, Float, Qubit
+from opensquirrel.ir import IR, BlochSphereRotation, Comment, ControlledGate, Float, MatrixGate, Qubit
 from opensquirrel.register_manager import QubitRegister, RegisterManager
 from opensquirrel.writer import writer
 
@@ -36,21 +39,26 @@ CR(1.234) q[0], q[1]
 
 
 def test_anonymous_gate() -> None:
-    register_manager = RegisterManager(QubitRegister(2))
-    ir = IR()
-    ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
-    ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
-    ir.add_gate(CR(Qubit(0), Qubit(1), Float(1.234)))
-    circuit = Circuit(register_manager, ir)
-
+    qc = CircuitBuilder(2, 2)
+    qc.H(Qubit(0))
+    qc.ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
+    qc.ir.add_gate(ControlledGate(Qubit(0), BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23)))
+    qc.ir.add_gate(MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)]))
+    qc.CR(Qubit(0), Qubit(1), Float(1.234))
     assert (
-        writer.circuit_to_string(circuit)
+        writer.circuit_to_string(qc.to_circuit())
         == """version 3.0
 
 qubit[2] q
+bit[2] b
 
-CR(1.234) q[0], q[1]
-BlochSphereRotation(Qubit[0], axis=Axis[0.57735027 0.57735027 0.57735027], angle=1.23, phase=0.0)
+H q[0]
+BlochSphereRotation(Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)
+ControlledGate(control_qubit=Qubit[0], BlochSphereRotation(Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
+MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1 0 0 0]
+ [0 1 0 0]
+ [0 0 0 1]
+ [0 0 1 0]])
 CR(1.234) q[0], q[1]
 """
     )

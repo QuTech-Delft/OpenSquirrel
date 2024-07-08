@@ -248,7 +248,7 @@ class Measure(Statement, ABC):
 
 class Gate(Statement, ABC):
 
-    _sig_digits_repr = 5
+    _significant_digits_repr = 5
 
     def __init__(
         self,
@@ -314,9 +314,10 @@ class BlochSphereRotation(Gate):
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
-        sdr = self._sig_digits_repr
-        return (f"BlochSphereRotation({self.qubit}, axis={self.axis}, angle={round(self.angle, sdr)},"
-                f" phase={round(self.phase, sdr)})")
+        axis = np.round(self.axis, self._significant_digits_repr)
+        angle = np.round(self.angle, self._significant_digits_repr)
+        phase = np.round(self.phase, self._significant_digits_repr)
+        return f"BlochSphereRotation({self.qubit}, axis={axis}, angle={angle}, phase={phase})"
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BlochSphereRotation):
@@ -362,7 +363,7 @@ class MatrixGate(Gate):
         self.operands = operands
 
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={self.matrix})"
+        return f"MatrixGate(qubits={self.operands}, matrix={np.round(self.matrix, self._significant_digits_repr)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
