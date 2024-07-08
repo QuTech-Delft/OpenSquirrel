@@ -32,7 +32,8 @@ class McKayDecomposer(Decomposer):
             return [g]
 
         if g.axis[0] == 0 and g.axis[1] == 0:
-            return [Rz(g.get_qubit_operands()[0], g.angle * g.axis[2])]
+            rz_angle = float(g.angle * g.axis[2])
+            return [Rz(g.get_qubit_operands()[0], Float(rz_angle))]
 
         zxz_decomposition = ZXZDecomposer().decompose(g)
         zxz_angle = 0.0
