@@ -25,26 +25,26 @@ def decomposer_fixture() -> YZYDecomposer:
         (Ry(Qubit(0), Float(0.9)), [Ry(Qubit(0), Float(0.9))]),
         (
             X(Qubit(0)),
-            [Ry(Qubit(0), Float(math.pi / 2)), Rz(Qubit(0), Float(math.pi)), Ry(Qubit(0), Float(-math.pi / 2))],
+            [Ry(Qubit(0), Float(-math.pi / 2)), Rz(Qubit(0), Float(math.pi)), Ry(Qubit(0), Float(math.pi / 2))],
         ),
         (
             Rx(Qubit(0), Float(0.123)),
             [
-                Ry(Qubit(0), Float(math.pi / 2)),
-                Rz(Qubit(0), Float(0.12300000000000022)),
                 Ry(Qubit(0), Float(-math.pi / 2)),
+                Rz(Qubit(0), Float(0.12300000000000022)),
+                Ry(Qubit(0), Float(math.pi / 2)),
             ],
         ),
         (
             H(Qubit(0)),
-            [Ry(Qubit(0), Float(math.pi / 4)), Rz(Qubit(0), Float(math.pi)), Ry(Qubit(0), Float(-math.pi / 4))],
+            [Ry(Qubit(0), Float(-math.pi / 4)), Rz(Qubit(0), Float(math.pi)), Ry(Qubit(0), Float(math.pi / 4))],
         ),
         (
             BlochSphereRotation(qubit=Qubit(0), angle=5.21, axis=(1, 2, 3), phase=0.324),
             [
-                Ry(Qubit(0), Float(0.013919263778408464)),
-                Rz(Qubit(0), Float(-0.893533136099803)),
                 Ry(Qubit(0), Float(-0.6295818450148737)),
+                Rz(Qubit(0), Float(-0.893533136099803)),
+                Ry(Qubit(0), Float(0.013919263778408464)),
             ],
         ),
     ],

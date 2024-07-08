@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable
 
 from opensquirrel.common import ATOL
-from opensquirrel.decomposer.general_decomposer import Decomposer
+from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
 from opensquirrel.default_gates import Rx, Ry, Rz
 from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
@@ -91,6 +91,13 @@ class ABADecomposer(Decomposer, ABC):
 
         theta1 = (p + m) / 2
         theta3 = p - theta1
+
+        is_in_lower_half = math.copysign(math.sin(p), math.sin(p) * axis[2]) <= ATOL
+        is_sin_m_negative = self.index_a - self.index_b == -1 or self.index_a - self.index_b == 2
+
+        if is_in_lower_half and is_sin_m_negative:
+            return theta3, theta2, theta1
+
         return theta1, theta2, theta3
 
     def decompose(self, g: Gate) -> list[Gate]:
@@ -110,8 +117,10 @@ class ABADecomposer(Decomposer, ABC):
         a1 = self.ra(g.qubit, Float(theta1))
         b = self.rb(g.qubit, Float(theta2))
         a2 = self.ra(g.qubit, Float(theta3))
+        decomposition_list = [a1, b, a2]
+        check_gate_replacement(g, decomposition_list)
 
-        return filter_out_identities([a1, b, a2])
+        return filter_out_identities(decomposition_list)
 
 
 class XYXDecomposer(ABADecomposer):

@@ -24,14 +24,14 @@ def decomposer_fixture() -> ZXZDecomposer:
         (Rx(Qubit(0), Float(0.9)), [Rx(Qubit(0), Float(0.9))]),
         (
             Y(Qubit(0)),
-            [Rz(Qubit(0), Float(math.pi / 2)), Rx(Qubit(0), Float(math.pi)), Rz(Qubit(0), Float(-math.pi / 2))],
+            [Rz(Qubit(0), Float(-math.pi / 2)), Rx(Qubit(0), Float(math.pi)), Rz(Qubit(0), Float(math.pi / 2))],
         ),
         (
             Ry(Qubit(0), Float(0.9)),
             [
-                Rz(Qubit(0), Float(math.pi / 2)),
-                Rx(Qubit(0), Float(0.9000000000000004)),
                 Rz(Qubit(0), Float(-math.pi / 2)),
+                Rx(Qubit(0), Float(0.9000000000000004)),
+                Rz(Qubit(0), Float(math.pi / 2)),
             ],
         ),
         (Z(Qubit(0)), [Rz(Qubit(0), Float(math.pi))]),
@@ -43,9 +43,9 @@ def decomposer_fixture() -> ZXZDecomposer:
         (
             BlochSphereRotation(qubit=Qubit(0), angle=5.21, axis=(1, 2, 3), phase=0.324),
             [
-                Rz(Qubit(0), Float(0.662145687003993)),
-                Rx(Qubit(0), Float(-0.6209410696845807)),
                 Rz(Qubit(0), Float(-1.5521517485841891)),
+                Rx(Qubit(0), Float(-0.6209410696845807)),
+                Rz(Qubit(0), Float(0.662145687003993)),
             ],
         ),
     ],
