@@ -49,6 +49,7 @@ class ABADecomposer(Decomposer, ABC):
             raise ValueError("Angle needs to be normalized")
 
         if abs(alpha - math.pi) < ATOL:
+
             # alpha == pi, math.tan(alpha / 2) is not defined.
 
             if abs(a_axis_value) < ATOL:
@@ -59,13 +60,15 @@ class ABADecomposer(Decomposer, ABC):
             else:
                 p = math.pi
                 theta2 = 2 * math.acos(a_axis_value)
-
                 if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
                     m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                 else:
-                    m = 2 * math.acos(b_axis_value / math.sqrt(1 - a_axis_value**2))
+                    m = 2 * math.acos(
+                        round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log(ATOL, 10))))
+                    )
 
         else:
+
             p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
 
             acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
@@ -87,7 +90,6 @@ class ABADecomposer(Decomposer, ABC):
                 m = 2 * math.acos(acos_argument)
 
         theta1 = (p + m) / 2
-
         theta3 = p - theta1
         return theta1, theta2, theta3
 

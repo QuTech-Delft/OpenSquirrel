@@ -3,7 +3,7 @@ import math
 import pytest
 
 from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
-from opensquirrel.default_gates import CNOT, CR, X90, H, Rz, X, Y, Z
+from opensquirrel.default_gates import CNOT, CR, X90, Y90, H, Rz, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Float, Qubit
 
 
@@ -24,10 +24,8 @@ def test_identity_empty_decomposition(decomposer: McKayDecomposer) -> None:
 def test_x(decomposer: McKayDecomposer) -> None:
     assert decomposer.decompose(X(Qubit(0))) == [
         # FIXME: we can do better here. See https://github.com/QuTech-Delft/OpenSquirrel/issues/89.
-        Rz(Qubit(0), Float(-math.pi / 2)),
         X90(Qubit(0)),
         X90(Qubit(0)),
-        Rz(Qubit(0), Float(-math.pi / 2)),
     ]
 
 
@@ -36,20 +34,18 @@ def test_y(decomposer: McKayDecomposer) -> None:
 
 
 def test_z(decomposer: McKayDecomposer) -> None:
-    assert decomposer.decompose(Z(Qubit(0))) == [
-        Rz(Qubit(0), Float(-math.pi / 2)),
-        X90(Qubit(0)),
-        Rz(Qubit(0), Float(math.pi)),
-        X90(Qubit(0)),
-        Rz(Qubit(0), Float(math.pi / 2)),
-    ]
+    assert decomposer.decompose(Z(Qubit(0))) == [Rz(Qubit(0), Float(math.pi))]
+
+
+def test_rz(decomposer: McKayDecomposer) -> None:
+    assert decomposer.decompose(Rz(Qubit(0), Float(math.pi / 2))) == [Rz(Qubit(0), Float(math.pi / 2))]
 
 
 def test_hadamard(decomposer: McKayDecomposer) -> None:
     assert decomposer.decompose(H(Qubit(0))) == [
-        BlochSphereRotation(Qubit(0), axis=(1, 0, 0), angle=math.pi / 2, phase=0.0),
         BlochSphereRotation(Qubit(0), axis=(0, 0, 1), angle=math.pi / 2, phase=0.0),
         BlochSphereRotation(Qubit(0), axis=(1, 0, 0), angle=math.pi / 2, phase=0.0),
+        BlochSphereRotation(Qubit(0), axis=(0, 0, 1), angle=math.pi / 2, phase=0.0),
     ]
 
 
@@ -61,3 +57,7 @@ def test_arbitrary(decomposer: McKayDecomposer) -> None:
         X90(Qubit(0)),
         Rz(Qubit(0), Float(2.2329420137988887)),
     ]
+
+
+def test_a(decomposer: McKayDecomposer) -> None:
+    print(decomposer.decompose(Y90(Qubit(0))))

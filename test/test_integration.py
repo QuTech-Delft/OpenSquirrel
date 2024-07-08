@@ -150,17 +150,17 @@ def test_consecutive_measurements() -> None:
 qubit[3] q
 bit[3] b
 
-X90 q[0]
 Rz(1.5707963) q[0]
 X90 q[0]
+Rz(1.5707963) q[0]
 b[0] = measure q[0]
-X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
+Rz(1.5707963) q[1]
 b[1] = measure q[1]
-X90 q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
+Rz(1.5707963) q[2]
 b[2] = measure q[2]
 """
     )
@@ -189,17 +189,17 @@ def test_measurements_unrolling() -> None:
 qubit[3] q
 bit[3] b
 
-X90 q[0]
 Rz(1.5707963) q[0]
 X90 q[0]
+Rz(1.5707963) q[0]
 b[0] = measure q[0]
-X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
+Rz(1.5707963) q[1]
 b[1] = measure q[1]
-X90 q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
+Rz(1.5707963) q[2]
 b[2] = measure q[2]
 """
     )
@@ -227,11 +227,7 @@ def test_measure_order() -> None:
 qubit[2] q
 bit[2] b
 
-Rz(2.7488936) q[1]
-X90 q[1]
-Rz(3.1415927) q[1]
-X90 q[1]
-Rz(-0.3926991) q[1]
+Rz(-0.7853982) q[1]
 b[1] = measure q[1]
 b[0] = measure q[0]
 """
@@ -265,14 +261,12 @@ def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions() -
 qubit[2] q
 bit[2] b
 
-Rz(-1.5707963) q[0]
 X90 q[0]
 X90 q[0]
-Rz(-1.5707963) q[0]
 b[0] = measure q[0]
-X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
+Rz(1.5707963) q[1]
 CNOT q[1], q[0]
 b[1] = measure q[1]
 b[0] = measure q[0]
@@ -305,14 +299,12 @@ def test_qubit_variable_b_and_bit_variable_q() -> None:
 qubit[2] q
 bit[2] b
 
-Rz(-1.5707963) q[0]
 X90 q[0]
 X90 q[0]
-Rz(-1.5707963) q[0]
 b[0] = measure q[0]
-X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
+Rz(1.5707963) q[1]
 CNOT q[1], q[0]
 b[1] = measure q[1]
 b[0] = measure q[0]
@@ -352,16 +344,15 @@ def test_qi() -> None:
 
     circuit.merge_single_qubit_gates()
     circuit.decompose(decomposer=McKayDecomposer())
-
     assert (
         str(circuit)
         == """version 3.0
 
 qubit[4] q
 
-X90 q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
+Rz(1.5707963) q[1]
 Rz(-0.20000005) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
@@ -370,9 +361,9 @@ Rz(1.5707963) q[0]
 CNOT q[1], q[0]
 Rz(1.5789) q[0]
 CNOT q[1], q[0]
-X90 q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
+Rz(1.5707963) q[2]
 CNOT q[1], q[2]
 CR(2.123) q[2], q[3]
 Rz(2.5707962) q[1]
