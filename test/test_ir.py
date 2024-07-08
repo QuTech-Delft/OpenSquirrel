@@ -9,6 +9,7 @@ import pytest
 from numpy.typing import ArrayLike
 
 from opensquirrel.common import ATOL
+from opensquirrel.decomposer.aba_decomposer import ZXZDecomposer
 from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
 
 

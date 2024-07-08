@@ -7,6 +7,8 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 
+import numpy as np
+
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
 from opensquirrel.default_gates import Rx, Ry, Rz
@@ -92,7 +94,7 @@ class ABADecomposer(Decomposer, ABC):
         theta1 = (p + m) / 2
         theta3 = p - theta1
 
-        is_in_lower_half = math.copysign(math.sin(p), math.sin(p) * axis[2]) <= ATOL
+        is_in_lower_half = math.copysign(math.sin(p), math.sin(p) * np.prod(axis)) <= ATOL
         is_sin_m_negative = self.index_a - self.index_b == -1 or self.index_a - self.index_b == 2
 
         if is_in_lower_half and is_sin_m_negative:
