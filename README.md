@@ -1,4 +1,4 @@
-# OpenSquirrel: a flexible quantum program compiler.
+# OpenSquirrel: a flexible quantum program compiler
 
 ```
  ,;;:;,
@@ -18,18 +18,15 @@ As a quantum circuit compiler, it is fully aware of the semantics of each gate a
 It understands the quantum programming language cQASM 3 and will support additional quantum programming languages in the future.
 It is developed in modern Python and follows best practices.
 
+## Documentation
+
+OpenSquirrel documentation is hosted through GitHub Pages [here](https://QuTech-Delft.github.io/OpenSquirrel/).
 
 ## Installation
 
 ```shell
 $ pip install opensquirrel
 ```
-
-
-## Documentation
-
-OpenSquirrel documentation is hosted through GitHub Pages [here](https://QuTech-Delft.github.io/OpenSquirrel/).
-
 
 ## Authors
 
