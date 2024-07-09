@@ -55,10 +55,7 @@ bit[2] b
 H q[0]
 BlochSphereRotation(Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)
 ControlledGate(control_qubit=Qubit[0], BlochSphereRotation(Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
-MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1 0 0 0]
- [0 1 0 0]
- [0 0 0 1]
- [0 0 1 0]])
+MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1 0 0 0] [0 1 0 0] [0 0 0 1] [0 0 1 0]])
 CR(1.234) q[0], q[1]
 """
     )
