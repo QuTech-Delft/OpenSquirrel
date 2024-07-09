@@ -1,5 +1,8 @@
 # OpenSquirrel
 
+[![CI](https://github.com/QuTech-Delft/OpenSquirrel/workflows/Tests/badge.svg)](https://github.com/qutech-delft/OpenSquirrel/actions)
+[![PyPI](https://badgen.net/pypi/v/OpenSquirrel)](https://pypi.org/project/OpenSquirrel/)
+
 A flexible quantum program compiler.
 
 ```
