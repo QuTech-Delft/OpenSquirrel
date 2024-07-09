@@ -48,12 +48,12 @@ poetry shell
 poetry install
 ```
 
-## Install
+## Use from another project
 
-OpenSquirrel can be installed as follows:
+The `opensquirrel` module can be imported from another Python file with:
 
-```shell
-pip install opensquirrel
+```python
+import opensquirrel
 ```
 
 ## Licensing
