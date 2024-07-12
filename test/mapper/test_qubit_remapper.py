@@ -51,8 +51,8 @@ class TestRemapper:
     def mapping_4(self) -> Mapping:
         return Mapping([3, 1, 0, 2])
 
-    def test_get_remapped_ir_raise_assert(self, circuit_3: Circuit, mapping_4: Mapping) -> None:
-        with pytest.raises(AssertionError):
+    def test_get_remapped_ir_raise_value_error(self, circuit_3: Circuit, mapping_4: Mapping) -> None:
+        with pytest.raises(ValueError):
             get_remapped_ir(circuit_3, mapping_4)
 
     def test_get_remapped_ir_3_ok(self, circuit_3: Circuit, circuit_3_remapped: Circuit, mapping_3: Mapping) -> None:
@@ -63,8 +63,8 @@ class TestRemapper:
         circuit_4.ir = get_remapped_ir(circuit_4, mapping_4)
         assert circuit_4 == circuit_4_remapped
 
-    def test_remap_ir_raise_assert(self, circuit_3: Circuit, mapping_4: Mapping) -> None:
-        with pytest.raises(AssertionError):
+    def test_remap_ir_raise_value_error(self, circuit_3: Circuit, mapping_4: Mapping) -> None:
+        with pytest.raises(ValueError):
             remap_ir(circuit_3, mapping_4)
 
     def test_remap_ir_3_ok(self, circuit_3: Circuit, circuit_3_remapped: Circuit, mapping_3: Mapping) -> None:

@@ -33,7 +33,8 @@ class Parser(GateLibrary, MeasurementLibrary):
     def _ast_literal_to_ir_literal(
         cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat,
     ) -> Int | Float | None:
-        assert type(cqasm_literal_expression) in [cqasm.values.ConstInt, cqasm.values.ConstFloat]
+        if type(cqasm_literal_expression) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat]:
+            raise TypeError(f"Unrecognized type: {type(cqasm_literal_expression)}")
         if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
             return Int(cqasm_literal_expression.value)
         if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
@@ -108,9 +109,10 @@ class Parser(GateLibrary, MeasurementLibrary):
         for ast_arg in reversed(ast_args):
             if Parser._is_qubit_type(ast_arg):
                 expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-            else:
-                assert Parser._is_bit_type(ast_arg)
+            elif Parser._is_bit_type(ast_arg):
                 expanded_args.append(cls._get_bits(ast_arg, register_manager))
+            else:
+                raise TypeError("Received argument is not a (qu)bit.")
         return zip(*expanded_args)
 
     @classmethod

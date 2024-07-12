@@ -362,8 +362,14 @@ class MatrixGate(Gate):
         arguments: tuple[Expression, ...] | None = None,
     ):
         Gate.__init__(self, generator, arguments)
-        assert len(operands) >= 2, "For 1q gates, please use BlochSphereRotation"
-        assert matrix.shape == (1 << len(operands), 1 << len(operands))
+        if len(operands) < 2:
+            raise ValueError("For 1q gates, please use BlochSphereRotation")
+
+        if matrix.shape != (1 << len(operands), 1 << len(operands)):
+            raise ValueError(
+                f"Incorrect matrix shape. Expected {(1 << len(operands), 1 << len(operands))} but received "
+                f"{matrix.shape}."
+            )
 
         self.matrix = matrix
         self.operands = operands
@@ -479,7 +485,8 @@ class Comment(Statement):
     str: str
 
     def __post_init__(self) -> None:
-        assert "*/" not in self.str, "Comment contains illegal characters"
+        if "*/" in self.str:
+            raise ValueError("Comment contains illegal characters")
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)
