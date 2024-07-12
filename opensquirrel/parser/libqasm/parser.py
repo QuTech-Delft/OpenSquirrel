@@ -171,7 +171,7 @@ class Parser(GateLibrary, MeasurementLibrary):
     @staticmethod
     def _check_analysis_result(result: Any) -> None:
         if isinstance(result, list):
-            raise Exception("Parsing error: " + ", ".join(result))
+            raise IOError("Parsing error: " + ", ".join(result))
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
