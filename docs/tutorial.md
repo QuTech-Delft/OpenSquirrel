@@ -178,7 +178,7 @@ circuit
 
     qubit[1] q
 
-    BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
+    Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
 
 In the above example, OpenSquirrel has merged all the Rx gates together. Yet, for now, OpenSquirrel does not recognize that this results in a single Rx over the cumulated angle of the individual rotations. Moreover, it does not recognize that the result corresponds to the X-gate (up to a global phase difference). At a later stage, we may want OpenSquirrel to recognize the resultant gate in the case it is part of the set of known gates.
 

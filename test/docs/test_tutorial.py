@@ -20,6 +20,6 @@ def test_anonymous_gate():
 
 qubit[1] q
 
-BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
+Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
 """
     )

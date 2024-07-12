@@ -270,7 +270,7 @@ class Gate(Statement, ABC):
     def name(self) -> str:
         if self.generator:
             return self.generator.__name__
-        return self.__repr__()
+        return "Anonymous gate: " + self.__repr__()
 
     @property
     def is_anonymous(self) -> bool:
@@ -291,6 +291,9 @@ class Gate(Statement, ABC):
         Returns:
             Boolean value stating whether the Gate is an identity Gate.
         """
+
+    def _round(self, value: float | AxisLike) -> float | AxisLike:
+        return np.round(value, self._significant_digits_repr)
 
 
 class BlochSphereRotation(Gate):
@@ -314,10 +317,8 @@ class BlochSphereRotation(Gate):
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
-        axis = np.round(self.axis, self._significant_digits_repr)
-        angle = np.round(self.angle, self._significant_digits_repr)
-        phase = np.round(self.phase, self._significant_digits_repr)
-        return f"BlochSphereRotation({self.qubit}, axis={axis}, angle={angle}, phase={phase})"
+        return (f"BlochSphereRotation({self.qubit}, axis={self._round(self.axis)}, angle={self._round(self.angle)},"
+                f" phase={self._round(self.phase)})")
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BlochSphereRotation):
@@ -363,7 +364,7 @@ class MatrixGate(Gate):
         self.operands = operands
 
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={np.round(self.matrix, self._significant_digits_repr)})"
+        return f"MatrixGate(qubits={self.operands}, matrix={self._round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
