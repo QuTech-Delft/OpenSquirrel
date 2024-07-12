@@ -291,7 +291,7 @@ class Gate(Statement, ABC):
             Boolean value stating whether the Gate is an identity Gate.
         """
 
-    def _round(self, value: float | AxisLike) -> float | AxisLike:
+    def _round(self, value: float | Axis | NDArray[np.complex64]) -> float | Axis | NDArray[np.complex64]:
         return np.round(value, self._significant_digits_repr)
 
 
