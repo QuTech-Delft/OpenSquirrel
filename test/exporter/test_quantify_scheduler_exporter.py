@@ -9,7 +9,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION
+from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION, UnsupportedGatesError
 from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Measure, Qubit
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
@@ -82,7 +82,7 @@ class TestQuantifySchedulerExporter:
         ir.add_gate(g)
 
         with MockedQuantifyScheduler():
-            with pytest.raises(Exception, match="Cannot export circuit: it contains unsupported gates"):
+            with pytest.raises(UnsupportedGatesError, match="Cannot export circuit: it contains unsupported gates"):
                 quantify_scheduler_exporter.export(Circuit(register_manager, ir))
 
     def test_gates_not_supported(self):
@@ -97,5 +97,7 @@ class TestQuantifySchedulerExporter:
 )
 def test_quantify_scheduler_not_installed() -> None:
     empty_circuit = Circuit(RegisterManager(QubitRegister(1)), IR())
-    with pytest.raises(Exception, match="quantify-scheduler is not installed, or cannot be installed on your system"):
+    with pytest.raises(
+        ModuleNotFoundError, match="quantify-scheduler is not installed, or cannot be installed on your system"
+    ):
         quantify_scheduler_exporter.export(empty_circuit)

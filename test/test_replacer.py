@@ -49,7 +49,7 @@ class TestCheckGateReplacement:
         ],
     )
     def test_wrong_qubit(self, gate: Gate, replacement_gates: list[Gate], error_msg: str) -> None:
-        with pytest.raises(Exception, match=error_msg):
+        with pytest.raises(ValueError, match=error_msg):
             check_gate_replacement(gate, replacement_gates)
 
     def test_cnot_as_sqrt_swap(self):
@@ -69,7 +69,7 @@ class TestCheckGateReplacement:
             ],
         )
 
-        with pytest.raises(Exception, match="Replacement for gate CNOT does not preserve the quantum state"):
+        with pytest.raises(ValueError, match="Replacement for gate CNOT does not preserve the quantum state"):
             check_gate_replacement(
                 CNOT(control=c, target=t),
                 [
@@ -83,7 +83,7 @@ class TestCheckGateReplacement:
                 ],
             )
 
-        with pytest.raises(Exception, match="Replacement for gate CNOT does not seem to operate on the right qubits"):
+        with pytest.raises(ValueError, match="Replacement for gate CNOT does not seem to operate on the right qubits"):
             check_gate_replacement(
                 CNOT(control=c, target=t),
                 [
@@ -101,10 +101,10 @@ class TestCheckGateReplacement:
         # If we were building the whole circuit matrix, this would run out of memory.
         check_gate_replacement(H(Qubit(9234687)), [Y90(Qubit(9234687)), X(Qubit(9234687))])
 
-        with pytest.raises(Exception, match="Replacement for gate H does not seem to operate on the right qubits"):
+        with pytest.raises(ValueError, match="Replacement for gate H does not seem to operate on the right qubits"):
             check_gate_replacement(H(Qubit(9234687)), [Y90(Qubit(698446519)), X(Qubit(9234687))])
 
-        with pytest.raises(Exception, match="Replacement for gate H does not preserve the quantum state"):
+        with pytest.raises(ValueError, match="Replacement for gate H does not preserve the quantum state"):
             check_gate_replacement(H(Qubit(9234687)), [Y90(Qubit(9234687)), X(Qubit(9234687)), X(Qubit(9234687))])
 
 

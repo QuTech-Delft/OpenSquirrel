@@ -93,22 +93,21 @@ class TestCircuitBuilder:
 
     def test_unknown_instruction(self):
         builder = CircuitBuilder(3)
-
-        with pytest.raises(Exception) as exception_info:
+        with pytest.raises(ValueError) as exception_info:
             builder.unknown(0)
         assert re.search("Unknown instruction `unknown`", str(exception_info.value))
 
     def test_wrong_number_of_arguments(self):
         builder = CircuitBuilder(3)
 
-        with pytest.raises(Exception) as exception_info:
+        with pytest.raises(TypeError) as exception_info:
             builder.H(Qubit(0), Qubit(1))
         assert re.search(r"H\(\) takes 1 positional argument but 2 were given", str(exception_info.value))
 
     def test_wrong_argument_type(self):
         builder = CircuitBuilder(3)
 
-        with pytest.raises(Exception) as exception_info:
+        with pytest.raises(TypeError) as exception_info:
             builder.H(0)
 
         assert re.search(

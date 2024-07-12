@@ -68,19 +68,19 @@ CRk q[0, 3], q[1, 4], 23
 
 
 def test_error(parser: Parser) -> None:
-    with pytest.raises(Exception, match="Error at <unknown file name>:1:30..31: failed to resolve variable 'q'"):
+    with pytest.raises(IOError, match="Error at <unknown file name>:1:30..31: failed to resolve variable 'q'"):
         parser.circuit_from_string("version 3.0; qubit[20] qu; H q[5]")
 
 
 def test_wrong_gate_argument_number_or_types(parser: Parser) -> None:
     with pytest.raises(
-        Exception,
+        IOError,
         match=r"Parsing error: Error at <unknown file name>:1:26\.\.27: failed to resolve instruction 'H' with argument pack \(qubit, int\)",
     ):
         parser.circuit_from_string("version 3.0; qubit[1] q; H q[0], 1")
 
     with pytest.raises(
-        Exception,
+        IOError,
         match=r"Parsing error: Error at <unknown file name>:1:26\.\.30: failed to resolve instruction 'CNOT' with argument pack \(qubit, int\)",
     ):
         parser.circuit_from_string("version 3.0; qubit[1] q; CNOT q[0], 1")
