@@ -46,7 +46,7 @@ def test_anonymous_gate() -> None:
     qc.ir.add_gate(MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)]))
     qc.CR(Qubit(0), Qubit(1), Float(1.234))
     assert (
-        writer.circuit_to_string(qc.to_circuit())
+        str(qc.to_circuit())
         == """version 3.0
 
 qubit[2] q

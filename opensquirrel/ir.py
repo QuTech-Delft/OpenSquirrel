@@ -247,7 +247,6 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
-
     _significant_digits_repr = 5
 
     def __init__(
