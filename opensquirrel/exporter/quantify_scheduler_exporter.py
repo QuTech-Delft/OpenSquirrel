@@ -19,11 +19,6 @@ class UnsupportedGatesError(Exception):
     """Should be raised when the set of gates is not supported by the exporter."""
 
 
-_unsupported_gates_exception = UnsupportedGatesError(
-    "Cannot export circuit: it contains unsupported gates. "
-    "Decompose them to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
-)
-
 # Radian to degree conversion outcome precision
 DEG_PRECISION = 5
 
