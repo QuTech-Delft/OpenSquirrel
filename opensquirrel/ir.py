@@ -316,8 +316,10 @@ class BlochSphereRotation(Gate):
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
-        return (f"BlochSphereRotation({self.qubit}, axis={self._round(self.axis)}, angle={self._round(self.angle)},"
-                f" phase={self._round(self.phase)})")
+        return (
+            f"BlochSphereRotation({self.qubit}, axis={self._round(self.axis)}, angle={self._round(self.angle)},"
+            f" phase={self._round(self.phase)})"
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BlochSphereRotation):
