@@ -57,6 +57,3 @@ def test_arbitrary(decomposer: McKayDecomposer) -> None:
         Rz(Qubit(0), Float(2.2329420137988887)),
     ]
 
-
-def test_a(decomposer: McKayDecomposer) -> None:
-    print(decomposer.decompose(Y90(Qubit(0))))
