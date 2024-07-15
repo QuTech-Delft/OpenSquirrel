@@ -23,7 +23,6 @@ def test_identity_empty_decomposition(decomposer: McKayDecomposer) -> None:
 
 def test_x(decomposer: McKayDecomposer) -> None:
     assert decomposer.decompose(X(Qubit(0))) == [
-        # FIXME: we can do better here. See https://github.com/QuTech-Delft/OpenSquirrel/issues/89.
         X90(Qubit(0)),
         X90(Qubit(0)),
     ]
