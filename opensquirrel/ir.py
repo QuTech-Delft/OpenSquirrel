@@ -13,6 +13,15 @@ from numpy.typing import ArrayLike, DTypeLike, NDArray
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
 
+_REPR_DECIMALS = 5
+
+
+def _repr_round(
+        value: float | Axis | NDArray[np.complex64],
+        decimals: int = _REPR_DECIMALS) -> float | Axis | NDArray[np.complex64]:
+    return np.round(value, decimals)
+
+
 class IRVisitor(ABC):
     def visit_comment(self, comment: Comment) -> Any:
         pass
@@ -247,7 +256,6 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
-    _significant_digits_repr = 5
 
     def __init__(
         self,
@@ -291,9 +299,6 @@ class Gate(Statement, ABC):
             Boolean value stating whether the Gate is an identity Gate.
         """
 
-    def _round(self, value: float | Axis | NDArray[np.complex64]) -> float | Axis | NDArray[np.complex64]:
-        return np.round(value, self._significant_digits_repr)
-
 
 class BlochSphereRotation(Gate):
     def __init__(
@@ -317,8 +322,8 @@ class BlochSphereRotation(Gate):
 
     def __repr__(self) -> str:
         return (
-            f"BlochSphereRotation({self.qubit}, axis={self._round(self.axis)}, angle={self._round(self.angle)},"
-            f" phase={self._round(self.phase)})"
+            f"BlochSphereRotation({self.qubit}, axis={_repr_round(self.axis)}, angle={_repr_round(self.angle)},"
+            f" phase={_repr_round(self.phase)})"
         )
 
     def __eq__(self, other: object) -> bool:
@@ -365,7 +370,7 @@ class MatrixGate(Gate):
         self.operands = operands
 
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={self._round(self.matrix)})"
+        return f"MatrixGate(qubits={self.operands}, matrix={_repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
