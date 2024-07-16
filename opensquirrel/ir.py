@@ -12,6 +12,14 @@ from numpy.typing import ArrayLike, DTypeLike, NDArray
 
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
+REPR_DECIMALS = 5
+
+
+def repr_round(
+    value: float | Axis | NDArray[np.complex64], decimals: int = REPR_DECIMALS
+) -> float | Axis | NDArray[np.complex64]:
+    return np.round(value, decimals)
+
 
 class IRVisitor(ABC):
     def visit_comment(self, comment: Comment) -> Any:
@@ -247,6 +255,7 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
+
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,
@@ -265,7 +274,9 @@ class Gate(Statement, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<anonymous-gate>"
+        if self.generator:
+            return self.generator.__name__
+        return "Anonymous gate: " + self.__repr__()
 
     @property
     def is_anonymous(self) -> bool:
@@ -309,7 +320,10 @@ class BlochSphereRotation(Gate):
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
-        return f"BlochSphereRotation({self.qubit}, axis={self.axis}, angle={self.angle}, phase={self.phase})"
+        return (
+            f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
+            f" phase={repr_round(self.phase)})"
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BlochSphereRotation):
@@ -355,7 +369,7 @@ class MatrixGate(Gate):
         self.operands = operands
 
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={self.matrix})"
+        return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
