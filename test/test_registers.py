@@ -3,7 +3,7 @@ from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 
 
 def test_qubit_variable_b_and_bit_variable_q() -> None:
-    circuit = Circuit.from_string(
+    qc = Circuit.from_string(
         """
         version 3.0
 
@@ -18,10 +18,10 @@ def test_qubit_variable_b_and_bit_variable_q() -> None:
         q[0] = measure b[0]
         """
     )
-    circuit.merge_single_qubit_gates()
-    circuit.decompose(decomposer=McKayDecomposer())
+    qc.merge_single_qubit_gates()
+    qc.decompose(decomposer=McKayDecomposer())
     assert (
-        str(circuit)
+        str(qc)
         == """version 3.0
 
 qubit[2] q

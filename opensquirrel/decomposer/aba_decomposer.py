@@ -62,9 +62,6 @@ class ABADecomposer(Decomposer, ABC):
                 if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
                     m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                 else:
-                    # m = 2 * math.acos(
-                    #     round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log(ATOL, 10))))
-                    # )
                     m = 2 * math.acos(
                         round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL))))
                     )

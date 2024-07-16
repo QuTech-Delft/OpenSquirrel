@@ -69,7 +69,6 @@ def test_hadamard(decomposer: McKayDecomposer) -> None:
     gate = H(Qubit(0))
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    print(decomposed_gate)
     assert decomposed_gate == [
         Rz(Qubit(0), Float(math.pi / 2)),
         X90(Qubit(0)),
