@@ -5,6 +5,7 @@ import math
 import pytest
 
 from opensquirrel.decomposer.aba_decomposer import XYXDecomposer
+from opensquirrel.decomposer.general_decomposer import check_gate_replacement
 from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, S, X, Y
 from opensquirrel.ir import BlochSphereRotation, Float, Gate, Qubit
 
@@ -14,12 +15,17 @@ def decomposer_fixture() -> XYXDecomposer:
     return XYXDecomposer()
 
 
+def test_identity(decomposer: XYXDecomposer) -> None:
+    gate = I(Qubit(0))
+    decomposed_gate = decomposer.decompose(gate)
+    assert decomposed_gate == []
+
+
 @pytest.mark.parametrize(
     "gate, expected_result",
     [
         (CNOT(Qubit(0), Qubit(1)), [CNOT(Qubit(0), Qubit(1))]),
         (CR(Qubit(2), Qubit(3), Float(2.123)), [CR(Qubit(2), Qubit(3), Float(2.123))]),
-        (I(Qubit(0)), []),
         (
             S(Qubit(0)),
             [Rx(Qubit(0), Float(-math.pi / 2)), Ry(Qubit(0), Float(math.pi / 2)), Rx(Qubit(0), Float(math.pi / 2))],
@@ -38,7 +44,9 @@ def decomposer_fixture() -> XYXDecomposer:
             ],
         ),
     ],
-    ids=["CNOT", "CR", "I", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],
+    ids=["CNOT", "CR", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],
 )
 def test_xyx_decomposer(decomposer: XYXDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+    decomposed_gate = decomposer.decompose(gate)
+    check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result

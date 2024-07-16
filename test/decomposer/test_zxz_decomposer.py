@@ -5,7 +5,8 @@ import math
 import pytest
 
 from opensquirrel.decomposer.aba_decomposer import ZXZDecomposer
-from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, Rz, S, X, Y, Z
+from opensquirrel.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Float, Gate, Qubit
 
 
@@ -14,12 +15,17 @@ def decomposer_fixture() -> ZXZDecomposer:
     return ZXZDecomposer()
 
 
+def test_identity(decomposer: ZXZDecomposer) -> None:
+    gate = I(Qubit(0))
+    decomposed_gate = decomposer.decompose(gate)
+    assert decomposed_gate == []
+
+
 @pytest.mark.parametrize(
     "gate, expected_result",
     [
         (CNOT(Qubit(0), Qubit(1)), [CNOT(Qubit(0), Qubit(1))]),
         (CR(Qubit(2), Qubit(3), Float(2.123)), [CR(Qubit(2), Qubit(3), Float(2.123))]),
-        (I(Qubit(0)), []),
         (X(Qubit(0)), [Rx(Qubit(0), Float(math.pi))]),
         (Rx(Qubit(0), Float(0.9)), [Rx(Qubit(0), Float(0.9))]),
         (
@@ -49,7 +55,9 @@ def decomposer_fixture() -> ZXZDecomposer:
             ],
         ),
     ],
-    ids=["CNOT", "CR", "I", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],
+    ids=["CNOT", "CR", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],
 )
 def test_zxz_decomposer(decomposer: ZXZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+    decomposed_gate = decomposer.decompose(gate)
+    check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result

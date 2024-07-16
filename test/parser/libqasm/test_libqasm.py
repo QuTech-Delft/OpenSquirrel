@@ -1,5 +1,6 @@
 import pytest
 
+from opensquirrel import Circuit
 from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
 from opensquirrel.ir import Float, Int, Qubit
 from opensquirrel.parser.libqasm.parser import Parser
@@ -83,3 +84,9 @@ def test_wrong_gate_argument_number_or_types(parser: Parser) -> None:
         match=r"Parsing error: Error at <unknown file name>:1:26\.\.30: failed to resolve instruction 'CNOT' with argument pack \(qubit, int\)",
     ):
         parser.circuit_from_string("version 3.0; qubit[1] q; CNOT q[0], 1")
+
+    with pytest.raises(
+        Exception,
+        match=r"Parsing error: Error at <unknown file name>:1:26\.\.28: failed to resolve instruction 'Ry' with argument pack \(qubit, float, int\)",
+    ):
+        parser.circuit_from_string("""version 3.0; qubit[3] q; Ry q[0], 1.23, 1""")
