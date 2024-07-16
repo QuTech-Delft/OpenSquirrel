@@ -7,6 +7,8 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 
+import numpy as np
+
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Rx, Ry, Rz
@@ -50,27 +52,25 @@ class ABADecomposer(Decomposer, ABC):
 
         if abs(alpha - math.pi) < ATOL:
             # alpha == pi, math.tan(alpha / 2) is not defined.
-
             if abs(a_axis_value) < ATOL:
                 theta2 = math.pi
                 p = 0.0
                 m = 2 * math.acos(b_axis_value)
-
             else:
                 p = math.pi
                 theta2 = 2 * math.acos(a_axis_value)
-
                 if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
                     m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                 else:
-                    m = 2 * math.acos(b_axis_value / math.sqrt(1 - a_axis_value**2))
+                    m = 2 * math.acos(
+                        round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL))))
+                    )
 
         else:
             p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
-
             acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
 
-            # This fixes float approximations like 1.0000000000002 which acos doesn't like.
+            # This fixes float approximations like 1.0000000000002, which acos does not like.
             acos_argument = max(min(acos_argument, 1.0), -1.0)
 
             theta2 = 2 * math.acos(acos_argument)
@@ -81,14 +81,19 @@ class ABADecomposer(Decomposer, ABC):
             else:
                 acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
-                # This fixes float approximations like 1.0000000000002 which acos doesn't like.
+                # This fixes float approximations like 1.0000000000002, which acos does not like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)
-
                 m = 2 * math.acos(acos_argument)
 
         theta1 = (p + m) / 2
-
         theta3 = p - theta1
+
+        is_in_lower_half = math.copysign(math.sin(p), math.sin(p) * np.prod(axis)) <= ATOL
+        is_sin_m_negative = self.index_a - self.index_b == -1 or self.index_a - self.index_b == 2
+
+        if is_in_lower_half and is_sin_m_negative:
+            theta1, theta3 = theta3, theta1
+
         return theta1, theta2, theta3
 
     def decompose(self, g: Gate) -> list[Gate]:
@@ -108,7 +113,6 @@ class ABADecomposer(Decomposer, ABC):
         a1 = self.ra(g.qubit, Float(theta1))
         b = self.rb(g.qubit, Float(theta2))
         a2 = self.ra(g.qubit, Float(theta3))
-
         return filter_out_identities([a1, b, a2])
 
 

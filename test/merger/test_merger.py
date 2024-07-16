@@ -1,6 +1,7 @@
 import math
 from test.ir_equality_test_base import modify_circuit_and_check
 
+from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import CNOT, H, Rx, Ry, Rz
 from opensquirrel.ir import IR, BlochSphereRotation, Float, Qubit
@@ -123,3 +124,15 @@ def test_merge_and_flush() -> None:
     assert ir.statements[0].is_anonymous
     assert ir.statements[3].generator == Ry
     assert ir.statements[3].arguments, (Qubit(0), Float(3.234))
+
+
+def test_merge_y90_x_to_h() -> None:
+
+    builder = CircuitBuilder(1)
+    builder.Y90(Qubit(0)).X(Qubit(0))
+    qc = builder.to_circuit()
+
+    builder2 = CircuitBuilder(1)
+    builder2.H(Qubit(0))
+    expected_qc = builder2.to_circuit()
+    modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)

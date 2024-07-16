@@ -27,6 +27,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
 
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
     replacement_matrix = get_circuit_matrix(get_reindexed_circuit(replacement_gates, gate_qubit_indices))
+
     if not are_matrices_equivalent_up_to_global_phase(replaced_matrix, replacement_matrix):
         raise Exception(f"Replacement for gate {gate.name} does not preserve the quantum state")
 
