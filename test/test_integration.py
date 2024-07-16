@@ -104,7 +104,8 @@ def test_Spin2_backend() -> None:
     qc.merge_single_qubit_gates()
     qc.decompose(decomposer=McKayDecomposer())
     assert (
-        str(qc) == """version 3.0
+        str(qc)
+        == """version 3.0
 
 qubit[4] q
 bit[4] b
