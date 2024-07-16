@@ -12,13 +12,12 @@ from numpy.typing import ArrayLike, DTypeLike, NDArray
 
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
+REPR_DECIMALS = 5
 
-_REPR_DECIMALS = 5
 
-
-def _repr_round(
-        value: float | Axis | NDArray[np.complex64],
-        decimals: int = _REPR_DECIMALS) -> float | Axis | NDArray[np.complex64]:
+def repr_round(
+    value: float | Axis | NDArray[np.complex64], decimals: int = REPR_DECIMALS
+) -> float | Axis | NDArray[np.complex64]:
     return np.round(value, decimals)
 
 
@@ -322,8 +321,8 @@ class BlochSphereRotation(Gate):
 
     def __repr__(self) -> str:
         return (
-            f"BlochSphereRotation({self.qubit}, axis={_repr_round(self.axis)}, angle={_repr_round(self.angle)},"
-            f" phase={_repr_round(self.phase)})"
+            f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
+            f" phase={repr_round(self.phase)})"
         )
 
     def __eq__(self, other: object) -> bool:
@@ -370,7 +369,7 @@ class MatrixGate(Gate):
         self.operands = operands
 
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={_repr_round(self.matrix)})"
+        return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
