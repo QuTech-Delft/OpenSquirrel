@@ -40,7 +40,7 @@ class McKayDecomposer(Decomposer):
         if len(zxz_decomposition) >= 2 and isinstance(zxz_decomposition[1], BlochSphereRotation):
             zxz_angle = zxz_decomposition[1].angle
 
-        if zxz_angle == pi / 2:
+        if abs(zxz_angle - pi / 2) < ATOL:
             zxz_decomposition[1] = X90(g.qubit)
             return zxz_decomposition
 

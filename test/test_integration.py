@@ -91,13 +91,20 @@ def test_Spin2_backend() -> None:
         b = measure q
         """
     )
+    qc.replace(
+        CNOT,
+        lambda control, target: [
+            H(target),
+            CZ(control, target),
+            H(target),
+        ],
+    )
 
     # Merge single-qubit gates and decompose with McKay decomposition.
     qc.merge_single_qubit_gates()
     qc.decompose(decomposer=McKayDecomposer())
     assert (
-        str(qc)
-        == """version 3.0
+        str(qc) == """version 3.0
 
 qubit[4] q
 bit[4] b
@@ -105,25 +112,30 @@ bit[4] b
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
-Rz(-0.20000005) q[0]
+Rz(-1.7707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
 X90 q[0]
-Rz(1.5707963) q[0]
-CNOT q[1], q[0]
-Rz(1.5789) q[0]
-CNOT q[1], q[0]
+Rz(-1.5707963) q[0]
+CZ q[1], q[0]
+Rz(-1.5707963) q[0]
+X90 q[0]
+Rz(1.5626926) q[0]
+X90 q[0]
+Rz(-1.5707963) q[0]
+CZ q[1], q[0]
+CZ q[1], q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
-CNOT q[1], q[2]
 CR(2.123) q[2], q[3]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
 b[0] = measure q[0]
-Rz(2.5707962) q[1]
+Rz(4.1415926) q[1]
 X90 q[1]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(3.1415927) q[1]
+Rz(-1.5707963) q[1]
 b[1] = measure q[1]
 b[2] = measure q[2]
 b[3] = measure q[3]
