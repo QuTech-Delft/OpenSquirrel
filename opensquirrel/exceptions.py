@@ -6,7 +6,7 @@ from typing import Any
 class UnsupportedGateError(Exception):
     """Should be raised when a gate is not supported."""
 
-    def __init__(self, gate: Any, *args) -> None:
+    def __init__(self, gate: Any, *args: Any) -> None:
         """Init of the ``UnsupportedGateError``.
 
         Args:
