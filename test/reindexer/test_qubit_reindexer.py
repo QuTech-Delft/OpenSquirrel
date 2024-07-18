@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pytest
 
-from opensquirrel.circuit import Circuit
+from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_gates import Y90, X
 from opensquirrel.ir import IR, Bit, BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Qubit
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
@@ -13,10 +13,10 @@ from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
 
 
 def circuit_1_reindexed() -> Circuit:
-    ir = IR()
-    ir.add_gate(Y90(Qubit(1)))
-    ir.add_gate(X(Qubit(0)))
-    return Circuit(RegisterManager(QubitRegister(2)), ir)
+    builder = CircuitBuilder(2)
+    builder.Y90(Qubit(1))
+    builder.X(Qubit(0))
+    return builder.to_circuit()
 
 
 def replacement_gates_1() -> list[Gate]:
