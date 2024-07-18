@@ -15,8 +15,8 @@ except ModuleNotFoundError:
     pass
 
 
-class UnsupportedGatesError(Exception):
-    """Should be raised when the set of gates is not supported by the exporter."""
+class UnsupportedGateError(Exception):
+    """Should be raised when a gate is not supported by the exporter."""
 
 
 # Radian to degree conversion outcome precision
@@ -60,20 +60,20 @@ class _ScheduleCreator(IRVisitor):
             self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
-        raise UnsupportedGatesError(
+        raise UnsupportedGateError(
             f"Cannot export circuit: it contains unsupported gates. The following gate could not be exported: {g}. "
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         )
 
     def visit_matrix_gate(self, g: MatrixGate) -> None:
-        raise UnsupportedGatesError(
+        raise UnsupportedGateError(
             f"Cannot export circuit: it contains unsupported gates. MatrixGates are not supported. "
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         )
 
     def visit_controlled_gate(self, g: ControlledGate) -> None:
         if not isinstance(g.target_gate, BlochSphereRotation):
-            raise UnsupportedGatesError(
+            raise UnsupportedGateError(
                 f"Cannot export circuit: it contains unsupported gates. The following gate could not be exported: {g}. "
                 "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
             )
@@ -94,7 +94,7 @@ class _ScheduleCreator(IRVisitor):
             )
             return
 
-        raise UnsupportedGatesError(
+        raise UnsupportedGateError(
             f"Cannot export circuit: it contains unsupported gates. The following gate could not be exported: {g}. "
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         )
