@@ -6,6 +6,7 @@ from typing import Any
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
+from opensquirrel.exceptions import ExportError, UnsupportedGateError
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit
 
 try:
@@ -13,23 +14,6 @@ try:
     import quantify_scheduler.operations.gate_library as quantify_scheduler_gates
 except ModuleNotFoundError:
     pass
-
-
-class UnsupportedGateError(Exception):
-    """Should be raised when a gate is not supported by the exporter."""
-
-    def __init__(self, gate: Any, *args) -> None:
-        """Init of the ``UnsupportedGateError``.
-
-        Args:
-            gate: Gate that is not supported.
-        """
-        self.unsupported_gate = gate
-        super().__init__(f"The following gate is not supported: {gate}.", *args)
-
-
-class ExportError(Exception):
-    """Should be raised when a gate is not supported by the exporter."""
 
 
 # Radian to degree conversion outcome precision
