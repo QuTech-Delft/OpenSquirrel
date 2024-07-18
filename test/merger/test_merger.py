@@ -3,7 +3,7 @@ from test.ir_equality_test_base import modify_circuit_and_check
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import CNOT, H, Rx, Ry, Rz
+from opensquirrel.default_gates import CNOT, Ry, Rz
 from opensquirrel.ir import IR, BlochSphereRotation, Float, Qubit
 from opensquirrel.merger import general_merger
 from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
@@ -120,7 +120,8 @@ def test_merge_and_flush() -> None:
 
 def test_merge_y90_x_to_h() -> None:
     builder = CircuitBuilder(1)
-    builder.Y90(Qubit(0)).X(Qubit(0))
+    builder.Y90(Qubit(0))
+    builder.X(Qubit(0))
     qc = builder.to_circuit()
 
     builder2 = CircuitBuilder(1)
