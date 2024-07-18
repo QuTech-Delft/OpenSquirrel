@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from typing import List
-
 import pytest
 
-from opensquirrel import Circuit
+from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_gates import CNOT, H
 from opensquirrel.ir import IR, Bit, Comment, Measure, Qubit, Statement
 from opensquirrel.mapper import HardcodedMapper, Mapper
@@ -34,17 +32,16 @@ class TestMapper:
 class TestMapQubits:
     @pytest.fixture(name="circuit")
     def circuit_fixture(self) -> Circuit:
-        register_manager = RegisterManager(QubitRegister(3), BitRegister(3))
-        ir = IR()
-        ir.add_gate(H(Qubit(0)))
-        ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        ir.add_gate(CNOT(Qubit(1), Qubit(2)))
-        ir.add_comment(Comment("Qubit[1]"))
-        ir.add_measurement(Measure(Qubit(0), Bit(0), axis=(0, 0, 1)))
-        return Circuit(register_manager, ir)
+        circuit_builder = CircuitBuilder(3, 1)
+        circuit_builder.H(Qubit(0))
+        circuit_builder.CNOT(Qubit(0), Qubit(1))
+        circuit_builder.CNOT(Qubit(1), Qubit(2))
+        circuit_builder.comment("Qubit[1]")
+        circuit_builder.measure(Qubit(0), Bit(0))
+        return circuit_builder.to_circuit()
 
     @pytest.fixture(name="expected_statements")
-    def expected_statements_fixture(self) -> List[Statement]:
+    def expected_statements_fixture(self) -> list[Statement]:
         return [
             H(Qubit(1)),
             CNOT(Qubit(1), Qubit(0)),
