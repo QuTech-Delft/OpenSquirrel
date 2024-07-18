@@ -78,7 +78,6 @@ class TestQuantifySchedulerExporter:
             )
             assert mock_schedule.add.call_count == 7
 
-
     @pytest.mark.parametrize(
         "gate",
         [
@@ -87,7 +86,7 @@ class TestQuantifySchedulerExporter:
             BlochSphereRotation(qubit=Qubit(0), axis=(1, 2, 3), angle=0.9876, phase=2.34),
             CCZ(Qubit(0), Qubit(1), Qubit(2)),
         ],
-        ids=["H", "SWAP", "BSR", "CCZ"]
+        ids=["H", "SWAP", "BSR", "CCZ"],
     )
     def test_gates_not_supported(self, gate: Gate) -> None:
         register_manager = RegisterManager(QubitRegister(3))
