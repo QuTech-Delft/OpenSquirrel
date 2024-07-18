@@ -44,15 +44,15 @@ class MockedQuantifyScheduler:
 
 class TestQuantifySchedulerExporter:
     def test_export(self):
-        circuit_builder = CircuitBuilder(3, 3)
-        circuit_builder.X(Qubit(0))
-        circuit_builder.CZ(Qubit(0), Qubit(1))
-        circuit_builder.Rz(Qubit(1), Float(2.34))
-        circuit_builder.Ry(Qubit(2), Float(1.23))
-        circuit_builder.measure(Qubit(0), Bit(0))
-        circuit_builder.measure(Qubit(1), Bit(1))
-        circuit_builder.measure(Qubit(2), Bit(2))
-        circuit = circuit_builder.to_circuit()
+        builder = CircuitBuilder(3, 3)
+        builder.X(Qubit(0))
+        builder.CZ(Qubit(0), Qubit(1))
+        builder.Rz(Qubit(1), Float(2.34))
+        builder.Ry(Qubit(2), Float(1.23))
+        builder.measure(Qubit(0), Bit(0))
+        builder.measure(Qubit(1), Bit(1))
+        builder.measure(Qubit(2), Bit(2))
+        circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
             mock_schedule = unittest.mock.MagicMock()

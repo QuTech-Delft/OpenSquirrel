@@ -10,37 +10,37 @@ from opensquirrel.mapper.qubit_remapper import get_remapped_ir, remap_ir
 class TestRemapper:
     @pytest.fixture
     def circuit_3(self) -> Circuit:
-        circuit_builder = CircuitBuilder(3)
-        circuit_builder.H(Qubit(0))
-        circuit_builder.CNOT(Qubit(0), Qubit(1))
-        circuit_builder.H(Qubit(2))
-        return circuit_builder.to_circuit()
+        builder = CircuitBuilder(3)
+        builder.H(Qubit(0))
+        builder.CNOT(Qubit(0), Qubit(1))
+        builder.H(Qubit(2))
+        return builder.to_circuit()
 
     @pytest.fixture
     def circuit_3_remapped(self) -> Circuit:
-        circuit_builder = CircuitBuilder(3)
-        circuit_builder.H(Qubit(2))
-        circuit_builder.CNOT(Qubit(2), Qubit(1))
-        circuit_builder.H(Qubit(0))
-        return circuit_builder.to_circuit()
+        builder = CircuitBuilder(3)
+        builder.H(Qubit(2))
+        builder.CNOT(Qubit(2), Qubit(1))
+        builder.H(Qubit(0))
+        return builder.to_circuit()
 
     @pytest.fixture
     def circuit_4(self) -> Circuit:
-        circuit_builder = CircuitBuilder(4)
-        circuit_builder.H(Qubit(0))
-        circuit_builder.CNOT(Qubit(0), Qubit(1))
-        circuit_builder.X(Qubit(2))
-        circuit_builder.Y(Qubit(3))
-        return circuit_builder.to_circuit()
+        builder = CircuitBuilder(4)
+        builder.H(Qubit(0))
+        builder.CNOT(Qubit(0), Qubit(1))
+        builder.X(Qubit(2))
+        builder.Y(Qubit(3))
+        return builder.to_circuit()
 
     @pytest.fixture
     def circuit_4_remapped(self) -> Circuit:
-        circuit_builder = CircuitBuilder(4)
-        circuit_builder.H(Qubit(3))
-        circuit_builder.CNOT(Qubit(3), Qubit(1))
-        circuit_builder.X(Qubit(0))
-        circuit_builder.Y(Qubit(2))
-        return circuit_builder.to_circuit()
+        builder = CircuitBuilder(4)
+        builder.H(Qubit(3))
+        builder.CNOT(Qubit(3), Qubit(1))
+        builder.X(Qubit(0))
+        builder.Y(Qubit(2))
+        return builder.to_circuit()
 
     @pytest.fixture
     def mapping_3(self) -> Mapping:
