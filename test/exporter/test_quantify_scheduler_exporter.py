@@ -8,7 +8,7 @@ import pytest
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
-from opensquirrel.exceptions import ExportError
+from opensquirrel.exceptions import CircuitExportError
 from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION
 from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Measure, Qubit
@@ -83,7 +83,7 @@ class TestQuantifySchedulerExporter:
         ir.add_gate(g)
 
         with MockedQuantifyScheduler():
-            with pytest.raises(ExportError, match="Cannot export circuit: it contains unsupported gates"):
+            with pytest.raises(CircuitExportError, match="cannot export circuit: it contains unsupported gates"):
                 quantify_scheduler_exporter.export(Circuit(register_manager, ir))
 
     def test_gates_not_supported(self):

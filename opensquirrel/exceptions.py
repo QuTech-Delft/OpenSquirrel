@@ -12,9 +12,8 @@ class UnsupportedGateError(Exception):
         Args:
             gate: Gate that is not supported.
         """
-        self.unsupported_gate = gate
-        super().__init__(f"The following gate is not supported: {gate}.", *args)
+        super().__init__(f"{gate} not supported", *args)
 
 
-class ExportError(Exception):
-    """Should be raised when a gate is not supported by the exporter."""
+class CircuitExportError(Exception):
+    """Should be raised when circuit cannot be exported to the desired output format."""
