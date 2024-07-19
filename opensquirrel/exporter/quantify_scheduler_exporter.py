@@ -82,10 +82,7 @@ class _ScheduleCreator(IRVisitor):
             )
             return
 
-        raise UnsupportedGateError(
-            f"Cannot export circuit: it contains unsupported gates. The following gate could not be exported: {g}. "
-            "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
-        )
+        raise UnsupportedGateError(g)
 
 
 def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
