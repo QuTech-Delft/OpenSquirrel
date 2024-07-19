@@ -40,6 +40,7 @@ def circuit_2_reindexed() -> Circuit:
     builder.ir.add_gate(ControlledGate(Qubit(0), X(Qubit(3))))
     return builder.to_circuit()
 
+
 @pytest.mark.parametrize(
     "replacement_gates, qubit_indices, bit_register_size, circuit_reindexed",
     [
