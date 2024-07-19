@@ -1,118 +1,62 @@
-import math
-
 import numpy as np
+import pytest
+from numpy.typing import ArrayLike
 
-from opensquirrel import Circuit, CircuitBuilder, circuit_matrix_calculator
-from opensquirrel.default_gates import CNOT, H, X
+from opensquirrel import CircuitBuilder
+from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.ir import Qubit
-from opensquirrel.register_manager import QubitRegister, RegisterManager
 
 
-def test_hadamard() -> None:
-    builder = CircuitBuilder(1)
-    builder.H(Qubit(0))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit), math.sqrt(0.5) * np.array([[1, 1], [1, -1]])
-    )
-
-
-def test_double_hadamard() -> None:
-    builder = CircuitBuilder(1)
-    builder.H(Qubit(0))
-    builder.H(Qubit(0))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(circuit_matrix_calculator.get_circuit_matrix(circuit), np.eye(2))
-
-
-def test_triple_hadamard() -> None:
-    builder = CircuitBuilder(1)
-    builder.H(Qubit(0))
-    builder.H(Qubit(0))
-    builder.H(Qubit(0))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit), math.sqrt(0.5) * np.array([[1, 1], [1, -1]])
-    )
-
-
-def test_hadamard_x() -> None:
-    builder = CircuitBuilder(2)
-    builder.H(Qubit(0))
-    builder.X(Qubit(1))
-    circuit = builder.to_circuit()
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit),
-        math.sqrt(0.5) * np.array([[0, 0, 1, 1], [0, 0, 1, -1], [1, 1, 0, 0], [1, -1, 0, 0]]),
-    )
-
-
-def test_x_hadamard() -> None:
-    builder = CircuitBuilder(2)
-    builder.H(Qubit(1))
-    builder.X(Qubit(0))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit),
-        math.sqrt(0.5) * np.array([[0, 1, 0, 1], [1, 0, 1, 0], [0, 1, 0, -1], [1, 0, -1, 0]]),
-    )
-
-
-def test_cnot() -> None:
-    builder = CircuitBuilder(2)
-    builder.CNOT(Qubit(1), Qubit(0))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit), [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]
-    )
-
-
-def test_cnot_reversed() -> None:
-    builder = CircuitBuilder(2)
-    builder.CNOT(Qubit(0), Qubit(1))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit), [[1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0]]
-    )
-
-
-def test_hadamard_cnot() -> None:
-    builder = CircuitBuilder(2)
-    builder.H(Qubit(0))
-    builder.CNOT(Qubit(0), Qubit(1))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit),
-        math.sqrt(0.5) * np.array([[1, 1, 0, 0], [0, 0, 1, -1], [0, 0, 1, 1], [1, -1, 0, 0]]),
-    )
-
-
-def test_hadamard_cnot_0_2() -> None:
-    builder = CircuitBuilder(3)
-    builder.H(Qubit(0))
-    builder.CNOT(Qubit(0), Qubit(2))
-    circuit = builder.to_circuit()
-
-    np.testing.assert_almost_equal(
-        circuit_matrix_calculator.get_circuit_matrix(circuit),
-        math.sqrt(0.5)
-        * np.array(
-            [
-                [1, 1, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 1, -1, 0, 0],
-                [0, 0, 1, 1, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 1, -1],
-                [0, 0, 0, 0, 1, 1, 0, 0],
-                [1, -1, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 1, 1],
-                [0, 0, 1, -1, 0, 0, 0, 0],
-            ]
+@pytest.mark.parametrize(
+    "builder, expected_matrix",
+    [
+        (CircuitBuilder(1).H(Qubit(0)), np.sqrt(0.5) * np.array([[1, 1], [1, -1]])),
+        (CircuitBuilder(1).H(Qubit(0)).H(Qubit(0)), np.eye(2)),
+        (CircuitBuilder(1).H(Qubit(0)).H(Qubit(0)).H(Qubit(0)), np.sqrt(0.5) * np.array([[1, 1], [1, -1]])),
+        (
+            CircuitBuilder(2).H(Qubit(0)).X(Qubit(1)),
+            np.sqrt(0.5) * np.array([[0, 0, 1, 1], [0, 0, 1, -1], [1, 1, 0, 0], [1, -1, 0, 0]]),
         ),
-    )
+        (
+            CircuitBuilder(2).H(Qubit(1)).X(Qubit(0)),
+            np.sqrt(0.5) * np.array([[0, 1, 0, 1], [1, 0, 1, 0], [0, 1, 0, -1], [1, 0, -1, 0]]),
+        ),
+        (CircuitBuilder(2).CNOT(Qubit(1), Qubit(0)), [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]),
+        (CircuitBuilder(2).CNOT(Qubit(0), Qubit(1)), [[1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0]]),
+        (
+            CircuitBuilder(2).H(Qubit(0)).CNOT(Qubit(0), Qubit(1)),
+            np.sqrt(0.5) * np.array([[1, 1, 0, 0], [0, 0, 1, -1], [0, 0, 1, 1], [1, -1, 0, 0]]),
+        ),
+        (
+            CircuitBuilder(3).H(Qubit(0)).CNOT(Qubit(0), Qubit(2)),
+            np.sqrt(0.5)
+            * np.array(
+                [
+                    [1, 1, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 1, -1, 0, 0],
+                    [0, 0, 1, 1, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 1, -1],
+                    [0, 0, 0, 0, 1, 1, 0, 0],
+                    [1, -1, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 1, 1],
+                    [0, 0, 1, -1, 0, 0, 0, 0],
+                ]
+            ),
+        ),
+    ],
+    ids=[
+        "H[0]",
+        "H[0]H[0]",
+        "H[0]H[0]H[0]",
+        "H[0]X[1]",
+        "H[1]X[0]",
+        "CNOT[1,0]",
+        "CNOT[0,1]",
+        "H[0]CNOT[0,1]",
+        "H[0]CNOT[0,2]",
+    ],
+)
+def test_get_circuit_matrix(builder: CircuitBuilder, expected_matrix: ArrayLike) -> None:
+    circuit = builder.to_circuit()
+    matrix = get_circuit_matrix(circuit)
+    np.testing.assert_almost_equal(matrix, expected_matrix)
