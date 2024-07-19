@@ -5,11 +5,9 @@ import math
 import pytest
 
 from opensquirrel import CircuitBuilder
-from opensquirrel.decomposer import general_decomposer
-from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
+from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
 from opensquirrel.default_gates import CNOT, Y90, BlochSphereRotation, H, I, Ry, Rz, X, Z, sqrtSWAP
 from opensquirrel.ir import Float, Gate, Qubit
-from opensquirrel.register_manager import QubitRegister, RegisterManager
 
 
 class TestCheckGateReplacement:
@@ -122,7 +120,7 @@ class TestReplacer:
                     return [I(g.qubit), g, I(g.qubit)]
                 return [g]
 
-        general_decomposer.decompose(circuit.ir, decomposer=TestDecomposer())
+        decompose(circuit.ir, decomposer=TestDecomposer())
 
         builder2 = CircuitBuilder(3)
         builder2.I(Qubit(0))
@@ -139,7 +137,7 @@ class TestReplacer:
         builder1.comment("Test comment.")
         circuit = builder1.to_circuit()
 
-        general_decomposer.replace(circuit.ir, H, lambda q: [Y90(q), X(q)])
+        replace(circuit.ir, H, lambda q: [Y90(q), X(q)])
 
         builder2 = CircuitBuilder(3)
         builder2.Y90(Qubit(0))
