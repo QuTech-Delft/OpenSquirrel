@@ -6,7 +6,7 @@ from typing import Any
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
-from opensquirrel.exceptions import CircuitExportError, UnsupportedGateError
+from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit
 
 try:
@@ -101,7 +101,7 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
     try:
         circuit.ir.accept(schedule_creator)
     except UnsupportedGateError as e:
-        raise CircuitExportError(
+        raise ExporterError(
             f"cannot export circuit: {e} ."
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         ) from e

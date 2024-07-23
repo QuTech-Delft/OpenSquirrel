@@ -15,5 +15,5 @@ class UnsupportedGateError(Exception):
         super().__init__(f"{gate} not supported", *args)
 
 
-class CircuitExportError(Exception):
-    """Should be raised when circuit cannot be exported to the desired output format."""
+class ExporterError(Exception):
+    """Should be raised when a circuit cannot be exported to the desired output format."""
