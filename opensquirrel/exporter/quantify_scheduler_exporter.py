@@ -102,7 +102,7 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
         circuit.ir.accept(schedule_creator)
     except UnsupportedGateError as e:
         raise ExporterError(
-            f"cannot export circuit: {e} ."
+            f"cannot export circuit: {e}. "
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         ) from e
     return schedule_creator.schedule
