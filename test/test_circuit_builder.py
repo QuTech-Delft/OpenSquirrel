@@ -121,5 +121,5 @@ class TestCircuitBuilder:
     def test_decoupling_circuit_and_builder(self) -> None:
         builder = CircuitBuilder(1)
         circuit = builder.to_circuit()
-        builder.I(Qubit(0))
-        assert len(circuit.ir.statements) == 0
+        assert circuit.ir is not builder.ir
+        assert circuit.register_manager is not builder.register_manager
