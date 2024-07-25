@@ -48,7 +48,7 @@ class ABADecomposer(Decomposer, ABC):
         a_axis_value = axis[self.index_a]
         b_axis_value = axis[self.index_b]
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
-            raise ValueError("Angle needs to be normalized")
+            raise ValueError("angle needs to be normalized")
 
         if abs(alpha - math.pi) < ATOL:
             # alpha == pi, math.tan(alpha / 2) is not defined.

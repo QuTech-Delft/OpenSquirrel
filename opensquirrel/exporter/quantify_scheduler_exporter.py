@@ -6,18 +6,15 @@ from typing import Any
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
+from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit
 
 try:
     import quantify_scheduler
     import quantify_scheduler.operations.gate_library as quantify_scheduler_gates
-except Exception as e:
+except ModuleNotFoundError:
     pass
 
-_unsupported_gates_exception = Exception(
-    "Cannot export circuit: it contains unsupported gates. "
-    "Decompose them to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
-)
 
 # Radian to degree conversion outcome precision
 DEG_PRECISION = 5
@@ -41,7 +38,6 @@ class _ScheduleCreator(IRVisitor):
                 acq_protocol="ThresholdedAcquisition",
             )
         )
-        return
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
         # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
@@ -61,14 +57,14 @@ class _ScheduleCreator(IRVisitor):
             self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
-        raise _unsupported_gates_exception
+        raise UnsupportedGateError(g)
 
     def visit_matrix_gate(self, g: MatrixGate) -> None:
-        raise _unsupported_gates_exception
+        raise UnsupportedGateError(g)
 
     def visit_controlled_gate(self, g: ControlledGate) -> None:
         if not isinstance(g.target_gate, BlochSphereRotation):
-            raise _unsupported_gates_exception
+            raise UnsupportedGateError(g)
 
         if g.target_gate == X(g.target_gate.qubit):
             self.schedule.add(
@@ -86,7 +82,7 @@ class _ScheduleCreator(IRVisitor):
             )
             return
 
-        raise _unsupported_gates_exception
+        raise UnsupportedGateError(g)
 
 
 def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
@@ -94,7 +90,7 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
 
         class QuantifySchedulerNotInstalled:
             def __getattr__(self, attr_name: Any) -> None:
-                raise ImportError("quantify-scheduler is not installed, or cannot be installed on your system")
+                raise ModuleNotFoundError("quantify-scheduler is not installed, or cannot be installed on your system")
 
         global quantify_scheduler
         quantify_scheduler = QuantifySchedulerNotInstalled()
@@ -102,5 +98,11 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
     schedule_creator = _ScheduleCreator(circuit.qubit_register_name)
-    circuit.ir.accept(schedule_creator)
+    try:
+        circuit.ir.accept(schedule_creator)
+    except UnsupportedGateError as e:
+        raise ExporterError(
+            f"cannot export circuit: {e} ."
+            "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
+        ) from e
     return schedule_creator.schedule

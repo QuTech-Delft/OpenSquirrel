@@ -39,13 +39,13 @@ class TestAxis:
     @pytest.mark.parametrize(
         "erroneous_axis, expected_error, expected_error_message",
         [
-            (Qubit(1), TypeError, "Axis requires an ArrayLike"),
-            ([0, [3], [2]], TypeError, "Axis requires an ArrayLike"),
-            (0, ValueError, "Axis requires an ArrayLike of length 3, but received an ArrayLike of length 1."),
+            (Qubit(1), TypeError, "axis requires an ArrayLike"),
+            ([0, [3], [2]], TypeError, "axis requires an ArrayLike"),
+            (0, ValueError, "axis requires an ArrayLike of length 3, but received an ArrayLike of length 1"),
             (
                 [1, 2, 3, 4],
                 ValueError,
-                "Axis requires an ArrayLike of length 3, but received an ArrayLike of length 4.",
+                "axis requires an ArrayLike of length 3, but received an ArrayLike of length 4",
             ),
         ],
     )
