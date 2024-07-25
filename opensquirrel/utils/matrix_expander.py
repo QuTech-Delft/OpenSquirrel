@@ -96,7 +96,7 @@ class MatrixExpander(IRVisitor):
 
     def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex_]:
         if rot.qubit.index >= self.qubit_register_size:
-            raise IndexError("Index out of range.")
+            raise IndexError("index out of range")
 
         result = np.kron(
             np.kron(
@@ -105,12 +105,12 @@ class MatrixExpander(IRVisitor):
             np.eye(1 << rot.qubit.index),
         )
         if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
-            ValueError("Result has incorrect shape.")
+            ValueError("result has incorrect shape")
         return result
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex_]:
         if gate.control_qubit.index >= self.qubit_register_size:
-            raise IndexError("Index out of range.")
+            raise IndexError("index out of range")
 
         expanded_matrix = gate.target_gate.accept(self)
         for col_index, col in enumerate(expanded_matrix.T):
@@ -131,14 +131,14 @@ class MatrixExpander(IRVisitor):
         qubit_operands = list(reversed(gate.operands))
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
-            raise IndexError("Index out of range.")
+            raise IndexError("index out of range")
 
         m = gate.matrix
 
         if m.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
             raise ValueError(
-                f"Matrix has incorrect shape. Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but "
-                f"received {m.shape}."
+                f"matrix has incorrect shape."
+                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}"
             )
 
         expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
@@ -151,7 +151,7 @@ class MatrixExpander(IRVisitor):
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
         if expanded_matrix.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
-            raise ValueError("Expended matrix has incorrect shape.")
+            raise ValueError("expended matrix has incorrect shape")
         return expanded_matrix
 
 

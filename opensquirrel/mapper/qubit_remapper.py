@@ -59,7 +59,7 @@ class _QubitRemapper(IRVisitor):
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
     if len(mapping) > circuit.qubit_register_size:
-        raise ValueError("Mapping is larger than the qubit register size.")
+        raise ValueError("mapping is larger than the qubit register size")
     qubit_remapper = _QubitRemapper(mapping)
     replacement_ir = circuit.ir
     for statement in replacement_ir.statements:
@@ -69,7 +69,7 @@ def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
 
 def remap_ir(circuit: Circuit, mapping: Mapping) -> None:
     if len(mapping) > circuit.qubit_register_size:
-        raise ValueError("Mapping is larger than the qubit register size.")
+        raise ValueError("mapping is larger than the qubit register size")
     qubit_remapper = _QubitRemapper(mapping)
     for statement in circuit.ir.statements:
         statement.accept(qubit_remapper)

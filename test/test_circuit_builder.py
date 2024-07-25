@@ -83,19 +83,19 @@ class TestCircuitBuilder:
 
         with pytest.raises(IndexError) as exception_info:
             builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(12)).to_circuit()
-        assert re.search("Qubit index is out of bounds", str(exception_info.value))
+        assert re.search("qubit index is out of bounds", str(exception_info.value))
 
     def test_measurement_index_error(self):
         builder = CircuitBuilder(2, 1)
         with pytest.raises(IndexError) as exception_info:
             builder.H(Qubit(0)).measure(Qubit(0), Bit(10)).to_circuit()
-        assert re.search("Bit index is out of bounds", str(exception_info.value))
+        assert re.search("bit index is out of bounds", str(exception_info.value))
 
     def test_unknown_instruction(self):
         builder = CircuitBuilder(3)
         with pytest.raises(ValueError) as exception_info:
             builder.unknown(0)
-        assert re.search("Unknown instruction `unknown`", str(exception_info.value))
+        assert re.search("unknown instruction `unknown`", str(exception_info.value))
 
     def test_wrong_number_of_arguments(self):
         builder = CircuitBuilder(3)
@@ -111,9 +111,9 @@ class TestCircuitBuilder:
             builder.H(0)
 
         assert re.search(
-            "Wrong argument type for instruction `H`, got <class 'int'> but expected <class 'opensquirrel.ir.Qubit'>",
+            "wrong argument type for instruction `H`, got <class 'int'> but expected <class 'opensquirrel.ir.Qubit'>",
             str(exception_info.value),
         ) or re.search(
-            "Wrong argument type for instruction `H`, got <class 'int'> but expected Qubit",
+            "wrong argument type for instruction `H`, got <class 'int'> but expected Qubit",
             str(exception_info.value),
         )

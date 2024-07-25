@@ -18,7 +18,7 @@ class Mapping:
     def __init__(self, physical_qubit_register: list[int]) -> None:
         self.data: dict[int, int] = dict(enumerate(physical_qubit_register))
         if (self.data.keys()) != set(self.data.values()):
-            raise ValueError("The mapping is incorrect.")
+            raise ValueError("the mapping is incorrect")
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Mapping):

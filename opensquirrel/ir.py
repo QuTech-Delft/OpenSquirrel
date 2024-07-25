@@ -159,12 +159,10 @@ class Axis(Sequence[np.float64], Expression):
         try:
             axis = np.asfarray(axis)
         except (ValueError, TypeError) as e:
-            raise TypeError("Axis requires an ArrayLike") from e
+            raise TypeError("axis requires an ArrayLike") from e
         axis = axis.flatten()
         if len(axis) != 3:
-            raise ValueError(
-                f"Axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}."
-            )
+            raise ValueError(f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}")
         return cls._normalize_axis(axis)
 
     @staticmethod
@@ -363,12 +361,12 @@ class MatrixGate(Gate):
     ):
         Gate.__init__(self, generator, arguments)
         if len(operands) < 2:
-            raise ValueError("For 1q gates, please use BlochSphereRotation")
+            raise ValueError("for 1q gates, please use BlochSphereRotation")
 
         if matrix.shape != (1 << len(operands), 1 << len(operands)):
             raise ValueError(
-                f"Incorrect matrix shape. Expected {(1 << len(operands), 1 << len(operands))} but received "
-                f"{matrix.shape}."
+                f"incorrect matrix shape. "
+                f"Expected {(1 << len(operands), 1 << len(operands))} but received {matrix.shape}"
             )
 
         self.matrix = matrix
@@ -486,7 +484,7 @@ class Comment(Statement):
 
     def __post_init__(self) -> None:
         if "*/" in self.str:
-            raise ValueError("Comment contains illegal characters")
+            raise ValueError("comment contains illegal characters")
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)
