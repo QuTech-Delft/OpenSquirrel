@@ -39,7 +39,9 @@ def test_anonymous_gate() -> None:
     builder.H(Qubit(0))
     builder.ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
     builder.ir.add_gate(ControlledGate(Qubit(0), BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23)))
-    builder.ir.add_gate(MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)]))
+    builder.ir.add_gate(
+        MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)])
+    )
     builder.CR(Qubit(0), Qubit(1), Float(1.234))
     assert (
         str(builder.to_circuit())

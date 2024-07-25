@@ -6,14 +6,16 @@ import unittest.mock
 import pytest
 
 from opensquirrel import CircuitBuilder
-from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
+<<<<<<< HEAD
 from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
 from opensquirrel.exceptions import ExporterError
+=======
+from opensquirrel.default_gates import CCZ, SWAP, H
+>>>>>>> 2b367dd (Builder instead of IR for circuit creation)
 from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Measure, Qubit
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate, Qubit
 
 
 class FloatEq(float):
@@ -89,13 +91,13 @@ class TestQuantifySchedulerExporter:
         ids=["H", "SWAP", "BSR", "CCZ"],
     )
     def test_gates_not_supported(self, gate: Gate) -> None:
-        register_manager = RegisterManager(QubitRegister(3))
-        ir = IR()
-        ir.add_gate(gate)
+        builder = CircuitBuilder(3)
+        builder.ir.add_gate(gate)
+        circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler():
-            with pytest.raises(ExporterError, match="cannot export circuit: "):
-                quantify_scheduler_exporter.export(Circuit(register_manager, ir))
+            with pytest.raises(ExporterError, match="Cannot export circuit: it contains unsupported gates"):
+                quantify_scheduler_exporter.export(circuit)
 
 
 @pytest.mark.skipif(

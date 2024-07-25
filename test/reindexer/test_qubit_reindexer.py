@@ -7,8 +7,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_gates import Y90, X
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Qubit
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Qubit
 from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
 
 
@@ -33,14 +32,13 @@ def replacement_gates_2() -> list[Gate]:
 
 
 def circuit_2_reindexed() -> Circuit:
-    ir = IR()
-    ir.add_gate(Measure(Qubit(0), Bit(0)))
-    ir.add_gate(BlochSphereRotation(Qubit(2), axis=(0, 0, 1), angle=math.pi))
+    builder = CircuitBuilder(4, 4)
+    builder.measure(Qubit(0), Bit(0))
+    builder.ir.add_gate(BlochSphereRotation(Qubit(2), axis=(0, 0, 1), angle=math.pi))
     matrix = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
-    ir.add_gate(MatrixGate(matrix, [Qubit(1), Qubit(2)]))
-    ir.add_gate(ControlledGate(Qubit(0), X(Qubit(3))))
-    return Circuit(RegisterManager(QubitRegister(4), BitRegister(4)), ir)
-
+    builder.ir.add_gate(MatrixGate(matrix, [Qubit(1), Qubit(2)]))
+    builder.ir.add_gate(ControlledGate(Qubit(0), X(Qubit(3))))
+    return builder.to_circuit()
 
 @pytest.mark.parametrize(
     "replacement_gates, qubit_indices, bit_register_size, circuit_reindexed",
