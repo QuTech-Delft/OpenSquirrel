@@ -101,7 +101,7 @@ def test_merge_and_flush() -> None:
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 0, 1), angle=math.pi))  # This is hadamard with 0 phase
+    builder2.ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 0, 1), angle=math.pi))  # this is Hadamard with 0 phase
     builder2.Rz(Qubit(1), Float(-1.0))
     builder2.CNOT(Qubit(0), Qubit(1))
     builder2.Ry(Qubit(0), Float(3.234))
