@@ -77,7 +77,7 @@ def test_merge_different_qubits() -> None:
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 0, 1), angle=math.pi))  # This is hadamard with 0 phase
+    builder2.ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 0, 1), angle=math.pi))  # this is Hadamard with 0 phase
     builder2.Rz(Qubit(1), Float(1.2345))
     builder2.Ry(Qubit(2), Float(4.234))
     expected_circuit = builder2.to_circuit()
