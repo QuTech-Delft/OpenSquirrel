@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 from collections.abc import Callable, Mapping
+from copy import deepcopy
 from functools import partial
 from typing import Any
 
@@ -124,4 +125,4 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
                 self._check_bit_out_of_bounds_access(args[i].index)
 
     def to_circuit(self) -> Circuit:
-        return Circuit(self.register_manager, self.ir)
+        return Circuit(deepcopy(self.register_manager), deepcopy(self.ir))

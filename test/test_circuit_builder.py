@@ -117,3 +117,9 @@ class TestCircuitBuilder:
             "wrong argument type for instruction `H`, got <class 'int'> but expected Qubit",
             str(exception_info.value),
         )
+
+    def test_decoupling_circuit_and_builder(self) -> None:
+        builder = CircuitBuilder(1)
+        circuit = builder.to_circuit()
+        assert circuit.ir is not builder.ir
+        assert circuit.register_manager is not builder.register_manager
