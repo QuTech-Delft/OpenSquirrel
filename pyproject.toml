@@ -30,7 +30,6 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-antlr4-python3-runtime = "^4.13.1"
 numpy = [
     { version = "1.24", python = "<3.9" },
     { version = "^1.26", python = "^3.9" },
@@ -80,7 +79,7 @@ asyncio_mode = "auto"
 
 [tool.coverage.run]
 branch = true
-omit = ["tests/*", "**/.tox/**", "opensquirrel/parsing/antlr/generated/*"]
+omit = ["tests/*", "**/.tox/**"]
 
 [tool.coverage.report]
 show_missing = true
