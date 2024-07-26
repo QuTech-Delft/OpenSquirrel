@@ -13,55 +13,6 @@ from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import Measure
 
 
-def test_simple_circuit() -> None:
-    qc = Circuit.from_string(
-        """
-        version 3.0
-
-        qubit[2] q
-        bit[2] b
-
-        H q[0]
-        CNOT q[0], q[1]
-
-        b = measure q
-        """
-    )
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
-
-    # Merge single-qubit gates and decompose with McKay decomposition.
-    qc.merge_single_qubit_gates()
-    qc.decompose(decomposer=McKayDecomposer())
-    assert (
-        str(qc)
-        == """version 3.0
-
-qubit[2] q
-bit[2] b
-
-Rz(1.5707963) q[0]
-X90 q[0]
-Rz(1.5707963) q[0]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-CZ q[0], q[1]
-b[0] = measure q[0]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-b[1] = measure q[1]
-"""
-    )
-
-
 def test_Spin2_backend() -> None:
     qc = Circuit.from_string(
         """
@@ -76,21 +27,21 @@ def test_Spin2_backend() -> None:
         qubit[4] q
         bit[4] b
 
-        H q[2]
-        H q[1]
-        H q[0]
-        Rz(1.5707963) q[0]
+        H q[0:2]
+        Rx(1.5789) q[0]
         Ry(-0.2) q[0]
+        Rz(1.5707963) q[0]
         CNOT q[1], q[0]
-        Rz(1.5789) q[0]
-        CNOT q[1], q[0]
-        CNOT q[1], q[2]
-        Rz(2.5707963) q[1]
         CR(2.123) q[2], q[3]
-        Ry(-1.5707963) q[1]
+        CRk(2) q[0], q[2]
         b = measure q
         """
     )
+
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    qc.decompose(decomposer=CNOTDecomposer())
+
+    # Replace CNOT gates with CZ gates
     qc.replace(
         CNOT,
         lambda control, target: [
@@ -103,6 +54,7 @@ def test_Spin2_backend() -> None:
     # Merge single-qubit gates and decompose with McKay decomposition.
     qc.merge_single_qubit_gates()
     qc.decompose(decomposer=McKayDecomposer())
+
     assert (
         str(qc)
         == """version 3.0
@@ -113,32 +65,50 @@ bit[4] b
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
-Rz(-1.7707963) q[0]
+Rz(0.0081037174) q[0]
 X90 q[0]
-Rz(1.5707963) q[0]
+Rz(1.5707964) q[0]
 X90 q[0]
-Rz(-1.5707963) q[0]
+Rz(-1.3707963) q[0]
 CZ q[1], q[0]
-Rz(-1.5707963) q[0]
-X90 q[0]
-Rz(1.5626926) q[0]
-X90 q[0]
-Rz(-1.5707963) q[0]
-CZ q[1], q[0]
-CZ q[1], q[2]
 Rz(1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
-CR(2.123) q[2], q[3]
+Rz(1.0615) q[3]
+X90 q[3]
+Rz(1.5707963) q[3]
+X90 q[3]
+CZ q[2], q[3]
+Rz(1.5707963) q[3]
+X90 q[3]
+Rz(2.0800926) q[3]
+X90 q[3]
+Rz(1.5707963) q[3]
+CZ q[2], q[3]
 Rz(1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
+Rz(1.8468982) q[2]
+X90 q[2]
+Rz(1.5707963) q[2]
+X90 q[2]
+CZ q[0], q[2]
+Rz(1.5707963) q[2]
+X90 q[2]
+Rz(2.3561945) q[2]
+X90 q[2]
+Rz(1.5707963) q[2]
+CZ q[0], q[2]
+Rz(0.78539816) q[0]
 b[0] = measure q[0]
-Rz(4.1415926) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
 b[1] = measure q[1]
+Rz(1.5707963) q[2]
+X90 q[2]
+Rz(1.5707963) q[2]
 b[2] = measure q[2]
+Rz(1.5707963) q[3]
+X90 q[3]
+Rz(1.5707963) q[3]
 b[3] = measure q[3]
 """
     )
@@ -161,8 +131,10 @@ def test_HectoQubit_backend() -> None:
         """
     )
 
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
+    # Replace CNOT gates with CZ gates
     qc.replace(
         CNOT,
         lambda control, target: [
@@ -172,6 +144,7 @@ def test_HectoQubit_backend() -> None:
         ],
     )
 
+    # Merge single-qubit gates and decompose with the Rz-Ry-Rz decomposer.
     qc.merge_single_qubit_gates()
     qc.decompose(decomposer=ZYZDecomposer())
 
