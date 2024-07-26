@@ -1,7 +1,13 @@
 # OpenSquirrel
 
 [![CI](https://github.com/QuTech-Delft/OpenSquirrel/workflows/Tests/badge.svg)](https://github.com/qutech-delft/OpenSquirrel/actions)
+[![codecov](https://img.shields.io/codecov/c/github/QuTech-Delft/OpenSquirrel?style=flat-square&logo=codecov)](https://codecov.io/gh/QuTech-Delft/OpenSquirrel)
 [![PyPI](https://badgen.net/pypi/v/OpenSquirrel)](https://pypi.org/project/OpenSquirrel/)
+![OS](https://img.shields.io/badge/os-linux%20%7C%20macos%20%7C%20windows-blue?style=flat-square)
+![Python](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
+[![license](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A flexible quantum program compiler.
 
