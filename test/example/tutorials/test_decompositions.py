@@ -112,6 +112,7 @@ Rz(1.5707963) q[0]
 Ry(1.0471976) q[0]
 Rz(-1.5707963) q[0]
 """
+
         )
 
     def test_builder_and_mckay(self):

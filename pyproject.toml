@@ -36,7 +36,6 @@ numpy = [
 ]
 libqasm = "0.6.6"
 networkx = "^3.0.0"
-jupyter = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23.11,<25.0"
@@ -46,7 +45,6 @@ pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = ">=4.1,<6.0"
 mypy = "^1.7.0"
 pylint = "^3.1.0"
-sympy = "^1.13.1"
 
 [tool.poetry.group.docs]
 optional = true
@@ -57,6 +55,13 @@ mkdocstrings = {extras = ["python"], version = ">=0.24,<0.26"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
 mkdocs-material = "^9.4.12"
 pymdown-extensions = "^10.7.1"
+
+[tool.poetry.group.examples]
+optional = true
+
+[tool.poetry.group.examples.dependencies]
+sympy = "^1.13.1"
+jupyter = "^1.0.0"
 
 [tool.poetry.group.export]
 optional = true
