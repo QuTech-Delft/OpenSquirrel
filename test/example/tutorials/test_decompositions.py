@@ -4,10 +4,10 @@ import sympy as sp
 from IPython.display import display
 
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_gates import H, Rx, Rz
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer, XZXDecomposer
+from opensquirrel.decomposer.aba_decomposer import XZXDecomposer, ZYZDecomposer
 from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.default_gates import H, Rx, Rz
 from opensquirrel.ir import Float, Qubit
 
 
