@@ -4,7 +4,8 @@ import sympy as sp
 from IPython.display import display
 
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.default_gates import H, Rx, Rz
+from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer, XZXDecomposer
 from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.ir import Float, Qubit
@@ -98,6 +99,7 @@ Rx(1.0471976) q[0]
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
         circuit.decompose(decomposer=ZYZDecomposer())
+
         assert (
             str(circuit)
             == """version 3.0
@@ -112,7 +114,10 @@ Rz(1.5707963) q[0]
 Ry(1.0471976) q[0]
 Rz(-1.5707963) q[0]
 """
-
+        )
+        assert (
+            XZXDecomposer().decompose(H(Qubit(0)))
+            == [Rx(Qubit(0), Float(math.pi/2)), Rz(Qubit(0), Float(math.pi/2)), Rx(Qubit(0), Float(math.pi/2))]
         )
 
     def test_builder_and_mckay(self):
