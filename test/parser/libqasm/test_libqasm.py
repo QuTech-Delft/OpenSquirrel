@@ -1,6 +1,5 @@
 import pytest
 
-from opensquirrel import Circuit
 from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
 from opensquirrel.ir import Float, Int, Qubit
 from opensquirrel.parser.libqasm.parser import Parser

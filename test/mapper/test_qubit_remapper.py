@@ -1,47 +1,46 @@
 import pytest
 
+from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import CNOT, H, X, Y
-from opensquirrel.ir import IR, Qubit
+from opensquirrel.ir import Qubit
 from opensquirrel.mapper.mapping import Mapping
 from opensquirrel.mapper.qubit_remapper import get_remapped_ir, remap_ir
-from opensquirrel.register_manager import QubitRegister, RegisterManager
 
 
 class TestRemapper:
     @pytest.fixture
     def circuit_3(self) -> Circuit:
-        ir = IR()
-        ir.add_gate(H(Qubit(0)))
-        ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        ir.add_gate(H(Qubit(2)))
-        return Circuit(RegisterManager(QubitRegister(3)), ir)
+        builder = CircuitBuilder(3)
+        builder.H(Qubit(0))
+        builder.CNOT(Qubit(0), Qubit(1))
+        builder.H(Qubit(2))
+        return builder.to_circuit()
 
     @pytest.fixture
     def circuit_3_remapped(self) -> Circuit:
-        ir = IR()
-        ir.add_gate(H(Qubit(2)))
-        ir.add_gate(CNOT(Qubit(2), Qubit(1)))
-        ir.add_gate(H(Qubit(0)))
-        return Circuit(RegisterManager(QubitRegister(3)), ir)
+        builder = CircuitBuilder(3)
+        builder.H(Qubit(2))
+        builder.CNOT(Qubit(2), Qubit(1))
+        builder.H(Qubit(0))
+        return builder.to_circuit()
 
     @pytest.fixture
     def circuit_4(self) -> Circuit:
-        ir = IR()
-        ir.add_gate(H(Qubit(0)))
-        ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        ir.add_gate(X(Qubit(2)))
-        ir.add_gate(Y(Qubit(3)))
-        return Circuit(RegisterManager(QubitRegister(4)), ir)
+        builder = CircuitBuilder(4)
+        builder.H(Qubit(0))
+        builder.CNOT(Qubit(0), Qubit(1))
+        builder.X(Qubit(2))
+        builder.Y(Qubit(3))
+        return builder.to_circuit()
 
     @pytest.fixture
     def circuit_4_remapped(self) -> Circuit:
-        ir = IR()
-        ir.add_gate(H(Qubit(3)))
-        ir.add_gate(CNOT(Qubit(3), Qubit(1)))
-        ir.add_gate(X(Qubit(0)))
-        ir.add_gate(Y(Qubit(2)))
-        return Circuit(RegisterManager(QubitRegister(4)), ir)
+        builder = CircuitBuilder(4)
+        builder.H(Qubit(3))
+        builder.CNOT(Qubit(3), Qubit(1))
+        builder.X(Qubit(0))
+        builder.Y(Qubit(2))
+        return builder.to_circuit()
 
     @pytest.fixture
     def mapping_3(self) -> Mapping:
