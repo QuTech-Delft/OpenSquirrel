@@ -34,7 +34,8 @@ class ABADecomposer(Decomposer, ABC):
     @staticmethod
     def _find_non_used_index(axis_list: list[int]) -> int:
         """Finds the index of the axis object that is not used in the decomposition.
-        For example, if ZYZ decomposition, the integer returned will be 0 (since it is X).
+        For example, if one selects the ZYZ decomposition, the integer returned will be 0 (since it is X).
+
         Parameters:
             axis_list: list of the axis indices in use
 

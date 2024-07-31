@@ -64,3 +64,10 @@ def test_yzy_decomposer(decomposer: YZYDecomposer, gate: Gate, expected_result: 
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
+
+
+def test_axis_indexer():
+    yzy_decomp = YZYDecomposer()
+    missing_index = yzy_decomp._find_non_used_index([yzy_decomp.index_a, yzy_decomp.index_b])
+
+    assert missing_index == 0
