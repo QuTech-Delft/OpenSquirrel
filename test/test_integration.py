@@ -5,7 +5,7 @@ import importlib.util
 import pytest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.decomposer.aba_decomposer import XZXDecomposer, ZXZDecomposer, ZYZDecomposer
 from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H
