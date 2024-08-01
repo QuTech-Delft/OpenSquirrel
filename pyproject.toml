@@ -98,24 +98,32 @@ target-version = "py38"
 [tool.ruff.lint]
 select = [
     "A", # flake8-builtins
-    #"B", #flake8-bugbear
+    #"ANN", # flake8-annotations
+    "ASYNC", # flake8-async
+    #"B", # flake8-bugbear
+    "BLE", # flake8-blind-except
     #"COM", #flake8-commas
     #"C4", #flake8-comprehensions
     #"C90", # mccabe 
     #"D", # pydocstyle
+    "DTZ", # flake8-datetimez
     #"E", # pycodestyle (error)
     "ERA", # eradicate
     #"EM", # flake8-errmsg
+    "EXE", # flake8-executable
     #"F", # Pyflakes
-    #"FIX", # flake8-fixme
     "FA", # flake8-future-annotations
     #"FBT", # flake8-boolean-trap 
-    "FLY", # flynt 
+    #"FIX", # flake8-fixme
+    "FLY", # flynt
+    "G", # flake8-logging-format
     "I", # isort
     #"ISC", # flake8-implicit-str-concat
     "ICN", # flake8-import-conventions
+    "LOG", # flake8-logging
     #"N", # pep8-naming
     #"NPY", # NumPy-specific rules
+    "PD", # pandas-vet
     "PERF", # Perflint 
     "PIE", # flake8-pie
     #"PT", # flake8-pytest-style
@@ -134,6 +142,7 @@ select = [
     #"UP", # pyupgrade
     "W", # pycodestyle (warning)
     "Q", # flake8-quotes
+    "YTT", # flake8-2020
 ]
 isort.combine-as-imports = true
 pydocstyle.convention = "google"
