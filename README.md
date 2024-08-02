@@ -32,7 +32,7 @@ It is developed in modern Python and follows best practices.
 
 ## User manual
 
-User documentation of OpenSquirrel is hosted through [GitHub Pages](https://QuTech-Delft.github.io/OpenSquirrel/).
+[User documentation](https://QuTech-Delft.github.io/OpenSquirrel/) is hosted through GitHub Pages.
 
 ## File organization
 
@@ -69,7 +69,7 @@ pip install opensquirrel
 
 ## Usage
 
-The `opensquirrel` module can be imported from another Python file with:
+The `opensquirrel` module can be imported another Python:
 
 ```python
 import opensquirrel
