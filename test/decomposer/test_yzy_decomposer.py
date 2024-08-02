@@ -66,8 +66,8 @@ def test_yzy_decomposer(decomposer: YZYDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_axis_indexer():
+def test_find_unused_index():
     yzy_decomp = YZYDecomposer()
-    missing_index = yzy_decomp._find_non_used_index([yzy_decomp.index_a, yzy_decomp.index_b])
+    missing_index = yzy_decomp._find_unused_index()
 
     assert missing_index == 0

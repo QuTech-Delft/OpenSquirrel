@@ -31,18 +31,13 @@ class ABADecomposer(Decomposer, ABC):
         self.index_a = self._gate_list.index(self.ra)
         self.index_b = self._gate_list.index(self.rb)
 
-    @staticmethod
-    def _find_non_used_index(axis_list: list[int]) -> int:
+    def _find_unused_index(self) -> int:
         """Finds the index of the axis object that is not used in the decomposition.
         For example, if one selects the ZYZ decomposition, the integer returned will be 0 (since it is X).
-
-        Parameters:
-            axis_list: list of the axis indices in use
-
         Returns:
             Index of the axis object that is not used in the decomposition.
         """
-        return sorted(set(range(0, 3)) - set(axis_list))[0]
+        return ({0, 1, 2} - {self.index_a, self.index_b}).pop()
 
     def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
         """Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
@@ -58,9 +53,9 @@ class ABADecomposer(Decomposer, ABC):
 
         """
         axis = Axis(axis)
-        a_axis_value = axis[self.index_a] + 0.0
-        b_axis_value = axis[self.index_b] + 0.0
-        c_axis_value = axis[self._find_non_used_index([self.index_a, self.index_b])] + 0.0
+        a_axis_value = axis[self.index_a]
+        b_axis_value = axis[self.index_b]
+        c_axis_value = axis[self._find_unused_index()]
 
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
             raise ValueError("angle needs to be normalized")
@@ -103,7 +98,7 @@ class ABADecomposer(Decomposer, ABC):
                     m_sign = 2 * math.atan(c_axis_value / a_axis_value)
                     m = math.copysign(m, m_sign)
 
-        is_sin_m_negative = self.index_a - self.index_b == -1 or self.index_a - self.index_b == 2
+        is_sin_m_negative = self.index_a - self.index_b in (-1, 2)
         if is_sin_m_negative:
             m = m * -1
 

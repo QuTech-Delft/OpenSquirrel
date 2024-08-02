@@ -56,8 +56,8 @@ def test_xzx_decomposer(decomposer: XZXDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_axis_indexer():
+def test_find_unused_index():
     xzx_decomp = XZXDecomposer()
-    missing_index = xzx_decomp._find_non_used_index([xzx_decomp.index_a, xzx_decomp.index_b])
+    missing_index = xzx_decomp._find_unused_index()
 
     assert missing_index == 1

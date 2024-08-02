@@ -50,8 +50,8 @@ def test_zyz_decomposer(decomposer: ZYZDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_zyz_indexer():
+def test_find_unused_index():
     zyz_decomp = ZYZDecomposer()
-    missing_index = zyz_decomp._find_non_used_index([zyz_decomp.index_a, zyz_decomp.index_b])
+    missing_index = zyz_decomp._find_unused_index()
 
     assert missing_index == 0

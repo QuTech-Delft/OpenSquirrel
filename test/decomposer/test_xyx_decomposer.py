@@ -52,9 +52,9 @@ def test_xyx_decomposer(decomposer: XYXDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_axis_indexer():
+def test_find_unused_index():
 
     xyx_decomp = XYXDecomposer()
-    missing_index = xyx_decomp._find_non_used_index([xyx_decomp.index_a, xyx_decomp.index_b])
+    missing_index = xyx_decomp._find_unused_index()
 
     assert missing_index == 2
