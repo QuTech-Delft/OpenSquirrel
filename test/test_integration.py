@@ -114,7 +114,7 @@ b[3] = measure q[3]
     )
 
 
-def test_HectoQubit_backend() -> None:
+def test_hectoqubit_backend() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -200,7 +200,7 @@ def test_HectoQubit_backend() -> None:
             assert qs_measurements[i]["acq_protocol"] == "ThresholdedAcquisition"
 
 
-def test_HectoQubit_circuit_xyx() -> None:
+def test_hectoqubit_circuit_xyx() -> None:
 
     qc = Circuit.from_string(
         """
