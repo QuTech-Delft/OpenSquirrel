@@ -61,3 +61,10 @@ def test_zxz_decomposer(decomposer: ZXZDecomposer, gate: Gate, expected_result: 
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
+
+
+def test_find_unused_index():
+    zxz_decomp = ZXZDecomposer()
+    missing_index = zxz_decomp._find_unused_index()
+
+    assert missing_index == 1

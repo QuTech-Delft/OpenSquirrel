@@ -31,6 +31,14 @@ class ABADecomposer(Decomposer, ABC):
         self.index_a = self._gate_list.index(self.ra)
         self.index_b = self._gate_list.index(self.rb)
 
+    def _find_unused_index(self) -> int:
+        """Finds the index of the axis object that is not used in the decomposition.
+        For example, if one selects the ZYZ decomposition, the integer returned will be 0 (since it is X).
+        Returns:
+            Index of the axis object that is not used in the decomposition.
+        """
+        return ({0, 1, 2} - {self.index_a, self.index_b}).pop()
+
     def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
         """Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
         characterized by a rotation around `axis` of angle `alpha`.
@@ -47,6 +55,8 @@ class ABADecomposer(Decomposer, ABC):
         axis = Axis(axis)
         a_axis_value = axis[self.index_a]
         b_axis_value = axis[self.index_b]
+        c_axis_value = axis[self._find_unused_index()]
+
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
             raise ValueError("angle needs to be normalized")
 
@@ -84,15 +94,16 @@ class ABADecomposer(Decomposer, ABC):
                 # This fixes float approximations like 1.0000000000002, which acos does not like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)
                 m = 2 * math.acos(acos_argument)
+                if math.pi - abs(m) > ATOL:
+                    m_sign = 2 * math.atan(c_axis_value / a_axis_value)
+                    m = math.copysign(m, m_sign)
+
+        is_sin_m_negative = self.index_a - self.index_b in (-1, 2)
+        if is_sin_m_negative:
+            m = m * -1
 
         theta1 = (p + m) / 2
         theta3 = p - theta1
-
-        is_in_lower_half = math.copysign(math.sin(p), math.sin(p) * np.prod(axis)) <= ATOL
-        is_sin_m_negative = self.index_a - self.index_b == -1 or self.index_a - self.index_b == 2
-
-        if is_in_lower_half and is_sin_m_negative:
-            theta1, theta3 = theta3, theta1
 
         return theta1, theta2, theta3
 

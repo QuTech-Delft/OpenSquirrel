@@ -57,3 +57,10 @@ def test_yxy_decomposer(decomposer: YXYDecomposer, gate: Gate, expected_result: 
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
+
+
+def test_find_unused_index():
+    yxy_decomp = YXYDecomposer()
+    missing_index = yxy_decomp._find_unused_index()
+
+    assert missing_index == 2

@@ -48,3 +48,10 @@ def test_zyz_decomposer(decomposer: ZYZDecomposer, gate: Gate, expected_result: 
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
+
+
+def test_find_unused_index():
+    zyz_decomp = ZYZDecomposer()
+    missing_index = zyz_decomp._find_unused_index()
+
+    assert missing_index == 0

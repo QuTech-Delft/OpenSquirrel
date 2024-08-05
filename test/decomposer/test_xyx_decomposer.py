@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from opensquirrel.decomposer.aba_decomposer import XYXDecomposer
+from opensquirrel.decomposer.aba_decomposer import ABADecomposer, XYXDecomposer
 from opensquirrel.decomposer.general_decomposer import check_gate_replacement
 from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, S, X, Y
 from opensquirrel.ir import BlochSphereRotation, Float, Gate, Qubit
@@ -50,3 +50,11 @@ def test_xyx_decomposer(decomposer: XYXDecomposer, gate: Gate, expected_result: 
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
+
+
+def test_find_unused_index():
+
+    xyx_decomp = XYXDecomposer()
+    missing_index = xyx_decomp._find_unused_index()
+
+    assert missing_index == 2
