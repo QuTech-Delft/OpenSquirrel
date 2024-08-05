@@ -38,6 +38,7 @@ libqasm = "0.6.6"
 networkx = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
+black = ">=23.11,<25.0"
 coverage = {extras = ["toml"], version = "^7.3.2"}
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = ">=4.1,<6.0"
