@@ -144,6 +144,11 @@ select = [
     "Q", # flake8-quotes
     "YTT", # flake8-2020
 ]
+ignore = [
+    "ANN101", # self should not be typed
+    "ANN102", # cls should not be typed
+    "W605", # deprecated in Python 3.6
+]
 isort.combine-as-imports = true
 pydocstyle.convention = "google"
 flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "networkx", "collections"]
