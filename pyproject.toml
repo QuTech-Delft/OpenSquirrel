@@ -38,7 +38,7 @@ libqasm = "0.6.6"
 networkx = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
-black = ">=23.11,<25.0"
+black = {extras = ["jupyter"], version = ">=23.11,<25.0"}
 coverage = {extras = ["toml"], version = "^7.3.2"}
 isort = "^5.11.4"
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
@@ -62,9 +62,6 @@ optional = true
 [tool.poetry.group.examples.dependencies]
 sympy = "^1.13.1"
 jupyter = "^1.0.0"
-dev = [
-    "black[jupyter]"
-]
 
 [tool.poetry.group.export]
 optional = true
