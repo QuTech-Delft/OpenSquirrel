@@ -158,9 +158,11 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
     "S101", # asserts allowed in tests
     "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
     "D", # No doc requirements in tests
+    "SLF001", # Testing private functions is ok
 ]
 "check_*.py" = [
     "S101", # asserts allowed in check functions
+    "SLF001", # Checking private functions is ok
 ]
 
 [tool.black]
