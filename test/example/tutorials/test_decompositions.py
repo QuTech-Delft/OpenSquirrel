@@ -51,7 +51,8 @@ class TestDecomposition:
         rhs_string = "cos(theta_2/2)*cos((theta_1 + theta_3)/2) + sin(theta_2/2)*sin((theta_1 - theta_3)/2)*i + sin((theta_1 + theta_3)/2)*cos(theta_2/2)*j + sin(theta_2/2)*cos((theta_1 - theta_3)/2)*k"
         assert str(rhs) == rhs_string
 
-    def test_aba_decomposer_builder_to_circuit(self):
+    def test_aba_decomposer_input_circuit_creation(self):
+        """This test uses the `CircuitBuilder` to build a circuit that serves as input to the ABA decomposer."""
 
         builder = CircuitBuilder(qubit_register_size=1)
         # Add Hadamard to the circuit
