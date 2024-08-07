@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 from collections.abc import Callable, Mapping
+from copy import deepcopy
 from functools import partial
 from typing import Any
 
@@ -11,7 +12,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
-from opensquirrel.ir import IR, Bit, Comment, Gate, Measure, Qubit
+from opensquirrel.ir import IR, Comment, Gate, Measure, Qubit
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -85,7 +86,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             index: qubit index
         """
         if index >= self.register_manager.get_qubit_register_size():
-            raise IndexError("Qubit index is out of bounds")
+            raise IndexError("qubit index is out of bounds")
 
     def _check_bit_out_of_bounds_access(self, index: int) -> None:
         """Throw error if bit index is outside the qubit register range.
@@ -94,7 +95,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             index: bit index
         """
         if index >= self.register_manager.get_bit_register_size():
-            raise IndexError("Bit index is out of bounds")
+            raise IndexError("bit index is out of bounds")
 
     def _check_generator_f_args(
         self, generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]
@@ -112,11 +113,11 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             if isinstance(par.annotation, str):
                 if args[i].__class__.__name__ != par.annotation:
                     raise TypeError(
-                        f"Wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                        f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
                     )
             elif not isinstance(args[i], par.annotation):
                 raise TypeError(
-                    f"Wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                    f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
                 )
             if args[i].__class__.__name__ == "Qubit":
                 self._check_qubit_out_of_bounds_access(args[i].index)
@@ -124,4 +125,4 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
                 self._check_bit_out_of_bounds_access(args[i].index)
 
     def to_circuit(self) -> Circuit:
-        return Circuit(self.register_manager, self.ir)
+        return Circuit(deepcopy(self.register_manager), deepcopy(self.ir))

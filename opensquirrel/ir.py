@@ -12,6 +12,14 @@ from numpy.typing import ArrayLike, DTypeLike, NDArray
 
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
+REPR_DECIMALS = 5
+
+
+def repr_round(
+    value: float | Axis | NDArray[np.complex64], decimals: int = REPR_DECIMALS
+) -> float | Axis | NDArray[np.complex64]:
+    return np.round(value, decimals)
+
 
 class IRVisitor(ABC):
     def visit_comment(self, comment: Comment) -> Any:
@@ -151,12 +159,10 @@ class Axis(Sequence[np.float64], Expression):
         try:
             axis = np.asarray(axis, dtype=float)
         except (ValueError, TypeError) as e:
-            raise TypeError("Axis requires an ArrayLike") from e
+            raise TypeError("axis requires an ArrayLike") from e
         axis = axis.flatten()
         if len(axis) != 3:
-            raise ValueError(
-                f"Axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}."
-            )
+            raise ValueError(f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}")
         return cls._normalize_axis(axis)
 
     @staticmethod
@@ -247,6 +253,7 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
+
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,
@@ -265,7 +272,9 @@ class Gate(Statement, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<anonymous-gate>"
+        if self.generator:
+            return self.generator.__name__
+        return "Anonymous gate: " + self.__repr__()
 
     @property
     def is_anonymous(self) -> bool:
@@ -309,7 +318,10 @@ class BlochSphereRotation(Gate):
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
-        return f"BlochSphereRotation({self.qubit}, axis={self.axis}, angle={self.angle}, phase={self.phase})"
+        return (
+            f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
+            f" phase={repr_round(self.phase)})"
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BlochSphereRotation):
@@ -348,14 +360,20 @@ class MatrixGate(Gate):
         arguments: tuple[Expression, ...] | None = None,
     ):
         Gate.__init__(self, generator, arguments)
-        assert len(operands) >= 2, "For 1q gates, please use BlochSphereRotation"
-        assert matrix.shape == (1 << len(operands), 1 << len(operands))
+        if len(operands) < 2:
+            raise ValueError("for 1q gates, please use BlochSphereRotation")
+
+        if matrix.shape != (1 << len(operands), 1 << len(operands)):
+            raise ValueError(
+                f"incorrect matrix shape. "
+                f"Expected {(1 << len(operands), 1 << len(operands))} but received {matrix.shape}"
+            )
 
         self.matrix = matrix
         self.operands = operands
 
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={self.matrix})"
+        return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
@@ -465,7 +483,8 @@ class Comment(Statement):
     str: str
 
     def __post_init__(self) -> None:
-        assert "*/" not in self.str, "Comment contains illegal characters"
+        if "*/" in self.str:
+            raise ValueError("comment contains illegal characters")
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)

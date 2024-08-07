@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Iterator, Mapping
+from collections.abc import Callable, Iterable, Mapping
 from typing import Any, overload
 
 import cqasm.v3x as cqasm
@@ -33,7 +33,8 @@ class Parser(GateLibrary, MeasurementLibrary):
     def _ast_literal_to_ir_literal(
         cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat,
     ) -> Int | Float | None:
-        assert type(cqasm_literal_expression) in [cqasm.values.ConstInt, cqasm.values.ConstFloat]
+        if type(cqasm_literal_expression) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat]:
+            raise TypeError(f"unrecognized type: {type(cqasm_literal_expression)}")
         if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
             return Int(cqasm_literal_expression.value)
         if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
@@ -108,9 +109,10 @@ class Parser(GateLibrary, MeasurementLibrary):
         for ast_arg in reversed(ast_args):
             if Parser._is_qubit_type(ast_arg):
                 expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-            else:
-                assert Parser._is_bit_type(ast_arg)
+            elif Parser._is_bit_type(ast_arg):
                 expanded_args.append(cls._get_bits(ast_arg, register_manager))
+            else:
+                raise TypeError("received argument is not a (qu)bit")
         return zip(*expanded_args)
 
     @classmethod
@@ -155,7 +157,7 @@ class Parser(GateLibrary, MeasurementLibrary):
         if squirrel_type == Int:
             return "i"
 
-        raise TypeError("Unsupported type")
+        raise TypeError("unsupported type")
 
     def _create_analyzer(self) -> cqasm.Analyzer:
         # TODO: we are temporarily using the default analyzer,
@@ -171,7 +173,7 @@ class Parser(GateLibrary, MeasurementLibrary):
     @staticmethod
     def _check_analysis_result(result: Any) -> None:
         if isinstance(result, list):
-            raise Exception("Parsing error: " + ", ".join(result))
+            raise IOError("parsing error: " + ", ".join(result))
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages

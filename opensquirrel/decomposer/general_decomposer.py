@@ -23,12 +23,13 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
         replacement_gates_qubit_indices.update([q.index for q in g.get_qubit_operands()])
 
     if set(gate_qubit_indices) != replacement_gates_qubit_indices:
-        raise ValueError(f"Replacement for gate {gate.name} does not seem to operate on the right qubits")
+        raise ValueError(f"replacement for gate {gate.name} does not seem to operate on the right qubits")
 
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
     replacement_matrix = get_circuit_matrix(get_reindexed_circuit(replacement_gates, gate_qubit_indices))
+
     if not are_matrices_equivalent_up_to_global_phase(replaced_matrix, replacement_matrix):
-        raise Exception(f"Replacement for gate {gate.name} does not preserve the quantum state")
+        raise ValueError(f"replacement for gate {gate.name} does not preserve the quantum state")
 
 
 def decompose(ir: IR, decomposer: Decomposer) -> None:

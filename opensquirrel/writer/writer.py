@@ -42,6 +42,10 @@ class _WriterImpl(IRVisitor):
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name
         if gate.is_anonymous:
+            if "MatrixGate" in gate_name:
+                # In the case of a MatrixGate the newlines should be removed from the array
+                # such that the array is printed on a single line.
+                gate_name = gate_name.replace("\n", "")
             self.output += f"{gate_name}\n"
             return
         if any(not isinstance(arg, Qubit) for arg in gate.arguments):  # type: ignore[union-attr]
