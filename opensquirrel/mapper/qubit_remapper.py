@@ -4,7 +4,6 @@ from opensquirrel.ir import (
     BlochSphereRotation,
     Comment,
     ControlledGate,
-    Gate,
     IRVisitor,
     MatrixGate,
     Measure,
