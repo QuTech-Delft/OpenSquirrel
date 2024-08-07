@@ -118,7 +118,7 @@ select = [
     "DTZ", # flake8-datetimez
     "E", # pycodestyle (error)
     "ERA", # eradicate
-    #"EM", # flake8-errmsg
+    "EM", # flake8-errmsg
     "EXE", # flake8-executable
     #"F", # Pyflakes
     "FA", # flake8-future-annotations

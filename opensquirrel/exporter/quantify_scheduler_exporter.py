@@ -98,7 +98,8 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
 
         class QuantifySchedulerNotInstalled:
             def __getattr__(self, attr_name: Any) -> None:
-                raise ModuleNotFoundError("quantify-scheduler is not installed, or cannot be installed on your system")
+                msg = "quantify-scheduler is not installed, or cannot be installed on your system"
+                raise ModuleNotFoundError(msg)
 
         global quantify_scheduler
         quantify_scheduler = QuantifySchedulerNotInstalled()
@@ -109,8 +110,9 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
     try:
         circuit.ir.accept(schedule_creator)
     except UnsupportedGateError as e:
-        raise ExporterError(
+        msg = (
             f"cannot export circuit: {e}. "
-            "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)",
-        ) from e
+            "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
+        )
+        raise ExporterError(msg) from e
     return schedule_creator.schedule

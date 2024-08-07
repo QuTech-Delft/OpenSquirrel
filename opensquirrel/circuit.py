@@ -139,4 +139,5 @@ class Circuit:
             from opensquirrel.exporter import quantify_scheduler_exporter
 
             return quantify_scheduler_exporter.export(self)
-        raise ValueError("unknown exporter format")
+        msg = "unknown exporter format"
+        raise ValueError(msg)

@@ -34,7 +34,8 @@ class Parser(GateLibrary, MeasurementLibrary):
         cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat,
     ) -> Int | Float | None:
         if type(cqasm_literal_expression) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat]:
-            raise TypeError(f"unrecognized type: {type(cqasm_literal_expression)}")
+            msg = f"unrecognized type: {type(cqasm_literal_expression)}"
+            raise TypeError(msg)
         if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
             return Int(cqasm_literal_expression.value)
         if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
@@ -114,7 +115,8 @@ class Parser(GateLibrary, MeasurementLibrary):
             elif Parser._is_bit_type(ast_arg):
                 expanded_args.append(cls._get_bits(ast_arg, register_manager))
             else:
-                raise TypeError("received argument is not a (qu)bit")
+                msg = "received argument is not a (qu)bit"
+                raise TypeError(msg)
         return zip(*expanded_args)
 
     @classmethod
@@ -159,7 +161,8 @@ class Parser(GateLibrary, MeasurementLibrary):
         if squirrel_type == Int:
             return "i"
 
-        raise TypeError("unsupported type")
+        msg = "unsupported type"
+        raise TypeError(msg)
 
     def _create_analyzer(self) -> cqasm.Analyzer:
         # TODO: we are temporarily using the default analyzer,
