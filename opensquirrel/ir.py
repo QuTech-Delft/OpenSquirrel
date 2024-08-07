@@ -16,7 +16,7 @@ REPR_DECIMALS = 5
 
 
 def repr_round(
-    value: float | Axis | NDArray[np.complex64], decimals: int = REPR_DECIMALS
+    value: float | Axis | NDArray[np.complex64] | NDArray[np.complex128], decimals: int = REPR_DECIMALS
 ) -> float | Axis | NDArray[np.complex64]:
     return np.round(value, decimals)
 
@@ -157,7 +157,7 @@ class Axis(Sequence[np.float64], Expression):
             return axis.value
 
         try:
-            axis = np.asfarray(axis)
+            axis = np.asarray(axis, dtype=float)
         except (ValueError, TypeError) as e:
             raise TypeError("axis requires an ArrayLike") from e
         axis = axis.flatten()
@@ -354,7 +354,7 @@ class BlochSphereRotation(Gate):
 class MatrixGate(Gate):
     def __init__(
         self,
-        matrix: NDArray[np.complex_],
+        matrix: NDArray[np.complex128],
         operands: list[Qubit],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
