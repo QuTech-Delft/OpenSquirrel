@@ -6,8 +6,8 @@ from collections.abc import Callable, Iterable, Mapping
 from opensquirrel.ir import Gate, Measure
 
 
-class InstructionLibrary(ABC):
-    """Abstract base class for instruction libraries."""
+class InstructionLibrary:
+    """Base class for instruction libraries."""
 
 
 class GateLibrary(InstructionLibrary):

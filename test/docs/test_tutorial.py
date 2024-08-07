@@ -6,7 +6,7 @@ from opensquirrel.ir import Float, Qubit
 
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
-    for i in range(4):
+    for _ in range(4):
         builder.Rx(Qubit(0), Float(math.pi / 4))
     circuit = builder.to_circuit()
     circuit.merge_single_qubit_gates()

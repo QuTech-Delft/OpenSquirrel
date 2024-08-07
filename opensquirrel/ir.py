@@ -21,7 +21,7 @@ def repr_round(
     return np.round(value, decimals)
 
 
-class IRVisitor(ABC):
+class IRVisitor:
     def visit_comment(self, comment: Comment) -> Any:
         pass
 

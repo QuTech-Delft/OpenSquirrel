@@ -109,7 +109,7 @@ select = [
     "A", # flake8-builtins
     "ANN", # flake8-annotations
     "ASYNC", # flake8-async
-    #"B", # flake8-bugbear
+    "B", # flake8-bugbear
     "BLE", # flake8-blind-except
     #"COM", #flake8-commas
     #"C4", #flake8-comprehensions
