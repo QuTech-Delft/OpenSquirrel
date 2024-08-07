@@ -137,7 +137,7 @@ select = [
     "PIE", # flake8-pie
     "PT", # flake8-pytest-style
     "PTH", # flake8-use-pathlib
-    #"FURB", # refurb
+    "FURB", # refurb
     #"RET", # flake8-return
     #"RUF", # Ruff-specific rules
     "S", # flake8-bandit

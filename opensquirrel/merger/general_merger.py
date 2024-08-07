@@ -1,4 +1,4 @@
-from math import acos, cos, floor, log, sin
+from math import acos, cos, floor, log10, sin
 
 import numpy as np
 
@@ -28,7 +28,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     if abs(sin(combined_angle / 2)) < ATOL:
         return BlochSphereRotation.identity(a.qubit)
 
-    order_of_magnitude = abs(floor(log(ATOL, 10)))
+    order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
         (
             1
