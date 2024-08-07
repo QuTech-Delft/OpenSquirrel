@@ -95,7 +95,7 @@ class _ScheduleCreator(IRVisitor):
         raise UnsupportedGateError(g)
 
 
-def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
+def export(circuit: Circuit) -> quantify_scheduler.Schedule:
     if "quantify_scheduler" not in globals():
 
         class QuantifySchedulerNotInstalled:

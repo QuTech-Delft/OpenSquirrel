@@ -146,10 +146,10 @@ select = [
     "SLF", # flake8-self
     "SLOT", # flake8-slots
     "TCH", # flake8-type-checking
-    #"TRY", # tryceratops 
+    "TRY", # tryceratops 
     "T20", # flake8-print
     "T100", # flake8-debugger
-    #"UP", # pyupgrade
+    "UP", # pyupgrade
     "W", # pycodestyle (warning)
     "Q", # flake8-quotes
     "YTT", # flake8-2020
