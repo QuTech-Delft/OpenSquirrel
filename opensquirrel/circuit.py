@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
-from opensquirrel.decomposer import general_decomposer
-from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import IR, Gate, Measure
 from opensquirrel.mapper import Mapper
 from opensquirrel.register_manager import RegisterManager
+
+if TYPE_CHECKING:
+    from opensquirrel.decomposer.general_decomposer import Decomposer
 
 
 class Circuit:
@@ -112,6 +113,8 @@ class Circuit:
         """Generic decomposition pass.
         It applies the given decomposer function to every gate in the circuit.
         """
+        from opensquirrel.decomposer import general_decomposer
+
         general_decomposer.decompose(self.ir, decomposer)
 
     def map(self, mapper: Mapper) -> None:
@@ -127,6 +130,8 @@ class Circuit:
         `f` is a callable that takes the arguments of the gate that is to be replaced and
         returns the decomposition as a list of gates.
         """
+        from opensquirrel.decomposer import general_decomposer
+
         general_decomposer.replace(self.ir, gate_generator, f)
 
     def export(self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None) -> Any:
