@@ -141,7 +141,7 @@ select = [
     "RET", # flake8-return
     "RUF", # Ruff-specific rules 
     "S", # flake8-bandit
-    #"SIM", # flake8-simplify
+    "SIM", # flake8-simplify
     "SLF", # flake8-self
     "SLOT", # flake8-slots
     #"TCH", # flake8-type-checking

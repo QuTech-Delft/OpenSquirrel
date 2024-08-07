@@ -97,9 +97,8 @@ class TestQuantifySchedulerExporter:
         builder.ir.add_gate(gate)
         circuit = builder.to_circuit()
 
-        with MockedQuantifyScheduler():
-            with pytest.raises(ExporterError, match="cannot export circuit: "):
-                quantify_scheduler_exporter.export(circuit)
+        with MockedQuantifyScheduler(), pytest.raises(ExporterError, match="cannot export circuit: "):
+            quantify_scheduler_exporter.export(circuit)
 
 
 @pytest.mark.skipif(

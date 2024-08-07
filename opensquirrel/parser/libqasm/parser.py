@@ -44,7 +44,7 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @staticmethod
     def _type_of(ast_expression: Any) -> type:
-        if isinstance(ast_expression, cqasm.values.IndexRef) or isinstance(ast_expression, cqasm.values.VariableRef):
+        if isinstance(ast_expression, (cqasm.values.IndexRef, cqasm.values.VariableRef)):
             return type(ast_expression.variable.typ)
         return type(ast_expression)
 

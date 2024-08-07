@@ -9,11 +9,11 @@ from typing_extensions import Self
 
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, cqasm.types.Qubit) or isinstance(variable.typ, cqasm.types.QubitArray)
+    return isinstance(variable.typ, (cqasm.types.Qubit, cqasm.types.QubitArray))
 
 
 def is_bit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, cqasm.types.Bit) or isinstance(variable.typ, cqasm.types.BitArray)
+    return isinstance(variable.typ, (cqasm.types.Bit, cqasm.types.BitArray))
 
 
 @dataclass
