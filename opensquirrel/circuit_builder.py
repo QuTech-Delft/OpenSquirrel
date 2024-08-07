@@ -98,7 +98,10 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             raise IndexError("bit index is out of bounds")
 
     def _check_generator_f_args(
-        self, generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]
+        self,
+        generator_f: Callable[..., Gate | Measure],
+        attr: str,
+        args: tuple[Any, ...],
     ) -> None:
         """General instruction validation function. The function checks if each instruction has the proper arguments
         and if the qubit and bits are within the register range.
@@ -113,11 +116,11 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             if isinstance(par.annotation, str):
                 if args[i].__class__.__name__ != par.annotation:
                     raise TypeError(
-                        f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                        f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}",
                     )
             elif not isinstance(args[i], par.annotation):
                 raise TypeError(
-                    f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                    f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}",
                 )
             if args[i].__class__.__name__ == "Qubit":
                 self._check_qubit_out_of_bounds_access(args[i].index)

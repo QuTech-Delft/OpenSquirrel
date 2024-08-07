@@ -69,7 +69,8 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @staticmethod
     def _get_qubits(
-        ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef, register_manager: RegisterManager
+        ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef,
+        register_manager: RegisterManager,
     ) -> list[Qubit]:
         ret = []
         variable_name = Parser._parse_ast_string(ast_qubit_expression.variable.name)
@@ -84,7 +85,8 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @staticmethod
     def _get_bits(
-        ast_bit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef, register_manager: RegisterManager
+        ast_bit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef,
+        register_manager: RegisterManager,
     ) -> list[Bit]:
         ret = []
         variable_name = Parser._parse_ast_string(ast_bit_expression.variable.name)

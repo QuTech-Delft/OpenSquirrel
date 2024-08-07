@@ -365,7 +365,7 @@ class MatrixGate(Gate):
         if matrix.shape != (1 << len(operands), 1 << len(operands)):
             raise ValueError(
                 f"incorrect matrix shape. "
-                f"Expected {(1 << len(operands), 1 << len(operands))} but received {matrix.shape}"
+                f"Expected {(1 << len(operands), 1 << len(operands))} but received {matrix.shape}",
             )
 
         self.matrix = matrix

@@ -12,7 +12,9 @@ class InstructionLibrary:
 
 class GateLibrary(InstructionLibrary):
     def __init__(
-        self, gate_set: Iterable[Callable[..., Gate]], gate_aliases: Mapping[str, Callable[..., Gate]]
+        self,
+        gate_set: Iterable[Callable[..., Gate]],
+        gate_aliases: Mapping[str, Callable[..., Gate]],
     ) -> None:
         self.gate_set = gate_set
         self.gate_aliases = gate_aliases

@@ -42,7 +42,7 @@ class _ScheduleCreator(IRVisitor):
                 acq_channel=g.qubit.index,
                 acq_index=g.qubit.index,
                 acq_protocol="ThresholdedAcquisition",
-            )
+            ),
         )
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
@@ -75,16 +75,18 @@ class _ScheduleCreator(IRVisitor):
         if g.target_gate == X(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CNOT(
-                    qC=self._get_qubit_string(g.control_qubit), qT=self._get_qubit_string(g.target_gate.qubit)
-                )
+                    qC=self._get_qubit_string(g.control_qubit),
+                    qT=self._get_qubit_string(g.target_gate.qubit),
+                ),
             )
             return
 
         if g.target_gate == Z(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CZ(
-                    qC=self._get_qubit_string(g.control_qubit), qT=self._get_qubit_string(g.target_gate.qubit)
-                )
+                    qC=self._get_qubit_string(g.control_qubit),
+                    qT=self._get_qubit_string(g.target_gate.qubit),
+                ),
             )
             return
 
@@ -109,6 +111,6 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
     except UnsupportedGateError as e:
         raise ExporterError(
             f"cannot export circuit: {e}. "
-            "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
+            "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)",
         ) from e
     return schedule_creator.schedule

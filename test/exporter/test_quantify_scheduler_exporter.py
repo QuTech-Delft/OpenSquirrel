@@ -25,11 +25,13 @@ class FloatEq(float):
 class MockedQuantifyScheduler:
     def __enter__(self) -> tuple[Any, Any]:
         self.patch_qs = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler", create=True
+            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler",
+            create=True,
         )
 
         self.patch_qs_gates = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates", create=True
+            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates",
+            create=True,
         )
 
         with contextlib.ExitStack() as stack:
@@ -71,11 +73,12 @@ class TestQuantifySchedulerExporter:
                         phi=FloatEq(math.degrees(math.pi / 2)),
                         qubit="q[2]",
                     ),
-                ]
+                ],
             )
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(
-                theta=FloatEq(round(math.degrees(2.34), DEG_PRECISION)), qubit="q[1]"
+                theta=FloatEq(round(math.degrees(2.34), DEG_PRECISION)),
+                qubit="q[1]",
             )
             assert mock_schedule.add.call_count == 7
 
@@ -100,11 +103,13 @@ class TestQuantifySchedulerExporter:
 
 
 @pytest.mark.skipif(
-    importlib.util.find_spec("quantify_scheduler") is not None, reason="quantify_scheduler is installed"
+    importlib.util.find_spec("quantify_scheduler") is not None,
+    reason="quantify_scheduler is installed",
 )
 def test_quantify_scheduler_not_installed() -> None:
     empty_circuit = CircuitBuilder(1).to_circuit()
     with pytest.raises(
-        ModuleNotFoundError, match="quantify-scheduler is not installed, or cannot be installed on your system"
+        ModuleNotFoundError,
+        match="quantify-scheduler is not installed, or cannot be installed on your system",
     ):
         quantify_scheduler_exporter.export(empty_circuit)

@@ -101,7 +101,8 @@ def CZ(control: Qubit, target: Qubit) -> ControlledGate:
 @named_gate
 def CR(control: Qubit, target: Qubit, theta: Float) -> ControlledGate:
     return ControlledGate(
-        control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2)
+        control,
+        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2),
     )
 
 
@@ -120,7 +121,7 @@ def SWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
                 [0, 0, 1, 0],
                 [0, 1, 0, 0],
                 [0, 0, 0, 1],
-            ]
+            ],
         ),
         [q1, q2],
     )
@@ -135,7 +136,7 @@ def sqrtSWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
                 [0, (1 + 1j) / 2, (1 - 1j) / 2, 0],
                 [0, (1 - 1j) / 2, (1 + 1j) / 2, 0],
                 [0, 0, 0, 1],
-            ]
+            ],
         ),
         [q1, q2],
     )

@@ -111,7 +111,7 @@ select = [
     "ASYNC", # flake8-async
     "B", # flake8-bugbear
     "BLE", # flake8-blind-except
-    #"COM", #flake8-commas
+    "COM", #flake8-commas
     #"C4", #flake8-comprehensions
     #"C90", # mccabe
     #"D", # pydocstyle
@@ -157,6 +157,7 @@ ignore = [
     "ANN101", # self should not be typed
     "ANN102", # cls should not be typed
     "ANN401", # typing.Any is can be usefull (for example in __eq__)
+    "COM812", # Conflicts with ruff format
     "W605", # deprecated in Python 3.6
 ]
 isort.combine-as-imports = true

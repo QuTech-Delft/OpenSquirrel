@@ -35,7 +35,7 @@ def test_Spin2_backend() -> None:
         CR(2.123) q[2], q[3]
         CRk(2) q[0], q[2]
         b = measure q
-        """
+        """,
     )
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
@@ -128,7 +128,7 @@ def test_hectoqubit_backend() -> None:
         CRk(4) q[0], q[1]
         H q[0]
         b[0:1] = measure q[0:1]
-        """
+        """,
     )
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
@@ -150,7 +150,8 @@ def test_hectoqubit_backend() -> None:
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
-            Exception, match="quantify-scheduler is not installed, or cannot be installed on " "your system"
+            Exception,
+            match="quantify-scheduler is not installed, or cannot be installed on " "your system",
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
@@ -214,7 +215,7 @@ def test_hectoqubit_circuit_xyx() -> None:
         CRk(4) q[0], q[1]
         H q[0]
         b[0:1] = measure q[0:1]
-        """
+        """,
     )
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
@@ -275,7 +276,7 @@ def test_HectoQubit_circuit_xzx() -> None:
         CRk(4) q[0], q[1]
         H q[0]
         b[0:1] = measure q[0:1]
-        """
+        """,
     )
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates

@@ -100,7 +100,8 @@ class MatrixExpander(IRVisitor):
 
         result = np.kron(
             np.kron(
-                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)), can1(rot.axis, rot.angle, rot.phase)
+                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)),
+                can1(rot.axis, rot.angle, rot.phase),
             ),
             np.eye(1 << rot.qubit.index),
         )
@@ -138,7 +139,7 @@ class MatrixExpander(IRVisitor):
         if m.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
             raise ValueError(
                 f"matrix has incorrect shape."
-                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}"
+                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}",
             )
 
         expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
