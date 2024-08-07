@@ -139,7 +139,7 @@ select = [
     "PTH", # flake8-use-pathlib
     "FURB", # refurb
     "RET", # flake8-return
-    #"RUF", # Ruff-specific rules 
+    "RUF", # Ruff-specific rules 
     "S", # flake8-bandit
     #"SIM", # flake8-simplify
     "SLF", # flake8-self

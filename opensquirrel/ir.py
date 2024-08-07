@@ -409,7 +409,7 @@ class ControlledGate(Gate):
         return visitor.visit_controlled_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
-        return [self.control_qubit] + self.target_gate.get_qubit_operands()
+        return [self.control_qubit, *self.target_gate.get_qubit_operands()]
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()

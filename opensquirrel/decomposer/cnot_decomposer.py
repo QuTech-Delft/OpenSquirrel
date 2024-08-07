@@ -45,39 +45,31 @@ class CNOTDecomposer(Decomposer):
         )
         if abs((theta0_with_x - theta2_with_x) % (2 * math.pi)) < ATOL:
             # The decomposition can use a single CNOT according to the lemma.
-
-            A = [Ry(q=target_qubit, theta=Float(-theta1_with_x / 2)), Rz(q=target_qubit, theta=Float(-theta2_with_x))]
-
-            B = [
-                Rz(q=target_qubit, theta=Float(theta2_with_x)),
-                Ry(q=target_qubit, theta=Float(theta1_with_x / 2)),
-            ]
+            A = [Ry(target_qubit, Float(-theta1_with_x / 2)), Rz(target_qubit, Float(-theta2_with_x))]
+            B = [Rz(target_qubit, Float(theta2_with_x)), Ry(target_qubit, Float(theta1_with_x / 2))]
 
             return filter_out_identities(
-                B
-                + [CNOT(control=g.control_qubit, target=target_qubit)]
-                + A
-                + [Rz(q=g.control_qubit, theta=Float(g.target_gate.phase - math.pi / 2))],
+                [
+                    *B,
+                    CNOT(g.control_qubit, target_qubit),
+                    *A,
+                    Rz(g.control_qubit, Float(g.target_gate.phase - math.pi / 2)),
+                ],
             )
 
         theta0, theta1, theta2 = ZYZDecomposer().get_decomposition_angles(g.target_gate.angle, g.target_gate.axis)
 
-        A = [Ry(q=target_qubit, theta=Float(theta1 / 2)), Rz(q=target_qubit, theta=Float(theta2))]
-
-        B = [
-            Rz(q=target_qubit, theta=Float(-(theta0 + theta2) / 2)),
-            Ry(q=target_qubit, theta=Float(-theta1 / 2)),
-        ]
-
-        C = [
-            Rz(q=target_qubit, theta=Float((theta0 - theta2) / 2)),
-        ]
+        A = [Ry(target_qubit, Float(theta1 / 2)), Rz(target_qubit, Float(theta2))]
+        B = [Rz(target_qubit, Float(-(theta0 + theta2) / 2)), Ry(target_qubit, Float(-theta1 / 2))]
+        C = [Rz(target_qubit, Float((theta0 - theta2) / 2))]
 
         return filter_out_identities(
-            C
-            + [CNOT(control=g.control_qubit, target=target_qubit)]
-            + B
-            + [CNOT(control=g.control_qubit, target=target_qubit)]
-            + A
-            + [Rz(q=g.control_qubit, theta=Float(g.target_gate.phase))],
+            [
+                *C,
+                CNOT(g.control_qubit, target_qubit),
+                *B,
+                CNOT(g.control_qubit, target_qubit),
+                *A,
+                Rz(g.control_qubit, Float(g.target_gate.phase)),
+            ],
         )

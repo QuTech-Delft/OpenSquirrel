@@ -143,7 +143,7 @@ class MatrixExpander(IRVisitor):
         if m.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
             msg = (
                 f"matrix has incorrect shape."
-                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}",
+                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}"
             )
             raise ValueError(msg)
 

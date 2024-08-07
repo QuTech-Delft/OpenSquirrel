@@ -6,6 +6,7 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from typing import ClassVar
 
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
@@ -23,7 +24,7 @@ class ABADecomposer(Decomposer, ABC):
     @abstractmethod
     def rb(self) -> Callable[..., BlochSphereRotation]: ...
 
-    _gate_list: list[Callable[..., BlochSphereRotation]] = [Rx, Ry, Rz]
+    _gate_list: ClassVar[list[Callable[..., BlochSphereRotation]]] = [Rx, Ry, Rz]
 
     def __init__(self) -> None:
         self.index_a = self._gate_list.index(self.ra)
