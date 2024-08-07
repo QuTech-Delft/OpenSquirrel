@@ -156,7 +156,7 @@ class RegisterManager:
         self.bit_register: BitRegister = bit_register or BitRegister(0)
 
     def __repr__(self) -> str:
-        return f"qubit_register:\n{self.qubit_register}\n" f"bit_register:\n{self.bit_register}"
+        return f"qubit_register:\n{self.qubit_register}\nbit_register:\n{self.bit_register}"
 
     @classmethod
     def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
