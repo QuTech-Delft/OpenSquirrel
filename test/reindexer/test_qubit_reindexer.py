@@ -42,7 +42,7 @@ def circuit_2_reindexed() -> Circuit:
 
 
 @pytest.mark.parametrize(
-    "replacement_gates, qubit_indices, bit_register_size, circuit_reindexed",
+    ("replacement_gates", "qubit_indices", "bit_register_size", "circuit_reindexed"),
     [
         (replacement_gates_1(), [3, 1], 0, circuit_1_reindexed()),
         (replacement_gates_2(), [1, 0, 3, 2], 4, circuit_2_reindexed()),

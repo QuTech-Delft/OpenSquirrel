@@ -93,9 +93,8 @@ class TestCircuitBuilder:
 
     def test_unknown_instruction(self) -> None:
         builder = CircuitBuilder(3)
-        with pytest.raises(ValueError) as exception_info:
+        with pytest.raises(ValueError, match="unknown instruction `unknown`"):
             builder.unknown(0)
-        assert re.search("unknown instruction `unknown`", str(exception_info.value))
 
     def test_wrong_number_of_arguments(self) -> None:
         builder = CircuitBuilder(3)

@@ -82,7 +82,7 @@ def test_error(parser: Parser) -> None:
 
 
 @pytest.mark.parametrize(
-    "error_message, circuit_string",
+    ("error_message", "circuit_string"),
     [
         (
             r"parsing error: Error at <unknown file name>:1:26\.\.27: "

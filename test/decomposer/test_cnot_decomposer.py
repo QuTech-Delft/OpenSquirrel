@@ -16,7 +16,7 @@ def decomposer_fixture() -> CNOTDecomposer:
 
 
 @pytest.mark.parametrize(
-    "gate,expected_result",
+    ("gate", "expected_result"),
     [(H(Qubit(0)), [H(Qubit(0))]), (Rz(Qubit(0), Float(2.345)), [Rz(Qubit(0), Float(2.345))])],
 )
 def test_ignores_1q_gates(decomposer: CNOTDecomposer, gate: Gate, expected_result: list[Gate]) -> None:

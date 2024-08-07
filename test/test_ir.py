@@ -34,7 +34,7 @@ class TestAxis:
         np.testing.assert_array_equal(axis.value, [1, 0, 0])
 
     @pytest.mark.parametrize(
-        "new_axis, expected_axis",
+        ("new_axis", "expected_axis"),
         [
             ([0, 0, 1], [0, 0, 1]),
             ([0, 3, 4], [0, 3 / 5, 4 / 5]),
@@ -46,7 +46,7 @@ class TestAxis:
         np.testing.assert_array_equal(axis, expected_axis)
 
     @pytest.mark.parametrize(
-        "erroneous_axis, expected_error, expected_error_message",
+        ("erroneous_axis", "expected_error", "expected_error_message"),
         [
             (Qubit(1), TypeError, "axis requires an ArrayLike"),
             ([0, [3], [2]], TypeError, "axis requires an ArrayLike"),

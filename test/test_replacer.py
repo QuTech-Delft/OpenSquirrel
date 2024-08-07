@@ -28,7 +28,7 @@ from opensquirrel.ir import Float, Gate, Qubit
 
 class TestCheckGateReplacement:
     @pytest.mark.parametrize(
-        "gate, replacement_gates",
+        ("gate", "replacement_gates"),
         [
             (I(Qubit(0)), [I(Qubit(0))]),
             (I(Qubit(0)), [I(Qubit(0)), I(Qubit(0))]),
@@ -46,7 +46,7 @@ class TestCheckGateReplacement:
         check_gate_replacement(gate, replacement_gates)
 
     @pytest.mark.parametrize(
-        "gate, replacement_gates, error_msg",
+        ("gate", "replacement_gates", "error_msg"),
         [
             (H(Qubit(0)), [H(Qubit(1))], "replacement for gate H does not seem to operate on the right qubits"),
             (

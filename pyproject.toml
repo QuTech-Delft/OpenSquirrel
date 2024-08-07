@@ -135,7 +135,7 @@ select = [
     "PD", # pandas-vet
     "PERF", # Perflint
     "PIE", # flake8-pie
-    #"PT", # flake8-pytest-style
+    "PT", # flake8-pytest-style
     "PTH", # flake8-use-pathlib
     #"FURB", # refurb
     #"RET", # flake8-return
