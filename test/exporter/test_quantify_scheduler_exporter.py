@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import contextlib
 import importlib.util
 import math
 import unittest.mock
+from typing import Any
 
 import pytest
 
@@ -15,12 +18,12 @@ from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate, Qubit
 
 
 class FloatEq(float):
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return abs(self - other) < ATOL
 
 
 class MockedQuantifyScheduler:
-    def __enter__(self):
+    def __enter__(self) -> tuple[Any, Any]:
         self.patch_qs = unittest.mock.patch(
             "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler", create=True
         )
@@ -36,12 +39,12 @@ class MockedQuantifyScheduler:
 
         return self.mock_quantify_scheduler, self.mock_quantify_scheduler_gates
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
         self._stack.__exit__(exc_type, exc_value, exc_traceback)
 
 
 class TestQuantifySchedulerExporter:
-    def test_export(self):
+    def test_export(self) -> None:
         builder = CircuitBuilder(3, 3)
         builder.X(Qubit(0))
         builder.CZ(Qubit(0), Qubit(1))

@@ -66,7 +66,7 @@ def test_yzy_decomposer(decomposer: YZYDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_find_unused_index():
+def test_find_unused_index() -> None:
     yzy_decomp = YZYDecomposer()
     missing_index = yzy_decomp._find_unused_index()
 

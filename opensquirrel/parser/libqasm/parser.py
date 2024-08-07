@@ -19,7 +19,7 @@ class Parser(GateLibrary, MeasurementLibrary):
         gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: Iterable[Callable[..., Measure]] = default_measurement_set,
-    ):
+    ) -> None:
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
         self.ir = None

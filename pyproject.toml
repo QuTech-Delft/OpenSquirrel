@@ -107,7 +107,7 @@ target-version = "py38"
 [tool.ruff.lint]
 select = [
     "A", # flake8-builtins
-    #"ANN", # flake8-annotations
+    "ANN", # flake8-annotations
     "ASYNC", # flake8-async
     #"B", # flake8-bugbear
     "BLE", # flake8-blind-except
@@ -156,6 +156,7 @@ select = [
 ignore = [
     "ANN101", # self should not be typed
     "ANN102", # cls should not be typed
+    "ANN401", # typing.Any is can be usefull (for example in __eq__)
     "W605", # deprecated in Python 3.6
 ]
 isort.combine-as-imports = true

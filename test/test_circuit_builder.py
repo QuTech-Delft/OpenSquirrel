@@ -8,7 +8,7 @@ from opensquirrel.ir import Bit, Comment, Measure, Qubit
 
 
 class TestCircuitBuilder:
-    def test_simple(self):
+    def test_simple(self) -> None:
         builder = CircuitBuilder(2)
 
         builder.comment("A single line comment.")
@@ -25,7 +25,7 @@ class TestCircuitBuilder:
             CNOT(Qubit(0), Qubit(1)),
         ]
 
-    def test_identity(self):
+    def test_identity(self) -> None:
         builder = CircuitBuilder(1)
         builder.I(Qubit(0))
 
@@ -37,7 +37,7 @@ class TestCircuitBuilder:
             I(Qubit(0)),
         ]
 
-    def test_single_measure(self):
+    def test_single_measure(self) -> None:
         builder = CircuitBuilder(1, 1)
         builder.measure(Qubit(0), Bit(0))
 
@@ -49,7 +49,7 @@ class TestCircuitBuilder:
             Measure(Qubit(0), Bit(0)),
         ]
 
-    def test_circuit_measure(self):
+    def test_circuit_measure(self) -> None:
         builder = CircuitBuilder(2, 2)
 
         builder.H(Qubit(0))
@@ -68,7 +68,7 @@ class TestCircuitBuilder:
             Measure(Qubit(1), Bit(1)),
         ]
 
-    def test_chain(self):
+    def test_chain(self) -> None:
         builder = CircuitBuilder(3)
 
         circuit = builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).to_circuit()
@@ -78,33 +78,33 @@ class TestCircuitBuilder:
             CNOT(Qubit(0), Qubit(1)),
         ]
 
-    def test_gate_index_error(self):
+    def test_gate_index_error(self) -> None:
         builder = CircuitBuilder(2)
 
         with pytest.raises(IndexError) as exception_info:
             builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(12)).to_circuit()
         assert re.search("qubit index is out of bounds", str(exception_info.value))
 
-    def test_measurement_index_error(self):
+    def test_measurement_index_error(self) -> None:
         builder = CircuitBuilder(2, 1)
         with pytest.raises(IndexError) as exception_info:
             builder.H(Qubit(0)).measure(Qubit(0), Bit(10)).to_circuit()
         assert re.search("bit index is out of bounds", str(exception_info.value))
 
-    def test_unknown_instruction(self):
+    def test_unknown_instruction(self) -> None:
         builder = CircuitBuilder(3)
         with pytest.raises(ValueError) as exception_info:
             builder.unknown(0)
         assert re.search("unknown instruction `unknown`", str(exception_info.value))
 
-    def test_wrong_number_of_arguments(self):
+    def test_wrong_number_of_arguments(self) -> None:
         builder = CircuitBuilder(3)
 
         with pytest.raises(TypeError) as exception_info:
             builder.H(Qubit(0), Qubit(1))
         assert re.search(r"H\(\) takes 1 positional argument but 2 were given", str(exception_info.value))
 
-    def test_wrong_argument_type(self):
+    def test_wrong_argument_type(self) -> None:
         builder = CircuitBuilder(3)
 
         with pytest.raises(TypeError) as exception_info:

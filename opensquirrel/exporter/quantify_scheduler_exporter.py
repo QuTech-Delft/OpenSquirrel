@@ -7,7 +7,14 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit
+from opensquirrel.ir import (
+    BlochSphereRotation,
+    ControlledGate,
+    IRVisitor,
+    MatrixGate,
+    Measure,
+    Qubit,
+)
 
 try:
     import quantify_scheduler
@@ -24,7 +31,7 @@ class _ScheduleCreator(IRVisitor):
     def _get_qubit_string(self, q: Qubit) -> str:
         return f"{self.qubit_register_name}[{q.index}]"
 
-    def __init__(self, qubit_register_name: str):
+    def __init__(self, qubit_register_name: str) -> None:
         self.qubit_register_name = qubit_register_name
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 

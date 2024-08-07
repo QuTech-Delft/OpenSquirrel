@@ -357,7 +357,7 @@ class MatrixGate(Gate):
         operands: list[Qubit],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
-    ):
+    ) -> None:
         Gate.__init__(self, generator, arguments)
         if len(operands) < 2:
             raise ValueError("for 1q gates, please use BlochSphereRotation")
@@ -392,7 +392,7 @@ class ControlledGate(Gate):
         target_gate: Gate,
         generator: Callable[..., ControlledGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
-    ):
+    ) -> None:
         Gate.__init__(self, generator, arguments)
         self.control_qubit = control_qubit
         self.target_gate = target_gate

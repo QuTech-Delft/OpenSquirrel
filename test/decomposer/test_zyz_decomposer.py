@@ -50,7 +50,7 @@ def test_zyz_decomposer(decomposer: ZYZDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_find_unused_index():
+def test_find_unused_index() -> None:
     zyz_decomp = ZYZDecomposer()
     missing_index = zyz_decomp._find_unused_index()
 

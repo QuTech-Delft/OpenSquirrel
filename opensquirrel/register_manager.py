@@ -151,7 +151,7 @@ class RegisterManager:
     these variables are defined in the input program.
     """
 
-    def __init__(self, qubit_register: QubitRegister, bit_register: BitRegister | None = None):
+    def __init__(self, qubit_register: QubitRegister, bit_register: BitRegister | None = None) -> None:
         self.qubit_register: QubitRegister = qubit_register
         self.bit_register: BitRegister = bit_register or BitRegister(0)
 

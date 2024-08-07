@@ -56,7 +56,7 @@ def test_xzx_decomposer(decomposer: XZXDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_find_unused_index():
+def test_find_unused_index() -> None:
     xzx_decomp = XZXDecomposer()
     missing_index = xzx_decomp._find_unused_index()
 
