@@ -13,7 +13,6 @@ from opensquirrel.ir import Float, Qubit
 
 class TestDecomposition:
     def test_sympy_display(self):
-
         theta1, theta2, theta3 = sp.symbols("theta_1 theta_2 theta_3")
 
         z1 = sp.algebras.Quaternion.from_axis_angle((0, 0, 1), theta1)
@@ -83,7 +82,6 @@ Rx(1.0471976) q[0]
         )
 
     def test_zyz_decomposer(self):
-
         builder = CircuitBuilder(qubit_register_size=1)
         # Add Hadamard to the circuit
         builder.H(Qubit(0))

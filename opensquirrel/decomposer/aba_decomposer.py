@@ -1,4 +1,4 @@
-""" Module containing classes that inherit from the ABADecomposer class to decompose a circuit into one of the Pauli
+"""Module containing classes that inherit from the ABADecomposer class to decompose a circuit into one of the Pauli
 ABA decompositions."""
 
 from __future__ import annotations
@@ -6,7 +6,6 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-
 
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer

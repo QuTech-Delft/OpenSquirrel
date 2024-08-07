@@ -21,7 +21,6 @@ DEG_PRECISION = 5
 
 
 class _ScheduleCreator(IRVisitor):
-
     def _get_qubit_string(self, q: Qubit) -> str:
         return f"{self.qubit_register_name}[{q.index}]"
 

@@ -253,7 +253,6 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
-
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,
