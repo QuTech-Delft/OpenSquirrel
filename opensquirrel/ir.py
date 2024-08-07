@@ -10,14 +10,18 @@ from typing import Any, Sequence, Union, cast, overload
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
+from opensquirrel.common import (
+    ATOL,
+    are_matrices_equivalent_up_to_global_phase,
+    normalize_angle,
+)
 
 REPR_DECIMALS = 5
 
 
 def repr_round(
-    value: float | Axis | NDArray[np.complex64], decimals: int = REPR_DECIMALS
-) -> float | Axis | NDArray[np.complex64]:
+    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
+) -> float | NDArray[np.complex64 | np.complex128]:
     return np.round(value, decimals)
 
 
@@ -253,7 +257,6 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
-
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,

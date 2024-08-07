@@ -193,7 +193,6 @@ class TestMeasure:
 
 
 class TestBlochSphereRotation:
-
     @pytest.fixture(name="gate")
     def gate_fixture(self) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=Qubit(42), axis=(1, 0, 0), angle=math.pi, phase=math.tau)

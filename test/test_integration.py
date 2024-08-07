@@ -201,7 +201,6 @@ def test_hectoqubit_backend() -> None:
 
 
 def test_hectoqubit_circuit_xyx() -> None:
-
     qc = Circuit.from_string(
         """
         version 3.0
@@ -263,7 +262,6 @@ b[1] = measure q[1]
 
 
 def test_HectoQubit_circuit_xzx() -> None:
-
     qc = Circuit.from_string(
         """
         version 3.0

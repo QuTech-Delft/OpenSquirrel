@@ -122,7 +122,7 @@ select = [
     "ICN", # flake8-import-conventions
     "LOG", # flake8-logging
     #"N", # pep8-naming
-    #"NPY", # NumPy-specific rules
+    "NPY", # NumPy-specific rules
     "PD", # pandas-vet
     "PERF", # Perflint 
     "PIE", # flake8-pie
