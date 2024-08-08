@@ -1,11 +1,11 @@
 import math
-from test.ir_equality_test_base import modify_circuit_and_check
 
 from opensquirrel import CircuitBuilder
-from opensquirrel.default_gates import CNOT, Ry, Rz
+from opensquirrel.default_gates import Ry, Rz
 from opensquirrel.ir import BlochSphereRotation, Float, Qubit
 from opensquirrel.merger import general_merger
 from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
+from test.ir_equality_test_base import modify_circuit_and_check
 
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
