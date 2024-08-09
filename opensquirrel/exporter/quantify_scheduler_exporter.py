@@ -7,7 +7,9 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit
+from opensquirrel.ir import (BlochSphereRotation, ControlledGate, IRVisitor,
+                             MatrixGate, Measure, Qubit)
+from opensquirrel.register_manager import RegisterManager
 
 try:
     import quantify_scheduler
@@ -21,22 +23,33 @@ DEG_PRECISION = 5
 
 
 class _ScheduleCreator(IRVisitor):
+
     def _get_qubit_string(self, q: Qubit) -> str:
         return f"{self.qubit_register_name}[{q.index}]"
 
-    def __init__(self, qubit_register_name: str):
-        self.qubit_register_name = qubit_register_name
+    def __init__(self, register_manager: RegisterManager):
+        self.register_manager = register_manager
+        self.qubit_register_size = register_manager.get_qubit_register_size()
+        self.qubit_register_name = register_manager.get_qubit_register_name()
+        self.bit_register_size = register_manager.get_bit_register_size()
+        self.acq_index_record = [0] * self.qubit_register_size
+        self.bit_string_mapping = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_measure(self, g: Measure) -> None:
+        qubit_index = g.qubit.index
+        acq_index = self.acq_index_record[qubit_index]
+        self.bit_string_mapping[g.bit.index] = (acq_index, qubit_index)
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(g.qubit),
-                acq_channel=g.qubit.index,
-                acq_index=g.qubit.index,
+                acq_channel=qubit_index,
+                acq_index=acq_index,
                 acq_protocol="ThresholdedAcquisition",
             )
         )
+        self.acq_index_record[qubit_index] += 1
+        return
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
         # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
@@ -96,7 +109,7 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
         global quantify_scheduler_gates
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
-    schedule_creator = _ScheduleCreator(circuit.qubit_register_name)
+    schedule_creator = _ScheduleCreator(circuit.register_manager)
     try:
         circuit.ir.accept(schedule_creator)
     except UnsupportedGateError as e:
@@ -104,4 +117,5 @@ def export(circuit: Circuit) -> "quantify_scheduler.Schedule":
             f"cannot export circuit: {e}. "
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         ) from e
-    return schedule_creator.schedule
+
+    return schedule_creator.schedule, schedule_creator.bit_string_mapping

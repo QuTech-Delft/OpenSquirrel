@@ -3,8 +3,10 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
-from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Measure, Qubit
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.ir import (IR, BlochSphereRotation, ControlledGate, Gate,
+                             IRVisitor, MatrixGate, Measure, Qubit)
+from opensquirrel.register_manager import (BitRegister, QubitRegister,
+                                           RegisterManager)
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
