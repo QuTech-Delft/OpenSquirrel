@@ -11,7 +11,6 @@ from opensquirrel.ir import Float, Gate, Qubit
 
 
 class TestCheckGateReplacement:
-
     @pytest.mark.parametrize(
         "gate, replacement_gates",
         [

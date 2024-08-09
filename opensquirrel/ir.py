@@ -10,14 +10,18 @@ from typing import Any, Sequence, Union, cast, overload
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
+from opensquirrel.common import (
+    ATOL,
+    are_matrices_equivalent_up_to_global_phase,
+    normalize_angle,
+)
 
 REPR_DECIMALS = 5
 
 
 def repr_round(
-    value: float | Axis | NDArray[np.complex64], decimals: int = REPR_DECIMALS
-) -> float | Axis | NDArray[np.complex64]:
+    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
+) -> float | NDArray[np.complex64 | np.complex128]:
     return np.round(value, decimals)
 
 
@@ -157,7 +161,7 @@ class Axis(Sequence[np.float64], Expression):
             return axis.value
 
         try:
-            axis = np.asfarray(axis)
+            axis = np.asarray(axis, dtype=float)
         except (ValueError, TypeError) as e:
             raise TypeError("axis requires an ArrayLike") from e
         axis = axis.flatten()
@@ -253,7 +257,6 @@ class Measure(Statement, ABC):
 
 
 class Gate(Statement, ABC):
-
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,
@@ -354,7 +357,7 @@ class BlochSphereRotation(Gate):
 class MatrixGate(Gate):
     def __init__(
         self,
-        matrix: NDArray[np.complex_],
+        matrix: NDArray[np.complex128],
         operands: list[Qubit],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
