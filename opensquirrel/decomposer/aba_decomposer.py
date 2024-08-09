@@ -7,8 +7,6 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 
-import numpy as np
-
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Rx, Ry, Rz

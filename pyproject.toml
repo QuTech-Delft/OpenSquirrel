@@ -38,13 +38,14 @@ libqasm = "0.6.6"
 networkx = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
-black = ">=23.11,<25.0"
+black = {extras = ["jupyter"], version = ">=23.11,<25.0"}
 coverage = {extras = ["toml"], version = "^7.3.2"}
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = ">=4.1,<6.0"
 mypy = "^1.7.0"
 ruff = "^0.5.0"
 tox = "^4.16.0"
+sympy = "^1.13.1"
 
 [tool.poetry.group.docs]
 optional = true
@@ -55,6 +56,14 @@ mkdocstrings = {extras = ["python"], version = ">=0.24,<0.26"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
 mkdocs-material = "^9.4.12"
 pymdown-extensions = "^10.7.1"
+sympy = "^1.13.1"
+
+[tool.poetry.group.examples]
+optional = true
+
+[tool.poetry.group.examples.dependencies]
+jupyter = "^1.0.0"
+sympy = "^1.13.1"
 
 [tool.poetry.group.export]
 optional = true
@@ -104,7 +113,7 @@ select = [
     "BLE", # flake8-blind-except
     #"COM", #flake8-commas
     #"C4", #flake8-comprehensions
-    #"C90", # mccabe 
+    #"C90", # mccabe
     #"D", # pydocstyle
     "DTZ", # flake8-datetimez
     #"E", # pycodestyle (error)
@@ -113,7 +122,7 @@ select = [
     "EXE", # flake8-executable
     #"F", # Pyflakes
     "FA", # flake8-future-annotations
-    #"FBT", # flake8-boolean-trap 
+    #"FBT", # flake8-boolean-trap
     #"FIX", # flake8-fixme
     "FLY", # flynt
     "G", # flake8-logging-format
@@ -124,19 +133,19 @@ select = [
     #"N", # pep8-naming
     "NPY", # NumPy-specific rules
     "PD", # pandas-vet
-    "PERF", # Perflint 
+    "PERF", # Perflint
     "PIE", # flake8-pie
     #"PT", # flake8-pytest-style
     "PTH", # flake8-use-pathlib
     #"FURB", # refurb
     #"RET", # flake8-return
-    #"RUF", # Ruff-specific rules 
+    #"RUF", # Ruff-specific rules
     "S", # flake8-bandit
     #"SIM", # flake8-simplify
     "SLF", # flake8-self
     "SLOT", # flake8-slots
     #"TCH", # flake8-type-checking
-    #"TRY", # tryceratops 
+    #"TRY", # tryceratops
     "T20", # flake8-print
     "T100", # flake8-debugger
     #"UP", # pyupgrade
