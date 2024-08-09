@@ -32,7 +32,7 @@ packages = [
 python = "^3.8"
 numpy = [
     { version = "1.24", python = "<3.9" },
-    { version = "^1.26", python = "^3.9" },
+    { version = ">=1.26", python = "^3.9" },
 ]
 libqasm = "0.6.6"
 networkx = "^3.0.0"
@@ -40,11 +40,11 @@ networkx = "^3.0.0"
 [tool.poetry.group.dev.dependencies]
 black = ">=23.11,<25.0"
 coverage = {extras = ["toml"], version = "^7.3.2"}
-isort = "^5.11.4"
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = ">=4.1,<6.0"
 mypy = "^1.7.0"
-pylint = "^3.1.0"
+ruff = "^0.5.0"
+tox = "^4.16.0"
 
 [tool.poetry.group.docs]
 optional = true
@@ -91,12 +91,79 @@ exclude_lines = [
     "if __name__ == .__main__.:"
 ]
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-line_length = 120
+[tool.ruff]
+line-length = 120
+target-version = "py38"
+
+[tool.ruff.lint]
+select = [
+    "A", # flake8-builtins
+    #"ANN", # flake8-annotations
+    "ASYNC", # flake8-async
+    #"B", # flake8-bugbear
+    "BLE", # flake8-blind-except
+    #"COM", #flake8-commas
+    #"C4", #flake8-comprehensions
+    #"C90", # mccabe 
+    #"D", # pydocstyle
+    "DTZ", # flake8-datetimez
+    #"E", # pycodestyle (error)
+    "ERA", # eradicate
+    #"EM", # flake8-errmsg
+    "EXE", # flake8-executable
+    #"F", # Pyflakes
+    "FA", # flake8-future-annotations
+    #"FBT", # flake8-boolean-trap 
+    #"FIX", # flake8-fixme
+    "FLY", # flynt
+    "G", # flake8-logging-format
+    "I", # isort
+    #"ISC", # flake8-implicit-str-concat
+    "ICN", # flake8-import-conventions
+    "LOG", # flake8-logging
+    #"N", # pep8-naming
+    "NPY", # NumPy-specific rules
+    "PD", # pandas-vet
+    "PERF", # Perflint 
+    "PIE", # flake8-pie
+    #"PT", # flake8-pytest-style
+    "PTH", # flake8-use-pathlib
+    #"FURB", # refurb
+    #"RET", # flake8-return
+    #"RUF", # Ruff-specific rules 
+    "S", # flake8-bandit
+    #"SIM", # flake8-simplify
+    "SLF", # flake8-self
+    "SLOT", # flake8-slots
+    #"TCH", # flake8-type-checking
+    #"TRY", # tryceratops 
+    "T20", # flake8-print
+    "T100", # flake8-debugger
+    #"UP", # pyupgrade
+    "W", # pycodestyle (warning)
+    "Q", # flake8-quotes
+    "YTT", # flake8-2020
+]
+ignore = [
+    "ANN101", # self should not be typed
+    "ANN102", # cls should not be typed
+    "W605", # deprecated in Python 3.6
+]
+isort.combine-as-imports = true
+pydocstyle.convention = "google"
+flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "networkx", "collections"]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"test/**/*.py" = [
+    "S101", # asserts allowed in tests
+    "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
+    "D", # No doc requirements in tests
+    "SLF001", # Testing private functions is ok
+]
+"check_*.py" = [
+    "S101", # asserts allowed in check functions
+    "SLF001", # Checking private functions is ok
+]
 
 [tool.black]
 line-length = 120
@@ -104,15 +171,6 @@ line-length = 120
 [tool.mypy]
 ignore_missing_imports = true
 strict = true
-
-[tool.pylint]
-ignore = "parsing"
-max-line-length = 120
-disable = ["C0103", "C0114", "C0115", "C0116"]
-           # C0103: name formatting
-           # C0114: missing module docstring
-           # C0115: missing class docstring
-           # C0116: missing function docstring
 
 [build-system]
 requires = ["poetry-core"]
