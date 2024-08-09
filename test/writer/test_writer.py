@@ -1,7 +1,8 @@
 import numpy as np
 
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, Qubit
+from opensquirrel.ir import (BlochSphereRotation, ControlledGate, Float,
+                             MatrixGate, Qubit)
 from opensquirrel.writer import writer
 
 

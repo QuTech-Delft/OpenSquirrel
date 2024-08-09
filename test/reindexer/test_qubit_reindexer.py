@@ -7,7 +7,8 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_gates import Y90, X
-from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Qubit
+from opensquirrel.ir import (Bit, BlochSphereRotation, ControlledGate, Gate,
+                             MatrixGate, Measure, Qubit)
 from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
 
 
