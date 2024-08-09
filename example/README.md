@@ -1,24 +1,18 @@
 The documentation for the code can be found in various Jupyter notebooks located in the `tutorials` folder.
 
-`Jupyter` and `sympy` are required to access the notebooks. These can be installed all at once by running.
+`Jupyter` and `sympy` are required to access the notebooks. These can be installed all at once by running:
 
 ```
 pip install opensquirrel[examples]
 ```
 
-Alternatively, one can install both packages manually. Installing `Jupyter` using pip can be done by executing,
+Alternatively, one can install both packages manually:
 
 ```
-pip install jupyter
+pip install jupyter sympy
 ```
 
-and `sympy`,
-
-```
-pip install sympy
-```
-
-To open the `Jupyter` notebooks, one can run,
+To open the `Jupyter` notebooks, one can run
 
 ```
 jupyter notebook
