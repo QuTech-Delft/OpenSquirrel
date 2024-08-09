@@ -1,6 +1,5 @@
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (Bit, Comment, Float, Gate, Int, IRVisitor,
-                             Measure, Qubit)
+from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit
 from opensquirrel.register_manager import RegisterManager
 
 

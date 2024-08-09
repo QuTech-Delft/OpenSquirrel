@@ -4,8 +4,7 @@ import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import \
-    default_bloch_sphere_rotations_without_params
+from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
 from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit
 
 
