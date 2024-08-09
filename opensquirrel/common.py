@@ -20,11 +20,15 @@ def normalize_angle(x: float) -> float:
 def are_matrices_equivalent_up_to_global_phase(
     matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128]
 ) -> bool:
-    order_magnitude = abs(math.floor(math.log10(ATOL)))
+    """Checks whether two matrices are equivalent up to a global phase.
 
-    matrix_a = np.round(matrix_a, order_magnitude)
-    matrix_b = np.round(matrix_b, order_magnitude)
+    Args:
+        matrix_a: first matrix.
+        matrix_b: second matrix.
 
+    Returns:
+        Whether two matrices are equivalent up to a global phase.
+    """
     first_non_zero = next(
         (i, j) for i in range(matrix_a.shape[0]) for j in range(matrix_a.shape[1]) if abs(matrix_a[i, j]) > ATOL
     )
