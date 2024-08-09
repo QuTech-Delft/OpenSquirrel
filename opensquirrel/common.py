@@ -20,7 +20,7 @@ def normalize_angle(x: float) -> float:
 def are_matrices_equivalent_up_to_global_phase(
     matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128]
 ) -> bool:
-    """ Checks whether two matrices are equivalent up to a global phase.
+    """Checks whether two matrices are equivalent up to a global phase.
 
     Args:
         matrix_a: first matrix.
