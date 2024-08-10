@@ -4,6 +4,7 @@ from opensquirrel.register_manager import RegisterManager
 
 
 class _WriterImpl(IRVisitor):
+    # Precision used when writing out a float number
     FLOAT_PRECISION = 8
 
     def __init__(self, register_manager: RegisterManager) -> None:
