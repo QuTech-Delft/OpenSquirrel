@@ -18,18 +18,14 @@ qubit[3] q
 
 
 def test_circuit_with_qubits_and_bits() -> None:
-    builder = CircuitBuilder(3)
-    builder.H(Qubit(0))
-    builder.CR(Qubit(0), Qubit(1), Float(1.234))
+    builder = CircuitBuilder(3, 3)
     circuit = builder.to_circuit()
     assert (
         writer.circuit_to_string(circuit)
         == """version 3.0
 
 qubit[3] q
-
-H q[0]
-CR(1.234) q[0], q[1]
+bit[3] b
 """
     )
 
