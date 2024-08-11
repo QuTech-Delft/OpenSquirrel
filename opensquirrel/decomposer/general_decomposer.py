@@ -60,7 +60,7 @@ class _GenericReplacer(Decomposer):
     def decompose(self, g: Gate) -> list[Gate]:
         if g.is_anonymous or g.generator != self.gate_generator:
             return [g]
-        arguments = tuple() if g.arguments is None else g.arguments
+        arguments = () if g.arguments is None else g.arguments
         return self.replacement_function(*arguments)
 
 

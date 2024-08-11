@@ -43,8 +43,8 @@ class Register(ABC):
         index_to_variable_name: dict[int, str] | None = None,
     ) -> None:
         self.register_size: int = register_size
-        self.variable_name_to_range: dict[str, Range] = variable_name_to_range or dict()
-        self.index_to_variable_name: dict[int, str] = index_to_variable_name or dict()
+        self.variable_name_to_range: dict[str, Range] = variable_name_to_range or {}
+        self.index_to_variable_name: dict[int, str] = index_to_variable_name or {}
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Register):
@@ -87,8 +87,8 @@ class Register(ABC):
     def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
         variables = [v for v in ast.variables if cls.is_of_type(v)]
         register_size = sum([v.typ.size for v in variables])
-        variable_name_to_range: dict[str, Range] = dict()
-        index_to_variable_name: dict[int, str] = dict()
+        variable_name_to_range: dict[str, Range] = {}
+        index_to_variable_name: dict[int, str] = {}
 
         current_index: int = 0
         for v in variables:
