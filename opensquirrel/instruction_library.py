@@ -35,8 +35,7 @@ class MeasurementLibrary(InstructionLibrary):
 
     def get_measurement_f(self, measurement_name: str) -> Callable[..., Measure]:
         try:
-            generator_f = next(f for f in self.measurement_set if f.__name__ == measurement_name)
-            return generator_f
+            return next(f for f in self.measurement_set if f.__name__ == measurement_name)
         except StopIteration as exc:
             msg = f"unknown instruction `{measurement_name}`"
             raise ValueError(msg) from exc

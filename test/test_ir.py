@@ -266,8 +266,7 @@ class TestMatrixGate:
                 [0, 0, 1, 0],
             ],
         )
-        cnot_matrix_gate = MatrixGate(cnot_matrix, operands=[Qubit(42), Qubit(100)])
-        return cnot_matrix_gate
+        return MatrixGate(cnot_matrix, operands=[Qubit(42), Qubit(100)])
 
     def test_repr(self, gate: MatrixGate) -> None:
         assert (

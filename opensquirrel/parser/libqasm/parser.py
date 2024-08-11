@@ -46,17 +46,15 @@ class Parser(GateLibrary, MeasurementLibrary):
     def _type_of(ast_expression: Any) -> type:
         if isinstance(ast_expression, cqasm.values.IndexRef) or isinstance(ast_expression, cqasm.values.VariableRef):
             return type(ast_expression.variable.typ)
-        else:
-            return type(ast_expression)
+        return type(ast_expression)
 
     @staticmethod
     def _size_of(ast_expression: Any) -> int:
         if isinstance(ast_expression, cqasm.values.IndexRef):
             return len(ast_expression.indices)
-        elif isinstance(ast_expression, cqasm.values.VariableRef):
+        if isinstance(ast_expression, cqasm.values.VariableRef):
             return int(ast_expression.variable.typ.size)
-        else:
-            return 1
+        return 1
 
     @staticmethod
     def _is_qubit_type(ast_expression: Any) -> bool:
@@ -172,8 +170,7 @@ class Parser(GateLibrary, MeasurementLibrary):
         #   In the future, we may want to go back to no using the default analyzer again,
         #   so that all gates are registered based on OpenSquirrel's default gate set
         without_defaults = False
-        analyzer = cqasm.Analyzer("3.0", without_defaults)
-        return analyzer
+        return cqasm.Analyzer("3.0", without_defaults)
 
     @staticmethod
     def _check_analysis_result(result: Any) -> None:
