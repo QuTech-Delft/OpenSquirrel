@@ -124,7 +124,7 @@ select = [
     "F", # Pyflakes
     "FA", # flake8-future-annotations
     "FBT", # flake8-boolean-trap 
-    #"FIX", # flake8-fixme
+    "FIX", # flake8-fixme
     "FLY", # flynt
     "G", # flake8-logging-format
     "I", # isort
@@ -159,6 +159,7 @@ ignore = [
     "ANN102", # cls should not be typed
     "ANN401", # typing.Any is can be usefull (for example in __eq__)
     "COM812", # Conflicts with ruff format
+    "ISC001", # Possible conflicts with ruff format
     "W605", # deprecated in Python 3.6
 ]
 isort.combine-as-imports = true

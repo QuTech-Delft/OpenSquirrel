@@ -14,10 +14,6 @@ if TYPE_CHECKING:
     from opensquirrel.register_manager import RegisterManager
 
 
-if TYPE_CHECKING:
-    from opensquirrel.decomposer.general_decomposer import Decomposer
-
-
 class Circuit:
     """The Circuit class is the only interface to access OpenSquirrel's features.
 

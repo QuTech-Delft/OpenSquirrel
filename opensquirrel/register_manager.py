@@ -80,7 +80,6 @@ class Register(ABC):
 
     @staticmethod
     def _parse_ast_string(string: str) -> str:
-        # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
         return string[2:-1]
 
     @classmethod
@@ -99,14 +98,6 @@ class Register(ABC):
                 index_to_variable_name[current_index] = v_name
                 current_index += 1
         return cls(register_size, variable_name_to_range, index_to_variable_name)
-
-
-# TODO:
-# In the future, when variables of different types can be defined (e.g. float q)
-# we will have to prevent a variable being called 'q' or 'b'.
-# A possible way to do this would be to introduce variable name mangling in the IR
-# (e.g., store float 'q' as '_float__q')
-# This variable name mangling could be done as an early compiler pass
 
 
 class QubitRegister(Register):

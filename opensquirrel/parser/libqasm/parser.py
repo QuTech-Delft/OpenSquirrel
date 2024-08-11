@@ -26,7 +26,6 @@ class Parser(GateLibrary, MeasurementLibrary):
 
     @staticmethod
     def _parse_ast_string(string: str) -> str:
-        # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
         return string[2:-1]
 
     @staticmethod
@@ -163,12 +162,6 @@ class Parser(GateLibrary, MeasurementLibrary):
         raise TypeError(msg)
 
     def _create_analyzer(self) -> cqasm.Analyzer:
-        # TODO: we are temporarily using the default analyzer,
-        #   mainly because there is a misalignment between the AST and the IR measure nodes.
-        #   The AST currently produces measure nodes with a bit argument,
-        #   but the IR doesn't consider yet that bit argument.
-        #   In the future, we may want to go back to no using the default analyzer again,
-        #   so that all gates are registered based on OpenSquirrel's default gate set
         without_defaults = False
         return cqasm.Analyzer("3.0", without_defaults)
 
