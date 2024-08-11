@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
@@ -21,6 +20,9 @@ try:
     import quantify_scheduler.operations.gate_library as quantify_scheduler_gates
 except ModuleNotFoundError:
     pass
+
+if TYPE_CHECKING:
+    from opensquirrel.circuit import Circuit
 
 
 # Radian to degree conversion outcome precision

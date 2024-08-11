@@ -6,9 +6,13 @@ from typing import TYPE_CHECKING, Any, Literal
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.exporter.export_format import ExportFormat
-from opensquirrel.ir import IR, Gate, Measure
-from opensquirrel.mapper import Mapper
-from opensquirrel.register_manager import RegisterManager
+
+if TYPE_CHECKING:
+    from opensquirrel.decomposer.general_decomposer import Decomposer
+    from opensquirrel.ir import IR, Gate, Measure
+    from opensquirrel.mapper import Mapper
+    from opensquirrel.register_manager import RegisterManager
+
 
 if TYPE_CHECKING:
     from opensquirrel.decomposer.general_decomposer import Decomposer

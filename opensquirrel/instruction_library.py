@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
+from typing import TYPE_CHECKING
 
-from opensquirrel.ir import Gate, Measure
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate, Measure
 
 
 class InstructionLibrary:
