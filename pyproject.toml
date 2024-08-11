@@ -112,13 +112,8 @@ select = [
     "B", # flake8-bugbear
     "BLE", # flake8-blind-except
     "COM", #flake8-commas
-<<<<<<< HEAD
-    #"C4", #flake8-comprehensions
-    #"C90", # mccabe
-=======
     "C4", #flake8-comprehensions
-    #"C90", # mccabe 
->>>>>>> 7297f13 (Turn on C4 (flake8-comprehensions))
+    "C90", # mccabe 
     #"D", # pydocstyle
     "DTZ", # flake8-datetimez
     #"E", # pycodestyle (error)
