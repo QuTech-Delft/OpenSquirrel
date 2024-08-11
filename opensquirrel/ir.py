@@ -191,7 +191,7 @@ class Axis(Sequence[np.float64], Expression):
         """String representation of the ``Axis``."""
         return f"Axis{self.value}"
 
-    def __array__(self, dtype: DTypeLike = None, copy: bool = True) -> NDArray[Any]:
+    def __array__(self, dtype: DTypeLike = None, *, copy: bool = True) -> NDArray[Any]:
         """Convert the ``Axis`` data to an array."""
         return np.array(self.value, dtype=dtype, copy=copy)
 

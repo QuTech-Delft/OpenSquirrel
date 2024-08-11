@@ -122,7 +122,7 @@ select = [
     "EXE", # flake8-executable
     "F", # Pyflakes
     "FA", # flake8-future-annotations
-    #"FBT", # flake8-boolean-trap
+    "FBT", # flake8-boolean-trap 
     #"FIX", # flake8-fixme
     "FLY", # flynt
     "G", # flake8-logging-format
