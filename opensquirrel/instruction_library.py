@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
 from collections.abc import Callable, Iterable, Mapping
 
 from opensquirrel.ir import Gate, Measure

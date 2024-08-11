@@ -120,7 +120,7 @@ select = [
     "ERA", # eradicate
     "EM", # flake8-errmsg
     "EXE", # flake8-executable
-    #"F", # Pyflakes
+    "F", # Pyflakes
     "FA", # flake8-future-annotations
     #"FBT", # flake8-boolean-trap
     #"FIX", # flake8-fixme
