@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 
 # Radian to degree conversion outcome precision
-DEG_PRECISION = 5
+FIXED_POINT_DEG_PRECISION = 5
 
 
 class _ScheduleCreator(IRVisitor):
@@ -54,14 +54,14 @@ class _ScheduleCreator(IRVisitor):
         # This ambiguity has no physical consequences, but may cause the exporter test fail.
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
-            theta = round(math.degrees(g.angle), DEG_PRECISION)
-            phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), DEG_PRECISION)
+            theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
+            phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
-            theta = round(math.degrees(g.angle), DEG_PRECISION)
+            theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
