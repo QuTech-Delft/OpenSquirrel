@@ -1,27 +1,49 @@
 import numpy as np
 
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, Qubit
+from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Float, MatrixGate, Qubit
 from opensquirrel.writer import writer
 
 
-def test_write() -> None:
+def test_circuit_without_bits() -> None:
     builder = CircuitBuilder(3)
     circuit = builder.to_circuit()
-
     assert (
         writer.circuit_to_string(circuit)
         == """version 3.0
 
 qubit[3] q
+"""
+    )
 
+
+def test_circuit_with_qubits_and_bits() -> None:
+    builder = CircuitBuilder(3, 3)
+    circuit = builder.to_circuit()
+    assert (
+        writer.circuit_to_string(circuit)
+        == """version 3.0
+
+qubit[3] q
+bit[3] b
+"""
+    )
+
+
+def test_circuit_to_string_after_circuit_modification() -> None:
+    builder = CircuitBuilder(3)
+    circuit = builder.to_circuit()
+    assert (
+        writer.circuit_to_string(circuit)
+        == """version 3.0
+
+qubit[3] q
 """
     )
 
     builder.H(Qubit(0))
     builder.CR(Qubit(0), Qubit(1), Float(1.234))
     circuit = builder.to_circuit()
-
     assert (
         writer.circuit_to_string(circuit)
         == """version 3.0
@@ -30,6 +52,39 @@ qubit[3] q
 
 H q[0]
 CR(1.234) q[0], q[1]
+"""
+    )
+
+
+def test_float_precision() -> None:
+    builder = CircuitBuilder(3)
+    builder.CR(Qubit(0), Qubit(1), Float(1.6546514861321684321654))
+    circuit = builder.to_circuit()
+    assert (
+        writer.circuit_to_string(circuit)
+        == """version 3.0
+
+qubit[3] q
+
+CR(1.6546515) q[0], q[1]
+"""
+    )
+
+
+def test_measure() -> None:
+    builder = CircuitBuilder(1, 1)
+    builder.H(Qubit(0))
+    builder.measure(Qubit(0), Bit(0))
+    circuit = builder.to_circuit()
+    assert (
+        writer.circuit_to_string(circuit)
+        == """version 3.0
+
+qubit[1] q
+bit[1] b
+
+H q[0]
+b[0] = measure q[0]
 """
     )
 
@@ -76,21 +131,5 @@ H q[0]
 /* My comment */
 
 CR(1.234) q[0], q[1]
-"""
-    )
-
-
-def test_cap_significant_digits() -> None:
-    builder = CircuitBuilder(3)
-    builder.CR(Qubit(0), Qubit(1), Float(1.6546514861321684321654))
-    circuit = builder.to_circuit()
-
-    assert (
-        writer.circuit_to_string(circuit)
-        == """version 3.0
-
-qubit[3] q
-
-CR(1.6546515) q[0], q[1]
 """
     )

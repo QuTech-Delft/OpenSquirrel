@@ -4,7 +4,8 @@ from opensquirrel.register_manager import RegisterManager
 
 
 class _WriterImpl(IRVisitor):
-    number_of_significant_digits = 8
+    # Precision used when writing out a float number
+    FLOAT_PRECISION = 8
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
@@ -29,7 +30,7 @@ class _WriterImpl(IRVisitor):
         return f"{i.value}"
 
     def visit_float(self, f: Float) -> str:
-        return f"{f.value:.{self.number_of_significant_digits}}"
+        return f"{f.value:.{self.FLOAT_PRECISION}}"
 
     def visit_measure(self, measure: Measure) -> None:
         if measure.is_abstract:
@@ -63,4 +64,4 @@ def circuit_to_string(circuit: Circuit) -> str:
 
     circuit.ir.accept(writer_impl)
 
-    return writer_impl.output
+    return writer_impl.output.rstrip() + "\n"  # remove all trailing lines and leave only one
