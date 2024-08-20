@@ -268,7 +268,7 @@ class TestMatrixGate:
         with pytest.raises(ValueError) as e_info:
             MatrixGate(np.eye(4), [Qubit(0), Qubit(0)])
 
-        assert "control and target cannot be the same qubit" in str(e_info.value)
+        assert "control and target qubit cannot be the same" in str(e_info.value)
 
 
 class TestControlledGate:
@@ -276,4 +276,4 @@ class TestControlledGate:
         with pytest.raises(ValueError) as e_info:
             ControlledGate(Qubit(0), BlochSphereRotation(Qubit(0), [0, 0, 1], angle=np.pi))
 
-        assert "control and target cannot be the same qubit" in str(e_info.value)
+        assert "control and target qubit cannot be the same" in str(e_info.value)
