@@ -13,7 +13,7 @@ from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, SWAP, H
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION
+from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate, Qubit
 
 
@@ -69,7 +69,7 @@ class TestQuantifySchedulerExporter:
                 [
                     unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="q[0]"),
                     unittest.mock.call(
-                        theta=FloatEq(round(math.degrees(1.23), DEG_PRECISION)),
+                        theta=FloatEq(round(math.degrees(1.23), FIXED_POINT_DEG_PRECISION)),
                         phi=FloatEq(math.degrees(math.pi / 2)),
                         qubit="q[2]",
                     ),
@@ -77,7 +77,7 @@ class TestQuantifySchedulerExporter:
             )
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(
-                theta=FloatEq(round(math.degrees(2.34), DEG_PRECISION)),
+                theta=FloatEq(round(math.degrees(2.34), FIXED_POINT_DEG_PRECISION)),
                 qubit="q[1]",
             )
             assert mock_schedule.add.call_count == 7
