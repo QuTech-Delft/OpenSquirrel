@@ -279,6 +279,18 @@ class Gate(Statement, ABC):
     def is_anonymous(self) -> bool:
         return self.arguments is None
 
+    @staticmethod
+    def _check_repeated_qubit_operands(qubits: list[Qubit]) -> bool:
+        """Check if qubit operands are repeated.
+
+        Args:
+            qubits: List of qubits.
+
+        Returns:
+            Whether qubit operands are repeated.
+        """
+        return len(qubits) != len(set(qubits))
+
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
         """Get the qubit operands of the Gate.
@@ -362,6 +374,9 @@ class MatrixGate(Gate):
         if len(operands) < 2:
             raise ValueError("for 1q gates, please use BlochSphereRotation")
 
+        if self._check_repeated_qubit_operands(operands):
+            raise ValueError("control and target qubit cannot be the same")
+
         if matrix.shape != (1 << len(operands), 1 << len(operands)):
             raise ValueError(
                 f"incorrect matrix shape. "
@@ -396,6 +411,9 @@ class ControlledGate(Gate):
         Gate.__init__(self, generator, arguments)
         self.control_qubit = control_qubit
         self.target_gate = target_gate
+
+        if self._check_repeated_qubit_operands([control_qubit] + target_gate.get_qubit_operands()):
+            raise ValueError("control and target qubit cannot be the same")
 
     def __repr__(self) -> str:
         return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
