@@ -116,7 +116,7 @@ select = [
     "C90", # mccabe 
     #"D", # pydocstyle
     "DTZ", # flake8-datetimez
-    #"E", # pycodestyle (error)
+    "E", # pycodestyle (error)
     "ERA", # eradicate
     #"EM", # flake8-errmsg
     "EXE", # flake8-executable

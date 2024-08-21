@@ -9,7 +9,7 @@ from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, In
 
 
 @named_gate
-def I(q: Qubit) -> BlochSphereRotation:
+def I(q: Qubit) -> BlochSphereRotation:  # noqa: E743
     return BlochSphereRotation.identity(q)
 
 

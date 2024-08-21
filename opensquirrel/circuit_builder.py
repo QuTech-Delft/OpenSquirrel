@@ -115,13 +115,14 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             if isinstance(par.annotation, str):
                 if args[i].__class__.__name__ != par.annotation:
-                    raise TypeError(
-                        f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}",
+                    msg = (
+                        f"wrong argument type for instruction `{attr}`, "
+                        f"got {type(args[i])} but expected {par.annotation}"
                     )
+                    raise TypeError(msg)
             elif not isinstance(args[i], par.annotation):
-                raise TypeError(
-                    f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}",
-                )
+                msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                raise TypeError(msg)
             if args[i].__class__.__name__ == "Qubit":
                 self._check_qubit_out_of_bounds_access(args[i].index)
             elif args[i].__class__.__name__ == "Bit":
