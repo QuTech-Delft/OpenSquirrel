@@ -238,19 +238,22 @@ class Measure(Statement, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<abstract_reset>"
+        return self.generator.__name__ if self.generator else "<abstract_measurement>"
 
     @property
     def is_abstract(self) -> bool:
         return self.arguments is None
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Reset):
+        if not isinstance(other, Measure):
             return False
-        return self.qubit == other.qubit
+        return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_reset(self)
+        return visitor.visit_measure(self)
+
+    def get_bit_operands(self) -> list[Bit]:
+        return [self.bit]
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
@@ -272,22 +275,19 @@ class Reset(Statement, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<abstract_measurement>"
+        return self.generator.__name__ if self.generator else "<abstract_reset>"
 
     @property
     def is_abstract(self) -> bool:
         return self.arguments is None
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Measure):
+        if not isinstance(other, Reset):
             return False
         return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_reset(self)
-
-    def get_bit_operands(self) -> list[Bit]:
-        return [self.bit]
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]

@@ -181,35 +181,10 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
     def _create_analyzer(self) -> cqasm.Analyzer:
         # This method is temporarily adjusted such that the reset instruction can be added manually.
 
-        # without_defaults = False
-        # analyzer = cqasm.Analyzer("3.0", without_defaults)
-        # return analyzer
-
-        without_defaults = True
-        analyzer = cqasm.Analyzer("3.0.0", without_defaults)
-        for generator_f in self.gate_set:
-            for set_of_letters in itertools.product(
-                *(
-                    self._get_cqasm_param_type_letters(param.annotation)
-                    for param in inspect.signature(generator_f).parameters.values()
-                )
-            ):
-                param_types = "".join(set_of_letters)
-                analyzer.register_instruction(generator_f.__name__, param_types)
-
-        for generator_f in self.measurement_set:
-            for set_of_letters in itertools.product(
-                *(
-                    self._get_cqasm_param_type_letters(p.annotation)
-                    for p in inspect.signature(generator_f).parameters.values()
-                )
-            ):
-                param_types = "".join(set_of_letters)
-                analyzer.register_instruction(generator_f.__name__, param_types)
-
+        without_defaults = False
+        analyzer = cqasm.Analyzer("3.0", without_defaults)
         for param_type in ["Q", "V", ""]:
             analyzer.register_instruction("reset", param_type)
-
         return analyzer
 
     @staticmethod
