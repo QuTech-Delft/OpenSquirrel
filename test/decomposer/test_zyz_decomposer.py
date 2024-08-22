@@ -22,7 +22,7 @@ def test_identity(decomposer: ZYZDecomposer) -> None:
 
 
 @pytest.mark.parametrize(
-    "gate, expected_result",
+    ("gate", "expected_result"),
     [
         (CNOT(Qubit(0), Qubit(1)), [CNOT(Qubit(0), Qubit(1))]),
         (CR(Qubit(2), Qubit(3), Float(2.123)), [CR(Qubit(2), Qubit(3), Float(2.123))]),
@@ -50,7 +50,7 @@ def test_zyz_decomposer(decomposer: ZYZDecomposer, gate: Gate, expected_result: 
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_find_unused_index():
+def test_find_unused_index() -> None:
     zyz_decomp = ZYZDecomposer()
     missing_index = zyz_decomp._find_unused_index()
 

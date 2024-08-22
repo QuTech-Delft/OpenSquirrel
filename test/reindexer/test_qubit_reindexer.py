@@ -42,7 +42,7 @@ def circuit_2_reindexed() -> Circuit:
 
 
 @pytest.mark.parametrize(
-    "replacement_gates, qubit_indices, bit_register_size, circuit_reindexed",
+    ("replacement_gates", "qubit_indices", "bit_register_size", "circuit_reindexed"),
     [
         (replacement_gates_1(), [3, 1], 0, circuit_1_reindexed()),
         (replacement_gates_2(), [1, 0, 3, 2], 4, circuit_2_reindexed()),
@@ -50,7 +50,10 @@ def circuit_2_reindexed() -> Circuit:
     ids=["circuit1", "circuit2"],
 )
 def test_get_reindexed_circuit(
-    replacement_gates: list[Gate], qubit_indices: list[int], bit_register_size: int, circuit_reindexed: Circuit
+    replacement_gates: list[Gate],
+    qubit_indices: list[int],
+    bit_register_size: int,
+    circuit_reindexed: Circuit,
 ) -> None:
     circuit = get_reindexed_circuit(replacement_gates, qubit_indices, bit_register_size)
     assert circuit == circuit_reindexed

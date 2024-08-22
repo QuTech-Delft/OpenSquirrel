@@ -95,7 +95,7 @@ def test_anonymous_gate() -> None:
     builder.ir.add_gate(BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23))
     builder.ir.add_gate(ControlledGate(Qubit(0), BlochSphereRotation(Qubit(1), axis=(1, 1, 1), angle=1.23)))
     builder.ir.add_gate(
-        MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)])
+        MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)]),
     )
     builder.CR(Qubit(0), Qubit(1), Float(1.234))
     assert (
@@ -110,7 +110,7 @@ Anonymous gate: BlochSphereRotation(Qubit[0], axis=[0.57735 0.57735 0.57735], an
 Anonymous gate: ControlledGate(control_qubit=Qubit[0], BlochSphereRotation(Qubit[1], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
 Anonymous gate: MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1 0 0 0] [0 1 0 0] [0 0 0 1] [0 0 1 0]])
 CR(1.234) q[0], q[1]
-"""
+"""  # noqa: E501
     )
 
 

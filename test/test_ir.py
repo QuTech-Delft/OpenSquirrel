@@ -9,7 +9,16 @@ import pytest
 from numpy.typing import ArrayLike
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
+from opensquirrel.ir import (
+    Axis,
+    Bit,
+    BlochSphereRotation,
+    ControlledGate,
+    Expression,
+    MatrixGate,
+    Measure,
+    Qubit,
+)
 
 
 class TestAxis:
@@ -25,7 +34,7 @@ class TestAxis:
         np.testing.assert_array_equal(axis.value, [1, 0, 0])
 
     @pytest.mark.parametrize(
-        "new_axis, expected_axis",
+        ("new_axis", "expected_axis"),
         [
             ([0, 0, 1], [0, 0, 1]),
             ([0, 3, 4], [0, 3 / 5, 4 / 5]),
@@ -37,7 +46,7 @@ class TestAxis:
         np.testing.assert_array_equal(axis, expected_axis)
 
     @pytest.mark.parametrize(
-        "erroneous_axis, expected_error, expected_error_message",
+        ("erroneous_axis", "expected_error", "expected_error_message"),
         [
             (Qubit(1), TypeError, "axis requires an ArrayLike"),
             ([0, [3], [2]], TypeError, "axis requires an ArrayLike"),
@@ -50,7 +59,11 @@ class TestAxis:
         ],
     )
     def test_axis_setter_with_error(
-        self, axis: Axis, erroneous_axis: Any, expected_error: type[Exception], expected_error_message: str
+        self,
+        axis: Axis,
+        erroneous_axis: Any,
+        expected_error: type[Exception],
+        expected_error_message: str,
     ) -> None:
         with pytest.raises(expected_error, match=expected_error_message):
             axis.value = erroneous_axis
@@ -86,12 +99,13 @@ class TestIR:
                 [0, 1, 0, 0],
                 [0, 0, 0, 1],
                 [0, 0, 1, 0],
-            ]
+            ],
         )
         cnot_matrix_gate = MatrixGate(matrix, operands=[Qubit(4), Qubit(100)])
 
         cnot_controlled_gate = ControlledGate(
-            Qubit(4), BlochSphereRotation(qubit=Qubit(100), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+            Qubit(4),
+            BlochSphereRotation(qubit=Qubit(100), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
         )
 
         assert cnot_controlled_gate == cnot_matrix_gate
@@ -103,11 +117,12 @@ class TestIR:
                 [0, 1, 0, 0],
                 [0, 0, 1, 0],
                 [0, 0, 0, 1],
-            ]
+            ],
         )
         large_identity_matrix_gate = MatrixGate(matrix, operands=[Qubit(0), Qubit(2)])
         small_identity_control_gate = ControlledGate(
-            Qubit(4), BlochSphereRotation(qubit=Qubit(2), axis=(1, 0, 0), angle=0, phase=0)
+            Qubit(4),
+            BlochSphereRotation(qubit=Qubit(2), axis=(1, 0, 0), angle=0, phase=0),
         )
 
         assert large_identity_matrix_gate == small_identity_control_gate
@@ -119,12 +134,13 @@ class TestIR:
                 [0, 0, 0, 1],
                 [0, 0, 1, 0],
                 [0, 1, 0, 0],
-            ]
+            ],
         )
         inverted_matrix_gate = MatrixGate(matrix, operands=[Qubit(0), Qubit(1)])
 
         inverted_cnot_gate = ControlledGate(
-            Qubit(1), BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+            Qubit(1),
+            BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
         )
 
         assert inverted_matrix_gate == inverted_cnot_gate
@@ -136,12 +152,13 @@ class TestIR:
                 [0, 0, 0, 1j],
                 [0, 0, 1j, 0],
                 [0, 1j, 0, 0],
-            ]
+            ],
         )
         inverted_matrix_with_phase = MatrixGate(matrix, operands=[Qubit(0), Qubit(1)])
 
         inverted_cnot_gate = ControlledGate(
-            Qubit(1), BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+            Qubit(1),
+            BlochSphereRotation(qubit=Qubit(0), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
         )
 
         assert inverted_matrix_with_phase == inverted_cnot_gate
@@ -153,12 +170,13 @@ class TestIR:
                 [0, 0, 1, 0],
                 [0, 1, 0, 0],
                 [0, 0, 0, 1],
-            ]
+            ],
         )
         swap_matrix_gate = MatrixGate(matrix, operands=[Qubit(4), Qubit(100)])
 
         cnot_controlled_gate = ControlledGate(
-            Qubit(4), BlochSphereRotation(qubit=Qubit(100), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+            Qubit(4),
+            BlochSphereRotation(qubit=Qubit(100), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
         )
 
         assert cnot_controlled_gate != swap_matrix_gate
@@ -246,10 +264,9 @@ class TestMatrixGate:
                 [0, 1, 0, 0],
                 [0, 0, 0, 1],
                 [0, 0, 1, 0],
-            ]
+            ],
         )
-        cnot_matrix_gate = MatrixGate(cnot_matrix, operands=[Qubit(42), Qubit(100)])
-        return cnot_matrix_gate
+        return MatrixGate(cnot_matrix, operands=[Qubit(42), Qubit(100)])
 
     def test_repr(self, gate: MatrixGate) -> None:
         assert (

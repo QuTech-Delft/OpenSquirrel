@@ -46,6 +46,7 @@ mypy = "^1.7.0"
 ruff = "^0.5.0"
 tox = "^4.16.0"
 sympy = "^1.13.1"
+IPython = "^7.12.0"
 
 [tool.poetry.group.docs]
 optional = true
@@ -99,6 +100,7 @@ exclude_lines = [
     "raise NotImplementedError",
     "if __name__ == .__main__.:"
 ]
+exclude_also = ["if TYPE_CHECKING:"]
 
 [tool.ruff]
 line-length = 120
@@ -107,27 +109,27 @@ target-version = "py38"
 [tool.ruff.lint]
 select = [
     "A", # flake8-builtins
-    #"ANN", # flake8-annotations
+    "ANN", # flake8-annotations
     "ASYNC", # flake8-async
-    #"B", # flake8-bugbear
+    "B", # flake8-bugbear
     "BLE", # flake8-blind-except
-    #"COM", #flake8-commas
-    #"C4", #flake8-comprehensions
-    #"C90", # mccabe
+    "COM", #flake8-commas
+    "C4", #flake8-comprehensions
+    "C90", # mccabe 
     #"D", # pydocstyle
     "DTZ", # flake8-datetimez
-    #"E", # pycodestyle (error)
+    "E", # pycodestyle (error)
     "ERA", # eradicate
-    #"EM", # flake8-errmsg
+    "EM", # flake8-errmsg
     "EXE", # flake8-executable
-    #"F", # Pyflakes
+    "F", # Pyflakes
     "FA", # flake8-future-annotations
-    #"FBT", # flake8-boolean-trap
-    #"FIX", # flake8-fixme
+    "FBT", # flake8-boolean-trap 
+    "FIX", # flake8-fixme
     "FLY", # flynt
     "G", # flake8-logging-format
     "I", # isort
-    #"ISC", # flake8-implicit-str-concat
+    "ISC", # flake8-implicit-str-concat
     "ICN", # flake8-import-conventions
     "LOG", # flake8-logging
     #"N", # pep8-naming
@@ -135,20 +137,20 @@ select = [
     "PD", # pandas-vet
     "PERF", # Perflint
     "PIE", # flake8-pie
-    #"PT", # flake8-pytest-style
+    "PT", # flake8-pytest-style
     "PTH", # flake8-use-pathlib
-    #"FURB", # refurb
-    #"RET", # flake8-return
-    #"RUF", # Ruff-specific rules
+    "FURB", # refurb
+    "RET", # flake8-return
+    "RUF", # Ruff-specific rules 
     "S", # flake8-bandit
-    #"SIM", # flake8-simplify
+    "SIM", # flake8-simplify
     "SLF", # flake8-self
     "SLOT", # flake8-slots
-    #"TCH", # flake8-type-checking
-    #"TRY", # tryceratops
+    "TCH", # flake8-type-checking
+    "TRY", # tryceratops 
     "T20", # flake8-print
     "T100", # flake8-debugger
-    #"UP", # pyupgrade
+    "UP", # pyupgrade
     "W", # pycodestyle (warning)
     "Q", # flake8-quotes
     "YTT", # flake8-2020
@@ -156,6 +158,9 @@ select = [
 ignore = [
     "ANN101", # self should not be typed
     "ANN102", # cls should not be typed
+    "ANN401", # typing.Any is can be usefull (for example in __eq__)
+    "COM812", # Conflicts with ruff format
+    "ISC001", # Possible conflicts with ruff format
     "W605", # deprecated in Python 3.6
 ]
 isort.combine-as-imports = true

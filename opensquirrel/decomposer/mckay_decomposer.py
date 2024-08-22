@@ -21,14 +21,11 @@ class McKayDecomposer(Decomposer):
 
         Relevant literature: https://arxiv.org/abs/1612.00858
         """
-        if not isinstance(g, BlochSphereRotation):
+        if not isinstance(g, BlochSphereRotation) or g.name == "Rz" or g.name == "X90":
             return [g]
 
         if abs(g.angle) < ATOL:
             return []
-
-        if g.name == "Rz" or g.name == "X90":
-            return [g]
 
         if g.axis[0] == 0 and g.axis[1] == 0:
             rz_angle = float(g.angle * g.axis[2])

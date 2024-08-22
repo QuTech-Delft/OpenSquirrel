@@ -8,7 +8,7 @@ from opensquirrel.ir import Qubit
 
 
 @pytest.mark.parametrize(
-    "builder, expected_matrix",
+    ("builder", "expected_matrix"),
     [
         (CircuitBuilder(1).H(Qubit(0)), np.sqrt(0.5) * np.array([[1, 1], [1, -1]])),
         (CircuitBuilder(1).H(Qubit(0)).H(Qubit(0)), np.eye(2)),
@@ -40,7 +40,7 @@ from opensquirrel.ir import Qubit
                     [1, -1, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 1, 1],
                     [0, 0, 1, -1, 0, 0, 0, 0],
-                ]
+                ],
             ),
         ),
     ],

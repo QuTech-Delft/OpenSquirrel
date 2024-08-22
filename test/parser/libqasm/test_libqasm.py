@@ -1,6 +1,16 @@
 import pytest
 
-from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
+from opensquirrel.default_gates import (
+    CNOT,
+    CR,
+    CRk,
+    H,
+    I,
+    Ry,
+    X,
+    default_gate_aliases,
+    default_gate_set,
+)
 from opensquirrel.ir import Float, Int, Qubit
 from opensquirrel.parser.libqasm.parser import Parser
 
@@ -23,7 +33,7 @@ Ry q[1], 1.234
 CNOT q[0], q[1]
 CR q[1], q[0], 5.123
 CRk q[0], q[1], 23
-"""
+""",
     )
 
     assert circuit.qubit_register_size == 2
@@ -48,7 +58,7 @@ qubit[20] q
 H q[5:9]
 X q[13,17]
 CRk q[0, 3], q[1, 4], 23
-"""
+""",
     )
 
     assert circuit.qubit_register_size == 20
@@ -72,18 +82,21 @@ def test_error(parser: Parser) -> None:
 
 
 @pytest.mark.parametrize(
-    "error_message, circuit_string",
+    ("error_message", "circuit_string"),
     [
         (
-            r"parsing error: Error at <unknown file name>:1:26\.\.27: failed to resolve instruction 'H' with argument pack \(qubit, int\)",
+            r"parsing error: Error at <unknown file name>:1:26\.\.27: "
+            r"failed to resolve instruction 'H' with argument pack \(qubit, int\)",
             "version 3.0; qubit[1] q; H q[0], 1",
         ),
         (
-            r"parsing error: Error at <unknown file name>:1:26\.\.30: failed to resolve instruction 'CNOT' with argument pack \(qubit, int\)",
+            r"parsing error: Error at <unknown file name>:1:26\.\.30: "
+            r"failed to resolve instruction 'CNOT' with argument pack \(qubit, int\)",
             "version 3.0; qubit[1] q; CNOT q[0], 1",
         ),
         (
-            r"parsing error: Error at <unknown file name>:1:26\.\.28: failed to resolve instruction 'Ry' with argument pack \(qubit, float, int\)",
+            r"parsing error: Error at <unknown file name>:1:26\.\.28: "
+            r"failed to resolve instruction 'Ry' with argument pack \(qubit, float, int\)",
             "version 3.0; qubit[3] q; Ry q[0], 1.23, 1",
         ),
     ],

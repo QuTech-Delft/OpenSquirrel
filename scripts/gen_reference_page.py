@@ -16,9 +16,7 @@ for path in sorted(opensquirrel.rglob("*.py")):
 
     parts = list(module_path.parts)
 
-    if parts[-1] == "__init__":
-        continue
-    elif parts[-1] == "__main__":
+    if parts[-1] in ("__init__", "__main__"):
         continue
 
     identifier = ".".join(parts)

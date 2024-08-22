@@ -1,4 +1,4 @@
-from math import acos, cos, floor, log, sin
+from math import acos, cos, floor, log10, sin
 
 import numpy as np
 
@@ -16,7 +16,8 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
     """
     if a.qubit != b.qubit:
-        raise ValueError("cannot merge two BlochSphereRotation's on different qubits")
+        msg = "cannot merge two BlochSphereRotation's on different qubits"
+        raise ValueError(msg)
 
     acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
     # This fixes float approximations like 1.0000000000002 which acos doesn't like.
@@ -27,7 +28,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     if abs(sin(combined_angle / 2)) < ATOL:
         return BlochSphereRotation.identity(a.qubit)
 
-    order_of_magnitude = abs(floor(log(ATOL, 10)))
+    order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
         (
             1
