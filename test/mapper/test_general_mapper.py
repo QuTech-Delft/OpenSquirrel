@@ -11,14 +11,14 @@ from opensquirrel.mapper.mapping import Mapping
 class TestMapper:
     def test_init(self) -> None:
         with pytest.raises(TypeError):
-            Mapper()
+            Mapper(1)
 
     def test_implementation(self) -> None:
         class Mapper2(Mapper):
             pass
 
         with pytest.raises(TypeError):
-            Mapper2()
+            Mapper2(1)
 
         class Mapper3(Mapper2):
             def __init__(self, qubit_register_size: int) -> None:

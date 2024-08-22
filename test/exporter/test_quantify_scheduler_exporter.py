@@ -4,6 +4,7 @@ import contextlib
 import importlib.util
 import math
 import unittest.mock
+from math import isclose
 from typing import Any
 
 import pytest
@@ -19,7 +20,7 @@ from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate, Qubit
 
 class FloatEq(float):
     def __eq__(self, other: Any) -> bool:
-        return abs(self - other) < ATOL
+        return isclose(self, other, abs_tol=ATOL)
 
 
 class MockedQuantifyScheduler:
