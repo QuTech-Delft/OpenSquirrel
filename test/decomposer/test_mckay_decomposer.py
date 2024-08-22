@@ -16,7 +16,7 @@ def decomposer_fixture() -> McKayDecomposer:
 
 
 @pytest.mark.parametrize(
-    "gate,expected_result",
+    ("gate", "expected_result"),
     [
         (CNOT(Qubit(0), Qubit(1)), [CNOT(Qubit(0), Qubit(1))]),
         (CR(Qubit(2), Qubit(3), Float(2.123)), [CR(Qubit(2), Qubit(3), Float(2.123))]),

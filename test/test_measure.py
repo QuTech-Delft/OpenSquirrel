@@ -40,7 +40,7 @@ def test_consecutive_measurements() -> None:
         b[0] = measure q[0]
         b[2] = measure q[2]
         b[1] = measure q[1]
-        """
+        """,
     )
     assert (
         str(qc)
@@ -72,7 +72,7 @@ def test_measurements_unrolling() -> None:
         b[1, 4] = measure q[1, 4]
         b[2:5] = measure q[0:3]
         b = measure q
-        """
+        """,
     )
     assert (
         str(qc)
@@ -110,7 +110,7 @@ def test_measure_order() -> None:
         Rz(-pi/3) q[0]
         Rz(pi/2) q[1]
         b[1, 0] = measure q[1, 0]
-        """
+        """,
     )
     qc.merge_single_qubit_gates()
     qc.decompose(decomposer=McKayDecomposer())
@@ -145,7 +145,7 @@ def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions() -
         CNOT q1, q0
         b1 = measure q1
         b0 = measure q0
-        """
+        """,
     )
     qc.merge_single_qubit_gates()
     qc.decompose(decomposer=McKayDecomposer())

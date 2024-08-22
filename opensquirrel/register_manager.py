@@ -9,11 +9,11 @@ from typing_extensions import Self
 
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, cqasm.types.Qubit) or isinstance(variable.typ, cqasm.types.QubitArray)
+    return isinstance(variable.typ, (cqasm.types.Qubit, cqasm.types.QubitArray))
 
 
 def is_bit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, cqasm.types.Bit) or isinstance(variable.typ, cqasm.types.BitArray)
+    return isinstance(variable.typ, (cqasm.types.Bit, cqasm.types.BitArray))
 
 
 @dataclass
@@ -43,8 +43,8 @@ class Register(ABC):
         index_to_variable_name: dict[int, str] | None = None,
     ) -> None:
         self.register_size: int = register_size
-        self.variable_name_to_range: dict[str, Range] = variable_name_to_range or dict()
-        self.index_to_variable_name: dict[int, str] = index_to_variable_name or dict()
+        self.variable_name_to_range: dict[str, Range] = variable_name_to_range or {}
+        self.index_to_variable_name: dict[int, str] = index_to_variable_name or {}
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Register):
@@ -80,15 +80,14 @@ class Register(ABC):
 
     @staticmethod
     def _parse_ast_string(string: str) -> str:
-        # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
         return string[2:-1]
 
     @classmethod
     def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
         variables = [v for v in ast.variables if cls.is_of_type(v)]
         register_size = sum([v.typ.size for v in variables])
-        variable_name_to_range: dict[str, Range] = dict()
-        index_to_variable_name: dict[int, str] = dict()
+        variable_name_to_range: dict[str, Range] = {}
+        index_to_variable_name: dict[int, str] = {}
 
         current_index: int = 0
         for v in variables:
@@ -99,14 +98,6 @@ class Register(ABC):
                 index_to_variable_name[current_index] = v_name
                 current_index += 1
         return cls(register_size, variable_name_to_range, index_to_variable_name)
-
-
-# TODO:
-# In the future, when variables of different types can be defined (e.g. float q)
-# we will have to prevent a variable being called 'q' or 'b'.
-# A possible way to do this would be to introduce variable name mangling in the IR
-# (e.g., store float 'q' as '_float__q')
-# This variable name mangling could be done as an early compiler pass
 
 
 class QubitRegister(Register):
@@ -151,12 +142,12 @@ class RegisterManager:
     these variables are defined in the input program.
     """
 
-    def __init__(self, qubit_register: QubitRegister, bit_register: BitRegister | None = None):
+    def __init__(self, qubit_register: QubitRegister, bit_register: BitRegister | None = None) -> None:
         self.qubit_register: QubitRegister = qubit_register
         self.bit_register: BitRegister = bit_register or BitRegister(0)
 
     def __repr__(self) -> str:
-        return f"qubit_register:\n{self.qubit_register}\n" f"bit_register:\n{self.bit_register}"
+        return f"qubit_register:\n{self.qubit_register}\nbit_register:\n{self.bit_register}"
 
     @classmethod
     def from_ast(cls, ast: cqasm.semantic.Program) -> Self:

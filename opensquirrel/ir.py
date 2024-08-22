@@ -23,7 +23,7 @@ def repr_round(
     return np.round(value, decimals)
 
 
-class IRVisitor(ABC):
+class IRVisitor:
     def visit_comment(self, comment: Comment) -> Any:
         pass
 
@@ -164,10 +164,12 @@ class Axis(Sequence[np.float64], Expression):
         try:
             axis = np.asarray(axis, dtype=float)
         except (ValueError, TypeError) as e:
-            raise TypeError("axis requires an ArrayLike") from e
+            msg = "axis requires an ArrayLike"
+            raise TypeError(msg) from e
         axis = axis.flatten()
         if len(axis) != 3:
-            raise ValueError(f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}")
+            msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
+            raise ValueError(msg)
         return cls._normalize_axis(axis)
 
     @staticmethod
@@ -194,7 +196,7 @@ class Axis(Sequence[np.float64], Expression):
         """String representation of the ``Axis``."""
         return f"Axis{self.value}"
 
-    def __array__(self, dtype: DTypeLike = None, copy: bool = True) -> NDArray[Any]:
+    def __array__(self, dtype: DTypeLike = None, *, copy: bool = True) -> NDArray[Any]:
         """Convert the ``Axis`` data to an array."""
         return np.array(self.value, dtype=dtype, copy=copy)
 
@@ -408,19 +410,21 @@ class MatrixGate(Gate):
         operands: list[Qubit],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
-    ):
+    ) -> None:
         Gate.__init__(self, generator, arguments)
         if len(operands) < 2:
-            raise ValueError("for 1q gates, please use BlochSphereRotation")
+            msg = "for 1q gates, please use BlochSphereRotation"
+            raise ValueError(msg)
 
         if self._check_repeated_qubit_operands(operands):
             raise ValueError("control and target qubit cannot be the same")
 
         if matrix.shape != (1 << len(operands), 1 << len(operands)):
-            raise ValueError(
+            msg = (
                 f"incorrect matrix shape. "
                 f"Expected {(1 << len(operands), 1 << len(operands))} but received {matrix.shape}"
             )
+            raise ValueError(msg)
 
         self.matrix = matrix
         self.operands = operands
@@ -446,7 +450,7 @@ class ControlledGate(Gate):
         target_gate: Gate,
         generator: Callable[..., ControlledGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
-    ):
+    ) -> None:
         Gate.__init__(self, generator, arguments)
         self.control_qubit = control_qubit
         self.target_gate = target_gate
@@ -462,7 +466,7 @@ class ControlledGate(Gate):
         return visitor.visit_controlled_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
-        return [self.control_qubit] + self.target_gate.get_qubit_operands()
+        return [self.control_qubit, *self.target_gate.get_qubit_operands()]
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
@@ -561,7 +565,8 @@ class Comment(Statement):
 
     def __post_init__(self) -> None:
         if "*/" in self.str:
-            raise ValueError("comment contains illegal characters")
+            msg = "comment contains illegal characters"
+            raise ValueError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)

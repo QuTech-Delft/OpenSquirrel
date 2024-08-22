@@ -53,7 +53,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: list[Callable[..., Measure]] = default_measurement_set,
-    ):
+    ) -> None:
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
@@ -87,7 +87,8 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             index: qubit index
         """
         if index >= self.register_manager.get_qubit_register_size():
-            raise IndexError("qubit index is out of bounds")
+            msg = "qubit index is out of bounds"
+            raise IndexError(msg)
 
     def _check_bit_out_of_bounds_access(self, index: int) -> None:
         """Throw error if bit index is outside the qubit register range.
@@ -96,10 +97,14 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             index: bit index
         """
         if index >= self.register_manager.get_bit_register_size():
-            raise IndexError("bit index is out of bounds")
+            msg = "bit index is out of bounds"
+            raise IndexError(msg)
 
     def _check_generator_f_args(
-        self, generator_f: Callable[..., Gate | Measure], attr: str, args: tuple[Any, ...]
+        self,
+        generator_f: Callable[..., Gate | Measure],
+        attr: str,
+        args: tuple[Any, ...],
     ) -> None:
         """General instruction validation function. The function checks if each instruction has the proper arguments
         and if the qubit and bits are within the register range.
@@ -113,13 +118,14 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             if isinstance(par.annotation, str):
                 if args[i].__class__.__name__ != par.annotation:
-                    raise TypeError(
-                        f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                    msg = (
+                        f"wrong argument type for instruction `{attr}`, "
+                        f"got {type(args[i])} but expected {par.annotation}"
                     )
+                    raise TypeError(msg)
             elif not isinstance(args[i], par.annotation):
-                raise TypeError(
-                    f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
-                )
+                msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+                raise TypeError(msg)
             if args[i].__class__.__name__ == "Qubit":
                 self._check_qubit_out_of_bounds_access(args[i].index)
             elif args[i].__class__.__name__ == "Bit":

@@ -34,7 +34,10 @@ class _QubitReindexer(IRVisitor):
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(
-            qubit=Qubit(self.qubit_indices.index(g.qubit.index)), angle=g.angle, axis=g.axis, phase=g.phase
+            qubit=Qubit(self.qubit_indices.index(g.qubit.index)),
+            angle=g.angle,
+            axis=g.axis,
+            phase=g.phase,
         )
 
     def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
@@ -48,7 +51,9 @@ class _QubitReindexer(IRVisitor):
 
 
 def get_reindexed_circuit(
-    replacement_gates: Iterable[Gate], qubit_indices: list[int], bit_register_size: int = 0
+    replacement_gates: Iterable[Gate],
+    qubit_indices: list[int],
+    bit_register_size: int = 0,
 ) -> Circuit:
     from opensquirrel.circuit import Circuit
 

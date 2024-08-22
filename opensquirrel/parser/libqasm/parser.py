@@ -11,8 +11,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import (GateLibrary, MeasurementLibrary,
-                                              ResetLibrary)
+from opensquirrel.instruction_library import (GateLibrary, MeasurementLibrary, ResetLibrary)
 from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
 
@@ -24,7 +23,7 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: Iterable[Callable[..., Measure]] = default_measurement_set,
         reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
-    ):
+    ) -> None:
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
         ResetLibrary.__init__(self, reset_set)
@@ -32,7 +31,6 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
 
     @staticmethod
     def _parse_ast_string(string: str) -> str:
-        # FIXME: libqasm should return bytes, not the __repr__ of a bytes object ("b'q'")
         return string[2:-1]
 
     @staticmethod
@@ -40,7 +38,8 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat,
     ) -> Int | Float | None:
         if type(cqasm_literal_expression) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat]:
-            raise TypeError(f"unrecognized type: {type(cqasm_literal_expression)}")
+            msg = f"unrecognized type: {type(cqasm_literal_expression)}"
+            raise TypeError(msg)
         if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
             return Int(cqasm_literal_expression.value)
         if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
@@ -49,19 +48,17 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
 
     @staticmethod
     def _type_of(ast_expression: Any) -> type:
-        if isinstance(ast_expression, cqasm.values.IndexRef) or isinstance(ast_expression, cqasm.values.VariableRef):
+        if isinstance(ast_expression, (cqasm.values.IndexRef, cqasm.values.VariableRef)):
             return type(ast_expression.variable.typ)
-        else:
-            return type(ast_expression)
+        return type(ast_expression)
 
     @staticmethod
     def _size_of(ast_expression: Any) -> int:
         if isinstance(ast_expression, cqasm.values.IndexRef):
             return len(ast_expression.indices)
-        elif isinstance(ast_expression, cqasm.values.VariableRef):
+        if isinstance(ast_expression, cqasm.values.VariableRef):
             return int(ast_expression.variable.typ.size)
-        else:
-            return 1
+        return 1
 
     @staticmethod
     def _is_qubit_type(ast_expression: Any) -> bool:
@@ -75,7 +72,8 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
 
     @staticmethod
     def _get_qubits(
-        ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef, register_manager: RegisterManager
+        ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef,
+        register_manager: RegisterManager,
     ) -> list[Qubit]:
         ret = []
         variable_name = Parser._parse_ast_string(ast_qubit_expression.variable.name)
@@ -90,7 +88,8 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
 
     @staticmethod
     def _get_bits(
-        ast_bit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef, register_manager: RegisterManager
+        ast_bit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef,
+        register_manager: RegisterManager,
     ) -> list[Bit]:
         ret = []
         variable_name = Parser._parse_ast_string(ast_bit_expression.variable.name)
@@ -111,7 +110,8 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
             if Parser._is_qubit_type(ast_arg):
                 expanded_args.append(cls._get_qubits(ast_arg, register_manager))
             else:
-                raise TypeError("received argument is not a (qu)bit")
+                msg = "received argument is not a (qu)bit"
+                raise TypeError(msg)
         return zip(*expanded_args)
 
     @classmethod
@@ -129,7 +129,8 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
             elif Parser._is_bit_type(ast_arg):
                 expanded_args.append(cls._get_bits(ast_arg, register_manager))
             else:
-                raise TypeError("received argument is not a (qu)bit")
+                msg = "received argument is not a (qu)bit"
+                raise TypeError(msg)
         return zip(*expanded_args)
 
     @classmethod
@@ -174,7 +175,8 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         if squirrel_type == Int or squirrel_type == "Int":
             return "i"
 
-        raise TypeError("unsupported type")
+        msg = "unsupported type"
+        raise TypeError(msg)
 
     def _create_analyzer(self) -> cqasm.Analyzer:
         # This method is temporarily adjusted such that the reset instruction can be added manually.
@@ -213,7 +215,7 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
     @staticmethod
     def _check_analysis_result(result: Any) -> None:
         if isinstance(result, list):
-            raise IOError("parsing error: " + ", ".join(result))
+            raise OSError("parsing error: " + ", ".join(result))
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
