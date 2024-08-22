@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import inspect
+import itertools
 from collections.abc import Callable, Iterable, Mapping
 from typing import Any, overload
 
@@ -8,20 +10,24 @@ import cqasm.v3x as cqasm
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
-from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
-from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit
+from opensquirrel.default_resets import default_reset_set
+from opensquirrel.instruction_library import (GateLibrary, MeasurementLibrary,
+                                              ResetLibrary)
+from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
 
 
-class Parser(GateLibrary, MeasurementLibrary):
+class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
     def __init__(
         self,
         gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: Iterable[Callable[..., Measure]] = default_measurement_set,
+        reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
     ):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
+        ResetLibrary.__init__(self, reset_set)
         self.ir = None
 
     @staticmethod
@@ -98,6 +104,17 @@ class Parser(GateLibrary, MeasurementLibrary):
         return ret
 
     @classmethod
+    def _get_expanded_reset_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
+        """<Docstring for _get_expanded_reset_args>"""
+        expanded_args: list[list[Any]] = []
+        for ast_arg in reversed(ast_args):
+            if Parser._is_qubit_type(ast_arg):
+                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
+            else:
+                raise TypeError("received argument is not a (qu)bit")
+        return zip(*expanded_args)
+
+    @classmethod
     def _get_expanded_measure_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
         For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))]
@@ -148,20 +165,49 @@ class Parser(GateLibrary, MeasurementLibrary):
     def _get_cqasm_param_type_letters(
         squirrel_type: type[Qubit] | type[Bit] | type[Float] | type[Int],
     ) -> str | tuple[str, str]:
-        if squirrel_type == Qubit:
+        if squirrel_type == Qubit or squirrel_type == "Qubit":
             return "Q", "V"  # "V" is to allow array notations like q[3, 5, 7] and q[3:6]
-        if squirrel_type == Bit:
+        if squirrel_type == Bit or squirrel_type == "Bit":
             return "B", "W"  # "W" is to allow array notations like b[3, 5, 7] and b[3:6]
-        if squirrel_type == Float:
+        if squirrel_type == Float or squirrel_type == "Float":
             return "f"
-        if squirrel_type == Int:
+        if squirrel_type == Int or squirrel_type == "Int":
             return "i"
 
         raise TypeError("unsupported type")
 
     def _create_analyzer(self) -> cqasm.Analyzer:
-        without_defaults = False
-        analyzer = cqasm.Analyzer("3.0", without_defaults)
+        # This method is temporarily adjusted such that the reset instruction can be added manually.
+
+        # without_defaults = False
+        # analyzer = cqasm.Analyzer("3.0", without_defaults)
+        # return analyzer
+
+        without_defaults = True
+        analyzer = cqasm.Analyzer("3.0.0", without_defaults)
+        for generator_f in self.gate_set:
+            for set_of_letters in itertools.product(
+                *(
+                    self._get_cqasm_param_type_letters(param.annotation)
+                    for param in inspect.signature(generator_f).parameters.values()
+                )
+            ):
+                param_types = "".join(set_of_letters)
+                analyzer.register_instruction(generator_f.__name__, param_types)
+
+        for generator_f in self.measurement_set:
+            for set_of_letters in itertools.product(
+                *(
+                    self._get_cqasm_param_type_letters(p.annotation)
+                    for p in inspect.signature(generator_f).parameters.values()
+                )
+            ):
+                param_types = "".join(set_of_letters)
+                analyzer.register_instruction(generator_f.__name__, param_types)
+
+        for param_type in ["Q", "V", ""]:
+            analyzer.register_instruction("reset", param_type)
+
         return analyzer
 
     @staticmethod
@@ -188,6 +234,11 @@ class Parser(GateLibrary, MeasurementLibrary):
                 expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
                 for arg_set in expanded_args:
                     ir.add_measurement(generator_f_measure(*arg_set))
+            elif "reset" in statement_name:
+                generator_f_reset = self.get_reset_f(statement_name)
+                expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
+                for arg_set in expanded_args:
+                    ir.add_reset(generator_f_reset(*arg_set))
             else:
                 generator_f_gate = self.get_gate_f(statement_name)
                 expanded_args = Parser._get_expanded_gate_args(statement.operands, register_manager)

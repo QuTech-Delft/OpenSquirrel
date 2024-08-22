@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from collections.abc import Callable, Iterable, Mapping
 
-from opensquirrel.ir import Gate, Measure
+from opensquirrel.ir import Gate, Measure, Reset
 
 
 class InstructionLibrary(ABC):
@@ -37,3 +37,15 @@ class MeasurementLibrary(InstructionLibrary):
             return generator_f
         except StopIteration as exc:
             raise ValueError(f"unknown instruction `{measurement_name}`") from exc
+
+
+class ResetLibrary(InstructionLibrary):
+    def __init__(self, reset_set: Iterable[Callable[..., Reset]]) -> None:
+        self.reset_set = reset_set
+
+    def get_reset_f(self, reset_name: str) -> Callable[..., Reset]:
+        try:
+            generator_f = next(f for f in self.reset_set if f.__name__ == reset_name)
+            return generator_f
+        except StopIteration as exc:
+            raise ValueError(f"unknown instruction `{reset_name}`") from exc
