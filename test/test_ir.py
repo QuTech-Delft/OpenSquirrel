@@ -282,7 +282,7 @@ class TestMatrixGate:
         assert not gate.is_identity()
 
     def test_matrix_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError, match=r"control and target qubit .*") as e_info:
             MatrixGate(np.eye(4), [Qubit(0), Qubit(0)])
 
         assert "control and target qubit cannot be the same" in str(e_info.value)
@@ -290,7 +290,7 @@ class TestMatrixGate:
 
 class TestControlledGate:
     def test_control_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError, match="control and target qubit *.") as e_info:
             ControlledGate(Qubit(0), BlochSphereRotation(Qubit(0), [0, 0, 1], angle=np.pi))
 
         assert "control and target qubit cannot be the same" in str(e_info.value)
