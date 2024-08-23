@@ -6,7 +6,7 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, Qubit, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Int, MatrixGate, Qubit, named_gate
 
 
 def test_circuit_from_string() -> None:
@@ -144,15 +144,15 @@ Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, ph
 
 def test_create_custom_gates() -> None:
     @named_gate
-    def x(q: Qubit) -> Gate:
+    def x(q: Qubit) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 
     @named_gate
-    def cnot(control: Qubit, target: Qubit) -> Gate:
+    def cnot(control: Qubit, target: Qubit) -> ControlledGate:
         return ControlledGate(control, x(target))
 
     @named_gate
-    def swap(q1: Qubit, q2: Qubit) -> Gate:
+    def swap(q1: Qubit, q2: Qubit) -> MatrixGate:
         return MatrixGate(
             np.array(
                 [
