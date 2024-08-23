@@ -417,7 +417,8 @@ class MatrixGate(Gate):
             raise ValueError(msg)
 
         if self._check_repeated_qubit_operands(operands):
-            raise ValueError("control and target qubit cannot be the same")
+            msg = "control and target qubit cannot be the same"
+            raise ValueError(msg)
 
         if matrix.shape != (1 << len(operands), 1 << len(operands)):
             msg = (
@@ -455,8 +456,9 @@ class ControlledGate(Gate):
         self.control_qubit = control_qubit
         self.target_gate = target_gate
 
-        if self._check_repeated_qubit_operands([control_qubit] + target_gate.get_qubit_operands()):
-            raise ValueError("control and target qubit cannot be the same")
+        if self._check_repeated_qubit_operands([control_qubit, *target_gate.get_qubit_operands()]):
+            msg = "control and target qubit cannot be the same"
+            raise ValueError(msg)
 
     def __repr__(self) -> str:
         return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"

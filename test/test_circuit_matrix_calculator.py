@@ -1,6 +1,8 @@
+from typing import Any
+
 import numpy as np
 import pytest
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
@@ -56,7 +58,7 @@ from opensquirrel.ir import Qubit
         "H[0]CNOT[0,2]",
     ],
 )
-def test_get_circuit_matrix(builder: CircuitBuilder, expected_matrix: ArrayLike) -> None:
+def test_get_circuit_matrix(builder: CircuitBuilder, expected_matrix: NDArray[Any]) -> None:
     circuit = builder.to_circuit()
     matrix = get_circuit_matrix(circuit)
     np.testing.assert_almost_equal(matrix, expected_matrix)

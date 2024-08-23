@@ -13,6 +13,8 @@ from opensquirrel.default_gates import (CNOT, Y90, BlochSphereRotation, H, I,
 from opensquirrel.ir import Float, Gate, Qubit
 
 
+
+
 class TestCheckGateReplacement:
     @pytest.mark.parametrize(
         ("gate", "replacement_gates"),

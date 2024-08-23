@@ -16,7 +16,7 @@ def check_equivalence_up_to_global_phase(matrix_a: NDArray[np.complex128], matri
 
 def modify_circuit_and_check(
     circuit: Circuit,
-    action: Callable[[Circuit, Any]],
+    action: Callable[[Circuit], Any],
     expected_circuit: Circuit | None = None,
 ) -> None:
     """

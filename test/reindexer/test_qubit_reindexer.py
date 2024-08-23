@@ -23,7 +23,7 @@ def replacement_gates_1() -> list[Gate]:
     return [Y90(Qubit(1)), X(Qubit(3))]
 
 
-def replacement_gates_2() -> list[Gate]:
+def replacement_gates_2() -> list[Gate | Measure]:
     return [
         Measure(Qubit(1), Bit(1)),
         BlochSphereRotation(Qubit(3), axis=(0, 0, 1), angle=math.pi),

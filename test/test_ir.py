@@ -34,7 +34,7 @@ class TestAxis:
         ],
     )
     def test_axis_setter_no_error(self, axis: Axis, new_axis: ArrayLike, expected_axis: ArrayLike) -> None:
-        axis.value = new_axis
+        axis.value = new_axis  # type: ignore[assignment]
         np.testing.assert_array_equal(axis, expected_axis)
 
     @pytest.mark.parametrize(
@@ -270,19 +270,17 @@ class TestMatrixGate:
         assert gate.get_qubit_operands() == [Qubit(42), Qubit(100)]
 
     def test_is_identity(self, gate: MatrixGate) -> None:
-        assert MatrixGate(np.eye(4), operands=[Qubit(42), Qubit(100)]).is_identity()
+        assert MatrixGate(np.eye(4, dtype=np.complex128), operands=[Qubit(42), Qubit(100)]).is_identity()
         assert not gate.is_identity()
 
     def test_matrix_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError) as e_info:
-            MatrixGate(np.eye(4), [Qubit(0), Qubit(0)])
+        with pytest.raises(ValueError, match="control and target qubit cannot be the same") as e_info:
+            MatrixGate(np.eye(4, dtype=np.complex128), [Qubit(0), Qubit(0)])
 
         assert "control and target qubit cannot be the same" in str(e_info.value)
 
 
 class TestControlledGate:
     def test_control_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
             ControlledGate(Qubit(0), BlochSphereRotation(Qubit(0), [0, 0, 1], angle=np.pi))
-
-        assert "control and target qubit cannot be the same" in str(e_info.value)
