@@ -6,14 +6,8 @@ from typing import TYPE_CHECKING, Any
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
-from opensquirrel.ir import (
-    BlochSphereRotation,
-    ControlledGate,
-    IRVisitor,
-    MatrixGate,
-    Measure,
-    Qubit,
-)
+from opensquirrel.ir import (BlochSphereRotation, ControlledGate, IRVisitor,
+                             MatrixGate, Measure, Qubit)
 
 try:
     import quantify_scheduler

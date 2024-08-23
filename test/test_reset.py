@@ -1,5 +1,5 @@
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.ir import Qubit, Bit
+from opensquirrel.ir import Bit, Qubit
 
 
 def test_reset() -> None:

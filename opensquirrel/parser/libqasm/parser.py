@@ -11,7 +11,8 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import (GateLibrary, MeasurementLibrary, ResetLibrary)
+from opensquirrel.instruction_library import (GateLibrary, MeasurementLibrary,
+                                              ResetLibrary)
 from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
 
