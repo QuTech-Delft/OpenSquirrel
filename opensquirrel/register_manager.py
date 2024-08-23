@@ -78,10 +78,6 @@ class Register(ABC):
     def size(self) -> int:
         return self.register_size
 
-    @staticmethod
-    def _parse_ast_string(string: str) -> str:
-        return string[2:-1]
-
     @classmethod
     def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
         variables = [v for v in ast.variables if cls.is_of_type(v)]
@@ -91,7 +87,7 @@ class Register(ABC):
 
         current_index: int = 0
         for v in variables:
-            v_name = Register._parse_ast_string(v.name)
+            v_name = v.name
             v_size = v.typ.size
             variable_name_to_range[v_name] = Range(current_index, v_size)
             for _ in range(v_size):

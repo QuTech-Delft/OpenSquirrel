@@ -30,10 +30,6 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         self.ir = None
 
     @staticmethod
-    def _parse_ast_string(string: str) -> str:
-        return string[2:-1]
-
-    @staticmethod
     def _ast_literal_to_ir_literal(
         cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat,
     ) -> Int | Float | None:
@@ -76,7 +72,7 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         register_manager: RegisterManager,
     ) -> list[Qubit]:
         ret = []
-        variable_name = Parser._parse_ast_string(ast_qubit_expression.variable.name)
+        variable_name = ast_qubit_expression.variable.name
         if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
             qubit_range = register_manager.get_qubit_range(variable_name)
             ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
@@ -92,7 +88,7 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         register_manager: RegisterManager,
     ) -> list[Bit]:
         ret = []
-        variable_name = Parser._parse_ast_string(ast_bit_expression.variable.name)
+        variable_name = ast_bit_expression.variable.name
         if isinstance(ast_bit_expression, cqasm.values.VariableRef):
             bit_range = register_manager.get_bit_range(variable_name)
             ret = [Bit(index) for index in range(bit_range.first, bit_range.first + bit_range.size)]
@@ -104,14 +100,21 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
 
     @classmethod
     def _get_expanded_reset_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
-        """<Docstring for _get_expanded_reset_args>"""
-        expanded_args: list[list[Any]] = []
-        for ast_arg in reversed(ast_args):
-            if Parser._is_qubit_type(ast_arg):
-                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-            else:
-                msg = "received argument is not a (qu)bit"
-                raise TypeError(msg)
+        """Construct a list of qubits and return a zip.
+        For example: [Qubit(0), Qubit(1), Qubit(2)]
+        """
+        expanded_args: list[Any] = []
+        if len(ast_args) < 1:
+            for qubit_index in range(register_manager.get_qubit_register_size()):
+                expanded_args.append(Qubit(qubit_index))
+            return zip(expanded_args)
+        else:
+            for ast_arg in ast_args:
+                if Parser._is_qubit_type(ast_arg):
+                    expanded_args.append(cls._get_qubits(ast_arg, register_manager))
+                else:
+                    msg = "received argument is not a (qu)bit"
+                    raise TypeError(msg)
         return zip(*expanded_args)
 
     @classmethod
@@ -150,42 +153,10 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
                 expanded_args.append([cls._ast_literal_to_ir_literal(ast_arg)] * number_of_operands)
         return zip(*expanded_args)
 
-    @overload
     @staticmethod
-    def _get_cqasm_param_type_letters(squirrel_type: type[Qubit]) -> tuple[str, str]: ...
-
-    @overload
-    @staticmethod
-    def _get_cqasm_param_type_letters(squirrel_type: type[Bit]) -> tuple[str, str]: ...
-
-    @overload
-    @staticmethod
-    def _get_cqasm_param_type_letters(squirrel_type: type[Float] | type[Int]) -> str: ...
-
-    @staticmethod
-    def _get_cqasm_param_type_letters(
-        squirrel_type: type[Qubit] | type[Bit] | type[Float] | type[Int],
-    ) -> str | tuple[str, str]:
-        if squirrel_type == Qubit or squirrel_type == "Qubit":
-            return "Q", "V"  # "V" is to allow array notations like q[3, 5, 7] and q[3:6]
-        if squirrel_type == Bit or squirrel_type == "Bit":
-            return "B", "W"  # "W" is to allow array notations like b[3, 5, 7] and b[3:6]
-        if squirrel_type == Float or squirrel_type == "Float":
-            return "f"
-        if squirrel_type == Int or squirrel_type == "Int":
-            return "i"
-
-        msg = "unsupported type"
-        raise TypeError(msg)
-
-    def _create_analyzer(self) -> cqasm.Analyzer:
-        # This method is temporarily adjusted such that the reset instruction can be added manually.
-
+    def _create_analyzer() -> cqasm.Analyzer:
         without_defaults = False
-        analyzer = cqasm.Analyzer("3.0", without_defaults)
-        for param_type in ["Q", "V", ""]:
-            analyzer.register_instruction("reset", param_type)
-        return analyzer
+        return cqasm.Analyzer("3.0", without_defaults)
 
     @staticmethod
     def _check_analysis_result(result: Any) -> None:
@@ -194,7 +165,7 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
-        analyzer = self._create_analyzer()
+        analyzer = Parser._create_analyzer()
         analysis_result = analyzer.analyze_string(s)
         Parser._check_analysis_result(analysis_result)
         ast = analysis_result
@@ -205,19 +176,18 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         # Parse statements
         ir = IR()
         for statement in ast.block.statements:
-            statement_name = self._parse_ast_string(statement.name)
-            if "measure" in statement_name:
-                generator_f_measure = self.get_measurement_f(statement_name)
+            if "measure" in statement.name:
+                generator_f_measure = self.get_measurement_f(statement.name)
                 expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
                 for arg_set in expanded_args:
                     ir.add_measurement(generator_f_measure(*arg_set))
-            elif "reset" in statement_name:
-                generator_f_reset = self.get_reset_f(statement_name)
+            elif "reset" in statement.name:
+                generator_f_reset = self.get_reset_f(statement.name)
                 expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
                 for arg_set in expanded_args:
                     ir.add_reset(generator_f_reset(*arg_set))
             else:
-                generator_f_gate = self.get_gate_f(statement_name)
+                generator_f_gate = self.get_gate_f(statement.name)
                 expanded_args = Parser._get_expanded_gate_args(statement.operands, register_manager)
                 for arg_set in expanded_args:
                     ir.add_gate(generator_f_gate(*arg_set))

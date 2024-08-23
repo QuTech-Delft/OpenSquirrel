@@ -284,7 +284,7 @@ class Reset(Statement, ABC):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Reset):
             return False
-        return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        return self.qubit == other.qubit
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_reset(self)

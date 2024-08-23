@@ -11,13 +11,14 @@ from typing_extensions import Self
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
-from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary
-from opensquirrel.ir import IR, Comment, Gate, Measure
+from opensquirrel.default_resets import default_reset_set
+from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
+from opensquirrel.ir import IR, Comment, Gate, Measure, Reset
 from opensquirrel.register_manager import (BitRegister, QubitRegister,
                                            RegisterManager)
 
 
-class CircuitBuilder(GateLibrary, MeasurementLibrary):
+class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
     """
     A class using the builder pattern to make construction of circuits easy from Python.
     Adds corresponding instruction when a method is called. Checks that instructions are known and called with the right
@@ -53,9 +54,11 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
         gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
         measurement_set: list[Callable[..., Measure]] = default_measurement_set,
+        reset_set: list[Callable[..., Reset]] = default_reset_set,
     ) -> None:
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasurementLibrary.__init__(self, measurement_set)
+        ResetLibrary.__init__(self, reset_set)
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
@@ -74,6 +77,10 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
             generator_f_measure = MeasurementLibrary.get_measurement_f(self, attr)
             self._check_generator_f_args(generator_f_measure, attr, args)
             self.ir.add_measurement(generator_f_measure(*args))
+        elif any(attr == reset.__name__ for reset in self.reset_set):
+            generator_f_reset = ResetLibrary.get_reset_f(self, attr)
+            self._check_generator_f_args(generator_f_reset, attr, args)
+            self.ir.add_reset(generator_f_reset(*args))
         else:
             generator_f_gate = GateLibrary.get_gate_f(self, attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
@@ -102,7 +109,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary):
 
     def _check_generator_f_args(
         self,
-        generator_f: Callable[..., Gate | Measure],
+        generator_f: Callable[..., Gate | Measure | Reset],
         attr: str,
         args: tuple[Any, ...],
     ) -> None:
