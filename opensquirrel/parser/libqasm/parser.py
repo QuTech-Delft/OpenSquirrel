@@ -97,23 +97,6 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         return ret
 
     @classmethod
-    def _get_expanded_reset_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
-        """Construct a list of qubits and return a zip.
-        For example: [Qubit(0), Qubit(1), Qubit(2)]
-        """
-        if len(ast_args) < 1:
-            expanded_args = [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
-            return zip(expanded_args)
-        expanded_args: list[Any] = []
-        for ast_arg in ast_args:
-            if Parser._is_qubit_type(ast_arg):
-                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-            else:
-                msg = "received argument is not a (qu)bit"
-                raise TypeError(msg)
-        return zip(*expanded_args)
-
-    @classmethod
     def _get_expanded_measure_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
         For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))]
@@ -127,6 +110,23 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
                 expanded_args.append(cls._get_qubits(ast_arg, register_manager))
             elif Parser._is_bit_type(ast_arg):
                 expanded_args.append(cls._get_bits(ast_arg, register_manager))
+            else:
+                msg = "received argument is not a (qu)bit"
+                raise TypeError(msg)
+        return zip(*expanded_args)
+
+    @classmethod
+    def _get_expanded_reset_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
+        """Construct a list of qubits and return a zip.
+        For example: [Qubit(0), Qubit(1), Qubit(2)]
+        """
+        if len(ast_args) < 1:
+            expanded_args = [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
+            return zip(expanded_args)
+        expanded_args: list[Any] = []
+        for ast_arg in ast_args:
+            if Parser._is_qubit_type(ast_arg):
+                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
             else:
                 msg = "received argument is not a (qu)bit"
                 raise TypeError(msg)

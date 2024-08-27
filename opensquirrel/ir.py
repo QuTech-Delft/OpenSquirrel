@@ -260,7 +260,7 @@ class Measure(Statement, ABC):
 class Reset(Statement, ABC):
     def __init__(
         self,
-        qubit: Qubit | None = None,
+        qubit: Qubit = None,
         generator: Callable[..., Reset] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
