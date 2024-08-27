@@ -1,6 +1,15 @@
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (IR, BlochSphereRotation, Comment, ControlledGate,
-                             IRVisitor, MatrixGate, Measure, Qubit, Reset)
+from opensquirrel.ir import (
+    IR,
+    BlochSphereRotation,
+    Comment,
+    ControlledGate,
+    IRVisitor,
+    MatrixGate,
+    Measure,
+    Qubit,
+    Reset,
+)
 from opensquirrel.mapper.mapping import Mapping
 
 

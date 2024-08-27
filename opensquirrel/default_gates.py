@@ -5,8 +5,7 @@ from collections.abc import Callable
 
 import numpy as np
 
-from opensquirrel.ir import (BlochSphereRotation, ControlledGate, Float, Gate,
-                             Int, MatrixGate, Qubit, named_gate)
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, Qubit, named_gate
 
 
 @named_gate

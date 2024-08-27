@@ -14,8 +14,7 @@ from opensquirrel.common import ATOL
 from opensquirrel.default_gates import CCZ, SWAP, H
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.exporter.quantify_scheduler_exporter import \
-    FIXED_POINT_DEG_PRECISION
+from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate, Qubit
 
 

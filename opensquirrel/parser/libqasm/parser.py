@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import inspect
-import itertools
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any, overload
+from typing import Any
 
 import cqasm.v3x as cqasm
 
@@ -11,8 +9,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import (GateLibrary, MeasurementLibrary,
-                                              ResetLibrary)
+from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
 from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
 
@@ -104,18 +101,16 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         """Construct a list of qubits and return a zip.
         For example: [Qubit(0), Qubit(1), Qubit(2)]
         """
-        expanded_args: list[Any] = []
         if len(ast_args) < 1:
-            for qubit_index in range(register_manager.get_qubit_register_size()):
-                expanded_args.append(Qubit(qubit_index))
+            expanded_args = [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
             return zip(expanded_args)
-        else:
-            for ast_arg in ast_args:
-                if Parser._is_qubit_type(ast_arg):
-                    expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-                else:
-                    msg = "received argument is not a (qu)bit"
-                    raise TypeError(msg)
+        expanded_args: list[Any] = []
+        for ast_arg in ast_args:
+            if Parser._is_qubit_type(ast_arg):
+                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
+            else:
+                msg = "received argument is not a (qu)bit"
+                raise TypeError(msg)
         return zip(*expanded_args)
 
     @classmethod
