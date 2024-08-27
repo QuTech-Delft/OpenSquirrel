@@ -3,7 +3,7 @@ from test.ir_equality_test_base import modify_circuit_and_check
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.default_gates import Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, Float, Qubit
+from opensquirrel.ir import BlochSphereRotation, Float, Qubit, Bit
 from opensquirrel.merger import general_merger
 from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
 
@@ -131,5 +131,43 @@ def test_merge_y90_x_to_h() -> None:
 
     builder2 = CircuitBuilder(1)
     builder2.H(Qubit(0))
+    expected_qc = builder2.to_circuit()
+    modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
+
+
+def test_no_merge_across_measure() -> None:
+    builder = CircuitBuilder(2, 2)
+    builder.H(Qubit(0))
+    builder.measure(Qubit(0), Bit(0))
+    builder.H(Qubit(0))
+    builder.H(Qubit(1))
+    builder.measure(Qubit(0), Bit(1))
+    builder.H(Qubit(1))
+    qc = builder.to_circuit()
+
+    builder2 = CircuitBuilder(2, 2)
+    builder2.H(Qubit(0))
+    builder2.measure(Qubit(0), Bit(0))
+    builder2.H(Qubit(0))
+    builder2.measure(Qubit(0), Bit(1))
+    expected_qc = builder2.to_circuit()
+    modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
+
+
+def test_no_merge_across_reset() -> None:
+    builder = CircuitBuilder(2)
+    builder.H(Qubit(0))
+    builder.reset(Qubit(0))
+    builder.H(Qubit(0))
+    builder.H(Qubit(1))
+    builder.reset(Qubit(0))
+    builder.H(Qubit(1))
+    qc = builder.to_circuit()
+
+    builder2 = CircuitBuilder(2)
+    builder2.H(Qubit(0))
+    builder2.reset(Qubit(0))
+    builder2.H(Qubit(0))
+    builder2.reset(Qubit(0))
     expected_qc = builder2.to_circuit()
     modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)

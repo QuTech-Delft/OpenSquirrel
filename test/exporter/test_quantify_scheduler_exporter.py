@@ -52,6 +52,7 @@ class TestQuantifySchedulerExporter:
         builder = CircuitBuilder(3, 3)
         builder.X(Qubit(0))
         builder.CZ(Qubit(0), Qubit(1))
+        builder.reset(Qubit(0))
         builder.Rz(Qubit(1), Float(2.34))
         builder.Ry(Qubit(2), Float(1.23))
         builder.measure(Qubit(0), Bit(0))
@@ -77,12 +78,13 @@ class TestQuantifySchedulerExporter:
                     ),
                 ],
             )
+            mock_quantify_scheduler_gates.Reset.assert_called_once_with(qubit="q[0]")
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(
                 theta=FloatEq(round(math.degrees(2.34), FIXED_POINT_DEG_PRECISION)),
                 qubit="q[1]",
             )
-            assert mock_schedule.add.call_count == 7
+            assert mock_schedule.add.call_count == 8
 
     @pytest.mark.parametrize(
         "gate",

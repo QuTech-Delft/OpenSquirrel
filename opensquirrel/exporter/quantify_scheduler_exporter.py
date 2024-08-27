@@ -7,7 +7,7 @@ from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (BlochSphereRotation, ControlledGate, IRVisitor,
-                             MatrixGate, Measure, Qubit)
+                             MatrixGate, Measure, Qubit, Reset)
 
 try:
     import quantify_scheduler
@@ -30,16 +30,6 @@ class _ScheduleCreator(IRVisitor):
     def __init__(self, qubit_register_name: str) -> None:
         self.qubit_register_name = qubit_register_name
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
-
-    def visit_measure(self, g: Measure) -> None:
-        self.schedule.add(
-            quantify_scheduler_gates.Measure(
-                self._get_qubit_string(g.qubit),
-                acq_channel=g.qubit.index,
-                acq_index=g.qubit.index,
-                acq_protocol="ThresholdedAcquisition",
-            ),
-        )
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
         # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
@@ -87,6 +77,19 @@ class _ScheduleCreator(IRVisitor):
             return
 
         raise UnsupportedGateError(g)
+
+    def visit_measure(self, g: Measure) -> None:
+        self.schedule.add(
+            quantify_scheduler_gates.Measure(
+                self._get_qubit_string(g.qubit),
+                acq_channel=g.qubit.index,
+                acq_index=g.qubit.index,
+                acq_protocol="ThresholdedAcquisition",
+            ),
+        )
+
+    def visit_reset(self, g: Reset) -> Any:
+        self.schedule.add(quantify_scheduler_gates.Reset(qubit=self._get_qubit_string(g.qubit)))
 
 
 def export(circuit: Circuit) -> quantify_scheduler.Schedule:

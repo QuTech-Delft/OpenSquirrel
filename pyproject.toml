@@ -17,7 +17,6 @@ keywords = [
 classifiers = [
   'Development Status :: 3 - Alpha',
   'Programming Language :: Python :: 3',
-  'Programming Language :: Python :: 3.8',
   'Programming Language :: Python :: 3.9',
   'Programming Language :: Python :: 3.10',
   'Programming Language :: Python :: 3.11',
@@ -29,13 +28,14 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 numpy = [
     { version = "1.24", python = "<3.9" },
     { version = ">=1.26", python = "^3.9" },
 ]
-libqasm = "0.6.6"
+libqasm = "0.6.7"
 networkx = "^3.0.0"
+quantify-scheduler = "^0.21.1"
 
 [tool.poetry.group.dev.dependencies]
 black = {extras = ["jupyter"], version = ">=23.11,<25.0"}
@@ -80,7 +80,7 @@ quantify-scheduler=[
     # quantify-scheduler is not released for newer Python versions, i.e. > 3.9.
     # Its is only required for exporting OpenSquirrel circuits to the
     # Schedule format and testing this functionality.
-    { version = "^0.18.0", python = "<3.10" },
+    { version = "^0.21.1", python = "<3.10" },
 ]
 
 [tool.pytest.ini_options]
@@ -115,7 +115,7 @@ select = [
     "BLE", # flake8-blind-except
     "COM", #flake8-commas
     "C4", #flake8-comprehensions
-    "C90", # mccabe 
+    "C90", # mccabe
     #"D", # pydocstyle
     "DTZ", # flake8-datetimez
     "E", # pycodestyle (error)
@@ -124,7 +124,7 @@ select = [
     "EXE", # flake8-executable
     "F", # Pyflakes
     "FA", # flake8-future-annotations
-    "FBT", # flake8-boolean-trap 
+    "FBT", # flake8-boolean-trap
     "FIX", # flake8-fixme
     "FLY", # flynt
     "G", # flake8-logging-format
@@ -141,13 +141,13 @@ select = [
     "PTH", # flake8-use-pathlib
     "FURB", # refurb
     "RET", # flake8-return
-    "RUF", # Ruff-specific rules 
+    "RUF", # Ruff-specific rules
     "S", # flake8-bandit
     "SIM", # flake8-simplify
     "SLF", # flake8-self
     "SLOT", # flake8-slots
     "TCH", # flake8-type-checking
-    "TRY", # tryceratops 
+    "TRY", # tryceratops
     "T20", # flake8-print
     "T100", # flake8-debugger
     "UP", # pyupgrade

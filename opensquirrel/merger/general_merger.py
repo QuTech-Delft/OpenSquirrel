@@ -6,7 +6,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import \
     default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit
+from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit, Reset, Comment
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -85,7 +85,8 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     Gates obtained from merging other gates become anonymous gates.
     """
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
-        Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(circuit.qubit_register_size)
+        Qubit(qubit_index): BlochSphereRotation.identity(Qubit(qubit_index))
+        for qubit_index in range(circuit.qubit_register_size)
     }
 
     ir = circuit.ir
@@ -93,8 +94,8 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
-        if not isinstance(statement, Gate) and not isinstance(statement, Measure):
-            # Skip, since statement is not a gate or measurement
+        if isinstance(statement, Comment):
+            # Skip, since statement is a comment
             statement_index += 1
             continue
 
