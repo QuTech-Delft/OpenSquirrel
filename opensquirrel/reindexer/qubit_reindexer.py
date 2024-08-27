@@ -30,7 +30,8 @@ class _QubitReindexer(IRVisitor):
         self.qubit_indices = qubit_indices
 
     def visit_reset(self, reset: Reset) -> Reset:
-        return Reset(qubit=Qubit(self.qubit_indices.index(reset.qubit.index)))
+        qubit_to_reset = self.qubit_indices.index(reset.qubit.index)
+        return Reset(qubit=Qubit(qubit_to_reset))
 
     def visit_measure(self, measure: Measure) -> Measure:
         return Measure(qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), bit=measure.bit, axis=measure.axis)
