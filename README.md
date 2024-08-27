@@ -88,10 +88,17 @@ Rz(1.5707963) q[0]
 Ry(1.0471976) q[0]
 Rz(-1.5707963) q[0]
 ```
-
 ## Documentation
 
 OpenSquirrel documentation is hosted through GitHub Pages [here](https://QuTech-Delft.github.io/OpenSquirrel/).
+The [example](https://github.com/QuTech-Delft/OpenSquirrel/tree/develop/example) folder contains `Jupyer` notebooks with
+example tutorials.
+
+
+## Contributing
+
+The contribution guidelines and set up can be found
+[here](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/CONTRIBUTING.md).
 
 
 ## Authors
