@@ -42,8 +42,8 @@ The tutorials can be found [here](https://github.com/QuTech-Delft/OpenSquirrel/t
 ## Getting started
 
 Essentially, compiling a circuit in OpenSquirrel requires,
-1. Defining and building a quantum circuit
-2. Decomposing a circuit
+1. Defining and building a quantum circuit using the openSquirrel IR directly or using a `CQASM` string
+2. Modifying and traversing the circuit
 3. Writing the circuit to assembly
 
 The circuit can be built with the `CircuitBuilder` class. Here is an example of building a single qubit circuit that
@@ -64,6 +64,25 @@ builder.Rx(Qubit(0), Float(math.pi / 3))
 # Get the circuit from the circuit builder
 circuit = builder.to_circuit()
 ```
+This can also be done directly using a `CQASM3` string as shown below,
+```python
+from opensquirrel.circuit import Circuit
+
+cqasm_string = (
+"""
+version 3.0
+
+qubit[1] q
+
+H q[0]
+Z q[0]
+Y q[0]
+Rx(1.0471976) q[0]
+""")
+
+qc = Circuit.from_string(cqasm_string)
+```
+
 The circuit can then be decomposed using a decomposition strategy. The different decomposition strategies can be found in the [tutorials](https://github.com/QuTech-Delft/OpenSquirrel/tree/develop/example/tutorials).
 In the example below, the circuit is decomposed using `ZYZDecomposer`.
 
