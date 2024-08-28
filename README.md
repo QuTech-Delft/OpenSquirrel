@@ -32,11 +32,13 @@ We encourage installing OpenSquirrel via `pip`:
 ```shell
 $ pip install opensquirrel
 ```
+
 To install the dependencies to run the examples on `jupyter`, install:
 
 ```shell
 $ pip install opensquirrel[examples]
 ```
+
 The tutorials can be found [here](https://github.com/QuTech-Delft/OpenSquirrel/tree/develop/example).
 
 ## Getting started
@@ -63,10 +65,6 @@ builder.Rx(Qubit(0), Float(math.pi / 3))
 
 # Get the circuit from the circuit builder
 circuit = builder.to_circuit()
-```
-This can also be done directly using a `CQASM3` string as shown below,
-```python
-from opensquirrel.circuit import Circuit
 
 cqasm_string = (
 """
@@ -83,7 +81,6 @@ Rx(1.0471976) q[0]
 qc = Circuit.from_string(cqasm_string)
 ```
 
-
 The circuit can then be decomposed using a decomposition strategy. The different decomposition strategies can be found in the [tutorials](https://github.com/QuTech-Delft/OpenSquirrel/tree/develop/example/tutorials).
 In the example below, the circuit is decomposed using `ZYZDecomposer`.
 
@@ -91,6 +88,8 @@ In the example below, the circuit is decomposed using `ZYZDecomposer`.
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 
 circuit.decompose(decomposer=ZYZDecomposer())
+```
+
 Once the circuit is decomposed, the circuit is written to low level assembly language, namely `cQASM3`. This is done by
 invoking the `writer` class, as can be seen below.
 
@@ -123,7 +122,6 @@ example tutorials.
 
 The contribution guidelines and set up can be found
 [here](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/CONTRIBUTING.md).
-
 
 ## Authors
 
