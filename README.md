@@ -7,7 +7,6 @@
 [![pytest](https://img.shields.io/badge/py-test-blue?logo=pytest)](https://github.com/pytest-dev/pytest)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-
 ```
  ,;;:;,
    ;;;;;
@@ -18,6 +17,7 @@
  jgs `"=\_  )_"`
           ``'"`
 ```
+
 OpenSquirrel is a quantum compiler that chooses a _modular_, over a _configurable_, approach to prepare and optimize quantum circuits for heterogeneous target architectures.
 
 It has a user-friendly interface and is straightforwardly extensible with custom-made readers, compiler passes, and exporters.
@@ -83,6 +83,7 @@ Rx(1.0471976) q[0]
 qc = Circuit.from_string(cqasm_string)
 ```
 
+
 The circuit can then be decomposed using a decomposition strategy. The different decomposition strategies can be found in the [tutorials](https://github.com/QuTech-Delft/OpenSquirrel/tree/develop/example/tutorials).
 In the example below, the circuit is decomposed using `ZYZDecomposer`.
 
@@ -110,6 +111,8 @@ Ry(3.1415927) q[0]
 Rz(1.5707963) q[0]
 Ry(1.0471976) q[0]
 Rz(-1.5707963) q[0]
+```
+
 ## Documentation
 
 OpenSquirrel documentation is hosted through GitHub Pages [here](https://QuTech-Delft.github.io/OpenSquirrel/).
