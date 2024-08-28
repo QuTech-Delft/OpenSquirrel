@@ -120,17 +120,17 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         """Construct a list of qubits and return a zip.
         For example: [Qubit(0), Qubit(1), Qubit(2)]
         """
-        if len(ast_args) < 1:
-            expanded_args = [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
-            return zip(expanded_args)
         expanded_args: list[Any] = []
+        if len(ast_args) < 1:
+            expanded_args += [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
+            return zip(expanded_args)
         for ast_arg in ast_args:
             if Parser._is_qubit_type(ast_arg):
-                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
+                expanded_args += cls._get_qubits(ast_arg, register_manager)
             else:
                 msg = "received argument is not a (qu)bit"
                 raise TypeError(msg)
-        return zip(*expanded_args)
+        return zip(expanded_args)
 
     @classmethod
     def _get_expanded_gate_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
