@@ -16,25 +16,26 @@ def test_circuit_from_string() -> None:
 
         // Initialise a circuit with two qubits and a bit
         qubit[2] q
-        bit[1] b
+        bit[2] b
 
         // Create a Bell pair
         H q[0]
         CNOT q[0], q[1]
 
-        // Measure second qubit
-        b = measure q[1]
+        // Measure qubits
+        b = measure q
         """
     )
 
     str_circuit = """version 3.0
 
 qubit[2] q
-bit[1] b
+bit[2] b
 
 H q[0]
 CNOT q[0], q[1]
-b[0] = measure q[1]
+b[0] = measure q[0]
+b[1] = measure q[1]
 """
     assert str_circuit == str(my_circuit)
 
@@ -124,7 +125,7 @@ def test_CNOT_strong_type_error() -> None:
 
 def test_merge_single_qubit() -> None:
     builder = CircuitBuilder(1)
-    for _i in range(4):
+    for _ in range(4):
         builder.Rx(Qubit(0), Float(math.pi / 4))
 
     circuit = builder.to_circuit()

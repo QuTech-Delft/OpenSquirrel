@@ -3,10 +3,11 @@
 ## Installation
 
 OpenSquirrel is available through the Python Package Index ([PyPI](<https://pypi.org/project/opensquirrel/>)). Accordingly, the installation is as easy as ABC:
-
+```
+$ pip install opensquirrel
+```
+You can check if the package is installed by importing it,
 ```python
-!pip install opensquirrel
-
 import opensquirrel
 ```
 
@@ -27,14 +28,14 @@ my_circuit = Circuit.from_string(
 
     // Initialise a circuit with two qubits and a bit
     qubit[2] q
-    bit[1] b
+    bit[2] b
 
     // Create a Bell pair
     H q[0]
     CNOT q[0], q[1]
 
-    // Measure second qubit
-    b = measure q[1]
+    // Measure qubits
+    b = measure q
     """
 )
 my_circuit
@@ -43,13 +44,13 @@ my_circuit
     version 3.0
 
     qubit[2] q
-    bit[1] b
+    bit[2] b
 
     H q[0]
     CNOT q[0], q[1]
-    b[0] = measure q[1]
+    b[0] = measure q[0]
+    b[1] = measure q[1]
 
->__Note__: Currently OpenSquirrel only supports a limited version of the quantum programming language cQASM 3.0. This is due to the fact that the latter is still under development. When new features are introduced to the language, OpenSquirrel will follow in due course. For example, at the time of writing, OpenSquirrel only supports the declaration of a single qubit register per quantum program, whereas the language already allows for the declaration of multiple qubit registers within the global scope of the quantum program. Both the language and OpenSquirrel are under continuous development. Nevertheless, the language features that _are_ supported by OpenSquirrel function properly.
 
 ### 2. Using OpenSquirrel's `CircuitBuilder`
 
@@ -172,7 +173,7 @@ Note that the semantic representation of an anonymous gate is not compliant cQAS
 import math
 
 builder = CircuitBuilder(1)
-for _i in range(4):
+for _ in range(4):
     builder.Rx(Qubit(0), Float(math.pi / 4))
 
 circuit = builder.to_circuit()
@@ -233,14 +234,19 @@ def swap(q1: Qubit, q2: Qubit) -> Gate:
 
 ### Gate decomposition
 
-OpenSquirrel can decompose the gates of a quantum circuit, given a specific decomposition. OpenSquirrel offers several, so-called, decomposers out of the box, but users can also make their own decomposer and apply them to the circuit. Decompositions can be:
+OpenSquirrel can decompose the gates of a quantum circuit, given a specific decomposition.
+OpenSquirrel offers several, so-called, decomposers out of the box,
+but users can also make their own decomposer and apply them to the circuit.
+Decompositions can be:
    1. predefined, or;
    2. inferred from the gate semantics.
 
 #### 1. Predefined decomposition
 
-The first kind of decomposition is when you want to replace a particular gate in the circuit, like the CNOT gate, with a fixed list of gates. It is commonly known that CNOT can be decomposed as H-CZ-H. This decomposition is demonstrated below using a Python _lambda function_, which requires the same parameters as the gate that is decomposed:
-
+The first kind of decomposition is when you want to replace a particular gate in the circuit,
+like the CNOT gate, with a fixed list of gates. It is commonly known that CNOT can be decomposed as H-CZ-H.
+This decomposition is demonstrated below using a Python _lambda function_,
+which requires the same parameters as the gate that is decomposed:
 ```python
 from opensquirrel.default_gates import CNOT, H, CZ
 
@@ -278,8 +284,8 @@ circuit
     H q[1]
     Ry(6.78) q[2]
 
-OpenSquirrel will check whether the provided decomposition is correct. For instance, an exception is thrown if we forget the final Hadamard, or H-gate, in our custom-made decomposition:
-
+OpenSquirrel will check whether the provided decomposition is correct.
+For instance, an exception is thrown if we forget the final Hadamard, or H-gate, in our custom-made decomposition:
 ```python
 circuit = Circuit.from_string(
     """
