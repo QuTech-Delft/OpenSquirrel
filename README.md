@@ -46,7 +46,7 @@ The tutorials can be found [here](https://github.com/QuTech-Delft/OpenSquirrel/t
 Essentially, compiling a circuit in OpenSquirrel can be seen as a 3-stage process:
 1. Defining and building the quantum circuit using either the `CircuitBuilder` or from a `cQASM` string.
 2. Executing multiple passes on the circuit, each traversing and modifying it (e.g., a decomposition).
-3. Exporting the circuit (to `cQASM` again, or to a _lowered_ language like QuantifyScheduler). 
+3. Exporting the circuit (to `cQASM` again, or to a _lowered_ language like `cQASM3`). 
 
 Here is an example of building a circuit using the `CircuitBuilder`:
 
@@ -90,8 +90,8 @@ from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 circuit.decompose(decomposer=ZYZDecomposer())
 ```
 
-Once the circuit is decomposed, the circuit is written to low level assembly language, namely `cQASM3`. This is done by
-invoking the `writer` class, as can be seen below.
+Once the circuit is decomposed, the circuit is written to low level assembly language, namely `cQASM3`.
+This is done by invoking the `writer` class, as can be seen below.
 
 ```python
 from opensquirrel.writer import writer
@@ -114,8 +114,7 @@ Rz(-1.5707963) q[0]
 ## Documentation
 
 OpenSquirrel documentation is hosted through GitHub Pages [here](https://QuTech-Delft.github.io/OpenSquirrel/).
-The [example](https://github.com/QuTech-Delft/OpenSquirrel/tree/develop/example) folder contains `Jupyter` notebooks with
-example tutorials.
+The [example](https://github.com/QuTech-Delft/OpenSquirrel/tree/develop/example) folder contains `Jupyter` notebooks with example tutorials.
 
 ## Contributing
 
