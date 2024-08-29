@@ -35,7 +35,6 @@ numpy = [
 ]
 libqasm = "0.6.7"
 networkx = "^3.0.0"
-quantify-scheduler = "^0.21.1"
 
 [tool.poetry.group.dev.dependencies]
 black = {extras = ["jupyter"], version = ">=23.11,<25.0"}
@@ -80,7 +79,7 @@ quantify-scheduler=[
     # quantify-scheduler is not released for newer Python versions, i.e. > 3.9.
     # Its is only required for exporting OpenSquirrel circuits to the
     # Schedule format and testing this functionality.
-    { version = "^0.21.1", python = "<3.10" },
+    { version = "^0.18.0", python = "<3.10" },
 ]
 
 [tool.pytest.ini_options]
