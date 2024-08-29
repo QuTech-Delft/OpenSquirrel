@@ -71,16 +71,15 @@ Alternatively, one can build a circuit from a `cQASM` string:
 ```python
 from opensquirrel.circuit import Circuit
 
-cqasm_string = (
-"""
-version 3.0
-
-qubit[1] q
-
-H q[0]
-Z q[0]
-Y q[0]
-Rx(1.0471976) q[0]
+cqasm_string = ("""
+    version 3.0
+    
+    qubit q
+    
+    H q
+    Z q
+    Y q
+    Rx(1.0471976) q
 """)
 
 circuit = Circuit.from_string(cqasm_string)
