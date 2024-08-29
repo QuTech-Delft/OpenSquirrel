@@ -65,7 +65,9 @@ builder.Rx(Qubit(0), Float(math.pi / 3))
 # Get the circuit from the circuit builder
 circuit = builder.to_circuit()
 ```
-Alternatively, one can build a circuit from a `cQASM` string,
+
+Alternatively, one can build a circuit from a `cQASM` string:
+
 ```python
 from opensquirrel.circuit import Circuit
 
