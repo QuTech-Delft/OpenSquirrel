@@ -25,10 +25,6 @@ class Parser(GateLibrary, MeasurementLibrary):
         self.ir = None
 
     @staticmethod
-    def _parse_ast_string(string: str) -> str:
-        return string[2:-1]
-
-    @staticmethod
     def _ast_literal_to_ir_literal(
         cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat,
     ) -> Int | Float | None:
@@ -71,7 +67,7 @@ class Parser(GateLibrary, MeasurementLibrary):
         register_manager: RegisterManager,
     ) -> list[Qubit]:
         ret = []
-        variable_name = Parser._parse_ast_string(ast_qubit_expression.variable.name)
+        variable_name = ast_qubit_expression.variable.name
         if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
             qubit_range = register_manager.get_qubit_range(variable_name)
             ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
@@ -87,7 +83,7 @@ class Parser(GateLibrary, MeasurementLibrary):
         register_manager: RegisterManager,
     ) -> list[Bit]:
         ret = []
-        variable_name = Parser._parse_ast_string(ast_bit_expression.variable.name)
+        variable_name = ast_bit_expression.variable.name
         if isinstance(ast_bit_expression, cqasm.values.VariableRef):
             bit_range = register_manager.get_bit_range(variable_name)
             ret = [Bit(index) for index in range(bit_range.first, bit_range.first + bit_range.size)]
@@ -183,7 +179,7 @@ class Parser(GateLibrary, MeasurementLibrary):
         # Parse statements
         ir = IR()
         for statement in ast.block.statements:
-            statement_name = self._parse_ast_string(statement.name)
+            statement_name = statement.name
             if "measure" in statement_name:
                 generator_f_measure = self.get_measurement_f(statement_name)
                 expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
