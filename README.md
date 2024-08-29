@@ -46,7 +46,7 @@ The tutorials can be found [here](https://github.com/QuTech-Delft/OpenSquirrel/t
 Essentially, compiling a circuit in OpenSquirrel can be seen as a 3-stage process:
 1. Defining and building the quantum circuit using either the `CircuitBuilder` or from a `cQASM` string.
 2. Executing multiple passes on the circuit, each traversing and modifying it (e.g., a decomposition).
-3. Exporting the circuit (to `cQASM` again, or to a _lowered_ language like `cQASM3`). 
+3. Exporting the circuit (to `cQASM` again, or to a _lowered_ language like `cQASM3`).
 
 Here is an example of building a circuit using the `CircuitBuilder`:
 
@@ -64,6 +64,10 @@ builder.Rx(Qubit(0), Float(math.pi / 3))
 
 # Get the circuit from the circuit builder
 circuit = builder.to_circuit()
+```
+Alternatively, one can build a circuit from a `cQASM` string,
+```python
+from opensquirrel.circuit import Circuit
 
 cqasm_string = (
 """
@@ -77,7 +81,7 @@ Y q[0]
 Rx(1.0471976) q[0]
 """)
 
-qc = Circuit.from_string(cqasm_string)
+circuit = Circuit.from_string(cqasm_string)
 ```
 
 The circuit can then be decomposed using a decomposition strategy.
