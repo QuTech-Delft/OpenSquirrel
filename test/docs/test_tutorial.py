@@ -10,7 +10,7 @@ from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Int, Mat
 
 
 def test_circuit_from_string() -> None:
-    my_circuit = Circuit.from_string(
+    qc = Circuit.from_string(
         """
         version 3.0
 
@@ -27,7 +27,7 @@ def test_circuit_from_string() -> None:
         """
     )
 
-    str_circuit = """version 3.0
+    assert str(qc) == """version 3.0
 
 qubit[2] q
 bit[2] b
@@ -37,33 +37,29 @@ CNOT q[0], q[1]
 b[0] = measure q[0]
 b[1] = measure q[1]
 """
-    assert str_circuit == str(my_circuit)
 
 
 def test_circuit_builder() -> None:
-    my_circuit_from_builder = (
-        CircuitBuilder(qubit_register_size=2).Ry(Qubit(0), Float(0.23)).CNOT(Qubit(0), Qubit(1)).to_circuit()
-    )
-    assert (
-        str(my_circuit_from_builder)
-        == """version 3.0
+    builder = CircuitBuilder(qubit_register_size=2)
+    builder.Ry(Qubit(0), Float(0.23)).CNOT(Qubit(0), Qubit(1))
+    qc = builder.to_circuit()
+
+    assert str(qc) == """version 3.0
 
 qubit[2] q
 
 Ry(0.23) q[0]
 CNOT q[0], q[1]
 """
-    )
 
 
-def test_functionality_hadamard() -> None:
+def test_circuit_builder_loop() -> None:
     builder = CircuitBuilder(qubit_register_size=10)
     for i in range(0, 10, 2):
         builder.H(Qubit(i))
+    qc = builder.to_circuit()
 
-    assert (
-        str(builder.to_circuit())
-        == """version 3.0
+    assert str(qc) == """version 3.0
 
 qubit[10] q
 
@@ -73,20 +69,18 @@ H q[4]
 H q[6]
 H q[8]
 """
-    )
 
 
-def test_QFT() -> None:
+def test_circuit_builder_QFT() -> None:
     qubit_register_size = 5
-    qft = CircuitBuilder(qubit_register_size)
+    builder = CircuitBuilder(qubit_register_size)
     for i in range(qubit_register_size):
-        qft.H(Qubit(i))
+        builder.H(Qubit(i))
         for c in range(i + 1, qubit_register_size):
-            qft.CRk(Qubit(c), Qubit(i), Int(c - i + 1))
+            builder.CRk(Qubit(c), Qubit(i), Int(c - i + 1))
+    qft = builder.to_circuit()
 
-    assert (
-        str(qft.to_circuit())
-        == """version 3.0
+    assert str(qft) == """version 3.0
 
 qubit[5] q
 
@@ -106,10 +100,9 @@ H q[3]
 CRk(2) q[4], q[3]
 H q[4]
 """
-    )
 
 
-def test_CNOT_strong_type_error() -> None:
+def test_CNOT_strong_type_error_string() -> None:
     with pytest.raises(OSError, match=r".* with argument pack .*") as e_info:
         Circuit.from_string(
             """
@@ -123,24 +116,27 @@ def test_CNOT_strong_type_error() -> None:
     assert "failed to resolve instruction 'CNOT' with argument pack (qubit, int)" in str(e_info.value)
 
 
-def test_merge_single_qubit() -> None:
+def test_CNOT_strong_type_error_builder() -> None:
+    with pytest.raises(TypeError) as e_info:
+        CircuitBuilder(qubit_register_size=2).CNOT(Qubit(0), 3)
+
+    assert ("wrong argument type for instruction `CNOT`, got <class 'int'> but expected Qubit" in str(e_info.value))
+
+
+def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
     for _ in range(4):
         builder.Rx(Qubit(0), Float(math.pi / 4))
+    qc = builder.to_circuit()
 
-    circuit = builder.to_circuit()
+    qc.merge_single_qubit_gates()
 
-    circuit.merge_single_qubit_gates()
-
-    assert (
-        str(circuit)
-        == """version 3.0
+    assert str(qc) == """version 3.0
 
 qubit[1] q
 
 Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
 """
-    )
 
 
 def test_create_custom_gates() -> None:
@@ -182,7 +178,7 @@ def test_create_custom_gates() -> None:
 
 
 def test_predefined_decomposition() -> None:
-    circuit = Circuit.from_string(
+    qc = Circuit.from_string(
         """
         version 3.0
         qubit[3] q
@@ -192,18 +188,17 @@ def test_predefined_decomposition() -> None:
         Ry q[2], 6.78
         """
     )
-
-    circuit.replace(
+    qc.replace(
         CNOT,
-        lambda control, target: [
+        lambda control, target:
+        [
             H(target),
             CZ(control, target),
             H(target),
-        ],
+        ]
     )
-    assert (
-        str(circuit)
-        == """version 3.0
+
+    assert  str(qc) == """version 3.0
 
 qubit[3] q
 
@@ -215,11 +210,10 @@ CZ q[0], q[1]
 H q[1]
 Ry(6.78) q[2]
 """
-    )
 
 
-def test_error_decomposition() -> None:
-    circuit = Circuit.from_string(
+def test_error_predefined_decomposition() -> None:
+    qc = Circuit.from_string(
         """
         version 3.0
         qubit[3] q
@@ -230,47 +224,25 @@ def test_error_decomposition() -> None:
         """
     )
     with pytest.raises(ValueError, match=r"replacement for gate .*") as e_info:
-        circuit.replace(
+        qc.replace(
             CNOT,
             lambda control, target: [
                 H(target),
                 CZ(control, target),
-            ],
+            ]
         )
 
     assert str(e_info.value) == "replacement for gate CNOT does not preserve the quantum state"
 
 
-def test_anonymous_gate() -> None:
-    builder = CircuitBuilder(1)
-    for _ in range(4):
-        builder.Rx(Qubit(0), Float(math.pi / 4))
-    circuit = builder.to_circuit()
-    circuit.merge_single_qubit_gates()
-    assert (
-        str(circuit)
-        == """version 3.0
-
-qubit[1] q
-
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
-"""
-    )
-
-
 def test_zyz_decomposer() -> None:
     builder = CircuitBuilder(qubit_register_size=1)
-    builder.H(Qubit(0))
-    builder.Z(Qubit(0))
-    builder.Y(Qubit(0))
-    builder.Rx(Qubit(0), Float(math.pi / 3))
+    builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), Float(math.pi / 3))
+    qc = builder.to_circuit()
 
-    circuit = builder.to_circuit()
-    circuit.decompose(decomposer=ZYZDecomposer())
+    qc.decompose(decomposer=ZYZDecomposer())
 
-    assert (
-        str(circuit)
-        == """version 3.0
+    assert str(qc) == """version 3.0
 
 qubit[1] q
 
@@ -282,5 +254,5 @@ Rz(1.5707963) q[0]
 Ry(1.0471976) q[0]
 Rz(-1.5707963) q[0]
 """
-    )
+
     assert ZYZDecomposer().decompose(H(Qubit(0))) == [Rz(Qubit(0), Float(math.pi)), Ry(Qubit(0), Float(math.pi / 2))]

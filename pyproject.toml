@@ -56,6 +56,7 @@ mkdocs = {extras = ["python"], version = "^1.5.3"}
 mkdocstrings = {extras = ["python"], version = ">=0.24,<0.26"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
 mkdocs-material = "^9.4.12"
+mkdocs-literate-nav = "^0.6.1"
 pymdown-extensions = "^10.7.1"
 sympy = "^1.13.1"
 
@@ -115,7 +116,7 @@ select = [
     "BLE", # flake8-blind-except
     "COM", #flake8-commas
     "C4", #flake8-comprehensions
-    "C90", # mccabe 
+    "C90", # mccabe
     #"D", # pydocstyle
     "DTZ", # flake8-datetimez
     "E", # pycodestyle (error)
@@ -124,7 +125,7 @@ select = [
     "EXE", # flake8-executable
     "F", # Pyflakes
     "FA", # flake8-future-annotations
-    "FBT", # flake8-boolean-trap 
+    "FBT", # flake8-boolean-trap
     "FIX", # flake8-fixme
     "FLY", # flynt
     "G", # flake8-logging-format
@@ -141,13 +142,13 @@ select = [
     "PTH", # flake8-use-pathlib
     "FURB", # refurb
     "RET", # flake8-return
-    "RUF", # Ruff-specific rules 
+    "RUF", # Ruff-specific rules
     "S", # flake8-bandit
     "SIM", # flake8-simplify
     "SLF", # flake8-self
     "SLOT", # flake8-slots
     "TCH", # flake8-type-checking
-    "TRY", # tryceratops 
+    "TRY", # tryceratops
     "T20", # flake8-print
     "T100", # flake8-debugger
     "UP", # pyupgrade
