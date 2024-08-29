@@ -33,9 +33,9 @@ Make sure the tests and the following linters pass.
 From a `poetry` shell (started from an OpenSquirrel checkout):
 
 ```
-$ pytest -vv
-$ poetry run isort .
-$ poetry run black .
+$ poetry run pytest . -vv
+$ poetry run ruff check --fix
+$ poetry run ruff format
 $ poetry run mypy opensquirrel --strict
 ```
 

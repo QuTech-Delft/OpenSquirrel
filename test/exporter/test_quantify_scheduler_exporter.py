@@ -1,32 +1,38 @@
+from __future__ import annotations
+
 import contextlib
 import importlib.util
 import math
 import unittest.mock
+from math import isclose
+from typing import Any
 
 import pytest
 
-from opensquirrel.circuit import Circuit
+from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import CCZ, CZ, SWAP, H, Ry, Rz, X
+from opensquirrel.default_gates import CCZ, SWAP, H
+from opensquirrel.exceptions import ExporterError
 from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.exporter.quantify_scheduler_exporter import DEG_PRECISION
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Measure, Qubit
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
+from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate, Qubit
 
 
 class FloatEq(float):
-    def __eq__(self, other):
-        return abs(self - other) < ATOL
+    def __eq__(self, other: Any) -> bool:
+        return isclose(self, other, abs_tol=ATOL)
 
 
 class MockedQuantifyScheduler:
-    def __enter__(self):
+    def __enter__(self) -> tuple[Any, Any]:
         self.patch_qs = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler", create=True
+            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler",
+            create=True,
         )
 
         self.patch_qs_gates = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates", create=True
+            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates",
+            create=True,
         )
 
         with contextlib.ExitStack() as stack:
@@ -36,27 +42,27 @@ class MockedQuantifyScheduler:
 
         return self.mock_quantify_scheduler, self.mock_quantify_scheduler_gates
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
         self._stack.__exit__(exc_type, exc_value, exc_traceback)
 
 
 class TestQuantifySchedulerExporter:
-    def test_export(self):
-        register_manager = RegisterManager(QubitRegister(3), BitRegister(3))
-        ir = IR()
-        ir.add_gate(X(Qubit(0)))
-        ir.add_gate(CZ(Qubit(0), Qubit(1)))
-        ir.add_gate(Rz(Qubit(1), Float(2.34)))
-        ir.add_gate(Ry(Qubit(2), Float(1.23)))
-        ir.add_measurement(Measure(Qubit(0), Bit(0)))
-        ir.add_measurement(Measure(Qubit(1), Bit(1)))
-        ir.add_measurement(Measure(Qubit(2), Bit(2)))
+    def test_export(self) -> None:
+        builder = CircuitBuilder(3, 3)
+        builder.X(Qubit(0))
+        builder.CZ(Qubit(0), Qubit(1))
+        builder.Rz(Qubit(1), Float(2.34))
+        builder.Ry(Qubit(2), Float(1.23))
+        builder.measure(Qubit(0), Bit(0))
+        builder.measure(Qubit(1), Bit(1))
+        builder.measure(Qubit(2), Bit(2))
+        circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
             mock_schedule = unittest.mock.MagicMock()
             mock_quantify_scheduler.Schedule.return_value = mock_schedule
 
-            quantify_scheduler_exporter.export(Circuit(register_manager, ir))
+            quantify_scheduler_exporter.export(circuit)
 
             mock_quantify_scheduler.Schedule.assert_called_with("Exported OpenSquirrel circuit")
 
@@ -64,38 +70,46 @@ class TestQuantifySchedulerExporter:
                 [
                     unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="q[0]"),
                     unittest.mock.call(
-                        theta=FloatEq(round(math.degrees(1.23), DEG_PRECISION)),
+                        theta=FloatEq(round(math.degrees(1.23), FIXED_POINT_DEG_PRECISION)),
                         phi=FloatEq(math.degrees(math.pi / 2)),
                         qubit="q[2]",
                     ),
-                ]
+                ],
             )
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(
-                theta=FloatEq(round(math.degrees(2.34), DEG_PRECISION)), qubit="q[1]"
+                theta=FloatEq(round(math.degrees(2.34), FIXED_POINT_DEG_PRECISION)),
+                qubit="q[1]",
             )
             assert mock_schedule.add.call_count == 7
 
-    def check_gate_not_supported(self, g: Gate) -> None:
-        register_manager = RegisterManager(QubitRegister(3))
-        ir = IR()
-        ir.add_gate(g)
+    @pytest.mark.parametrize(
+        "gate",
+        [
+            H(Qubit(0)),
+            SWAP(Qubit(0), Qubit(1)),
+            BlochSphereRotation(qubit=Qubit(0), axis=(1, 2, 3), angle=0.9876, phase=2.34),
+            CCZ(Qubit(0), Qubit(1), Qubit(2)),
+        ],
+        ids=["H", "SWAP", "BSR", "CCZ"],
+    )
+    def test_gates_not_supported(self, gate: Gate) -> None:
+        builder = CircuitBuilder(3)
+        builder.ir.add_gate(gate)
+        circuit = builder.to_circuit()
 
-        with MockedQuantifyScheduler():
-            with pytest.raises(Exception, match="Cannot export circuit: it contains unsupported gates"):
-                quantify_scheduler_exporter.export(Circuit(register_manager, ir))
-
-    def test_gates_not_supported(self):
-        self.check_gate_not_supported(H(Qubit(0)))
-        self.check_gate_not_supported(SWAP(Qubit(0), Qubit(1)))
-        self.check_gate_not_supported(BlochSphereRotation(qubit=Qubit(0), axis=(1, 2, 3), angle=0.9876, phase=2.34))
-        self.check_gate_not_supported(CCZ(Qubit(0), Qubit(1), Qubit(2)))
+        with MockedQuantifyScheduler(), pytest.raises(ExporterError, match="cannot export circuit: "):
+            quantify_scheduler_exporter.export(circuit)
 
 
 @pytest.mark.skipif(
-    importlib.util.find_spec("quantify_scheduler") is not None, reason="quantify_scheduler is installed"
+    importlib.util.find_spec("quantify_scheduler") is not None,
+    reason="quantify_scheduler is installed",
 )
 def test_quantify_scheduler_not_installed() -> None:
-    empty_circuit = Circuit(RegisterManager(QubitRegister(1)), IR())
-    with pytest.raises(Exception, match="quantify-scheduler is not installed, or cannot be installed on your system"):
+    empty_circuit = CircuitBuilder(1).to_circuit()
+    with pytest.raises(
+        ModuleNotFoundError,
+        match="quantify-scheduler is not installed, or cannot be installed on your system",
+    ):
         quantify_scheduler_exporter.export(empty_circuit)

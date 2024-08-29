@@ -12,8 +12,16 @@ from numpy.typing import ArrayLike, DTypeLike, NDArray
 
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
+REPR_DECIMALS = 5
 
-class IRVisitor(ABC):
+
+def repr_round(
+    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
+) -> float | NDArray[np.complex64 | np.complex128]:
+    return np.round(value, decimals)
+
+
+class IRVisitor:
     def visit_comment(self, comment: Comment) -> Any:
         pass
 
@@ -149,14 +157,14 @@ class Axis(Sequence[np.float64], Expression):
             return axis.value
 
         try:
-            axis = np.asfarray(axis)
+            axis = np.asarray(axis, dtype=float)
         except (ValueError, TypeError) as e:
-            raise TypeError("Axis requires an ArrayLike") from e
+            msg = "axis requires an ArrayLike"
+            raise TypeError(msg) from e
         axis = axis.flatten()
         if len(axis) != 3:
-            raise ValueError(
-                f"Axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}."
-            )
+            msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
+            raise ValueError(msg)
         return cls._normalize_axis(axis)
 
     @staticmethod
@@ -183,7 +191,7 @@ class Axis(Sequence[np.float64], Expression):
         """String representation of the ``Axis``."""
         return f"Axis{self.value}"
 
-    def __array__(self, dtype: DTypeLike = None, copy: bool = True) -> NDArray[Any]:
+    def __array__(self, dtype: DTypeLike = None, *, copy: bool = True) -> NDArray[Any]:
         """Convert the ``Axis`` data to an array."""
         return np.array(self.value, dtype=dtype, copy=copy)
 
@@ -265,11 +273,25 @@ class Gate(Statement, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<anonymous-gate>"
+        if self.generator:
+            return self.generator.__name__
+        return "Anonymous gate: " + self.__repr__()
 
     @property
     def is_anonymous(self) -> bool:
         return self.arguments is None
+
+    @staticmethod
+    def _check_repeated_qubit_operands(qubits: list[Qubit]) -> bool:
+        """Check if qubit operands are repeated.
+
+        Args:
+            qubits: List of qubits.
+
+        Returns:
+            Whether qubit operands are repeated.
+        """
+        return len(qubits) != len(set(qubits))
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
@@ -309,7 +331,10 @@ class BlochSphereRotation(Gate):
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
-        return f"BlochSphereRotation({self.qubit}, axis={self.axis}, angle={self.angle}, phase={self.phase})"
+        return (
+            f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
+            f" phase={repr_round(self.phase)})"
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, BlochSphereRotation):
@@ -342,20 +367,32 @@ class BlochSphereRotation(Gate):
 class MatrixGate(Gate):
     def __init__(
         self,
-        matrix: NDArray[np.complex_],
+        matrix: NDArray[np.complex128],
         operands: list[Qubit],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
-    ):
+    ) -> None:
         Gate.__init__(self, generator, arguments)
-        assert len(operands) >= 2, "For 1q gates, please use BlochSphereRotation"
-        assert matrix.shape == (1 << len(operands), 1 << len(operands))
+        if len(operands) < 2:
+            msg = "for 1q gates, please use BlochSphereRotation"
+            raise ValueError(msg)
+
+        if self._check_repeated_qubit_operands(operands):
+            msg = "control and target qubit cannot be the same"
+            raise ValueError(msg)
+
+        if matrix.shape != (1 << len(operands), 1 << len(operands)):
+            msg = (
+                f"incorrect matrix shape. "
+                f"Expected {(1 << len(operands), 1 << len(operands))} but received {matrix.shape}"
+            )
+            raise ValueError(msg)
 
         self.matrix = matrix
         self.operands = operands
 
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={self.matrix})"
+        return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
@@ -375,10 +412,14 @@ class ControlledGate(Gate):
         target_gate: Gate,
         generator: Callable[..., ControlledGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
-    ):
+    ) -> None:
         Gate.__init__(self, generator, arguments)
         self.control_qubit = control_qubit
         self.target_gate = target_gate
+
+        if self._check_repeated_qubit_operands([control_qubit, *target_gate.get_qubit_operands()]):
+            msg = "control and target qubit cannot be the same"
+            raise ValueError(msg)
 
     def __repr__(self) -> str:
         return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
@@ -388,7 +429,7 @@ class ControlledGate(Gate):
         return visitor.visit_controlled_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
-        return [self.control_qubit] + self.target_gate.get_qubit_operands()
+        return [self.control_qubit, *self.target_gate.get_qubit_operands()]
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
@@ -465,7 +506,9 @@ class Comment(Statement):
     str: str
 
     def __post_init__(self) -> None:
-        assert "*/" not in self.str, "Comment contains illegal characters"
+        if "*/" in self.str:
+            msg = "comment contains illegal characters"
+            raise ValueError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)

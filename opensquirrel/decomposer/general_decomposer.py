@@ -10,7 +10,6 @@ from opensquirrel.reindexer import get_reindexed_circuit
 
 
 class Decomposer(ABC):
-
     @abstractmethod
     def decompose(self, gate: Gate) -> list[Gate]:
         raise NotImplementedError()
@@ -23,12 +22,15 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
         replacement_gates_qubit_indices.update([q.index for q in g.get_qubit_operands()])
 
     if set(gate_qubit_indices) != replacement_gates_qubit_indices:
-        raise ValueError(f"Replacement for gate {gate.name} does not seem to operate on the right qubits")
+        msg = f"replacement for gate {gate.name} does not seem to operate on the right qubits"
+        raise ValueError(msg)
 
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
     replacement_matrix = get_circuit_matrix(get_reindexed_circuit(replacement_gates, gate_qubit_indices))
+
     if not are_matrices_equivalent_up_to_global_phase(replaced_matrix, replacement_matrix):
-        raise Exception(f"Replacement for gate {gate.name} does not preserve the quantum state")
+        msg = f"replacement for gate {gate.name} does not preserve the quantum state"
+        raise ValueError(msg)
 
 
 def decompose(ir: IR, decomposer: Decomposer) -> None:
@@ -60,7 +62,7 @@ class _GenericReplacer(Decomposer):
     def decompose(self, g: Gate) -> list[Gate]:
         if g.is_anonymous or g.generator != self.gate_generator:
             return [g]
-        arguments = tuple() if g.arguments is None else g.arguments
+        arguments = () if g.arguments is None else g.arguments
         return self.replacement_function(*arguments)
 
 

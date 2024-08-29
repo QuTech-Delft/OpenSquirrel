@@ -14,7 +14,8 @@ class Mapper:
         self.mapping = mapping if mapping is not None else Mapping(physical_qubit_register)
 
         if qubit_register_size != self.mapping.size():
-            raise ValueError("Qubit register size and mapping size differ.")
+            msg = "qubit register size and mapping size differ"
+            raise ValueError(msg)
 
     def get_mapping(self) -> Mapping:
         """Get mapping."""

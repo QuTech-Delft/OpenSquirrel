@@ -4,18 +4,15 @@ import math
 
 import pytest
 
-from opensquirrel.circuit import Circuit
-from opensquirrel.decomposer import general_decomposer
-from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement
-from opensquirrel.default_gates import CNOT, Y90, BlochSphereRotation, H, I, Ry, Rz, X, Z, sqrtSWAP
-from opensquirrel.ir import IR, Comment, Float, Gate, Qubit
-from opensquirrel.register_manager import QubitRegister, RegisterManager
+from opensquirrel import CircuitBuilder
+from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
+from opensquirrel.default_gates import CNOT, Y90, H, I, Ry, Rz, X, Z, sqrtSWAP
+from opensquirrel.ir import BlochSphereRotation, Float, Gate, Qubit
 
 
 class TestCheckGateReplacement:
-
     @pytest.mark.parametrize(
-        "gate, replacement_gates",
+        ("gate", "replacement_gates"),
         [
             (I(Qubit(0)), [I(Qubit(0))]),
             (I(Qubit(0)), [I(Qubit(0)), I(Qubit(0))]),
@@ -33,26 +30,26 @@ class TestCheckGateReplacement:
         check_gate_replacement(gate, replacement_gates)
 
     @pytest.mark.parametrize(
-        "gate, replacement_gates, error_msg",
+        ("gate", "replacement_gates", "error_msg"),
         [
-            (H(Qubit(0)), [H(Qubit(1))], "Replacement for gate H does not seem to operate on the right qubits"),
+            (H(Qubit(0)), [H(Qubit(1))], "replacement for gate H does not seem to operate on the right qubits"),
             (
                 CNOT(Qubit(0), Qubit(1)),
                 [CNOT(Qubit(2), Qubit(1))],
-                "Replacement for gate CNOT does not seem to operate on the right qubits",
+                "replacement for gate CNOT does not seem to operate on the right qubits",
             ),
             (
                 CNOT(Qubit(0), Qubit(1)),
                 [CNOT(Qubit(1), Qubit(0))],
-                "Replacement for gate CNOT does not preserve the quantum state",
+                "replacement for gate CNOT does not preserve the quantum state",
             ),
         ],
     )
     def test_wrong_qubit(self, gate: Gate, replacement_gates: list[Gate], error_msg: str) -> None:
-        with pytest.raises(Exception, match=error_msg):
+        with pytest.raises(ValueError, match=error_msg):
             check_gate_replacement(gate, replacement_gates)
 
-    def test_cnot_as_sqrt_swap(self):
+    def test_cnot_as_sqrt_swap(self) -> None:
         # https://en.wikipedia.org/wiki/Quantum_logic_gate#/media/File:Qcircuit_CNOTsqrtSWAP2.svg
         c = Qubit(0)
         t = Qubit(1)
@@ -69,7 +66,7 @@ class TestCheckGateReplacement:
             ],
         )
 
-        with pytest.raises(Exception, match="Replacement for gate CNOT does not preserve the quantum state"):
+        with pytest.raises(ValueError, match="replacement for gate CNOT does not preserve the quantum state"):
             check_gate_replacement(
                 CNOT(control=c, target=t),
                 [
@@ -83,7 +80,7 @@ class TestCheckGateReplacement:
                 ],
             )
 
-        with pytest.raises(Exception, match="Replacement for gate CNOT does not seem to operate on the right qubits"):
+        with pytest.raises(ValueError, match="replacement for gate CNOT does not seem to operate on the right qubits"):
             check_gate_replacement(
                 CNOT(control=c, target=t),
                 [
@@ -97,56 +94,54 @@ class TestCheckGateReplacement:
                 ],
             )
 
-    def test_large_number_of_qubits(self):
+    def test_large_number_of_qubits(self) -> None:
         # If we were building the whole circuit matrix, this would run out of memory.
         check_gate_replacement(H(Qubit(9234687)), [Y90(Qubit(9234687)), X(Qubit(9234687))])
 
-        with pytest.raises(Exception, match="Replacement for gate H does not seem to operate on the right qubits"):
+        with pytest.raises(ValueError, match="replacement for gate H does not seem to operate on the right qubits"):
             check_gate_replacement(H(Qubit(9234687)), [Y90(Qubit(698446519)), X(Qubit(9234687))])
 
-        with pytest.raises(Exception, match="Replacement for gate H does not preserve the quantum state"):
+        with pytest.raises(ValueError, match="replacement for gate H does not preserve the quantum state"):
             check_gate_replacement(H(Qubit(9234687)), [Y90(Qubit(9234687)), X(Qubit(9234687)), X(Qubit(9234687))])
 
 
 class TestReplacer:
-    def test_replace_generic(self):
-        register_manager = RegisterManager(QubitRegister(3))
-        ir = IR()
-        ir.add_gate(H(Qubit(0)))
-        ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        circuit = Circuit(register_manager, ir)
+    def test_replace_generic(self) -> None:
+        builder1 = CircuitBuilder(3)
+        builder1.H(Qubit(0))
+        builder1.CNOT(Qubit(0), Qubit(1))
+        circuit = builder1.to_circuit()
 
         # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
             def decompose(self, g: Gate) -> list[Gate]:
                 if isinstance(g, BlochSphereRotation):
-                    return [BlochSphereRotation.identity(g.qubit), g, BlochSphereRotation.identity(g.qubit)]
+                    return [I(g.qubit), g, I(g.qubit)]
                 return [g]
 
-        general_decomposer.decompose(ir, decomposer=TestDecomposer())
+        decompose(circuit.ir, decomposer=TestDecomposer())
 
-        expected_ir = IR()
-        expected_ir.add_gate(BlochSphereRotation.identity(Qubit(0)))
-        expected_ir.add_gate(H(Qubit(0)))
-        expected_ir.add_gate(BlochSphereRotation.identity(Qubit(0)))
-        expected_ir.add_gate(CNOT(Qubit(0), Qubit(1)))
-        expected_circuit = Circuit(register_manager, expected_ir)
+        builder2 = CircuitBuilder(3)
+        builder2.I(Qubit(0))
+        builder2.H(Qubit(0))
+        builder2.I(Qubit(0))
+        builder2.CNOT(Qubit(0), Qubit(1))
+        expected_circuit = builder2.to_circuit()
 
         assert expected_circuit == circuit
 
-    def test_replace(self):
-        register_manager = RegisterManager(QubitRegister(3))
-        ir = IR()
-        ir.add_gate(H(Qubit(0)))
-        ir.add_comment(Comment("Test comment."))
-        circuit = Circuit(register_manager, ir)
+    def test_replace(self) -> None:
+        builder1 = CircuitBuilder(3)
+        builder1.H(Qubit(0))
+        builder1.comment("Test comment.")
+        circuit = builder1.to_circuit()
 
-        general_decomposer.replace(ir, H, lambda q: [Y90(q), X(q)])
+        replace(circuit.ir, H, lambda q: [Y90(q), X(q)])
 
-        expected_ir = IR()
-        expected_ir.add_gate(Y90(Qubit(0)))
-        expected_ir.add_gate(X(Qubit(0)))
-        expected_ir.add_comment(Comment("Test comment."))
-        expected_circuit = Circuit(register_manager, expected_ir)
+        builder2 = CircuitBuilder(3)
+        builder2.Y90(Qubit(0))
+        builder2.X(Qubit(0))
+        builder2.comment("Test comment.")
+        expected_circuit = builder2.to_circuit()
 
         assert expected_circuit == circuit

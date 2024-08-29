@@ -94,29 +94,36 @@ class MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
-    def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex_]:
-        assert rot.qubit.index < self.qubit_register_size
+    def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
+        if rot.qubit.index >= self.qubit_register_size:
+            msg = "index out of range"
+            raise IndexError(msg)
 
         result = np.kron(
             np.kron(
-                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)), can1(rot.axis, rot.angle, rot.phase)
+                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)),
+                can1(rot.axis, rot.angle, rot.phase),
             ),
             np.eye(1 << rot.qubit.index),
         )
-        assert result.shape == (1 << self.qubit_register_size, 1 << self.qubit_register_size)
+        if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
+            msg = "result has incorrect shape"
+            ValueError(msg)
         return result
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex_]:
-        assert gate.control_qubit.index < self.qubit_register_size
+    def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
+        if gate.control_qubit.index >= self.qubit_register_size:
+            msg = "index out of range"
+            raise IndexError(msg)
 
         expanded_matrix = gate.target_gate.accept(self)
         for col_index, col in enumerate(expanded_matrix.T):
             if col_index & (1 << gate.control_qubit.index) == 0:
                 col[:] = 0
                 col[col_index] = 1
-        return np.asarray(expanded_matrix, dtype=np.complex_)
+        return np.asarray(expanded_matrix, dtype=np.complex128)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex_]:
+    def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex128]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as
         #   1, 0, 0, 0
@@ -127,11 +134,18 @@ class MatrixExpander(IRVisitor):
         # since qubit #i corresponds to the i-th LEAST significant bit.
         qubit_operands = list(reversed(gate.operands))
 
-        assert all(q.index < self.qubit_register_size for q in qubit_operands)
+        if any(q.index >= self.qubit_register_size for q in qubit_operands):
+            msg = "index out of range"
+            raise IndexError(msg)
 
         m = gate.matrix
 
-        assert m.shape == (1 << len(qubit_operands), 1 << len(qubit_operands))
+        if m.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
+            msg = (
+                f"matrix has incorrect shape."
+                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}"
+            )
+            raise ValueError(msg)
 
         expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
 
@@ -142,7 +156,9 @@ class MatrixExpander(IRVisitor):
                 expanded_matrix_row = expand_ket(expanded_matrix_column, small_matrix_row, qubit_operands)
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
-        assert expanded_matrix.shape == (1 << self.qubit_register_size, 1 << self.qubit_register_size)
+        if expanded_matrix.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
+            msg = "expended matrix has incorrect shape"
+            raise ValueError(msg)
         return expanded_matrix
 
 
@@ -151,17 +167,17 @@ Y = np.array([[0, -1j], [1j, 0]])
 Z = np.array([[1, 0], [0, -1]])
 
 
-def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex_]:
+def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex128]:
     nx, ny, nz = Axis(axis)
 
     result = cmath.rect(1, phase) * (
         math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
     )
 
-    return np.asarray(result, dtype=np.complex_)
+    return np.asarray(result, dtype=np.complex128)
 
 
-def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex_]:
+def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
     """
     Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of
     qubits. This can be used for, e.g.,
@@ -202,4 +218,4 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex_]:
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
     expander = MatrixExpander(qubit_register_size)
-    return cast(NDArray[np.complex_], gate.accept(expander))
+    return cast(NDArray[np.complex128], gate.accept(expander))

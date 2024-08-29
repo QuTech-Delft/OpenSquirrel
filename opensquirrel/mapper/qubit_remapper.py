@@ -1,15 +1,5 @@
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (
-    IR,
-    BlochSphereRotation,
-    Comment,
-    ControlledGate,
-    Gate,
-    IRVisitor,
-    MatrixGate,
-    Measure,
-    Qubit,
-)
+from opensquirrel.ir import IR, BlochSphereRotation, Comment, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit
 from opensquirrel.mapper.mapping import Mapping
 
 
@@ -58,7 +48,9 @@ class _QubitRemapper(IRVisitor):
 
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
-    assert len(mapping) <= circuit.qubit_register_size
+    if len(mapping) > circuit.qubit_register_size:
+        msg = "mapping is larger than the qubit register size"
+        raise ValueError(msg)
     qubit_remapper = _QubitRemapper(mapping)
     replacement_ir = circuit.ir
     for statement in replacement_ir.statements:
@@ -67,7 +59,9 @@ def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
 
 
 def remap_ir(circuit: Circuit, mapping: Mapping) -> None:
-    assert len(mapping) <= circuit.qubit_register_size
+    if len(mapping) > circuit.qubit_register_size:
+        msg = "mapping is larger than the qubit register size"
+        raise ValueError(msg)
     qubit_remapper = _QubitRemapper(mapping)
     for statement in circuit.ir.statements:
         statement.accept(qubit_remapper)

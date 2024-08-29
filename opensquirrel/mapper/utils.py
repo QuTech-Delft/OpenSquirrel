@@ -12,10 +12,11 @@ def make_interaction_graph(ir: IR) -> nx.Graph:
         if len(target_qubits) == 1:
             continue
         if len(target_qubits) > 2:
-            raise ValueError(
-                f"The gate {gate} acts on more than 2 qubits. The gate must be decomposed before an interaction graph "
-                "can be made."
+            msg = (
+                f"the gate {gate} acts on more than 2 qubits. "
+                "The gate must be decomposed before an interaction graph can be made",
             )
+            raise ValueError(msg)
         interaction_graph.add_edge(*target_qubits)
 
     return interaction_graph

@@ -1,4 +1,4 @@
-""" Module containing classes that inherit from the ABADecomposer class to decompose a circuit into one of the Pauli
+"""Module containing classes that inherit from the ABADecomposer class to decompose a circuit into one of the Pauli
 ABA decompositions."""
 
 from __future__ import annotations
@@ -6,6 +6,7 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from typing import ClassVar
 
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
@@ -23,11 +24,19 @@ class ABADecomposer(Decomposer, ABC):
     @abstractmethod
     def rb(self) -> Callable[..., BlochSphereRotation]: ...
 
-    _gate_list: list[Callable[..., BlochSphereRotation]] = [Rx, Ry, Rz]
+    _gate_list: ClassVar[list[Callable[..., BlochSphereRotation]]] = [Rx, Ry, Rz]
 
     def __init__(self) -> None:
         self.index_a = self._gate_list.index(self.ra)
         self.index_b = self._gate_list.index(self.rb)
+
+    def _find_unused_index(self) -> int:
+        """Finds the index of the axis object that is not used in the decomposition.
+        For example, if one selects the ZYZ decomposition, the integer returned will be 0 (since it is X).
+        Returns:
+            Index of the axis object that is not used in the decomposition.
+        """
+        return ({0, 1, 2} - {self.index_a, self.index_b}).pop()
 
     def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
         """Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
@@ -45,32 +54,33 @@ class ABADecomposer(Decomposer, ABC):
         axis = Axis(axis)
         a_axis_value = axis[self.index_a]
         b_axis_value = axis[self.index_b]
+        c_axis_value = axis[self._find_unused_index()]
+
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
-            raise ValueError("Angle needs to be normalized")
+            msg = "angle needs to be normalized"
+            raise ValueError(msg)
 
         if abs(alpha - math.pi) < ATOL:
             # alpha == pi, math.tan(alpha / 2) is not defined.
-
             if abs(a_axis_value) < ATOL:
                 theta2 = math.pi
                 p = 0.0
                 m = 2 * math.acos(b_axis_value)
-
             else:
                 p = math.pi
                 theta2 = 2 * math.acos(a_axis_value)
-
                 if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
                     m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                 else:
-                    m = 2 * math.acos(b_axis_value / math.sqrt(1 - a_axis_value**2))
+                    m = 2 * math.acos(
+                        round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL)))),
+                    )
 
         else:
             p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
-
             acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
 
-            # This fixes float approximations like 1.0000000000002 which acos doesn't like.
+            # This fixes float approximations like 1.0000000000002, which acos does not like.
             acos_argument = max(min(acos_argument, 1.0), -1.0)
 
             theta2 = 2 * math.acos(acos_argument)
@@ -81,14 +91,20 @@ class ABADecomposer(Decomposer, ABC):
             else:
                 acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
-                # This fixes float approximations like 1.0000000000002 which acos doesn't like.
+                # This fixes float approximations like 1.0000000000002, which acos does not like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)
-
                 m = 2 * math.acos(acos_argument)
+                if math.pi - abs(m) > ATOL:
+                    m_sign = 2 * math.atan(c_axis_value / a_axis_value)
+                    m = math.copysign(m, m_sign)
+
+        is_sin_m_negative = self.index_a - self.index_b in (-1, 2)
+        if is_sin_m_negative:
+            m = m * -1
 
         theta1 = (p + m) / 2
-
         theta3 = p - theta1
+
         return theta1, theta2, theta3
 
     def decompose(self, g: Gate) -> list[Gate]:
@@ -108,7 +124,6 @@ class ABADecomposer(Decomposer, ABC):
         a1 = self.ra(g.qubit, Float(theta1))
         b = self.rb(g.qubit, Float(theta2))
         a2 = self.ra(g.qubit, Float(theta3))
-
         return filter_out_identities([a1, b, a2])
 
 
