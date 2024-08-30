@@ -4,8 +4,8 @@ import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit
+from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
+from opensquirrel.ir import BlochSphereRotation, Comment, Qubit
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -84,7 +84,7 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     Gates obtained from merging other gates become anonymous gates.
     """
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
-        Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(circuit.qubit_register_size)
+        Qubit(qubit_index): I(Qubit(qubit_index)) for qubit_index in range(circuit.qubit_register_size)
     }
 
     ir = circuit.ir
@@ -92,13 +92,13 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
-        if not isinstance(statement, Gate) and not isinstance(statement, Measure):
-            # Skip, since statement is not a gate or measurement
+        if isinstance(statement, Comment):
+            # Skip, since statement is a comment
             statement_index += 1
             continue
 
         if isinstance(statement, BlochSphereRotation):
-            # Accumulate
+            # Accumulate consecutive Bloch sphere rotations
             already_accumulated = accumulators_per_qubit[statement.qubit]
 
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
@@ -107,11 +107,13 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
             del ir.statements[statement_index]
             continue
 
-        for qubit_operand in statement.get_qubit_operands():
+        # Skip controlled-gates, measure, reset, and reset accumulator for their qubit operands
+        for qubit_operand in statement.get_qubit_operands():  # type: ignore
             if not accumulators_per_qubit[qubit_operand].is_identity():
                 ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
-                accumulators_per_qubit[qubit_operand] = BlochSphereRotation.identity(qubit_operand)
+                accumulators_per_qubit[qubit_operand] = I(qubit_operand)
                 statement_index += 1
+
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():

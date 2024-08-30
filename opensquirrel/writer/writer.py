@@ -1,5 +1,5 @@
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit
+from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -39,6 +39,13 @@ class _WriterImpl(IRVisitor):
         bit_argument = measure.arguments[1].accept(self)  # type: ignore[index]
         qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
         self.output += f"{bit_argument} = {measure.name} {qubit_argument}\n"
+
+    def visit_reset(self, reset: Reset) -> None:
+        if reset.is_abstract:
+            self.output += f"{reset.name}\n"
+            return
+        qubit_argument = reset.arguments[0].accept(self)  # type: ignore[index]
+        self.output += f"{reset.name} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name

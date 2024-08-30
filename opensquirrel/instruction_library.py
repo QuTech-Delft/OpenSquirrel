@@ -4,7 +4,7 @@ from collections.abc import Callable, Iterable, Mapping
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import Gate, Measure
+    from opensquirrel.ir import Gate, Measure, Reset
 
 
 class InstructionLibrary:
@@ -40,4 +40,16 @@ class MeasurementLibrary(InstructionLibrary):
             return next(f for f in self.measurement_set if f.__name__ == measurement_name)
         except StopIteration as exc:
             msg = f"unknown instruction `{measurement_name}`"
+            raise ValueError(msg) from exc
+
+
+class ResetLibrary(InstructionLibrary):
+    def __init__(self, reset_set: Iterable[Callable[..., Reset]]) -> None:
+        self.reset_set = reset_set
+
+    def get_reset_f(self, reset_name: str) -> Callable[..., Reset]:
+        try:
+            return next(f for f in self.reset_set if f.__name__ == reset_name)
+        except StopIteration as exc:
+            msg = f"unknown instruction `{reset_name}`"
             raise ValueError(msg) from exc

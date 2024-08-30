@@ -9,16 +9,7 @@ import pytest
 from numpy.typing import ArrayLike
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir import (
-    Axis,
-    Bit,
-    BlochSphereRotation,
-    ControlledGate,
-    Expression,
-    MatrixGate,
-    Measure,
-    Qubit,
-)
+from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
 
 
 class TestAxis:

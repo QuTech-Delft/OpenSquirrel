@@ -46,6 +46,9 @@ class IRVisitor:
     def visit_measure(self, measure: Measure) -> Any:
         pass
 
+    def visit_reset(self, reset: Reset) -> Any:
+        pass
+
     def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
         pass
 
@@ -249,6 +252,40 @@ class Measure(Statement, ABC):
 
     def get_bit_operands(self) -> list[Bit]:
         return [self.bit]
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+
+class Reset(Statement, ABC):
+    def __init__(
+        self,
+        qubit: Qubit,
+        generator: Callable[..., Reset] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+    ) -> None:
+        self.generator = generator
+        self.arguments = arguments
+        self.qubit: Qubit = qubit
+
+    def __repr__(self) -> str:
+        return f"Reset(qubit={self.qubit})"
+
+    @property
+    def name(self) -> str:
+        return self.generator.__name__ if self.generator else "<abstract_reset>"
+
+    @property
+    def is_abstract(self) -> bool:
+        return self.arguments is None
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Reset):
+            return False
+        return self.qubit == other.qubit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_reset(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
@@ -489,6 +526,27 @@ def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable
     return wrapper
 
 
+def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
+    @wraps(reset_generator)
+    def wrapper(*args: Any, **kwargs: Any) -> Reset:
+        result = reset_generator(*args, **kwargs)
+        result.generator = wrapper
+
+        all_args = []
+        arg_index = 0
+        for par in inspect.signature(reset_generator).parameters.values():
+            if par.name in kwargs:
+                all_args.append(kwargs[par.name])
+            else:
+                all_args.append(args[arg_index])
+                arg_index += 1
+
+        result.arguments = tuple(all_args)
+        return result
+
+    return wrapper
+
+
 def compare_gates(g1: Gate, g2: Gate) -> bool:
     union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
 
@@ -524,6 +582,9 @@ class IR:
 
     def add_measurement(self, measurement: Measure) -> None:
         self.statements.append(measurement)
+
+    def add_reset(self, reset: Reset) -> None:
+        self.statements.append(reset)
 
     def add_comment(self, comment: Comment) -> None:
         self.statements.append(comment)
