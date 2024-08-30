@@ -1,3 +1,4 @@
+
 The documentation for the code can be found in various Jupyter notebooks located in the `tutorials` folder.
 
 `Jupyter` and `sympy` are required to access the notebooks. These can be installed all at once by running:
@@ -7,7 +8,6 @@ $ pip install opensquirrel[examples]
 ```
 
 Alternatively, one can install both packages manually:
-
 ```shell
 $ pip install jupyter sympy
 ```
