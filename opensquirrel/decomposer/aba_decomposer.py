@@ -95,7 +95,7 @@ class ABADecomposer(Decomposer, ABC):
                 acos_argument = max(min(acos_argument, 1.0), -1.0)
                 m = 2 * math.acos(acos_argument)
                 if math.pi - abs(m) > ATOL:
-                    m_sign = 2 * math.atan(c_axis_value / a_axis_value)
+                    m_sign = 2 * math.atan2(c_axis_value, a_axis_value)
                     m = math.copysign(m, m_sign)
 
         is_sin_m_negative = self.index_a - self.index_b in (-1, 2)
