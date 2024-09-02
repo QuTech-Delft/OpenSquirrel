@@ -61,6 +61,8 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
+    def __contains__(self, qubit:Qubit):
+        return qubit in self.register_manager
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
         if attr == "comment":
             return self._add_comment
