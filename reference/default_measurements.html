@@ -9,23 +9,25 @@
       
       
       
+        <link rel="prev" href="default_gates.html">
       
-        <link rel="next" href="tutorial.html">
+      
+        <link rel="next" href="default_resets.html">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.33">
     
     
       
-        <title>OpenSquirrel</title>
+        <title>default_measurements - OpenSquirrel</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.3cba04c6.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.3cba04c6.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -44,9 +46,9 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -72,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#table-of-contents" class="md-skip">
+        <a href="#opensquirrel.default_measurements" class="md-skip">
           Skip to content
         </a>
       
@@ -86,7 +88,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+    <a href="../index.html" title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -106,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              default_measurements
             
           </span>
         </div>
@@ -221,11 +223,9 @@
         
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="index.html" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../index.html" class="md-tabs__link">
         
   
     
@@ -242,7 +242,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="tutorial.html" class="md-tabs__link">
+      <a href="../tutorial.html" class="md-tabs__link">
         
   
     
@@ -257,17 +257,21 @@
         
   
   
+    
+  
   
     
     
       
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="reference/circuit.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="circuit.html" class="md-tabs__link">
           
   
     
@@ -305,7 +309,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+    <a href="../index.html" title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -332,28 +336,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Home
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="index.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -362,51 +348,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#table-of-contents" class="md-nav__link">
-    <span class="md-ellipsis">
-      Table of Contents
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#authors" class="md-nav__link">
-    <span class="md-ellipsis">
-      Authors
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#acknowledgements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Acknowledgements
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -418,7 +359,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorial.html" class="md-nav__link">
+      <a href="../tutorial.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -435,8 +376,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -445,17 +388,20 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -466,7 +412,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             API documentation
@@ -477,8 +423,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -526,11 +474,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" checked>
         
           
           <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
@@ -544,7 +492,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_1">
             <span class="md-nav__icon md-icon"></span>
             opensquirrel
@@ -558,7 +506,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/circuit.html" class="md-nav__link">
+      <a href="circuit.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -579,7 +527,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/circuit_builder.html" class="md-nav__link">
+      <a href="circuit_builder.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -600,7 +548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/circuit_matrix_calculator.html" class="md-nav__link">
+      <a href="circuit_matrix_calculator.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -621,7 +569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/common.html" class="md-nav__link">
+      <a href="common.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -690,7 +638,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/decomposer/aba_decomposer.html" class="md-nav__link">
+      <a href="decomposer/aba_decomposer.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -711,7 +659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/decomposer/cnot_decomposer.html" class="md-nav__link">
+      <a href="decomposer/cnot_decomposer.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -732,7 +680,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/decomposer/general_decomposer.html" class="md-nav__link">
+      <a href="decomposer/general_decomposer.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -753,7 +701,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/decomposer/mckay_decomposer.html" class="md-nav__link">
+      <a href="decomposer/mckay_decomposer.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -782,7 +730,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/default_gates.html" class="md-nav__link">
+      <a href="default_gates.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -800,10 +748,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="reference/default_measurements.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    default_measurements
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="default_measurements.html" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -812,6 +778,33 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#opensquirrel.default_measurements" class="md-nav__link">
+    <span class="md-ellipsis">
+      default_measurements
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -824,7 +817,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/default_resets.html" class="md-nav__link">
+      <a href="default_resets.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -845,7 +838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/exceptions.html" class="md-nav__link">
+      <a href="exceptions.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -910,7 +903,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/exporter/export_format.html" class="md-nav__link">
+      <a href="exporter/export_format.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -931,7 +924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/exporter/quantify_scheduler_exporter.html" class="md-nav__link">
+      <a href="exporter/quantify_scheduler_exporter.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -960,7 +953,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/instruction_library.html" class="md-nav__link">
+      <a href="instruction_library.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -981,7 +974,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/ir.html" class="md-nav__link">
+      <a href="ir.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1052,7 +1045,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/mapper/general_mapper.html" class="md-nav__link">
+      <a href="mapper/general_mapper.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1073,7 +1066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/mapper/mapping.html" class="md-nav__link">
+      <a href="mapper/mapping.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1094,7 +1087,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/mapper/qubit_remapper.html" class="md-nav__link">
+      <a href="mapper/qubit_remapper.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1115,7 +1108,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/mapper/simple_mappers.html" class="md-nav__link">
+      <a href="mapper/simple_mappers.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1136,7 +1129,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/mapper/utils.html" class="md-nav__link">
+      <a href="mapper/utils.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1207,7 +1200,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/merger/general_merger.html" class="md-nav__link">
+      <a href="merger/general_merger.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1320,7 +1313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/parser/libqasm/parser.html" class="md-nav__link">
+      <a href="parser/libqasm/parser.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1357,7 +1350,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/register_manager.html" class="md-nav__link">
+      <a href="register_manager.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1420,7 +1413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/reindexer/qubit_reindexer.html" class="md-nav__link">
+      <a href="reindexer/qubit_reindexer.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1537,7 +1530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/utils/check_passes/check_mapper.html" class="md-nav__link">
+      <a href="utils/check_passes/check_mapper.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1566,7 +1559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/utils/identity_filter.html" class="md-nav__link">
+      <a href="utils/identity_filter.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1587,7 +1580,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/utils/matrix_expander.html" class="md-nav__link">
+      <a href="utils/matrix_expander.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1658,7 +1651,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/writer/writer.html" class="md-nav__link">
+      <a href="writer/writer.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1720,27 +1713,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#table-of-contents" class="md-nav__link">
+  <a href="#opensquirrel.default_measurements" class="md-nav__link">
     <span class="md-ellipsis">
-      Table of Contents
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#authors" class="md-nav__link">
-    <span class="md-ellipsis">
-      Authors
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#acknowledgements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Acknowledgements
+      default_measurements
     </span>
   </a>
   
@@ -1764,25 +1739,34 @@
   
 
 
-  <h1>Home</h1>
+  <h1>default_measurements</h1>
 
-<p>This site contains the documentation for OpenSquirrel, <em>i.e.</em>, a flexible quantum program compiler.
-OpenSquirrel chooses a <em>modular</em>, over a <em>configurable</em>, approach to prepare and optimize quantum circuits for heterogeneous target architectures.</p>
-<p>It has a user-friendly interface and is straightforwardly extensible with custom-made readers, compiler passes, and exporters.
-As a quantum circuit compiler, it is fully aware of the semantics of each gate and arbitrary quantum gates can be constructed manually.
-It understands the quantum programming language cQASM 3 and will support additional quantum programming languages in the future.
-It is developed in modern Python and follows best practices.</p>
-<p>[<a href="https://github.com/QuTech-Delft/OpenSquirrel">GitHub repository</a>][<a href="https://pypi.org/project/opensquirrel/">PyPI</a>]</p>
-<h2 id="table-of-contents">Table of Contents</h2>
-<p>The following documentation structure is used: <a href="https://diataxis.fr/">Diátaxis documentation framework</a>.</p>
-<ol>
-<li><a href="tutorial.html">Tutorial</a></li>
-<li><a href="reference/reference.html">Reference</a></li>
-</ol>
-<h2 id="authors">Authors</h2>
-<p>Quantum Inspire (<a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#113;&#117;&#97;&#110;&#116;&#117;&#109;&#45;&#105;&#110;&#115;&#112;&#105;&#114;&#101;&#46;&#99;&#111;&#109;">&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#113;&#117;&#97;&#110;&#116;&#117;&#109;&#45;&#105;&#110;&#115;&#112;&#105;&#114;&#101;&#46;&#99;&#111;&#109;</a>)</p>
-<h2 id="acknowledgements">Acknowledgements</h2>
-<p>The Quantum Inspire project (by QuTech: a collaboration of TNO and TU Delft)</p>
+<div class="doc doc-object doc-module">
+
+
+
+<a id="opensquirrel.default_measurements"></a>
+    <div class="doc doc-contents first">
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
@@ -1811,15 +1795,31 @@ It is developed in modern Python and follows best practices.</p>
       
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
+          
+          <a href="default_gates.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: default_gates">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                default_gates
+              </div>
+            </div>
+          </a>
+        
         
           
-          <a href="tutorial.html" class="md-footer__link md-footer__link--next" aria-label="Next: Tutorial">
+          <a href="default_resets.html" class="md-footer__link md-footer__link--next" aria-label="Next: default_resets">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Tutorial
+                default_resets
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1853,12 +1853,12 @@ It is developed in modern Python and follows best practices.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.indexes", "navigation.tabs", "navigation.tracking", "navigation.footer"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.indexes", "navigation.tabs", "navigation.tracking", "navigation.footer"], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.af256bd8.min.js"></script>
+      <script src="../assets/javascripts/bundle.af256bd8.min.js"></script>
       
-        <script src="javascripts/mathjax.js"></script>
+        <script src="../javascripts/mathjax.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
