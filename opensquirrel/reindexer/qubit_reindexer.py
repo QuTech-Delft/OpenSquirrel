@@ -32,7 +32,7 @@ class _QubitReindexer(IRVisitor):
         return Reset(qubit=Qubit(qubit_to_reset))
 
     def visit_measure(self, measure: Measure) -> Measure:
-        return Measure(qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), bit=measure.bit, axis=measure.axis)
+        return Measure(qubits=[Qubit(self.qubit_indices.index(measure.qubit.index)),], bit=measure.bit, axis=measure.axis)
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(

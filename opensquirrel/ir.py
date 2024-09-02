@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Union, cast, overload
+from typing import Any, Union, List, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -219,7 +219,7 @@ class Statement(IRNode, ABC):
 class Measure(Statement, ABC):
     def __init__(
         self,
-        qubit: Qubit,
+        qubits: List[Qubit],
         bit: Bit,
         axis: AxisLike = (0, 0, 1),
         generator: Callable[..., Measure] | None = None,
@@ -227,12 +227,29 @@ class Measure(Statement, ABC):
     ) -> None:
         self.generator = generator
         self.arguments = arguments
-        self.qubit: Qubit = qubit
+        if isinstance(qubits,list):
+            if all(map(lambda _t: isinstance(_t,Qubit),qubits)):
+                self.qubits = qubits
+                self.qubit = qubits[0]
+            elif all(map(lambda _t: isinstance(_t,int),qubits)):
+                self.qubits = [Qubit(bitpos) for bitpos in qubits]
+                self.qubit = qubits[0]
+            else:
+                raise ValueError("argument @qubits is invalid for creating Measure object")
+        elif isinstance(qubits,Qubit):
+            self.qubit = qubits
+            self.qubits = [self.qubit]
+        elif isinstance(qubits, int):
+            self.qubit = Qubit(qubits)
+            self.qubits = [self.qubit]
+        else:
+            raise ValueError("argument @qubits is invalid for creating Measure object")
+        self.qubit = self.qubits[0]
         self.bit: Bit = bit
         self.axis = Axis(axis)
 
     def __repr__(self) -> str:
-        return f"Measure(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
+        return f"Measure(qubits={self.qubits}, bit={self.bit}, axis={self.axis})"
 
     @property
     def name(self) -> str:
@@ -245,7 +262,7 @@ class Measure(Statement, ABC):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Measure):
             return False
-        return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        return self.qubits == other.qubits and np.allclose(self.axis, other.axis, atol=ATOL)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_measure(self)
@@ -254,7 +271,7 @@ class Measure(Statement, ABC):
         return [self.bit]
 
     def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
+        return self.qubits
 
 
 class Reset(Statement, ABC):

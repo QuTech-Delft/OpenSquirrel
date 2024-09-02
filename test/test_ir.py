@@ -179,7 +179,7 @@ class TestMeasure:
         return Measure(Qubit(42), Bit(42), axis=(0, 0, 1))
 
     def test_repr(self, measure: Measure) -> None:
-        expected_repr = "Measure(qubit=Qubit[42], bit=Bit[42], axis=Axis[0. 0. 1.])"
+        expected_repr = "Measure(qubits=[Qubit[42]], bit=Bit[42], axis=Axis[0. 0. 1.])"
         assert repr(measure) == expected_repr
 
     def test_equality(self, measure: Measure) -> None:
