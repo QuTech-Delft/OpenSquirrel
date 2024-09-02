@@ -11,9 +11,17 @@ from opensquirrel.reindexer import get_reindexed_circuit
 
 class Decomposer(ABC):
     @abstractmethod
-    def decompose(self, gate: Gate) -> list[Gate]:
+    def decompose(self, gate: Gate,gates_before : list[Statement] = [], gates_after : list[Statement] = []) -> list[Gate]:
         raise NotImplementedError()
 
+    def uses_multi_gate_replacement(self):
+        return False
+
+    def remove_predecessor_gates(self) -> List[int]: #return relative index or none
+        return []
+
+    def remove_successor_gates(self) -> List[int]: #return relative index or none
+        return []
 
 def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> None:
     gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
@@ -47,9 +55,21 @@ def decompose(ir: IR, decomposer: Decomposer) -> None:
             continue
 
         gate = statement
-        replacement_gates: list[Gate] = decomposer.decompose(statement)
-        check_gate_replacement(gate, replacement_gates)
-
+        gates_before = ir.statements[:statement_index]
+        gates_after = ir.statements[statement_index+1:]
+        replacement_gates: list[Gate] = decomposer.decompose(statement,gates_before,gates_after)
+        if decomposer.uses_multi_gate_replacement():
+            del_idx = [pred_rel_idx+statement_index for pred_rel_idx in decomposer.remove_predecessor_gates()]
+            del_idx.extend([succ_rel_idx+statement_index for succ_rel_idx in decomposer.remove_successor_gates()])
+            for index in sorted(del_idx, reverse=True):
+                del ir.statements[index]
+            if del_idx:
+                statement_index = min(del_idx)+1
+                ir.statements[statement_index : statement_index + 1] = replacement_gates
+                statement_index += len(replacement_gates)
+                continue
+        else:
+            check_gate_replacement(gate, replacement_gates)
         ir.statements[statement_index : statement_index + 1] = replacement_gates
         statement_index += len(replacement_gates)
 
@@ -59,7 +79,7 @@ class _GenericReplacer(Decomposer):
         self.gate_generator = gate_generator
         self.replacement_function = replacement_function
 
-    def decompose(self, g: Gate) -> list[Gate]:
+    def decompose(self, g: Gate,gates_before : list[Statement] = [], gates_after : list[Statement] = []) -> list[Gate]:
         if g.is_anonymous or g.generator != self.gate_generator:
             return [g]
         arguments = () if g.arguments is None else g.arguments
@@ -69,5 +89,4 @@ class _GenericReplacer(Decomposer):
 def replace(ir: IR, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
     """Does the same as decomposer, but only applies to a given gate."""
     generic_replacer = _GenericReplacer(gate_generator, f)
-
     decompose(ir, generic_replacer)

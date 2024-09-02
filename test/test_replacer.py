@@ -6,9 +6,22 @@ import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
+from opensquirrel.decomposer.twoqubitgate_decomposer import TwoQubitGateFolder
 from opensquirrel.default_gates import CNOT, Y90, H, I, Ry, Rz, X, Z, sqrtSWAP
 from opensquirrel.ir import BlochSphereRotation, Float, Gate, Qubit
 
+class TestCheckTwoQubitDecomposer:
+    """check if HZH gate can be folded to X
+    H(Qubit(0)),Z(Qubit(0)),H(Qubit(0))) -> X(Qubit(0)))
+    """
+    def test_HZH_to_X(self):
+        builder1 = CircuitBuilder(3)
+        builder1.H(Qubit(0))
+        builder1.Z(Qubit(0))
+        builder1.H(Qubit(0))
+        circuit = builder1.to_circuit()
+        decompose(circuit.ir,decomposer=TwoQubitGateFolder())
+        assert(len(circuit.ir.statements) == 1)
 
 class TestCheckGateReplacement:
     @pytest.mark.parametrize(
@@ -114,7 +127,7 @@ class TestReplacer:
 
         # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
-            def decompose(self, g: Gate) -> list[Gate]:
+            def decompose(self, g: Gate,gates_before : list[Statement] = [], gates_after : list[Statement] = []) -> list[Gate]:
                 if isinstance(g, BlochSphereRotation):
                     return [I(g.qubit), g, I(g.qubit)]
                 return [g]

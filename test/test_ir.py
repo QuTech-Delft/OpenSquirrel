@@ -9,7 +9,7 @@ import pytest
 from numpy.typing import ArrayLike
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
+from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit, GateKind
 
 
 class TestAxis:
@@ -269,7 +269,9 @@ class TestMatrixGate:
         assert gate.get_qubit_operands() == [Qubit(42), Qubit(100)]
 
     def test_is_identity(self, gate: MatrixGate) -> None:
-        assert MatrixGate(np.eye(4, dtype=np.complex128), operands=[Qubit(42), Qubit(100)]).is_identity()
+        ms = MatrixGate(np.eye(4, dtype=np.complex128), operands=[Qubit(42), Qubit(100)])
+        assert ms.gatekind == GateKind.UNK
+        assert ms.is_identity()
         assert not gate.is_identity()
 
     def test_matrix_gate_same_control_and_target_qubit(self) -> None:

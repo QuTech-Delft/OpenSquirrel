@@ -10,7 +10,7 @@ from opensquirrel.ir import BlochSphereRotation, Float, Gate
 
 
 class McKayDecomposer(Decomposer):
-    def decompose(self, g: Gate) -> list[Gate]:
+    def decompose(self, g: Gate,gates_before : list[Statement] = [], gates_after : list[Statement] = []) -> list[Gate]:
         """Return the McKay decomposition of a 1-qubit gate as a list of gates.
                 gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
 

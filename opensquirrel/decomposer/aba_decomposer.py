@@ -107,7 +107,7 @@ class ABADecomposer(Decomposer, ABC):
 
         return theta1, theta2, theta3
 
-    def decompose(self, g: Gate) -> list[Gate]:
+    def decompose(self, g: Gate,gates_before : list[Statement] = [], gates_after : list[Statement] = []) -> list[Gate]:
         """General A-B-A decomposition function for a single gate.
 
         Args:
