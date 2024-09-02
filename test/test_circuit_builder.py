@@ -49,6 +49,15 @@ class TestCircuitBuilder:
             Measure(Qubit(0), Bit(0)),
         ]
 
+    def test_contains(self) -> None:
+        builder = CircuitBuilder(1, 1)
+        builder.measure(Qubit(0), Bit(0))
+
+        circuit = builder.to_circuit()
+
+        assert not Qubit(1) in builder
+        assert Qubit(0) in circuit
+
     def test_circuit_measure(self) -> None:
         builder = CircuitBuilder(2, 2)
 
