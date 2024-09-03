@@ -137,7 +137,9 @@ class Circuit:
     def export(self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             from opensquirrel.exporter import quantify_scheduler_exporter
-
             return quantify_scheduler_exporter.export(self)
+        if fmt == ExportFormat.CQASM_V1:
+            from opensquirrel.exporter import cqasmv1_exporter
+            return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)
