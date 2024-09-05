@@ -268,9 +268,9 @@ class TestMatrixGate:
         )
 
     def test_incorrect_array(self) -> None:
-        with pytest.raises(ValueError, match=".* malformed .*") as e_info:
-            MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, "d", 0]], [Qubit(0), Qubit(1)])
-        assert "complex() arg is a malformed string" in str(e_info.value)
+        with pytest.raises(ValueError, match=".* inhomogeneous shape after .*") as e_info:
+            MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 0]], [Qubit(0), Qubit(1)])
+        assert "setting an array element with a sequence." in str(e_info.value)
 
     def test_repr(self, gate: MatrixGate) -> None:
         assert (
