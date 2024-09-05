@@ -404,7 +404,7 @@ class BlochSphereRotation(Gate):
 class MatrixGate(Gate):
     def __init__(
         self,
-        matrix: NDArray[np.complex128],
+        matrix: ArrayLike | list[list[int | DTypeLike]],
         operands: list[Qubit],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
@@ -417,6 +417,8 @@ class MatrixGate(Gate):
         if self._check_repeated_qubit_operands(operands):
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
+
+        matrix = np.asarray(matrix, dtype=np.complex128)
 
         if matrix.shape != (1 << len(operands), 1 << len(operands)):
             msg = (
