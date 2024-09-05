@@ -259,10 +259,24 @@ class TestMatrixGate:
         )
         return MatrixGate(cnot_matrix, operands=[Qubit(42), Qubit(100)])
 
+    def test_array_like(self) -> None:
+        gate = MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [Qubit(0), Qubit(1)])
+        assert (
+            repr(gate) == "MatrixGate(qubits=[Qubit[0], Qubit[1]], "
+            "matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n "
+            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 1.+0.j]\n [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
+        )
+
+    def test_incorrect_array(self) -> None:
+        with pytest.raises(ValueError, match=".* inhomogeneous shape after .*") as e_info:
+            MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 0]], [Qubit(0), Qubit(1)])
+        assert "setting an array element with a sequence." in str(e_info.value)
+
     def test_repr(self, gate: MatrixGate) -> None:
         assert (
-            repr(gate)
-            == "MatrixGate(qubits=[Qubit[42], Qubit[100]], matrix=[[1 0 0 0]\n [0 1 0 0]\n [0 0 0 1]\n [0 0 1 0]])"
+            repr(gate) == "MatrixGate(qubits=[Qubit[42], Qubit[100]], "
+            "matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n "
+            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 1.+0.j]\n [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
         )
 
     def test_get_qubit_operands(self, gate: MatrixGate) -> None:
