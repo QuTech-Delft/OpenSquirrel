@@ -1,10 +1,43 @@
 import numpy as np
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import CircuitBuilder, Circuit
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Float, Gate, MatrixGate, Qubit
+
+
+def test_cqasm_v3_to_cqasm_v1() -> None:
+    cqasm_v3_string = Circuit.from_string(
+            """
+    version 3.0
+
+    qubit[2] q
+    bit[2] b
+
+    reset q
+    I q[0]
+    H q[0]
+    CNOT q[0], q[1]
+    Rx(5.123) q[0]
+    b = measure q
+    """
+        )
+    cqasm_v1_string = cqasm_v3_string.export(fmt=ExportFormat.CQASM_V1)
+    assert cqasm_v1_string == """version 1.0
+
+qubits 2
+
+prep_z q[0]
+prep_z q[1]
+i q[0]
+h q[0]
+cnot q[0], q[1]
+rx q[0], 5.123
+measure_z q[0]
+measure_z q[1]
+"""
+
 
 
 def test_qubit_statement() -> None:
@@ -85,7 +118,7 @@ prep_z q[0]
 def test_all_supported_gates() -> None:
     builder = CircuitBuilder(2,2)
     builder.reset(Qubit(0)).reset(Qubit(1))
-    builder.X(Qubit(0)).Y(Qubit(0)).Z(Qubit(0))
+    builder.I(Qubit(0)).X(Qubit(0)).Y(Qubit(0)).Z(Qubit(0))
     builder.Rx(Qubit(0), Float(1.234)).Ry(Qubit(0), Float(-1.234)).Rz(Qubit(0), Float(1.234))
     builder.X90(Qubit(0)).Y90(Qubit(0))
     builder.mX90(Qubit(0)).mY90(Qubit(0))
@@ -100,6 +133,7 @@ qubits 2
 
 prep_z q[0]
 prep_z q[1]
+i q[0]
 x q[0]
 y q[0]
 z q[0]
