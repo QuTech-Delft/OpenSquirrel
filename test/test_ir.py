@@ -9,7 +9,18 @@ import pytest
 from numpy.typing import ArrayLike
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
+from opensquirrel.ir import (
+    Axis,
+    Bit,
+    BlochSphereRotation,
+    ControlledGate,
+    Expression,
+    Float,
+    Int,
+    MatrixGate,
+    Measure,
+    Qubit,
+)
 
 
 class TestAxis:
@@ -297,3 +308,45 @@ class TestControlledGate:
     def test_control_gate_same_control_and_target_qubit(self) -> None:
         with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
             ControlledGate(Qubit(0), BlochSphereRotation(Qubit(0), [0, 0, 1], angle=np.pi))
+
+
+class TestDataClasses:
+    def test_float_incorrect_string(self) -> None:
+        with pytest.raises(ValueError, match="value must be a float") as e_info:
+            Float("f")  # type: ignore
+
+        assert "value must be a float" in str(e_info.value)
+
+    def test_float_parse_int_and_string(self) -> None:
+        assert Float("1").value == 1.0  # type: ignore
+        assert Float(1).value == 1.0
+
+    def test_int_incorrect_string(self) -> None:
+        with pytest.raises(ValueError, match="value must be an int") as e_info:
+            Int("f")  # type: ignore
+
+        assert "value must be an int" in str(e_info.value)
+
+    def test_int_parse_float_and_string(self) -> None:
+        assert Int("1").value == 1  # type: ignore
+        assert Int(1.1).value == 1  # type: ignore
+
+    def test_bit_incorrect_string(self) -> None:
+        with pytest.raises(ValueError, match="index must be an int") as e_info:
+            Bit("f")  # type: ignore
+
+        assert "index must be an int" in str(e_info.value)
+
+    def test_bit_parse_float_and_string(self) -> None:
+        assert str(Bit("1")) == "Bit[1]"  # type: ignore
+        assert str(Bit(1.1)) == "Bit[1]"  # type: ignore
+
+    def test_qubit_incorrect_string(self) -> None:
+        with pytest.raises(ValueError, match="index must be an int") as e_info:
+            Qubit("f")  # type: ignore
+
+        assert "index must be an int" in str(e_info.value)
+
+    def test_qubit_parse_float_and_string(self) -> None:
+        assert str(Qubit("1")) == "Qubit[1]"  # type: ignore
+        assert str(Qubit(1.1)) == "Qubit[1]"  # type: ignore

@@ -76,6 +76,13 @@ class Float(Expression):
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
 
+    def __post_init__(self) -> None:
+        try:
+            self.value = float(self.value)
+        except ValueError as exception:
+            msg = "value must be a float"
+            raise ValueError(msg) from exception
+
 
 @dataclass
 class Int(Expression):
@@ -83,6 +90,13 @@ class Int(Expression):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
+
+    def __post_init__(self) -> None:
+        try:
+            self.value = int(self.value)
+        except ValueError as exception:
+            msg = "value must be an int"
+            raise ValueError(msg) from exception
 
 
 @dataclass
@@ -94,6 +108,13 @@ class Bit(Expression):
 
     def __repr__(self) -> str:
         return f"Bit[{self.index}]"
+
+    def __post_init__(self) -> None:
+        try:
+            self.index = int(self.index)
+        except ValueError as exception:
+            msg = "index must be an int"
+            raise ValueError(msg) from exception
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_bit(self)
@@ -108,6 +129,13 @@ class Qubit(Expression):
 
     def __repr__(self) -> str:
         return f"Qubit[{self.index}]"
+
+    def __post_init__(self) -> None:
+        try:
+            self.index = int(self.index)
+        except ValueError as exception:
+            msg = "index must be an int"
+            raise ValueError(msg) from exception
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_qubit(self)
