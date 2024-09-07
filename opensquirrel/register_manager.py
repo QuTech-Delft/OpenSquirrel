@@ -151,6 +151,9 @@ class RegisterManager:
         bit_register = BitRegister.from_ast(ast)
         return cls(qubit_register, bit_register)
 
+    def __contains__(self, qubit_item:Qubit):
+        return qubit_item in self.qubit_register
+
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, RegisterManager):
             return False

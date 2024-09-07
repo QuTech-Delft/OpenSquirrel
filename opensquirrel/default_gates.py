@@ -5,22 +5,27 @@ from collections.abc import Callable
 
 import numpy as np
 
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, Qubit, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, Qubit, named_gate, GateKind
 
 
 @named_gate
 def I(q: Qubit) -> BlochSphereRotation:  # noqa: E743
-    return BlochSphereRotation.identity(q)
-
+    bs = BlochSphereRotation.identity(q)
+    bs.gatekind = GateKind.I
+    return bs
 
 @named_gate
 def H(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
+    bs = BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
+    bs.gatekind = GateKind.H
+    return bs
 
 
 @named_gate
 def X(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+    bs = BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+    bs.gatekind = GateKind.X
+    return bs
 
 
 @named_gate
@@ -35,7 +40,9 @@ def mX90(q: Qubit) -> BlochSphereRotation:
 
 @named_gate
 def Y(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
+    bs = BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
+    bs.gatekind = GateKind.Y
+    return bs
 
 
 @named_gate
@@ -50,7 +57,9 @@ def mY90(q: Qubit) -> BlochSphereRotation:
 
 @named_gate
 def Z(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
+    bs = BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
+    bs.gatekind = GateKind.Z
+    return bs
 
 
 @named_gate

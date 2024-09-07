@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import wraps
+from enum import Enum
 from typing import Any, Union, cast, overload
 
 import numpy as np
@@ -290,6 +291,13 @@ class Reset(Statement, ABC):
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
+class GateKind(Enum):
+    UNK = 0
+    I = 1 #PauliI
+    X = 2 #PauliX
+    Y = 3 #PauliY
+    Z = 4 #PauliZ
+    H = 5 #Hadamard
 
 class Gate(Statement, ABC):
     def __init__(
@@ -302,6 +310,7 @@ class Gate(Statement, ABC):
         # Note: two gates are considered equal even when their generators/arguments are different.
         self.generator = generator
         self.arguments = arguments
+        self.gatekind = GateKind.UNK
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Gate):

@@ -18,8 +18,10 @@ class CNOTDecomposer(Decomposer):
 
     Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
     """
+    def __init__(self,*args,**kwargs):
+        super(Decomposer,self).__init__(*args,**kwargs)
 
-    def decompose(self, g: Gate) -> list[Gate]:
+    def decompose(self, g: Gate,gates_before : list[Statement] = [], gates_after : list[Statement] = []) -> list[Gate]:
         if not isinstance(g, ControlledGate):
             # Do nothing:
             # - BlochSphereRotation's are only single-qubit,
