@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Union, cast, overload
+from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -77,11 +77,11 @@ class Float(Expression):
         return visitor.visit_float(self)
 
     def __post_init__(self) -> None:
-        try:
+        if isinstance(self.value, SupportsFloat):
             self.value = float(self.value)
-        except ValueError as exception:
+        else:
             msg = "value must be a float"
-            raise ValueError(msg) from exception
+            raise TypeError(msg)
 
 
 @dataclass
@@ -92,11 +92,11 @@ class Int(Expression):
         return visitor.visit_int(self)
 
     def __post_init__(self) -> None:
-        try:
+        if isinstance(self.value, SupportsInt):
             self.value = int(self.value)
-        except ValueError as exception:
+        else:
             msg = "value must be an int"
-            raise ValueError(msg) from exception
+            raise TypeError(msg)
 
 
 @dataclass
@@ -110,11 +110,11 @@ class Bit(Expression):
         return f"Bit[{self.index}]"
 
     def __post_init__(self) -> None:
-        try:
-            self.index = int(self.index)
-        except ValueError as exception:
+        if isinstance(self.index, SupportsInt):
+            self.value = int(self.index)
+        else:
             msg = "index must be an int"
-            raise ValueError(msg) from exception
+            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_bit(self)
@@ -131,11 +131,11 @@ class Qubit(Expression):
         return f"Qubit[{self.index}]"
 
     def __post_init__(self) -> None:
-        try:
-            self.index = int(self.index)
-        except ValueError as exception:
+        if isinstance(self.index, SupportsInt):
+            self.value = int(self.index)
+        else:
             msg = "index must be an int"
-            raise ValueError(msg) from exception
+            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_qubit(self)
