@@ -311,44 +311,36 @@ class TestControlledGate:
 
 
 class TestFloat:
-    def test_float_incorrect_string(self) -> None:
-        with pytest.raises(TypeError, match="value must be a float") as e_info:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="value must be a float"):
             Float("f")  # type: ignore
 
-        assert "value must be a float" in str(e_info.value)
-
-    def test_float_parse_int_and_string(self) -> None:
+    def test_init(self) -> None:
         assert Float(1).value == 1.0
 
 
 class TestInt:
-    def test_int_incorrect_string(self) -> None:
-        with pytest.raises(TypeError, match="value must be an int") as e_info:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="value must be an int"):
             Int("f")  # type: ignore
 
-        assert "value must be an int" in str(e_info.value)
-
-    def test_int_parse_float_and_string(self) -> None:
+    def test_init(self) -> None:
         assert Int(1).value == 1
 
 
 class TestBit:
-    def test_bit_incorrect_string(self) -> None:
-        with pytest.raises(TypeError, match="index must be an int") as e_info:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="index must be an int"):
             Bit("f")  # type: ignore
 
-        assert "index must be an int" in str(e_info.value)
-
-    def test_bit_parse_float_and_string(self) -> None:
+    def test_init(self) -> None:
         assert str(Bit(1)) == "Bit[1]"
 
 
 class TestQubit:
-    def test_qubit_incorrect_string(self) -> None:
-        with pytest.raises(TypeError, match="index must be an int") as e_info:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="index must be an int"):
             Qubit("f")  # type: ignore
 
-        assert "index must be an int" in str(e_info.value)
-
-    def test_qubit_parse_float_and_string(self) -> None:
+    def test_init(self) -> None:
         assert str(Qubit(1)) == "Qubit[1]"

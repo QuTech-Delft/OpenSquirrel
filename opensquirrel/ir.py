@@ -111,7 +111,7 @@ class Bit(Expression):
 
     def __post_init__(self) -> None:
         if isinstance(self.index, SupportsInt):
-            self.value = int(self.index)
+            self.index = int(self.index)
         else:
             msg = "index must be an int"
             raise TypeError(msg)
@@ -132,7 +132,7 @@ class Qubit(Expression):
 
     def __post_init__(self) -> None:
         if isinstance(self.index, SupportsInt):
-            self.value = int(self.index)
+            self.index = int(self.index)
         else:
             msg = "index must be an int"
             raise TypeError(msg)
