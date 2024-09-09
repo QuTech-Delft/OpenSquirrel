@@ -9,7 +9,18 @@ import pytest
 from numpy.typing import ArrayLike
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Axis, Bit, BlochSphereRotation, ControlledGate, Expression, MatrixGate, Measure, Qubit
+from opensquirrel.ir import (
+    Axis,
+    Bit,
+    BlochSphereRotation,
+    ControlledGate,
+    Expression,
+    Float,
+    Int,
+    MatrixGate,
+    Measure,
+    Qubit,
+)
 
 
 class TestAxis:
@@ -297,3 +308,39 @@ class TestControlledGate:
     def test_control_gate_same_control_and_target_qubit(self) -> None:
         with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
             ControlledGate(Qubit(0), BlochSphereRotation(Qubit(0), [0, 0, 1], angle=np.pi))
+
+
+class TestFloat:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="value must be a float"):
+            Float("f")  # type: ignore
+
+    def test_init(self) -> None:
+        assert Float(1).value == 1.0
+
+
+class TestInt:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="value must be an int"):
+            Int("f")  # type: ignore
+
+    def test_init(self) -> None:
+        assert Int(1).value == 1
+
+
+class TestBit:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="index must be an int"):
+            Bit("f")  # type: ignore
+
+    def test_init(self) -> None:
+        assert str(Bit(1)) == "Bit[1]"
+
+
+class TestQubit:
+    def test_type_error(self) -> None:
+        with pytest.raises(TypeError, match="index must be an int"):
+            Qubit("f")  # type: ignore
+
+    def test_init(self) -> None:
+        assert str(Qubit(1)) == "Qubit[1]"

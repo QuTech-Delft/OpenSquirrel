@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Union, cast, overload
+from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -76,6 +76,13 @@ class Float(Expression):
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
 
+    def __post_init__(self) -> None:
+        if isinstance(self.value, SupportsFloat):
+            self.value = float(self.value)
+        else:
+            msg = "value must be a float"
+            raise TypeError(msg)
+
 
 @dataclass
 class Int(Expression):
@@ -83,6 +90,13 @@ class Int(Expression):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
+
+    def __post_init__(self) -> None:
+        if isinstance(self.value, SupportsInt):
+            self.value = int(self.value)
+        else:
+            msg = "value must be an int"
+            raise TypeError(msg)
 
 
 @dataclass
@@ -94,6 +108,13 @@ class Bit(Expression):
 
     def __repr__(self) -> str:
         return f"Bit[{self.index}]"
+
+    def __post_init__(self) -> None:
+        if isinstance(self.index, SupportsInt):
+            self.index = int(self.index)
+        else:
+            msg = "index must be an int"
+            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_bit(self)
@@ -108,6 +129,13 @@ class Qubit(Expression):
 
     def __repr__(self) -> str:
         return f"Qubit[{self.index}]"
+
+    def __post_init__(self) -> None:
+        if isinstance(self.index, SupportsInt):
+            self.index = int(self.index)
+        else:
+            msg = "index must be an int"
+            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_qubit(self)
