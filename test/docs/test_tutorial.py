@@ -6,7 +6,7 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Int, MatrixGate, Qubit, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, Qubit, named_gate
 
 
 def test_circuit_from_string() -> None:
@@ -86,7 +86,7 @@ def test_circuit_builder_QFT() -> None:
     for i in range(qubit_register_size):
         builder.H(Qubit(i))
         for c in range(i + 1, qubit_register_size):
-            builder.CRk(Qubit(c), Qubit(i), Int(c - i + 1))
+            builder.CRk(Qubit(c), Qubit(i), c - i + 1)
     qft = builder.to_circuit()
 
     assert (

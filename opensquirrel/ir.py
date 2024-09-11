@@ -84,19 +84,39 @@ class Float(Expression):
             raise TypeError(msg)
 
 
-@dataclass
+@dataclass(init=False)
 class Int(Expression):
+    """Integers used for internal representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Int`` object.
+    """
+
     value: int
+
+    def __init__(self, value: SupportsInt) -> None:
+        """Init of the ``Int`` object.
+
+        Args:
+            value: value of the ``Int`` object.
+        """
+        if isinstance(value, SupportsInt):
+            self.value = int(value)
+            return
+
+        msg = "value must be an int"
+        raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
 
-    def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsInt):
-            self.value = int(self.value)
-        else:
-            msg = "value must be an int"
-            raise TypeError(msg)
+    def __int__(self) -> int:
+        """Cast the ``Int`` object to a building python ``int``.
+
+        Returns:
+            Building python ``int`` representation of the ``Int``.
+        """
+        return self.value
 
 
 @dataclass

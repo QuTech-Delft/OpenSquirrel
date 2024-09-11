@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, SupportsInt
 
 import numpy as np
 import pytest
@@ -320,12 +320,14 @@ class TestFloat:
 
 
 class TestInt:
-    def test_type_error(self) -> None:
+    @pytest.mark.parametrize("value", ["f", None, {1}])
+    def test_type_error(self, value: Any) -> None:
         with pytest.raises(TypeError, match="value must be an int"):
-            Int("f")  # type: ignore
+            Int(value)  # type: ignore
 
-    def test_init(self) -> None:
-        assert Int(1).value == 1
+    @pytest.mark.parametrize("value", [1, 1.0, 1.1, Int(1)])
+    def test_init(self, value: SupportsInt) -> None:
+        assert Int(value).value == 1
 
 
 class TestBit:
