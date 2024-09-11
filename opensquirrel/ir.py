@@ -82,10 +82,6 @@ class Float(Expression):
         else:
             msg = "value must be a float"
             raise TypeError(msg)
-<<<<<<< HEAD
-=======
-
->>>>>>> b67dfe9 ([CQT 126] Verify dataclasses using __post_init__ (#319) (#321))
 
 
 @dataclass(init=False)
@@ -114,7 +110,6 @@ class Int(Expression):
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
 
-<<<<<<< HEAD
     def __int__(self) -> int:
         """Cast the ``Int`` object to a building python ``int``.
 
@@ -122,14 +117,6 @@ class Int(Expression):
             Building python ``int`` representation of the ``Int``.
         """
         return self.value
-=======
-    def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsInt):
-            self.value = int(self.value)
-        else:
-            msg = "value must be an int"
-            raise TypeError(msg)
->>>>>>> b67dfe9 ([CQT 126] Verify dataclasses using __post_init__ (#319) (#321))
 
 
 @dataclass
@@ -186,6 +173,7 @@ class Qubit(Expression):
         return f"Qubit[{self.index}]"
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accept the Qubit"""
         return visitor.visit_qubit(self)
 
 
