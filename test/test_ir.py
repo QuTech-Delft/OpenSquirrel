@@ -323,7 +323,7 @@ class TestInt:
     @pytest.mark.parametrize("value", ["f", None, {1}])
     def test_type_error(self, value: Any) -> None:
         with pytest.raises(TypeError, match="value must be an int"):
-            Int(value)  # type: ignore
+            Int(value)
 
     @pytest.mark.parametrize("value", [1, 1.0, 1.1, Int(1)])
     def test_init(self, value: SupportsInt) -> None:

@@ -540,7 +540,7 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         result = gate_generator(*args, **kwargs)
         result.generator = wrapper
 
-        all_args = []
+        all_args: list[Expression] = []
         for par in inspect.signature(gate_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
