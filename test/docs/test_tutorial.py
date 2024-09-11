@@ -80,7 +80,7 @@ H q[8]
     )
 
 
-def test_circuit_builder_QFT() -> None:
+def test_circuit_builder_qft() -> None:
     qubit_register_size = 5
     builder = CircuitBuilder(qubit_register_size)
     for i in range(qubit_register_size):
@@ -128,11 +128,12 @@ def test_CNOT_strong_type_error_string() -> None:
     assert "failed to resolve instruction 'CNOT' with argument pack (qubit, int)" in str(e_info.value)
 
 
-def test_CNOT_strong_type_error_builder() -> None:
-    with pytest.raises(TypeError) as e_info:
+def test_cnot_strong_type_error_builder() -> None:
+    expected_msg = (
+        "wrong argument type for instruction `CNOT`, got <class 'int'> but expected <class 'opensquirrel.ir.Qubit'>"
+    )
+    with pytest.raises(TypeError, match=expected_msg):
         CircuitBuilder(qubit_register_size=2).CNOT(Qubit(0), 3)
-
-    assert "wrong argument type for instruction `CNOT`, got <class 'int'> but expected Qubit" in str(e_info.value)
 
 
 def test_anonymous_gate() -> None:

@@ -541,13 +541,16 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         result.generator = wrapper
 
         all_args = []
-        arg_index = 0
         for par in inspect.signature(gate_generator).parameters.values():
-            if par.name in kwargs:
-                all_args.append(kwargs[par.name])
-            else:
-                all_args.append(args[arg_index])
-                arg_index += 1
+            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
+            next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
+
+            # Convert to correct expression for IR
+            if next_annotation == SupportsInt:
+                next_arg = Int(next_arg)
+
+            # Append parsed argument
+            all_args.append(next_arg)
 
         result.arguments = tuple(all_args)
         return result
@@ -652,6 +655,15 @@ class IR:
         for statement in self.statements:
             statement.accept(visitor)
 
+
+ANNOTATIONS = {
+    "BlochSphereRotation": BlochSphereRotation,
+    "ControlledGate": ControlledGate,
+    "Float": Float,
+    "MatrixGate": MatrixGate,
+    "SupportsInt": SupportsInt,
+    "Qubit": Qubit,
+}
 
 # Type Aliases
 AxisLike = Union[ArrayLike, Axis]

@@ -112,7 +112,7 @@ builder = CircuitBuilder(qubit_register_size)
 for i in range(qubit_register_size):
       builder.H(Qubit(i))
       for c in range(i + 1, qubit_register_size):
-            builder.CRk(Qubit(c), Qubit(i), Int(c-i+1))
+            builder.CRk(Qubit(c), Qubit(i), c-i+1)
 qft = builder.to_circuit()
 
 print(qft)
