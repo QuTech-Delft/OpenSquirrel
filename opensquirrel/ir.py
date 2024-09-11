@@ -155,22 +155,72 @@ class Bit(Expression):
 
 @dataclass
 class Qubit(Expression):
-    index: int
+    """The Qubit data object is a representation of a qubit."""
 
     def __hash__(self) -> int:
+        """Function to hash Qubit class"""
         return hash(self.index)
 
     def __repr__(self) -> str:
+        """Function to represent the Qubit class"""
         return f"Qubit[{self.index}]"
 
-    def __post_init__(self) -> None:
-        if isinstance(self.index, SupportsInt):
-            self.index = int(self.index)
-        else:
-            msg = "index must be an int"
-            raise TypeError(msg)
+    def __init__(self, qubit: QubitLike) -> None:
+        """The Qubit data object is a representation of a qubit.
+
+        Args:
+            qubit: A ``QubitLike`` to create the qubit from.
+        """
+        self._index = self._parse_and_validate_qubit_like(qubit)
+
+    def __eq__(self, other: Any) -> bool:
+        """Check to see if an object is equal to a Qubit.
+
+        Args:
+            other: object to compare.
+
+        Returns: whether the qubit objects are equal.
+
+        """
+        if not isinstance(other, Qubit):
+            return False
+        return self._index == other._index
+
+    @property
+    def index(self) -> int:
+        """The index of the qubit saved as an integer."""
+        return self._index
+
+    @index.setter
+    def index(self, qubit: QubitLike) -> None:
+        """Parse and set a new qubit index.
+
+        Args:
+            qubit: A ``QubitLike`` to create the qubit from.
+        """
+        self._index = self._parse_and_validate_qubit_like(qubit)
+
+    @classmethod
+    def _parse_and_validate_qubit_like(cls, qubit: QubitLike) -> int:
+        """Parse and validate a QubitLike object
+
+        Args:
+            qubit: A ``QubitLike`` to create a qubit and set the index from.
+
+        Returns:
+            The index of the qubit as an integer.
+        """
+        if isinstance(qubit, Qubit):
+            return qubit.index
+
+        if isinstance(qubit, SupportsInt):
+            return qubit
+
+        msg = "index must be an int"
+        raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accept the Qubit"""
         return visitor.visit_qubit(self)
 
 
@@ -680,3 +730,4 @@ ANNOTATIONS = {
 
 # Type Aliases
 AxisLike = Union[ArrayLike, Axis]
+QubitLike = Union[int, Qubit]
