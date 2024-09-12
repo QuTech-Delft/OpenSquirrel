@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload, get_args
+from typing import Any, SupportsFloat, SupportsInt, Union, cast, get_args, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -521,7 +521,6 @@ class MatrixGate(Gate):
             raise ValueError(msg)
 
         self.matrix = matrix
-
 
     def __repr__(self) -> str:
         return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
