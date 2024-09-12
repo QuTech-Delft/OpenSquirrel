@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload, get_args
+from typing import Any, SupportsFloat, SupportsInt, Union, cast, get_args, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
