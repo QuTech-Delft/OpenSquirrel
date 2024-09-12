@@ -1,7 +1,7 @@
 import pytest
 
 from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
-from opensquirrel.ir import Float, Int, Qubit
+from opensquirrel.ir import Float, Qubit
 from opensquirrel.parser.libqasm.parser import Parser
 
 
@@ -34,7 +34,7 @@ CRk q[0], q[1], 23
         Ry(Qubit(1), Float(1.234)),
         CNOT(Qubit(0), Qubit(1)),
         CR(Qubit(1), Qubit(0), Float(5.123)),
-        CRk(Qubit(0), Qubit(1), Int(23)),
+        CRk(Qubit(0), Qubit(1), 23),
     ]
 
 
@@ -61,8 +61,8 @@ CRk q[0, 3], q[1, 4], 23
         H(Qubit(9)),
         X(Qubit(13)),
         X(Qubit(17)),
-        CRk(Qubit(0), Qubit(1), Int(23)),
-        CRk(Qubit(3), Qubit(4), Int(23)),
+        CRk(Qubit(0), Qubit(1), 23),
+        CRk(Qubit(3), Qubit(4), 23),
     ]
 
 

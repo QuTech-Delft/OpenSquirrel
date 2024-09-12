@@ -84,19 +84,39 @@ class Float(Expression):
             raise TypeError(msg)
 
 
-@dataclass
+@dataclass(init=False)
 class Int(Expression):
+    """Integers used for internal representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Int`` object.
+    """
+
     value: int
+
+    def __init__(self, value: SupportsInt) -> None:
+        """Init of the ``Int`` object.
+
+        Args:
+            value: value of the ``Int`` object.
+        """
+        if isinstance(value, SupportsInt):
+            self.value = int(value)
+            return
+
+        msg = "value must be an int"
+        raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
 
-    def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsInt):
-            self.value = int(self.value)
-        else:
-            msg = "value must be an int"
-            raise TypeError(msg)
+    def __int__(self) -> int:
+        """Cast the ``Int`` object to a building python ``int``.
+
+        Returns:
+            Building python ``int`` representation of the ``Int``.
+        """
+        return self.value
 
 
 @dataclass
@@ -520,14 +540,17 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         result = gate_generator(*args, **kwargs)
         result.generator = wrapper
 
-        all_args = []
-        arg_index = 0
+        all_args: list[Expression] = []
         for par in inspect.signature(gate_generator).parameters.values():
-            if par.name in kwargs:
-                all_args.append(kwargs[par.name])
-            else:
-                all_args.append(args[arg_index])
-                arg_index += 1
+            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
+            next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
+
+            # Convert to correct expression for IR
+            if next_annotation == SupportsInt:
+                next_arg = Int(next_arg)
+
+            # Append parsed argument
+            all_args.append(next_arg)
 
         result.arguments = tuple(all_args)
         return result
@@ -632,6 +655,15 @@ class IR:
         for statement in self.statements:
             statement.accept(visitor)
 
+
+ANNOTATIONS = {
+    "BlochSphereRotation": BlochSphereRotation,
+    "ControlledGate": ControlledGate,
+    "Float": Float,
+    "MatrixGate": MatrixGate,
+    "SupportsInt": SupportsInt,
+    "Qubit": Qubit,
+}
 
 # Type Aliases
 AxisLike = Union[ArrayLike, Axis]
