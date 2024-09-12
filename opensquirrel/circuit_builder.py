@@ -13,7 +13,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
-from opensquirrel.ir import IR, Comment, Gate, Measure, Reset
+from opensquirrel.ir import IR, Comment, Gate, Measure, QubitLike, Reset
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -123,7 +123,15 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
         """
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             if isinstance(par.annotation, str):
-                if args[i].__class__.__name__ != par.annotation:
+                if par.annotation == "QubitLike":
+                    if args[i].__class__.__name__ not in str(QubitLike):
+                        msg = (
+                            f"wrong argument type for instruction `{attr}`, "
+                            f"got {type(args[i])} but expected {QubitLike!s}"
+                        )
+                        raise TypeError(msg)
+
+                elif args[i].__class__.__name__ != par.annotation:
                     msg = (
                         f"wrong argument type for instruction `{attr}`, "
                         f"got {type(args[i])} but expected {par.annotation}"

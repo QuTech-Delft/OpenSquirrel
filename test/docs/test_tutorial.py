@@ -128,13 +128,6 @@ def test_CNOT_strong_type_error_string() -> None:
     assert "failed to resolve instruction 'CNOT' with argument pack (qubit, int)" in str(e_info.value)
 
 
-def test_CNOT_strong_type_error_builder() -> None:
-    with pytest.raises(TypeError) as e_info:
-        CircuitBuilder(qubit_register_size=2).CNOT(Qubit(0), 3)
-
-    assert "wrong argument type for instruction `CNOT`, got <class 'int'> but expected Qubit" in str(e_info.value)
-
-
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
     for _ in range(4):

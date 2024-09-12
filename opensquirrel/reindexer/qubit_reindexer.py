@@ -36,18 +36,18 @@ class _QubitReindexer(IRVisitor):
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(
-            qubit=Qubit(self.qubit_indices.index(g.qubit.index)),
+            qubit=Qubit(self.qubit_indices.index(Qubit(g.qubit).index)),
             angle=g.angle,
             axis=g.axis,
             phase=g.phase,
         )
 
     def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
-        reindexed_operands = [Qubit(self.qubit_indices.index(op.index)) for op in g.operands]
+        reindexed_operands = [Qubit(self.qubit_indices.index(Qubit(op).index)) for op in g.operands]
         return MatrixGate(matrix=g.matrix, operands=reindexed_operands)
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
-        control_qubit = Qubit(self.qubit_indices.index(controlled_gate.control_qubit.index))
+        control_qubit = Qubit(self.qubit_indices.index(Qubit(controlled_gate.control_qubit).index))
         target_gate = controlled_gate.target_gate.accept(self)
         return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
 

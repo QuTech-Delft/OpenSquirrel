@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
+from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload, get_args
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -149,9 +149,11 @@ class Qubit(Expression):
         Returns: whether the qubit objects are equal.
 
         """
-        if not isinstance(other, Qubit):
+        if not isinstance(other, get_args(QubitLike)):
             return False
-        return self._index == other._index
+
+        qubit_to_compare = Qubit(other)
+        return self._index == qubit_to_compare._index
 
     @property
     def index(self) -> int:
@@ -332,6 +334,8 @@ class Measure(Statement, ABC):
         return [self.bit]
 
     def get_qubit_operands(self) -> list[Qubit]:
+        if not isinstance(self.qubit, Qubit):
+            self.qubit = Qubit(self.qubit)
         return [self.qubit]
 
 
@@ -366,6 +370,8 @@ class Reset(Statement, ABC):
         return visitor.visit_reset(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
+        if not isinstance(self.qubit, Qubit):
+            self.qubit = Qubit(self.qubit)
         return [self.qubit]
 
 
@@ -397,7 +403,7 @@ class Gate(Statement, ABC):
         return self.arguments is None
 
     @staticmethod
-    def _check_repeated_qubit_operands(qubits: list[Qubit]) -> bool:
+    def _check_repeated_qubit_operands(qubits: Sequence[QubitLike]) -> bool:
         """Check if qubit operands are repeated.
 
         Args:
@@ -409,7 +415,7 @@ class Gate(Statement, ABC):
         return len(qubits) != len(set(qubits))
 
     @abstractmethod
-    def get_qubit_operands(self) -> list[Qubit]:
+    def get_qubit_operands(self) -> Sequence[Qubit]:
         """Get the qubit operands of the Gate.
 
         Returns:
@@ -428,7 +434,7 @@ class Gate(Statement, ABC):
 class BlochSphereRotation(Gate):
     def __init__(
         self,
-        qubit: Qubit,
+        qubit: QubitLike,
         axis: AxisLike,
         angle: float,
         phase: float = 0,
@@ -436,18 +442,23 @@ class BlochSphereRotation(Gate):
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
         Gate.__init__(self, generator, arguments)
-        self.qubit: Qubit = qubit
+        self.qubit: QubitLike = qubit
         self.axis = Axis(axis)
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
 
+        if not isinstance(qubit, Qubit):
+            self.qubit = Qubit(qubit)
+
     @staticmethod
-    def identity(q: Qubit) -> BlochSphereRotation:
+    def identity(q: QubitLike) -> BlochSphereRotation:
+        if not isinstance(q, Qubit):
+            q = Qubit(q)
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
         return (
-            f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
+            f"BlochSphereRotation({Qubit(self.qubit)}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
             f" phase={repr_round(self.phase)})"
         )
 
@@ -472,6 +483,8 @@ class BlochSphereRotation(Gate):
         return visitor.visit_bloch_sphere_rotation(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
+        if not isinstance(self.qubit, Qubit):
+            self.qubit = Qubit(self.qubit)
         return [self.qubit]
 
     def is_identity(self) -> bool:
@@ -483,7 +496,7 @@ class MatrixGate(Gate):
     def __init__(
         self,
         matrix: ArrayLike | list[list[int | DTypeLike]],
-        operands: list[Qubit],
+        operands: Sequence[QubitLike],
         generator: Callable[..., MatrixGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
@@ -491,6 +504,8 @@ class MatrixGate(Gate):
         if len(operands) < 2:
             msg = "for 1q gates, please use BlochSphereRotation"
             raise ValueError(msg)
+
+        self.operands = self._cast_to_qubit_list(operands)
 
         if self._check_repeated_qubit_operands(operands):
             msg = "control and target qubit cannot be the same"
@@ -506,16 +521,24 @@ class MatrixGate(Gate):
             raise ValueError(msg)
 
         self.matrix = matrix
-        self.operands = operands
+
 
     def __repr__(self) -> str:
         return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
+
+    @staticmethod
+    def _cast_to_qubit_list(operands: Sequence[QubitLike]) -> list[Qubit]:
+        qubit_list = []
+        for _, operand in enumerate(operands):
+            qubit_list.append(Qubit(operand))
+        return qubit_list
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
-    def get_qubit_operands(self) -> list[Qubit]:
+    def get_qubit_operands(self) -> Sequence[Qubit]:
+        self.operands = self._cast_to_qubit_list(self.operands)
         return self.operands
 
     def is_identity(self) -> bool:
@@ -525,7 +548,7 @@ class MatrixGate(Gate):
 class ControlledGate(Gate):
     def __init__(
         self,
-        control_qubit: Qubit,
+        control_qubit: QubitLike,
         target_gate: Gate,
         generator: Callable[..., ControlledGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
@@ -533,19 +556,23 @@ class ControlledGate(Gate):
         Gate.__init__(self, generator, arguments)
         self.control_qubit = control_qubit
         self.target_gate = target_gate
+        if not isinstance(control_qubit, Qubit):
+            self.control_qubit = Qubit(control_qubit)
 
         if self._check_repeated_qubit_operands([control_qubit, *target_gate.get_qubit_operands()]):
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
 
     def __repr__(self) -> str:
-        return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
+        return f"ControlledGate(control_qubit={Qubit(self.control_qubit)}, {self.target_gate})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
+        if not isinstance(self.control_qubit, Qubit):
+            self.control_qubit = Qubit(self.control_qubit)
         return [self.control_qubit, *self.target_gate.get_qubit_operands()]
 
     def is_identity(self) -> bool:

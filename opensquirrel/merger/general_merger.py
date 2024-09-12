@@ -5,7 +5,7 @@ import numpy as np
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import BlochSphereRotation, Comment, Qubit
+from opensquirrel.ir import BlochSphereRotation, Comment, Qubit, QubitLike
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -83,7 +83,7 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
 
     Gates obtained from merging other gates become anonymous gates.
     """
-    accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
+    accumulators_per_qubit: dict[QubitLike, BlochSphereRotation] = {
         Qubit(qubit_index): I(Qubit(qubit_index)) for qubit_index in range(circuit.qubit_register_size)
     }
 
