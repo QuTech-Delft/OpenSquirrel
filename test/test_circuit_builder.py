@@ -83,8 +83,14 @@ class TestCircuitBuilder:
     def test_wrong_number_of_arguments(self) -> None:
         builder = CircuitBuilder(3)
 
+<<<<<<< HEAD
         with pytest.raises(TypeError, match=".* takes 1 positional argument but 2 were given"):
             builder.H(0, 1)
+=======
+        with pytest.raises(TypeError) as exception_info:
+            builder.H(Qubit(0), Qubit(1))
+        assert re.search(r"H\(\) takes 1 positional argument but 2 were given", str(exception_info.value))
+>>>>>>> f712b23 (Accept QubitLike throughout opensquirrel)
 
     def test_decoupling_circuit_and_builder(self) -> None:
         builder = CircuitBuilder(1)
@@ -97,4 +103,11 @@ class TestCircuitBuilder:
 
         circuit = builder.H(0).CNOT(0, 1).to_circuit()
 
+<<<<<<< HEAD
         assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+=======
+        assert circuit.ir.statements == [
+            H(Qubit(0)),
+            CNOT(Qubit(0), Qubit(1)),
+        ]
+>>>>>>> f712b23 (Accept QubitLike throughout opensquirrel)

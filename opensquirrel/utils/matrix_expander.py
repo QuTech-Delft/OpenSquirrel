@@ -20,7 +20,7 @@ from opensquirrel.ir import (
 )
 
 
-def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
+def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
     """
     Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
     where only the given qubits appear, in order.
@@ -56,7 +56,7 @@ def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
     return reduced_ket
 
 
-def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
+def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> int:
     """
     Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
     where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.
@@ -106,6 +106,9 @@ class MatrixExpander(IRVisitor):
         self.qubit_register_size = qubit_register_size
 
     def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
+        if not isinstance(rot.qubit, Qubit):
+            rot.qubit = Qubit(rot.qubit)
+
         if rot.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -123,6 +126,9 @@ class MatrixExpander(IRVisitor):
         return result
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
+        if not isinstance(gate.control_qubit, Qubit):
+            gate.control_qubit = Qubit(gate.control_qubit)
+
         if gate.control_qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -145,7 +151,7 @@ class MatrixExpander(IRVisitor):
         # since qubit #i corresponds to the i-th LEAST significant bit.
         qubit_operands = list(reversed(gate.operands))
 
-        if any(q.index >= self.qubit_register_size for q in qubit_operands):
+        if any(Qubit(q).index >= self.qubit_register_size for q in qubit_operands):
             msg = "index out of range"
             raise IndexError(msg)
 

@@ -5,7 +5,7 @@ import numpy as np
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import BlochSphereRotation, Comment, Qubit
+from opensquirrel.ir import BlochSphereRotation, Comment, Qubit, QubitLike
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
