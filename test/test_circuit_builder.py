@@ -103,22 +103,18 @@ class TestCircuitBuilder:
             builder.H(Qubit(0), Qubit(1))
         assert re.search(r"H\(\) takes 1 positional argument but 2 were given", str(exception_info.value))
 
-    def test_wrong_argument_type(self) -> None:
-        builder = CircuitBuilder(3)
-
-        with pytest.raises(TypeError) as exception_info:
-            builder.H(0)
-
-        assert re.search(
-            "wrong argument type for instruction `H`, got <class 'int'> but expected <class 'opensquirrel.ir.Qubit'>",
-            str(exception_info.value),
-        ) or re.search(
-            "wrong argument type for instruction `H`, got <class 'int'> but expected Qubit",
-            str(exception_info.value),
-        )
-
     def test_decoupling_circuit_and_builder(self) -> None:
         builder = CircuitBuilder(1)
         circuit = builder.to_circuit()
         assert circuit.ir is not builder.ir
         assert circuit.register_manager is not builder.register_manager
+
+    def test_int_qubit_parsing(self) -> None:
+        builder = CircuitBuilder(3)
+
+        circuit = builder.H(0).CNOT(0, 1).to_circuit()
+
+        assert circuit.ir.statements == [
+            H(Qubit(0)),
+            CNOT(Qubit(0), Qubit(1)),
+        ]

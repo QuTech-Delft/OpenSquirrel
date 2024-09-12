@@ -39,13 +39,13 @@ class _ScheduleCreator(IRVisitor):
             # Rxy rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
             phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
+            self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(Qubit(g.qubit))))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
+            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(Qubit(g.qubit))))
             return
 
         raise UnsupportedGateError(g)
@@ -60,8 +60,8 @@ class _ScheduleCreator(IRVisitor):
         if g.target_gate == X(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CNOT(
-                    qC=self._get_qubit_string(g.control_qubit),
-                    qT=self._get_qubit_string(g.target_gate.qubit),
+                    qC=self._get_qubit_string(Qubit(g.control_qubit)),
+                    qT=self._get_qubit_string(Qubit(g.target_gate.qubit)),
                 ),
             )
             return
@@ -69,8 +69,8 @@ class _ScheduleCreator(IRVisitor):
         if g.target_gate == Z(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CZ(
-                    qC=self._get_qubit_string(g.control_qubit),
-                    qT=self._get_qubit_string(g.target_gate.qubit),
+                    qC=self._get_qubit_string(Qubit(g.control_qubit)),
+                    qT=self._get_qubit_string(Qubit(g.target_gate.qubit)),
                 ),
             )
             return
@@ -88,7 +88,7 @@ class _ScheduleCreator(IRVisitor):
         )
 
     def visit_reset(self, g: Reset) -> Any:
-        self.schedule.add(quantify_scheduler_gates.Reset(qubit=self._get_qubit_string(g.qubit)))
+        self.schedule.add(quantify_scheduler_gates.Reset(qubit=self._get_qubit_string(Qubit(g.qubit))))
 
 
 def export(circuit: Circuit) -> quantify_scheduler.Schedule:

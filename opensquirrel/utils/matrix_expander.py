@@ -8,10 +8,10 @@ from typing import cast
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit, QubitLike
 
 
-def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
+def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
     """
     Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
     where only the given qubits appear, in order.
@@ -41,12 +41,14 @@ def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
     """
     reduced_ket = 0
     for i, qubit in enumerate(qubits):
+        if not isinstance(qubit, Qubit):
+            qubit = Qubit(qubit)
         reduced_ket |= ((ket & (1 << qubit.index)) >> qubit.index) << i
 
     return reduced_ket
 
 
-def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
+def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> int:
     """
     Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
     where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.
@@ -84,6 +86,8 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     """
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
+        if not isinstance(qubit, Qubit):
+            qubit = Qubit(qubit)
         expanded_ket &= ~(1 << qubit.index)  # Erase bit.
         expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # Set bit to value from reduced_ket.
 
@@ -95,6 +99,9 @@ class MatrixExpander(IRVisitor):
         self.qubit_register_size = qubit_register_size
 
     def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
+        if not isinstance(rot.qubit, Qubit):
+            rot.qubit = Qubit(rot.qubit)
+
         if rot.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -112,6 +119,9 @@ class MatrixExpander(IRVisitor):
         return result
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
+        if not isinstance(gate.control_qubit, Qubit):
+            gate.control_qubit = Qubit(gate.control_qubit)
+
         if gate.control_qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -134,7 +144,7 @@ class MatrixExpander(IRVisitor):
         # since qubit #i corresponds to the i-th LEAST significant bit.
         qubit_operands = list(reversed(gate.operands))
 
-        if any(q.index >= self.qubit_register_size for q in qubit_operands):
+        if any(Qubit(q).index >= self.qubit_register_size for q in qubit_operands):
             msg = "index out of range"
             raise IndexError(msg)
 
