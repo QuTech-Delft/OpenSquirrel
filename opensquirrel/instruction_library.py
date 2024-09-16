@@ -31,15 +31,15 @@ class GateLibrary(InstructionLibrary):
         return generator_f
 
 
-class MeasurementLibrary(InstructionLibrary):
-    def __init__(self, measurement_set: Iterable[Callable[..., Measure]]) -> None:
-        self.measurement_set = measurement_set
+class measureLibrary(InstructionLibrary):
+    def __init__(self, measure_set: Iterable[Callable[..., Measure]]) -> None:
+        self.measure_set = measure_set
 
-    def get_measurement_f(self, measurement_name: str) -> Callable[..., Measure]:
+    def get_measure_f(self, measure_name: str) -> Callable[..., Measure]:
         try:
-            return next(f for f in self.measurement_set if f.__name__ == measurement_name)
+            return next(f for f in self.measure_set if f.__name__ == measure_name)
         except StopIteration as exc:
-            msg = f"unknown instruction `{measurement_name}`"
+            msg = f"unknown instruction `{measure_name}`"
             raise ValueError(msg) from exc
 
 

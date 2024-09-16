@@ -7,23 +7,23 @@ import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_set
+from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
+from opensquirrel.instruction_library import GateLibrary, measureLibrary, ResetLibrary
 from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
 
 
-class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
+class Parser(GateLibrary, measureLibrary, ResetLibrary):
     def __init__(
         self,
         gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measurement_set: Iterable[Callable[..., Measure]] = default_measurement_set,
+        measure_set: Iterable[Callable[..., Measure]] = default_measure_set,
         reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
     ) -> None:
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasurementLibrary.__init__(self, measurement_set)
+        measureLibrary.__init__(self, measure_set)
         ResetLibrary.__init__(self, reset_set)
         self.ir = None
 
@@ -173,10 +173,10 @@ class Parser(GateLibrary, MeasurementLibrary, ResetLibrary):
         ir = IR()
         for statement in ast.block.statements:
             if "measure" in statement.name:
-                generator_f_measure = self.get_measurement_f(statement.name)
+                generator_f_measure = self.get_measure_f(statement.name)
                 expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
                 for arg_set in expanded_args:
-                    ir.add_measurement(generator_f_measure(*arg_set))
+                    ir.add_measure(generator_f_measure(*arg_set))
             elif "reset" in statement.name:
                 generator_f_reset = self.get_reset_f(statement.name)
                 expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
