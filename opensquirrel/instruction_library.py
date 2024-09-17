@@ -31,7 +31,7 @@ class GateLibrary(InstructionLibrary):
         return generator_f
 
 
-class measureLibrary(InstructionLibrary):
+class MeasureLibrary(InstructionLibrary):
     def __init__(self, measure_set: Iterable[Callable[..., Measure]]) -> None:
         self.measure_set = measure_set
 

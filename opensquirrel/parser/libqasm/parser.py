@@ -9,12 +9,12 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, ResetLibrary, measureLibrary
+from opensquirrel.instruction_library import GateLibrary, ResetLibrary, MeasureLibrary
 from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
 
 
-class Parser(GateLibrary, measureLibrary, ResetLibrary):
+class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
     def __init__(
         self,
         gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
@@ -23,7 +23,7 @@ class Parser(GateLibrary, measureLibrary, ResetLibrary):
         reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
     ) -> None:
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        measureLibrary.__init__(self, measure_set)
+        MeasureLibrary.__init__(self, measure_set)
         ResetLibrary.__init__(self, reset_set)
         self.ir = None
 

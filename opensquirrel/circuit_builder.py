@@ -12,12 +12,12 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, ResetLibrary, measureLibrary
+from opensquirrel.instruction_library import GateLibrary, ResetLibrary, MeasureLibrary
 from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
-class CircuitBuilder(GateLibrary, measureLibrary, ResetLibrary):
+class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
     """
     A class using the builder pattern to make construction of circuits easy from Python.
     Adds corresponding instruction when a method is called. Checks that instructions are known and called with the right
@@ -56,7 +56,7 @@ class CircuitBuilder(GateLibrary, measureLibrary, ResetLibrary):
         reset_set: list[Callable[..., Reset]] = default_reset_set,
     ) -> None:
         GateLibrary.__init__(self, gate_set, gate_aliases)
-        measureLibrary.__init__(self, measure_set)
+        MeasureLibrary.__init__(self, measure_set)
         ResetLibrary.__init__(self, reset_set)
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
@@ -73,7 +73,7 @@ class CircuitBuilder(GateLibrary, measureLibrary, ResetLibrary):
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
         if any(attr == measure.__name__ for measure in self.measure_set):
-            generator_f_measure = measureLibrary.get_measure_f(self, attr)
+            generator_f_measure = MeasureLibrary.get_measure_f(self, attr)
             self._check_generator_f_args(generator_f_measure, attr, args)
             self.ir.add_measure(generator_f_measure(*args))
         elif any(attr == reset.__name__ for reset in self.reset_set):

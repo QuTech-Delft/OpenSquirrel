@@ -74,7 +74,7 @@ class Circuit:
             cqasm3_string: a cQASM 3 string
             gate_set: an array of gate semantic functions. See default_gates for examples
             gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
-            measure_set: an array of measure semantic functions. See default_measures for examples
+            measure_set: an array of measurement semantic functions. See default_measures for examples
         """
         from opensquirrel.parser.libqasm.parser import Parser
 
