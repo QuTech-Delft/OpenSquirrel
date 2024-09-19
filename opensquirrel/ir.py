@@ -147,7 +147,6 @@ class Qubit(Expression):
     Attributes:
         index: index of the ``Qubit`` object.
     """
-
     index: int
 
     def __init__(self, index: QubitLike) -> None:
