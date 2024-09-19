@@ -13,7 +13,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset, QubitLike
+from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset, QubitLike, Qubit
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -86,12 +86,13 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
             self.ir.add_gate(generator_f_gate(*args))
         return self
 
-    def _check_qubit_out_of_bounds_access(self, index: int) -> None:
+    def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.
 
         Args:
-            index: qubit index
+            qubit: qubit to check.
         """
+        index = Qubit(qubit).index
         if index >= self.register_manager.get_qubit_register_size():
             msg = "qubit index is out of bounds"
             raise IndexError(msg)
@@ -122,26 +123,17 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
 
         """
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
-            if isinstance(par.annotation, str):
-                if par.annotation == "QubitLike":
-                    if args[i].__class__.__name__ not in str(QubitLike):
-                        msg = (
-                            f"wrong argument type for instruction `{attr}`, "
-                            f"got {type(args[i])} but expected {QubitLike!s}"
-                        )
-                        raise TypeError(msg)
-
-                elif args[i].__class__.__name__ != par.annotation:
-                    msg = (
-                        f"wrong argument type for instruction `{attr}`, "
-                        f"got {type(args[i])} but expected {par.annotation}"
-                    )
-                    raise TypeError(msg)
-            elif not isinstance(args[i], par.annotation):
-                msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {par.annotation}"
+            try:
+                expected_type = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            except KeyError as e:
+                msg = "unknown annotation type"
+                raise TypeError(msg) from e
+            
+            if not isinstance(args[i], expected_type):
+                msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"
                 raise TypeError(msg)
-            if args[i].__class__.__name__ == "Qubit":
-                self._check_qubit_out_of_bounds_access(args[i].index)
+            if expected_type in (QubitLike, Qubit):
+                self._check_qubit_out_of_bounds_access(args[i])
             elif args[i].__class__.__name__ == "Bit":
                 self._check_bit_out_of_bounds_access(args[i].index)
 

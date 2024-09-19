@@ -59,11 +59,11 @@ class _WriterImpl(IRVisitor):
                 gate_name = gate_name.replace("\n", "")
             self.output += f"{gate_name}\n"
             return
-        if any(not isinstance(arg, QubitLike) for arg in gate.arguments):  # type: ignore[union-attr]
-            params = [arg.accept(self) for arg in gate.arguments if not isinstance(arg, QubitLike)]  # type: ignore[union-attr]
+        if any(not isinstance(arg, Qubit) for arg in gate.arguments):  # type: ignore[union-attr]
+            params = [arg.accept(self) for arg in gate.arguments if not isinstance(arg, Qubit)]  # type: ignore[union-attr]
             gate_name += f"({', '.join(params)})"
 
-        qubit_args = (Qubit(arg).accept(self) for arg in gate.arguments if isinstance(arg, QubitLike))  # type: ignore[union-attr]
+        qubit_args = (arg.accept(self) for arg in gate.arguments if isinstance(arg, Qubit))  # type: ignore[union-attr]
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"
 
     def visit_comment(self, comment: Comment) -> None:

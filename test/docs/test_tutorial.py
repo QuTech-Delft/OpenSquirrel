@@ -128,13 +128,6 @@ def test_CNOT_strong_type_error_string() -> None:
     assert "failed to resolve instruction 'CNOT' with argument pack (qubit, int)" in str(e_info.value)
 
 
-def test_cnot_strong_type_error_builder() -> None:
-    expected_msg = (
-        "wrong argument type for instruction `CNOT`, got <class 'int'> but expected <class 'opensquirrel.ir.Qubit'>"
-    )
-    with pytest.raises(TypeError, match=expected_msg):
-        CircuitBuilder(qubit_register_size=2).CNOT(Qubit(0), 3)
-
 
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
@@ -242,13 +235,7 @@ def test_error_predefined_decomposition() -> None:
         """
     )
     with pytest.raises(ValueError, match=r"replacement for gate .*") as e_info:
-        qc.replace(
-            CNOT,
-            lambda control, target: [
-                H(target),
-                CZ(control, target),
-            ],
-        )
+        qc.replace(CNOT, lambda control, target: [H(target), CZ(control, target)])
 
     assert str(e_info.value) == "replacement for gate CNOT does not preserve the quantum state"
 

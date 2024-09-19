@@ -161,18 +161,6 @@ _Output_:
     Parsing error: failed to resolve overload for cnot with argument pack (qubit, int)
 
 The issue is that the CNOT expects a qubit as second input argument where an integer has been provided.
-The same holds for the `CircuitBuilder`, _i.e._,
-it also throws an error if arguments are passed of an unexpected type:
-
-```python
-try:
-    CircuitBuilder(qubit_register_size=2).CNOT(Qubit(0), 3)
-except Exception as e:
-    print(e)
-```
-_Output_:
-
-    TypeError: wrong argument type for instruction `CNOT`, got <class 'int'> but expected Qubit
 
 ## Modifying a circuit
 

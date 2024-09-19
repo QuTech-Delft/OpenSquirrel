@@ -108,7 +108,7 @@ def CR(control: QubitLike, target: QubitLike, theta: Float) -> ControlledGate:
 
 
 @named_gate
-def CRk(control: Qubit, target: Qubit, k: SupportsInt) -> ControlledGate:
+def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate:
     theta = 2 * math.pi / (2 ** Int(k).value)
     return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
 
