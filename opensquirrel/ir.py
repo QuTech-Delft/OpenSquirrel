@@ -473,26 +473,26 @@ class MatrixGate(Gate):
     ) -> None:
         Gate.__init__(self, generator, arguments)
 
-        operands = [Qubit(operand) for operand in operands]
-        if len(operands) < 2:
+        parsed_operands = [Qubit(operand) for operand in operands]
+        if len(parsed_operands) < 2:
             msg = "for 1q gates, please use BlochSphereRotation"
             raise ValueError(msg)
 
-        if self._check_repeated_qubit_operands(operands):
+        if self._check_repeated_qubit_operands(parsed_operands):
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
 
         matrix = np.asarray(matrix, dtype=np.complex128)
 
-        if matrix.shape != (1 << len(operands), 1 << len(operands)):
+        if matrix.shape != (1 << len(parsed_operands), 1 << len(parsed_operands)):
             msg = (
                 f"incorrect matrix shape. "
-                f"Expected {(1 << len(operands), 1 << len(operands))} but received {matrix.shape}"
+                f"Expected {(1 << len(parsed_operands), 1 << len(parsed_operands))} but received {matrix.shape}"
             )
             raise ValueError(msg)
 
         self.matrix = matrix
-        self.operands = operands
+        self.operands = parsed_operands
 
     def __repr__(self) -> str:
         return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
@@ -520,7 +520,7 @@ class ControlledGate(Gate):
         self.control_qubit = Qubit(control_qubit)
         self.target_gate = target_gate
 
-        if self._check_repeated_qubit_operands([control_qubit, *target_gate.get_qubit_operands()]):
+        if self._check_repeated_qubit_operands([self.control_qubit, *target_gate.get_qubit_operands()]):
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
 
