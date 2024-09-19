@@ -134,7 +134,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
                 is_incorrect_type = not isinstance(args[i], expected_type)
             except TypeError:
                 # expected type is probably a Union, which works differently in python39
-                is_incorrect_type = not isinstance(args[i], expected_type.__args__())
+                is_incorrect_type = not isinstance(args[i], expected_type.__args__)
 
             if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"
