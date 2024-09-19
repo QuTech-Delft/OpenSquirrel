@@ -86,7 +86,7 @@ class Float(Expression):
 
 @dataclass(init=False)
 class Int(Expression):
-    """Integers used for internal representation of ``Statement`` arguments.
+    """Integers used for intermediate representation of ``Statement`` arguments.
 
     Attributes:
         value: value of the ``Int`` object.
@@ -142,13 +142,18 @@ class Bit(Expression):
 
 @dataclass(init=False)
 class Qubit(Expression):
+    """``Qubit`` is used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        index: index of the ``Qubit`` object.
+    """
     index: int
 
     def __init__(self, index: QubitLike) -> None:
-        """Init of the ``Int`` object.
+        """Init of the ``Qubit`` object.
 
         Args:
-            value: value of the ``Int`` object.
+            index: index of the ``Qubit`` object.
         """
         if isinstance(index, SupportsInt):
             self.index = int(index)
@@ -159,17 +164,12 @@ class Qubit(Expression):
             raise TypeError(msg)
 
     def __hash__(self) -> int:
+        """Create a hash for this qubit."""
         return hash(self.index)
 
     def __repr__(self) -> str:
+        """String representation of the Qubit."""
         return f"Qubit[{self.index}]"
-
-    def __post_init__(self) -> None:
-        if isinstance(self.index, SupportsInt):
-            self.index = int(self.index)
-        else:
-            msg = "index must be an int"
-            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_qubit(self)
