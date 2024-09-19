@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Sequence, Iterable
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from functools import wraps
 from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
@@ -680,12 +680,12 @@ QubitLike = Union[SupportsInt, Qubit]
 
 
 ANNOTATIONS = {
-    "AxisLike" : AxisLike,
+    "AxisLike": AxisLike,
     "BlochSphereRotation": BlochSphereRotation,
     "ControlledGate": ControlledGate,
     "Float": Float,
     "MatrixGate": MatrixGate,
     "SupportsInt": SupportsInt,
     "Qubit": Qubit,
-    "QubitLike" : QubitLike,
+    "QubitLike": QubitLike,
 }

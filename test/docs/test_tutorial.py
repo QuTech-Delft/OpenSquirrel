@@ -128,7 +128,6 @@ def test_CNOT_strong_type_error_string() -> None:
     assert "failed to resolve instruction 'CNOT' with argument pack (qubit, int)" in str(e_info.value)
 
 
-
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
     for _ in range(4):

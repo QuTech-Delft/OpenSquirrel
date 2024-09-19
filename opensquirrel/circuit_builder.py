@@ -13,7 +13,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset, QubitLike, Qubit
+from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -128,7 +128,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
             except KeyError as e:
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
-            
+
             if not isinstance(args[i], expected_type):
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"
                 raise TypeError(msg)
