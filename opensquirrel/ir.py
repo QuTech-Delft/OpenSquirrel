@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, SupportsFloat, SupportsInt, Union, cast, get_args, overload
+from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -173,7 +173,6 @@ class Qubit(Expression):
         return f"Qubit[{self.index}]"
 
     def accept(self, visitor: IRVisitor) -> Any:
-        """Accept the Qubit"""
         return visitor.visit_qubit(self)
 
 
@@ -318,8 +317,6 @@ class Measure(Statement, ABC):
         return [self.bit]
 
     def get_qubit_operands(self) -> list[Qubit]:
-        if not isinstance(self.qubit, Qubit):
-            self.qubit = Qubit(self.qubit)
         return [self.qubit]
 
 
@@ -354,8 +351,6 @@ class Reset(Statement, ABC):
         return visitor.visit_reset(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
-        if not isinstance(self.qubit, Qubit):
-            self.qubit = Qubit(self.qubit)
         return [self.qubit]
 
 
@@ -399,7 +394,7 @@ class Gate(Statement, ABC):
         return len(qubits) != len(set(qubits))
 
     @abstractmethod
-    def get_qubit_operands(self) -> Sequence[Qubit]:
+    def get_qubit_operands(self) -> list[Qubit]:
         """Get the qubit operands of the Gate.
 
         Returns:
@@ -431,16 +426,13 @@ class BlochSphereRotation(Gate):
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
 
-        if not isinstance(qubit, Qubit):
-            self.qubit = Qubit(qubit)
-
     @staticmethod
     def identity(q: QubitLike) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
         return (
-            f"BlochSphereRotation({Qubit(self.qubit)}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
+            f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
             f" phase={repr_round(self.phase)})"
         )
 
@@ -465,8 +457,6 @@ class BlochSphereRotation(Gate):
         return visitor.visit_bloch_sphere_rotation(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
-        if not isinstance(self.qubit, Qubit):
-            self.qubit = Qubit(self.qubit)
         return [self.qubit]
 
     def is_identity(self) -> bool:
@@ -508,19 +498,11 @@ class MatrixGate(Gate):
     def __repr__(self) -> str:
         return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
-    @staticmethod
-    def _cast_to_qubit_list(operands: Sequence[QubitLike]) -> list[Qubit]:
-        qubit_list = []
-        for _, operand in enumerate(operands):
-            qubit_list.append(Qubit(operand))
-        return qubit_list
-
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
-    def get_qubit_operands(self) -> Sequence[Qubit]:
-        self.operands = self._cast_to_qubit_list(self.operands)
+    def get_qubit_operands(self) -> list[Qubit]:
         return self.operands
 
     def is_identity(self) -> bool:
@@ -538,23 +520,19 @@ class ControlledGate(Gate):
         Gate.__init__(self, generator, arguments)
         self.control_qubit = Qubit(control_qubit)
         self.target_gate = target_gate
-        if not isinstance(control_qubit, Qubit):
-            self.control_qubit = Qubit(control_qubit)
 
         if self._check_repeated_qubit_operands([self.control_qubit, *target_gate.get_qubit_operands()]):
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
 
     def __repr__(self) -> str:
-        return f"ControlledGate(control_qubit={Qubit(self.control_qubit)}, {self.target_gate})"
+        return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
-        if not isinstance(self.control_qubit, Qubit):
-            self.control_qubit = Qubit(self.control_qubit)
         return [self.control_qubit, *self.target_gate.get_qubit_operands()]
 
     def is_identity(self) -> bool:

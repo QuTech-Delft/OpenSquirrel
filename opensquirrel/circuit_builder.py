@@ -12,8 +12,13 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
+<<<<<<< HEAD
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
 from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
+=======
+from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
+from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset, QubitLike, Qubit
+>>>>>>> 5437165 (Implement QubitLike)
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
