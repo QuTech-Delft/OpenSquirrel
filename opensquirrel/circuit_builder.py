@@ -129,7 +129,14 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
 
-            if not isinstance(args[i], expected_type):
+            # fix for python39
+            try:
+                is_incorrect_type = not isinstance(args[i], expected_type)
+            except TypeError:
+                # expected type is probably a Union, which works differently in python39
+                is_incorrect_type = not isinstance(args[i], expected_type.__args__())
+
+            if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"
                 raise TypeError(msg)
             if expected_type in (QubitLike, Qubit):
