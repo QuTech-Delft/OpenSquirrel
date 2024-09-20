@@ -435,8 +435,8 @@ class BlochSphereRotation(Gate):
         self,
         qubit: QubitLike,
         axis: AxisLike,
-        angle: float,
-        phase: float = 0,
+        angle: SupportsFloat,
+        phase: SupportsFloat = 0,
         generator: Callable[..., BlochSphereRotation] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
