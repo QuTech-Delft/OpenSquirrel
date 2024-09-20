@@ -176,9 +176,6 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
     "SLF001", # Checking private functions is ok
 ]
 
-[tool.black]
-line-length = 120
-
 [tool.mypy]
 ignore_missing_imports = true
 strict = true
