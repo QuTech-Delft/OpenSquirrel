@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
-from typing import SupportsInt
+from typing import SupportsInt, SupportsFloat
 
 import numpy as np
 
@@ -75,18 +75,18 @@ def Tdag(q: QubitLike) -> BlochSphereRotation:
 
 
 @named_gate
-def Rx(q: QubitLike, theta: Float) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=theta.value, phase=0)
+def Rx(q: QubitLike, theta: SupportsFloat) -> BlochSphereRotation:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=theta, phase=0)
 
 
 @named_gate
-def Ry(q: QubitLike, theta: Float) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=theta.value, phase=0)
+def Ry(q: QubitLike, theta: SupportsFloat) -> BlochSphereRotation:
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=theta, phase=0)
 
 
 @named_gate
-def Rz(q: QubitLike, theta: Float) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=theta.value, phase=0)
+def Rz(q: QubitLike, theta: SupportsFloat) -> BlochSphereRotation:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=theta, phase=0)
 
 
 @named_gate
@@ -100,10 +100,11 @@ def CZ(control: QubitLike, target: QubitLike) -> ControlledGate:
 
 
 @named_gate
-def CR(control: QubitLike, target: QubitLike, theta: Float) -> ControlledGate:
+def CR(control: QubitLike, target: QubitLike, theta: SupportsFloat) -> ControlledGate:
+    theta = Float(theta)
     return ControlledGate(
         control,
-        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2),
+        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta.value / 2),
     )
 
 
@@ -165,7 +166,7 @@ default_bloch_sphere_rotations_without_params = [
     Tdag,
 ]
 default_bloch_sphere_rotations: list[
-    Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, Float], BlochSphereRotation]
+    Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, SupportsFloat], BlochSphereRotation]
 ]
 default_bloch_sphere_rotations = [
     *default_bloch_sphere_rotations_without_params,
