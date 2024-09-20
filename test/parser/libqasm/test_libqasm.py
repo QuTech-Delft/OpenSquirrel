@@ -1,7 +1,6 @@
 import pytest
 
 from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
-from opensquirrel.ir import Float
 from opensquirrel.parser.libqasm.parser import Parser
 
 
@@ -28,7 +27,7 @@ CRk q[0], q[1], 23
 
     assert circuit.qubit_register_size == 2
     assert circuit.qubit_register_name == "q"
-    assert circuit.ir.statements == [H(0), I(0), Ry(1, Float(1.234)), CNOT(0, 1), CR(1, 0, Float(5.123)), CRk(0, 1, 23)]
+    assert circuit.ir.statements == [H(0), I(0), Ry(1, 1.234), CNOT(0, 1), CR(1, 0, 5.123), CRk(0, 1, 23)]
 
 
 def test_sgmq(parser: Parser) -> None:

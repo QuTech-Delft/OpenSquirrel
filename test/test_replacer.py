@@ -8,7 +8,7 @@ from opensquirrel import CircuitBuilder
 from opensquirrel.decomposer import Decomposer
 from opensquirrel.decomposer.general_decomposer import check_gate_replacement, decompose, replace
 from opensquirrel.default_gates import CNOT, Y90, H, I, Ry, Rz, X, Z, sqrtSWAP
-from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, Gate
 
 
 class TestCheckGateReplacement:
@@ -45,28 +45,20 @@ class TestCheckGateReplacement:
         t = 1
         check_gate_replacement(
             CNOT(control=c, target=t),
-            [
-                Ry(t, Float(math.pi / 2)),
-                sqrtSWAP(c, t),
-                Z(c),
-                sqrtSWAP(c, t),
-                Rz(c, Float(-math.pi / 2)),
-                Rz(t, Float(-math.pi / 2)),
-                Ry(t, Float(-math.pi / 2)),
-            ],
+            [Ry(t, math.pi / 2), sqrtSWAP(c, t), Z(c), sqrtSWAP(c, t), Rz(c, -math.pi / 2), Rz(t, -math.pi / 2), Ry(t, -math.pi / 2)],
         )
 
         with pytest.raises(ValueError, match="replacement for gate CNOT does not preserve the quantum state"):
             check_gate_replacement(
                 CNOT(control=c, target=t),
                 [
-                    Ry(t, Float(math.pi / 2)),
+                    Ry(t, math.pi / 2),
                     sqrtSWAP(c, t),
                     Z(c),
                     sqrtSWAP(c, t),
-                    Rz(c, Float(-math.pi / 2 + 0.01)),
-                    Rz(t, Float(-math.pi / 2)),
-                    Ry(t, Float(-math.pi / 2)),
+                    Rz(c, -math.pi / 2 + 0.01),
+                    Rz(t, -math.pi / 2),
+                    Ry(t, -math.pi / 2),
                 ],
             )
 
@@ -74,13 +66,13 @@ class TestCheckGateReplacement:
             check_gate_replacement(
                 CNOT(control=c, target=t),
                 [
-                    Ry(t, Float(math.pi / 2)),
+                    Ry(t, math.pi / 2),
                     sqrtSWAP(c, t),
                     Z(c),
                     sqrtSWAP(c, 2),
-                    Rz(c, Float(-math.pi / 2 + 0.01)),
-                    Rz(t, Float(-math.pi / 2)),
-                    Ry(t, Float(-math.pi / 2)),
+                    Rz(c, -math.pi / 2 + 0.01),
+                    Rz(t, -math.pi / 2),
+                    Ry(t, -math.pi / 2),
                 ],
             )
 
