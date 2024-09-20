@@ -92,7 +92,7 @@ class Float(Expression):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
-    
+
     def __float__(self) -> float:
         """Cast the ``Float`` object to a building python ``float``.
 
