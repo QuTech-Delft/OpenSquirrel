@@ -10,7 +10,7 @@ ATOL = 0.0000001
 
 
 def normalize_angle(x: SupportsFloat) -> float:
-    """Normalize the angle to be in between the range of $(-\pi, \pi]$.
+    r"""Normalize the angle to be in between the range of $(-\pi, \pi]$.
     
     Args:
         x: value to normalize.
