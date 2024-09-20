@@ -6,7 +6,7 @@ from opensquirrel.common import ATOL, normalize_angle
 from opensquirrel.decomposer.aba_decomposer import ZXZDecomposer
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import X90, Rz
-from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, Gate
 
 
 class McKayDecomposer(Decomposer):
@@ -29,7 +29,7 @@ class McKayDecomposer(Decomposer):
 
         if g.axis[0] == 0 and g.axis[1] == 0:
             rz_angle = float(g.angle * g.axis[2])
-            return [Rz(g.qubit, Float(rz_angle))]
+            return [Rz(g.qubit, rz_angle)]
 
         zxz_decomposition = ZXZDecomposer().decompose(g)
         zxz_angle = 0.0
@@ -64,16 +64,16 @@ class McKayDecomposer(Decomposer):
             return decomposed_g
 
         if abs(lam) > ATOL:
-            decomposed_g.append(Rz(g.qubit, Float(lam)))
+            decomposed_g.append(Rz(g.qubit, lam))
 
         decomposed_g.append(X90(g.qubit))
 
         if abs(theta) > ATOL:
-            decomposed_g.append(Rz(g.qubit, Float(theta)))
+            decomposed_g.append(Rz(g.qubit, theta))
 
         decomposed_g.append(X90(g.qubit))
 
         if abs(phi) > ATOL:
-            decomposed_g.append(Rz(g.qubit, Float(phi)))
+            decomposed_g.append(Rz(g.qubit, phi))
 
         return decomposed_g
