@@ -106,7 +106,6 @@ class MatrixExpander(IRVisitor):
         self.qubit_register_size = qubit_register_size
 
     def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
-
         if rot.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -124,7 +123,6 @@ class MatrixExpander(IRVisitor):
         return result
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
-
         if gate.control_qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
