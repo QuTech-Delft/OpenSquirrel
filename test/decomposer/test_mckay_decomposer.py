@@ -71,5 +71,9 @@ def test_arbitrary(decomposer: McKayDecomposer) -> None:
     decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
     check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
     assert decomposed_arbitrary_operation == [
-        Rz(0, 0.018644578210707863), X90(0), Rz(0, 2.520651583905213), X90(0), Rz(0, 2.2329420137988887),
+        Rz(0, 0.018644578210707863),
+        X90(0),
+        Rz(0, 2.520651583905213),
+        X90(0),
+        Rz(0, 2.2329420137988887),
     ]
