@@ -65,10 +65,9 @@ For creation of a circuit through Python, the `CircuitBuilder` can be used accor
 
 ```python
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import Float
 
 builder = CircuitBuilder(qubit_register_size=2)
-builder.Ry(0, Float(0.23)).CNOT(0, 1)
+builder.Ry(0, 0.23).CNOT(0, 1)
 qc = builder.to_circuit()
 
 print(qc)
@@ -186,7 +185,7 @@ import math
 
 builder = CircuitBuilder(1)
 for _ in range(4):
-    builder.Rx(0, Float(math.pi / 4))
+    builder.Rx(0, math.pi / 4)
 qc = builder.to_circuit()
 
 qc.merge_single_qubit_gates()
@@ -363,7 +362,7 @@ an example can be seen below where a Hadamard, Z, Y and Rx gate are all decompos
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 
 builder = CircuitBuilder(qubit_register_size=1)
-builder.H(0).Z(0).Y(0).Rx(0, Float(math.pi / 3))
+builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
 qc = builder.to_circuit()
 
 qc.decompose(decomposer=ZYZDecomposer())
