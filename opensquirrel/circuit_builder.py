@@ -33,7 +33,7 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
 
     Example:
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
-        H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).CNOT(Qubit(0), Qubit(2)).\
+        H(0).CNOT(0, 1).CNOT(0, 2).\
         to_circuit()
         version 3.0
         <BLANKLINE>
