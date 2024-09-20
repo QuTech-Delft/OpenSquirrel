@@ -27,9 +27,15 @@ def check_mapper(mapper: Mapper) -> None:
 
     ir = IR()
     ir.add_comment(Comment("comment"))
+<<<<<<< HEAD
     ir.add_gate(BlochSphereRotation(42, (1, 0, 0), 1, 2))
     ir.add_gate(ControlledGate(42, BlochSphereRotation.identity(100)))
     ir.add_measure(Measure(42, Bit(42), (0, 0, 1)))
+=======
+    ir.add_gate(BlochSphereRotation(42, axis=(1, 0, 0), angle=1, phase=2))
+    ir.add_gate(ControlledGate(42, BlochSphereRotation.identity(100)))
+    ir.add_measurement(Measure(42, bit=Bit(42), axis=(0, 0, 1)))
+>>>>>>> 745c738 (Remove redundend Qubit from OS)
     Circuit(register_manager, ir)
     _check_scenario(circuit, mapper)
 
