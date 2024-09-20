@@ -366,7 +366,7 @@ _Output_:
 #### 2. Inferred decomposition
 
 OpenSquirrel has a variety inferred decomposition strategies.
-More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/tutorials/decompositions.ipynb).
+More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
 
 One of the most common single qubit decomposition techniques is the Z-Y-Z decomposition.
 This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
