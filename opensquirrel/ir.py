@@ -76,6 +76,7 @@ class Float(Expression):
     Attributes:
         value: value of the ``Float`` object.
     """
+
     value: float
 
     def __init__(self, value: SupportsFloat) -> None:
@@ -100,8 +101,6 @@ class Float(Expression):
             Building python ``float`` representation of the ``Float``.
         """
         return self.value
-
-
 
 
 @dataclass(init=False)

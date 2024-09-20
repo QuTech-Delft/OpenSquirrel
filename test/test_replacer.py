@@ -45,7 +45,15 @@ class TestCheckGateReplacement:
         t = 1
         check_gate_replacement(
             CNOT(control=c, target=t),
-            [Ry(t, math.pi / 2), sqrtSWAP(c, t), Z(c), sqrtSWAP(c, t), Rz(c, -math.pi / 2), Rz(t, -math.pi / 2), Ry(t, -math.pi / 2)],
+            [
+                Ry(t, math.pi / 2),
+                sqrtSWAP(c, t),
+                Z(c),
+                sqrtSWAP(c, t),
+                Rz(c, -math.pi / 2),
+                Rz(t, -math.pi / 2),
+                Ry(t, -math.pi / 2),
+            ],
         )
 
         with pytest.raises(ValueError, match="replacement for gate CNOT does not preserve the quantum state"):

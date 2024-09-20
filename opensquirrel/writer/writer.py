@@ -2,10 +2,8 @@ import inspect
 from typing import SupportsInt, SupportsFloat
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import Bit, Comment, Gate, Int, Float, IRVisitor, Measure, Qubit, Reset
+from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
 from opensquirrel.register_manager import RegisterManager
-
-
 
 
 class _WriterImpl(IRVisitor):
