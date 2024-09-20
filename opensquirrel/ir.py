@@ -587,6 +587,8 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
             # Convert to correct expression for IR
             if is_int_annotation(next_annotation):
                 next_arg = Int(next_arg)
+            elif next_annotation in (SupportsFloat, Float):
+                next_arg = Float(next_arg)
             if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
 
@@ -726,6 +728,7 @@ ANNOTATIONS_TO_TYPE_MAP = {
     "ControlledGate": ControlledGate,
     "Float": Float,
     "MatrixGate": MatrixGate,
+    "SupportsFloat": SupportsFloat,
     "SupportsInt": SupportsInt,
     "Qubit": Qubit,
     "QubitLike": QubitLike,
