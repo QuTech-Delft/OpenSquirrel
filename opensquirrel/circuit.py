@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Literal
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.exporter.export_format import ExportFormat
+from opensquirrel.ir import Qubit, Gate, Measure, Reset
 
 if TYPE_CHECKING:
     from opensquirrel.decomposer.general_decomposer import Decomposer
@@ -53,6 +54,9 @@ class Circuit:
         if not isinstance(other, Circuit):
             return False
         return self.register_manager == other.register_manager and self.ir == other.ir
+
+    def __contains__(self, qubit:Qubit) -> bool:
+        return any([isinstance(stmt,(Gate,Measure,Reset)) and qubit in stmt.get_qubit_operands()  for stmt in self.ir.statements])
 
     @classmethod
     def from_string(

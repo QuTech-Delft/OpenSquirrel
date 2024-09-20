@@ -13,7 +13,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measurements import default_measurement_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasurementLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset
+from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset, Qubit
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -60,6 +60,9 @@ class CircuitBuilder(GateLibrary, MeasurementLibrary, ResetLibrary):
         ResetLibrary.__init__(self, reset_set)
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
+
+    def __contains__(self, qubit:Qubit) -> bool:
+        return any([isinstance(stmt,(Gate,Measure,Reset)) and qubit in stmt.get_qubit_operands()  for stmt in self.ir.statements])
 
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
         if attr == "comment":
