@@ -104,7 +104,9 @@ Rz(-1.5707963) q[0]
 """
         )
         assert XZXDecomposer().decompose(H(0)) == [
-            Rx(0, Float(math.pi / 2)), Rz(0, Float(math.pi / 2)), Rx(0, Float(math.pi / 2)),
+            Rx(0, Float(math.pi / 2)),
+            Rz(0, Float(math.pi / 2)),
+            Rx(0, Float(math.pi / 2)),
         ]
 
     def test_mckay_decomposer(self) -> None:
