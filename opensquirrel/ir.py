@@ -69,19 +69,39 @@ class Expression(IRNode, ABC):
     pass
 
 
-@dataclass
+@dataclass(init=False)
 class Float(Expression):
+    """Floats used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Float`` object.
+    """
     value: float
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_float(self)
+    def __init__(self, value: SupportsFloat) -> None:
+        """Init of the ``Float`` object.
 
-    def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsFloat):
-            self.value = float(self.value)
+        Args:
+            value: value of the ``Float`` object.
+        """
+        if isinstance(value, SupportsFloat):
+            self.value = float(value)
         else:
             msg = "value must be a float"
             raise TypeError(msg)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_float(self)
+    
+    def __float__(self) -> float:
+        """Cast the ``Float`` object to a building python ``float``.
+
+        Returns:
+            Building python ``float`` representation of the ``Float``.
+        """
+        return self.value
+
+
 
 
 @dataclass(init=False)
