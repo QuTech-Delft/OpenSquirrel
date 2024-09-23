@@ -4,7 +4,7 @@ from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any, Literal
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measurements import default_measurement_set
+from opensquirrel.default_measures import default_measure_set
 from opensquirrel.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
@@ -60,7 +60,7 @@ class Circuit:
         cqasm3_string: str,
         gate_set: list[Callable[..., Gate]] = default_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measurement_set: list[Callable[..., Measure]] = default_measurement_set,
+        measure_set: list[Callable[..., Measure]] = default_measure_set,
     ) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -74,14 +74,14 @@ class Circuit:
             cqasm3_string: a cQASM 3 string
             gate_set: an array of gate semantic functions. See default_gates for examples
             gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
-            measurement_set: an array of measurement semantic functions. See default_measurements for examples
+            measure_set: an array of measurement semantic functions. See default_measures for examples
         """
         from opensquirrel.parser.libqasm.parser import Parser
 
         parser = Parser(
             gate_set=gate_set,
             gate_aliases=gate_aliases,
-            measurement_set=measurement_set,
+            measure_set=measure_set,
         )
         return parser.circuit_from_string(cqasm3_string)
 

@@ -188,17 +188,17 @@ def test_hectoqubit_backend() -> None:
             "Measure q[1]",
         ]
 
-        ir_measurements = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
-        qs_measurements = [
+        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
+        qs_measures = [
             operation.data["gate_info"]
             for operation in exported_schedule.operations.values()
             if operation.data["gate_info"]["operation_type"] == "measure"
         ]
 
-        for i, ir_measurement in enumerate(ir_measurements):
-            assert qs_measurements[i]["acq_channel_override"] == ir_measurement.qubit.index
-            assert qs_measurements[i]["acq_index"] == ir_measurement.qubit.index
-            assert qs_measurements[i]["acq_protocol"] == "ThresholdedAcquisition"
+        for i, ir_measure in enumerate(ir_measures):
+            assert qs_measures[i]["acq_channel_override"] == ir_measure.qubit.index
+            assert qs_measures[i]["acq_index"] == ir_measure.qubit.index
+            assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
 
 
 def test_hectoqubit_circuit_xyx() -> None:
