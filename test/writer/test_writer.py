@@ -1,4 +1,3 @@
-
 from opensquirrel import CircuitBuilder
 from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Float, MatrixGate
 from opensquirrel.writer import writer

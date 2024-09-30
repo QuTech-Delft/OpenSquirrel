@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Reset
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit, Reset
 
 try:
     import quantify_scheduler
@@ -16,7 +16,6 @@ except ModuleNotFoundError:
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
-    from opensquirrel.ir import Qubit
 
 # Radian to degree conversion outcome precision
 FIXED_POINT_DEG_PRECISION = 5

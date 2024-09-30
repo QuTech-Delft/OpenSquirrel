@@ -1,3 +1,5 @@
+from typing import SupportsInt
+
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, QubitLike, Reset
 from opensquirrel.register_manager import RegisterManager

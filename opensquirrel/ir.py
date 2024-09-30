@@ -583,7 +583,7 @@ def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable
         result = measurement_generator(*args, **kwargs)
         result.generator = wrapper
 
-        all_args = []
+        all_args: list[Any] = []
         for par in inspect.signature(measurement_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
@@ -607,7 +607,7 @@ def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
         result = reset_generator(*args, **kwargs)
         result.generator = wrapper
 
-        all_args = []
+        all_args: list[Any] = []
         for par in inspect.signature(reset_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
