@@ -584,7 +584,7 @@ def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Me
         result.generator = wrapper
 
         all_args: list[Any] = []
-        for par in inspect.signature(measurement_generator).parameters.values():
+        for par in inspect.signature(measure_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
 
