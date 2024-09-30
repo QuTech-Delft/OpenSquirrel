@@ -1,12 +1,11 @@
 import math
 
-import numpy as np
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Int, MatrixGate, Qubit, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
 
 
 def test_circuit_from_string() -> None:
@@ -44,7 +43,7 @@ b[1] = measure q[1]
 
 def test_circuit_builder() -> None:
     builder = CircuitBuilder(qubit_register_size=2)
-    builder.Ry(Qubit(0), Float(0.23)).CNOT(Qubit(0), Qubit(1))
+    builder.Ry(0, Float(0.23)).CNOT(0, 1)
     qc = builder.to_circuit()
 
     assert (
@@ -62,7 +61,7 @@ CNOT q[0], q[1]
 def test_circuit_builder_loop() -> None:
     builder = CircuitBuilder(qubit_register_size=10)
     for i in range(0, 10, 2):
-        builder.H(Qubit(i))
+        builder.H(i)
     qc = builder.to_circuit()
 
     assert (
@@ -80,13 +79,13 @@ H q[8]
     )
 
 
-def test_circuit_builder_QFT() -> None:
+def test_circuit_builder_qft() -> None:
     qubit_register_size = 5
     builder = CircuitBuilder(qubit_register_size)
     for i in range(qubit_register_size):
-        builder.H(Qubit(i))
+        builder.H(i)
         for c in range(i + 1, qubit_register_size):
-            builder.CRk(Qubit(c), Qubit(i), Int(c - i + 1))
+            builder.CRk(c, i, c - i + 1)
     qft = builder.to_circuit()
 
     assert (
@@ -131,7 +130,7 @@ def test_CNOT_strong_type_error_string() -> None:
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
     for _ in range(4):
-        builder.Rx(Qubit(0), Float(math.pi / 4))
+        builder.Rx(0, Float(math.pi / 4))
     qc = builder.to_circuit()
 
     qc.merge_single_qubit_gates()
@@ -149,39 +148,35 @@ Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, ph
 
 def test_create_custom_gates() -> None:
     @named_gate
-    def x(q: Qubit) -> BlochSphereRotation:
+    def x(q: QubitLike) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 
     @named_gate
-    def cnot(control: Qubit, target: Qubit) -> ControlledGate:
+    def cnot(control: QubitLike, target: QubitLike) -> ControlledGate:
         return ControlledGate(control, x(target))
 
     @named_gate
-    def swap(q1: Qubit, q2: Qubit) -> MatrixGate:
+    def swap(q1: QubitLike, q2: QubitLike) -> MatrixGate:
         return MatrixGate(
-            np.array(
-                [
-                    [1, 0, 0, 0],
-                    [0, 0, 1, 0],
-                    [0, 1, 0, 0],
-                    [0, 0, 0, 1],
-                ]
-            ),
-            [q1, q2],
-        )
-
-    assert x(Qubit(0)) == BlochSphereRotation(Qubit(0), axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
-    assert cnot(Qubit(0), Qubit(1)) == ControlledGate(Qubit(0), x(Qubit(1)))
-    assert swap(Qubit(0), Qubit(1)) == MatrixGate(
-        np.array(
             [
                 [1, 0, 0, 0],
                 [0, 0, 1, 0],
                 [0, 1, 0, 0],
                 [0, 0, 0, 1],
-            ]
-        ),
-        [Qubit(0), Qubit(1)],
+            ],
+            [q1, q2],
+        )
+
+    assert x(0) == BlochSphereRotation(0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+    assert cnot(0, 1) == ControlledGate(0, x(1))
+    assert swap(0, 1) == MatrixGate(
+        [
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 1],
+        ],
+        [0, 1],
     )
 
 
@@ -234,20 +229,14 @@ def test_error_predefined_decomposition() -> None:
         """
     )
     with pytest.raises(ValueError, match=r"replacement for gate .*") as e_info:
-        qc.replace(
-            CNOT,
-            lambda control, target: [
-                H(target),
-                CZ(control, target),
-            ],
-        )
+        qc.replace(CNOT, lambda control, target: [H(target), CZ(control, target)])
 
     assert str(e_info.value) == "replacement for gate CNOT does not preserve the quantum state"
 
 
 def test_zyz_decomposer() -> None:
     builder = CircuitBuilder(qubit_register_size=1)
-    builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), Float(math.pi / 3))
+    builder.H(0).Z(0).Y(0).Rx(0, Float(math.pi / 3))
     qc = builder.to_circuit()
 
     qc.decompose(decomposer=ZYZDecomposer())
@@ -268,4 +257,4 @@ Rz(-1.5707963) q[0]
 """
     )
 
-    assert ZYZDecomposer().decompose(H(Qubit(0))) == [Rz(Qubit(0), Float(math.pi)), Ry(Qubit(0), Float(math.pi / 2))]
+    assert ZYZDecomposer().decompose(H(0)) == [Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]

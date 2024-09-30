@@ -65,10 +65,10 @@ For creation of a circuit through Python, the `CircuitBuilder` can be used accor
 
 ```python
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import Qubit, Float
+from opensquirrel.ir import Float
 
 builder = CircuitBuilder(qubit_register_size=2)
-builder.Ry(Qubit(0), Float(0.23)).CNOT(Qubit(0),Qubit(1))
+builder.Ry(0, Float(0.23)).CNOT(0, 1)
 qc = builder.to_circuit()
 
 print(qc)
@@ -87,7 +87,7 @@ You can naturally use the functionalities available in Python to create your cir
 ```python
 builder = CircuitBuilder(qubit_register_size=10)
 for i in range(0, 10, 2):
-    builder.H(Qubit(i))
+    builder.H(i)
 qc = builder.to_circuit()
 
 print(qc)
@@ -110,9 +110,9 @@ For instance, you can generate a quantum fourier transform (QFT) circuit as foll
 qubit_register_size = 5
 builder = CircuitBuilder(qubit_register_size)
 for i in range(qubit_register_size):
-      builder.H(Qubit(i))
+      builder.H(i)
       for c in range(i + 1, qubit_register_size):
-            builder.CRk(Qubit(c), Qubit(i), Int(c-i+1))
+            builder.CRk(c, i, c-i+1)
 qft = builder.to_circuit()
 
 print(qft)
@@ -161,18 +161,6 @@ _Output_:
     Parsing error: failed to resolve overload for cnot with argument pack (qubit, int)
 
 The issue is that the CNOT expects a qubit as second input argument where an integer has been provided.
-The same holds for the `CircuitBuilder`, _i.e._,
-it also throws an error if arguments are passed of an unexpected type:
-
-```python
-try:
-    CircuitBuilder(qubit_register_size=2).CNOT(Qubit(0), 3)
-except Exception as e:
-    print(e)
-```
-_Output_:
-
-    TypeError: wrong argument type for instruction `CNOT`, got <class 'int'> but expected Qubit
 
 ## Modifying a circuit
 
@@ -198,7 +186,7 @@ import math
 
 builder = CircuitBuilder(1)
 for _ in range(4):
-    builder.Rx(Qubit(0), Float(math.pi / 4))
+    builder.Rx(0, Float(math.pi / 4))
 qc = builder.to_circuit()
 
 qc.merge_single_qubit_gates()
@@ -235,7 +223,7 @@ Below is shown how the X-gate is defined in the default gate set of OpenSquirrel
 
 ```python
 @named_gate
-def x(q: Qubit) -> Gate:
+def x(q: QubitLike) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 ```
 
@@ -248,7 +236,7 @@ For instance, the CNOT gate is defined in the default gate set of OpenSquirrel a
 
 ```python
 @named_gate
-def cnot(control: Qubit, target: Qubit) -> Gate:
+def cnot(control: QubitLike, target: QubitLike) -> Gate:
     return ControlledGate(control, x(target))
 ```
 
@@ -256,16 +244,14 @@ def cnot(control: Qubit, target: Qubit) -> Gate:
 
 ```python
 @named_gate
-def swap(q1: Qubit, q2: Qubit) -> Gate:
+def swap(q1: QubitLike, q2: QubitLike) -> Gate:
     return MatrixGate(
-        np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1],
-            ]
-        ),
+        [
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 1],
+        ],
         [q1, q2],
     )
 ```
@@ -366,7 +352,7 @@ _Output_:
 #### 2. Inferred decomposition
 
 OpenSquirrel has a variety inferred decomposition strategies.
-More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/tutorials/decompositions.ipynb).
+More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
 
 One of the most common single qubit decomposition techniques is the Z-Y-Z decomposition.
 This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
@@ -377,7 +363,7 @@ an example can be seen below where a Hadamard, Z, Y and Rx gate are all decompos
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 
 builder = CircuitBuilder(qubit_register_size=1)
-builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), Float(math.pi / 3))
+builder.H(0).Z(0).Y(0).Rx(0, Float(math.pi / 3))
 qc = builder.to_circuit()
 
 qc.decompose(decomposer=ZYZDecomposer())
@@ -404,7 +390,7 @@ Similarly, the decomposer can be used on individual gates.
 from opensquirrel.decomposer.aba_decomposer import XZXDecomposer
 from opensquirrel.default_gates import H
 
-print(ZYZDecomposer().decompose(H(Qubit(0))))
+print(ZYZDecomposer().decompose(H(0)))
 ```
 _Output_:
 

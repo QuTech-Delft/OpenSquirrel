@@ -48,19 +48,15 @@ class _QubitRemapper(IRVisitor):
         return measure
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
-        if not isinstance(g.qubit, Qubit):
-            g.qubit = Qubit(g.qubit)
         g.qubit.accept(self)
         return g
 
     def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
-        [Qubit(op).accept(self) for op in g.operands]
+        for op in g.operands:
+            op.accept(self)
         return g
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
-        if not isinstance(controlled_gate.control_qubit, Qubit):
-            controlled_gate.control_qubit = Qubit(controlled_gate.control_qubit)
-
         controlled_gate.control_qubit.accept(self)
         controlled_gate.target_gate.accept(self)
         return controlled_gate

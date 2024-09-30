@@ -15,7 +15,7 @@ from opensquirrel.default_gates import CCZ, SWAP, H
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
-from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate, Qubit
+from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate
 
 
 class FloatEq(float):
@@ -49,14 +49,14 @@ class MockedQuantifyScheduler:
 class TestQuantifySchedulerExporter:
     def test_export(self) -> None:
         builder = CircuitBuilder(3, 3)
-        builder.X(Qubit(0))
-        builder.CZ(Qubit(0), Qubit(1))
-        builder.reset(Qubit(0))
-        builder.Rz(Qubit(1), Float(2.34))
-        builder.Ry(Qubit(2), Float(1.23))
-        builder.measure(Qubit(0), Bit(0))
-        builder.measure(Qubit(1), Bit(1))
-        builder.measure(Qubit(2), Bit(2))
+        builder.X(0)
+        builder.CZ(0, 1)
+        builder.reset(0)
+        builder.Rz(1, Float(2.34))
+        builder.Ry(2, Float(1.23))
+        builder.measure(0, Bit(0))
+        builder.measure(1, Bit(1))
+        builder.measure(2, Bit(2))
         circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
@@ -87,12 +87,7 @@ class TestQuantifySchedulerExporter:
 
     @pytest.mark.parametrize(
         "gate",
-        [
-            H(Qubit(0)),
-            SWAP(Qubit(0), Qubit(1)),
-            BlochSphereRotation(qubit=Qubit(0), axis=(1, 2, 3), angle=0.9876, phase=2.34),
-            CCZ(Qubit(0), Qubit(1), Qubit(2)),
-        ],
+        [H(0), SWAP(0, 1), BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34), CCZ(0, 1, 2)],
         ids=["H", "SWAP", "BSR", "CCZ"],
     )
     def test_gates_not_supported(self, gate: Gate) -> None:

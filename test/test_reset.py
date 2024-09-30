@@ -1,5 +1,5 @@
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.ir import Bit, Qubit
+from opensquirrel.ir import Bit
 
 
 def test_reset() -> None:
@@ -93,11 +93,11 @@ reset q[2]
 
 def test_reset_in_circuit_builder() -> None:
     builder = CircuitBuilder(2, 2)
-    builder.H(Qubit(0))
-    builder.CNOT(Qubit(0), Qubit(1))
-    builder.reset(Qubit(0))
-    builder.measure(Qubit(0), Bit(0))
-    builder.measure(Qubit(1), Bit(1))
+    builder.H(0)
+    builder.CNOT(0, 1)
+    builder.reset(0)
+    builder.measure(0, Bit(0))
+    builder.measure(1, Bit(1))
 
     qc = builder.to_circuit()
 

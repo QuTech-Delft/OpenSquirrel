@@ -51,8 +51,7 @@ def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
     """
     reduced_ket = 0
     for i, qubit in enumerate(qubits):
-        if not isinstance(qubit, Qubit):
-            qubit = Qubit(qubit)
+        qubit = Qubit(qubit)
         reduced_ket |= ((ket & (1 << qubit.index)) >> qubit.index) << i
 
     return reduced_ket
@@ -96,8 +95,7 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> 
     """
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
-        if not isinstance(qubit, Qubit):
-            qubit = Qubit(qubit)
+        qubit = Qubit(qubit)
         expanded_ket &= ~(1 << qubit.index)  # Erase bit.
         expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # Set bit to value from reduced_ket.
 
@@ -109,9 +107,6 @@ class MatrixExpander(IRVisitor):
         self.qubit_register_size = qubit_register_size
 
     def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
-        if not isinstance(rot.qubit, Qubit):
-            rot.qubit = Qubit(rot.qubit)
-
         if rot.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -129,9 +124,6 @@ class MatrixExpander(IRVisitor):
         return result
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
-        if not isinstance(gate.control_qubit, Qubit):
-            gate.control_qubit = Qubit(gate.control_qubit)
-
         if gate.control_qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -154,7 +146,7 @@ class MatrixExpander(IRVisitor):
         # since qubit #i corresponds to the i-th LEAST significant bit.
         qubit_operands = list(reversed(gate.operands))
 
-        if any(Qubit(q).index >= self.qubit_register_size for q in qubit_operands):
+        if any(q.index >= self.qubit_register_size for q in qubit_operands):
             msg = "index out of range"
             raise IndexError(msg)
 

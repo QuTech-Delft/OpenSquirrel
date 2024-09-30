@@ -26,7 +26,8 @@ class _WriterImpl(IRVisitor):
         qubit_register_name = self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
 
-    def visit_int(self, i: Int) -> str:
+    def visit_int(self, i: SupportsInt) -> str:
+        i = Int(i)
         return f"{i.value}"
 
     def visit_float(self, f: Float) -> str:
