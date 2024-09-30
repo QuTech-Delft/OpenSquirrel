@@ -299,7 +299,7 @@ class Measure(Statement, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<abstract_measurement>"
+        return self.generator.__name__ if self.generator else "<abstract_measure>"
 
     @property
     def is_abstract(self) -> bool:
@@ -577,10 +577,10 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     return wrapper
 
 
-def named_measurement(measurement_generator: Callable[..., Measure]) -> Callable[..., Measure]:
-    @wraps(measurement_generator)
+def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Measure]:
+    @wraps(measure_generator)
     def wrapper(*args: Any, **kwargs: Any) -> Measure:
-        result = measurement_generator(*args, **kwargs)
+        result = measure_generator(*args, **kwargs)
         result.generator = wrapper
 
         all_args: list[Any] = []
@@ -658,8 +658,8 @@ class IR:
     def add_gate(self, gate: Gate) -> None:
         self.statements.append(gate)
 
-    def add_measurement(self, measurement: Measure) -> None:
-        self.statements.append(measurement)
+    def add_measure(self, measure: Measure) -> None:
+        self.statements.append(measure)
 
     def add_reset(self, reset: Reset) -> None:
         self.statements.append(reset)

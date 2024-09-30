@@ -2,7 +2,7 @@ from opensquirrel import Circuit
 from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 
 
-def test_measurement() -> None:
+def test_measure() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -26,7 +26,7 @@ b[1] = measure q[1]
     )
 
 
-def test_consecutive_measurements() -> None:
+def test_consecutive_measures() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -59,7 +59,7 @@ b[1] = measure q[1]
     )
 
 
-def test_measurements_unrolling() -> None:
+def test_measures_unrolling() -> None:
     qc = Circuit.from_string(
         """
         version 3.0

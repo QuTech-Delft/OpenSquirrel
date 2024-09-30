@@ -70,7 +70,7 @@ class TestCircuitBuilder:
         with pytest.raises(IndexError, match="qubit index is out of bounds"):
             builder.H(0).CNOT(0, 12).to_circuit()
 
-    def test_measurement_index_error(self) -> None:
+    def test_measure_index_error(self) -> None:
         builder = CircuitBuilder(2, 1)
         with pytest.raises(IndexError, match="bit index is out of bounds"):
             builder.H(0).measure(0, Bit(10)).to_circuit()
