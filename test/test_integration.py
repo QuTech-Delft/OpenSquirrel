@@ -219,6 +219,8 @@ def test_hectoqubit_backend_allxy() -> None:
         qubit[3] q
         bit[10] b
 
+        reset
+
         Rx(0.0) q[0]
         Rx(0.0) q[0]
         b[0] = measure q[0]
@@ -277,6 +279,9 @@ def test_hectoqubit_backend_allxy() -> None:
         ]
 
         assert operations == [
+            "Reset q[0]",
+            "Reset q[1]",
+            "Reset q[2]",
             "Rxy(0, 0, 'q[0]')",
             "Rxy(0, 0, 'q[0]')",
             "Measure q[0]",

@@ -120,7 +120,7 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_reset(self, g: Reset) -> Any:
         self.schedule.add(
-            quantify_scheduler_gates.Reset(qubit=self._get_qubit_string(g.qubit))
+            quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit))
         )
 
 
