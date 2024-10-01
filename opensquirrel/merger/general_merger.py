@@ -1,15 +1,16 @@
-from math import acos, cos, floor, log, sin
+from math import acos, cos, floor, log10, sin
 
 import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import \
-    default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import BlochSphereRotation, Gate, Measure, Qubit
+from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
+from opensquirrel.ir import BlochSphereRotation, Comment, Qubit
 
 
-def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
+def compose_bloch_sphere_rotations(
+    a: BlochSphereRotation, b: BlochSphereRotation
+) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
     The first rotation is applied and then the second.
     The resulting gate is anonymous except if `a` is the identity and `b` is not anonymous, or vice versa.
@@ -17,9 +18,12 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
     """
     if a.qubit != b.qubit:
-        raise ValueError("cannot merge two BlochSphereRotation's on different qubits")
+        msg = "cannot merge two BlochSphereRotation's on different qubits"
+        raise ValueError(msg)
 
-    acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
+    acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(
+        b.angle / 2
+    ) * np.dot(a.axis, b.axis)
     # This fixes float approximations like 1.0000000000002 which acos doesn't like.
     acos_argument = max(min(acos_argument, 1.0), -1.0)
 
@@ -28,7 +32,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     if abs(sin(combined_angle / 2)) < ATOL:
         return BlochSphereRotation.identity(a.qubit)
 
-    order_of_magnitude = abs(floor(log(ATOL, 10)))
+    order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
         (
             1
@@ -44,8 +48,12 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
     combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
 
-    generator = b.generator if a.is_identity() else a.generator if b.is_identity() else None
-    arguments = b.arguments if a.is_identity() else a.arguments if b.is_identity() else None
+    generator = (
+        b.generator if a.is_identity() else a.generator if b.is_identity() else None
+    )
+    arguments = (
+        b.arguments if a.is_identity() else a.arguments if b.is_identity() else None
+    )
 
     return BlochSphereRotation(
         qubit=a.qubit,
@@ -84,7 +92,8 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     Gates obtained from merging other gates become anonymous gates.
     """
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
-        Qubit(q): BlochSphereRotation.identity(Qubit(q)) for q in range(circuit.qubit_register_size)
+        Qubit(qubit_index): I(Qubit(qubit_index))
+        for qubit_index in range(circuit.qubit_register_size)
     }
 
     ir = circuit.ir
@@ -92,13 +101,13 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
-        if not isinstance(statement, Gate) and not isinstance(statement, Measure):
-            # Skip, since statement is not a gate or measurement
+        if isinstance(statement, Comment):
+            # Skip, since statement is a comment
             statement_index += 1
             continue
 
         if isinstance(statement, BlochSphereRotation):
-            # Accumulate
+            # Accumulate consecutive Bloch sphere rotations
             already_accumulated = accumulators_per_qubit[statement.qubit]
 
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
@@ -107,15 +116,21 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
             del ir.statements[statement_index]
             continue
 
-        for qubit_operand in statement.get_qubit_operands():
+        # Skip controlled-gates, measure, reset, and reset accumulator for their qubit operands
+        for qubit_operand in statement.get_qubit_operands():  # type: ignore
             if not accumulators_per_qubit[qubit_operand].is_identity():
-                ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
-                accumulators_per_qubit[qubit_operand] = BlochSphereRotation.identity(qubit_operand)
+                ir.statements.insert(
+                    statement_index, accumulators_per_qubit[qubit_operand]
+                )
+                accumulators_per_qubit[qubit_operand] = I(qubit_operand)
                 statement_index += 1
+
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
         if not accumulated_bloch_sphere_rotation.is_identity():
             if accumulated_bloch_sphere_rotation.is_anonymous:
-                accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
+                accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(
+                    accumulated_bloch_sphere_rotation
+                )
             ir.statements.append(accumulated_bloch_sphere_rotation)

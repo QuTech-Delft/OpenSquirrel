@@ -22,7 +22,7 @@ def test_identity(decomposer: XZXDecomposer) -> None:
 
 
 @pytest.mark.parametrize(
-    "gate, expected_result",
+    ("gate", "expected_result"),
     [
         (CNOT(Qubit(0), Qubit(1)), [CNOT(Qubit(0), Qubit(1))]),
         (CR(Qubit(2), Qubit(3), Float(2.123)), [CR(Qubit(2), Qubit(3), Float(2.123))]),
@@ -40,7 +40,9 @@ def test_identity(decomposer: XZXDecomposer) -> None:
             ],
         ),
         (
-            BlochSphereRotation(qubit=Qubit(0), angle=5.21, axis=(1, 2, 3), phase=0.324),
+            BlochSphereRotation(
+                qubit=Qubit(0), angle=5.21, axis=(1, 2, 3), phase=0.324
+            ),
             [
                 Rx(Qubit(0), Float(0.43035280630630446)),
                 Rz(Qubit(0), Float(-1.030183660156084)),
@@ -50,13 +52,15 @@ def test_identity(decomposer: XZXDecomposer) -> None:
     ],
     ids=["CNOT", "CR", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],
 )
-def test_xzx_decomposer(decomposer: XZXDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+def test_xzx_decomposer(
+    decomposer: XZXDecomposer, gate: Gate, expected_result: list[Gate]
+) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_find_unused_index():
+def test_find_unused_index() -> None:
     xzx_decomp = XZXDecomposer()
     missing_index = xzx_decomp._find_unused_index()
 

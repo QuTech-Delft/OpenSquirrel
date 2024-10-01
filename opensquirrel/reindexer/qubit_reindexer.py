@@ -3,10 +3,18 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
-from opensquirrel.ir import (IR, BlochSphereRotation, ControlledGate, Gate,
-                             IRVisitor, MatrixGate, Measure, Qubit)
-from opensquirrel.register_manager import (BitRegister, QubitRegister,
-                                           RegisterManager)
+from opensquirrel.ir import (
+    IR,
+    BlochSphereRotation,
+    ControlledGate,
+    Gate,
+    IRVisitor,
+    MatrixGate,
+    Measure,
+    Qubit,
+    Reset,
+)
+from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -29,26 +37,45 @@ class _QubitReindexer(IRVisitor):
     def __init__(self, qubit_indices: list[int]) -> None:
         self.qubit_indices = qubit_indices
 
-    def visit_measure(self, measure: Measure) -> Measure:
-        return Measure(qubit=Qubit(self.qubit_indices.index(measure.qubit.index)), bit=measure.bit, axis=measure.axis)
+    def visit_reset(self, reset: Reset) -> Reset:
+        qubit_to_reset = self.qubit_indices.index(reset.qubit.index)
+        return Reset(qubit=Qubit(qubit_to_reset))
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
+    def visit_measure(self, measure: Measure) -> Measure:
+        return Measure(
+            qubit=Qubit(self.qubit_indices.index(measure.qubit.index)),
+            bit=measure.bit,
+            axis=measure.axis,
+        )
+
+    def visit_bloch_sphere_rotation(
+        self, g: BlochSphereRotation
+    ) -> BlochSphereRotation:
         return BlochSphereRotation(
-            qubit=Qubit(self.qubit_indices.index(g.qubit.index)), angle=g.angle, axis=g.axis, phase=g.phase
+            qubit=Qubit(self.qubit_indices.index(g.qubit.index)),
+            angle=g.angle,
+            axis=g.axis,
+            phase=g.phase,
         )
 
     def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
-        reindexed_operands = [Qubit(self.qubit_indices.index(op.index)) for op in g.operands]
+        reindexed_operands = [
+            Qubit(self.qubit_indices.index(op.index)) for op in g.operands
+        ]
         return MatrixGate(matrix=g.matrix, operands=reindexed_operands)
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
-        control_qubit = Qubit(self.qubit_indices.index(controlled_gate.control_qubit.index))
+        control_qubit = Qubit(
+            self.qubit_indices.index(controlled_gate.control_qubit.index)
+        )
         target_gate = controlled_gate.target_gate.accept(self)
         return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
 
 
 def get_reindexed_circuit(
-    replacement_gates: Iterable[Gate], qubit_indices: list[int], bit_register_size: int = 0
+    replacement_gates: Iterable[Gate],
+    qubit_indices: list[int],
+    bit_register_size: int = 0,
 ) -> Circuit:
     from opensquirrel.circuit import Circuit
 

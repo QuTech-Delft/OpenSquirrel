@@ -1,14 +1,14 @@
-from opensquirrel.ir import Bit, Measure, Qubit, named_measurement
+from opensquirrel.ir import Bit, Measure, Qubit, named_measure
 
 
-@named_measurement
+@named_measure
 def measure(q: Qubit, b: Bit) -> Measure:
     return Measure(qubit=q, bit=b, axis=(0, 0, 1))
 
 
-@named_measurement
+@named_measure
 def measure_z(q: Qubit, b: Bit) -> Measure:
     return Measure(qubit=q, bit=b, axis=(0, 0, 1))
 
 
-default_measurement_set = [measure_z, measure]
+default_measure_set = [measure_z, measure]

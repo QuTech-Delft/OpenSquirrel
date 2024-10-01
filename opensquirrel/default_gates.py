@@ -2,26 +2,39 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from typing import SupportsInt
 
 import numpy as np
 
-from opensquirrel.ir import (BlochSphereRotation, ControlledGate, Float, Gate,
-                             Int, MatrixGate, Qubit, named_gate)
+from opensquirrel.ir import (
+    BlochSphereRotation,
+    ControlledGate,
+    Float,
+    Gate,
+    Int,
+    MatrixGate,
+    Qubit,
+    named_gate,
+)
 
 
 @named_gate
-def I(q: Qubit) -> BlochSphereRotation:
+def I(q: Qubit) -> BlochSphereRotation:  # noqa: E743
     return BlochSphereRotation.identity(q)
 
 
 @named_gate
 def H(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
+    return BlochSphereRotation(
+        qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2
+    )
 
 
 @named_gate
 def X(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+    return BlochSphereRotation(
+        qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
+    )
 
 
 @named_gate
@@ -36,7 +49,9 @@ def mX90(q: Qubit) -> BlochSphereRotation:
 
 @named_gate
 def Y(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
+    return BlochSphereRotation(
+        qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2
+    )
 
 
 @named_gate
@@ -51,7 +66,9 @@ def mY90(q: Qubit) -> BlochSphereRotation:
 
 @named_gate
 def Z(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
+    return BlochSphereRotation(
+        qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2
+    )
 
 
 @named_gate
@@ -102,14 +119,20 @@ def CZ(control: Qubit, target: Qubit) -> ControlledGate:
 @named_gate
 def CR(control: Qubit, target: Qubit, theta: Float) -> ControlledGate:
     return ControlledGate(
-        control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2)
+        control,
+        BlochSphereRotation(
+            qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2
+        ),
     )
 
 
 @named_gate
-def CRk(control: Qubit, target: Qubit, k: Int) -> ControlledGate:
-    theta = 2 * math.pi / (2**k.value)
-    return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
+def CRk(control: Qubit, target: Qubit, k: SupportsInt) -> ControlledGate:
+    theta = 2 * math.pi / (2 ** Int(k).value)
+    return ControlledGate(
+        control,
+        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2),
+    )
 
 
 @named_gate
@@ -121,7 +144,7 @@ def SWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
                 [0, 0, 1, 0],
                 [0, 1, 0, 0],
                 [0, 0, 0, 1],
-            ]
+            ],
         ),
         [q1, q2],
     )
@@ -136,7 +159,7 @@ def sqrtSWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
                 [0, (1 + 1j) / 2, (1 - 1j) / 2, 0],
                 [0, (1 - 1j) / 2, (1 + 1j) / 2, 0],
                 [0, 0, 0, 1],
-            ]
+            ],
         ),
         [q1, q2],
     )
@@ -147,7 +170,9 @@ def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> ControlledGate:
     return ControlledGate(control1, CZ(control2, target))
 
 
-default_bloch_sphere_rotations_without_params: list[Callable[[Qubit], BlochSphereRotation]]
+default_bloch_sphere_rotations_without_params: list[
+    Callable[[Qubit], BlochSphereRotation]
+]
 default_bloch_sphere_rotations_without_params = [
     I,
     H,
@@ -164,7 +189,8 @@ default_bloch_sphere_rotations_without_params = [
     Tdag,
 ]
 default_bloch_sphere_rotations: list[
-    Callable[[Qubit], BlochSphereRotation] | Callable[[Qubit, Float], BlochSphereRotation]
+    Callable[[Qubit], BlochSphereRotation]
+    | Callable[[Qubit, Float], BlochSphereRotation]
 ]
 default_bloch_sphere_rotations = [
     *default_bloch_sphere_rotations_without_params,

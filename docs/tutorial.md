@@ -2,119 +2,142 @@
 
 ## Installation
 
-OpenSquirrel is available through the Python Package Index ([PyPI](<https://pypi.org/project/opensquirrel/>)). Accordingly, the installation is as easy as ABC:
+OpenSquirrel is available through the Python Package Index ([PyPI](<https://pypi.org/project/opensquirrel/>)).
 
+Accordingly, installation is as easy as ABC:
+```shell
+$ pip install opensquirrel
+```
+
+You can check if the package is installed by importing it:
 ```python
-! pip
-install
-opensquirrel
-
 import opensquirrel
 ```
 
 ## Creating a circuit
 
-OpenSquirrel's entrypoint is the `Circuit`, which represents a quantum circuit. You can create a circuit in two different ways:
- 1. form a string written in the cQASM 3.0 quantum programming language, or;
- 2. by using OpenSquirrel's `CircuitBuilder` in Python.
+OpenSquirrel's entrypoint is the `Circuit`, which represents a quantum circuit.
+You can create a circuit in two different ways:
 
-### 1. From a cQASM 3.0 string
+ 1. form a string written in [cQASM](https://qutech-delft.github.io/cQASM-spec), or;
+ 2. by using the `CircuitBuilder` in Python.
+
+### 1. From a cQASM string
 
 ```python
 from opensquirrel import Circuit
 
-my_circuit = Circuit.from_string(
+qc = Circuit.from_string(
     """
     version 3.0
 
+    // Initialise a circuit with two qubits and a bit
     qubit[2] q
-    h q[0]; cnot q[0], q[1] // Create a Bell pair
+    bit[2] b
+
+    // Create a Bell pair
+    H q[0]
+    CNOT q[0], q[1]
+
+    // Measure qubits
+    b = measure q
     """
 )
-my_circuit
+
+print(qc)
 ```
+_Output_:
 
     version 3.0
 
     qubit[2] q
+    bit[2] b
 
-    h q[0]
-    cnot q[0], q[1]
+    H q[0]
+    CNOT q[0], q[1]
+    b[0] = measure q[0]
+    b[1] = measure q[1]
 
->__Note__: Currently OpenSquirrel only supports a limited version of the quantum programming language cQASM 3.0. This is due to the fact that the latter is still under development. When new features are introduced to the language, OpenSquirrel will follow in due course. For example, at the time of writing, OpenSquirrel only supports the declaration of a single qubit register per quantum program, whereas the language already allows for the declaration of multiple qubit registers within the global scope of the quantum program. Both the language and OpenSquirrel are under continuous development. Nevertheless, the language features that _are_ supported by OpenSquirrel function properly.
 
-### 2. Using OpenSquirrel's `CircuitBuilder`
+### 2. Using the `CircuitBuilder`
 
 For creation of a circuit through Python, the `CircuitBuilder` can be used accordingly:
 
 ```python
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import Qubit, Int, Float
+from opensquirrel.ir import Qubit, Float
 
-my_circuit_from_builder = CircuitBuilder(qubit_register_size=2).ry(Qubit(0), Float(0.23)).cnot(Qubit(0),
-                                                                                               Qubit(1)).to_circuit()
-my_circuit_from_builder
+builder = CircuitBuilder(qubit_register_size=2)
+builder.Ry(Qubit(0), Float(0.23)).CNOT(Qubit(0),Qubit(1))
+qc = builder.to_circuit()
+
+print(qc)
 ```
+_Output_:
 
     version 3.0
 
     qubit[2] q
 
-    ry q[0], 0.23
-    cnot q[0], q[1]
+    Ry(0.23) q[0]
+    CNOT q[0], q[1]
 
 You can naturally use the functionalities available in Python to create your circuit:
 
 ```python
 builder = CircuitBuilder(qubit_register_size=10)
 for i in range(0, 10, 2):
-    builder.h(Qubit(i))
+    builder.H(Qubit(i))
+qc = builder.to_circuit()
 
-builder.to_circuit()
+print(qc)
 ```
+_Output_:
 
     version 3.0
 
     qubit[10] q
 
-    h q[0]
-    h q[2]
-    h q[4]
-    h q[6]
-    h q[8]
+    H q[0]
+    H q[2]
+    H q[4]
+    H q[6]
+    H q[8]
 
 For instance, you can generate a quantum fourier transform (QFT) circuit as follows:
 
 ```python
 qubit_register_size = 5
-qft = CircuitBuilder(qubit_register_size)
+builder = CircuitBuilder(qubit_register_size)
 for i in range(qubit_register_size):
-      qft.h(Qubit(i))
+      builder.H(Qubit(i))
       for c in range(i + 1, qubit_register_size):
-            qft.crk(Qubit(c), Qubit(i), Int(c-i+1))
+            builder.CRk(Qubit(c), Qubit(i), c-i+1)
+qft = builder.to_circuit()
 
-qft.to_circuit()
+print(qft)
 ```
+_Output_:
 
     version 3.0
 
     qubit[5] q
 
-    h q[0]
-    crk q[1], q[0], 2
-    crk q[2], q[0], 3
-    crk q[3], q[0], 4
-    crk q[4], q[0], 5
-    h q[1]
-    crk q[2], q[1], 2
-    crk q[3], q[1], 3
-    crk q[4], q[1], 4
-    h q[2]
-    crk q[3], q[2], 2
-    crk q[4], q[2], 3
-    h q[3]
-    crk q[4], q[3], 2
-    h q[4]
+    H q[0]
+    CRk(2) q[1], q[0]
+    CRk(3) q[2], q[0]
+    CRk(4) q[3], q[0]
+    CRk(5) q[4], q[0]
+    H q[1]
+    CRk(2) q[2], q[1]
+    CRk(3) q[3], q[1]
+    CRk(4) q[4], q[1]
+    H q[2]
+    CRk(2) q[3], q[2]
+    CRk(3) q[4], q[2]
+    H q[3]
+    CRk(2) q[4], q[3]
+    H q[4]
 
 ### Strong types
 
@@ -127,28 +150,29 @@ try:
         version 3.0
         qubit[2] q
 
-        cnot q[0], 3 // The CNOT expects a qubit as second argument.
-        """,
-        use_libqasm=True
+        CNOT q[0], 3 // The CNOT expects a qubit as second argument.
+        """
     )
 except Exception as e:
     print(e)
 ```
+_Output_:
 
-    Parsing error: Error at <unknown>:5:9..13: failed to resolve overload for cnot with argument pack (qubit, int)
+    Parsing error: failed to resolve overload for cnot with argument pack (qubit, int)
 
-The issue is that the CNOT expects a qubit as second input argument, where an integer has been provided.
-
-The same holds for the `CircuitBuilder`, _i.e._, it also throws an error if arguments are passed of an unexpected type:
+The issue is that the CNOT expects a qubit as second input argument where an integer has been provided.
+The same holds for the `CircuitBuilder`, _i.e._,
+it also throws an error if arguments are passed of an unexpected type:
 
 ```python
 try:
-    CircuitBuilder(qubit_register_size=2).cnot(Qubit(0), Int(3))
+    CircuitBuilder(qubit_register_size=2).CNOT(Qubit(0), 3)
 except Exception as e:
     print(e)
 ```
+_Output_:
 
-    Wrong argument type for gate `cnot`, got <class 'opensquirrel.ir.Int'> but expected <class 'opensquirrel.ir.Qubit'>
+    TypeError: wrong argument type for instruction `CNOT`, got <class 'int'> but expected Qubit
 
 ## Modifying a circuit
 
@@ -156,23 +180,32 @@ except Exception as e:
 
 All single-qubit gates appearing in a circuit can be merged by applying `merge_single_qubit_gates()` to the circuit.
 Note that multi-qubit gates remain untouched and single-qubit gates are not merged across any multi-qubit gates.
-The gate that results from the merger of single-qubit gates will, in general, comprise an arbitrary rotation and, therefore, not be a known gate.
+The gate that results from the merger of single-qubit gates will, in general,
+comprise an arbitrary rotation and, therefore, not be a known gate.
 In OpenSquirrel an unrecognized gate is deemed _anonymous_.
-When a circuit that contains anonymous gates is written to a cQASM string, the semantic representation of the anonymous gate is exported.
-Note that the semantic representation of an anonymous gate is not compliant cQASM.
+When a circuit contains anonymous gates and is written to a cQASM string,
+the semantic representation of the anonymous gate is exported.
+
+!!! warning
+
+    The semantic representation of an anonymous gate is not compliant
+    [cQASM](https://qutech-delft.github.io/cQASM-spec), meaning that
+    a cQASM parser, _e.g._ [libQASM](https://qutech-delft.github.io/libqasm/),
+    will not recognize it as a valid statement.
 
 ```python
 import math
 
 builder = CircuitBuilder(1)
-for i in range(4):
+for _ in range(4):
     builder.Rx(Qubit(0), Float(math.pi / 4))
+qc = builder.to_circuit()
 
-circuit = builder.to_circuit()
+qc.merge_single_qubit_gates()
 
-circuit.merge_single_qubit_gates()
-circuit
+print(qc)
 ```
+_Output_:
 
     version 3.0
 
@@ -180,15 +213,25 @@ circuit
 
     Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
 
-In the above example, OpenSquirrel has merged all the Rx gates together. Yet, for now, OpenSquirrel does not recognize that this results in a single Rx over the cumulated angle of the individual rotations. Moreover, it does not recognize that the result corresponds to the X-gate (up to a global phase difference). At a later stage, we may want OpenSquirrel to recognize the resultant gate in the case it is part of the set of known gates.
+In the above example, OpenSquirrel has merged all the Rx gates together.
+Yet, for now, OpenSquirrel does not recognize that this results in a single Rx
+over the cumulated angle of the individual rotations.
+Moreover, it does not recognize that the result corresponds to the X gate (up to a global phase difference).
+At a later stage, we may want OpenSquirrel to recognize the resultant gate
+in the case it is part of the set of known gates.
 
-The gate set is, however, not immutable. In the following section, we demonstrate how new gates can be defined and added to the default gate set.
+The gate set is, however, not immutable.
+In the following section, we demonstrate how new gates can be defined and added to the default gate set.
 
 ### Defining your own quantum gates
 
-OpenSquirrel accepts any new gate and requires its definition in terms of a semantic. Creating new gates is done using Python functions, decorators, and one of the following gate semantic classes: `BlochSphereRotation`, `ControlledGate`, or `MatrixGate`.
+OpenSquirrel accepts any new gate and requires its definition in terms of a semantic.
+Creating new gates is done using Python functions, decorators, and one of the following gate semantic classes:
+`BlochSphereRotation`, `ControlledGate`, or `MatrixGate`.
 
-- The `BlochSphereRotation` class is used to define an arbitrary single qubit gate. It accepts a qubit, an axis, an angle, and a phase as arguments. Below is shown how the X-gate is defined in the default gate set of OpenSquirrel:
+- The `BlochSphereRotation` class is used to define an arbitrary single qubit gate.
+It accepts a qubit, an axis, an angle, and a phase as arguments.
+Below is shown how the X-gate is defined in the default gate set of OpenSquirrel:
 
 ```python
 @named_gate
@@ -196,9 +239,12 @@ def x(q: Qubit) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 ```
 
-Notice the `@named_gate` decorator. This _tells_ OpenSquirrel that the function defines a gate and that it should, therefore, have all the nice properties OpenSquirrel expects of it. When you define a gate as such, it also creates a gate in the accompanying cQASM 3.0 parser taking the same arguments as the Python function.
+Notice the `@named_gate` decorator.
+This _tells_ OpenSquirrel that the function defines a gate and that it should,
+therefore, have all the nice properties OpenSquirrel expects of it.
 
-- The `ControlledGate` class is used to define a multiple qubit gate that comprises a controlled operation. For instance, the CNOT gate is defined in the default gate set of OpenSquirrel as follows:
+- The `ControlledGate` class is used to define a multiple qubit gate that comprises a controlled operation.
+For instance, the CNOT gate is defined in the default gate set of OpenSquirrel as follows:
 
 ```python
 @named_gate
@@ -224,338 +270,153 @@ def swap(q1: Qubit, q2: Qubit) -> Gate:
     )
 ```
 
-Once you have defined your new quantum gates, you can pass them as a custom `gate_set` argument to the `Circuit` object. Here is how to add, _e.g._, the Sycamore gate (labeled as `syc`) on top of the existing default gate set of OpenSquirrel:
+!!! note
 
-```python
-import numpy as np
-import cmath
-from opensquirrel import default_gates
-from opensquirrel.ir import named_gate, MatrixGate
-
-
-# Definition of the Sycamore gate as a MatrixGate
-@named_gate
-def syc(q1: Qubit, q2: Qubit):
-    return MatrixGate(
-        matrix=np.array([
-            [1, 0, 0, 0],
-            [0, 0, -1j, 0],
-            [0, -1j, 0, 0],
-            [0, 0, 0, cmath.rect(1, - math.pi / 6)]
-        ]),
-        operands=[q1, q2]
-    )
-
-
-my_extended_gate_set = default_gates.default_gate_set.copy()
-my_extended_gate_set.append(syc)
-
-my_sycamore_circuit = Circuit.from_string(
-    """
-    version 3.0
-    qubit[3] q
-
-    h q[1]
-    syc q[1], q[2]
-    cnot q[0], q[1]
-    """,
-    gate_set=my_extended_gate_set
-)
-```
+    User defined gates can only be used in when creating a circuit with the circuit builder.
+    [cQASM](https://qutech-delft.github.io/cQASM-spec) parsers will not recognize user defined gates, _i.e._,
+    they cannot be used when creating a circuit through a cQASM string.
 
 ### Gate decomposition
 
-OpenSquirrel can decompose the gates of a quantum circuit, given a specific decomposition. OpenSquirrel offers several, so-called, decomposers out of the box, but users can also make their own decomposer and apply them to the circuit. Decompositions can be:
+OpenSquirrel can decompose the gates of a quantum circuit, given a specific decomposition.
+OpenSquirrel offers several, so-called, decomposers out of the box,
+but users can also make their own decomposer and apply them to the circuit.
+Decompositions can be:
    1. predefined, or;
    2. inferred from the gate semantics.
 
 #### 1. Predefined decomposition
 
-The first kind of decomposition is when you want to replace a particular gate in the circuit, like the CNOT gate, with a fixed list of gates. It is commonly known that CNOT can be decomposed as H-CZ-H. This decomposition is demonstrated below using a Python _lambda function_, which requires the same parameters as the gate that is decomposed:
+The first kind of decomposition is when you want to replace a particular gate in the circuit,
+like the CNOT gate, with a fixed list of gates.
+It is commonly known that CNOT can be decomposed as H-CZ-H.
+This decomposition is demonstrated below using a Python _lambda function_,
+which requires the same parameters as the gate that is decomposed:
 
 ```python
-from opensquirrel.default_gates import cnot, h, cz
+from opensquirrel.default_gates import CNOT, H, CZ
 
-circuit = Circuit.from_string(
+qc = Circuit.from_string(
     """
     version 3.0
     qubit[3] q
 
-    x q[0:2]  // Note that this notation is expanded in OpenSquirrel.
-    cnot q[0], q[1]
-    ry q[2], 6.78
+    X q[0:2]  // Note that this notation is expanded in OpenSquirrel.
+    CNOT q[0], q[1]
+    Ry q[2], 6.78
     """
 )
+qc.replace(
+    CNOT,
+    lambda control, target:
+    [
+        H(target),
+        CZ(control, target),
+        H(target),
+    ]
+)
 
-circuit.replace(cnot,
-                lambda control, target:
-                [
-                    h(target),
-                    cz(control, target),
-                    h(target),
-                ]
-                )
-circuit
+print(qc)
 ```
+_Output_:
 
     version 3.0
 
     qubit[3] q
 
-    x q[0]
-    x q[1]
-    x q[2]
-    h q[1]
-    cz q[0], q[1]
-    h q[1]
-    ry q[2], 6.78
+    X q[0]
+    X q[1]
+    X q[2]
+    H q[1]
+    CZ q[0], q[1]
+    H q[1]
+    Ry(6.78) q[2]
 
-OpenSquirrel will check whether the provided decomposition is correct. For instance, an exception is thrown if we forget the final Hadamard, or H-gate, in our custom-made decomposition:
+OpenSquirrel will check whether the provided decomposition is correct.
+For instance, an exception is thrown if we forget the final Hadamard,
+or H gate, in our custom-made decomposition:
 
 ```python
-circuit = Circuit.from_string(
+qc = Circuit.from_string(
     """
     version 3.0
     qubit[3] q
 
-    x q[0:2]
-    cnot q[0], q[1]
-    ry q[2], 6.78
+    X q[0:2]
+    CNOT q[0], q[1]
+    Ry q[2], 6.78
     """
 )
-
 try:
-  circuit.replace(cnot,
-                  lambda control, target:
-                  [
-                      h(target),
-                      cz(control, target),
-                  ]
-)
-
+    qc.replace(
+        CNOT,
+        lambda control, target:
+        [
+            H(target),
+            CZ(control, target),
+        ]
+    )
 except Exception as e:
   print(e)
 ```
+_Output_:
 
-    Replacement for gate cnot does not preserve the quantum state
+    replacement for gate CNOT does not preserve the quantum state
 
 #### 2. Inferred decomposition
 
-On top of decompositions of a single gate, OpenSquirrel can decompose gates _based on their semantics_, regardless of name. To give an example, let us decompose an arbitrary single qubit gate into a product of axis rotations ZYZ; note that these are not Y- and Z-gates, but Ry and Rz rotations gates.
+OpenSquirrel has a variety inferred decomposition strategies.
+More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
 
-First, we need to figure out the mathmatics behind this decomposition. Let us use quaternions and the Python library for symbolic mathematics [SymPy](https://www.sympy.org/en/index.html) for this; it will make things a lot easier. A 3D rotation of angle $\alpha$ about the (normalized) axis $n=\left(n_x, n_y, n_z \right)$ can be represented by the quaternion $q = \cos\left(\alpha/2\right) + \sin\left(\alpha/2\right) \left( n_x i + n_y j + n_z k \right)$. Since composition of rotations is equivalent to the product of their quaternions, we have to find the angles $\theta_1$, $\theta_2$ and $\theta_3$ such that
-
-$$\begin{align}
-q =
-&\left[ \cos\left(\frac{\theta_1}{2}\right) + k \sin\left(\frac{\theta_1}{2}\right) \right]\\
-&\times\left[ \cos\left(\frac{\theta_2}{2}\right) + j \sin\left(\frac{\theta_2}{2}\right) \right]\\
-&\times\left[ \cos\left(\frac{\theta_3}{2}\right) + k \sin\left(\frac{\theta_3}{2}\right) \right]\ .
-\end{align}
-$$
-
-Let us expand this last term with SymPy:
+One of the most common single qubit decomposition techniques is the Z-Y-Z decomposition.
+This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
+The decompositions are found in `opensquirrel.decomposer`,
+an example can be seen below where a Hadamard, Z, Y and Rx gate are all decomposed on a single qubit circuit.
 
 ```python
-! pip install sympy
+from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+
+builder = CircuitBuilder(qubit_register_size=1)
+builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), Float(math.pi / 3))
+qc = builder.to_circuit()
+
+qc.decompose(decomposer=ZYZDecomposer())
+
+print(qc)
 ```
-
-```python
-import sympy as sp
-
-theta1, theta2, theta3 = sp.symbols("theta_1 theta_2 theta_3")
-
-z1 = sp.algebras.Quaternion.from_axis_angle((0, 0, 1), theta1)
-y = sp.algebras.Quaternion.from_axis_angle((0, 1, 0), theta2)
-z2 = sp.algebras.Quaternion.from_axis_angle((0, 0, 1), theta3)
-
-rhs = sp.trigsimp(sp.expand(z1 * y * z2))
-rhs
-```
-
-$$ \cos{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{\theta_{1} + \theta_{3}}{2} \right)} + - \sin{\left(\frac{\theta_{2}}{2} \right)} \sin{\left(\frac{\theta_{1} - \theta_{3}}{2} \right)} i + \sin{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{\theta_{1} - \theta_{3}}{2} \right)} j + \sin{\left(\frac{\theta_{1} + \theta_{3}}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} k$$
-
-Let us change variables and define $p\equiv\theta_1 + \theta_3$ and $m\equiv\theta_1 - \theta_3$.
-
-```python
-p, m = sp.symbols("p m")
-
-rhs_simplified = rhs.subs({
-    theta1 + theta3: p,
-    theta1 - theta3: m
-})
-
-rhs_simplified
-```
-
-$$ \cos{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} + - \sin{\left(\frac{m}{2} \right)} \sin{\left(\frac{\theta_{2}}{2} \right)} i + \sin{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{m}{2} \right)} j + \sin{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} k$$
-
-The original quaternion $q$ can be defined in Sympy accordingly:
-
-```python
-alpha, nx, ny, nz = sp.symbols("alpha n_x n_y n_z")
-
-q = sp.algebras.Quaternion.from_axis_angle((nx, ny, nz), alpha).subs({
-    nx**2 + ny**2 + nz**2: 1  # We assume the axis is normalized.
-})
-q
-```
-
-$$ \cos{\left(\frac{\alpha}{2} \right)} + n_{x} \sin{\left(\frac{\alpha}{2} \right)} i + n_{y} \sin{\left(\frac{\alpha}{2} \right)} j + n_{z} \sin{\left(\frac{\alpha}{2} \right)} k$$
-
-We get the following system of equations, where the unknowns are $p$, $m$, and $\theta_2$:
-
-```python
-from IPython.display import display, Math
-
-display(
-    sp.Eq(rhs_simplified.a, q.a),
-    sp.Eq(rhs_simplified.b, q.b),
-    sp.Eq(rhs_simplified.c, q.c),
-    sp.Eq(rhs_simplified.d, q.d)
-    )
-
-```
-
-$$ \cos{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} = \cos{\left(\frac{\alpha}{2} \right)}$$
-
-$$ - \sin{\left(\frac{m}{2} \right)} \sin{\left(\frac{\theta_{2}}{2} \right)} = n_{x} \sin{\left(\frac{\alpha}{2} \right)}$$
-
-$$ \sin{\left(\frac{\theta_{2}}{2} \right)} \cos{\left(\frac{m}{2} \right)} = n_{y} \sin{\left(\frac{\alpha}{2} \right)}$$
-
-$$ \sin{\left(\frac{p}{2} \right)} \cos{\left(\frac{\theta_{2}}{2} \right)} = n_{z} \sin{\left(\frac{\alpha}{2} \right)}$$
-
-This system can be solved using Sympy, but we obtain a rather ugly solution after some computation time:
-
-```python
-# sp.solve([q.a - rhs.a, q.b - rhs.b, q.c - rhs.c, q.d - rhs.d], theta1, theta2, theta3) # Using this we obtain a rather ugly solution after some computation time ...
-```
-Instead, we assume $\sin(p/2) \neq 0$, such that we can substitute in the first equation $\cos\left(\theta_2/2\right)$ with its value computed from the last equation. We find:
-
-```python
-sp.trigsimp(sp.Eq(rhs_simplified.a, q.a).subs(sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)))
-```
-
-$$ \frac{n_{z} \sin{\left(\frac{\alpha}{2} \right)}}{\tan{\left(\frac{p}{2} \right)}} = \cos{\left(\frac{\alpha}{2} \right)}$$
-
-Therefore,
-
-
-$$p=\theta_1+\theta_3=2\arctan\left[n_z\tan\left(\frac{\alpha}{2}\right)\right]$$
-
-
-We can then deduce
-
-
-$$\begin{array}{rl}\theta_2 &=2\arccos\left[\cos\left(\frac{\alpha}{2}\right)\cos^{-1}\left(\frac{p}{2}\right)\right] \\ &=2\arccos\left[ \cos\left(\frac{\alpha}{2}\right)\sqrt{1+n_z^2\tan^2\left(\frac{\alpha}{2}\right)}\right] \\ \end{array}$$
-
-
-Using the third equation, we can finally infer the value of $m$:
-
-
-$$m=\theta_1-\theta_3=2\arccos\left[\frac{n_y\sin\left(\frac{\alpha}{2}\right)}{\sin\left(\frac{\theta_2}{2}\right)}\right]$$
-
-
-Let us put this into code...
-
-```python
-from typing import Tuple
-
-ATOL = 0.0001
-
-def theta123(alpha: float, axis: Tuple[float, float, float]):
-    """
-    Gives the angles used in the Z-Y-Z decomposition of the Bloch sphere rotation
-    characterized by a rotation around `axis` of angle `alpha`.
-
-    Parameters:
-      alpha: angle of the Bloch sphere rotation
-      axis: _normalized_ axis of the Bloch sphere rotation
-
-    Returns:
-      a triple (theta1, theta2, theta3) corresponding to the decomposition of the
-      arbitrary Bloch sphere rotation into U = rz(theta1) ry(theta2) rz(theta3)
-
-    """
-
-    # CAUTION: there might be edge cases where this crashes.
-
-    nx, ny, nz = axis
-    assert abs(nx**2 + ny**2 + nz**2 - 1) < ATOL, "Axis needs to be normalized"
-
-    ta2 = math.tan(alpha / 2)
-    theta2 = 2 * math.acos(math.cos(alpha / 2) * math.sqrt(1 + (nz * ta2) ** 2))
-
-    p = 2 * math.atan(nz * ta2)
-    m = 2 * math.acos(ny * math.sin(alpha / 2) / math.sin(theta2 / 2))
-
-    theta1 = (p + m) / 2
-    theta3 = p - theta1
-
-    return (theta1, theta2, theta3)
-```
-
-Once we have our angles, we can implement the OpenSquirrel decomposition; we will name it the `ZYZDecomposer`. Implementation is done by inheriting from the `Decomposer` base class and defining the `decompose` method, which in turn expects a gate and returns a list of gates. This method is applied internally to all gates of the circuit. Since 2-qubit gates should be left as-is, there is an `isinstance` check, to skip those. Also note that the axis of a `BlochSphereRotation` in OpenSquirrel is always normalized internally, and the _angle_ should always be in the range $[-\pi, \pi]$.
-
-Here is what our final ZYZ decomposition looks like:
-
-```python
-from opensquirrel.ir import Gate, BlochSphereRotation
-from opensquirrel.decomposer.general_decomposer import Decomposer
-from opensquirrel.default_gates import rz, ry
-
-
-class ZYZDecomposer(Decomposer):
-
-    def decompose(g: Gate) -> [Gate]:
-        if not isinstance(g, BlochSphereRotation):
-            return [g]  # Do nothing.
-
-        theta1, theta2, theta3 = theta123(g.angle, g.axis)
-
-        z1 = rz(g.qubit, Float(theta1))
-        y = ry(g.qubit, Float(theta2))
-        z2 = rz(g.qubit, Float(theta3))
-
-        # Note: written like this, the decomposition doesn't preserve the global phase, which is fine
-        # since the global phase is a physically irrelevant artifact of the mathematical
-        # model we use to describe the quantum system.
-
-        # Should we want to preserve it, we would need to use a raw BlochSphereRotation, which would then
-        # be an anonymous gate in the resulting decomposed circuit:
-        # z2 = BlochSphereRotation(qubit=g.qubit, angle=theta3, axis=(0, 0, 1), phase = g.phase)
-
-        return [z1, y, z2]
-```
-
-Once we defined the decomposition function, we can apply it by passing our decomposer to the `decompose()` method of the circuit. The decomposition of every gate is checked, to see if it preserves the circuit semantics (_i.e._, the unitary matrix), so we can sleep on both ears knowing that our circuit/quantum state remains the same.
-
-
-```python
-circuit_to_decompose = Circuit.from_string(
-    """
-    version 3.0
-
-    qubit[3] q
-
-    h q[0]
-    """
-)
-
-circuit_to_decompose.merge_single_qubit_gates()
-circuit_to_decompose.decompose(decomposer=ZYZDecomposer)
-circuit_to_decompose
-```
+_Output_:
 
     version 3.0
 
-    qubit[3] q
+    qubit[1] q
 
-    rz q[0], 3.1415927
-    ry q[0], 1.5707963
-    rz q[0], 0.0
+    Rz(3.1415927) q[0]
+    Ry(1.5707963) q[0]
+    Rz(3.1415927) q[0]
+    Ry(3.1415927) q[0]
+    Rz(1.5707963) q[0]
+    Ry(1.0471976) q[0]
+    Rz(-1.5707963) q[0]
 
-We get the expected result for the Hadamard gate: H = Y$^{1/2}$Z, one of the canonical decompositions of the Hadamard gate as described in the [Quantum Inspire knowledge base](https://www.quantum-inspire.com/kbase/hadamard/).
+Similarly, the decomposer can be used on individual gates.
+
+```python
+from opensquirrel.decomposer.aba_decomposer import XZXDecomposer
+from opensquirrel.default_gates import H
+
+print(ZYZDecomposer().decompose(H(Qubit(0))))
+```
+_Output_:
+
+    [BlochSphereRotation(Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0),
+     BlochSphereRotation(Qubit[0], axis=Axis[0. 1. 0.], angle=1.5707963267948966, phase=0.0),
+     BlochSphereRotation(Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0)]
+
 
 ## Exporting a circuit
 
-As you have seen in the examples above, you can turn a circuit into a cQASM 3.0 string by simply using the `str` or `__repr__` methods. We are aiming to support the possibility to export to other languages as well, _e.g._, a OpenQASM 3.0 string, and frameworks, _e.g._, a Qiskit quantum circuit.
+As you have seen in the examples above, you can turn a circuit into a
+[cQASM](https://qutech-delft.github.io/cQASM-spec) string
+by simply using the `str` or `__repr__` methods.
+We are aiming to support the possibility to export to other languages as well,
+_e.g._, a OpenQASM 3.0 string, and frameworks, _e.g._, a Qiskit quantum circuit.

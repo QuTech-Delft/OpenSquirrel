@@ -16,7 +16,7 @@ def test_qubit_variable_b_and_bit_variable_q() -> None:
         CNOT b[1], b[00]
         q[1] = measure b[1]
         q[0] = measure b[0]
-        """
+        """,
     )
     qc.merge_single_qubit_gates()
     qc.decompose(decomposer=McKayDecomposer())

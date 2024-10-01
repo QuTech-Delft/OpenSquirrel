@@ -1,6 +1,15 @@
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (IR, BlochSphereRotation, Comment, ControlledGate,
-                             IRVisitor, MatrixGate, Measure, Qubit)
+from opensquirrel.ir import (
+    IR,
+    BlochSphereRotation,
+    Comment,
+    ControlledGate,
+    IRVisitor,
+    MatrixGate,
+    Measure,
+    Qubit,
+    Reset,
+)
 from opensquirrel.mapper.mapping import Mapping
 
 
@@ -30,11 +39,17 @@ class _QubitRemapper(IRVisitor):
         qubit.index = self.mapping[qubit.index]
         return qubit
 
+    def visit_reset(self, reset: Reset) -> Reset:
+        reset.qubit.accept(self)
+        return reset
+
     def visit_measure(self, measure: Measure) -> Measure:
         measure.qubit.accept(self)
         return measure
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
+    def visit_bloch_sphere_rotation(
+        self, g: BlochSphereRotation
+    ) -> BlochSphereRotation:
         g.qubit.accept(self)
         return g
 
@@ -50,7 +65,8 @@ class _QubitRemapper(IRVisitor):
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
     if len(mapping) > circuit.qubit_register_size:
-        raise ValueError("mapping is larger than the qubit register size")
+        msg = "mapping is larger than the qubit register size"
+        raise ValueError(msg)
     qubit_remapper = _QubitRemapper(mapping)
     replacement_ir = circuit.ir
     for statement in replacement_ir.statements:
@@ -60,7 +76,8 @@ def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
 
 def remap_ir(circuit: Circuit, mapping: Mapping) -> None:
     if len(mapping) > circuit.qubit_register_size:
-        raise ValueError("mapping is larger than the qubit register size")
+        msg = "mapping is larger than the qubit register size"
+        raise ValueError(msg)
     qubit_remapper = _QubitRemapper(mapping)
     for statement in circuit.ir.statements:
         statement.accept(qubit_remapper)

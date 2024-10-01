@@ -12,7 +12,7 @@ from opensquirrel.ir import Float, Qubit
 
 
 class TestDecomposition:
-    def test_sympy_display(self):
+    def test_sympy_display(self) -> None:
         theta1, theta2, theta3 = sp.symbols("theta_1 theta_2 theta_3")
 
         z1 = sp.algebras.Quaternion.from_axis_angle((0, 0, 1), theta1)
@@ -38,7 +38,11 @@ class TestDecomposition:
             sp.Eq(rhs_simplified.d, q.d),
         )
 
-        sp.trigsimp(sp.Eq(rhs_simplified.a, q.a).subs(sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)))
+        sp.trigsimp(
+            sp.Eq(rhs_simplified.a, q.a).subs(
+                sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)
+            )
+        )
 
         theta1, theta2, theta3 = sp.symbols("theta_1 theta_2 theta_3")
 
@@ -47,10 +51,13 @@ class TestDecomposition:
         y2 = sp.algebras.Quaternion.from_axis_angle((0, 1, 0), theta3)
 
         rhs = sp.trigsimp(sp.expand(y1 * z * y2))
-        rhs_string = "cos(theta_2/2)*cos((theta_1 + theta_3)/2) + sin(theta_2/2)*sin((theta_1 - theta_3)/2)*i + sin((theta_1 + theta_3)/2)*cos(theta_2/2)*j + sin(theta_2/2)*cos((theta_1 - theta_3)/2)*k"
+        rhs_string = (
+            "cos(theta_2/2)*cos((theta_1 + theta_3)/2) + sin(theta_2/2)*sin((theta_1 - theta_3)/2)*i "
+            "+ sin((theta_1 + theta_3)/2)*cos(theta_2/2)*j + sin(theta_2/2)*cos((theta_1 - theta_3)/2)*k"
+        )
         assert str(rhs) == rhs_string
 
-    def test_aba_decomposer_input_circuit_creation(self):
+    def test_aba_decomposer_input_circuit_creation(self) -> None:
         """This test uses the `CircuitBuilder` to build a circuit that serves as input to the ABA decomposer."""
 
         builder = CircuitBuilder(qubit_register_size=1)
@@ -81,7 +88,7 @@ Rx(1.0471976) q[0]
 """
         )
 
-    def test_zyz_decomposer(self):
+    def test_zyz_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=1)
         # Add Hadamard to the circuit
         builder.H(Qubit(0))
@@ -120,7 +127,7 @@ Rz(-1.5707963) q[0]
             Rx(Qubit(0), Float(math.pi / 2)),
         ]
 
-    def test_mckay_decomposer(self):
+    def test_mckay_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=1)
         # Add Hadamard to the circuit
         builder.H(Qubit(0))
@@ -170,7 +177,7 @@ Rz(-1.5707963) q[0]
 """
         )
 
-    def test_cnot_decomposer(self):
+    def test_cnot_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=2)
         # Add Hadamard to the circuit
         builder.CZ(Qubit(0), Qubit(1))

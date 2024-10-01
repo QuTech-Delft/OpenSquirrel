@@ -1,11 +1,23 @@
+from typing import SupportsInt
+
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (Bit, Comment, Float, Gate, Int, IRVisitor,
-                             Measure, Qubit)
+from opensquirrel.ir import (
+    Bit,
+    Comment,
+    Float,
+    Gate,
+    Int,
+    IRVisitor,
+    Measure,
+    Qubit,
+    Reset,
+)
 from opensquirrel.register_manager import RegisterManager
 
 
 class _WriterImpl(IRVisitor):
-    number_of_significant_digits = 8
+    # Precision used when writing out a float number
+    FLOAT_PRECISION = 8
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
@@ -15,7 +27,11 @@ class _WriterImpl(IRVisitor):
         bit_register_name = self.register_manager.get_bit_register_name()
         self.output = "version 3.0\n\n{}\n{}\n".format(
             f"qubit[{qubit_register_size}] {qubit_register_name}",
-            f"bit[{bit_register_size}] {bit_register_name}\n" if bit_register_size > 0 else "",
+            (
+                f"bit[{bit_register_size}] {bit_register_name}\n"
+                if bit_register_size > 0
+                else ""
+            ),
         )
 
     def visit_bit(self, bit: Bit) -> str:
@@ -26,11 +42,12 @@ class _WriterImpl(IRVisitor):
         qubit_register_name = self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
 
-    def visit_int(self, i: Int) -> str:
+    def visit_int(self, i: SupportsInt) -> str:
+        i = Int(i)
         return f"{i.value}"
 
     def visit_float(self, f: Float) -> str:
-        return f"{f.value:.{self.number_of_significant_digits}}"
+        return f"{f.value:.{self.FLOAT_PRECISION}}"
 
     def visit_measure(self, measure: Measure) -> None:
         if measure.is_abstract:
@@ -39,6 +56,13 @@ class _WriterImpl(IRVisitor):
         bit_argument = measure.arguments[1].accept(self)  # type: ignore[index]
         qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
         self.output += f"{bit_argument} = {measure.name} {qubit_argument}\n"
+
+    def visit_reset(self, reset: Reset) -> None:
+        if reset.is_abstract:
+            self.output += f"{reset.name}\n"
+            return
+        qubit_argument = reset.arguments[0].accept(self)  # type: ignore[index]
+        self.output += f"{reset.name} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name
@@ -64,4 +88,6 @@ def circuit_to_string(circuit: Circuit) -> str:
 
     circuit.ir.accept(writer_impl)
 
-    return writer_impl.output
+    return (
+        writer_impl.output.rstrip() + "\n"
+    )  # remove all trailing lines and leave only one

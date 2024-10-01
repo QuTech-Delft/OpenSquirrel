@@ -8,9 +8,16 @@ from typing import cast
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import (Axis, AxisLike, BlochSphereRotation,
-                             ControlledGate, Gate, IRVisitor, MatrixGate,
-                             Qubit)
+from opensquirrel.ir import (
+    Axis,
+    AxisLike,
+    BlochSphereRotation,
+    ControlledGate,
+    Gate,
+    IRVisitor,
+    MatrixGate,
+    Qubit,
+)
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
@@ -87,7 +94,9 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
         expanded_ket &= ~(1 << qubit.index)  # Erase bit.
-        expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # Set bit to value from reduced_ket.
+        expanded_ket |= (
+            (reduced_ket & (1 << i)) >> i
+        ) << qubit.index  # Set bit to value from reduced_ket.
 
     return expanded_ket
 
@@ -96,23 +105,32 @@ class MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
-    def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
+    def visit_bloch_sphere_rotation(
+        self, rot: BlochSphereRotation
+    ) -> NDArray[np.complex128]:
         if rot.qubit.index >= self.qubit_register_size:
-            raise IndexError("index out of range")
+            msg = "index out of range"
+            raise IndexError(msg)
 
         result = np.kron(
             np.kron(
-                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)), can1(rot.axis, rot.angle, rot.phase)
+                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)),
+                can1(rot.axis, rot.angle, rot.phase),
             ),
             np.eye(1 << rot.qubit.index),
         )
-        if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
-            ValueError("result has incorrect shape")
+        if result.shape != (
+            1 << self.qubit_register_size,
+            1 << self.qubit_register_size,
+        ):
+            msg = "result has incorrect shape"
+            ValueError(msg)
         return result
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
         if gate.control_qubit.index >= self.qubit_register_size:
-            raise IndexError("index out of range")
+            msg = "index out of range"
+            raise IndexError(msg)
 
         expanded_matrix = gate.target_gate.accept(self)
         for col_index, col in enumerate(expanded_matrix.T):
@@ -133,27 +151,38 @@ class MatrixExpander(IRVisitor):
         qubit_operands = list(reversed(gate.operands))
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
-            raise IndexError("index out of range")
+            msg = "index out of range"
+            raise IndexError(msg)
 
         m = gate.matrix
 
         if m.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
-            raise ValueError(
+            msg = (
                 f"matrix has incorrect shape."
                 f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}"
             )
+            raise ValueError(msg)
 
-        expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
+        expanded_matrix = np.zeros(
+            (1 << self.qubit_register_size, 1 << self.qubit_register_size),
+            dtype=m.dtype,
+        )
 
         for expanded_matrix_column in range(expanded_matrix.shape[1]):
             small_matrix_col = get_reduced_ket(expanded_matrix_column, qubit_operands)
 
             for small_matrix_row, value in enumerate(m[:, small_matrix_col]):
-                expanded_matrix_row = expand_ket(expanded_matrix_column, small_matrix_row, qubit_operands)
+                expanded_matrix_row = expand_ket(
+                    expanded_matrix_column, small_matrix_row, qubit_operands
+                )
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
-        if expanded_matrix.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
-            raise ValueError("expended matrix has incorrect shape")
+        if expanded_matrix.shape != (
+            1 << self.qubit_register_size,
+            1 << self.qubit_register_size,
+        ):
+            msg = "expended matrix has incorrect shape"
+            raise ValueError(msg)
         return expanded_matrix
 
 
@@ -166,7 +195,8 @@ def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex12
     nx, ny, nz = Axis(axis)
 
     result = cmath.rect(1, phase) * (
-        math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
+        math.cos(angle / 2) * np.identity(2)
+        - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
     )
 
     return np.asarray(result, dtype=np.complex128)
