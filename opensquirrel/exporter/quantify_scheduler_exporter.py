@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit, Reset
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Qubit, QubitLike, Reset
 
 try:
     import quantify_scheduler
@@ -22,8 +22,8 @@ FIXED_POINT_DEG_PRECISION = 5
 
 
 class _ScheduleCreator(IRVisitor):
-    def _get_qubit_string(self, q: Qubit) -> str:
-        return f"{self.qubit_register_name}[{q.index}]"
+    def _get_qubit_string(self, q: QubitLike) -> str:
+        return f"{self.qubit_register_name}[{Qubit(q).index}]"
 
     def __init__(self, qubit_register_name: str) -> None:
         self.qubit_register_name = qubit_register_name
@@ -89,7 +89,7 @@ class _ScheduleCreator(IRVisitor):
         )
 
     def visit_reset(self, g: Reset) -> Any:
-        self.schedule.add(quantify_scheduler_gates.Reset(qubit=self._get_qubit_string(Qubit(g.qubit))))
+        self.schedule.add(quantify_scheduler_gates.Reset(qubit=self._get_qubit_string(g.qubit)))
 
 
 def export(circuit: Circuit) -> quantify_scheduler.Schedule:

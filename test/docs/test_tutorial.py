@@ -87,7 +87,6 @@ def test_circuit_builder_qft() -> None:
         for c in range(i + 1, qubit_register_size):
             builder.CRk(c, i, c - i + 1)
     qft = builder.to_circuit()
-
     assert (
         str(qft)
         == """version 3.0
@@ -95,19 +94,19 @@ def test_circuit_builder_qft() -> None:
 qubit[5] q
 
 H q[0]
-CRk q[1], q[0], q[2]
-CRk q[2], q[0], q[3]
-CRk q[3], q[0], q[4]
-CRk q[4], q[0], q[5]
+CRk(2) q[1], q[0]
+CRk(3) q[2], q[0]
+CRk(4) q[3], q[0]
+CRk(5) q[4], q[0]
 H q[1]
-CRk q[2], q[1], q[2]
-CRk q[3], q[1], q[3]
-CRk q[4], q[1], q[4]
+CRk(2) q[2], q[1]
+CRk(3) q[3], q[1]
+CRk(4) q[4], q[1]
 H q[2]
-CRk q[3], q[2], q[2]
-CRk q[4], q[2], q[3]
+CRk(2) q[3], q[2]
+CRk(3) q[4], q[2]
 H q[3]
-CRk q[4], q[3], q[2]
+CRk(2) q[4], q[3]
 H q[4]
 """
     )

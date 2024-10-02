@@ -326,7 +326,7 @@ class TestBit:
 
 class TestQubit:
     def test_type_error(self) -> None:
-        with pytest.raises(TypeError, match="index must be an int"):
+        with pytest.raises(TypeError, match="index must be an instance of SupportsInt or Qubit"):
             Qubit("f")  # type: ignore
 
     def test_init(self) -> None:

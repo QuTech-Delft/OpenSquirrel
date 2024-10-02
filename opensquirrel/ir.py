@@ -161,7 +161,7 @@ class Qubit(Expression):
         elif isinstance(index, Qubit):
             self.index = index.index
         else:
-            msg = "index must be an int"
+            msg = "index must be an instance of SupportsInt or Qubit"
             raise TypeError(msg)
 
     def __hash__(self) -> int:
