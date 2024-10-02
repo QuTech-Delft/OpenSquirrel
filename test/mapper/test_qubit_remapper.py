@@ -8,7 +8,7 @@ from opensquirrel.mapper.qubit_remapper import get_remapped_ir, remap_ir
 
 
 class TestRemapper:
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_3(self) -> Circuit:
         builder = CircuitBuilder(3)
         builder.H(Qubit(0))
@@ -16,7 +16,7 @@ class TestRemapper:
         builder.H(Qubit(2))
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_3_remapped(self) -> Circuit:
         builder = CircuitBuilder(3)
         builder.H(Qubit(2))
@@ -24,7 +24,7 @@ class TestRemapper:
         builder.H(Qubit(0))
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_4(self) -> Circuit:
         builder = CircuitBuilder(4)
         builder.H(Qubit(0))
@@ -33,7 +33,7 @@ class TestRemapper:
         builder.Y(Qubit(3))
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_4_remapped(self) -> Circuit:
         builder = CircuitBuilder(4)
         builder.H(Qubit(3))
@@ -42,11 +42,11 @@ class TestRemapper:
         builder.Y(Qubit(2))
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def mapping_3(self) -> Mapping:
         return Mapping([2, 1, 0])
 
-    @pytest.fixture()
+    @pytest.fixture
     def mapping_4(self) -> Mapping:
         return Mapping([3, 1, 0, 2])
 
