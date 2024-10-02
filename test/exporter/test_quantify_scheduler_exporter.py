@@ -90,7 +90,7 @@ class TestQuantifySchedulerExporter:
                     ),
                 ],
             )
-            mock_quantify_scheduler_gates.Reset.assert_called_once_with(qubit="q[0]")
+            mock_quantify_scheduler_gates.Reset.assert_called_once_with("q[0]")
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(
                 qC="q[0]", qT="q[1]"
             )
