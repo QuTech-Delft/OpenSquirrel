@@ -38,15 +38,13 @@ class _ScheduleCreator(IRVisitor):
             # Rxy rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
             phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(
-                quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(Qubit(g.qubit)))
-            )
+            self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(Qubit(g.qubit))))
+            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
         raise UnsupportedGateError(g)
