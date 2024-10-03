@@ -13,10 +13,11 @@ class _WriterImpl(IRVisitor):
         self.register_manager = register_manager
         qubit_register_size = self.register_manager.get_qubit_register_size()
         qubit_register_name = self.register_manager.get_qubit_register_name()
+
         bit_register_size = self.register_manager.get_bit_register_size()
         bit_register_name = self.register_manager.get_bit_register_name()
-        self.output = "version 3.0\n\n{}\n{}\n".format(
-            f"qubit[{qubit_register_size}] {qubit_register_name}",
+        self.output = "version 3.0\n".format(
+            "\n{}\n{}\n"+f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else "",
             f"bit[{bit_register_size}] {bit_register_name}\n" if bit_register_size > 0 else "",
         )
 
@@ -71,7 +72,6 @@ class _WriterImpl(IRVisitor):
 
 def circuit_to_string(circuit: Circuit) -> str:
     writer_impl = _WriterImpl(circuit.register_manager)
-
     circuit.ir.accept(writer_impl)
 
     return writer_impl.output.rstrip() + "\n"  # remove all trailing lines and leave only one
