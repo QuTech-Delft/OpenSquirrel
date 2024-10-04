@@ -161,7 +161,7 @@ class Qubit(Expression):
         elif isinstance(index, Qubit):
             self.index = index.index
         else:
-            msg = "index must be an instance of SupportsInt or Qubit"
+            msg = "index must be a QubitLike"
             raise TypeError(msg)
 
     def __hash__(self) -> int:
@@ -474,26 +474,26 @@ class MatrixGate(Gate):
     ) -> None:
         Gate.__init__(self, generator, arguments)
 
-        parsed_operands = [Qubit(operand) for operand in operands]
-        if len(parsed_operands) < 2:
+        qubit_operands = [Qubit(operand) for operand in operands]
+        if len(qubit_operands) < 2:
             msg = "for 1q gates, please use BlochSphereRotation"
             raise ValueError(msg)
 
-        if self._check_repeated_qubit_operands(parsed_operands):
+        if self._check_repeated_qubit_operands(qubit_operands):
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
 
         matrix = np.asarray(matrix, dtype=np.complex128)
 
-        if matrix.shape != (1 << len(parsed_operands), 1 << len(parsed_operands)):
+        if matrix.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
             msg = (
                 f"incorrect matrix shape. "
-                f"Expected {(1 << len(parsed_operands), 1 << len(parsed_operands))} but received {matrix.shape}"
+                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))} but received {matrix.shape}"
             )
             raise ValueError(msg)
 
         self.matrix = matrix
-        self.operands = parsed_operands
+        self.operands = qubit_operands
 
     def __repr__(self) -> str:
         return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
@@ -552,6 +552,12 @@ def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., C
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
+    def is_qubit_like_annotation(annotation: Any) -> bool:
+        return annotation in (QubitLike, Qubit)
+
+    def is_supports_int_annotation(annotation: Any) -> bool:
+        return annotation in (SupportsInt, Int)
+
     @wraps(gate_generator)
     def wrapper(*args: Any, **kwargs: Any) -> Gate:
         result = gate_generator(*args, **kwargs)
@@ -560,12 +566,14 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         all_args: list[Expression] = []
         for par in inspect.signature(gate_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            next_annotation = (
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            )
 
             # Convert to correct expression for IR
-            if next_annotation in (SupportsInt, Int):
+            if is_supports_int_annotation(next_annotation):
                 next_arg = Int(next_arg)
-            if next_annotation in (QubitLike, Qubit):
+            if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
 
             # Append parsed argument
@@ -586,7 +594,9 @@ def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Me
         all_args: list[Any] = []
         for par in inspect.signature(measure_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            next_annotation = (
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            )
 
             # Convert to correct expression for IR
             if next_annotation in (QubitLike, Qubit):
@@ -610,7 +620,9 @@ def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
         all_args: list[Any] = []
         for par in inspect.signature(reset_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            next_annotation = (
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            )
 
             # Convert to correct expression for IR
             if next_annotation in (QubitLike, Qubit):
@@ -686,7 +698,7 @@ AxisLike = Union[ArrayLike, Axis]
 QubitLike = Union[SupportsInt, Qubit]
 
 
-ANNOTATIONS = {
+ANNOTATIONS_TO_TYPE_MAP = {
     "AxisLike": AxisLike,
     "BlochSphereRotation": BlochSphereRotation,
     "ControlledGate": ControlledGate,

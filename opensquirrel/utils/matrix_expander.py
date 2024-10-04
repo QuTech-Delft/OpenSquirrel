@@ -57,7 +57,7 @@ def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
     return reduced_ket
 
 
-def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> int:
+def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     """
     Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
     where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.

@@ -13,7 +13,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -124,7 +124,9 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
         """
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             try:
-                expected_type = ANNOTATIONS[par.annotation] if isinstance(par.annotation, str) else par.annotation
+                expected_type = (
+                    ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+                )
             except KeyError as e:
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
