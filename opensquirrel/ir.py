@@ -552,12 +552,6 @@ def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., C
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    def is_qubit_like_annotation(annotation: Any) -> bool:
-        return annotation in (QubitLike, Qubit)
-
-    def is_supports_int_annotation(annotation: Any) -> bool:
-        return annotation in (SupportsInt, Int)
-
     @wraps(gate_generator)
     def wrapper(*args: Any, **kwargs: Any) -> Gate:
         result = gate_generator(*args, **kwargs)
@@ -571,7 +565,7 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
             )
 
             # Convert to correct expression for IR
-            if is_supports_int_annotation(next_annotation):
+            if is_int_annotation(next_annotation):
                 next_arg = Int(next_arg)
             if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
@@ -599,7 +593,7 @@ def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Me
             )
 
             # Convert to correct expression for IR
-            if next_annotation in (QubitLike, Qubit):
+            if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
 
             # Append parsed argument
@@ -625,7 +619,7 @@ def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
             )
 
             # Convert to correct expression for IR
-            if next_annotation in (QubitLike, Qubit):
+            if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
 
             # Append parsed argument
@@ -696,6 +690,14 @@ class IR:
 # Type Aliases
 AxisLike = Union[ArrayLike, Axis]
 QubitLike = Union[SupportsInt, Qubit]
+
+
+def is_qubit_like_annotation(annotation: Any) -> bool:
+    return annotation in (QubitLike, Qubit)
+
+
+def is_int_annotation(annotation: Any) -> bool:
+    return annotation in (SupportsInt, Int)
 
 
 ANNOTATIONS_TO_TYPE_MAP = {

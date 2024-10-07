@@ -17,11 +17,10 @@ from opensquirrel.ir import (
     IRVisitor,
     MatrixGate,
     Qubit,
-    QubitLike,
 )
 
 
-def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
+def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
     """
     Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
     where only the given qubits appear, in order.
