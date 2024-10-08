@@ -8,7 +8,16 @@ from typing import cast
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
+from opensquirrel.ir import (
+    Axis,
+    AxisLike,
+    BlochSphereRotation,
+    ControlledGate,
+    Gate,
+    IRVisitor,
+    MatrixGate,
+    Qubit,
+)
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
@@ -41,6 +50,7 @@ def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
     """
     reduced_ket = 0
     for i, qubit in enumerate(qubits):
+        qubit = Qubit(qubit)
         reduced_ket |= ((ket & (1 << qubit.index)) >> qubit.index) << i
 
     return reduced_ket
@@ -84,6 +94,7 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     """
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
+        qubit = Qubit(qubit)
         expanded_ket &= ~(1 << qubit.index)  # Erase bit.
         expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # Set bit to value from reduced_ket.
 
