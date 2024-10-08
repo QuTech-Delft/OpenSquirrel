@@ -172,6 +172,9 @@ class TestIR:
 
         assert cnot_controlled_gate != swap_matrix_gate
 
+    def test_hash_difference_bit_qubit(self) -> None:
+        assert hash(Qubit(1)) != hash(Bit(1))
+
 
 class TestMeasure:
     @pytest.fixture(name="measure")

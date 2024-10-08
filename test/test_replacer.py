@@ -5,7 +5,8 @@ import math
 import pytest
 
 from opensquirrel import CircuitBuilder
-from opensquirrel.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
+from opensquirrel.decomposer import Decomposer
+from opensquirrel.decomposer.general_decomposer import check_gate_replacement, decompose, replace
 from opensquirrel.default_gates import CNOT, Y90, H, I, Ry, Rz, X, Z, sqrtSWAP
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
 

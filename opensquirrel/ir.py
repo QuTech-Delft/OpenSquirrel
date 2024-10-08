@@ -124,7 +124,7 @@ class Bit(Expression):
     index: int
 
     def __hash__(self) -> int:
-        return hash(self.index)
+        return hash(str(self.__class__) + str(self.index))
 
     def __repr__(self) -> str:
         return f"Bit[{self.index}]"
@@ -166,7 +166,7 @@ class Qubit(Expression):
 
     def __hash__(self) -> int:
         """Create a hash for this qubit."""
-        return hash(self.index)
+        return hash(str(self.__class__) + str(self.index))
 
     def __repr__(self) -> str:
         """String representation of the Qubit."""
