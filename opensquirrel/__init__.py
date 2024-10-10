@@ -1,3 +1,5 @@
-from opensquirrel.Circuit import Circuit
-from opensquirrel.CircuitBuilder import CircuitBuilder
-from opensquirrel.DefaultGates import DefaultGates
+from opensquirrel.circuit import Circuit
+from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.default_gates import default_gate_aliases
+
+__all__ = ["Circuit", "CircuitBuilder", "default_gate_aliases"]

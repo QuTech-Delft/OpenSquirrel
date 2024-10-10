@@ -3,8 +3,8 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
-			"USER": "vscode"
+			"USER": "pydev"
 		}
 	},
-	"remoteUser": "vscode"
+	"remoteUser": "pydev"
 }
