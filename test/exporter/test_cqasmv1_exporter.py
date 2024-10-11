@@ -39,6 +39,12 @@ measure_z q[1]
 """
 
 
+def test_version_statement() -> None:
+    qc = Circuit.from_string("""version 3.0""")
+    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    assert cqasm_v1_string == """version 1.0
+"""
+
 
 def test_qubit_statement() -> None:
     builder = CircuitBuilder(3)
