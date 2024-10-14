@@ -43,10 +43,10 @@ class _CQASMv1Creator(IRVisitor):
         gate_name = gate.name.lower()
         if gate.is_anonymous:
             raise UnsupportedGateError(gate)
-        params = ""
+        params = []
         if any(not isinstance(arg, Qubit) for arg in gate.arguments):  # type: ignore[union-attr]
-            params = [arg.accept(self) for arg in gate.arguments if
-                      not isinstance(arg, Qubit)]  # type: ignore[union-attr]
+            params = [
+                arg.accept(self) for arg in gate.arguments if not isinstance(arg, Qubit)]  # type: ignore[union-attr]
         qubit_args = (arg.accept(self) for arg in gate.arguments if isinstance(arg, Qubit))  # type: ignore[union-attr]
         self.cqasmv1_string += "{} {}{}\n".format(
             gate_name, ", ".join(qubit_args), ", " + ", ".join(params) if params else ""

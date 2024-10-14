@@ -134,7 +134,7 @@ class Circuit:
 
         general_decomposer.replace(self.ir, gate_generator, f)
 
-    def export(self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None) -> Any:
+    def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             from opensquirrel.exporter import quantify_scheduler_exporter
             return quantify_scheduler_exporter.export(self)
