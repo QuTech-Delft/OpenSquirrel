@@ -13,7 +13,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS, IR, Comment, Gate, Measure, Reset
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -33,7 +33,7 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
 
     Example:
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
-        H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).CNOT(Qubit(0), Qubit(2)).\
+        H(0).CNOT(0, 1).CNOT(0, 2).\
         to_circuit()
         version 3.0
         <BLANKLINE>
@@ -58,9 +58,7 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasureLibrary.__init__(self, measure_set)
         ResetLibrary.__init__(self, reset_set)
-        self.register_manager = RegisterManager(
-            QubitRegister(qubit_register_size), BitRegister(bit_register_size)
-        )
+        self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
@@ -88,12 +86,13 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
             self.ir.add_gate(generator_f_gate(*args))
         return self
 
-    def _check_qubit_out_of_bounds_access(self, index: int) -> None:
+    def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.
 
         Args:
-            index: qubit index
+            qubit: qubit to check.
         """
+        index = Qubit(qubit).index
         if index >= self.register_manager.get_qubit_register_size():
             msg = "qubit index is out of bounds"
             raise IndexError(msg)
@@ -126,19 +125,24 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             try:
                 expected_type = (
-                    ANNOTATIONS[par.annotation]
-                    if isinstance(par.annotation, str)
-                    else par.annotation
+                    ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
                 )
             except KeyError as e:
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
 
-            if not isinstance(args[i], expected_type):
+            # fix for python39
+            try:
+                is_incorrect_type = not isinstance(args[i], expected_type)
+            except TypeError:
+                # expected type is probably a Union, which works differently in python39
+                is_incorrect_type = not isinstance(args[i], expected_type.__args__)
+
+            if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"
                 raise TypeError(msg)
-            if args[i].__class__.__name__ == "Qubit":
-                self._check_qubit_out_of_bounds_access(args[i].index)
+            if expected_type in (QubitLike, Qubit):
+                self._check_qubit_out_of_bounds_access(args[i])
             elif args[i].__class__.__name__ == "Bit":
                 self._check_bit_out_of_bounds_access(args[i].index)
 

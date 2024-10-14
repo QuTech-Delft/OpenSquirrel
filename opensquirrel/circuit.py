@@ -8,7 +8,7 @@ from opensquirrel.default_measures import default_measure_set
 from opensquirrel.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.decomposer.general_decomposer import Decomposer
+    from opensquirrel.decomposer import Decomposer
     from opensquirrel.ir import IR, Gate, Measure
     from opensquirrel.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager

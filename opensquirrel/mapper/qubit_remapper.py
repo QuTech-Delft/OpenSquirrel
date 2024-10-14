@@ -54,7 +54,8 @@ class _QubitRemapper(IRVisitor):
         return g
 
     def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
-        [op.accept(self) for op in g.operands]
+        for op in g.operands:
+            op.accept(self)
         return g
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:

@@ -6,137 +6,115 @@ from typing import SupportsInt
 
 import numpy as np
 
-from opensquirrel.ir import (
-    BlochSphereRotation,
-    ControlledGate,
-    Float,
-    Gate,
-    Int,
-    MatrixGate,
-    Qubit,
-    named_gate,
-)
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, QubitLike, named_gate
 
 
 @named_gate
-def I(q: Qubit) -> BlochSphereRotation:  # noqa: E743
+def I(q: QubitLike) -> BlochSphereRotation:  # noqa: E743
     return BlochSphereRotation.identity(q)
 
 
 @named_gate
-def H(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2
-    )
+def H(q: QubitLike) -> BlochSphereRotation:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def X(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
-    )
+def X(q: QubitLike) -> BlochSphereRotation:
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def X90(q: Qubit) -> BlochSphereRotation:
+def X90(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def mX90(q: Qubit) -> BlochSphereRotation:
+def mX90(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0)
 
 
 @named_gate
-def Y(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2
-    )
+def Y(q: QubitLike) -> BlochSphereRotation:
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def Y90(q: Qubit) -> BlochSphereRotation:
+def Y90(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def mY90(q: Qubit) -> BlochSphereRotation:
+def mY90(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=-math.pi / 2, phase=0)
 
 
 @named_gate
-def Z(q: Qubit) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2
-    )
+def Z(q: QubitLike) -> BlochSphereRotation:
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def S(q: Qubit) -> BlochSphereRotation:
+def S(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def Sdag(q: Qubit) -> BlochSphereRotation:
+def Sdag(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 2, phase=0)
 
 
 @named_gate
-def T(q: Qubit) -> BlochSphereRotation:
+def T(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 4, phase=0)
 
 
 @named_gate
-def Tdag(q: Qubit) -> BlochSphereRotation:
+def Tdag(q: QubitLike) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 4, phase=0)
 
 
 @named_gate
-def Rx(q: Qubit, theta: Float) -> BlochSphereRotation:
+def Rx(q: QubitLike, theta: Float) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=theta.value, phase=0)
 
 
 @named_gate
-def Ry(q: Qubit, theta: Float) -> BlochSphereRotation:
+def Ry(q: QubitLike, theta: Float) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=theta.value, phase=0)
 
 
 @named_gate
-def Rz(q: Qubit, theta: Float) -> BlochSphereRotation:
+def Rz(q: QubitLike, theta: Float) -> BlochSphereRotation:
     return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=theta.value, phase=0)
 
 
 @named_gate
-def CNOT(control: Qubit, target: Qubit) -> ControlledGate:
+def CNOT(control: QubitLike, target: QubitLike) -> ControlledGate:
     return ControlledGate(control, X(target))
 
 
 @named_gate
-def CZ(control: Qubit, target: Qubit) -> ControlledGate:
+def CZ(control: QubitLike, target: QubitLike) -> ControlledGate:
     return ControlledGate(control, Z(target))
 
 
 @named_gate
-def CR(control: Qubit, target: Qubit, theta: Float) -> ControlledGate:
+def CR(control: QubitLike, target: QubitLike, theta: Float) -> ControlledGate:
     return ControlledGate(
         control,
-        BlochSphereRotation(
-            qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2
-        ),
+        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2),
     )
 
 
 @named_gate
-def CRk(control: Qubit, target: Qubit, k: SupportsInt) -> ControlledGate:
+def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate:
     theta = 2 * math.pi / (2 ** Int(k).value)
-    return ControlledGate(
-        control,
-        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2),
-    )
+    return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
 
 
 @named_gate
-def SWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
+def SWAP(q1: QubitLike, q2: QubitLike) -> MatrixGate:
     return MatrixGate(
         np.array(
             [
@@ -151,7 +129,7 @@ def SWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
 
 
 @named_gate
-def sqrtSWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
+def sqrtSWAP(q1: QubitLike, q2: QubitLike) -> MatrixGate:
     return MatrixGate(
         np.array(
             [
@@ -166,13 +144,11 @@ def sqrtSWAP(q1: Qubit, q2: Qubit) -> MatrixGate:
 
 
 @named_gate
-def CCZ(control1: Qubit, control2: Qubit, target: Qubit) -> ControlledGate:
+def CCZ(control1: QubitLike, control2: QubitLike, target: QubitLike) -> ControlledGate:
     return ControlledGate(control1, CZ(control2, target))
 
 
-default_bloch_sphere_rotations_without_params: list[
-    Callable[[Qubit], BlochSphereRotation]
-]
+default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
 default_bloch_sphere_rotations_without_params = [
     I,
     H,
@@ -189,8 +165,7 @@ default_bloch_sphere_rotations_without_params = [
     Tdag,
 ]
 default_bloch_sphere_rotations: list[
-    Callable[[Qubit], BlochSphereRotation]
-    | Callable[[Qubit, Float], BlochSphereRotation]
+    Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, Float], BlochSphereRotation]
 ]
 default_bloch_sphere_rotations = [
     *default_bloch_sphere_rotations_without_params,
