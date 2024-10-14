@@ -33,7 +33,7 @@ class _ScheduleCreator(IRVisitor):
         self.qubit_register_name = register_manager.get_qubit_register_name()
         self.bit_register_size = register_manager.get_bit_register_size()
         self.acq_index_record = [0] * self.qubit_register_size
-        self.bit_string_mapping = [(None, None)] * self.bit_register_size
+        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
@@ -100,8 +100,9 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_measure(self, g: Measure) -> None:
         qubit_index = g.qubit.index
+        bit_index = g.bit.index
         acq_index = self.acq_index_record[qubit_index]
-        self.bit_string_mapping[g.bit.index] = (acq_index, qubit_index)
+        self.bit_string_mapping.insert(bit_index, (acq_index, qubit_index))
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(g.qubit),
@@ -119,7 +120,7 @@ class _ScheduleCreator(IRVisitor):
         )
 
 
-def export(circuit: Circuit) -> quantify_scheduler.Schedule:
+def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:
     if "quantify_scheduler" not in globals():
 
         class QuantifySchedulerNotInstalled:
