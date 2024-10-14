@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from opensquirrel import CircuitBuilder, Circuit
+from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Float, Gate, MatrixGate, Qubit
