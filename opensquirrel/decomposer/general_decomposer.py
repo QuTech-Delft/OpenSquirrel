@@ -19,24 +19,16 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
     gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
     replacement_gates_qubit_indices = set()
     for g in replacement_gates:
-        replacement_gates_qubit_indices.update(
-            [q.index for q in g.get_qubit_operands()]
-        )
+        replacement_gates_qubit_indices.update([q.index for q in g.get_qubit_operands()])
 
     if set(gate_qubit_indices) != replacement_gates_qubit_indices:
         msg = f"replacement for gate {gate.name} does not seem to operate on the right qubits"
         raise ValueError(msg)
 
-    replaced_matrix = get_circuit_matrix(
-        get_reindexed_circuit([gate], gate_qubit_indices)
-    )
-    replacement_matrix = get_circuit_matrix(
-        get_reindexed_circuit(replacement_gates, gate_qubit_indices)
-    )
+    replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
+    replacement_matrix = get_circuit_matrix(get_reindexed_circuit(replacement_gates, gate_qubit_indices))
 
-    if not are_matrices_equivalent_up_to_global_phase(
-        replaced_matrix, replacement_matrix
-    ):
+    if not are_matrices_equivalent_up_to_global_phase(replaced_matrix, replacement_matrix):
         msg = f"replacement for gate {gate.name} does not preserve the quantum state"
         raise ValueError(msg)
 
@@ -63,11 +55,7 @@ def decompose(ir: IR, decomposer: Decomposer) -> None:
 
 
 class _GenericReplacer(Decomposer):
-    def __init__(
-        self,
-        gate_generator: Callable[..., Gate],
-        replacement_function: Callable[..., list[Gate]],
-    ) -> None:
+    def __init__(self, gate_generator: Callable[..., Gate], replacement_function: Callable[..., list[Gate]]) -> None:
         self.gate_generator = gate_generator
         self.replacement_function = replacement_function
 
@@ -78,9 +66,7 @@ class _GenericReplacer(Decomposer):
         return self.replacement_function(*arguments)
 
 
-def replace(
-    ir: IR, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]
-) -> None:
+def replace(ir: IR, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
     """Does the same as decomposer, but only applies to a given gate."""
     generic_replacer = _GenericReplacer(gate_generator, f)
 

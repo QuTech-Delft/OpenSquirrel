@@ -38,11 +38,7 @@ class TestDecomposition:
             sp.Eq(rhs_simplified.d, q.d),
         )
 
-        sp.trigsimp(
-            sp.Eq(rhs_simplified.a, q.a).subs(
-                sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)
-            )
-        )
+        sp.trigsimp(sp.Eq(rhs_simplified.a, q.a).subs(sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)))
 
         theta1, theta2, theta3 = sp.symbols("theta_1 theta_2 theta_3")
 

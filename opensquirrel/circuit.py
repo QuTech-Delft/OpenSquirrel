@@ -125,9 +125,7 @@ class Circuit:
 
         remap_ir(self, mapper.get_mapping())
 
-    def replace(
-        self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]
-    ) -> None:
+    def replace(self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
         `f` is a callable that takes the arguments of the gate that is to be replaced and
         returns the decomposition as a list of gates.
@@ -136,9 +134,7 @@ class Circuit:
 
         general_decomposer.replace(self.ir, gate_generator, f)
 
-    def export(
-        self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None
-    ) -> Any:
+    def export(self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             from opensquirrel.exporter import quantify_scheduler_exporter
 
