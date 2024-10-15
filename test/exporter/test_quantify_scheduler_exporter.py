@@ -77,7 +77,7 @@ class TestQuantifySchedulerExporter:
                     ),
                 ],
             )
-            mock_quantify_scheduler_gates.Reset.assert_called_once_with(qubit="q[0]")
+            mock_quantify_scheduler_gates.Reset.assert_called_once_with("q[0]")
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(
                 theta=FloatEq(round(math.degrees(2.34), FIXED_POINT_DEG_PRECISION)),
