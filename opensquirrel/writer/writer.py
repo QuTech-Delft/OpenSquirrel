@@ -16,11 +16,19 @@ class _WriterImpl(IRVisitor):
 
         bit_register_size = self.register_manager.get_bit_register_size()
         bit_register_name = self.register_manager.get_bit_register_name()
-        self.output = "version 3.0{}{}{}{}\n".format(
-            "\n\n" if qubit_register_size > 0 or bit_register_size > 0,
-            f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else "",
+        self.output = "version 3.0{}{}{}{}\n\n".format(
+            "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
+            (
+                f"qubit[{qubit_register_size}] {qubit_register_name}"
+                if qubit_register_size > 0
+                else ""
+            ),
             "\n" if qubit_register_size > 0 and bit_register_size > 0 else "",
-            f"bit[{bit_register_size}] {bit_register_name}" if bit_register_size > 0 else "",
+            (
+                f"bit[{bit_register_size}] {bit_register_name}"
+                if bit_register_size > 0
+                else ""
+            ),
         )
 
     def visit_bit(self, bit: Bit) -> str:
