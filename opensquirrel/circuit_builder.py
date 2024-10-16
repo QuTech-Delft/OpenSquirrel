@@ -124,19 +124,18 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
         """
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             try:
-                expected_type = (
-                    ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
-                )
+                expected_type = ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) \
+                    else par.annotation
             except KeyError as e:
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
 
             # fix for python39
             try:
-                is_incorrect_type = not isinstance(args[i], expected_type)
+                is_incorrect_type = not isinstance(args[i], expected_type) # type: ignore
             except TypeError:
                 # expected type is probably a Union, which works differently in python39
-                is_incorrect_type = not isinstance(args[i], expected_type.__args__)
+                is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
 
             if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"
