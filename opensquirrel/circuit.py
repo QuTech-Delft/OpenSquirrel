@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
-from typing import TYPE_CHECKING, Any, Literal
+from typing import TYPE_CHECKING, Any
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.decomposer.general_decomposer import Decomposer
+    from opensquirrel.decomposer import Decomposer
     from opensquirrel.ir import IR, Gate, Measure
     from opensquirrel.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
@@ -134,10 +134,12 @@ class Circuit:
 
         general_decomposer.replace(self.ir, gate_generator, f)
 
-    def export(self, fmt: Literal[ExportFormat.QUANTIFY_SCHEDULER] | None = None) -> Any:
+    def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             from opensquirrel.exporter import quantify_scheduler_exporter
-
             return quantify_scheduler_exporter.export(self)
+        if fmt == ExportFormat.CQASM_V1:
+            from opensquirrel.exporter import cqasmv1_exporter
+            return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)

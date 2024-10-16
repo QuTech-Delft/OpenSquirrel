@@ -1,8 +1,8 @@
-from opensquirrel.ir import Qubit, Reset, named_reset
+from opensquirrel.ir import QubitLike, Reset, named_reset
 
 
 @named_reset
-def reset(q: Qubit) -> Reset:
+def reset(q: QubitLike) -> Reset:
     return Reset(qubit=q)
 
 

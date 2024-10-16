@@ -82,9 +82,12 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     """Merge all consecutive 1-qubit gates in the circuit.
 
     Gates obtained from merging other gates become anonymous gates.
+
+    Args:
+        circuit: Circuit to perform the merge on.
     """
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
-        Qubit(qubit_index): I(Qubit(qubit_index)) for qubit_index in range(circuit.qubit_register_size)
+        Qubit(qubit_index): I(qubit_index) for qubit_index in range(circuit.qubit_register_size)
     }
 
     ir = circuit.ir
