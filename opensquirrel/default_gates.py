@@ -4,8 +4,6 @@ import math
 from collections.abc import Callable
 from typing import SupportsFloat, SupportsInt
 
-import numpy as np
-
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, QubitLike, named_gate
 
 
@@ -117,14 +115,12 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
 @named_gate
 def SWAP(q1: QubitLike, q2: QubitLike) -> MatrixGate:
     return MatrixGate(
-        np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1],
-            ],
-        ),
+        [
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 1],
+        ],
         [q1, q2],
     )
 
@@ -132,14 +128,12 @@ def SWAP(q1: QubitLike, q2: QubitLike) -> MatrixGate:
 @named_gate
 def sqrtSWAP(q1: QubitLike, q2: QubitLike) -> MatrixGate:
     return MatrixGate(
-        np.array(
-            [
-                [1, 0, 0, 0],
-                [0, (1 + 1j) / 2, (1 - 1j) / 2, 0],
-                [0, (1 - 1j) / 2, (1 + 1j) / 2, 0],
-                [0, 0, 0, 1],
-            ],
-        ),
+        [
+            [1 + 0j, 0j, 0j, 0j],
+            [0j, (1 + 1j) / 2, (1 - 1j) / 2, 0j],
+            [0j, (1 - 1j) / 2, (1 + 1j) / 2, 0j],
+            [0j, 0j, 0j, 1 + 0j],
+        ],
         [q1, q2],
     )
 
@@ -168,25 +162,8 @@ default_bloch_sphere_rotations_without_params = [
 default_bloch_sphere_rotations: list[
     Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, SupportsFloat], BlochSphereRotation]
 ]
-default_bloch_sphere_rotations = [
-    *default_bloch_sphere_rotations_without_params,
-    Rx,
-    Ry,
-    Rz,
-]
+default_bloch_sphere_rotations = [*default_bloch_sphere_rotations_without_params, Rx, Ry, Rz]
 default_gate_set: list[Callable[..., Gate]]
-default_gate_set = [
-    *default_bloch_sphere_rotations,
-    CNOT,
-    CZ,
-    CR,
-    CRk,
-    SWAP,
-    sqrtSWAP,
-    CCZ,
-]
+default_gate_set = [*default_bloch_sphere_rotations, CNOT, CZ, CR, CRk, SWAP, sqrtSWAP, CCZ]
 
-default_gate_aliases = {
-    "Hadamard": H,
-    "Identity": I,
-}
+default_gate_aliases = {"Hadamard": H, "Identity": I}

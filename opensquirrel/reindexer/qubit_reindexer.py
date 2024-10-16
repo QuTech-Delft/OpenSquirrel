@@ -36,20 +36,10 @@ class _QubitReindexer(IRVisitor):
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 8015764 (Fix named measurements and reset)
             qubit=self.qubit_indices.index(g.qubit.index),
             angle=g.angle,
             axis=g.axis,
             phase=g.phase,
-<<<<<<< HEAD
-=======
-            qubit=self.qubit_indices.index(g.qubit.index), angle=g.angle, axis=g.axis, phase=g.phase,
->>>>>>> 745c738 (Remove redundend Qubit from OS)
-=======
->>>>>>> 8015764 (Fix named measurements and reset)
         )
 
     def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:

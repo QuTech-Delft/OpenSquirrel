@@ -17,6 +17,7 @@ from opensquirrel.ir import (
     IRVisitor,
     MatrixGate,
     Qubit,
+    QubitLike,
 )
 
 

@@ -14,7 +14,6 @@ from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
 from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
-
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 

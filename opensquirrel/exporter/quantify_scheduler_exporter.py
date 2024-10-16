@@ -17,6 +17,7 @@ except ModuleNotFoundError:
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
+    from opensquirrel.ir import Qubit
     from opensquirrel.register_manager import RegisterManager
 
 # Radian to degree conversion outcome precision
@@ -41,29 +42,17 @@ class _ScheduleCreator(IRVisitor):
         # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
         # Depending on the system the angle may be stored as either 180 or -180 degrees.
         # This ambiguity has no physical consequences, but may cause the exporter test fail.
-        g_qubit = Qubit(g.qubit)
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            phi: float = round(
-                math.degrees(math.atan2(g.axis[1], g.axis[0])),
-                FIXED_POINT_DEG_PRECISION,
-            )
-            self.schedule.add(
-                quantify_scheduler_gates.Rxy(
-                    theta=theta, phi=phi, qubit=self._get_qubit_string(g_qubit)
-                )
-            )
+            phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), FIXED_POINT_DEG_PRECISION)
+            self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(
-                quantify_scheduler_gates.Rz(
-                    theta=theta, qubit=self._get_qubit_string(g.qubit)
-                )
-            )
+            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
         raise UnsupportedGateError(g)
@@ -75,14 +64,11 @@ class _ScheduleCreator(IRVisitor):
         if not isinstance(g.target_gate, BlochSphereRotation):
             raise UnsupportedGateError(g)
 
-        g_control_qubit = Qubit(g.control_qubit)
-        g_target_gate_qubit = Qubit(g.target_gate.qubit)
-
         if g.target_gate == X(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CNOT(
-                    qC=self._get_qubit_string(g_control_qubit),
-                    qT=self._get_qubit_string(g_target_gate_qubit),
+                    qC=self._get_qubit_string(g.control_qubit),
+                    qT=self._get_qubit_string(g.target_gate.qubit),
                 ),
             )
             return
@@ -90,8 +76,8 @@ class _ScheduleCreator(IRVisitor):
         if g.target_gate == Z(g.target_gate.qubit):
             self.schedule.add(
                 quantify_scheduler_gates.CZ(
-                    qC=self._get_qubit_string(g_control_qubit),
-                    qT=self._get_qubit_string(g_target_gate_qubit),
+                    qC=self._get_qubit_string(g.control_qubit),
+                    qT=self._get_qubit_string(g.target_gate.qubit),
                 ),
             )
             return
@@ -115,9 +101,7 @@ class _ScheduleCreator(IRVisitor):
         return
 
     def visit_reset(self, g: Reset) -> Any:
-        self.schedule.add(
-            quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit))
-        )
+        self.schedule.add(quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit)))
 
 
 def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:

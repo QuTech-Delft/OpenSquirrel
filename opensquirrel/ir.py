@@ -586,7 +586,7 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
             # Convert to correct expression for IR
             if is_int_annotation(next_annotation):
                 next_arg = Int(next_arg)
-            elif next_annotation in (SupportsFloat, Float):
+            elif is_float_annotation(next_annotation):
                 next_arg = Float(next_arg)
             if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
@@ -714,11 +714,42 @@ QubitLike = Union[SupportsInt, Qubit]
 
 
 def is_qubit_like_annotation(annotation: Any) -> bool:
+    """Check if the provided annotation should be cast to QubitLike.
+
+    Args:
+        annotation: annotation to check.
+
+    Returns:
+        Boolean value stating wether the annotation is something that should be cast to
+        Qubit.
+    """
     return annotation in (QubitLike, Qubit)
 
 
 def is_int_annotation(annotation: Any) -> bool:
+    """Check if the provided annotation should be cast to Int.
+
+    Args:
+        annotation: annotation to check.
+
+    Returns:
+        Boolean value stating wether the annotation is something that should be cast to
+        int.
+    """
     return annotation in (SupportsInt, Int)
+
+
+def is_float_annotation(annotation: Any) -> bool:
+    """Check if the provided annotation should be cast to Float.
+
+    Args:
+        annotation: annotation to check.
+
+    Returns:
+        Boolean value stating wether the annotation is something that should be cast to
+        float.
+    """
+    return annotation in (SupportsFloat, Float)
 
 
 ANNOTATIONS_TO_TYPE_MAP = {
