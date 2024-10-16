@@ -1,7 +1,17 @@
 from typing import SupportsInt
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
+from opensquirrel.ir import (
+    Bit,
+    Comment,
+    Float,
+    Gate,
+    Int,
+    IRVisitor,
+    Measure,
+    Qubit,
+    Reset,
+)
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -18,17 +28,9 @@ class _WriterImpl(IRVisitor):
         bit_register_name = self.register_manager.get_bit_register_name()
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
-            (
-                f"qubit[{qubit_register_size}] {qubit_register_name}"
-                if qubit_register_size > 0
-                else ""
-            ),
+            (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
             "\n" if qubit_register_size > 0 and bit_register_size > 0 else "",
-            (
-                f"bit[{bit_register_size}] {bit_register_name}"
-                if bit_register_size > 0
-                else ""
-            ),
+            (f"bit[{bit_register_size}] {bit_register_name}" if bit_register_size > 0 else ""),
         )
 
     def visit_bit(self, bit: Bit) -> str:
