@@ -203,12 +203,13 @@ def test_hectoqubit_backend() -> None:
         for i, ir_measure in enumerate(ir_measures):
             qubit_index = ir_measure.qubit.index
             ir_acq_index = ir_acq_index_record[qubit_index]
-            ir_bit_string_mapping.insert(ir_measure.bit.index, (ir_acq_index, qubit_index))
+            ir_bit_string_mapping[ir_measure.bit.index] = (ir_acq_index, qubit_index)
             assert qs_measures[i]["acq_channel_override"] == qubit_index
             assert qs_measures[i]["acq_index"] == ir_acq_index
             assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
             ir_acq_index_record[qubit_index] += 1
 
+        assert len(bit_string_mapping) == qc.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
 
 
@@ -311,26 +312,28 @@ def test_hectoqubit_backend_allxy() -> None:
             "Measure q[0]",
         ]
 
-        qs_measurements = [
+        qs_measures = [
             operation.data["gate_info"]
             for operation in exported_schedule.operations.values()
             if operation.data["gate_info"]["operation_type"] == "measure"
         ]
 
-        ir_measurements = [
+        ir_measures = [
             instruction
             for instruction in qc.ir.statements
             if isinstance(instruction, Measure)
         ]
+
         ir_acq_index_record = [0] * qc.qubit_register_size
         ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size
-        for i, ir_measurement in enumerate(ir_measurements):
+        for i, ir_measurement in enumerate(ir_measures):
             qubit_index = ir_measurement.qubit.index
             ir_acq_index = ir_acq_index_record[qubit_index]
-            ir_bit_string_mapping.insert(ir_measurement.bit.index, (ir_acq_index, qubit_index))
-            assert qs_measurements[i]["acq_channel_override"] == qubit_index
-            assert qs_measurements[i]["acq_index"] == ir_acq_index
-            assert qs_measurements[i]["acq_protocol"] == "ThresholdedAcquisition"
+            ir_bit_string_mapping[ir_measurement.bit.index] = (ir_acq_index, qubit_index)
+            assert qs_measures[i]["acq_channel_override"] == qubit_index
+            assert qs_measures[i]["acq_index"] == ir_acq_index
+            assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
             ir_acq_index_record[qubit_index] += 1
 
+        assert len(bit_string_mapping) == qc.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
