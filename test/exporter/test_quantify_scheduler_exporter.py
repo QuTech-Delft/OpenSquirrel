@@ -15,7 +15,7 @@ from opensquirrel.default_gates import CCZ, SWAP, H
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
-from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate
+from opensquirrel.ir import Bit, BlochSphereRotation, Gate
 
 
 class FloatEq(float):
@@ -52,8 +52,8 @@ class TestQuantifySchedulerExporter:
         builder.X(0)
         builder.CZ(0, 1)
         builder.reset(0)
-        builder.Rz(1, Float(2.34))
-        builder.Ry(2, Float(1.23))
+        builder.Rz(1, 2.34)
+        builder.Ry(2, 1.23)
         builder.measure(0, Bit(0))
         builder.measure(1, Bit(1))
         builder.measure(2, Bit(2))

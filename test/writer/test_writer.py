@@ -1,5 +1,5 @@
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Float, MatrixGate
+from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, MatrixGate
 from opensquirrel.writer import writer
 
 
@@ -40,7 +40,7 @@ qubit[3] q
     )
 
     builder.H(0)
-    builder.CR(0, 1, Float(1.234))
+    builder.CR(0, 1, 1.234)
     circuit = builder.to_circuit()
     assert (
         writer.circuit_to_string(circuit)
@@ -56,7 +56,7 @@ CR(1.234) q[0], q[1]
 
 def test_float_precision() -> None:
     builder = CircuitBuilder(3)
-    builder.CR(0, 1, Float(1.6546514861321684321654))
+    builder.CR(0, 1, 1.6546514861321684321654)
     circuit = builder.to_circuit()
     assert (
         writer.circuit_to_string(circuit)
@@ -93,7 +93,7 @@ def test_anonymous_gate() -> None:
     builder.ir.add_gate(BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23))
     builder.ir.add_gate(ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23)))
     builder.ir.add_gate(MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]))
-    builder.CR(0, 1, Float(1.234))
+    builder.CR(0, 1, 1.234)
     assert (
         str(builder.to_circuit())
         == """version 3.0
@@ -114,7 +114,7 @@ def test_comment() -> None:
     builder = CircuitBuilder(3)
     builder.H(0)
     builder.comment("My comment")
-    builder.CR(0, 1, Float(1.234))
+    builder.CR(0, 1, 1.234)
     circuit = builder.to_circuit()
     assert (
         writer.circuit_to_string(circuit)

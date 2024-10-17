@@ -69,19 +69,38 @@ class Expression(IRNode, ABC):
     pass
 
 
-@dataclass
+@dataclass(init=False)
 class Float(Expression):
+    """Floats used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Float`` object.
+    """
+
     value: float
+
+    def __init__(self, value: SupportsFloat) -> None:
+        """Init of the ``Float`` object.
+
+        Args:
+            value: value of the ``Float`` object.
+        """
+        if isinstance(value, SupportsFloat):
+            self.value = float(value)
+        else:
+            msg = "value must be a float"
+            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
 
-    def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsFloat):
-            self.value = float(self.value)
-        else:
-            msg = "value must be a float"
-            raise TypeError(msg)
+    def __float__(self) -> float:
+        """Cast the ``Float`` object to a building python ``float``.
+
+        Returns:
+            Building python ``float`` representation of the ``Float``.
+        """
+        return self.value
 
 
 @dataclass(init=False)
@@ -415,8 +434,8 @@ class BlochSphereRotation(Gate):
         self,
         qubit: QubitLike,
         axis: AxisLike,
-        angle: float,
-        phase: float = 0,
+        angle: SupportsFloat,
+        phase: SupportsFloat = 0,
         generator: Callable[..., BlochSphereRotation] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
@@ -567,6 +586,8 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
             # Convert to correct expression for IR
             if is_int_annotation(next_annotation):
                 next_arg = Int(next_arg)
+            elif is_float_annotation(next_annotation):
+                next_arg = Float(next_arg)
             if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
 
@@ -693,11 +714,42 @@ QubitLike = Union[SupportsInt, Qubit]
 
 
 def is_qubit_like_annotation(annotation: Any) -> bool:
+    """Check if the provided annotation should be cast to QubitLike.
+
+    Args:
+        annotation: annotation to check.
+
+    Returns:
+        Boolean value stating wether the annotation is something that should be cast to
+        Qubit.
+    """
     return annotation in (QubitLike, Qubit)
 
 
 def is_int_annotation(annotation: Any) -> bool:
+    """Check if the provided annotation should be cast to Int.
+
+    Args:
+        annotation: annotation to check.
+
+    Returns:
+        Boolean value stating wether the annotation is something that should be cast to
+        int.
+    """
     return annotation in (SupportsInt, Int)
+
+
+def is_float_annotation(annotation: Any) -> bool:
+    """Check if the provided annotation should be cast to Float.
+
+    Args:
+        annotation: annotation to check.
+
+    Returns:
+        Boolean value stating wether the annotation is something that should be cast to
+        float.
+    """
+    return annotation in (SupportsFloat, Float)
 
 
 ANNOTATIONS_TO_TYPE_MAP = {
@@ -706,6 +758,7 @@ ANNOTATIONS_TO_TYPE_MAP = {
     "ControlledGate": ControlledGate,
     "Float": Float,
     "MatrixGate": MatrixGate,
+    "SupportsFloat": SupportsFloat,
     "SupportsInt": SupportsInt,
     "Qubit": Qubit,
     "QubitLike": QubitLike,

@@ -1,5 +1,5 @@
 import inspect
-from typing import SupportsInt
+from typing import SupportsFloat, SupportsInt
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, QubitLike, Reset
@@ -33,7 +33,8 @@ class _WriterImpl(IRVisitor):
         i = Int(i)
         return f"{i.value}"
 
-    def visit_float(self, f: Float) -> str:
+    def visit_float(self, f: SupportsFloat) -> str:
+        f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
     def visit_measure(self, measure: Measure) -> None:
@@ -73,7 +74,7 @@ class _WriterImpl(IRVisitor):
                 if gate_generator[pos] not in qubit_function_keys:
                     params.append(arg.accept(self))
                     gate_name += f"({', '.join(params)})"
-                elif gate_generator[pos] in qubit_function_keys and isinstance(arg, QubitLike.__args__):  # type: ignore
+                elif gate_generator[pos] in qubit_function_keys and isinstance(arg, QubitLike.__args__):  # type: ignore[attr-defined]
                     qubit_args.append(Qubit(arg).accept(self))
 
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"

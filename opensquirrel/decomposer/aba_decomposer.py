@@ -11,7 +11,7 @@ from typing import ClassVar
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Rx, Ry, Rz
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 
@@ -121,9 +121,9 @@ class ABADecomposer(Decomposer, ABC):
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)
-        a1 = self.ra(g.qubit, Float(theta1))
-        b = self.rb(g.qubit, Float(theta2))
-        a2 = self.ra(g.qubit, Float(theta3))
+        a1 = self.ra(g.qubit, theta1)
+        b = self.rb(g.qubit, theta2)
+        a2 = self.ra(g.qubit, theta3)
         return filter_out_identities([a1, b, a2])
 
 

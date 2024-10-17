@@ -5,7 +5,7 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, QubitLike, named_gate
 
 
 def test_circuit_from_string() -> None:
@@ -43,7 +43,7 @@ b[1] = measure q[1]
 
 def test_circuit_builder() -> None:
     builder = CircuitBuilder(qubit_register_size=2)
-    builder.Ry(0, Float(0.23)).CNOT(0, 1)
+    builder.Ry(0, 0.23).CNOT(0, 1)
     qc = builder.to_circuit()
 
     assert (
@@ -129,7 +129,7 @@ def test_CNOT_strong_type_error_string() -> None:
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
     for _ in range(4):
-        builder.Rx(0, Float(math.pi / 4))
+        builder.Rx(0, math.pi / 4)
     qc = builder.to_circuit()
 
     qc.merge_single_qubit_gates()
@@ -235,7 +235,7 @@ def test_error_predefined_decomposition() -> None:
 
 def test_zyz_decomposer() -> None:
     builder = CircuitBuilder(qubit_register_size=1)
-    builder.H(0).Z(0).Y(0).Rx(0, Float(math.pi / 3))
+    builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
     qc = builder.to_circuit()
 
     qc.decompose(decomposer=ZYZDecomposer())
@@ -256,4 +256,4 @@ Rz(-1.5707963) q[0]
 """
     )
 
-    assert ZYZDecomposer().decompose(H(0)) == [Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]
+    assert ZYZDecomposer().decompose(H(0)) == [Rz(0, math.pi), Ry(0, math.pi / 2)]
