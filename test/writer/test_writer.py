@@ -184,14 +184,5 @@ bit[1] b
 """
     )
     # Empty declaration
-    qc = Circuit.from_string(
-        """
-        version 3.0
-
-        """,
-    )
-    assert (
-        str(qc)
-        == """version 3.0
-"""
-    )
+    qc = Circuit.from_string("""version 3.0""")
+    assert (str(qc) == """version 3.0""")
