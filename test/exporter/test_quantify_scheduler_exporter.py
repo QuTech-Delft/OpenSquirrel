@@ -11,7 +11,7 @@ import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import CCZ, SWAP, H
+from opensquirrel.default_gates import H
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
@@ -87,8 +87,8 @@ class TestQuantifySchedulerExporter:
 
     @pytest.mark.parametrize(
         "gate",
-        [H(0), SWAP(0, 1), BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34), CCZ(0, 1, 2)],
-        ids=["H", "SWAP", "BSR", "CCZ"],
+        [H(0), BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34)],
+        ids=["H", "BSR"],
     )
     def test_gates_not_supported(self, gate: Gate) -> None:
         builder = CircuitBuilder(3)

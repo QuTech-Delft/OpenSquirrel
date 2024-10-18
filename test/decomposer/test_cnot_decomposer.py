@@ -6,7 +6,7 @@ import pytest
 
 from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.default_gates import CNOT, CZ, SWAP, H, Ry, Rz, X
+from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz, X
 from opensquirrel.ir import ControlledGate, Float, Gate
 
 
@@ -22,13 +22,6 @@ def decomposer_fixture() -> CNOTDecomposer:
 def test_ignores_1q_gates(decomposer: CNOTDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     check_gate_replacement(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
-
-
-def test_ignores_matrix_gate(decomposer: CNOTDecomposer) -> None:
-    gate = SWAP(4, 3)
-    decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [gate]
 
 
 def test_ignores_double_controlled(decomposer: CNOTDecomposer) -> None:
