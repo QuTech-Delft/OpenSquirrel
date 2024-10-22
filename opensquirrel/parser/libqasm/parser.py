@@ -6,25 +6,13 @@ from typing import Any
 import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
-from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
+from opensquirrel.instruction_library import GateLibrary, GateModifierLibrary, MeasureLibrary, ResetLibrary
+from opensquirrel.ir import IR, Bit, Float, Gate, Int, Qubit, Statement
 from opensquirrel.register_manager import RegisterManager
 
 
-class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
-    def __init__(
-        self,
-        gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: Iterable[Callable[..., Measure]] = default_measure_set,
-        reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
-    ) -> None:
-        GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasureLibrary.__init__(self, measure_set)
-        ResetLibrary.__init__(self, reset_set)
+class Parser(GateLibrary, GateModifierLibrary, MeasureLibrary, ResetLibrary):
+    def __init__(self) -> None:
         self.ir = None
 
     @staticmethod
@@ -63,6 +51,14 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
     def _is_bit_type(ast_expression: Any) -> bool:
         ast_type = Parser._type_of(ast_expression)
         return bool(ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray)
+
+    @staticmethod
+    def _is_gate_instruction(ast_node: Any) -> bool:
+        return isinstance(ast_node, cqasm.semantic.GateInstruction)
+
+    @staticmethod
+    def _is_non_gate_instruction(ast_node: Any) -> bool:
+        return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
 
     @staticmethod
     def _get_qubits(
@@ -159,6 +155,21 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         if isinstance(result, list):
             raise OSError("parsing error: " + ", ".join(result))
 
+    def _get_gate_f(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
+        gate_name = instruction.gate.name
+        if gate_name == "inv" or gate_name == "pow" or gate_name == "ctrl":
+            return self.get_gate_modifier_f(gate_name)
+        else:
+            return self.get_gate_f(gate_name)
+
+    def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., Statement]:
+        if "measure" in instruction.name:
+            return self.get_measure_f(instruction.name)
+        elif "reset" in instruction.name:
+            return self.get_reset_f(instruction.name)
+        else:
+            raise OSError("parsing error: unknown non-unitary instruction")
+
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
         analyzer = Parser._create_analyzer()
@@ -172,20 +183,15 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         # Parse statements
         ir = IR()
         for statement in ast.block.statements:
-            if "measure" in statement.name:
-                generator_f_measure = self.get_measure_f(statement.name)
-                expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
-                for arg_set in expanded_args:
-                    ir.add_measure(generator_f_measure(*arg_set))
-            elif "reset" in statement.name:
-                generator_f_reset = self.get_reset_f(statement.name)
-                expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
-                for arg_set in expanded_args:
-                    ir.add_reset(generator_f_reset(*arg_set))
+            instruction_generator: Callable[..., Statement]
+            if Parser._is_gate_instruction(statement):
+                instruction_generator = self._get_gate_f(statement)
+            elif Parser._is_non_gate_instruction(statement):
+                instruction_generator = self._get_non_gate_f(statement)
             else:
-                generator_f_gate = self.get_gate_f(statement.name)
-                expanded_args = Parser._get_expanded_gate_args(statement.operands, register_manager)
-                for arg_set in expanded_args:
-                    ir.add_gate(generator_f_gate(*arg_set))
+                raise OSError("parsing error: unknown statement")
+            expanded_args = Parser._get_expanded_gate_args(statement.operands, register_manager)
+            for arg_set in expanded_args:
+                ir.add_statement(instruction_generator(*arg_set))
 
         return Circuit(register_manager, ir)

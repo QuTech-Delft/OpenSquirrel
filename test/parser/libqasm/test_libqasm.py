@@ -1,7 +1,7 @@
 import pytest
 
 from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
-from opensquirrel.ir import Float
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float
 from opensquirrel.parser.libqasm.parser import Parser
 
 
@@ -78,3 +78,21 @@ def test_error(parser: Parser) -> None:
 def test_wrong_gate_argument_number_or_types(parser: Parser, error_message: str, circuit_string: str) -> None:
     with pytest.raises(IOError, match=error_message):
         parser.circuit_from_string(circuit_string)
+
+
+def test_gate_modifiers(parser: Parser) -> None:
+    circuit = parser.circuit_from_string(
+        """
+version 3.0
+
+qubit[2] q
+
+ctrl.pow(2).inv.X q[0], q[1]
+""",
+    )
+
+    assert circuit.qubit_register_size == 2
+    assert circuit.qubit_register_name == "q"
+    assert circuit.ir.statements == [
+        ControlledGate(0, BlochSphereRotation(qubit=1, axis=[1, 0, 0], angle=-2, phase=0.0))
+    ]

@@ -579,6 +579,34 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     return wrapper
 
 
+def gate_modifier(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
+    @wraps(gate_generator)
+    def wrapper(*args: Any, **kwargs: Any) -> Gate:
+        result = gate_generator(*args, **kwargs)
+        result.generator = wrapper
+
+        all_args: list[Expression] = []
+        for par in inspect.signature(gate_generator).parameters.values():
+            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
+            next_annotation = (
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            )
+
+            # Convert to correct expression for IR
+            if is_int_annotation(next_annotation):
+                next_arg = Int(next_arg)
+            if is_qubit_like_annotation(next_annotation):
+                next_arg = Qubit(next_arg)
+
+            # Append parsed argument
+            all_args.append(next_arg)
+
+        result.arguments = tuple(all_args)
+        return result
+
+    return wrapper
+
+
 def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Measure]:
     @wraps(measure_generator)
     def wrapper(*args: Any, **kwargs: Any) -> Measure:
@@ -669,6 +697,9 @@ class IR:
 
     def add_reset(self, reset: Reset) -> None:
         self.statements.append(reset)
+
+    def add_statement(self, statement: Statement) -> None:
+        self.statements.append(statement)
 
     def add_comment(self, comment: Comment) -> None:
         self.statements.append(comment)

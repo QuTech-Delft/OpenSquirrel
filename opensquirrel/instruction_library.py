@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
+from default_gate_modifiers import inv, pow, ctrl
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -25,10 +26,22 @@ class GateLibrary(InstructionLibrary):
             generator_f = next(f for f in self.gate_set if f.__name__ == gate_name)
         except StopIteration as exc:
             if gate_name not in self.gate_aliases:
-                msg = f"unknown instruction `{gate_name}`"
+                msg = f"unknown gate `{gate_name}`"
                 raise ValueError(msg) from exc
             generator_f = self.gate_aliases[gate_name]
         return generator_f
+
+
+class GateModifierLibrary(InstructionLibrary):
+    def __init__(self, gate_modifier_set: Iterable[Callable[..., Gate]]) -> None:
+        self.gate_modifier_set = [inv, pow, ctrl]
+
+    def get_gate_modifier_f(self, gate_modifier_name: str) -> Callable[..., Gate]:
+        try:
+            return next(f for f in self.gate_modifier_set if f.__name__ == gate_modifier_name)
+        except StopIteration as exc:
+            msg = f"unknown gate_modifier `{gate_modifier_name}`"
+            raise ValueError(msg) from exc
 
 
 class MeasureLibrary(InstructionLibrary):
