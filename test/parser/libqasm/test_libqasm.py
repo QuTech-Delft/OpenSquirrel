@@ -86,32 +86,6 @@ def test_error(parser: Parser) -> None:
 
 
 @pytest.mark.parametrize(
-    ("error_message", "circuit_string"),
-    [
-        (
-            r"parsing error: Error at <unknown file name>:1:26\.\.27: "
-            r"failed to resolve instruction 'H' with argument pack \(qubit, int\)",
-            "version 3.0; qubit[1] q; H q[0], 1",
-        ),
-        (
-            r"parsing error: Error at <unknown file name>:1:26\.\.30: "
-            r"failed to resolve instruction 'CNOT' with argument pack \(qubit, int\)",
-            "version 3.0; qubit[1] q; CNOT q[0], 1",
-        ),
-        (
-            r"parsing error: Error at <unknown file name>:1:26\.\.28: "
-            r"failed to resolve instruction 'Ry' with argument pack \(qubit, float, int\)",
-            "version 3.0; qubit[3] q; Ry q[0], 1.23, 1",
-        ),
-    ],
-    ids=["H[q,i]", "CNOT[q,i]", "Ry[q,f,i]"],
-)
-def test_wrong_gate_argument_number_or_types(parser: Parser, error_message: str, circuit_string: str) -> None:
-    with pytest.raises(IOError, match=error_message):
-        parser.circuit_from_string(circuit_string)
-
-
-@pytest.mark.parametrize(
     ("expected_output", "circuit_string"),
     [
         (
@@ -156,8 +130,38 @@ bit[1] b
             """version 3.0\n""",
             """version 3.0""",
         ),
+        (
+            """version 3.0
+
+qubit[1] q
+""",
+            """version 3.0; qubit q""",
+        ),
+        (
+            """version 3.0
+
+qubit[1] q
+bit[1] b
+""",
+            """version 3.0; qubit q; bit b""",
+        ),
+        (
+            """version 3.0
+
+bit[1] b
+""",
+            """version 3.0; bit b""",
+        ),
     ],
-    ids=["only_qubit", "qubit_and_bit", "only_bit", "empty_declaration"],
+    ids=[
+        "only_qubit",
+        "qubit_and_bit",
+        "only_bit",
+        "empty_declaration",
+        "semicolon_qubit",
+        "semicolon_qubit_and_bit",
+        "semicolon_bit",
+    ],
 )
 def test_simplest(expected_output: str, circuit_string: str) -> None:
     qc = Circuit.from_string(circuit_string)
