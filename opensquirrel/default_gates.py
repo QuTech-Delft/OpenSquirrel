@@ -4,9 +4,7 @@ import math
 from collections.abc import Callable
 from typing import SupportsInt
 
-import numpy as np
-
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, MatrixGate, QubitLike, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, QubitLike, named_gate
 
 
 @named_gate
@@ -113,41 +111,6 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
     return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
 
 
-@named_gate
-def SWAP(q1: QubitLike, q2: QubitLike) -> MatrixGate:
-    return MatrixGate(
-        np.array(
-            [
-                [1, 0, 0, 0],
-                [0, 0, 1, 0],
-                [0, 1, 0, 0],
-                [0, 0, 0, 1],
-            ],
-        ),
-        [q1, q2],
-    )
-
-
-@named_gate
-def sqrtSWAP(q1: QubitLike, q2: QubitLike) -> MatrixGate:
-    return MatrixGate(
-        np.array(
-            [
-                [1, 0, 0, 0],
-                [0, (1 + 1j) / 2, (1 - 1j) / 2, 0],
-                [0, (1 - 1j) / 2, (1 + 1j) / 2, 0],
-                [0, 0, 0, 1],
-            ],
-        ),
-        [q1, q2],
-    )
-
-
-@named_gate
-def CCZ(control1: QubitLike, control2: QubitLike, target: QubitLike) -> ControlledGate:
-    return ControlledGate(control1, CZ(control2, target))
-
-
 default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
 default_bloch_sphere_rotations_without_params = [
     I,
@@ -180,9 +143,6 @@ default_gate_set = [
     CZ,
     CR,
     CRk,
-    SWAP,
-    sqrtSWAP,
-    CCZ,
 ]
 
 default_gate_aliases = {

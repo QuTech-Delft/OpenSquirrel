@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import math
-
 import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.decomposer import Decomposer
 from opensquirrel.decomposer.general_decomposer import check_gate_replacement, decompose, replace
-from opensquirrel.default_gates import CNOT, Y90, H, I, Ry, Rz, X, Z, sqrtSWAP
-from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.default_gates import CNOT, Y90, H, I, X
+from opensquirrel.ir import BlochSphereRotation, Gate
 
 
 class TestCheckGateReplacement:
@@ -39,50 +37,6 @@ class TestCheckGateReplacement:
         with pytest.raises(ValueError, match=error_msg):
             check_gate_replacement(gate, replacement_gates)
 
-    def test_cnot_as_sqrt_swap(self) -> None:
-        # https://en.wikipedia.org/wiki/Quantum_logic_gate#/media/File:Qcircuit_CNOTsqrtSWAP2.svg
-        c = 0
-        t = 1
-        check_gate_replacement(
-            CNOT(control=c, target=t),
-            [
-                Ry(t, Float(math.pi / 2)),
-                sqrtSWAP(c, t),
-                Z(c),
-                sqrtSWAP(c, t),
-                Rz(c, Float(-math.pi / 2)),
-                Rz(t, Float(-math.pi / 2)),
-                Ry(t, Float(-math.pi / 2)),
-            ],
-        )
-
-        with pytest.raises(ValueError, match="replacement for gate CNOT does not preserve the quantum state"):
-            check_gate_replacement(
-                CNOT(control=c, target=t),
-                [
-                    Ry(t, Float(math.pi / 2)),
-                    sqrtSWAP(c, t),
-                    Z(c),
-                    sqrtSWAP(c, t),
-                    Rz(c, Float(-math.pi / 2 + 0.01)),
-                    Rz(t, Float(-math.pi / 2)),
-                    Ry(t, Float(-math.pi / 2)),
-                ],
-            )
-
-        with pytest.raises(ValueError, match="replacement for gate CNOT does not seem to operate on the right qubits"):
-            check_gate_replacement(
-                CNOT(control=c, target=t),
-                [
-                    Ry(t, Float(math.pi / 2)),
-                    sqrtSWAP(c, t),
-                    Z(c),
-                    sqrtSWAP(c, 2),
-                    Rz(c, Float(-math.pi / 2 + 0.01)),
-                    Rz(t, Float(-math.pi / 2)),
-                    Ry(t, Float(-math.pi / 2)),
-                ],
-            )
 
     def test_large_number_of_qubits(self) -> None:
         # If we were building the whole circuit matrix, this would run out of memory.
