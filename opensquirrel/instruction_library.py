@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
-from default_gate_modifiers import inv, pow, ctrl
+from opensquirrel.default_gate_modifiers import inv, pow, ctrl
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

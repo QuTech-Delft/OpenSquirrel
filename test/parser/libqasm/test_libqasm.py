@@ -1,7 +1,8 @@
+import math
 import pytest
 
 from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate
 from opensquirrel.parser.libqasm.parser import Parser
 
 
@@ -80,19 +81,21 @@ def test_wrong_gate_argument_number_or_types(parser: Parser, error_message: str,
         parser.circuit_from_string(circuit_string)
 
 
-def test_gate_modifiers(parser: Parser) -> None:
-    circuit = parser.circuit_from_string(
-        """
-version 3.0
-
-qubit[2] q
-
-ctrl.pow(2).inv.X q[0], q[1]
-""",
-    )
-
-    assert circuit.qubit_register_size == 2
-    assert circuit.qubit_register_name == "q"
-    assert circuit.ir.statements == [
-        ControlledGate(0, BlochSphereRotation(qubit=1, axis=[1, 0, 0], angle=-2, phase=0.0))
-    ]
+@pytest.mark.parametrize(
+    ("circuit_string", "expected_result"),
+    [
+        ("version 3.0; qubit q; inv.X q",
+         [BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi * -1, phase=math.pi / 2)]),
+        ("version 3.0; qubit q; pow(2).X q",
+         [BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi * 2, phase=math.pi / 2)]),
+        ("version 3.0; qubit q; pow(2).inv.X q",
+         [BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi * -2, phase=math.pi / 2)]),
+        ("version 3.0; qubit[2] q; ctrl.pow(2).inv.X q[0], q[1]",
+         [ControlledGate(0,
+                         BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi * -2, phase=math.pi / 2))]),
+    ],
+    ids=["inv", "pow_2", "pow_2_inv", "ctrl_pow_2_inv"],
+)
+def test_gate_modifiers(parser: Parser, circuit_string: str, expected_result: list[Gate]) -> None:
+    circuit = parser.circuit_from_string(circuit_string)
+    assert circuit.ir.statements == expected_result

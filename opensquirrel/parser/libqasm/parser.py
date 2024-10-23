@@ -6,13 +6,28 @@ from typing import Any
 import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
+from opensquirrel.default_gates import default_gate_aliases, default_gate_set
+from opensquirrel.default_gate_modifiers import default_gate_modifier_set
+from opensquirrel.default_measures import default_measure_set
+from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, GateModifierLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import IR, Bit, Float, Gate, Int, Qubit, Statement
+from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset, Statement
 from opensquirrel.register_manager import RegisterManager
 
 
 class Parser(GateLibrary, GateModifierLibrary, MeasureLibrary, ResetLibrary):
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
+        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
+        gate_modifier_set: Iterable[Callable[..., Gate]] = default_gate_modifier_set,
+        measure_set: Iterable[Callable[..., Measure]] = default_measure_set,
+        reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
+    ) -> None:
+        GateLibrary.__init__(self, gate_set, gate_aliases)
+        GateModifierLibrary.__init__(self, gate_modifier_set)
+        MeasureLibrary.__init__(self, measure_set)
+        ResetLibrary.__init__(self, reset_set)
         self.ir = None
 
     @staticmethod
