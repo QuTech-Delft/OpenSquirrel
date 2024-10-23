@@ -1,6 +1,17 @@
 import pytest
 
-from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
+from opensquirrel import Circuit
+from opensquirrel.default_gates import (
+    CNOT,
+    CR,
+    CRk,
+    H,
+    I,
+    Ry,
+    X,
+    default_gate_aliases,
+    default_gate_set,
+)
 from opensquirrel.ir import Float
 from opensquirrel.parser.libqasm.parser import Parser
 
@@ -28,7 +39,14 @@ CRk q[0], q[1], 23
 
     assert circuit.qubit_register_size == 2
     assert circuit.qubit_register_name == "q"
-    assert circuit.ir.statements == [H(0), I(0), Ry(1, Float(1.234)), CNOT(0, 1), CR(1, 0, Float(5.123)), CRk(0, 1, 23)]
+    assert circuit.ir.statements == [
+        H(0),
+        I(0),
+        Ry(1, Float(1.234)),
+        CNOT(0, 1),
+        CR(1, 0, Float(5.123)),
+        CRk(0, 1, 23),
+    ]
 
 
 def test_sgmq(parser: Parser) -> None:
@@ -46,11 +64,24 @@ CRk q[0, 3], q[1, 4], 23
 
     assert circuit.qubit_register_size == 20
     assert circuit.qubit_register_name == "q"
-    assert circuit.ir.statements == [H(5), H(6), H(7), H(8), H(9), X(13), X(17), CRk(0, 1, 23), CRk(3, 4, 23)]
+    assert circuit.ir.statements == [
+        H(5),
+        H(6),
+        H(7),
+        H(8),
+        H(9),
+        X(13),
+        X(17),
+        CRk(0, 1, 23),
+        CRk(3, 4, 23),
+    ]
 
 
 def test_error(parser: Parser) -> None:
-    with pytest.raises(IOError, match="Error at <unknown file name>:1:30..31: failed to resolve variable 'q'"):
+    with pytest.raises(
+        IOError,
+        match="Error at <unknown file name>:1:30..31: failed to resolve variable 'q'",
+    ):
         parser.circuit_from_string("version 3.0; qubit[20] qu; H q[5]")
 
 
@@ -78,3 +109,56 @@ def test_error(parser: Parser) -> None:
 def test_wrong_gate_argument_number_or_types(parser: Parser, error_message: str, circuit_string: str) -> None:
     with pytest.raises(IOError, match=error_message):
         parser.circuit_from_string(circuit_string)
+
+
+@pytest.mark.parametrize(
+    ("expected_output", "circuit_string"),
+    [
+        (
+            """version 3.0
+
+qubit[1] q
+""",
+            """
+            version 3.0
+
+            qubit q
+
+            """,
+        ),
+        (
+            """version 3.0
+
+qubit[1] q
+bit[1] b
+""",
+            """
+            version 3.0
+
+            qubit q
+            bit b
+
+            """,
+        ),
+        (
+            """version 3.0
+
+bit[1] b
+""",
+            """
+            version 3.0
+
+            bit b
+
+            """,
+        ),
+        (
+            """version 3.0\n""",
+            """version 3.0""",
+        ),
+    ],
+    ids=["only_qubit", "qubit_and_bit", "only_bit", "empty_declaration"],
+)
+def test_simplest(expected_output: str, circuit_string: str) -> None:
+    qc = Circuit.from_string(circuit_string)
+    assert str(qc) == expected_output
