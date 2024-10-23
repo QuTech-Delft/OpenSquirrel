@@ -86,71 +86,35 @@ def test_error(parser: Parser) -> None:
 
 
 @pytest.mark.parametrize(
-    ("expected_output", "circuit_string"),
+    ("circuit_string", "expected_output"),
     [
         (
-            """version 3.0
-
-qubit[1] q
-""",
-            """
-            version 3.0
-
-            qubit q
-
-            """,
+            "version 3.0\nqubit q\n",
+            "version 3.0\n\nqubit[1] q\n",
         ),
         (
-            """version 3.0
-
-qubit[1] q
-bit[1] b
-""",
-            """
-            version 3.0
-
-            qubit q
-            bit b
-
-            """,
+            "version 3.0\nqubit q\nbit b\n",
+            "version 3.0\n\nqubit[1] q\nbit[1] b\n",
         ),
         (
-            """version 3.0
-
-bit[1] b
-""",
-            """
-            version 3.0
-
-            bit b
-
-            """,
+            "version 3.0\nbit b\n",
+            "version 3.0\n\nbit[1] b\n",
         ),
         (
-            """version 3.0\n""",
-            """version 3.0""",
+            "version 3.0",
+            "version 3.0\n",
         ),
         (
-            """version 3.0
-
-qubit[1] q
-""",
-            """version 3.0; qubit q""",
+            "version 3.0; qubit q",
+            "version 3.0\n\nqubit[1] q\n",
         ),
         (
-            """version 3.0
-
-qubit[1] q
-bit[1] b
-""",
-            """version 3.0; qubit q; bit b""",
+            "version 3.0; qubit q; bit b",
+            "version 3.0\n\nqubit[1] q\nbit[1] b\n",
         ),
         (
-            """version 3.0
-
-bit[1] b
-""",
-            """version 3.0; bit b""",
+            "version 3.0; bit b",
+            "version 3.0\n\nbit[1] b\n",
         ),
     ],
     ids=[
@@ -163,6 +127,6 @@ bit[1] b
         "semicolon_bit",
     ],
 )
-def test_simplest(expected_output: str, circuit_string: str) -> None:
+def test_simplest(circuit_string: str, expected_output: str) -> None:
     qc = Circuit.from_string(circuit_string)
     assert str(qc) == expected_output
