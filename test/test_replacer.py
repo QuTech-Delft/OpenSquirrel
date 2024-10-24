@@ -37,7 +37,6 @@ class TestCheckGateReplacement:
         with pytest.raises(ValueError, match=error_msg):
             check_gate_replacement(gate, replacement_gates)
 
-
     def test_large_number_of_qubits(self) -> None:
         # If we were building the whole circuit matrix, this would run out of memory.
         check_gate_replacement(H(9234687), [Y90(9234687), X(9234687)])

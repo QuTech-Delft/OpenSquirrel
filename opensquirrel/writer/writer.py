@@ -2,7 +2,18 @@ import inspect
 from typing import SupportsInt
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, QubitLike, Reset
+from opensquirrel.ir import (
+    Bit,
+    Comment,
+    Float,
+    Gate,
+    Int,
+    IRVisitor,
+    Measure,
+    Qubit,
+    QubitLike,
+    Reset,
+)
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -14,11 +25,14 @@ class _WriterImpl(IRVisitor):
         self.register_manager = register_manager
         qubit_register_size = self.register_manager.get_qubit_register_size()
         qubit_register_name = self.register_manager.get_qubit_register_name()
+
         bit_register_size = self.register_manager.get_bit_register_size()
         bit_register_name = self.register_manager.get_bit_register_name()
-        self.output = "version 3.0\n\n{}\n{}\n".format(
-            f"qubit[{qubit_register_size}] {qubit_register_name}",
-            f"bit[{bit_register_size}] {bit_register_name}\n" if bit_register_size > 0 else "",
+        self.output = "version 3.0{}{}{}{}\n\n".format(
+            "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
+            (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
+            "\n" if qubit_register_size > 0 and bit_register_size > 0 else "",
+            (f"bit[{bit_register_size}] {bit_register_name}" if bit_register_size > 0 else ""),
         )
 
     def visit_bit(self, bit: Bit) -> str:
@@ -84,7 +98,6 @@ class _WriterImpl(IRVisitor):
 
 def circuit_to_string(circuit: Circuit) -> str:
     writer_impl = _WriterImpl(circuit.register_manager)
-
     circuit.ir.accept(writer_impl)
 
     return writer_impl.output.rstrip() + "\n"  # remove all trailing lines and leave only one

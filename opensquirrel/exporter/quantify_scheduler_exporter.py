@@ -49,21 +49,13 @@ class _ScheduleCreator(IRVisitor):
                 math.degrees(math.atan2(g.axis[1], g.axis[0])),
                 FIXED_POINT_DEG_PRECISION,
             )
-            self.schedule.add(
-                quantify_scheduler_gates.Rxy(
-                    theta=theta, phi=phi, qubit=self._get_qubit_string(g_qubit)
-                )
-            )
+            self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g_qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(
-                quantify_scheduler_gates.Rz(
-                    theta=theta, qubit=self._get_qubit_string(g.qubit)
-                )
-            )
+            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
         raise UnsupportedGateError(g)
@@ -115,9 +107,7 @@ class _ScheduleCreator(IRVisitor):
         return
 
     def visit_reset(self, g: Reset) -> Any:
-        self.schedule.add(
-            quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit))
-        )
+        self.schedule.add(quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit)))
 
 
 def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:
