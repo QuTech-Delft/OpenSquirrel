@@ -99,3 +99,25 @@ def test_wrong_gate_argument_number_or_types(parser: Parser, error_message: str,
 def test_gate_modifiers(parser: Parser, circuit_string: str, expected_result: list[Gate]) -> None:
     circuit = parser.circuit_from_string(circuit_string)
     assert circuit.ir.statements == expected_result
+
+
+@pytest.mark.parametrize(
+    ("circuit_string", "expected_result"),
+    [
+        ("version 3.0; qubit q; X q",
+         [BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)]),
+        ("version 3.0; qubit q; Rx(pi) q",
+         [BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=0)]),
+        ("version 3.0; qubit[2] q; CNOT q[0], q[1]",
+         [ControlledGate(0,
+                         BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2))]),
+    ],
+    ids=[
+        "bloch_sphere_rotation",
+        "parametrized_bloch_sphere_rotation",
+        "controlled_gate"
+    ],
+)
+def test_named_gates(parser: Parser, circuit_string: str, expected_result: list[Gate]) -> None:
+    circuit = parser.circuit_from_string(circuit_string)
+    assert circuit.ir.statements == expected_result

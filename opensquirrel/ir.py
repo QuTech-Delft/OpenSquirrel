@@ -70,53 +70,63 @@ class Expression(IRNode, ABC):
 
 
 @dataclass
-class Float(Expression):
-    value: float
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_float(self)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsFloat):
-            self.value = float(self.value)
-        else:
-            msg = "value must be a float"
-            raise TypeError(msg)
-
-
-@dataclass(init=False)
 class Int(Expression):
     """Integers used for intermediate representation of ``Statement`` arguments.
 
     Attributes:
         value: value of the ``Int`` object.
     """
-
     value: int
 
-    def __init__(self, value: SupportsInt) -> None:
-        """Init of the ``Int`` object.
+    def __int__(self) -> int:
+        """Cast the ``Int`` object to a built-in Python ``int``.
 
-        Args:
-            value: value of the ``Int`` object.
+        Returns:
+            Built-in Python ``int`` representation of the ``Int``.
         """
-        if isinstance(value, SupportsInt):
-            self.value = int(value)
-            return
-
-        msg = "value must be an int"
-        raise TypeError(msg)
+        return self.value
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
 
-    def __int__(self) -> int:
-        """Cast the ``Int`` object to a building python ``int``.
+    def __post_init__(self) -> None:
+        if isinstance(self.value, Int):
+            self.value = self.value.value
+        elif isinstance(self.value, SupportsInt):
+            self.value = int(self.value)
+        else:
+            msg = "value must be a float"
+            raise TypeError(msg)
+
+
+@dataclass
+class Float(Expression):
+    """Floats used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Float`` object.
+    """
+    value: float
+
+    def __int__(self) -> float:
+        """Cast the ``Float`` object to a built-in Python ``float``.
 
         Returns:
-            Building python ``int`` representation of the ``Int``.
+            Built-in Python ``float`` representation of the ``Float``.
         """
         return self.value
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_float(self)
+
+    def __post_init__(self) -> None:
+        if isinstance(self.value, Float):
+            self.value = self.value.value
+        elif isinstance(self.value, SupportsFloat):
+            self.value = float(self.value)
+        else:
+            msg = "value must be a float"
+            raise TypeError(msg)
 
 
 @dataclass
@@ -539,72 +549,31 @@ class ControlledGate(Gate):
         return self.target_gate.is_identity()
 
 
-@overload
-def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
+def named_gate(cls):
+    class Wrapper:
+        def __init__(self, parameter: Any = None):
+            self.named_gate_functor = cls(parameter)
 
+        def call_single_qubit_gate(self, q: QubitLike) -> BlochSphereRotation:
+            return self.named_gate_functor(q)
 
-@overload
-def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
+        def call_two_qubit_gate(self, control: QubitLike, target: QubitLike) -> ControlledGate:
+            return self.named_gate_functor(control, target)
 
+        def __call__(self, *operands) -> Gate:
+            if len(operands) == 1:
+                return self.call_single_qubit_gate(operands[0])
+            elif len(operands) == 2:
+                return self.call_two_qubit_gate(operands[0], operands[1])
+            else:
+                raise OSError(f"calling named gate with {len(operands)} qubit operands")
 
-@overload
-def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
+        def __getattr__(self, item):
+            return getattr(self.named_gate_functor, item)
 
-
-def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    @wraps(gate_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> Gate:
-        result = gate_generator(*args, **kwargs)
-        result.generator = wrapper
-
-        all_args: list[Expression] = []
-        for par in inspect.signature(gate_generator).parameters.values():
-            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
-            )
-
-            # Convert to correct expression for IR
-            if is_int_annotation(next_annotation):
-                next_arg = Int(next_arg)
-            if is_qubit_like_annotation(next_annotation):
-                next_arg = Qubit(next_arg)
-
-            # Append parsed argument
-            all_args.append(next_arg)
-
-        result.arguments = tuple(all_args)
-        return result
-
-    return wrapper
-
-
-def gate_modifier(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    @wraps(gate_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> Gate:
-        result = gate_generator(*args, **kwargs)
-        result.generator = wrapper
-
-        all_args: list[Expression] = []
-        for par in inspect.signature(gate_generator).parameters.values():
-            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
-            )
-
-            # Convert to correct expression for IR
-            if is_int_annotation(next_annotation):
-                next_arg = Int(next_arg)
-            if is_qubit_like_annotation(next_annotation):
-                next_arg = Qubit(next_arg)
-
-            # Append parsed argument
-            all_args.append(next_arg)
-
-        result.arguments = tuple(all_args)
-        return result
-
-    return wrapper
+    Wrapper.__name__ = cls.__name__
+    Wrapper.__doc__ = cls.__doc__
+    return Wrapper
 
 
 def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Measure]:
