@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
+from opensquirrel.default_gates import NamedGateFunctor
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import Gate, Measure, Reset
+    from opensquirrel.ir import Float, Gate, Measure, Reset
 
 
 class InstructionLibrary:
@@ -14,21 +15,21 @@ class InstructionLibrary:
 class GateLibrary(InstructionLibrary):
     def __init__(
         self,
-        gate_set: Iterable[Callable[..., Gate]],
-        gate_aliases: Mapping[str, Callable[..., Gate]],
+        gate_set: Iterable[NamedGateFunctor],
+        gate_aliases: Mapping[str, NamedGateFunctor],
     ) -> None:
         self.gate_set = gate_set
         self.gate_aliases = gate_aliases
 
-    def get_gate_f(self, gate_name: str) -> Callable[..., Gate]:
+    def get_gate_f(self, gate_name: str, gate_parameter: Float) -> type[NamedGateFunctor]:
         try:
             generator_f = next(f for f in self.gate_set if f.__name__ == gate_name)
         except StopIteration as exc:
             if gate_name not in self.gate_aliases:
-                msg = f"unknown instruction `{gate_name}`"
+                msg = f"unknown gate `{gate_name}`"
                 raise ValueError(msg) from exc
             generator_f = self.gate_aliases[gate_name]
-        return generator_f
+        return generator_f(gate_parameter)
 
 
 class MeasureLibrary(InstructionLibrary):

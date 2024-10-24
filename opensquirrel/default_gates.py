@@ -1,117 +1,211 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Callable
-from typing import SupportsInt
+from typing import Any
 
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, QubitLike, named_gate
 
 
-@named_gate
-def I(q: QubitLike) -> BlochSphereRotation:  # noqa: E743
-    return BlochSphereRotation.identity(q)
+class NamedGateFunctor:
+    def __init__(self, parameter: Any = None):
+        self.parameter = parameter
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        pass
 
 
 @named_gate
-def H(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
+class I(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:  # noqa: E743
+        return BlochSphereRotation.identity(q)
 
 
 @named_gate
-def X(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+class H(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def X90(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi / 2, phase=0)
+class X(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def mX90(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0)
+class X90(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def Y(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
+class mX90(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0)
 
 
 @named_gate
-def Y90(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi / 2, phase=0)
+class Y(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def mY90(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=-math.pi / 2, phase=0)
+class Y90(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def Z(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
+class mY90(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=-math.pi / 2, phase=0)
 
 
 @named_gate
-def S(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 2, phase=0)
+class Z(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
-def Sdag(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 2, phase=0)
+class S(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 2, phase=0)
 
 
 @named_gate
-def T(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 4, phase=0)
+class Sdag:
+    def __init__(self, parameter: Any = None):
+        pass
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 2, phase=0)
 
 
 @named_gate
-def Tdag(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 4, phase=0)
+class T(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 4, phase=0)
 
 
 @named_gate
-def Rx(q: QubitLike, theta: Float) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=theta.value, phase=0)
+class Tdag(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 4, phase=0)
 
 
 @named_gate
-def Ry(q: QubitLike, theta: Float) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=theta.value, phase=0)
+class Rx(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        self.theta = Float(self.parameter).value
+        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=self.theta, phase=0)
 
 
 @named_gate
-def Rz(q: QubitLike, theta: Float) -> BlochSphereRotation:
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=theta.value, phase=0)
+class Ry(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        self.theta = Float(self.parameter).value
+        return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=self.theta, phase=0)
 
 
 @named_gate
-def CNOT(control: QubitLike, target: QubitLike) -> ControlledGate:
-    return ControlledGate(control, X(target))
+class Rz(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, q: QubitLike) -> BlochSphereRotation:
+        self.theta = Float(self.parameter).value
+        return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=self.theta, phase=0)
 
 
 @named_gate
-def CZ(control: QubitLike, target: QubitLike) -> ControlledGate:
-    return ControlledGate(control, Z(target))
+class CNOT(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, control: QubitLike, target: QubitLike) -> ControlledGate:
+        return ControlledGate(control, X()(target))
 
 
 @named_gate
-def CR(control: QubitLike, target: QubitLike, theta: Float) -> ControlledGate:
-    return ControlledGate(
-        control,
-        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2),
-    )
+class CZ(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, control: QubitLike, target: QubitLike) -> ControlledGate:
+        return ControlledGate(control, Z()(target))
 
 
 @named_gate
-def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate:
-    theta = 2 * math.pi / (2 ** Int(k).value)
-    return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
+class CR(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, control: QubitLike, target: QubitLike) -> ControlledGate:
+        self.theta = Float(self.parameter).value
+        return ControlledGate(
+            control,
+            BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=self.theta, phase=self.theta / 2),
+        )
 
 
-default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
+@named_gate
+class CRk(NamedGateFunctor):
+    def __init__(self, parameter: Any = None):
+        super().__init__(parameter)
+
+    def __call__(self, control: QubitLike, target: QubitLike) -> ControlledGate:
+        self.theta = 2 * math.pi / (2 ** Int(self.parameter).value)
+        return ControlledGate(
+            control,
+            BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=self.theta, phase=self.theta / 2)
+        )
+
+
+default_bloch_sphere_rotations_without_params: list[type[NamedGateFunctor]]
 default_bloch_sphere_rotations_without_params = [
     I,
     H,
@@ -127,16 +221,14 @@ default_bloch_sphere_rotations_without_params = [
     T,
     Tdag,
 ]
-default_bloch_sphere_rotations: list[
-    Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, Float], BlochSphereRotation]
-]
+default_bloch_sphere_rotations: list[type[NamedGateFunctor]]
 default_bloch_sphere_rotations = [
     *default_bloch_sphere_rotations_without_params,
     Rx,
     Ry,
     Rz,
 ]
-default_gate_set: list[Callable[..., Gate]]
+default_gate_set: list[type[NamedGateFunctor]]
 default_gate_set = [
     *default_bloch_sphere_rotations,
     CNOT,
@@ -145,6 +237,7 @@ default_gate_set = [
     CRk,
 ]
 
+default_gate_aliases: dict[str, type[NamedGateFunctor]]
 default_gate_aliases = {
     "Hadamard": H,
     "Identity": I,
