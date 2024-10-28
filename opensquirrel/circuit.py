@@ -10,7 +10,8 @@ from opensquirrel.default_measures import default_measure_set
 from opensquirrel.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from numpy.typing import ArrayLike
+    from numpy.typing import ArrayLike, NDArray
+
     from opensquirrel.decomposer import Decomposer
     from opensquirrel.ir import IR, Gate, Measure, QubitLike
     from opensquirrel.mapper import Mapper
@@ -105,19 +106,21 @@ class Circuit:
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
 
-    def _set_phase_map(self, phase_map: ArrayLike ) -> None:
+    def _set_phase_map(self, phase_map: NDArray[np.complex128]) -> None:
         self.qubit_phase_map = phase_map
 
     def get_qubit_phase(self, qubit: QubitLike) -> np.complex128:
         from opensquirrel.ir import Qubit
-        return self.qubit_phase_map[Qubit(qubit).index]
 
-    def add_qubit_phase(self, qubit: QubitLike, phase: np.complex128) -> None:
+        return np.complex128(self.qubit_phase_map[Qubit(qubit).index])
+
+    def add_qubit_phase(self, qubit: QubitLike, phase: np.complex128) -> ArrayLike:
         from opensquirrel.ir import Qubit
 
         temp_phase_map = self.qubit_phase_map
         temp_phase_map[Qubit(qubit).index] += phase
         self.qubit_phase_map = temp_phase_map
+        return temp_phase_map
 
     def merge_single_qubit_gates(self) -> None:
         """Merge all consecutive 1-qubit gates in the circuit.
@@ -155,9 +158,11 @@ class Circuit:
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
             from opensquirrel.exporter import quantify_scheduler_exporter
+
             return quantify_scheduler_exporter.export(self)
         if fmt == ExportFormat.CQASM_V1:
             from opensquirrel.exporter import cqasmv1_exporter
+
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)

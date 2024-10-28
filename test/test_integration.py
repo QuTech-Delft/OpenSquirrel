@@ -114,6 +114,7 @@ b[3] = measure q[3]
 """
     )
 
+
 def test_integration_global_phase() -> None:
     qc = Circuit.from_string(
         """
@@ -128,9 +129,13 @@ def test_integration_global_phase() -> None:
         qubit[3] q
 
         H q[0:2]
-        Rx(1.5789) q[0]
+        Ry(1.5789) q[0]
         H q[0]
         CNOT q[1], q[0]
+        Ry(3.09) q[0]
+        Ry(0.318) q[1]
+        Ry(0.18) q[2]
+        CNOT q[2], q[0]
         """,
     )
 
@@ -157,13 +162,30 @@ def test_integration_global_phase() -> None:
 
 qubit[3] q
 
-Rz(1.5789) q[0]
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
-Rz(1.5707963) q[2]
+Rz(3.1415927) q[0]
+X90 q[0]
+Rz(0.0081036221) q[0]
+X90 q[0]
+Rz(3.1415927) q[0]
+CZ q[1], q[0]
 X90 q[2]
-Rz(1.5707963) q[2]
+Rz(1.3907963) q[2]
+X90 q[2]
+X90 q[0]
+Rz(0.051592695) q[0]
+X90 q[0]
+Rz(3.1415927) q[0]
+CZ q[2], q[0]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
+Rz(3.1415927) q[1]
+X90 q[1]
+Rz(2.8235927) q[1]
+X90 q[1]
 """
     )
 
@@ -209,9 +231,7 @@ def test_hectoqubit_backend() -> None:
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule, bit_string_mapping = qc.export(
-            fmt=ExportFormat.QUANTIFY_SCHEDULER
-        )
+        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
         assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
@@ -240,11 +260,7 @@ def test_hectoqubit_backend() -> None:
             "Measure q[1]",
         ]
 
-        ir_measures = [
-            instruction
-            for instruction in qc.ir.statements
-            if isinstance(instruction, Measure)
-        ]
+        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
         qs_measures = [
             operation.data["gate_info"]
             for operation in exported_schedule.operations.values()
@@ -317,14 +333,11 @@ def test_hectoqubit_backend_allxy() -> None:
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
             Exception,
-            match="quantify-scheduler is not installed, or cannot be installed on "
-            "your system",
+            match="quantify-scheduler is not installed, or cannot be installed on " "your system",
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule, bit_string_mapping = qc.export(
-            fmt=ExportFormat.QUANTIFY_SCHEDULER
-        )
+        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
         assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
@@ -371,11 +384,7 @@ def test_hectoqubit_backend_allxy() -> None:
             if operation.data["gate_info"]["operation_type"] == "measure"
         ]
 
-        ir_measures = [
-            instruction
-            for instruction in qc.ir.statements
-            if isinstance(instruction, Measure)
-        ]
+        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
 
         ir_acq_index_record = [0] * qc.qubit_register_size
         ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size

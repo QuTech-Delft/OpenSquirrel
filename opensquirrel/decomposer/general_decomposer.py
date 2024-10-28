@@ -2,18 +2,24 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING
+
+import numpy as np
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.common import (
+    ATOL,
     are_matrices_equivalent_up_to_global_phase,
     calculate_phase_difference,
     to_euler_form,
-    ATOL
 )
-from opensquirrel.ir import IR, Gate
 from opensquirrel.default_gates import Rz
+from opensquirrel.ir import Float, Gate
 from opensquirrel.reindexer import get_reindexed_circuit
-from opensquirrel.circuit import Circuit
+
+if TYPE_CHECKING:
+    from opensquirrel.circuit import Circuit
+
 
 class Decomposer(ABC):
     @abstractmethod
@@ -27,6 +33,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], qc: Ci
     Args:
         gate: original gate
         replacement_gates: gates replacing the gate
+        qc: circuit to verify
 
     Returns:
         Returns verified list of replacement gates with possible correction.
@@ -49,21 +56,14 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], qc: Ci
         raise ValueError(msg)
 
     if qc is not None:
-        for qubit in gate.get_qubit_operands():
-            print("Get phase: " + str(qc.get_qubit_phase(qubit)) + " " + str(qubit))
-
         phase_difference = calculate_phase_difference(replaced_matrix, replacement_matrix)
         euler_phase = to_euler_form(phase_difference)
-        print("Add phase: " + str(euler_phase) + " " + str(qubit_list))
         [qc.add_qubit_phase(q, euler_phase) for q in gate.get_qubit_operands()]
-        #if euler_phase > ATOL:
-        #    print([q.get_phase() for q in gate.get_qubit_operands()])
-        #    print([q for q in gate.get_qubit_operands()])
 
         if len(gate_qubit_indices) > 1:
-            relative_phase = qc.get_qubit_phase(qubit_list[1]) - qc.get_qubit_phase(qubit_list[0])
+            relative_phase = float(np.real(qc.get_qubit_phase(qubit_list[1]) - qc.get_qubit_phase(qubit_list[0])))
             if abs(relative_phase) > ATOL:
-                list(replacement_gates).append(Rz(gate.get_qubit_operands()[0], -1*relative_phase))
+                list(replacement_gates).append(Rz(gate.get_qubit_operands()[0], Float(-1 * relative_phase)))
 
     return list(replacement_gates)
 
@@ -83,9 +83,9 @@ def decompose(circuit: Circuit, decomposer: Decomposer) -> None:
 
         gate = statement
         replacement_gates: list[Gate] = decomposer.decompose(statement)
-        replacement_gates = check_gate_replacement(gate, replacement_gates)
+        replacement_gates = check_gate_replacement(gate, replacement_gates, circuit)
 
-        circuit.ir.statements[statement_index: statement_index + 1] = replacement_gates
+        circuit.ir.statements[statement_index : statement_index + 1] = replacement_gates
         statement_index += len(replacement_gates)
 
 

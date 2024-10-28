@@ -168,7 +168,7 @@ class Qubit(Expression):
         """Create a hash for this qubit."""
         return hash(str(self.__class__) + str(self.index))
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         """Compare two qubits."""
         if not isinstance(other, Qubit):
             return False
