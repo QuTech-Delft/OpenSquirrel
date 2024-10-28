@@ -149,17 +149,6 @@ class Qubit(Expression):
     """
 
     index: int
-    _phase: np.complex128 = 0
-
-    def _set_phase(self, phase: np.complex128) -> None:
-        self._phase = phase
-
-    def get_phase(self) -> np.complex128:
-        return self._phase
-
-    def add_phase(self, phase: np.complex128) -> None:
-        phase += self._phase + phase
-        self._set_phase(phase)
 
     def __init__(self, index: QubitLike) -> None:
         """Init of the ``Qubit`` object.

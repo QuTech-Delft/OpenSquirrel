@@ -21,7 +21,7 @@ class Decomposer(ABC):
         raise NotImplementedError()
 
 
-def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> list[Gate]:
+def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], qc: Circuit | None = None) -> list[Gate]:
     """
     Verifies the replacement gates against the given gate.
     Args:
@@ -48,33 +48,34 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> lis
         msg = f"replacement for gate {gate.name} does not preserve the quantum state"
         raise ValueError(msg)
 
-    for qubit in gate.get_qubit_operands():
-        print("Get phase: " + str(qubit.get_phase()) +" "+ str(qubit))
+    if qc is not None:
+        for qubit in gate.get_qubit_operands():
+            print("Get phase: " + str(qc.get_qubit_phase(qubit)) + " " + str(qubit))
 
-    phase_difference = calculate_phase_difference(replaced_matrix, replacement_matrix)
-    euler_phase = to_euler_form(phase_difference)
-    print("Add phase: " + str(euler_phase) + " " + str(qubit_list))
-    [q.add_phase(euler_phase) for q in gate.get_qubit_operands()]
-    #if euler_phase > ATOL:
-    #    print([q.get_phase() for q in gate.get_qubit_operands()])
-    #    print([q for q in gate.get_qubit_operands()])
+        phase_difference = calculate_phase_difference(replaced_matrix, replacement_matrix)
+        euler_phase = to_euler_form(phase_difference)
+        print("Add phase: " + str(euler_phase) + " " + str(qubit_list))
+        [qc.add_qubit_phase(q, euler_phase) for q in gate.get_qubit_operands()]
+        #if euler_phase > ATOL:
+        #    print([q.get_phase() for q in gate.get_qubit_operands()])
+        #    print([q for q in gate.get_qubit_operands()])
 
-    if len(gate_qubit_indices) > 1:
-        relative_phase = qubit_list[1].get_phase() - qubit_list[0].get_phase()
-        if abs(relative_phase) > ATOL:
-            list(replacement_gates).append(Rz(gate.get_qubit_operands()[0], -1*relative_phase))
+        if len(gate_qubit_indices) > 1:
+            relative_phase = qc.get_qubit_phase(qubit_list[1]) - qc.get_qubit_phase(qubit_list[0])
+            if abs(relative_phase) > ATOL:
+                list(replacement_gates).append(Rz(gate.get_qubit_operands()[0], -1*relative_phase))
 
     return list(replacement_gates)
 
 
-def decompose(ir: IR, decomposer: Decomposer, circuit: Circuit | None = None) -> None:
+def decompose(circuit: Circuit, decomposer: Decomposer) -> None:
     """Applies `decomposer` to every gate in the circuit, replacing each gate by the output of `decomposer`.
     When `decomposer` decides to not decomposer a gate, it needs to return a list with the intact gate as single
     element.
     """
     statement_index = 0
-    while statement_index < len(ir.statements):
-        statement = ir.statements[statement_index]
+    while statement_index < len(circuit.ir.statements):
+        statement = circuit.ir.statements[statement_index]
 
         if not isinstance(statement, Gate):
             statement_index += 1
@@ -84,7 +85,7 @@ def decompose(ir: IR, decomposer: Decomposer, circuit: Circuit | None = None) ->
         replacement_gates: list[Gate] = decomposer.decompose(statement)
         replacement_gates = check_gate_replacement(gate, replacement_gates)
 
-        ir.statements[statement_index: statement_index + 1] = replacement_gates
+        circuit.ir.statements[statement_index: statement_index + 1] = replacement_gates
         statement_index += len(replacement_gates)
 
 
@@ -100,8 +101,8 @@ class _GenericReplacer(Decomposer):
         return self.replacement_function(*arguments)
 
 
-def replace(ir: IR, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
+def replace(circuit: Circuit, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
     """Does the same as decomposer, but only applies to a given gate."""
     generic_replacer = _GenericReplacer(gate_generator, f)
 
-    decompose(ir, generic_replacer)
+    decompose(circuit, generic_replacer)

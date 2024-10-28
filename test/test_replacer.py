@@ -63,7 +63,7 @@ class TestReplacer:
                     return [I(g.qubit), g, I(g.qubit)]
                 return [g]
 
-        decompose(circuit.ir, decomposer=TestDecomposer())
+        decompose(circuit, decomposer=TestDecomposer())
 
         builder2 = CircuitBuilder(3)
         builder2.I(0)
@@ -80,7 +80,7 @@ class TestReplacer:
         builder1.comment("Test comment.")
         circuit = builder1.to_circuit()
 
-        replace(circuit.ir, H, lambda q: [Y90(q), X(q)])
+        replace(circuit, H, lambda q: [Y90(q), X(q)])
 
         builder2 = CircuitBuilder(3)
         builder2.Y90(0)

@@ -10,6 +10,7 @@ from opensquirrel.default_measures import default_measure_set
 from opensquirrel.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
+    from numpy.typing import ArrayLike
     from opensquirrel.decomposer import Decomposer
     from opensquirrel.ir import IR, Gate, Measure, QubitLike
     from opensquirrel.mapper import Mapper
@@ -44,6 +45,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
+        self.qubit_phase_map = np.zeros(self.register_manager.get_qubit_register_size(), dtype=np.complex128)
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
@@ -103,6 +105,20 @@ class Circuit:
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
 
+    def _set_phase_map(self, phase_map: ArrayLike ) -> None:
+        self.qubit_phase_map = phase_map
+
+    def get_qubit_phase(self, qubit: QubitLike) -> np.complex128:
+        from opensquirrel.ir import Qubit
+        return self.qubit_phase_map[Qubit(qubit).index]
+
+    def add_qubit_phase(self, qubit: QubitLike, phase: np.complex128) -> None:
+        from opensquirrel.ir import Qubit
+
+        temp_phase_map = self.qubit_phase_map
+        temp_phase_map[Qubit(qubit).index] += phase
+        self.qubit_phase_map = temp_phase_map
+
     def merge_single_qubit_gates(self) -> None:
         """Merge all consecutive 1-qubit gates in the circuit.
         Gates obtained from merging other gates become anonymous gates.
@@ -117,7 +133,7 @@ class Circuit:
         """
         from opensquirrel.decomposer import general_decomposer
 
-        general_decomposer.decompose(self.ir, decomposer)
+        general_decomposer.decompose(self, decomposer)
 
     def map(self, mapper: Mapper) -> None:
         """Generic qubit mapper pass.
@@ -134,7 +150,7 @@ class Circuit:
         """
         from opensquirrel.decomposer import general_decomposer
 
-        general_decomposer.replace(self.ir, gate_generator, f)
+        general_decomposer.replace(self, gate_generator, f)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
