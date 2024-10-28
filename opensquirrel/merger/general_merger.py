@@ -102,7 +102,7 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
 
         if isinstance(statement, BlochSphereRotation):
             # Accumulate consecutive Bloch sphere rotations
-            already_accumulated = accumulators_per_qubit[statement.qubit]
+            already_accumulated = accumulators_per_qubit[Qubit(statement.qubit.index)]
 
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
             accumulators_per_qubit[statement.qubit] = composed

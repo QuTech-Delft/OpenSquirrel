@@ -3,13 +3,15 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any
 
+import numpy as np
+
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
     from opensquirrel.decomposer import Decomposer
-    from opensquirrel.ir import IR, Gate, Measure
+    from opensquirrel.ir import IR, Gate, Measure, QubitLike
     from opensquirrel.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
 

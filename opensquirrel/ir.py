@@ -149,6 +149,17 @@ class Qubit(Expression):
     """
 
     index: int
+    _phase: np.complex128 = 0
+
+    def _set_phase(self, phase: np.complex128) -> None:
+        self._phase = phase
+
+    def get_phase(self) -> np.complex128:
+        return self._phase
+
+    def add_phase(self, phase: np.complex128) -> None:
+        phase += self._phase + phase
+        self._set_phase(phase)
 
     def __init__(self, index: QubitLike) -> None:
         """Init of the ``Qubit`` object.
@@ -167,6 +178,12 @@ class Qubit(Expression):
     def __hash__(self) -> int:
         """Create a hash for this qubit."""
         return hash(str(self.__class__) + str(self.index))
+
+    def __eq__(self, other) -> bool:
+        """Compare two qubits."""
+        if not isinstance(other, Qubit):
+            return False
+        return self.__hash__() == other.__hash__()
 
     def __repr__(self) -> str:
         """String representation of the Qubit."""
