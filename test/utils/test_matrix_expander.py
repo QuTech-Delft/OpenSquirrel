@@ -7,7 +7,9 @@ from opensquirrel.utils import matrix_expander
 
 
 def test_bloch_sphere_rotation() -> None:
-    gate = BlochSphereRotation(qubit=0, axis=(0.8, -0.3, 1.5), angle=0.9468, phase=2.533)
+    gate = BlochSphereRotation(
+        qubit=0, axis=(0.8, -0.3, 1.5), angle=0.9468, phase=2.533
+    )
     np.testing.assert_almost_equal(
         matrix_expander.get_matrix(gate, 2),
         [
@@ -20,7 +22,10 @@ def test_bloch_sphere_rotation() -> None:
 
 
 def test_controlled_gate() -> None:
-    gate = ControlledGate(2, BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2))
+    gate = ControlledGate(
+        2,
+        BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+    )
     np.testing.assert_almost_equal(
         matrix_expander.get_matrix(gate, 3),
         [

@@ -55,7 +55,12 @@ class TestCircuitBuilder:
 
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [H(0), CNOT(0, 1), Measure(0, Bit(0)), Measure(1, Bit(1))]
+        assert circuit.ir.statements == [
+            H(0),
+            CNOT(0, 1),
+            Measure(0, Bit(0)),
+            Measure(1, Bit(1)),
+        ]
 
     def test_chain(self) -> None:
         builder = CircuitBuilder(3)
@@ -83,7 +88,9 @@ class TestCircuitBuilder:
     def test_wrong_number_of_arguments(self) -> None:
         builder = CircuitBuilder(3)
 
-        with pytest.raises(TypeError, match=".* takes 1 positional argument but 2 were given"):
+        with pytest.raises(
+            TypeError, match=".* takes 1 positional argument but 2 were given"
+        ):
             builder.H(0, 1)
 
     def test_decoupling_circuit_and_builder(self) -> None:

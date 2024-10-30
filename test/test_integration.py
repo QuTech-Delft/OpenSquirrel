@@ -39,7 +39,8 @@ def test_Spin2_backend() -> None:
         """,
     )
 
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit
+    # interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
@@ -132,7 +133,8 @@ def test_hectoqubit_backend() -> None:
         """
     )
 
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit
+    # interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
@@ -156,7 +158,9 @@ def test_hectoqubit_backend() -> None:
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, bit_string_mapping = qc.export(
+            fmt=ExportFormat.QUANTIFY_SCHEDULER
+        )
 
         assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
@@ -185,7 +189,11 @@ def test_hectoqubit_backend() -> None:
             "Measure q[1]",
         ]
 
-        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
+        ir_measures = [
+            instruction
+            for instruction in qc.ir.statements
+            if isinstance(instruction, Measure)
+        ]
         qs_measures = [
             operation.data["gate_info"]
             for operation in exported_schedule.operations.values()
@@ -193,7 +201,9 @@ def test_hectoqubit_backend() -> None:
         ]
 
         ir_acq_index_record = [0] * qc.qubit_register_size
-        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size
+        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [
+            (None, None)
+        ] * qc.bit_register_size
         for i, ir_measure in enumerate(ir_measures):
             qubit_index = ir_measure.qubit.index
             ir_acq_index = ir_acq_index_record[qubit_index]
@@ -258,11 +268,14 @@ def test_hectoqubit_backend_allxy() -> None:
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
             Exception,
-            match="quantify-scheduler is not installed, or cannot be installed on " "your system",
+            match="quantify-scheduler is not installed, or cannot be installed on "
+            "your system",
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, bit_string_mapping = qc.export(
+            fmt=ExportFormat.QUANTIFY_SCHEDULER
+        )
 
         assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
@@ -309,10 +322,16 @@ def test_hectoqubit_backend_allxy() -> None:
             if operation.data["gate_info"]["operation_type"] == "measure"
         ]
 
-        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
+        ir_measures = [
+            instruction
+            for instruction in qc.ir.statements
+            if isinstance(instruction, Measure)
+        ]
 
         ir_acq_index_record = [0] * qc.qubit_register_size
-        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size
+        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [
+            (None, None)
+        ] * qc.bit_register_size
         for i, ir_measurement in enumerate(ir_measures):
             qubit_index = ir_measurement.qubit.index
             ir_acq_index = ir_acq_index_record[qubit_index]

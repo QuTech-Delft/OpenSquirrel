@@ -10,13 +10,18 @@ from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
+from opensquirrel.common import (
+    ATOL,
+    are_matrices_equivalent_up_to_global_phase,
+    normalize_angle,
+)
 
 REPR_DECIMALS = 5
 
 
 def repr_round(
-    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
+    value: float | Axis | NDArray[np.complex64 | np.complex128],
+    decimals: int = REPR_DECIMALS,
 ) -> float | NDArray[np.complex64 | np.complex128]:
     return np.round(value, decimals)
 
@@ -49,7 +54,9 @@ class IRVisitor:
     def visit_reset(self, reset: Reset) -> Any:
         pass
 
-    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
+    def visit_bloch_sphere_rotation(
+        self, bloch_sphere_rotation: BlochSphereRotation
+    ) -> Any:
         pass
 
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
@@ -245,7 +252,8 @@ class Axis(Sequence[np.float64], Expression):
         """
         return axis / np.linalg.norm(axis)
 
-    def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
+    # type:ignore[override]
+    def __getitem__(self, index: int, /) -> np.float64:
         """Get the item at `index`."""
         return cast(np.float64, self.value[index])
 
@@ -308,7 +316,9 @@ class Measure(Statement, ABC):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Measure):
             return False
-        return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        return self.qubit == other.qubit and np.allclose(
+            self.axis, other.axis, atol=ATOL
+        )
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_measure(self)
@@ -362,7 +372,8 @@ class Gate(Statement, ABC):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        # Note: two gates are considered equal even when their generators/arguments are different.
+        # Note: two gates are considered equal even when their
+        # generators/arguments are different.
         self.generator = generator
         self.arguments = arguments
 
@@ -521,7 +532,9 @@ class ControlledGate(Gate):
         self.control_qubit = Qubit(control_qubit)
         self.target_gate = target_gate
 
-        if self._check_repeated_qubit_operands([self.control_qubit, *target_gate.get_qubit_operands()]):
+        if self._check_repeated_qubit_operands(
+            [self.control_qubit, *target_gate.get_qubit_operands()]
+        ):
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
 
@@ -540,15 +553,21 @@ class ControlledGate(Gate):
 
 
 @overload
-def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
+def named_gate(
+    gate_generator: Callable[..., BlochSphereRotation]
+) -> Callable[..., BlochSphereRotation]: ...
 
 
 @overload
-def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
+def named_gate(
+    gate_generator: Callable[..., MatrixGate]
+) -> Callable[..., MatrixGate]: ...
 
 
 @overload
-def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
+def named_gate(
+    gate_generator: Callable[..., ControlledGate]
+) -> Callable[..., ControlledGate]: ...
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
@@ -561,7 +580,9 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         for par in inspect.signature(gate_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation]
+                if isinstance(par.annotation, str)
+                else par.annotation
             )
 
             # Convert to correct expression for IR
@@ -589,7 +610,9 @@ def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Me
         for par in inspect.signature(measure_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation]
+                if isinstance(par.annotation, str)
+                else par.annotation
             )
 
             # Convert to correct expression for IR
@@ -615,7 +638,9 @@ def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
         for par in inspect.signature(reset_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation]
+                if isinstance(par.annotation, str)
+                else par.annotation
             )
 
             # Convert to correct expression for IR
@@ -632,7 +657,10 @@ def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
-    union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
+    union_mapping = [
+        q.index
+        for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))
+    ]
 
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
     from opensquirrel.reindexer import get_reindexed_circuit

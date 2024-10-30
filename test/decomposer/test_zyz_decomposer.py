@@ -35,12 +35,18 @@ def test_identity(decomposer: ZYZDecomposer) -> None:
         (H(0), [Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
-            [Rz(0, Float(0.018644578210710527)), Ry(0, Float(-0.6209410696845807)), Rz(0, Float(-0.9086506397909061))],
+            [
+                Rz(0, Float(0.018644578210710527)),
+                Ry(0, Float(-0.6209410696845807)),
+                Rz(0, Float(-0.9086506397909061)),
+            ],
         ),
     ],
     ids=["CNOT", "CR", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],
 )
-def test_zyz_decomposer(decomposer: ZYZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+def test_zyz_decomposer(
+    decomposer: ZYZDecomposer, gate: Gate, expected_result: list[Gate]
+) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result

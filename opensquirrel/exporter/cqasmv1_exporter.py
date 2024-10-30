@@ -44,9 +44,15 @@ class _CQASMv1Creator(IRVisitor):
         if gate.is_anonymous:
             raise UnsupportedGateError(gate)
         params = []
-        if any(not isinstance(arg, Qubit) for arg in gate.arguments):  # type: ignore[union-attr]
-            params = [arg.accept(self) for arg in gate.arguments if not isinstance(arg, Qubit)]  # type: ignore[union-attr]
-        qubit_args = (arg.accept(self) for arg in gate.arguments if isinstance(arg, Qubit))  # type: ignore[union-attr]
+        if any(
+            not isinstance(arg, Qubit) for arg in gate.arguments
+        ):  # type: ignore[union-attr]
+            params = [
+                arg.accept(self) for arg in gate.arguments if not isinstance(arg, Qubit)
+            ]  # type: ignore[union-attr]
+        qubit_args = (
+            arg.accept(self) for arg in gate.arguments if isinstance(arg, Qubit)
+        )  # type: ignore[union-attr]
         self.cqasmv1_string += "{} {}{}\n".format(
             gate_name, ", ".join(qubit_args), ", " + ", ".join(params) if params else ""
         )
@@ -60,4 +66,5 @@ def export(circuit: Circuit) -> str:
 
     circuit.ir.accept(cqasmv1_creator)
 
-    return cqasmv1_creator.cqasmv1_string.rstrip() + "\n"  # remove all trailing lines and leave only one
+    # remove all trailing lines and leave only one
+    return cqasmv1_creator.cqasmv1_string.rstrip() + "\n"

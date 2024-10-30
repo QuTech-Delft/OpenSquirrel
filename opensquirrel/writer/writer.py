@@ -30,9 +30,17 @@ class _WriterImpl(IRVisitor):
         bit_register_name = self.register_manager.get_bit_register_name()
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
-            (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
+            (
+                f"qubit[{qubit_register_size}] {qubit_register_name}"
+                if qubit_register_size > 0
+                else ""
+            ),
             "\n" if qubit_register_size > 0 and bit_register_size > 0 else "",
-            (f"bit[{bit_register_size}] {bit_register_name}" if bit_register_size > 0 else ""),
+            (
+                f"bit[{bit_register_size}] {bit_register_name}"
+                if bit_register_size > 0
+                else ""
+            ),
         )
 
     def visit_bit(self, bit: Bit) -> str:
@@ -87,7 +95,10 @@ class _WriterImpl(IRVisitor):
                 if gate_generator[pos] not in qubit_function_keys:
                     params.append(arg.accept(self))
                     gate_name += f"({', '.join(params)})"
-                elif gate_generator[pos] in qubit_function_keys and isinstance(arg, QubitLike.__args__):  # type: ignore
+                # type: ignore
+                elif gate_generator[pos] in qubit_function_keys and isinstance(
+                    arg, QubitLike.__args__
+                ):
                     qubit_args.append(Qubit(arg).accept(self))
 
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"
@@ -100,4 +111,5 @@ def circuit_to_string(circuit: Circuit) -> str:
     writer_impl = _WriterImpl(circuit.register_manager)
     circuit.ir.accept(writer_impl)
 
-    return writer_impl.output.rstrip() + "\n"  # remove all trailing lines and leave only one
+    # remove all trailing lines and leave only one
+    return writer_impl.output.rstrip() + "\n"

@@ -33,9 +33,12 @@ def test_single_gate() -> None:
     builder2.Ry(0, Float(1.2345))
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    modify_circuit_and_check(
+        circuit, general_merger.merge_single_qubit_gates, expected_circuit
+    )
 
-    # Check that when no fusion happens, generator and arguments of gates are preserved.
+    # Check that when no fusion happens, generator and arguments of gates are
+    # preserved.
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
     assert circuit.ir.statements[0].generator == Ry
     assert circuit.ir.statements[0].arguments == (Qubit(0), Float(1.2345))
@@ -49,7 +52,9 @@ def test_two_hadamards() -> None:
 
     expected_circuit = CircuitBuilder(4).to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    modify_circuit_and_check(
+        circuit, general_merger.merge_single_qubit_gates, expected_circuit
+    )
 
 
 def test_two_hadamards_different_qubits() -> None:
@@ -63,7 +68,9 @@ def test_two_hadamards_different_qubits() -> None:
     builder2.H(2)
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    modify_circuit_and_check(
+        circuit, general_merger.merge_single_qubit_gates, expected_circuit
+    )
 
 
 def test_merge_different_qubits() -> None:
@@ -76,18 +83,24 @@ def test_merge_different_qubits() -> None:
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi))  # this is Hadamard with 0 phase
+    builder2.ir.add_gate(
+        BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi)
+    )  # this is Hadamard with 0 phase
     builder2.Rz(1, Float(1.2345))
     builder2.Ry(2, Float(4.234))
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    modify_circuit_and_check(
+        circuit, general_merger.merge_single_qubit_gates, expected_circuit
+    )
 
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
-    assert circuit.ir.statements[0].is_anonymous  # When fusion happens, the resulting gate is anonymous.
+    # When fusion happens, the resulting gate is anonymous.
+    assert circuit.ir.statements[0].is_anonymous
 
     assert isinstance(circuit.ir.statements[1], BlochSphereRotation)
-    assert circuit.ir.statements[1].generator == Rz  # Otherwise it keeps the same generator and arguments.
+    # Otherwise it keeps the same generator and arguments.
+    assert circuit.ir.statements[1].generator == Rz
     assert circuit.ir.statements[1].arguments == (Qubit(1), Float(1.2345))
 
     assert isinstance(circuit.ir.statements[2], BlochSphereRotation)
@@ -105,13 +118,17 @@ def test_merge_and_flush() -> None:
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi))  # this is Hadamard with 0 phase
+    builder2.ir.add_gate(
+        BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi)
+    )  # this is Hadamard with 0 phase
     builder2.Rz(1, Float(-1.0))
     builder2.CNOT(0, 1)
     builder2.Ry(0, Float(3.234))
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    modify_circuit_and_check(
+        circuit, general_merger.merge_single_qubit_gates, expected_circuit
+    )
 
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
     assert circuit.ir.statements[0].is_anonymous

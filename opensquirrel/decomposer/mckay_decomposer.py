@@ -33,7 +33,9 @@ class McKayDecomposer(Decomposer):
 
         zxz_decomposition = ZXZDecomposer().decompose(g)
         zxz_angle = 0.0
-        if len(zxz_decomposition) >= 2 and isinstance(zxz_decomposition[1], BlochSphereRotation):
+        if len(zxz_decomposition) >= 2 and isinstance(
+            zxz_decomposition[1], BlochSphereRotation
+        ):
             zxz_angle = zxz_decomposition[1].angle
 
         if abs(zxz_angle - pi / 2) < ATOL:

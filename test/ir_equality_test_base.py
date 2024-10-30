@@ -10,7 +10,9 @@ from opensquirrel import Circuit, circuit_matrix_calculator
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 
 
-def check_equivalence_up_to_global_phase(matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128]) -> None:
+def check_equivalence_up_to_global_phase(
+    matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128]
+) -> None:
     assert are_matrices_equivalent_up_to_global_phase(matrix_a, matrix_b)
 
 

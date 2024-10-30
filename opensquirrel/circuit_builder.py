@@ -13,7 +13,16 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
+from opensquirrel.ir import (
+    ANNOTATIONS_TO_TYPE_MAP,
+    IR,
+    Comment,
+    Gate,
+    Measure,
+    Qubit,
+    QubitLike,
+    Reset,
+)
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -58,7 +67,9 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
         GateLibrary.__init__(self, gate_set, gate_aliases)
         MeasureLibrary.__init__(self, measure_set)
         ResetLibrary.__init__(self, reset_set)
-        self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
+        self.register_manager = RegisterManager(
+            QubitRegister(qubit_register_size), BitRegister(bit_register_size)
+        )
         self.ir = IR()
 
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
@@ -125,7 +136,9 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             try:
                 expected_type = (
-                    ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+                    ANNOTATIONS_TO_TYPE_MAP[par.annotation]
+                    if isinstance(par.annotation, str)
+                    else par.annotation
                 )
             except KeyError as e:
                 msg = "unknown annotation type"
@@ -133,10 +146,15 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
 
             # fix for python39
             try:
-                is_incorrect_type = not isinstance(args[i], expected_type)  # type: ignore
+                is_incorrect_type = not isinstance(
+                    args[i], expected_type
+                )  # type: ignore
             except TypeError:
-                # expected type is probably a Union, which works differently in python39
-                is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
+                # expected type is probably a Union, which works differently in
+                # python39
+                is_incorrect_type = not isinstance(
+                    args[i], expected_type.__args__
+                )  # type: ignore
 
             if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"

@@ -43,7 +43,9 @@ class TestAxis:
             (Axis(0, 1, 0), [0, 1, 0]),
         ],
     )
-    def test_axis_setter_no_error(self, axis: Axis, new_axis: ArrayLike, expected_axis: ArrayLike) -> None:
+    def test_axis_setter_no_error(
+        self, axis: Axis, new_axis: ArrayLike, expected_axis: ArrayLike
+    ) -> None:
         axis.value = new_axis  # type: ignore[assignment]
         np.testing.assert_array_equal(axis, expected_axis)
 
@@ -52,7 +54,11 @@ class TestAxis:
         [
             (Qubit(1), TypeError, "axis requires an ArrayLike"),
             ([0, [3], [2]], TypeError, "axis requires an ArrayLike"),
-            (0, ValueError, "axis requires an ArrayLike of length 3, but received an ArrayLike of length 1"),
+            (
+                0,
+                ValueError,
+                "axis requires an ArrayLike of length 3, but received an ArrayLike of length 1",
+            ),
             (
                 [1, 2, 3, 4],
                 ValueError,
@@ -84,7 +90,9 @@ class TestAxis:
     def test_array(self, axis: Axis) -> None:
         np.testing.assert_array_equal(axis, [1, 0, 0])
 
-    @pytest.mark.parametrize("other", [Axis(1, 0, 0), Axis([1, 0, 0]), Axis([[1], [0], [0]])])
+    @pytest.mark.parametrize(
+        "other", [Axis(1, 0, 0), Axis([1, 0, 0]), Axis([[1], [0], [0]])]
+    )
     def test_eq_true(self, axis: Axis, other: Any) -> None:
         assert axis == other
 
@@ -107,7 +115,9 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(
+                qubit=100, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
+            ),
         )
 
         assert cnot_controlled_gate == cnot_matrix_gate
@@ -120,7 +130,9 @@ class TestIR:
             [0, 0, 0, 1],
         ]
         large_identity_matrix_gate = MatrixGate(matrix, operands=[0, 2])
-        small_identity_control_gate = ControlledGate(4, BlochSphereRotation(qubit=2, axis=(1, 0, 0), angle=0, phase=0))
+        small_identity_control_gate = ControlledGate(
+            4, BlochSphereRotation(qubit=2, axis=(1, 0, 0), angle=0, phase=0)
+        )
 
         assert large_identity_matrix_gate == small_identity_control_gate
 
@@ -135,7 +147,9 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(
+                qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
+            ),
         )
 
         assert inverted_matrix_gate == inverted_cnot_gate
@@ -151,7 +165,9 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(
+                qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
+            ),
         )
 
         assert inverted_matrix_with_phase == inverted_cnot_gate
@@ -167,7 +183,9 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(
+                qubit=100, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
+            ),
         )
 
         assert cnot_controlled_gate != swap_matrix_gate
@@ -191,7 +209,11 @@ class TestMeasure:
 
     @pytest.mark.parametrize(
         "other_measure",
-        [Measure(43, Bit(43), axis=(0, 0, 1)), Measure(42, Bit(42), axis=(1, 0, 0)), "test"],
+        [
+            Measure(43, Bit(43), axis=(0, 0, 1)),
+            Measure(42, Bit(42), axis=(1, 0, 0)),
+            "test",
+        ],
         ids=["qubit", "axis", "type"],
     )
     def test_inequality(self, measure: Measure, other_measure: Measure | str) -> None:
@@ -207,38 +229,60 @@ class TestMeasure:
 class TestBlochSphereRotation:
     @pytest.fixture(name="gate")
     def gate_fixture(self) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau)
+        return BlochSphereRotation(
+            qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau
+        )
 
     def test_identity(self) -> None:
-        expected_result = BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=0)
+        expected_result = BlochSphereRotation(
+            qubit=42, axis=(1, 0, 0), angle=0, phase=0
+        )
         assert BlochSphereRotation.identity(42) == expected_result
 
     @pytest.mark.parametrize(
         "other_gate",
         [
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1 + ATOL / 2, 0, 0), angle=math.pi, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi + ATOL / 2, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau + ATOL / 2),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi + math.tau, phase=math.tau),
+            BlochSphereRotation(
+                qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau
+            ),
+            BlochSphereRotation(
+                qubit=42, axis=(1 + ATOL / 2, 0, 0), angle=math.pi, phase=math.tau
+            ),
+            BlochSphereRotation(
+                qubit=42, axis=(1, 0, 0), angle=math.pi + ATOL / 2, phase=math.tau
+            ),
+            BlochSphereRotation(
+                qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau + ATOL / 2
+            ),
+            BlochSphereRotation(
+                qubit=42, axis=(1, 0, 0), angle=math.pi + math.tau, phase=math.tau
+            ),
         ],
         ids=["all_equal", "close_axis", "close_angle", "close_phase", "angle+tau"],
     )
-    def test_equality(self, gate: BlochSphereRotation, other_gate: BlochSphereRotation) -> None:
+    def test_equality(
+        self, gate: BlochSphereRotation, other_gate: BlochSphereRotation
+    ) -> None:
         assert gate == other_gate
 
     @pytest.mark.parametrize(
         "other_gate",
         [
-            BlochSphereRotation(qubit=43, axis=(1, 0, 0), angle=math.pi, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(0, 1, 0), angle=math.pi, phase=math.tau),
+            BlochSphereRotation(
+                qubit=43, axis=(1, 0, 0), angle=math.pi, phase=math.tau
+            ),
+            BlochSphereRotation(
+                qubit=42, axis=(0, 1, 0), angle=math.pi, phase=math.tau
+            ),
             BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=math.tau),
             BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=1),
             "test",
         ],
         ids=["qubit", "axis", "angle", "phase", "type"],
     )
-    def test_inequality(self, gate: BlochSphereRotation, other_gate: BlochSphereRotation | str) -> None:
+    def test_inequality(
+        self, gate: BlochSphereRotation, other_gate: BlochSphereRotation | str
+    ) -> None:
         assert gate != other_gate
 
     def test_get_qubit_operands(self, gate: BlochSphereRotation) -> None:
@@ -261,7 +305,9 @@ class TestMatrixGate:
         return MatrixGate(cnot_matrix, operands=[42, 100])
 
     def test_array_like(self) -> None:
-        gate = MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1])
+        gate = MatrixGate(
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]
+        )
         assert (
             repr(gate) == "MatrixGate(qubits=[Qubit[0], Qubit[1]], "
             "matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n "
@@ -269,7 +315,9 @@ class TestMatrixGate:
         )
 
     def test_incorrect_array(self) -> None:
-        with pytest.raises(ValueError, match=".* inhomogeneous shape after .*") as e_info:
+        with pytest.raises(
+            ValueError, match=".* inhomogeneous shape after .*"
+        ) as e_info:
             MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 0]], [0, 1])
         assert "setting an array element with a sequence." in str(e_info.value)
 
@@ -284,17 +332,23 @@ class TestMatrixGate:
         assert gate.get_qubit_operands() == [Qubit(42), Qubit(100)]
 
     def test_is_identity(self, gate: MatrixGate) -> None:
-        assert MatrixGate(np.eye(4, dtype=np.complex128), operands=[42, 100]).is_identity()
+        assert MatrixGate(
+            np.eye(4, dtype=np.complex128), operands=[42, 100]
+        ).is_identity()
         assert not gate.is_identity()
 
     def test_matrix_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
+        with pytest.raises(
+            ValueError, match="control and target qubit cannot be the same"
+        ):
             MatrixGate(np.eye(4, dtype=np.complex128), [0, 0])
 
 
 class TestControlledGate:
     def test_control_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
+        with pytest.raises(
+            ValueError, match="control and target qubit cannot be the same"
+        ):
             ControlledGate(0, BlochSphereRotation(0, [0, 0, 1], angle=np.pi))
 
 

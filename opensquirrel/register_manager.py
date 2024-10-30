@@ -22,7 +22,9 @@ class Range:
     size: int = 0
 
     def __repr__(self) -> str:
-        return "[{}{}]".format(self.first, "" if self.size == 1 else f"..{self.first + self.size - 1}")
+        return "[{}{}]".format(
+            self.first, "" if self.size == 1 else f"..{self.first + self.size - 1}"
+        )
 
 
 class Register(ABC):
@@ -71,7 +73,9 @@ class Register(ABC):
         entries: str = ""
         first: bool = True
         for variable_name, register_range in self.variable_name_to_range.items():
-            entries += "{}{}: {}".format("" if first else ", ", variable_name, register_range)
+            entries += "{}{}: {}".format(
+                "" if first else ", ", variable_name, register_range
+            )
             first = False
         return f"{{ {entries} }}"
 
@@ -138,7 +142,9 @@ class RegisterManager:
     these variables are defined in the input program.
     """
 
-    def __init__(self, qubit_register: QubitRegister, bit_register: BitRegister | None = None) -> None:
+    def __init__(
+        self, qubit_register: QubitRegister, bit_register: BitRegister | None = None
+    ) -> None:
         self.qubit_register: QubitRegister = qubit_register
         self.bit_register: BitRegister = bit_register or BitRegister(0)
 
@@ -154,7 +160,10 @@ class RegisterManager:
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, RegisterManager):
             return False
-        return self.qubit_register == other.qubit_register and self.bit_register == other.bit_register
+        return (
+            self.qubit_register == other.qubit_register
+            and self.bit_register == other.bit_register
+        )
 
     def get_qubit_register_size(self) -> int:
         return self.qubit_register.size()
