@@ -30,10 +30,7 @@ def are_matrices_equivalent_up_to_global_phase(
         Whether two matrices are equivalent up to a global phase.
     """
     first_non_zero = next(
-        (i, j)
-        for i in range(matrix_a.shape[0])
-        for j in range(matrix_a.shape[1])
-        if abs(matrix_a[i, j]) > ATOL
+        (i, j) for i in range(matrix_a.shape[0]) for j in range(matrix_a.shape[1]) if abs(matrix_a[i, j]) > ATOL
     )
 
     if abs(matrix_b[first_non_zero]) < ATOL:

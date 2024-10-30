@@ -30,17 +30,9 @@ class _WriterImpl(IRVisitor):
         bit_register_name = self.register_manager.get_bit_register_name()
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
-            (
-                f"qubit[{qubit_register_size}] {qubit_register_name}"
-                if qubit_register_size > 0
-                else ""
-            ),
+            (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
             "\n" if qubit_register_size > 0 and bit_register_size > 0 else "",
-            (
-                f"bit[{bit_register_size}] {bit_register_name}"
-                if bit_register_size > 0
-                else ""
-            ),
+            (f"bit[{bit_register_size}] {bit_register_name}" if bit_register_size > 0 else ""),
         )
 
     def visit_bit(self, bit: Bit) -> str:
@@ -96,9 +88,7 @@ class _WriterImpl(IRVisitor):
                     params.append(arg.accept(self))
                     gate_name += f"({', '.join(params)})"
                 # type: ignore
-                elif gate_generator[pos] in qubit_function_keys and isinstance(
-                    arg, QubitLike.__args__
-                ):
+                elif gate_generator[pos] in qubit_function_keys and isinstance(arg, QubitLike.__args__):
                     qubit_args.append(Qubit(arg).accept(self))
 
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"

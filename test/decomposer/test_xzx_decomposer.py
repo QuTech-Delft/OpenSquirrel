@@ -50,9 +50,7 @@ def test_identity(decomposer: XZXDecomposer) -> None:
     ],
     ids=["CNOT", "CR", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],
 )
-def test_xzx_decomposer(
-    decomposer: XZXDecomposer, gate: Gate, expected_result: list[Gate]
-) -> None:
+def test_xzx_decomposer(decomposer: XZXDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result

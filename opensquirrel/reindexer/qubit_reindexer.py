@@ -47,9 +47,7 @@ class _QubitReindexer(IRVisitor):
             axis=measure.axis,
         )
 
-    def visit_bloch_sphere_rotation(
-        self, g: BlochSphereRotation
-    ) -> BlochSphereRotation:
+    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(
             qubit=self.qubit_indices.index(g.qubit.index),
             angle=g.angle,

@@ -106,9 +106,7 @@ class MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
-    def visit_bloch_sphere_rotation(
-        self, rot: BlochSphereRotation
-    ) -> NDArray[np.complex128]:
+    def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
         if rot.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -173,9 +171,7 @@ class MatrixExpander(IRVisitor):
             small_matrix_col = get_reduced_ket(expanded_matrix_column, qubit_operands)
 
             for small_matrix_row, value in enumerate(m[:, small_matrix_col]):
-                expanded_matrix_row = expand_ket(
-                    expanded_matrix_column, small_matrix_row, qubit_operands
-                )
+                expanded_matrix_row = expand_ket(expanded_matrix_column, small_matrix_row, qubit_operands)
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
         if expanded_matrix.shape != (
@@ -196,8 +192,7 @@ def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex12
     nx, ny, nz = Axis(axis)
 
     result = cmath.rect(1, phase) * (
-        math.cos(angle / 2) * np.identity(2)
-        - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
+        math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
     )
 
     return np.asarray(result, dtype=np.complex128)

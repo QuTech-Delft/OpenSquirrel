@@ -22,16 +22,12 @@ def I(q: QubitLike) -> BlochSphereRotation:  # noqa: E743
 
 @named_gate
 def H(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2
-    )
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
 def X(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
-    )
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
@@ -46,9 +42,7 @@ def mX90(q: QubitLike) -> BlochSphereRotation:
 
 @named_gate
 def Y(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2
-    )
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
@@ -63,9 +57,7 @@ def mY90(q: QubitLike) -> BlochSphereRotation:
 
 @named_gate
 def Z(q: QubitLike) -> BlochSphereRotation:
-    return BlochSphereRotation(
-        qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2
-    )
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2)
 
 
 @named_gate
@@ -117,9 +109,7 @@ def CZ(control: QubitLike, target: QubitLike) -> ControlledGate:
 def CR(control: QubitLike, target: QubitLike, theta: Float) -> ControlledGate:
     return ControlledGate(
         control,
-        BlochSphereRotation(
-            qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2
-        ),
+        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2),
     )
 
 
@@ -132,9 +122,7 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
     )
 
 
-default_bloch_sphere_rotations_without_params: list[
-    Callable[[QubitLike], BlochSphereRotation]
-]
+default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
 default_bloch_sphere_rotations_without_params = [
     I,
     H,
@@ -151,8 +139,7 @@ default_bloch_sphere_rotations_without_params = [
     Tdag,
 ]
 default_bloch_sphere_rotations: list[
-    Callable[[QubitLike], BlochSphereRotation]
-    | Callable[[QubitLike, Float], BlochSphereRotation]
+    Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, Float], BlochSphereRotation]
 ]
 default_bloch_sphere_rotations = [
     *default_bloch_sphere_rotations_without_params,

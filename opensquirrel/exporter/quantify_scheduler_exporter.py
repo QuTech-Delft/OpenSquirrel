@@ -41,9 +41,7 @@ class _ScheduleCreator(IRVisitor):
         self.qubit_register_name = register_manager.get_qubit_register_name()
         self.bit_register_size = register_manager.get_bit_register_size()
         self.acq_index_record = [0] * self.qubit_register_size
-        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [
-            (None, None)
-        ] * self.bit_register_size
+        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
@@ -60,21 +58,13 @@ class _ScheduleCreator(IRVisitor):
                 math.degrees(math.atan2(g.axis[1], g.axis[0])),
                 FIXED_POINT_DEG_PRECISION,
             )
-            self.schedule.add(
-                quantify_scheduler_gates.Rxy(
-                    theta=theta, phi=phi, qubit=self._get_qubit_string(g_qubit)
-                )
-            )
+            self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g_qubit)))
             return
 
         if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
             # Rz rotation.
             theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(
-                quantify_scheduler_gates.Rz(
-                    theta=theta, qubit=self._get_qubit_string(g.qubit)
-                )
-            )
+            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
             return
 
         raise UnsupportedGateError(g)
@@ -126,9 +116,7 @@ class _ScheduleCreator(IRVisitor):
         return
 
     def visit_reset(self, g: Reset) -> Any:
-        self.schedule.add(
-            quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit))
-        )
+        self.schedule.add(quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit)))
 
 
 def export(

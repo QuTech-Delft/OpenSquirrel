@@ -55,9 +55,7 @@ class TestCheckGateReplacement:
             ),
         ],
     )
-    def test_wrong_qubit(
-        self, gate: Gate, replacement_gates: list[Gate], error_msg: str
-    ) -> None:
+    def test_wrong_qubit(self, gate: Gate, replacement_gates: list[Gate], error_msg: str) -> None:
         with pytest.raises(ValueError, match=error_msg):
             check_gate_replacement(gate, replacement_gates)
 

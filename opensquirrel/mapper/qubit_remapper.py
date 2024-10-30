@@ -47,9 +47,7 @@ class _QubitRemapper(IRVisitor):
         measure.qubit.accept(self)
         return measure
 
-    def visit_bloch_sphere_rotation(
-        self, g: BlochSphereRotation
-    ) -> BlochSphereRotation:
+    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         g.qubit.accept(self)
         return g
 

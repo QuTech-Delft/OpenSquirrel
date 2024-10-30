@@ -38,9 +38,7 @@ class ABADecomposer(Decomposer, ABC):
         """
         return ({0, 1, 2} - {self.index_a, self.index_b}).pop()
 
-    def get_decomposition_angles(
-        self, alpha: float, axis: AxisLike
-    ) -> tuple[float, float, float]:
+    def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
         """Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
         characterized by a rotation around `axis` of angle `alpha`.
 
@@ -85,9 +83,7 @@ class ABADecomposer(Decomposer, ABC):
 
         else:
             p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
-            acos_argument = math.cos(alpha / 2) * math.sqrt(
-                1 + (a_axis_value * math.tan(alpha / 2)) ** 2
-            )
+            acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
 
             # This fixes float approximations like 1.0000000000002, which acos
             # does not like.
@@ -101,9 +97,7 @@ class ABADecomposer(Decomposer, ABC):
                 # which is better for gate count.
                 m = p
             else:
-                acos_argument = (
-                    float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
-                )
+                acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
                 # This fixes float approximations like 1.0000000000002, which
                 # acos does not like.
