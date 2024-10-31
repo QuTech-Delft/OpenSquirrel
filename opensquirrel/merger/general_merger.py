@@ -185,7 +185,7 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
                 if (
                     isinstance(statement, MatrixGate)
                     or isinstance(statement, ControlledGate)
-                    and not accumulated_barriers
+                    and len(accumulated_barriers) > 0
                 ):
                     qubit_statements = statement.get_qubit_operands()
                     barrier_qubits = next(q.get_qubit_operands() for q in accumulated_barriers if (q is not None))
