@@ -58,6 +58,9 @@ class IRVisitor:
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> Any:
         pass
 
+    def visit_barrier_gate(self, barrier: Barrier) -> Any:
+        pass
+
 
 class IRNode(ABC):
     @abstractmethod
@@ -408,6 +411,37 @@ class Gate(Statement, ABC):
         Returns:
             Boolean value stating whether the Gate is an identity Gate.
         """
+
+
+class Barrier(Gate):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        generator: Callable[..., Gate] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+    ) -> None:
+        self.generator = generator
+        self.arguments = arguments
+        self.qubit = Qubit(qubit)
+
+    def __repr__(self) -> str:
+        return f"Barrier(qubit={self.qubit})"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Barrier):
+            return False
+
+        return self.qubit == other.qubit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
+        return visitor.visit_barrier_gate(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+    def is_identity(self) -> bool:
+        return False
 
 
 class BlochSphereRotation(Gate):

@@ -1,8 +1,9 @@
+import numpy as np
 import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.default_gates import CNOT, H, I
-from opensquirrel.ir import Bit, Comment, Measure
+from opensquirrel.ir import Bit, Comment, Float, Measure
 
 
 class TestCircuitBuilder:
@@ -98,3 +99,59 @@ class TestCircuitBuilder:
         circuit = builder.H(0).CNOT(0, 1).to_circuit()
 
         assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+
+    def test_initial_barrier(self) -> None:
+        builder = CircuitBuilder(2)
+        circuit = builder.H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(np.pi / 3)).barrier(0).to_circuit()
+        circuit.merge_single_qubit_gates()
+        assert (
+            str(circuit)
+            == """version 3.0
+
+qubit[2] q
+
+H q[0]
+H q[1]
+barrier q[0]
+barrier q[1]
+Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.65465 -0.37796  0.65465], angle=-2.41886, phase=1.5708)
+"""
+        )
+
+    def test_barrier_with_CNOT(self) -> None:
+        builder = CircuitBuilder(2)
+        circuit = builder.X(0).barrier(0).X(1).barrier(1).CNOT(0, 1).barrier(1).X(1).to_circuit()
+        circuit.merge_single_qubit_gates()
+        assert (
+            str(circuit)
+            == """version 3.0
+
+qubit[2] q
+
+X q[0]
+X q[1]
+barrier q[0]
+barrier q[1]
+CNOT q[0], q[1]
+barrier q[1]
+X q[1]
+"""
+        )
+
+    def test_barrier_unpacking_use_case(self) -> None:
+        builder = CircuitBuilder(2)
+        circuit = builder.X(0).X(1).barrier(0).barrier(1).X(0).to_circuit()
+        circuit.merge_single_qubit_gates()
+        assert (
+            str(circuit)
+            == """version 3.0
+
+qubit[2] q
+
+X q[0]
+X q[1]
+barrier q[0]
+barrier q[1]
+X q[0]
+"""
+        )
