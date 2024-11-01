@@ -250,8 +250,15 @@ class Axis(Sequence[np.float64], Expression):
         """
         return axis / np.linalg.norm(axis)
 
-    # type:ignore[override]
-    def __getitem__(self, index: int, /) -> np.float64:
+    @overload
+    def __getitem__(self, i: int, /) -> np.float64:
+        ...
+
+    @overload
+    def __getitem__(self, s: slice, /) -> list[np.float64]:
+        ...
+
+    def __getitem__(self, index: Union[int, slice], /) -> Union[np.float64, list[np.float64]]:
         """Get the item at `index`."""
         return cast(np.float64, self.value[index])
 

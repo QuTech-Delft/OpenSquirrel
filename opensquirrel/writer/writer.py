@@ -87,8 +87,7 @@ class _WriterImpl(IRVisitor):
                 if gate_generator[pos] not in qubit_function_keys:
                     params.append(arg.accept(self))
                     gate_name += f"({', '.join(params)})"
-                # type: ignore
-                elif gate_generator[pos] in qubit_function_keys and isinstance(arg, QubitLike.__args__):
+                elif gate_generator[pos] in qubit_function_keys and isinstance(arg, QubitLike.__args__):  # type: ignore
                     qubit_args.append(Qubit(arg).accept(self))
 
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"
