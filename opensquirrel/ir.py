@@ -251,12 +251,10 @@ class Axis(Sequence[np.float64], Expression):
         return axis / np.linalg.norm(axis)
 
     @overload
-    def __getitem__(self, i: int, /) -> np.float64:
-        ...
+    def __getitem__(self, i: int, /) -> np.float64: ...
 
     @overload
-    def __getitem__(self, s: slice, /) -> list[np.float64]:
-        ...
+    def __getitem__(self, s: slice, /) -> list[np.float64]: ...
 
     def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
         """Get the item at `index`."""
