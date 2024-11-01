@@ -258,7 +258,7 @@ class Axis(Sequence[np.float64], Expression):
     def __getitem__(self, s: slice, /) -> list[np.float64]:
         ...
 
-    def __getitem__(self, index: Union[int, slice], /) -> Union[np.float64, list[np.float64]]:
+    def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
         """Get the item at `index`."""
         return cast(np.float64, self.value[index])
 
