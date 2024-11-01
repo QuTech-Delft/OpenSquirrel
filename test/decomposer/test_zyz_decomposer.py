@@ -16,7 +16,7 @@ def decomposer_fixture() -> ZYZDecomposer:
 
 
 def test_identity(decomposer: ZYZDecomposer) -> None:
-    gate = I(0)
+    gate = I()(0)
     decomposed_gate = decomposer.decompose(gate)
     assert decomposed_gate == []
 
@@ -24,18 +24,18 @@ def test_identity(decomposer: ZYZDecomposer) -> None:
 @pytest.mark.parametrize(
     ("gate", "expected_result"),
     [
-        (CNOT(0, 1), [CNOT(0, 1)]),
-        (CR(2, 3, Float(2.123)), [CR(2, 3, Float(2.123))]),
-        (X(0), [S(0), Ry(0, Float(math.pi)), Sdag(0)]),
-        (Rx(0, Float(0.9)), [S(0), Ry(0, Float(0.9)), Sdag(0)]),
-        (Y(0), [Ry(0, Float(math.pi))]),
-        (Ry(0, Float(0.9)), [Ry(0, Float(0.9))]),
-        (Z(0), [Rz(0, Float(math.pi))]),
-        (Rz(0, Float(0.123)), [Rz(0, Float(0.123))]),
-        (H(0), [Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]),
+        (CNOT()(0, 1), [CNOT()(0, 1)]),
+        (CR(2.123)(2, 3), [CR(2.123)(2, 3)]),
+        (X()(0), [S()(0), Ry(math.pi)(0), Sdag()(0)]),
+        (Rx(0.9)(0), [S()(0), Ry(0.9)(0), Sdag()(0)]),
+        (Y()(0), [Ry(math.pi)(0)]),
+        (Ry(0.9)(0), [Ry(0.9)(0)]),
+        (Z()(0), [Rz(math.pi)(0)]),
+        (Rz(0.123)(0), [Rz(0.123)(0)]),
+        (H()(0), [Rz(math.pi)(0), Ry(math.pi / 2)(0)]),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
-            [Rz(0, Float(0.018644578210710527)), Ry(0, Float(-0.6209410696845807)), Rz(0, Float(-0.9086506397909061))],
+            [Rz(0.018644578210710527)(0), Ry(-0.6209410696845807)(0), Rz(-0.9086506397909061)(0)],
         ),
     ],
     ids=["CNOT", "CR", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],

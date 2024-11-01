@@ -29,7 +29,7 @@ class McKayDecomposer(Decomposer):
 
         if g.axis[0] == 0 and g.axis[1] == 0:
             rz_angle = float(g.angle * g.axis[2])
-            return [Rz(g.qubit, Float(rz_angle))]
+            return [Rz(rz_angle)(g.qubit)]
 
         zxz_decomposition = ZXZDecomposer().decompose(g)
         zxz_angle = 0.0
@@ -37,7 +37,7 @@ class McKayDecomposer(Decomposer):
             zxz_angle = zxz_decomposition[1].angle
 
         if abs(zxz_angle - pi / 2) < ATOL:
-            zxz_decomposition[1] = X90(g.qubit)
+            zxz_decomposition[1] = X90()(g.qubit)
             return zxz_decomposition
 
         # McKay decomposition
@@ -59,21 +59,21 @@ class McKayDecomposer(Decomposer):
         decomposed_g: list[Gate] = []
 
         if abs(theta) < ATOL and lam == phi:
-            decomposed_g.append(X90(g.qubit))
-            decomposed_g.append(X90(g.qubit))
+            decomposed_g.append(X90()(g.qubit))
+            decomposed_g.append(X90()(g.qubit))
             return decomposed_g
 
         if abs(lam) > ATOL:
-            decomposed_g.append(Rz(g.qubit, Float(lam)))
+            decomposed_g.append(Rz(lam)(g.qubit))
 
-        decomposed_g.append(X90(g.qubit))
+        decomposed_g.append(X90()(g.qubit))
 
         if abs(theta) > ATOL:
-            decomposed_g.append(Rz(g.qubit, Float(theta)))
+            decomposed_g.append(Rz(theta)(g.qubit))
 
-        decomposed_g.append(X90(g.qubit))
+        decomposed_g.append(X90()(g.qubit))
 
         if abs(phi) > ATOL:
-            decomposed_g.append(Rz(g.qubit, Float(phi)))
+            decomposed_g.append(Rz(phi)(g.qubit))
 
         return decomposed_g

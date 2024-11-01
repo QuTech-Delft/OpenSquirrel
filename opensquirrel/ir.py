@@ -70,42 +70,13 @@ class Expression(IRNode, ABC):
 
 
 @dataclass
-class Int(Expression):
-    """Integers used for intermediate representation of ``Statement`` arguments.
-
-    Attributes:
-        value: value of the ``Int`` object.
-    """
-    value: int
-
-    def __int__(self) -> int:
-        """Cast the ``Int`` object to a built-in Python ``int``.
-
-        Returns:
-            Built-in Python ``int`` representation of the ``Int``.
-        """
-        return self.value
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_int(self)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.value, Int):
-            self.value = self.value.value
-        elif isinstance(self.value, SupportsInt):
-            self.value = int(self.value)
-        else:
-            msg = "value must be a float"
-            raise TypeError(msg)
-
-
-@dataclass
 class Float(Expression):
     """Floats used for intermediate representation of ``Statement`` arguments.
 
     Attributes:
         value: value of the ``Float`` object.
     """
+
     value: float
 
     def __int__(self) -> float:
@@ -127,6 +98,37 @@ class Float(Expression):
         else:
             msg = "value must be a float"
             raise TypeError(msg)
+
+
+@dataclass
+class Int(Expression):
+    """Integers used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Int`` object.
+    """
+
+    value: int
+
+    def __post_init__(self) -> None:
+        if isinstance(self.value, Int):
+            self.value = self.value.value
+        elif isinstance(self.value, SupportsInt):
+            self.value = int(self.value)
+        else:
+            msg = "value must be an integer"
+            raise TypeError(msg)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_int(self)
+
+    def __int__(self) -> int:
+        """Cast the ``Int`` object to a built-in Python ``int``.
+
+        Returns:
+            Built-in Python ``int`` representation of the ``Int``.
+        """
+        return self.value
 
 
 @dataclass
@@ -384,7 +386,7 @@ class Gate(Statement, ABC):
     @property
     def name(self) -> str:
         if self.generator:
-            return self.generator.__name__
+            return type(self.generator).__name__
         return "Anonymous gate: " + self.__repr__()
 
     @property
@@ -551,28 +553,20 @@ class ControlledGate(Gate):
 
 def named_gate(cls):
     class Wrapper:
-        def __init__(self, parameter: Any = None):
-            self.named_gate_functor = cls(parameter)
+        def __init__(self, *args: Any, **kwargs: Any):
+            self.named_gate_functor = cls(*args, **kwargs)
 
-        def call_single_qubit_gate(self, q: QubitLike) -> BlochSphereRotation:
-            return self.named_gate_functor(q)
-
-        def call_two_qubit_gate(self, control: QubitLike, target: QubitLike) -> ControlledGate:
-            return self.named_gate_functor(control, target)
-
-        def __call__(self, *operands) -> Gate:
-            if len(operands) == 1:
-                return self.call_single_qubit_gate(operands[0])
-            elif len(operands) == 2:
-                return self.call_two_qubit_gate(operands[0], operands[1])
-            else:
-                raise OSError(f"calling named gate with {len(operands)} qubit operands")
+        def __call__(self, *args, **kwargs) -> Gate:
+            gate = self.named_gate_functor(*args, **kwargs)
+            gate.generator = self.named_gate_functor
+            gate.arguments = args
+            return gate
 
         def __getattr__(self, item):
             return getattr(self.named_gate_functor, item)
 
     Wrapper.__name__ = cls.__name__
-    Wrapper.__doc__ = cls.__doc__
+
     return Wrapper
 
 

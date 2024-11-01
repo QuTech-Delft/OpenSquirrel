@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
-from types import NoneType
 from typing import Any, cast
 
 import cqasm.v3x as cqasm
@@ -31,15 +30,15 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
 
     @staticmethod
     def _ast_literal_to_ir_literal(
-        cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat | None,
+        ast_literal: cqasm.values.ConstInt | cqasm.values.ConstFloat | None,
     ) -> Int | Float | None:
-        if type(cqasm_literal_expression) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat, NoneType]:
-            msg = f"unrecognized type: {type(cqasm_literal_expression)}"
+        if type(ast_literal) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat, type(None)]:
+            msg = f"unrecognized type: {type(ast_literal)}"
             raise TypeError(msg)
-        if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
-            return Int(cqasm_literal_expression.value)
-        if isinstance(cqasm_literal_expression, cqasm.values.ConstFloat):
-            return Float(cqasm_literal_expression.value)
+        if isinstance(ast_literal, cqasm.values.ConstInt):
+            return Int(ast_literal.value)
+        if isinstance(ast_literal, cqasm.values.ConstFloat):
+            return Float(ast_literal.value)
         return None
 
     @staticmethod
@@ -121,6 +120,42 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             expanded_args.append(cls._get_qubits(ast_arg, register_manager))
         return zip(*expanded_args)
 
+    @classmethod
+    def _get_expanded_measure_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
+        """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
+        For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))]
+
+        Notice the  list is walked in reverse mode.
+        This is because the AST measure node has a bit first operand and a qubit second operand.
+        """
+        expanded_args: list[list[Any]] = []
+        for ast_arg in reversed(ast_args):
+            if Parser._is_qubit_type(ast_arg):
+                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
+            elif Parser._is_bit_type(ast_arg):
+                expanded_args.append(cls._get_bits(ast_arg, register_manager))
+            else:
+                msg = "received argument is not a (qu)bit"
+                raise TypeError(msg)
+        return zip(*expanded_args)
+
+    @classmethod
+    def _get_expanded_reset_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
+        """Construct a list of qubits and return a zip.
+        For example: [Qubit(0), Qubit(1), Qubit(2)]
+        """
+        expanded_args: list[Any] = []
+        if len(ast_args) < 1:
+            expanded_args += [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
+            return zip(expanded_args)
+        for ast_arg in ast_args:
+            if Parser._is_qubit_type(ast_arg):
+                expanded_args += cls._get_qubits(ast_arg, register_manager)
+            else:
+                msg = "received argument is not a (qu)bit"
+                raise TypeError(msg)
+        return zip(expanded_args)
+
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
         without_defaults = False
@@ -131,18 +166,18 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         if isinstance(result, list):
             raise OSError("parsing error: " + ", ".join(result))
 
-    def _get_gate_f(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
-        gate_name = instruction.gate.name
-        if gate_name == "inv" or gate_name == "pow" or gate_name == "ctrl":
-            modified_gate_f = cast(Callable[..., BlochSphereRotation], self._get_gate_f(instruction.gate))
+    def _get_gate_f(self, gate_instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
+        gate_name = gate_instruction.gate.name
+        if gate_name in ["inv", "pow", "ctrl"]:
+            modified_gate_f = cast(Callable[..., BlochSphereRotation], self._get_gate_f(gate_instruction.gate))
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_f)
             elif gate_name == "pow":
-                return PowerGateModifier(instruction.gate.parameter.value, modified_gate_f)
+                return PowerGateModifier(gate_instruction.gate.parameter.value, modified_gate_f)
             elif gate_name == "ctrl":
                 return ControlGateModifier(modified_gate_f)
         else:
-            gate_parameter = Parser._ast_literal_to_ir_literal(instruction.gate.parameter)
+            gate_parameter = Parser._ast_literal_to_ir_literal(gate_instruction.gate.parameter)
             return self.get_gate_f(gate_name, gate_parameter)
 
     def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., Statement]:
@@ -169,11 +204,15 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             instruction_generator: Callable[..., Statement]
             if Parser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_f(statement)
+                expanded_args = Parser._get_expanded_gate_args(statement.operands, register_manager)
             elif Parser._is_non_gate_instruction(statement):
                 instruction_generator = self._get_non_gate_f(statement)
+                if statement.name == "measure":
+                    expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
+                else:
+                    expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
             else:
                 raise OSError("parsing error: unknown statement")
-            for args in Parser._get_expanded_gate_args(statement.operands, register_manager):
+            for args in expanded_args:
                 ir.add_statement(instruction_generator(*args))
-
         return Circuit(register_manager, ir)

@@ -7,7 +7,7 @@ import pytest
 from opensquirrel.decomposer.aba_decomposer import ZXZDecomposer
 from opensquirrel.decomposer.general_decomposer import check_gate_replacement
 from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, Rz, X, Y, Z
-from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, Gate
 
 
 @pytest.fixture(name="decomposer")
@@ -16,7 +16,7 @@ def decomposer_fixture() -> ZXZDecomposer:
 
 
 def test_identity(decomposer: ZXZDecomposer) -> None:
-    gate = I(0)
+    gate = I()(0)
     decomposed_gate = decomposer.decompose(gate)
     assert decomposed_gate == []
 
@@ -24,18 +24,18 @@ def test_identity(decomposer: ZXZDecomposer) -> None:
 @pytest.mark.parametrize(
     ("gate", "expected_result"),
     [
-        (CNOT(0, 1), [CNOT(0, 1)]),
-        (CR(2, 3, Float(2.123)), [CR(2, 3, Float(2.123))]),
-        (X(0), [Rx(0, Float(math.pi))]),
-        (Rx(0, Float(0.9)), [Rx(0, Float(0.9))]),
-        (Y(0), [Rz(0, Float(-math.pi / 2)), Rx(0, Float(math.pi)), Rz(0, Float(math.pi / 2))]),
-        (Ry(0, Float(0.9)), [Rz(0, Float(-math.pi / 2)), Rx(0, Float(0.9000000000000004)), Rz(0, Float(math.pi / 2))]),
-        (Z(0), [Rz(0, Float(math.pi))]),
-        (Rz(0, Float(0.123)), [Rz(0, Float(0.123))]),
-        (H(0), [Rz(0, Float(math.pi / 2)), Rx(0, Float(math.pi / 2)), Rz(0, Float(math.pi / 2))]),
+        (CNOT()(0, 1), [CNOT()(0, 1)]),
+        (CR(2.123)(2, 3), [CR(2.123)(2, 3)]),
+        (X()(0), [Rx(math.pi)(0)]),
+        (Rx(0.9)(0), [Rx(0.9)(0)]),
+        (Y()(0), [Rz(-math.pi / 2)(0), Rx(math.pi)(0), Rz(math.pi / 2)(0)]),
+        (Ry(0.9)(0), [Rz(-math.pi / 2)(0), Rx(0.9000000000000004)(0), Rz(math.pi / 2)(0)]),
+        (Z()(0), [Rz(math.pi)(0)]),
+        (Rz(0.123)(0), [Rz(0.123)(0)]),
+        (H()(0), [Rz(math.pi / 2)(0), Rx(math.pi / 2)(0), Rz(math.pi / 2)(0)]),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
-            [Rz(0, Float(-1.5521517485841891)), Rx(0, Float(-0.6209410696845807)), Rz(0, Float(0.662145687003993))],
+            [Rz(-1.5521517485841891)(0), Rx(-0.6209410696845807)(0), Rz(0.662145687003993)(0)],
         ),
     ],
     ids=["CNOT", "CR", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],

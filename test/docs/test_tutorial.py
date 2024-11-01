@@ -18,7 +18,7 @@ def test_circuit_from_string() -> None:
         bit[2] b
 
         // Create a Bell pair
-        H q[0]
+        Rx(3.14) q[0]
         CNOT q[0], q[1]
 
         // Measure qubits
@@ -33,7 +33,7 @@ def test_circuit_from_string() -> None:
 qubit[2] q
 bit[2] b
 
-H q[0]
+Rx(3.14) q[0]
 CNOT q[0], q[1]
 b[0] = measure q[0]
 b[1] = measure q[1]
@@ -187,15 +187,15 @@ def test_predefined_decomposition() -> None:
 
         X q[0:2]  // Note that this notation is expanded in OpenSquirrel.
         CNOT q[0], q[1]
-        Ry q[2], 6.78
+        Ry(6.78) q[2]
         """
     )
     qc.replace(
-        CNOT,
+        CNOT(),
         lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
+            H()(target),
+            CZ()(control, target),
+            H()(target),
         ],
     )
 

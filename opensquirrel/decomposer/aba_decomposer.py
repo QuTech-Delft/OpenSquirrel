@@ -10,7 +10,7 @@ from typing import ClassVar
 
 from opensquirrel.common import ATOL
 from opensquirrel.decomposer.general_decomposer import Decomposer
-from opensquirrel.default_gates import Rx, Ry, Rz
+from opensquirrel.default_gates import Rx, Ry, Rz, NamedGateFunctor
 from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
 
@@ -18,13 +18,13 @@ from opensquirrel.utils.identity_filter import filter_out_identities
 class ABADecomposer(Decomposer, ABC):
     @property
     @abstractmethod
-    def ra(self) -> Callable[..., BlochSphereRotation]: ...
+    def ra(self) -> Callable[..., NamedGateFunctor]: ...
 
     @property
     @abstractmethod
-    def rb(self) -> Callable[..., BlochSphereRotation]: ...
+    def rb(self) -> Callable[..., NamedGateFunctor]: ...
 
-    _gate_list: ClassVar[list[Callable[..., BlochSphereRotation]]] = [Rx, Ry, Rz]
+    _gate_list: ClassVar[list[Callable[..., NamedGateFunctor]]] = [Rx, Ry, Rz]
 
     def __init__(self) -> None:
         self.index_a = self._gate_list.index(self.ra)
@@ -121,9 +121,9 @@ class ABADecomposer(Decomposer, ABC):
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)
-        a1 = self.ra(g.qubit, Float(theta1))
-        b = self.rb(g.qubit, Float(theta2))
-        a2 = self.ra(g.qubit, Float(theta3))
+        a1 = self.ra(theta1)(g.qubit)
+        b = self.rb(theta2)(g.qubit)
+        a2 = self.ra(theta3)(g.qubit)
         return filter_out_identities([a1, b, a2])
 
 
@@ -131,11 +131,11 @@ class XYXDecomposer(ABADecomposer):
     """Class responsible for the X-Y-X decomposition."""
 
     @property
-    def ra(self) -> Callable[..., BlochSphereRotation]:
+    def ra(self) -> Callable[..., NamedGateFunctor]:
         return Rx
 
     @property
-    def rb(self) -> Callable[..., BlochSphereRotation]:
+    def rb(self) -> Callable[..., NamedGateFunctor]:
         return Ry
 
 
@@ -143,11 +143,11 @@ class XZXDecomposer(ABADecomposer):
     """Class responsible for the X-Z-X decomposition."""
 
     @property
-    def ra(self) -> Callable[..., BlochSphereRotation]:
+    def ra(self) -> Callable[..., NamedGateFunctor]:
         return Rx
 
     @property
-    def rb(self) -> Callable[..., BlochSphereRotation]:
+    def rb(self) -> Callable[..., NamedGateFunctor]:
         return Rz
 
 
@@ -155,11 +155,11 @@ class YXYDecomposer(ABADecomposer):
     """Class responsible for the Y-X-Y decomposition."""
 
     @property
-    def ra(self) -> Callable[..., BlochSphereRotation]:
+    def ra(self) -> Callable[..., NamedGateFunctor]:
         return Ry
 
     @property
-    def rb(self) -> Callable[..., BlochSphereRotation]:
+    def rb(self) -> Callable[..., NamedGateFunctor]:
         return Rx
 
 
@@ -167,11 +167,11 @@ class YZYDecomposer(ABADecomposer):
     """Class responsible for the Y-Z-Y decomposition."""
 
     @property
-    def ra(self) -> Callable[..., BlochSphereRotation]:
+    def ra(self) -> Callable[..., NamedGateFunctor]:
         return Ry
 
     @property
-    def rb(self) -> Callable[..., BlochSphereRotation]:
+    def rb(self) -> Callable[..., NamedGateFunctor]:
         return Rz
 
 
@@ -179,11 +179,11 @@ class ZXZDecomposer(ABADecomposer):
     """Class responsible for the Z-X-Z decomposition."""
 
     @property
-    def ra(self) -> Callable[..., BlochSphereRotation]:
+    def ra(self) -> Callable[..., NamedGateFunctor]:
         return Rz
 
     @property
-    def rb(self) -> Callable[..., BlochSphereRotation]:
+    def rb(self) -> Callable[..., NamedGateFunctor]:
         return Rx
 
 
@@ -191,9 +191,9 @@ class ZYZDecomposer(ABADecomposer):
     """Class responsible for the Z-Y-Z decomposition."""
 
     @property
-    def ra(self) -> Callable[..., BlochSphereRotation]:
+    def ra(self) -> Callable[..., NamedGateFunctor]:
         return Rz
 
     @property
-    def rb(self) -> Callable[..., BlochSphereRotation]:
+    def rb(self) -> Callable[..., NamedGateFunctor]:
         return Ry

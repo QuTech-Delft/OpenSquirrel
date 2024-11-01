@@ -14,8 +14,8 @@ class InverseGateModifier(GateModifier):
     def __init__(self, generator_f_gate: Callable[..., BlochSphereRotation]):
         self.generator_f_gate = generator_f_gate
 
-    def __call__(self, q: QubitLike) -> BlochSphereRotation:
-        gate: BlochSphereRotation = self.generator_f_gate(q)
+    def __call__(self, qubit: QubitLike) -> BlochSphereRotation:
+        gate: BlochSphereRotation = self.generator_f_gate(qubit)
         modified_angle = gate.angle * -1
         return BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=gate.phase)
 
@@ -25,8 +25,8 @@ class PowerGateModifier(GateModifier):
         self.exponent = exponent
         self.generator_f_gate = generator_f_gate
 
-    def __call__(self, q: QubitLike) -> BlochSphereRotation:
-        gate: BlochSphereRotation = self.generator_f_gate(q)
+    def __call__(self, qubit: QubitLike) -> BlochSphereRotation:
+        gate: BlochSphereRotation = self.generator_f_gate(qubit)
         modified_angle = gate.angle * self.exponent
         return BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=gate.phase)
 

@@ -15,8 +15,8 @@ class InstructionLibrary:
 class GateLibrary(InstructionLibrary):
     def __init__(
         self,
-        gate_set: Iterable[NamedGateFunctor],
-        gate_aliases: Mapping[str, NamedGateFunctor],
+        gate_set: list[NamedGateFunctor],
+        gate_aliases: dict[str, NamedGateFunctor],
     ) -> None:
         self.gate_set = gate_set
         self.gate_aliases = gate_aliases

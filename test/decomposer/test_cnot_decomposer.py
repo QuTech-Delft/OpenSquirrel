@@ -17,7 +17,7 @@ def decomposer_fixture() -> CNOTDecomposer:
 
 @pytest.mark.parametrize(
     ("gate", "expected_result"),
-    [(H(0), [H(0)]), (Rz(0, Float(2.345)), [Rz(0, Float(2.345))])],
+    [(H()(0), [H()(0)]), (Rz(2.345)(0), [Rz(2.345)(0)])],
 )
 def test_ignores_1q_gates(decomposer: CNOTDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     check_gate_replacement(gate, expected_result)
@@ -25,27 +25,27 @@ def test_ignores_1q_gates(decomposer: CNOTDecomposer, gate: Gate, expected_resul
 
 
 def test_ignores_double_controlled(decomposer: CNOTDecomposer) -> None:
-    gate = ControlledGate(control_qubit=5, target_gate=ControlledGate(control_qubit=2, target_gate=X(0)))
+    gate = ControlledGate(control_qubit=5, target_gate=ControlledGate(control_qubit=2, target_gate=X()(0)))
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposed_gate == [gate]
 
 
 def test_preserves_CNOT(decomposer: CNOTDecomposer) -> None:
-    gate = CNOT(0, 1)
+    gate = CNOT()(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [CNOT(0, 1)]
+    assert decomposed_gate == [CNOT()(0, 1)]
 
 
 def test_CZ(decomposer: CNOTDecomposer) -> None:
-    gate = CZ(0, 1)
+    gate = CZ()(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposed_gate == [
-        Rz(1, Float(math.pi)),
-        Ry(1, Float(math.pi / 2)),
-        CNOT(0, 1),
-        Ry(1, Float(-math.pi / 2)),
-        Rz(1, Float(math.pi)),
+        Rz(math.pi)(1),
+        Ry(math.pi / 2)(1),
+        CNOT()(0, 1),
+        Ry(-math.pi / 2)(1),
+        Rz(math.pi)(1),
     ]
