@@ -49,11 +49,11 @@ class CNOTDecomposer(Decomposer):
         )
         if abs((theta0_with_x - theta2_with_x) % (2 * math.pi)) < ATOL:
             # The decomposition can use a single CNOT according to the lemma.
-            A = [
+            A = [  # noqa: N806
                 Ry(target_qubit, Float(-theta1_with_x / 2)),
                 Rz(target_qubit, Float(-theta2_with_x)),
             ]
-            B = [
+            B = [  # noqa: N806
                 Rz(target_qubit, Float(theta2_with_x)),
                 Ry(target_qubit, Float(theta1_with_x / 2)),
             ]
@@ -69,12 +69,15 @@ class CNOTDecomposer(Decomposer):
 
         theta0, theta1, theta2 = ZYZDecomposer().get_decomposition_angles(g.target_gate.angle, g.target_gate.axis)
 
-        A = [Ry(target_qubit, Float(theta1 / 2)), Rz(target_qubit, Float(theta2))]
-        B = [
+        A = [  # noqa: N806
+            Ry(target_qubit, Float(theta1 / 2)),
+            Rz(target_qubit, Float(theta2)),
+        ]
+        B = [  # noqa: N806
             Rz(target_qubit, Float(-(theta0 + theta2) / 2)),
             Ry(target_qubit, Float(-theta1 / 2)),
         ]
-        C = [Rz(target_qubit, Float((theta0 - theta2) / 2))]
+        C = [Rz(target_qubit, Float((theta0 - theta2) / 2))]  # noqa: N806
 
         return filter_out_identities(
             [

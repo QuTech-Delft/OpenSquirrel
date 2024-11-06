@@ -49,7 +49,7 @@ class _ScheduleCreator(IRVisitor):
         # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
         # Depending on the system the angle may be stored as either 180 or -180 degrees.
         # This ambiguity has no physical consequences, but may cause the
-        # exporter test fail.
+        # exporter test to fail.
         g_qubit = Qubit(g.qubit)
         if abs(g.axis[2]) < ATOL:
             # Rxy rotation.

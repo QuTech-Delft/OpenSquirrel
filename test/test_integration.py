@@ -14,7 +14,7 @@ from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import Measure
 
 
-def test_Spin2_backend() -> None:
+def test_Spin2_backend() -> None:  # noqa: N802
     qc = Circuit.from_string(
         """
         version 3.0
