@@ -4,7 +4,7 @@ import math
 from collections.abc import Callable
 from typing import SupportsInt
 
-from opensquirrel.ir import Barrier, BlochSphereRotation, ControlledGate, Float, Gate, Int, QubitLike, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, QubitLike, named_gate
 
 
 @named_gate
@@ -111,11 +111,6 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
     return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
 
 
-@named_gate  # type: ignore
-def barrier(q: QubitLike) -> Barrier:
-    return Barrier(q)
-
-
 default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
 default_bloch_sphere_rotations_without_params = [
     I,
@@ -142,7 +137,7 @@ default_bloch_sphere_rotations = [
     Rz,
 ]
 default_gate_set: list[Callable[..., Gate]]
-default_gate_set = [*default_bloch_sphere_rotations, CNOT, CZ, CR, CRk, barrier]
+default_gate_set = [*default_bloch_sphere_rotations, CNOT, CZ, CR, CRk]
 
 default_gate_aliases = {
     "Hadamard": H,

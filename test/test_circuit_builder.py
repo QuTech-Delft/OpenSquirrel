@@ -115,6 +115,7 @@ H q[1]
 barrier q[0]
 barrier q[1]
 Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.65465 -0.37796  0.65465], angle=-2.41886, phase=1.5708)
+barrier q[0]
 """
         )
 
@@ -153,5 +154,67 @@ X q[1]
 barrier q[0]
 barrier q[1]
 X q[0]
+"""
+        )
+
+    def test_barrier_4_qubit(self) -> None:
+        builder = CircuitBuilder(4)
+        circuit = (
+            builder.H(0)
+            .barrier(0)
+            .H(1)
+            .barrier(1)
+            .H(2)
+            .barrier(2)
+            .H(3)
+            .barrier(3)
+            .CNOT(0, 3)
+            .barrier(0)
+            .barrier(1)
+            .barrier(3)
+            .to_circuit()
+        )
+        circuit.merge_single_qubit_gates()
+        assert (
+            str(circuit)
+            == """version 3.0
+
+qubit[4] q
+
+H q[0]
+H q[1]
+H q[2]
+H q[3]
+barrier q[0]
+barrier q[1]
+barrier q[2]
+barrier q[3]
+CNOT q[0], q[3]
+barrier q[0]
+barrier q[1]
+barrier q[3]
+"""
+        )
+
+    def test_only_barriers(self) -> None:
+        builder = CircuitBuilder(4)
+        circuit = (
+            builder.barrier(0).barrier(1).barrier(2).barrier(3).CNOT(0, 3).barrier(0).barrier(1).barrier(3).to_circuit()
+        )
+        circuit.merge_single_qubit_gates()
+        assert (
+            str(circuit)
+            == """version 3.0
+
+qubit[4] q
+
+barrier q[0]
+barrier q[1]
+barrier q[2]
+barrier q[3]
+CNOT q[0], q[3]
+barrier q[0]
+barrier q[1]
+barrier q[3]
 """
         )

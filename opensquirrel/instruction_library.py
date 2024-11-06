@@ -4,7 +4,7 @@ from collections.abc import Callable, Iterable, Mapping
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import Gate, Measure, Reset
+    from opensquirrel.ir import Directive, Gate, Measure, Reset
 
 
 class InstructionLibrary:
@@ -52,4 +52,16 @@ class ResetLibrary(InstructionLibrary):
             return next(f for f in self.reset_set if f.__name__ == reset_name)
         except StopIteration as exc:
             msg = f"unknown instruction `{reset_name}`"
+            raise ValueError(msg) from exc
+
+
+class DirectiveLibrary(InstructionLibrary):
+    def __init__(self, directive_set: Iterable[Callable[..., Directive]]) -> None:
+        self.directive_set = directive_set
+
+    def get_directive_f(self, directive_name: str) -> Callable[..., Directive]:
+        try:
+            return next(f for f in self.directive_set if f.__name__ == directive_name)
+        except StopIteration as exc:
+            msg = f"unknown instruction `{directive_name}`"
             raise ValueError(msg) from exc

@@ -98,7 +98,7 @@ def rearrange_barrier(ir: IR, accumulated_barriers: list[Barrier | None]) -> lis
     within the circuit.
 
     Args:
-        ir: the current ir object
+        ir: the current IR object
         accumulated_barriers: list of barriers currently accumulated
 
     Returns:
@@ -140,6 +140,10 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
             barrier_list.append(statement)
         else:
             ordered_statement_list.append(statement)
+
+    if len(barrier_list) > 0:
+        ordered_statement_list.extend(barrier_list)
+
     return ordered_statement_list
 
 
@@ -187,18 +191,19 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
                     or isinstance(statement, ControlledGate)
                     and len(accumulated_barriers) > 0
                 ):
-                    qubit_statements = statement.get_qubit_operands()
+                    qubit_operands = statement.get_qubit_operands()
                     barrier_qubits = next(q.get_qubit_operands() for q in accumulated_barriers if (q is not None))
-                    if qubit_statements[0] in barrier_qubits or qubit_statements[1] in barrier_qubits:
+                    if any(q in barrier_qubits for q in qubit_operands):
                         accumulated_barriers = rearrange_barrier(ir, accumulated_barriers)
 
                 if isinstance(statement, Barrier):
                     if statement in accumulated_barriers:
                         accumulated_barriers = rearrange_barrier(ir, accumulated_barriers)
-
                     accumulated_barriers.append(statement)
+
+                ir.statements = merge_barriers(ir.statements)
                 statement_index += 1
-        ir.statements = merge_barriers(ir.statements)
+
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
