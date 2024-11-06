@@ -25,7 +25,7 @@ class GateLibrary(InstructionLibrary):
             generator_f = next(f for f in self.gate_set if f.__name__ == gate_name)
         except StopIteration as exc:
             if gate_name not in self.gate_aliases:
-                msg = f"unknown instruction `{gate_name}`"
+                msg = f"unknown instruction '{gate_name}'"
                 raise ValueError(msg) from exc
             generator_f = self.gate_aliases[gate_name]
         return generator_f

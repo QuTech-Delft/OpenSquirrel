@@ -71,20 +71,36 @@ class Expression(IRNode, ABC):
 
 @dataclass
 class Float(Expression):
+    """Floats used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Float`` object.
+    """
+
     value: float
+
+    def __int__(self) -> float:
+        """Cast the ``Float`` object to a built-in Python ``float``.
+
+        Returns:
+            Built-in Python ``float`` representation of the ``Float``.
+        """
+        return self.value
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
 
     def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsFloat):
+        if isinstance(self.value, Float):
+            self.value = self.value.value
+        elif isinstance(self.value, SupportsFloat):
             self.value = float(self.value)
         else:
             msg = "value must be a float"
             raise TypeError(msg)
 
 
-@dataclass(init=False)
+@dataclass
 class Int(Expression):
     """Integers used for intermediate representation of ``Statement`` arguments.
 
@@ -94,27 +110,23 @@ class Int(Expression):
 
     value: int
 
-    def __init__(self, value: SupportsInt) -> None:
-        """Init of the ``Int`` object.
-
-        Args:
-            value: value of the ``Int`` object.
-        """
-        if isinstance(value, SupportsInt):
-            self.value = int(value)
-            return
-
-        msg = "value must be an int"
-        raise TypeError(msg)
+    def __post_init__(self) -> None:
+        if isinstance(self.value, Int):
+            self.value = self.value.value
+        elif isinstance(self.value, SupportsInt):
+            self.value = int(self.value)
+        else:
+            msg = "value must be an integer"
+            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_int(self)
 
     def __int__(self) -> int:
-        """Cast the ``Int`` object to a building python ``int``.
+        """Cast the ``Int`` object to a built-in Python ``int``.
 
         Returns:
-            Building python ``int`` representation of the ``Int``.
+            Built-in Python ``int`` representation of the ``Int``.
         """
         return self.value
 
@@ -669,6 +681,9 @@ class IR:
 
     def add_reset(self, reset: Reset) -> None:
         self.statements.append(reset)
+
+    def add_statement(self, statement: Statement) -> None:
+        self.statements.append(statement)
 
     def add_comment(self, comment: Comment) -> None:
         self.statements.append(comment)
