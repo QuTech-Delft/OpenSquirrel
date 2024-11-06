@@ -6,8 +6,8 @@ from typing import Any, cast
 import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
+from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
@@ -107,9 +107,7 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
 
     @classmethod
     def _get_gate_operands(
-        cls,
-        instruction: cqasm.semantic.GateInstruction,
-        register_manager: RegisterManager
+        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
     ) -> list[list[Any]]:
         """Get the list of lists of operands of a gate.
         Notice that a gate just has a list of operands. The outer list is needed to support SGMQ.
@@ -135,9 +133,7 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
 
     @classmethod
     def _get_expanded_gate_args(
-        cls,
-        instruction: cqasm.semantic.GateInstruction,
-        register_manager: RegisterManager
+        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
     ) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
         For example, for CRk(2) q[0, 1] q[2, 3], this function first constructs the list with a list of qubits
@@ -203,20 +199,21 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             modified_gate_f = cast(Callable[..., BlochSphereRotation], self._get_gate_f(instruction.gate))
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_f)
-            elif gate_name == "pow":
+            if gate_name == "pow":
                 return PowerGateModifier(instruction.gate.parameter.value, modified_gate_f)
-            elif gate_name == "ctrl":
+            if gate_name == "ctrl":
                 return ControlGateModifier(modified_gate_f)
-        else:
-            return self.get_gate_f(gate_name)
+            msg = "parsing error: unknown unitary instruction"
+            raise OSError(msg)
+        return self.get_gate_f(gate_name)
 
     def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., Statement]:
         if "measure" in instruction.name:
             return self.get_measure_f(instruction.name)
-        elif "reset" in instruction.name:
+        if "reset" in instruction.name:
             return self.get_reset_f(instruction.name)
-        else:
-            raise OSError("parsing error: unknown non-unitary instruction")
+        msg = "parsing error: unknown non-unitary instruction"
+        raise OSError(msg)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
@@ -242,12 +239,12 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
                 else:
                     expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
             else:
-                raise OSError("parsing error: unknown statement")
+                msg = "parsing error: unknown statement"
+                raise OSError(msg)
 
             # For an SGMQ instruction:
             # expanded_args will contain a list with the list of qubits for each individual instruction,
             # while args will contain the list of qubits of an individual instruction
             for args in expanded_args:
-                print(*args)
                 ir.add_statement(instruction_generator(*args))
         return Circuit(register_manager, ir)

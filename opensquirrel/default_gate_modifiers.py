@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from abc import ABC
 from collections.abc import Callable
+from typing import Any, SupportsInt
+
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, QubitLike
-from typing import SupportsInt, Any
 
 
-class GateModifier(ABC):
+class GateModifier:
     pass
 
 
 class InverseGateModifier(GateModifier):
-    def __init__(self, generator_f_gate: Callable[..., BlochSphereRotation]):
+    def __init__(self, generator_f_gate: Callable[..., BlochSphereRotation]) -> None:
         self.generator_f_gate = generator_f_gate
 
     def __call__(self, *args: Any) -> BlochSphereRotation:
@@ -21,7 +21,7 @@ class InverseGateModifier(GateModifier):
 
 
 class PowerGateModifier(GateModifier):
-    def __init__(self, exponent: SupportsInt, generator_f_gate: Callable[..., BlochSphereRotation]):
+    def __init__(self, exponent: SupportsInt, generator_f_gate: Callable[..., BlochSphereRotation]) -> None:
         self.exponent = exponent
         self.generator_f_gate = generator_f_gate
 
@@ -32,7 +32,7 @@ class PowerGateModifier(GateModifier):
 
 
 class ControlGateModifier(GateModifier):
-    def __init__(self, generator_f_gate: Callable[..., BlochSphereRotation]):
+    def __init__(self, generator_f_gate: Callable[..., BlochSphereRotation]) -> None:
         self.generator_f_gate = generator_f_gate
 
     def __call__(self, control: QubitLike, *args: Any) -> ControlledGate:
