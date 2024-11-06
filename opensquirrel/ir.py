@@ -69,7 +69,7 @@ class Expression(IRNode, ABC):
     pass
 
 
-@dataclass
+@dataclass(init=False)
 class Float(Expression):
     """Floats used for intermediate representation of ``Statement`` arguments.
 
@@ -79,7 +79,20 @@ class Float(Expression):
 
     value: float
 
-    def __int__(self) -> float:
+    def __init__(self, value: SupportsFloat) -> None:
+        """Init of the ``Float`` object.
+
+        Args:
+            value: value of the ``Float`` object.
+        """
+        if isinstance(value, SupportsFloat):
+            self.value = float(value)
+            return
+
+        msg = "value must be a float"
+        raise TypeError(msg)
+
+    def __float__(self) -> float:
         """Cast the ``Float`` object to a built-in Python ``float``.
 
         Returns:
@@ -90,17 +103,8 @@ class Float(Expression):
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
 
-    def __post_init__(self) -> None:
-        if isinstance(self.value, Float):
-            self.value = self.value.value
-        elif isinstance(self.value, SupportsFloat):
-            self.value = float(self.value)
-        else:
-            msg = "value must be a float"
-            raise TypeError(msg)
 
-
-@dataclass
+@dataclass(init=False)
 class Int(Expression):
     """Integers used for intermediate representation of ``Statement`` arguments.
 
@@ -110,17 +114,18 @@ class Int(Expression):
 
     value: int
 
-    def __post_init__(self) -> None:
-        if isinstance(self.value, Int):
-            self.value = self.value.value
-        elif isinstance(self.value, SupportsInt):
-            self.value = int(self.value)
-        else:
-            msg = "value must be an integer"
-            raise TypeError(msg)
+    def __init__(self, value: SupportsInt) -> None:
+        """Init of the ``Int`` object.
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_int(self)
+        Args:
+            value: value of the ``Int`` object.
+        """
+        if isinstance(value, SupportsInt):
+            self.value = int(value)
+            return
+
+        msg = "value must be an int"
+        raise TypeError(msg)
 
     def __int__(self) -> int:
         """Cast the ``Int`` object to a built-in Python ``int``.
@@ -129,6 +134,9 @@ class Int(Expression):
             Built-in Python ``int`` representation of the ``Int``.
         """
         return self.value
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_int(self)
 
 
 @dataclass
