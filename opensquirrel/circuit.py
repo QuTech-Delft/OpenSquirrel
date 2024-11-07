@@ -8,8 +8,8 @@ from opensquirrel.default_measures import default_measure_set
 from opensquirrel.passes.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.ir import IR, Gate, Measure
+    from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
 
@@ -125,9 +125,7 @@ class Circuit:
 
         remap_ir(self, mapper.get_mapping())
 
-    def replace(
-        self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]
-    ) -> None:
+    def replace(self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
         `f` is a callable that takes the arguments of the gate that is to be replaced and
         returns the decomposition as a list of gates.

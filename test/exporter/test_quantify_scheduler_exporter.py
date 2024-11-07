@@ -13,11 +13,11 @@ from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import H
 from opensquirrel.exceptions import ExporterError
+from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate
 from opensquirrel.passes.exporter import quantify_scheduler_exporter
 from opensquirrel.passes.exporter.quantify_scheduler_exporter import (
     FIXED_POINT_DEG_PRECISION,
 )
-from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate
 
 
 class FloatEq(float):
@@ -39,9 +39,7 @@ class MockedQuantifyScheduler:
 
         with contextlib.ExitStack() as stack:
             self.mock_quantify_scheduler = stack.enter_context(self.patch_qs)
-            self.mock_quantify_scheduler_gates = stack.enter_context(
-                self.patch_qs_gates
-            )
+            self.mock_quantify_scheduler_gates = stack.enter_context(self.patch_qs_gates)
             self._stack = stack.pop_all()
 
         return self.mock_quantify_scheduler, self.mock_quantify_scheduler_gates
@@ -72,9 +70,7 @@ class TestQuantifySchedulerExporter:
 
             quantify_scheduler_exporter.export(circuit)
 
-            mock_quantify_scheduler.Schedule.assert_called_with(
-                "Exported OpenSquirrel circuit"
-            )
+            mock_quantify_scheduler.Schedule.assert_called_with("Exported OpenSquirrel circuit")
 
             mock_quantify_scheduler_gates.Rxy.assert_has_calls(
                 [
@@ -84,18 +80,14 @@ class TestQuantifySchedulerExporter:
                         qubit="q[0]",
                     ),
                     unittest.mock.call(
-                        theta=FloatEq(
-                            round(math.degrees(1.23), FIXED_POINT_DEG_PRECISION)
-                        ),
+                        theta=FloatEq(round(math.degrees(1.23), FIXED_POINT_DEG_PRECISION)),
                         phi=FloatEq(math.degrees(math.pi / 2)),
                         qubit="q[2]",
                     ),
                 ],
             )
             mock_quantify_scheduler_gates.Reset.assert_called_once_with("q[0]")
-            mock_quantify_scheduler_gates.CZ.assert_called_once_with(
-                qC="q[0]", qT="q[1]"
-            )
+            mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(
                 theta=FloatEq(round(math.degrees(2.34), FIXED_POINT_DEG_PRECISION)),
                 qubit="q[1]",
@@ -112,9 +104,7 @@ class TestQuantifySchedulerExporter:
         builder.ir.add_gate(gate)
         circuit = builder.to_circuit()
 
-        with MockedQuantifyScheduler(), pytest.raises(
-            ExporterError, match="cannot export circuit: "
-        ):
+        with MockedQuantifyScheduler(), pytest.raises(ExporterError, match="cannot export circuit: "):
             quantify_scheduler_exporter.export(circuit)
 
 

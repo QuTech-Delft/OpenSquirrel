@@ -3,10 +3,10 @@ from __future__ import annotations
 from math import atan2, cos, pi, sin, sqrt
 
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.passes.decomposer.aba_decomposer import ZXZDecomposer
-from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import X90, Rz
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.passes.decomposer.aba_decomposer import ZXZDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
 class McKayDecomposer(Decomposer):
@@ -33,9 +33,7 @@ class McKayDecomposer(Decomposer):
 
         zxz_decomposition = ZXZDecomposer().decompose(g)
         zxz_angle = 0.0
-        if len(zxz_decomposition) >= 2 and isinstance(
-            zxz_decomposition[1], BlochSphereRotation
-        ):
+        if len(zxz_decomposition) >= 2 and isinstance(zxz_decomposition[1], BlochSphereRotation):
             zxz_angle = zxz_decomposition[1].angle
 
         if abs(zxz_angle - pi / 2) < ATOL:

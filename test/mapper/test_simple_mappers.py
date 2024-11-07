@@ -23,9 +23,7 @@ class TestHardcodedMapper:
     @pytest.fixture(name="mapper")
     def mapper_fixture(self) -> HardcodedMapper:
         qubit_register_size = 10
-        mapping = Mapping(
-            [(i + 1) % qubit_register_size for i in range(qubit_register_size)]
-        )
+        mapping = Mapping([(i + 1) % qubit_register_size for i in range(qubit_register_size)])
         return HardcodedMapper(qubit_register_size, mapping)
 
     def test_compliance(self, mapper: HardcodedMapper) -> None:

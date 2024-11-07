@@ -4,11 +4,11 @@ import sympy as sp
 from IPython.display import display
 
 from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.default_gates import H, Rx, Rz
+from opensquirrel.ir import Float
 from opensquirrel.passes.decomposer.aba_decomposer import XZXDecomposer, ZYZDecomposer
 from opensquirrel.passes.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
-from opensquirrel.default_gates import H, Rx, Rz
-from opensquirrel.ir import Float
 
 
 class TestDecomposition:
@@ -38,11 +38,7 @@ class TestDecomposition:
             sp.Eq(rhs_simplified.d, q.d),
         )
 
-        sp.trigsimp(
-            sp.Eq(rhs_simplified.a, q.a).subs(
-                sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)
-            )
-        )
+        sp.trigsimp(sp.Eq(rhs_simplified.a, q.a).subs(sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)))
 
         theta1, theta2, theta3 = sp.symbols("theta_1 theta_2 theta_3")
 

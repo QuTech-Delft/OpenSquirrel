@@ -4,10 +4,10 @@ import math
 
 import pytest
 
-from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, Rz, S, Sdag, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 
 @pytest.fixture(name="decomposer")
@@ -44,9 +44,7 @@ def test_identity(decomposer: ZYZDecomposer) -> None:
     ],
     ids=["CNOT", "CR", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],
 )
-def test_zyz_decomposer(
-    decomposer: ZYZDecomposer, gate: Gate, expected_result: list[Gate]
-) -> None:
+def test_zyz_decomposer(decomposer: ZYZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result

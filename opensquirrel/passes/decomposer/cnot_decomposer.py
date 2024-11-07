@@ -3,10 +3,10 @@ from __future__ import annotations
 import math
 
 from opensquirrel.common import ATOL
-from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
-from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import CNOT, Ry, Rz, X
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate
+from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.passes.merger import general_merger
 from opensquirrel.utils.identity_filter import filter_out_identities
 
@@ -38,9 +38,7 @@ class CNOTDecomposer(Decomposer):
         # See https://threeplusone.com/pubs/on_gates.pdf
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
-        controlled_rotation_times_x = general_merger.compose_bloch_sphere_rotations(
-            X(target_qubit), g.target_gate
-        )
+        controlled_rotation_times_x = general_merger.compose_bloch_sphere_rotations(X(target_qubit), g.target_gate)
         (
             theta0_with_x,
             theta1_with_x,
@@ -69,9 +67,7 @@ class CNOTDecomposer(Decomposer):
                 ],
             )
 
-        theta0, theta1, theta2 = ZYZDecomposer().get_decomposition_angles(
-            g.target_gate.angle, g.target_gate.axis
-        )
+        theta0, theta1, theta2 = ZYZDecomposer().get_decomposition_angles(g.target_gate.angle, g.target_gate.axis)
 
         A = [Ry(target_qubit, Float(theta1 / 2)), Rz(target_qubit, Float(theta2))]
         B = [

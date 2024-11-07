@@ -4,10 +4,10 @@ import math
 
 import pytest
 
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.default_gates import CNOT, CR, X90, H, I, Rz, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
 
 
 @pytest.fixture(name="decomposer")
@@ -19,9 +19,7 @@ def decomposer_fixture() -> McKayDecomposer:
     ("gate", "expected_result"),
     [(CNOT(0, 1), [CNOT(0, 1)]), (CR(2, 3, Float(2.123)), [CR(2, 3, Float(2.123))])],
 )
-def test_ignores_2q_gates(
-    decomposer: McKayDecomposer, gate: Gate, expected_result: list[Gate]
-) -> None:
+def test_ignores_2q_gates(decomposer: McKayDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     check_gate_replacement(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
 
@@ -73,9 +71,7 @@ def test_hadamard(decomposer: McKayDecomposer) -> None:
 
 
 def test_arbitrary(decomposer: McKayDecomposer) -> None:
-    arbitrary_operation = BlochSphereRotation(
-        qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324
-    )
+    arbitrary_operation = BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324)
     decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
     check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
     assert decomposed_arbitrary_operation == [

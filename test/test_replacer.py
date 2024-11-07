@@ -3,14 +3,14 @@ from __future__ import annotations
 import pytest
 
 from opensquirrel import CircuitBuilder
+from opensquirrel.default_gates import CNOT, Y90, H, I, X
+from opensquirrel.ir import BlochSphereRotation, Gate
 from opensquirrel.passes.decomposer import Decomposer
 from opensquirrel.passes.decomposer.general_decomposer import (
     check_gate_replacement,
     decompose,
     replace,
 )
-from opensquirrel.default_gates import CNOT, Y90, H, I, X
-from opensquirrel.ir import BlochSphereRotation, Gate
 
 
 class TestCheckGateReplacement:
@@ -55,9 +55,7 @@ class TestCheckGateReplacement:
             ),
         ],
     )
-    def test_wrong_qubit(
-        self, gate: Gate, replacement_gates: list[Gate], error_msg: str
-    ) -> None:
+    def test_wrong_qubit(self, gate: Gate, replacement_gates: list[Gate], error_msg: str) -> None:
         with pytest.raises(ValueError, match=error_msg):
             check_gate_replacement(gate, replacement_gates)
 
