@@ -142,7 +142,8 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary, DirectiveLibrary
             try:
                 is_incorrect_type = not isinstance(args[i], expected_type)  # type: ignore
             except TypeError:
-                # expected type is probably a Union, which works differently in python39
+                # expected type is probably a Union, which works differently in
+                # python39
                 is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
 
             if is_incorrect_type:

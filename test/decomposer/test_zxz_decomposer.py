@@ -28,14 +28,39 @@ def test_identity(decomposer: ZXZDecomposer) -> None:
         (CR(2, 3, Float(2.123)), [CR(2, 3, Float(2.123))]),
         (X(0), [Rx(0, Float(math.pi))]),
         (Rx(0, Float(0.9)), [Rx(0, Float(0.9))]),
-        (Y(0), [Rz(0, Float(-math.pi / 2)), Rx(0, Float(math.pi)), Rz(0, Float(math.pi / 2))]),
-        (Ry(0, Float(0.9)), [Rz(0, Float(-math.pi / 2)), Rx(0, Float(0.9000000000000004)), Rz(0, Float(math.pi / 2))]),
+        (
+            Y(0),
+            [
+                Rz(0, Float(-math.pi / 2)),
+                Rx(0, Float(math.pi)),
+                Rz(0, Float(math.pi / 2)),
+            ],
+        ),
+        (
+            Ry(0, Float(0.9)),
+            [
+                Rz(0, Float(-math.pi / 2)),
+                Rx(0, Float(0.9000000000000004)),
+                Rz(0, Float(math.pi / 2)),
+            ],
+        ),
         (Z(0), [Rz(0, Float(math.pi))]),
         (Rz(0, Float(0.123)), [Rz(0, Float(0.123))]),
-        (H(0), [Rz(0, Float(math.pi / 2)), Rx(0, Float(math.pi / 2)), Rz(0, Float(math.pi / 2))]),
+        (
+            H(0),
+            [
+                Rz(0, Float(math.pi / 2)),
+                Rx(0, Float(math.pi / 2)),
+                Rz(0, Float(math.pi / 2)),
+            ],
+        ),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
-            [Rz(0, Float(-1.5521517485841891)), Rx(0, Float(-0.6209410696845807)), Rz(0, Float(0.662145687003993))],
+            [
+                Rz(0, Float(-1.5521517485841891)),
+                Rx(0, Float(-0.6209410696845807)),
+                Rz(0, Float(0.662145687003993)),
+            ],
         ),
     ],
     ids=["CNOT", "CR", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],
