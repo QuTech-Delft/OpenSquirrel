@@ -109,6 +109,14 @@ class Circuit:
 
         general_merger.merge_single_qubit_gates(self)
 
+    def optimise(self) -> None:
+        """Optimise the circuit by merging the single qubit gates
+        and the barriers vertically.
+        """
+        from opensquirrel.merger import general_merger
+
+        general_merger.optimise_circuit(self)
+
     def decompose(self, decomposer: Decomposer) -> None:
         """Generic decomposition pass.
         It applies the given decomposer function to every gate in the circuit.

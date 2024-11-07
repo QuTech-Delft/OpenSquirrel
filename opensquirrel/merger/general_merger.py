@@ -8,13 +8,10 @@ import numpy as np
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
 from opensquirrel.ir import (
-    IR,
     Barrier,
     BlochSphereRotation,
     Comment,
-    ControlledGate,
     Gate,
-    MatrixGate,
     Qubit,
     Statement,
 )
@@ -93,35 +90,6 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     return bsr
 
 
-def rearrange_barriers(ir: IR, accumulated_barriers: list[Barrier | None]) -> list[Barrier | None]:
-    """Function to arrange a set of barriers in an optimal and correct order within a circuit.
-    First, the barriers are positioned to avoid interfering with the logical flow of the circuit
-    for each qubit. Then, barriers across multiple qubits are "merged" by aligning them vertically
-    in the same position within the circuit.
-
-    Args:
-        ir: the current IR object
-        accumulated_barriers: list of barriers currently accumulated
-
-    Returns:
-        The list of accumulated barriers that have not yet been placed in the circuit.
-    """
-    ir.statements = merge_barriers(ir.statements)
-
-    reversed_list = ir.statements[::-1]
-    for index, statement in enumerate(reversed_list):
-        if statement in accumulated_barriers and isinstance(statement, Barrier):
-            del reversed_list[index]
-            reversed_list.insert(0, statement)
-            accumulated_barriers.remove(statement)
-
-    ir.statements = reversed_list[::-1]
-
-    ir.statements = merge_barriers(ir.statements)
-
-    return accumulated_barriers
-
-
 def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     """Function to fix the placement of the barriers such that the barriers are
     merged in the circuit. Note that this function requires the barriers to be
@@ -152,7 +120,21 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     return ordered_statement_list
 
 
-def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
+def optimise_circuit(circuit: Circuit) -> None:
+    """Optimise the circuit by merging the single qubit gates
+    and the barriers vertically.
+
+    Args:
+        circuit: Circuit object to optimise.
+
+    Returns:
+        None
+    """
+    merge_single_qubit_gates(circuit)
+    circuit.ir.statements = merge_barriers(circuit.ir.statements)
+
+
+def merge_single_qubit_gates(circuit: Circuit) -> None:
     """Merge all consecutive 1-qubit gates in the circuit.
 
     Gates obtained from merging other gates become anonymous gates.
@@ -163,8 +145,6 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
     accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
         Qubit(qubit_index): I(qubit_index) for qubit_index in range(circuit.qubit_register_size)
     }
-
-    accumulated_barriers: list[Barrier | None] = []
 
     ir = circuit.ir
     statement_index = 0
@@ -191,18 +171,6 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
             if not accumulators_per_qubit[qubit_operand].is_identity():
                 ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
                 accumulators_per_qubit[qubit_operand] = I(qubit_operand)
-                if (
-                    isinstance(statement, (MatrixGate, ControlledGate, Barrier))
-                ) and len(accumulated_barriers) > 0:
-                    qubit_operands = statement.get_qubit_operands()
-                    barrier_qubits = next(q.get_qubit_operands() for q in accumulated_barriers if (q is not None))
-                    if any(q in barrier_qubits for q in qubit_operands):
-                        accumulated_barriers = rearrange_barriers(ir, accumulated_barriers)
-
-                    if isinstance(statement, Barrier):
-                        accumulated_barriers.append(statement)
-
-                accumulated_barriers = rearrange_barriers(ir, accumulated_barriers)
                 statement_index += 1
 
         statement_index += 1

@@ -103,7 +103,7 @@ class TestCircuitBuilder:
     def test_initial_barrier(self) -> None:
         builder = CircuitBuilder(2)
         circuit = builder.H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(np.pi / 3)).barrier(0).to_circuit()
-        circuit.merge_single_qubit_gates()
+        circuit.optimise()
         assert (
             str(circuit)
             == """version 3.0
@@ -122,7 +122,7 @@ barrier q[0]
     def test_barrier_with_CNOT(self) -> None:
         builder = CircuitBuilder(2)
         circuit = builder.X(0).barrier(0).X(1).barrier(1).CNOT(0, 1).barrier(1).X(1).to_circuit()
-        circuit.merge_single_qubit_gates()
+        circuit.optimise()
         assert (
             str(circuit)
             == """version 3.0
@@ -142,7 +142,7 @@ X q[1]
     def test_barrier_unpacking_use_case(self) -> None:
         builder = CircuitBuilder(2)
         circuit = builder.X(0).X(1).barrier(0).barrier(1).X(0).to_circuit()
-        circuit.merge_single_qubit_gates()
+        circuit.optimise()
         assert (
             str(circuit)
             == """version 3.0
@@ -174,7 +174,7 @@ X q[0]
             .barrier(3)
             .to_circuit()
         )
-        circuit.merge_single_qubit_gates()
+        circuit.optimise()
         assert (
             str(circuit)
             == """version 3.0
@@ -201,7 +201,7 @@ barrier q[3]
         circuit = (
             builder.barrier(0).barrier(1).barrier(2).barrier(3).CNOT(0, 3).barrier(0).barrier(1).barrier(3).to_circuit()
         )
-        circuit.merge_single_qubit_gates()
+        circuit.optimise()
         assert (
             str(circuit)
             == """version 3.0
