@@ -10,13 +10,18 @@ from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
+from opensquirrel.common import (
+    ATOL,
+    are_matrices_equivalent_up_to_global_phase,
+    normalize_angle,
+)
 
 REPR_DECIMALS = 5
 
 
 def repr_round(
-    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
+    value: float | Axis | NDArray[np.complex64 | np.complex128],
+    decimals: int = REPR_DECIMALS,
 ) -> float | NDArray[np.complex64 | np.complex128]:
     return np.round(value, decimals)
 
@@ -245,7 +250,13 @@ class Axis(Sequence[np.float64], Expression):
         """
         return axis / np.linalg.norm(axis)
 
-    def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
+    @overload
+    def __getitem__(self, i: int, /) -> np.float64: ...
+
+    @overload
+    def __getitem__(self, s: slice, /) -> list[np.float64]: ...
+
+    def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
         """Get the item at `index`."""
         return cast(np.float64, self.value[index])
 
@@ -362,7 +373,8 @@ class Gate(Statement, ABC):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        # Note: two gates are considered equal even when their generators/arguments are different.
+        # Note: two gates are considered equal even when their
+        # generators/arguments are different.
         self.generator = generator
         self.arguments = arguments
 

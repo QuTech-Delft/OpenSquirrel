@@ -100,4 +100,5 @@ def circuit_to_string(circuit: Circuit) -> str:
     writer_impl = _WriterImpl(circuit.register_manager)
     circuit.ir.accept(writer_impl)
 
-    return writer_impl.output.rstrip() + "\n"  # remove all trailing lines and leave only one
+    # remove all trailing lines and leave only one
+    return writer_impl.output.rstrip() + "\n"

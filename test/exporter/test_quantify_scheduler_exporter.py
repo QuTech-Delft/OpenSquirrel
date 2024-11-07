@@ -59,7 +59,10 @@ class TestQuantifySchedulerExporter:
         builder.measure(2, Bit(2))
         circuit = builder.to_circuit()
 
-        with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
+        with MockedQuantifyScheduler() as (
+            mock_quantify_scheduler,
+            mock_quantify_scheduler_gates,
+        ):
             mock_schedule = unittest.mock.MagicMock()
             mock_quantify_scheduler.Schedule.return_value = mock_schedule
 
@@ -69,13 +72,17 @@ class TestQuantifySchedulerExporter:
 
             mock_quantify_scheduler_gates.Rxy.assert_has_calls(
                 [
-                    unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="q[0]"),
+                    unittest.mock.call(
+                        theta=FloatEq(math.degrees(math.pi)),
+                        phi=FloatEq(0),
+                        qubit="q[0]",
+                    ),
                     unittest.mock.call(
                         theta=FloatEq(round(math.degrees(1.23), FIXED_POINT_DEG_PRECISION)),
                         phi=FloatEq(math.degrees(math.pi / 2)),
                         qubit="q[2]",
                     ),
-                ],
+                ]
             )
             mock_quantify_scheduler_gates.Reset.assert_called_once_with("q[0]")
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")

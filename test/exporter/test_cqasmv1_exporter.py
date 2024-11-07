@@ -4,7 +4,15 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.exporter.export_format import ExportFormat
-from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Float, Gate, MatrixGate, Qubit
+from opensquirrel.ir import (
+    Bit,
+    BlochSphereRotation,
+    ControlledGate,
+    Float,
+    Gate,
+    MatrixGate,
+    Qubit,
+)
 
 
 def test_cqasm_v3_to_cqasm_v1() -> None:
@@ -193,7 +201,10 @@ measure_z q[1]
     [
         BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23),
         ControlledGate(Qubit(0), BlochSphereRotation(Qubit(1), axis=(1, 1, 1), angle=1.23)),
-        MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)]),
+        MatrixGate(
+            np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]),
+            [Qubit(0), Qubit(1)],
+        ),
     ],
 )
 def test_anonymous_gates(gate: Gate) -> None:
