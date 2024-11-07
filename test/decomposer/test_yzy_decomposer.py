@@ -4,8 +4,8 @@ import math
 
 import pytest
 
-from opensquirrel.decomposer.aba_decomposer import YZYDecomposer
-from opensquirrel.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.aba_decomposer import YZYDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, Rz, S, X, Y
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
 
@@ -29,20 +29,44 @@ def test_identity(decomposer: YZYDecomposer) -> None:
         (S(0), [Rz(0, Float(math.pi / 2))]),
         (Y(0), [Ry(0, Float(math.pi))]),
         (Ry(0, Float(0.9)), [Ry(0, Float(0.9))]),
-        (X(0), [Ry(0, Float(-math.pi / 2)), Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]),
+        (
+            X(0),
+            [
+                Ry(0, Float(-math.pi / 2)),
+                Rz(0, Float(math.pi)),
+                Ry(0, Float(math.pi / 2)),
+            ],
+        ),
         (
             Rx(0, Float(0.123)),
-            [Ry(0, Float(-math.pi / 2)), Rz(0, Float(0.12300000000000022)), Ry(0, Float(math.pi / 2))],
+            [
+                Ry(0, Float(-math.pi / 2)),
+                Rz(0, Float(0.12300000000000022)),
+                Ry(0, Float(math.pi / 2)),
+            ],
         ),
-        (H(0), [Ry(0, Float(-math.pi / 4)), Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 4))]),
+        (
+            H(0),
+            [
+                Ry(0, Float(-math.pi / 4)),
+                Rz(0, Float(math.pi)),
+                Ry(0, Float(math.pi / 4)),
+            ],
+        ),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
-            [Ry(0, Float(-0.6295818450148737)), Rz(0, Float(-0.893533136099803)), Ry(0, Float(0.013919263778408464))],
+            [
+                Ry(0, Float(-0.6295818450148737)),
+                Rz(0, Float(-0.893533136099803)),
+                Ry(0, Float(0.013919263778408464)),
+            ],
         ),
     ],
     ids=["CNOT", "CR", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],
 )
-def test_yzy_decomposer(decomposer: YZYDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+def test_yzy_decomposer(
+    decomposer: YZYDecomposer, gate: Gate, expected_result: list[Gate]
+) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result

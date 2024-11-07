@@ -356,11 +356,11 @@ More in depth tutorials can be found in the [decomposition example Jupyter noteb
 
 One of the most common single qubit decomposition techniques is the Z-Y-Z decomposition.
 This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
-The decompositions are found in `opensquirrel.decomposer`,
+The decompositions are found in `opensquirrel.passes.decomposer`,
 an example can be seen below where a Hadamard, Z, Y and Rx gate are all decomposed on a single qubit circuit.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
 
 builder = CircuitBuilder(qubit_register_size=1)
 builder.H(0).Z(0).Y(0).Rx(0, Float(math.pi / 3))
@@ -387,7 +387,7 @@ _Output_:
 Similarly, the decomposer can be used on individual gates.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import XZXDecomposer
+from opensquirrel.passes.decomposer.aba_decomposer import XZXDecomposer
 from opensquirrel.default_gates import H
 
 print(ZYZDecomposer().decompose(H(0)))

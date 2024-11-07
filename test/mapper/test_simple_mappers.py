@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from opensquirrel.mapper import HardcodedMapper, IdentityMapper
-from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.passes.mapper import HardcodedMapper, IdentityMapper
+from opensquirrel.passes.mapper.mapping import Mapping
 from opensquirrel.utils.check_passes import check_mapper
 
 
@@ -23,7 +23,9 @@ class TestHardcodedMapper:
     @pytest.fixture(name="mapper")
     def mapper_fixture(self) -> HardcodedMapper:
         qubit_register_size = 10
-        mapping = Mapping([(i + 1) % qubit_register_size for i in range(qubit_register_size)])
+        mapping = Mapping(
+            [(i + 1) % qubit_register_size for i in range(qubit_register_size)]
+        )
         return HardcodedMapper(qubit_register_size, mapping)
 
     def test_compliance(self, mapper: HardcodedMapper) -> None:

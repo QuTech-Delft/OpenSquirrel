@@ -9,7 +9,7 @@ from collections.abc import Callable
 from typing import ClassVar
 
 from opensquirrel.common import ATOL
-from opensquirrel.decomposer.general_decomposer import Decomposer
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.default_gates import Rx, Ry, Rz
 from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
 from opensquirrel.utils.identity_filter import filter_out_identities
@@ -38,7 +38,9 @@ class ABADecomposer(Decomposer, ABC):
         """
         return ({0, 1, 2} - {self.index_a, self.index_b}).pop()
 
-    def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
+    def get_decomposition_angles(
+        self, alpha: float, axis: AxisLike
+    ) -> tuple[float, float, float]:
         """Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
         characterized by a rotation around `axis` of angle `alpha`.
 
@@ -73,12 +75,17 @@ class ABADecomposer(Decomposer, ABC):
                     m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                 else:
                     m = 2 * math.acos(
-                        round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL)))),
+                        round(
+                            b_axis_value / math.sqrt(1 - a_axis_value**2),
+                            abs(math.floor(math.log10(ATOL))),
+                        ),
                     )
 
         else:
             p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
-            acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
+            acos_argument = math.cos(alpha / 2) * math.sqrt(
+                1 + (a_axis_value * math.tan(alpha / 2)) ** 2
+            )
 
             # This fixes float approximations like 1.0000000000002, which acos does not like.
             acos_argument = max(min(acos_argument, 1.0), -1.0)
@@ -89,7 +96,9 @@ class ABADecomposer(Decomposer, ABC):
             if abs(math.sin(theta2 / 2)) < ATOL:
                 m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
             else:
-                acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
+                acos_argument = (
+                    float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
+                )
 
                 # This fixes float approximations like 1.0000000000002, which acos does not like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)

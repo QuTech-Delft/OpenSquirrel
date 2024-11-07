@@ -3,9 +3,16 @@ import math
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
+from opensquirrel.ir import (
+    BlochSphereRotation,
+    ControlledGate,
+    Float,
+    MatrixGate,
+    QubitLike,
+    named_gate,
+)
 
 
 def test_circuit_from_string() -> None:
@@ -123,7 +130,10 @@ def test_CNOT_strong_type_error_string() -> None:
             """
         )
 
-    assert "failed to resolve instruction 'CNOT' with argument pack (qubit, int)" in str(e_info.value)
+    assert (
+        "failed to resolve instruction 'CNOT' with argument pack (qubit, int)"
+        in str(e_info.value)
+    )
 
 
 def test_anonymous_gate() -> None:
@@ -148,7 +158,9 @@ Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, ph
 def test_create_custom_gates() -> None:
     @named_gate
     def x(q: QubitLike) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+        return BlochSphereRotation(
+            qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
+        )
 
     @named_gate
     def cnot(control: QubitLike, target: QubitLike) -> ControlledGate:
@@ -166,7 +178,9 @@ def test_create_custom_gates() -> None:
             [q1, q2],
         )
 
-    assert x(0) == BlochSphereRotation(0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+    assert x(0) == BlochSphereRotation(
+        0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2
+    )
     assert cnot(0, 1) == ControlledGate(0, x(1))
     assert swap(0, 1) == MatrixGate(
         [
@@ -230,7 +244,10 @@ def test_error_predefined_decomposition() -> None:
     with pytest.raises(ValueError, match=r"replacement for gate .*") as e_info:
         qc.replace(CNOT, lambda control, target: [H(target), CZ(control, target)])
 
-    assert str(e_info.value) == "replacement for gate CNOT does not preserve the quantum state"
+    assert (
+        str(e_info.value)
+        == "replacement for gate CNOT does not preserve the quantum state"
+    )
 
 
 def test_zyz_decomposer() -> None:
@@ -256,4 +273,7 @@ Rz(-1.5707963) q[0]
 """
     )
 
-    assert ZYZDecomposer().decompose(H(0)) == [Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]
+    assert ZYZDecomposer().decompose(H(0)) == [
+        Rz(0, Float(math.pi)),
+        Ry(0, Float(math.pi / 2)),
+    ]

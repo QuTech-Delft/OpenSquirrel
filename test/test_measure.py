@@ -1,5 +1,5 @@
 from opensquirrel import Circuit
-from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
 
 
 def test_measure() -> None:

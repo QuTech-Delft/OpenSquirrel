@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Any
 
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
-from opensquirrel.exporter.export_format import ExportFormat
+from opensquirrel.passes.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.decomposer import Decomposer
+    from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.ir import IR, Gate, Measure
-    from opensquirrel.mapper import Mapper
+    from opensquirrel.passes.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -105,7 +105,7 @@ class Circuit:
         """Merge all consecutive 1-qubit gates in the circuit.
         Gates obtained from merging other gates become anonymous gates.
         """
-        from opensquirrel.merger import general_merger
+        from opensquirrel.passes.merger import general_merger
 
         general_merger.merge_single_qubit_gates(self)
 
@@ -113,7 +113,7 @@ class Circuit:
         """Generic decomposition pass.
         It applies the given decomposer function to every gate in the circuit.
         """
-        from opensquirrel.decomposer import general_decomposer
+        from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.decompose(self.ir, decomposer)
 
@@ -121,26 +121,28 @@ class Circuit:
         """Generic qubit mapper pass.
         Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
         """
-        from opensquirrel.mapper.qubit_remapper import remap_ir
+        from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
         remap_ir(self, mapper.get_mapping())
 
-    def replace(self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
+    def replace(
+        self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]
+    ) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
         `f` is a callable that takes the arguments of the gate that is to be replaced and
         returns the decomposition as a list of gates.
         """
-        from opensquirrel.decomposer import general_decomposer
+        from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.replace(self.ir, gate_generator, f)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
-            from opensquirrel.exporter import quantify_scheduler_exporter
+            from opensquirrel.passes.exporter import quantify_scheduler_exporter
 
             return quantify_scheduler_exporter.export(self)
         if fmt == ExportFormat.CQASM_V1:
-            from opensquirrel.exporter import cqasmv1_exporter
+            from opensquirrel.passes.exporter import cqasmv1_exporter
 
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"

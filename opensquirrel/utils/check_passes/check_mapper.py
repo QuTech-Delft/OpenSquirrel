@@ -5,8 +5,15 @@ from __future__ import annotations
 from copy import deepcopy
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, Comment, ControlledGate, Measure
-from opensquirrel.mapper.general_mapper import Mapper
+from opensquirrel.ir import (
+    IR,
+    Bit,
+    BlochSphereRotation,
+    Comment,
+    ControlledGate,
+    Measure,
+)
+from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 

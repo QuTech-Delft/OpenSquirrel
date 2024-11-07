@@ -4,8 +4,8 @@ import math
 
 import pytest
 
-from opensquirrel.decomposer.aba_decomposer import XYXDecomposer
-from opensquirrel.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.aba_decomposer import XYXDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, S, X, Y
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
 
@@ -26,7 +26,14 @@ def test_identity(decomposer: XYXDecomposer) -> None:
     [
         (CNOT(0, 1), [CNOT(0, 1)]),
         (CR(2, 3, Float(2.123)), [CR(2, 3, Float(2.123))]),
-        (S(0), [Rx(0, Float(-math.pi / 2)), Ry(0, Float(math.pi / 2)), Rx(0, Float(math.pi / 2))]),
+        (
+            S(0),
+            [
+                Rx(0, Float(-math.pi / 2)),
+                Ry(0, Float(math.pi / 2)),
+                Rx(0, Float(math.pi / 2)),
+            ],
+        ),
         (Y(0), [Ry(0, Float(math.pi))]),
         (Ry(0, Float(0.9)), [Ry(0, Float(0.9))]),
         (X(0), [Rx(0, Float(math.pi))]),
@@ -34,12 +41,18 @@ def test_identity(decomposer: XYXDecomposer) -> None:
         (H(0), [Ry(0, Float(math.pi / 2)), Rx(0, Float(math.pi))]),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
-            [Rx(0, Float(-1.140443520488592)), Ry(0, Float(-1.030183660156084)), Rx(0, Float(0.8251439260060653))],
+            [
+                Rx(0, Float(-1.140443520488592)),
+                Ry(0, Float(-1.030183660156084)),
+                Rx(0, Float(0.8251439260060653)),
+            ],
         ),
     ],
     ids=["CNOT", "CR", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],
 )
-def test_xyx_decomposer(decomposer: XYXDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+def test_xyx_decomposer(
+    decomposer: XYXDecomposer, gate: Gate, expected_result: list[Gate]
+) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
