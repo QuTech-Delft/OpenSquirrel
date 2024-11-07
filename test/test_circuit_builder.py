@@ -124,7 +124,7 @@ barrier q[0]
 """
         )
 
-    def test_barrier_with_CNOT(self) -> None:
+    def test_barrier_with_cnot(self) -> None:
         builder = CircuitBuilder(2)
         circuit = builder.X(0).barrier(0).X(1).barrier(1).CNOT(0, 1).barrier(1).X(1).to_circuit()
         circuit.optimise()
