@@ -66,7 +66,7 @@ class IRVisitor:
     def visit_directive(self, directive: Directive) -> Any:
         pass
 
-    def visit_barrier_gate(self, barrier: Barrier) -> Any:
+    def visit_barrier(self, barrier: Barrier) -> Any:
         pass
 
 
@@ -422,7 +422,7 @@ class Barrier(Directive):
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_directive(self)
-        return visitor.visit_barrier_gate(self)
+        return visitor.visit_barrier(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
