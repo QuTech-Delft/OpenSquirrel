@@ -22,8 +22,14 @@ from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
             CircuitBuilder(2).H(1).X(0),
             np.sqrt(0.5) * np.array([[0, 1, 0, 1], [1, 0, 1, 0], [0, 1, 0, -1], [1, 0, -1, 0]]),
         ),
-        (CircuitBuilder(2).CNOT(1, 0), [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]),
-        (CircuitBuilder(2).CNOT(0, 1), [[1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0]]),
+        (
+            CircuitBuilder(2).CNOT(1, 0),
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]],
+        ),
+        (
+            CircuitBuilder(2).CNOT(0, 1),
+            [[1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0]],
+        ),
         (
             CircuitBuilder(2).H(0).CNOT(0, 1),
             np.sqrt(0.5) * np.array([[1, 1, 0, 0], [0, 0, 1, -1], [0, 0, 1, 1], [1, -1, 0, 0]]),

@@ -55,7 +55,11 @@ def decompose(ir: IR, decomposer: Decomposer) -> None:
 
 
 class _GenericReplacer(Decomposer):
-    def __init__(self, gate_generator: Callable[..., Gate], replacement_function: Callable[..., list[Gate]]) -> None:
+    def __init__(
+        self,
+        gate_generator: Callable[..., Gate],
+        replacement_function: Callable[..., list[Gate]],
+    ) -> None:
         self.gate_generator = gate_generator
         self.replacement_function = replacement_function
 

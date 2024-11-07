@@ -31,14 +31,14 @@ def test_ignores_double_controlled(decomposer: CNOTDecomposer) -> None:
     assert decomposed_gate == [gate]
 
 
-def test_preserves_CNOT(decomposer: CNOTDecomposer) -> None:
+def test_preserves_CNOT(decomposer: CNOTDecomposer) -> None:  # noqa: N802
     gate = CNOT(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposed_gate == [CNOT(0, 1)]
 
 
-def test_CZ(decomposer: CNOTDecomposer) -> None:
+def test_CZ(decomposer: CNOTDecomposer) -> None:  # noqa: N802
     gate = CZ(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)

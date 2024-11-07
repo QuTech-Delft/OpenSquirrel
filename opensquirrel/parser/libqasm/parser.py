@@ -31,7 +31,10 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
     def _ast_literal_to_ir_literal(
         cqasm_literal_expression: cqasm.values.ConstInt | cqasm.values.ConstFloat,
     ) -> Int | Float | None:
-        if type(cqasm_literal_expression) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat]:
+        if type(cqasm_literal_expression) not in [
+            cqasm.values.ConstInt,
+            cqasm.values.ConstFloat,
+        ]:
             msg = f"unrecognized type: {type(cqasm_literal_expression)}"
             raise TypeError(msg)
         if isinstance(cqasm_literal_expression, cqasm.values.ConstInt):
@@ -160,7 +163,8 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             raise OSError("parsing error: " + ", ".join(result))
 
     def circuit_from_string(self, s: str) -> Circuit:
-        # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
+        # Analysis result will be either an Abstract Syntax Tree (AST) or a
+        # list of error messages
         analyzer = Parser._create_analyzer()
         analysis_result = analyzer.analyze_string(s)
         Parser._check_analysis_result(analysis_result)

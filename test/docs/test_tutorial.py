@@ -119,7 +119,7 @@ H q[4]
     )
 
 
-def test_CNOT_strong_type_error_string() -> None:
+def test_CNOT_strong_type_error_string() -> None:  # noqa: N802
     with pytest.raises(OSError, match=r".* with argument pack .*") as e_info:
         Circuit.from_string(
             """
