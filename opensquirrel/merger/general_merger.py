@@ -105,15 +105,16 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     barrier_list: list[Barrier] = []
     ordered_statement_list: list[Statement] = []
     for _, statement in enumerate(statement_list):
-        if len(barrier_list) > 0 and isinstance(statement, Gate):
-            barrier_qubits = next(q.get_qubit_operands() for q in barrier_list)[0]
-            if barrier_qubits in statement.get_qubit_operands():
-                ordered_statement_list.extend(barrier_list)
-                barrier_list = []
+        if isinstance(statement, Gate):
+            if len(barrier_list) > 0:
+                barrier_qubits = next(barrier.get_qubit_operands() for barrier in barrier_list)[0]
+                if barrier_qubits in statement.get_qubit_operands():
+                    ordered_statement_list.extend(barrier_list)
+                    barrier_list = []
+            ordered_statement_list.append(statement)
+
         if isinstance(statement, Barrier):
             barrier_list.append(statement)
-        else:
-            ordered_statement_list.append(statement)
 
     if len(barrier_list) > 0:
         ordered_statement_list.extend(barrier_list)
