@@ -85,9 +85,9 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
 
 
 def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
-    """Function to fix the placement of the barriers such that the barriers are
-    merged in the circuit. Note that this function requires the barriers to be
-    placed in the correct order.
+    """Receives a list of statements.
+    Returns an ordered version of the input list of statements where groups of barriers are merged together,
+    and placed as late in the list as possible.
 
     Args:
         statement_list: list of statements
