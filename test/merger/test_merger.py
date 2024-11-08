@@ -1,6 +1,8 @@
 import math
 
-from opensquirrel import CircuitBuilder
+import pytest
+
+from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_gates import Ry, Rz
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Qubit
 from opensquirrel.merger import general_merger
@@ -172,3 +174,118 @@ def test_no_merge_across_reset() -> None:
     builder2.reset(0)
     expected_qc = builder2.to_circuit()
     modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
+
+
+@pytest.mark.parametrize(
+    ("circuit", "expected_result"),
+    [
+        (
+            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(math.pi / 3)).barrier(0).to_circuit(),
+            """version 3.0
+
+qubit[2] q
+
+H q[0]
+H q[1]
+barrier q[0]
+barrier q[1]
+Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.65465 -0.37796  0.65465], angle=-2.41886, phase=1.5708)
+barrier q[0]
+""",
+        ),
+        (
+            CircuitBuilder(2).X(0).barrier(0).X(1).barrier(1).CNOT(0, 1).barrier(1).X(1).to_circuit(),
+            """version 3.0
+
+qubit[2] q
+
+X q[0]
+X q[1]
+barrier q[0]
+barrier q[1]
+CNOT q[0], q[1]
+barrier q[1]
+X q[1]
+""",
+        ),
+        (
+            CircuitBuilder(2).X(0).X(1).barrier(0).barrier(1).X(0).to_circuit(),
+            """version 3.0
+
+qubit[2] q
+
+X q[0]
+X q[1]
+barrier q[0]
+barrier q[1]
+X q[0]
+""",
+        ),
+        (
+            (
+                CircuitBuilder(4)
+                .H(0)
+                .barrier(0)
+                .H(1)
+                .barrier(1)
+                .H(2)
+                .barrier(2)
+                .H(3)
+                .barrier(3)
+                .CNOT(0, 3)
+                .barrier(0)
+                .barrier(1)
+                .barrier(3)
+                .to_circuit()
+            ),
+            """version 3.0
+
+qubit[4] q
+
+H q[0]
+H q[1]
+H q[2]
+H q[3]
+barrier q[0]
+barrier q[1]
+barrier q[2]
+barrier q[3]
+CNOT q[0], q[3]
+barrier q[0]
+barrier q[1]
+barrier q[3]
+""",
+        ),
+        (
+            (
+                CircuitBuilder(4)
+                .barrier(0)
+                .barrier(1)
+                .barrier(2)
+                .barrier(3)
+                .CNOT(0, 3)
+                .barrier(0)
+                .barrier(1)
+                .barrier(3)
+                .to_circuit()
+            ),
+            """version 3.0
+
+qubit[4] q
+
+barrier q[0]
+barrier q[1]
+barrier q[2]
+barrier q[3]
+CNOT q[0], q[3]
+barrier q[0]
+barrier q[1]
+barrier q[3]
+""",
+        ),
+    ],
+    ids=["initial-barrier", "cnot", "unpacking-usecase", "4-qubit", "barrier-only"],
+)
+def test_barriers(circuit: Circuit, expected_result: str) -> None:
+    circuit.merge_single_qubit_gates()
+    assert str(circuit) == expected_result

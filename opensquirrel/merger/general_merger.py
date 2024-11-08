@@ -7,14 +7,7 @@ import numpy as np
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import (
-    Barrier,
-    BlochSphereRotation,
-    Comment,
-    Gate,
-    Qubit,
-    Statement,
-)
+from opensquirrel.ir import Barrier, BlochSphereRotation, Comment, Gate, Measure, Qubit, Reset, Statement
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -105,7 +98,7 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     barrier_list: list[Barrier] = []
     ordered_statement_list: list[Statement] = []
     for _, statement in enumerate(statement_list):
-        if isinstance(statement, Gate):
+        if isinstance(statement, (Gate, Measure, Reset)):
             if len(barrier_list) > 0:
                 barrier_qubits = next(barrier.get_qubit_operands() for barrier in barrier_list)[0]
                 if barrier_qubits in statement.get_qubit_operands():
@@ -120,20 +113,6 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
         ordered_statement_list.extend(barrier_list)
 
     return ordered_statement_list
-
-
-def optimise_circuit(circuit: Circuit) -> None:
-    """Optimise the circuit by merging the single qubit gates
-    and the barriers vertically.
-
-    Args:
-        circuit: Circuit object to optimise.
-
-    Returns:
-        None
-    """
-    merge_single_qubit_gates(circuit)
-    circuit.ir.statements = merge_barriers(circuit.ir.statements)
 
 
 def merge_single_qubit_gates(circuit: Circuit) -> None:
@@ -183,3 +162,5 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
             if accumulated_bloch_sphere_rotation.is_anonymous:
                 accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
             ir.statements.append(accumulated_bloch_sphere_rotation)
+
+    ir.statements = merge_barriers(circuit.ir.statements)
