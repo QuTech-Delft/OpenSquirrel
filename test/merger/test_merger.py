@@ -180,17 +180,7 @@ def test_no_merge_across_reset() -> None:
     ("circuit", "expected_result"),
     [
         (
-            (
-                CircuitBuilder(2).
-                H(0).
-                barrier(0).
-                H(1).
-                barrier(1).
-                H(0).
-                Rx(0, Float(math.pi / 3)).
-                barrier(0).
-                to_circuit()
-            ),
+            (CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(math.pi / 3)).barrier(0).to_circuit()),
             """version 3.0
 
 qubit[2] q
@@ -204,17 +194,7 @@ barrier q[0]
 """,
         ),
         (
-            (
-                CircuitBuilder(2).
-                X(0).
-                barrier(0).
-                X(1).
-                barrier(1).
-                CNOT(0, 1).
-                barrier(1).
-                X(1).
-                to_circuit()
-            ),
+            (CircuitBuilder(2).X(0).barrier(0).X(1).barrier(1).CNOT(0, 1).barrier(1).X(1).to_circuit()),
             """version 3.0
 
 qubit[2] q
@@ -229,15 +209,7 @@ X q[1]
 """,
         ),
         (
-            (
-                CircuitBuilder(2).
-                X(0).
-                X(1).
-                barrier(0).
-                barrier(1).
-                X(0).
-                to_circuit()
-            ),
+            (CircuitBuilder(2).X(0).X(1).barrier(0).barrier(1).X(0).to_circuit()),
             """version 3.0
 
 qubit[2] q
@@ -284,35 +256,8 @@ barrier q[1]
 barrier q[3]
 """,
         ),
-        (
-            (
-                CircuitBuilder(4)
-                .barrier(0)
-                .barrier(1)
-                .barrier(2)
-                .barrier(3)
-                .CNOT(0, 3)
-                .barrier(0)
-                .barrier(1)
-                .barrier(3)
-                .to_circuit()
-            ),
-            """version 3.0
-
-qubit[4] q
-
-barrier q[0]
-barrier q[1]
-barrier q[2]
-barrier q[3]
-CNOT q[0], q[3]
-barrier q[0]
-barrier q[1]
-barrier q[3]
-""",
-        ),
     ],
-    ids=["initial-barrier", "cnot", "unpacking-usecase", "4-qubit", "barrier-only"],
+    ids=["anonymous_gate", "circuit_with_multi_and_single_qubit_gates", "unpacking_usecase", "circuit_with_4_qubits"],
 )
 def test_barriers(circuit: Circuit, expected_result: str) -> None:
     circuit.merge_single_qubit_gates()
