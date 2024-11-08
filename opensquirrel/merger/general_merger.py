@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import functools
+import operator
 from math import acos, cos, floor, log10, sin
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import Barrier, BlochSphereRotation, Comment, Gate, Measure, Qubit, Reset, Statement
+from opensquirrel.ir import Barrier, BlochSphereRotation, Comment, Qubit, Statement
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -84,6 +86,10 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     return bsr
 
 
+def _flatten_list(list_to_flatten: list[list[Any]]) -> list[Any]:
+    return functools.reduce(operator.iadd, list_to_flatten, [])
+
+
 def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     """Receives a list of statements.
     Returns an ordered version of the input list of statements where groups of barriers are merged together,
@@ -98,16 +104,16 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     barrier_list: list[Barrier] = []
     ordered_statement_list: list[Statement] = []
     for _, statement in enumerate(statement_list):
-        if isinstance(statement, (Gate, Measure, Reset)):
-            if len(barrier_list) > 0:
-                barrier_qubits = next(barrier.get_qubit_operands() for barrier in barrier_list)[0]
-                if barrier_qubits in statement.get_qubit_operands():
+        if isinstance(statement, Barrier):
+            barrier_list.append(statement)
+        else:
+            if len(barrier_list) > 0 and hasattr(statement, "get_qubit_operands"):
+                instruction_qubits = statement.get_qubit_operands()
+                barrier_qubits = _flatten_list([barrier.get_qubit_operands() for barrier in barrier_list])
+                if any(qubit in barrier_qubits for qubit in instruction_qubits):
                     ordered_statement_list.extend(barrier_list)
                     barrier_list = []
             ordered_statement_list.append(statement)
-
-        if isinstance(statement, Barrier):
-            barrier_list.append(statement)
 
     if len(barrier_list) > 0:
         ordered_statement_list.extend(barrier_list)
