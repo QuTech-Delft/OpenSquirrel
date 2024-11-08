@@ -18,7 +18,7 @@ class InverseGateModifier(GateModifier):
         gate: BlochSphereRotation = self.generator_f_gate(*args)
         modified_angle = gate.angle * -1
         modified_phase = gate.phase * -1
-        return BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=gate.phase)
+        return BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
 
 
 class PowerGateModifier(GateModifier):
@@ -30,7 +30,7 @@ class PowerGateModifier(GateModifier):
         gate: BlochSphereRotation = self.generator_f_gate(*args)
         modified_angle = gate.angle * float(self.exponent)
         modified_phase = gate.phase * float(self.exponent)
-        return BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=gate.phase)
+        return BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
 
 
 class ControlGateModifier(GateModifier):
