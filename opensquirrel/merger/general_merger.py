@@ -103,11 +103,14 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     """
     barrier_list: list[Barrier] = []
     ordered_statement_list: list[Statement] = []
-    for _, statement in enumerate(statement_list):
+    for statement in statement_list:
+        if isinstance(statement, Comment):
+            continue
         if isinstance(statement, Barrier):
             barrier_list.append(statement)
         else:
-            if len(barrier_list) > 0 and hasattr(statement, "get_qubit_operands"):
+            if len(barrier_list) > 0:
+                assert(hasattr(statement, "get_qubit_operands"))
                 instruction_qubits = statement.get_qubit_operands()
                 barrier_qubits = _flatten_list([barrier.get_qubit_operands() for barrier in barrier_list])
                 if any(qubit in barrier_qubits for qubit in instruction_qubits):

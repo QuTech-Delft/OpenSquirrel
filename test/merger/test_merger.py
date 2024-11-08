@@ -180,7 +180,17 @@ def test_no_merge_across_reset() -> None:
     ("circuit", "expected_result"),
     [
         (
-            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(math.pi / 3)).barrier(0).to_circuit(),
+            (
+                CircuitBuilder(2).
+                H(0).
+                barrier(0).
+                H(1).
+                barrier(1).
+                H(0).
+                Rx(0, Float(math.pi / 3)).
+                barrier(0).
+                to_circuit()
+            ),
             """version 3.0
 
 qubit[2] q
@@ -194,7 +204,17 @@ barrier q[0]
 """,
         ),
         (
-            CircuitBuilder(2).X(0).barrier(0).X(1).barrier(1).CNOT(0, 1).barrier(1).X(1).to_circuit(),
+            (
+                CircuitBuilder(2).
+                X(0).
+                barrier(0).
+                X(1).
+                barrier(1).
+                CNOT(0, 1).
+                barrier(1).
+                X(1).
+                to_circuit()
+            ),
             """version 3.0
 
 qubit[2] q
@@ -209,7 +229,15 @@ X q[1]
 """,
         ),
         (
-            CircuitBuilder(2).X(0).X(1).barrier(0).barrier(1).X(0).to_circuit(),
+            (
+                CircuitBuilder(2).
+                X(0).
+                X(1).
+                barrier(0).
+                barrier(1).
+                X(0).
+                to_circuit()
+            ),
             """version 3.0
 
 qubit[2] q
