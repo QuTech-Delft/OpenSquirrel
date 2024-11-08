@@ -5,7 +5,14 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
+from opensquirrel.ir import (
+    BlochSphereRotation,
+    ControlledGate,
+    Float,
+    MatrixGate,
+    QubitLike,
+    named_gate,
+)
 
 
 def test_circuit_from_string() -> None:
@@ -112,7 +119,7 @@ H q[4]
     )
 
 
-def test_CNOT_strong_type_error_string() -> None:
+def test_CNOT_strong_type_error_string() -> None:  # noqa: N802
     with pytest.raises(OSError, match=r".* with argument pack .*") as e_info:
         Circuit.from_string(
             """
@@ -256,4 +263,7 @@ Rz(-1.5707963) q[0]
 """
     )
 
-    assert ZYZDecomposer().decompose(H(0)) == [Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]
+    assert ZYZDecomposer().decompose(H(0)) == [
+        Rz(0, Float(math.pi)),
+        Ry(0, Float(math.pi / 2)),
+    ]
