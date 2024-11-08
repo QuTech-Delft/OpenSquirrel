@@ -10,18 +10,13 @@ from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import (
-    ATOL,
-    are_matrices_equivalent_up_to_global_phase,
-    normalize_angle,
-)
+from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
 REPR_DECIMALS = 5
 
 
 def repr_round(
-    value: float | Axis | NDArray[np.complex64 | np.complex128],
-    decimals: int = REPR_DECIMALS,
+    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
 ) -> float | NDArray[np.complex64 | np.complex128]:
     return np.round(value, decimals)
 
@@ -393,8 +388,7 @@ class Gate(Statement, ABC):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        # Note: two gates are considered equal even when their
-        # generators/arguments are different.
+        # Note: two gates are considered equal even when their generators/arguments are different.
         self.generator = generator
         self.arguments = arguments
 
