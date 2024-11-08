@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
-from typing import Any
+from typing import Any, cast
 
 import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
+from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
 from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import IR, Bit, Float, Gate, Int, Measure, Qubit, Reset
+from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, Measure, Qubit, Reset, Statement
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -65,6 +66,14 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         return bool(ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray)
 
     @staticmethod
+    def _is_gate_instruction(ast_node: Any) -> bool:
+        return isinstance(ast_node, cqasm.semantic.GateInstruction)
+
+    @staticmethod
+    def _is_non_gate_instruction(ast_node: Any) -> bool:
+        return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
+
+    @staticmethod
     def _get_qubits(
         ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef,
         register_manager: RegisterManager,
@@ -97,21 +106,62 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         return ret
 
     @classmethod
+    def _get_gate_operands(
+        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
+    ) -> list[list[Any]]:
+        """Get the list of lists of operands of a gate.
+        Notice that a gate just has a list of operands. The outer list is needed to support SGMQ.
+        For example, for CNOT q[0, 1] q[2, 3], this function returns [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]].
+        """
+        ret: list[list[Any]] = []
+        for operand in instruction.operands:
+            if cls._is_qubit_type(operand):
+                ret.append(cls._get_qubits(operand, register_manager))
+            else:
+                msg = "argument is not of qubit type"
+                raise TypeError(msg)
+        return ret
+
+    @classmethod
+    def _get_named_gate_param(cls, gate: cqasm.semantic.Gate) -> Any:
+        """Get the parameter of a named gate.
+        Notice the input gate can be a composition of gate modifiers acting on a named gate.
+        """
+        if gate.name in ["inv", "pow", "ctrl"]:
+            return cls._get_named_gate_param(gate.gate)
+        return cls._ast_literal_to_ir_literal(gate.parameter)
+
+    @classmethod
+    def _get_expanded_gate_args(
+        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
+    ) -> zip[tuple[Any, ...]]:
+        """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
+        For example, for CRk(2) q[0, 1] q[2, 3], this function first constructs the list with a list of qubits
+        [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]], then appends the list of parameters [Int(2), Int(2)],
+        and finally zips the whole list and returns [(Qubit(0), Qubit(1), Int(2)), (Qubit(2), Qubit(3), Int(2))]
+        """
+        ret = cls._get_gate_operands(instruction, register_manager)
+        gate_parameter = cls._get_named_gate_param(instruction.gate)
+        if gate_parameter is not None:
+            number_of_operands = len(ret[0])
+            ret.append([gate_parameter] * number_of_operands)
+        return zip(*ret)
+
+    @classmethod
     def _get_expanded_measure_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
         For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))]
-
-        Notice the  list is walked in reverse mode.
-        This is because the AST measure node has a bit first operand and a qubit second operand.
         """
+        # Notice the list is walked in reverse mode
+        # This is because the AST measure node has a bit first operand and a qubit second operand
         expanded_args: list[list[Any]] = []
         for ast_arg in reversed(ast_args):
-            if Parser._is_qubit_type(ast_arg):
+            if cls._is_qubit_type(ast_arg):
                 expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-            elif Parser._is_bit_type(ast_arg):
+            elif cls._is_bit_type(ast_arg):
                 expanded_args.append(cls._get_bits(ast_arg, register_manager))
             else:
-                msg = "received argument is not a (qu)bit"
+                msg = "argument is neither of qubit nor bit type"
                 raise TypeError(msg)
         return zip(*expanded_args)
 
@@ -125,29 +175,12 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             expanded_args += [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
             return zip(expanded_args)
         for ast_arg in ast_args:
-            if Parser._is_qubit_type(ast_arg):
+            if cls._is_qubit_type(ast_arg):
                 expanded_args += cls._get_qubits(ast_arg, register_manager)
             else:
-                msg = "received argument is not a (qu)bit"
+                msg = "argument is not of qubit type"
                 raise TypeError(msg)
         return zip(expanded_args)
-
-    @classmethod
-    def _get_expanded_gate_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
-        """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
-        For example: [(Qubit(0), Float(pi)), (Qubit(1), Float(pi))]
-        """
-        number_of_operands = 0
-        for ast_arg in ast_args:
-            if Parser._is_qubit_type(ast_arg):
-                number_of_operands += Parser._size_of(ast_arg)
-        expanded_args: list[list[Any]] = []
-        for ast_arg in ast_args:
-            if Parser._is_qubit_type(ast_arg):
-                expanded_args.append(cls._get_qubits(ast_arg, register_manager))
-            else:
-                expanded_args.append([cls._ast_literal_to_ir_literal(ast_arg)] * number_of_operands)
-        return zip(*expanded_args)
 
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
@@ -158,6 +191,28 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
     def _check_analysis_result(result: Any) -> None:
         if isinstance(result, list):
             raise OSError("parsing error: " + ", ".join(result))
+
+    def _get_gate_f(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
+        gate_name = instruction.gate.name
+        if gate_name in ["inv", "pow", "ctrl"]:
+            modified_gate_f = cast(Callable[..., BlochSphereRotation], self._get_gate_f(instruction.gate))
+            if gate_name == "inv":
+                return InverseGateModifier(modified_gate_f)
+            if gate_name == "pow":
+                return PowerGateModifier(instruction.gate.parameter.value, modified_gate_f)
+            if gate_name == "ctrl":
+                return ControlGateModifier(modified_gate_f)
+            msg = "parsing error: unknown unitary instruction"
+            raise OSError(msg)
+        return self.get_gate_f(gate_name)
+
+    def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., Statement]:
+        if "measure" in instruction.name:
+            return self.get_measure_f(instruction.name)
+        if "reset" in instruction.name:
+            return self.get_reset_f(instruction.name)
+        msg = "parsing error: unknown non-unitary instruction"
+        raise OSError(msg)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
@@ -172,20 +227,23 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         # Parse statements
         ir = IR()
         for statement in ast.block.statements:
-            if "measure" in statement.name:
-                generator_f_measure = self.get_measure_f(statement.name)
-                expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
-                for arg_set in expanded_args:
-                    ir.add_measure(generator_f_measure(*arg_set))
-            elif "reset" in statement.name:
-                generator_f_reset = self.get_reset_f(statement.name)
-                expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
-                for arg_set in expanded_args:
-                    ir.add_reset(generator_f_reset(*arg_set))
+            instruction_generator: Callable[..., Statement]
+            if Parser._is_gate_instruction(statement):
+                instruction_generator = self._get_gate_f(statement)
+                expanded_args = Parser._get_expanded_gate_args(statement, register_manager)
+            elif Parser._is_non_gate_instruction(statement):
+                instruction_generator = self._get_non_gate_f(statement)
+                if statement.name == "measure":
+                    expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
+                else:
+                    expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
             else:
-                generator_f_gate = self.get_gate_f(statement.name)
-                expanded_args = Parser._get_expanded_gate_args(statement.operands, register_manager)
-                for arg_set in expanded_args:
-                    ir.add_gate(generator_f_gate(*arg_set))
+                msg = "parsing error: unknown statement"
+                raise OSError(msg)
 
+            # For an SGMQ instruction:
+            # expanded_args will contain a list with the list of qubits for each individual instruction,
+            # while args will contain the list of qubits of an individual instruction
+            for args in expanded_args:
+                ir.add_statement(instruction_generator(*args))
         return Circuit(register_manager, ir)

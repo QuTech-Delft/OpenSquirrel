@@ -5,14 +5,7 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
-from opensquirrel.ir import (
-    BlochSphereRotation,
-    ControlledGate,
-    Float,
-    MatrixGate,
-    QubitLike,
-    named_gate,
-)
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
 
 
 def test_circuit_from_string() -> None:

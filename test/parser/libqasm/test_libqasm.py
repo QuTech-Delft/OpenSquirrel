@@ -140,7 +140,11 @@ def test_simplest(parser: Parser, circuit_string: str, expected_output: str) -> 
         ),
         (
             "version 3.0; qubit[2] q; ctrl.pow(2).inv.X q[0], q[1]",
-            [ControlledGate(0, BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi * -2, phase=math.pi / 2 * -2))],
+            [
+                ControlledGate(
+                    0, BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi * -2, phase=math.pi / 2 * -2)
+                )
+            ],
         ),
     ],
     ids=["inv", "pow_2_Rx", "pow_2_inv", "ctrl_pow_2_inv"],
