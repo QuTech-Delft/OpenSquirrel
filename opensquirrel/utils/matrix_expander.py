@@ -95,9 +95,8 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
         qubit = Qubit(qubit)
-        expanded_ket &= ~(1 << qubit.index)  # Erase bit.
-        # Set bit to value from reduced_ket.
-        expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index
+        expanded_ket &= ~(1 << qubit.index)  # erase bit
+        expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # set bit to value from reduced_ket
 
     return expanded_ket
 
@@ -118,10 +117,7 @@ class MatrixExpander(IRVisitor):
             ),
             np.eye(1 << rot.qubit.index),
         )
-        if result.shape != (
-            1 << self.qubit_register_size,
-            1 << self.qubit_register_size,
-        ):
+        if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
             msg = "result has incorrect shape"
             ValueError(msg)
         return result
@@ -162,10 +158,7 @@ class MatrixExpander(IRVisitor):
             )
             raise ValueError(msg)
 
-        expanded_matrix = np.zeros(
-            (1 << self.qubit_register_size, 1 << self.qubit_register_size),
-            dtype=m.dtype,
-        )
+        expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
 
         for expanded_matrix_column in range(expanded_matrix.shape[1]):
             small_matrix_col = get_reduced_ket(expanded_matrix_column, qubit_operands)
@@ -174,10 +167,7 @@ class MatrixExpander(IRVisitor):
                 expanded_matrix_row = expand_ket(expanded_matrix_column, small_matrix_row, qubit_operands)
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
-        if expanded_matrix.shape != (
-            1 << self.qubit_register_size,
-            1 << self.qubit_register_size,
-        ):
+        if expanded_matrix.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
             msg = "expended matrix has incorrect shape"
             raise ValueError(msg)
         return expanded_matrix

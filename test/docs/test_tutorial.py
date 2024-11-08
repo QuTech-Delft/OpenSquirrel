@@ -256,7 +256,4 @@ Rz(-1.5707963) q[0]
 """
     )
 
-    assert ZYZDecomposer().decompose(H(0)) == [
-        Rz(0, Float(math.pi)),
-        Ry(0, Float(math.pi / 2)),
-    ]
+    assert ZYZDecomposer().decompose(H(0)) == [Rz(0, Float(math.pi)), Ry(0, Float(math.pi / 2))]
