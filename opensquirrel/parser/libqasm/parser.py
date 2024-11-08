@@ -151,10 +151,9 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
     def _get_expanded_measure_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
         For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))]
-
-        Notice the list is walked in reverse mode.
-        This is because the AST measure node has a bit first operand and a qubit second operand.
         """
+        # Notice the list is walked in reverse mode
+        # This is because the AST measure node has a bit first operand and a qubit second operand
         expanded_args: list[list[Any]] = []
         for ast_arg in reversed(ast_args):
             if cls._is_qubit_type(ast_arg):
@@ -162,7 +161,7 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             elif cls._is_bit_type(ast_arg):
                 expanded_args.append(cls._get_bits(ast_arg, register_manager))
             else:
-                msg = "argument is not of qubit or bit type"
+                msg = "argument is neither of qubit nor bit type"
                 raise TypeError(msg)
         return zip(*expanded_args)
 
