@@ -27,7 +27,7 @@ class Decomposer(ABC):
         raise NotImplementedError()
 
 
-def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], qc: Circuit | None = None) -> list[Gate]:
+def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circuit: Circuit | None = None) -> list[Gate]:
     """
     Verifies the replacement gates against the given gate.
     Args:

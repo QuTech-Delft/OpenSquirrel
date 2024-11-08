@@ -120,12 +120,6 @@ def test_integration_global_phase() -> None:
         """
         version 3.0
 
-        // This is a single line comment which ends on the newline.
-        // The cQASM string must begin with the version instruction (apart from any preceding comments).
-
-        /* This is a multi-
-        line comment block */
-
         qubit[3] q
 
         H q[0:2]
