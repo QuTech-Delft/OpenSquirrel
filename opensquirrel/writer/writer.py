@@ -2,18 +2,7 @@ import inspect
 from typing import SupportsInt
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (
-    Bit,
-    Comment,
-    Float,
-    Gate,
-    Int,
-    IRVisitor,
-    Measure,
-    Qubit,
-    QubitLike,
-    Reset,
-)
+from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, QubitLike, Reset
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -100,5 +89,5 @@ def circuit_to_string(circuit: Circuit) -> str:
     writer_impl = _WriterImpl(circuit.register_manager)
     circuit.ir.accept(writer_impl)
 
-    # remove all trailing lines and leave only one
+    # Remove all trailing lines and leave only one
     return writer_impl.output.rstrip() + "\n"
