@@ -227,7 +227,6 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         # Parse statements
         ir = IR()
         for statement in ast.block.statements:
-            instruction_generator: Callable[..., Statement]
             if Parser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_f(statement)
                 expanded_args = Parser._get_expanded_gate_args(statement, register_manager)
