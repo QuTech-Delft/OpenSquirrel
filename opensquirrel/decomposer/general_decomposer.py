@@ -50,7 +50,7 @@ def decompose(ir: IR, decomposer: Decomposer) -> None:
         replacement_gates: list[Gate] = decomposer.decompose(statement)
         check_gate_replacement(gate, replacement_gates)
 
-        ir.statements[statement_index : statement_index + 1] = replacement_gates
+        ir.statements[statement_index: statement_index + 1] = replacement_gates
         statement_index += len(replacement_gates)
 
 

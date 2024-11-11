@@ -24,12 +24,12 @@ def X(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
 
 @named_gate
 def X90(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi / 2, phase=0)
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi / 2, phase=math.pi / 4)
 
 
 @named_gate
 def mX90(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0)
+    return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=-math.pi / 2, phase=-math.pi / 4)
 
 
 @named_gate
@@ -39,12 +39,12 @@ def Y(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
 
 @named_gate
 def Y90(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi / 2, phase=0)
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=math.pi / 2, phase=math.pi / 4)
 
 
 @named_gate
 def mY90(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=-math.pi / 2, phase=0)
+    return BlochSphereRotation(qubit=q, axis=(0, 1, 0), angle=-math.pi / 2, phase=-math.pi / 4)
 
 
 @named_gate
@@ -54,22 +54,22 @@ def Z(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
 
 @named_gate
 def S(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 2, phase=0)
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 2, phase=math.pi / 4)
 
 
 @named_gate
 def Sdag(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 2, phase=0)
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 2, phase=-math.pi / 4)
 
 
 @named_gate
 def T(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 4, phase=0)
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=math.pi / 4, phase=math.pi / 8)
 
 
 @named_gate
 def Tdag(q: QubitLike) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 4, phase=0)
+    return BlochSphereRotation(qubit=q, axis=(0, 0, 1), angle=-math.pi / 4, phase=-math.pi / 8)
 
 
 @named_gate

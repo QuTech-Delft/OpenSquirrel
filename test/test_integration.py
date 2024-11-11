@@ -6,9 +6,7 @@ import importlib.util
 import pytest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.decomposer.aba_decomposer import XYXDecomposer
-from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.decomposer import XYXDecomposer, CNOTDecomposer, McKayDecomposer, CNOT2CZDecomposer
 from opensquirrel.default_gates import CNOT, CZ, H
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import Measure
@@ -43,14 +41,7 @@ def test_Spin2_backend() -> None:  # noqa: N802
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+    qc.decompose(decomposer=CNOT2CZDecomposer())
 
     # Merge single-qubit gates and decompose with McKay decomposition.
     qc.merge_single_qubit_gates()
