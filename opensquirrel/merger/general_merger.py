@@ -183,15 +183,21 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
             del ir.statements[statement_index]
             continue
 
-        # For other instructions than Bloch sphere rotations,
-        # check if those instructions operate on qubits for which we keep an accumulated Bloch sphere rotation,
-        # and, in case they do, insert those corresponding accumulated Bloch sphere rotations
-        for qubit_operand in statement.get_qubit_operands():  # type: ignore
-            if not accumulators_per_qubit[qubit_operand].is_identity():
-                ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
-                accumulators_per_qubit[qubit_operand] = I(qubit_operand)
-                statement_index += 1
+        def insert_accumulated_bloch_sphere_rotations(qubits: list[Qubit]) -> None:
+            nonlocal statement_index
+            for qubit in qubits:
+                if not accumulators_per_qubit[qubit].is_identity():
+                    ir.statements.insert(statement_index, accumulators_per_qubit[qubit])
+                    accumulators_per_qubit[qubit] = I(qubit)
+                    statement_index += 1
 
+        # For barrier directives, insert all accumulated Bloch sphere rotations
+        # For other instructions, insert accumulated Bloch sphere rotations on qubits used by those instructions
+        # In any case, reset the dictionary entry for the inserted accumulated Bloch sphere rotations
+        if isinstance(statement, Barrier):
+            insert_accumulated_bloch_sphere_rotations([Qubit(i) for i in range(circuit.qubit_register_size)])
+        else:
+            insert_accumulated_bloch_sphere_rotations(statement.get_qubit_operands())
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
