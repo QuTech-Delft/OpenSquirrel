@@ -185,7 +185,8 @@ qubit[2] q
 H q[0]
 H q[1]
 barrier q[0]
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.65465 -0.37796  0.65465], angle=-2.41886, phase=1.5708)
+H q[0]
+Rx(1.0471976) q[0]
 barrier q[1]
 barrier q[0]
 """,
@@ -262,6 +263,5 @@ barrier q[3]
 def test_rearrange_barriers(circuit: Circuit, expected_result: str) -> None:
     from opensquirrel.merger.general_merger import rearrange_barriers
 
-    circuit.merge_single_qubit_gates()
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result

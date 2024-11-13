@@ -159,13 +159,9 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
         Qubit(qubit_index): I(qubit_index) for qubit_index in range(circuit.qubit_register_size)
     }
 
-    ir = circuit.ir
-
-    rearrange_barriers(ir)
-
     statement_index = 0
-    while statement_index < len(ir.statements):
-        statement = ir.statements[statement_index]
+    while statement_index < len(circuit.ir.statements):
+        statement = circuit.ir.statements[statement_index]
 
         # Skip, since statement is a comment
         if isinstance(statement, Comment):
@@ -177,14 +173,14 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
             already_accumulated = accumulators_per_qubit[statement.qubit]
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
             accumulators_per_qubit[statement.qubit] = composed
-            del ir.statements[statement_index]
+            del circuit.ir.statements[statement_index]
             continue
 
         def insert_accumulated_bloch_sphere_rotations(qubits: list[Qubit]) -> None:
             nonlocal statement_index
             for qubit in qubits:
                 if not accumulators_per_qubit[qubit].is_identity():
-                    ir.statements.insert(statement_index, accumulators_per_qubit[qubit])
+                    circuit.ir.statements.insert(statement_index, accumulators_per_qubit[qubit])
                     accumulators_per_qubit[qubit] = I(qubit)
                     statement_index += 1
 
@@ -201,4 +197,4 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
         if not accumulated_bloch_sphere_rotation.is_identity():
             if accumulated_bloch_sphere_rotation.is_anonymous:
                 accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
-            ir.statements.append(accumulated_bloch_sphere_rotation)
+            circuit.ir.statements.append(accumulated_bloch_sphere_rotation)
