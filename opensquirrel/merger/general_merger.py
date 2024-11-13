@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+import copy
 from math import acos, cos, floor, log10, sin
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
 from opensquirrel.ir import Barrier, BlochSphereRotation, Comment, Qubit, Statement
-from opensquirrel.utils.list_utils import flatten_list
+from opensquirrel.utils.list import flatten_irregular_list, flatten_list
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -118,6 +119,54 @@ def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
     return ordered_statement_list
 
 
+def sticky_barriers(initial_circuit: list[Statement], current_circuit: list[Statement]) -> list[Statement]:
+    """This process takes the initial circuit inputted by the user and joins the barriers that were originally
+    placed together before the single qubit gate merge.
+
+    Args:
+        initial_circuit: The original order of the statement list
+        current_circuit: The current order of the statement list
+
+    Returns:
+        List of statements with the respected original barrier positions
+    """
+    barrier_groups: list[list[Barrier]] = []
+    local_group = []
+    modified_circuit: list[Any] = copy.deepcopy(current_circuit)
+
+    for i, statement in enumerate(initial_circuit):
+        if isinstance(statement, Barrier):
+            local_group.append(statement)
+        elif len(local_group) > 0:
+            barrier_groups.append(local_group)
+            local_group = []
+        if len(local_group) > 0 and i + 1 == len(initial_circuit):
+            barrier_groups.append(local_group)
+            local_group = []
+
+    group_counter = 0
+    placement_counter = 0
+    if len(barrier_groups) > 0:
+        for i, statement in enumerate(modified_circuit):
+            if placement_counter != 0:
+                placement_counter -= 1
+                continue
+            if barrier_groups[group_counter][-1] == statement:
+                del modified_circuit[i]
+                modified_circuit.insert(i, barrier_groups[group_counter])
+                placement_counter = len(barrier_groups[group_counter])
+                group_counter += 1
+
+            elif isinstance(statement, Barrier):
+                modified_circuit[i] = None
+
+        modified_circuit = [statement for statement in modified_circuit if statement is not None]
+
+        modified_circuit = flatten_irregular_list(modified_circuit)
+
+    return modified_circuit
+
+
 def merge_single_qubit_gates(circuit: Circuit) -> None:
     """Merge all consecutive 1-qubit gates in the circuit.
 
@@ -132,6 +181,7 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
 
     ir = circuit.ir
     statement_index = 0
+    initial_circuit = copy.deepcopy(circuit.ir.statements)
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
@@ -166,4 +216,4 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
                 accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
             ir.statements.append(accumulated_bloch_sphere_rotation)
 
-    ir.statements = merge_barriers(circuit.ir.statements)
+    ir.statements = sticky_barriers(initial_circuit, ir.statements)
