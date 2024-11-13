@@ -1,15 +1,15 @@
 from __future__ import annotations
 
+import copy
 from math import acos, cos, floor, log10, sin
 from typing import TYPE_CHECKING, Any
 
-import functools
 import numpy as np
-import operator
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Comment, Gate, Qubit, Statement
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Comment, Qubit, Statement
+from opensquirrel.utils.list import flatten_list
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -83,10 +83,6 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
         ):
             return gate
     return bsr
-
-
-def flatten_list(list_to_flatten: list[list[Any]]) -> list[Any]:
-    return functools.reduce(operator.iadd, list_to_flatten, [])
 
 
 def can_move_instruction_before_barrier(instruction: Statement, barriers: list[Statement]) -> bool:
@@ -170,11 +166,11 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
 
     rearrange_barriers(ir)
 
-    statement_index: int = 0
+    statement_index = 0
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
-        # Skip comments
+        # Skip, since statement is a comment
         if isinstance(statement, Comment):
             statement_index += 1
             continue
@@ -182,28 +178,20 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
         # Accumulate consecutive Bloch sphere rotations
         if isinstance(statement, BlochSphereRotation):
             already_accumulated = accumulators_per_qubit[statement.qubit]
-
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
             accumulators_per_qubit[statement.qubit] = composed
-
             del ir.statements[statement_index]
             continue
 
-        def insert_accumulated_bloch_sphere_rotations(qubits: list[Qubit]) -> None:
-            nonlocal statement_index
-            for qubit in qubits:
-                if not accumulators_per_qubit[qubit].is_identity():
-                    ir.statements.insert(statement_index, accumulators_per_qubit[qubit])
-                    accumulators_per_qubit[qubit] = I(qubit)
-                    statement_index += 1
+        # For other instructions than Bloch sphere rotations,
+        # check if those instructions operate on qubits for which we keep an accumulated Bloch sphere rotation,
+        # and, in case they do, insert those corresponding accumulated Bloch sphere rotations
+        for qubit_operand in statement.get_qubit_operands():  # type: ignore
+            if not accumulators_per_qubit[qubit_operand].is_identity():
+                ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
+                accumulators_per_qubit[qubit_operand] = I(qubit_operand)
+                statement_index += 1
 
-        # For barrier directives, insert all accumulated Bloch sphere rotations
-        # For other instructions, insert accumulated Bloch sphere rotations on qubits used by those instructions
-        # In any case, reset the dictionary entry for the inserted accumulated Bloch sphere rotations
-        if isinstance(statement, Barrier):
-            insert_accumulated_bloch_sphere_rotations([Qubit(i) for i in range(circuit.qubit_register_size)])
-        else:
-            insert_accumulated_bloch_sphere_rotations(statement.get_qubit_operands())
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():

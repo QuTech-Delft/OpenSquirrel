@@ -52,11 +52,7 @@ class TestAxis:
         [
             (Qubit(1), TypeError, "axis requires an ArrayLike"),
             ([0, [3], [2]], TypeError, "axis requires an ArrayLike"),
-            (
-                0,
-                ValueError,
-                "axis requires an ArrayLike of length 3, but received an ArrayLike of length 1",
-            ),
+            (0, ValueError, "axis requires an ArrayLike of length 3, but received an ArrayLike of length 1"),
             (
                 [1, 2, 3, 4],
                 ValueError,
@@ -195,11 +191,7 @@ class TestMeasure:
 
     @pytest.mark.parametrize(
         "other_measure",
-        [
-            Measure(43, Bit(43), axis=(0, 0, 1)),
-            Measure(42, Bit(42), axis=(1, 0, 0)),
-            "test",
-        ],
+        [Measure(43, Bit(43), axis=(0, 0, 1)), Measure(42, Bit(42), axis=(1, 0, 0)), "test"],
         ids=["qubit", "axis", "type"],
     )
     def test_inequality(self, measure: Measure, other_measure: Measure | str) -> None:

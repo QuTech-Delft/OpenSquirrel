@@ -39,8 +39,7 @@ def test_Spin2_backend() -> None:  # noqa: N802
         """,
     )
 
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit
-    # interactions are captured by CNOT gates
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
@@ -133,8 +132,7 @@ def test_hectoqubit_backend() -> None:
         """
     )
 
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit
-    # interactions are captured by CNOT gates
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates

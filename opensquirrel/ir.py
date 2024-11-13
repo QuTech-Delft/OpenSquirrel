@@ -10,18 +10,13 @@ from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
-from opensquirrel.common import (
-    ATOL,
-    are_matrices_equivalent_up_to_global_phase,
-    normalize_angle,
-)
+from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
 
 REPR_DECIMALS = 5
 
 
 def repr_round(
-    value: float | Axis | NDArray[np.complex64 | np.complex128],
-    decimals: int = REPR_DECIMALS,
+    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
 ) -> float | NDArray[np.complex64 | np.complex128]:
     return np.round(value, decimals)
 
@@ -66,7 +61,7 @@ class IRVisitor:
     def visit_directive(self, directive: Directive) -> Any:
         pass
 
-    def visit_barrier_gate(self, barrier: Barrier) -> Any:
+    def visit_barrier(self, barrier: Barrier) -> Any:
         pass
 
 
@@ -80,19 +75,39 @@ class Expression(IRNode, ABC):
     pass
 
 
-@dataclass
+@dataclass(init=False)
 class Float(Expression):
+    """Floats used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``Float`` object.
+    """
+
     value: float
+
+    def __init__(self, value: SupportsFloat) -> None:
+        """Init of the ``Float`` object.
+
+        Args:
+            value: value of the ``Float`` object.
+        """
+        if isinstance(value, SupportsFloat):
+            self.value = float(value)
+            return
+
+        msg = "value must be a float"
+        raise TypeError(msg)
+
+    def __float__(self) -> float:
+        """Cast the ``Float`` object to a built-in Python ``float``.
+
+        Returns:
+            Built-in Python ``float`` representation of the ``Float``.
+        """
+        return self.value
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
-
-    def __post_init__(self) -> None:
-        if isinstance(self.value, SupportsFloat):
-            self.value = float(self.value)
-        else:
-            msg = "value must be a float"
-            raise TypeError(msg)
 
 
 @dataclass(init=False)
@@ -118,16 +133,16 @@ class Int(Expression):
         msg = "value must be an int"
         raise TypeError(msg)
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_int(self)
-
     def __int__(self) -> int:
-        """Cast the ``Int`` object to a building python ``int``.
+        """Cast the ``Int`` object to a built-in Python ``int``.
 
         Returns:
-            Building python ``int`` representation of the ``Int``.
+            Built-in Python ``int`` representation of the ``Int``.
         """
         return self.value
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_int(self)
 
 
 @dataclass
@@ -425,7 +440,7 @@ class Barrier(Directive):
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_directive(self)
-        return visitor.visit_barrier_gate(self)
+        return visitor.visit_barrier(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
@@ -442,8 +457,7 @@ class Gate(Statement, ABC):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        # Note: two gates are considered equal even when their
-        # generators/arguments are different.
+        # Note: two gates are considered equal even when their generators/arguments are different.
         self.generator = generator
         self.arguments = arguments
 
@@ -781,6 +795,9 @@ class IR:
 
     def add_reset(self, reset: Reset) -> None:
         self.statements.append(reset)
+
+    def add_statement(self, statement: Statement) -> None:
+        self.statements.append(statement)
 
     def add_comment(self, comment: Comment) -> None:
         self.statements.append(comment)
