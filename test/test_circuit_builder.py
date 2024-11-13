@@ -109,6 +109,7 @@ class TestCircuitBuilder:
         builder = CircuitBuilder(2)
         circuit = builder.H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(np.pi / 3)).barrier(0).to_circuit()
         circuit.merge_single_qubit_gates()
+        print(circuit)
         assert (
             str(circuit)
             == """version 3.0
@@ -118,8 +119,8 @@ qubit[2] q
 H q[0]
 H q[1]
 barrier q[0]
-barrier q[1]
 Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.65465 -0.37796  0.65465], angle=-2.41886, phase=1.5708)
+barrier q[1]
 barrier q[0]
 """
         )
@@ -165,7 +166,8 @@ X q[0]
     def test_barrier_4_qubit(self) -> None:
         builder = CircuitBuilder(4)
         circuit = (
-            builder.H(0)
+            builder
+            .H(0)
             .barrier(0)
             .H(1)
             .barrier(1)

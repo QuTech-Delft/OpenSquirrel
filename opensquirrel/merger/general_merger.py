@@ -1,23 +1,15 @@
 from __future__ import annotations
 
 from math import acos, cos, floor, log10, sin
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+import functools
 import numpy as np
+import operator
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import (
-    IR,
-    Barrier,
-    BlochSphereRotation,
-    Comment,
-    ControlledGate,
-    Gate,
-    MatrixGate,
-    Qubit,
-    Statement,
-)
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Comment, Gate, Qubit, Statement
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -35,8 +27,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         raise ValueError(msg)
 
     acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
-    # This fixes float approximations like 1.0000000000002 which acos doesn't
-    # like.
+    # This fixes float approximations like 1.0000000000002 which acos doesn't like.
     acos_argument = max(min(acos_argument, 1.0), -1.0)
 
     combined_angle = 2 * acos(acos_argument)
@@ -94,63 +85,73 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     return bsr
 
 
-def rearrange_barriers(ir: IR, accumulated_barriers: list[Barrier | None]) -> list[Barrier | None]:
-    """Function to arrange a set of barriers in an optimal and correct order within a circuit.
-    First, the barriers are positioned to avoid interfering with the logical flow of the circuit
-    for each qubit. Then, barriers across multiple qubits are "merged" by aligning them vertically
-    in the same position within the circuit.
+def flatten_list(list_to_flatten: list[list[Any]]) -> list[Any]:
+    return functools.reduce(operator.iadd, list_to_flatten, [])
 
-    Args:
-        ir: the current IR object
-        accumulated_barriers: list of barriers currently accumulated
 
-    Returns:
-        The list of accumulated barriers that have not yet been placed in the circuit.
+def can_move_instruction_before_barrier(instruction: Statement, barriers: list[Statement]) -> bool:
+    """Checks whether an instruction can be moved before a group of 'linked' barriers.
+    Returns True if none of the qubits used by the instruction are part of any barrier, False otherwise.
     """
-    ir.statements = merge_barriers(ir.statements)
-
-    reversed_list = ir.statements[::-1]
-    for index, statement in enumerate(reversed_list):
-        if statement in accumulated_barriers and isinstance(statement, Barrier):
-            del reversed_list[index]
-            reversed_list.insert(0, statement)
-            accumulated_barriers.remove(statement)
-
-    ir.statements = reversed_list[::-1]
-
-    ir.statements = merge_barriers(ir.statements)
-
-    return accumulated_barriers
+    instruction_qubit_operands = instruction.get_qubit_operands()
+    barriers_group_qubit_operands = set(flatten_list([barrier.get_qubit_operands() for barrier in barriers]))
+    if not any(qubit in barriers_group_qubit_operands for qubit in instruction_qubit_operands):
+        return True
+    return False
 
 
-def merge_barriers(statement_list: list[Statement]) -> list[Statement]:
-    """Function to fix the placement of the barriers such that the barriers are
-    merged in the circuit. Note that this function requires the barriers to be
-    placed in the correct order.
-
-    Args:
-        statement_list: list of statements
-
-    Returns:
-        Statement list with the barriers merged.
+def can_move_before(statement: Statement, statement_group: list[Statement]) -> bool:
+    """Checks whether a statement can be moved before a group of statements, following the logic below:
+    - An instruction cannot be moved before other instruction.
+    - An instruction may be moved before a group of 'linked' barriers.
     """
-    barrier_list: list[Barrier] = []
-    ordered_statement_list: list[Statement] = []
-    for _, statement in enumerate(statement_list):
-        if len(barrier_list) > 0 and isinstance(statement, Gate):
-            barrier_qubits = next(q.get_qubit_operands() for q in barrier_list)[0]
-            if barrier_qubits in statement.get_qubit_operands():
-                ordered_statement_list.extend(barrier_list)
-                barrier_list = []
-        if isinstance(statement, Barrier):
-            barrier_list.append(statement)
+    first_statement_from_group = statement_group[0]
+    if not isinstance(statement, Barrier) and not isinstance(first_statement_from_group, Barrier):
+        return False
+    if not isinstance(statement, Barrier) and isinstance(first_statement_from_group, Barrier):
+        return can_move_instruction_before_barrier(statement, statement_group)
+    if isinstance(statement, Barrier) and not isinstance(first_statement_from_group, Barrier):
+        return can_move_instruction_before_barrier(statement, statement_group)
+    return False
+
+
+def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:
+    """Receives a list of statements.
+    Returns a list of lists of statements, where each list of statements is
+    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).
+    """
+    ret: list[[Statement]] = []
+    index = -1
+    adding_linked_barriers_to_group = False
+    for statement in statements:
+        if not isinstance(statement, Barrier) or not adding_linked_barriers_to_group:
+            index += 1
+            ret.append([statement])
         else:
-            ordered_statement_list.append(statement)
+            ret[-1].append(statement)
+        adding_linked_barriers_to_group = isinstance(statement, Barrier)
+    return ret
 
-    if len(barrier_list) > 0:
-        ordered_statement_list.extend(barrier_list)
 
-    return ordered_statement_list
+def rearrange_barriers(ir: IR) -> None:
+    """Receives an IR.
+    Builds an enumerated list of lists of statements, where each list of statements is
+    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).
+    Then sorts that enumerated list of lists so that instructions can be moved before groups of barriers.
+    And updates the input IR with the flattened list of sorted statements.
+    """
+    statements_groups = group_linked_barriers(ir.statements)
+    for i, statement_group in enumerate(statements_groups):
+        statement = statement_group[0]
+        if not isinstance(statement, Barrier):
+            assert len(statement_group) == 1
+            previous_statement_groups = reversed(list(enumerate(statements_groups[:i])))
+            for j, previous_statement_group in previous_statement_groups:
+                if not can_move_before(statement, previous_statement_group):
+                    statements_groups.insert(j + 1, [statement])
+                    del statements_groups[i + 1]
+                    break
+    ir.statements = flatten_list(statements_groups)
 
 
 def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
@@ -165,20 +166,21 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
         Qubit(qubit_index): I(qubit_index) for qubit_index in range(circuit.qubit_register_size)
     }
 
-    accumulated_barriers: list[Barrier | None] = []
-
     ir = circuit.ir
-    statement_index = 0
+
+    rearrange_barriers(ir)
+
+    statement_index: int = 0
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
+        # Skip comments
         if isinstance(statement, Comment):
-            # Skip, since statement is a comment
             statement_index += 1
             continue
 
+        # Accumulate consecutive Bloch sphere rotations
         if isinstance(statement, BlochSphereRotation):
-            # Accumulate consecutive Bloch sphere rotations
             already_accumulated = accumulators_per_qubit[statement.qubit]
 
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
@@ -187,26 +189,21 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
             del ir.statements[statement_index]
             continue
 
-        # Skip controlled-gates, measure, reset, and reset accumulator for
-        # their qubit operands
-        for qubit_operand in statement.get_qubit_operands():  # type: ignore
-            if not accumulators_per_qubit[qubit_operand].is_identity():
-                ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])
-                accumulators_per_qubit[qubit_operand] = I(qubit_operand)
-                if (
-                    isinstance(statement, (MatrixGate, ControlledGate, Barrier))
-                ) and len(accumulated_barriers) > 0:
-                    qubit_operands = statement.get_qubit_operands()
-                    barrier_qubits = next(q.get_qubit_operands() for q in accumulated_barriers if (q is not None))
-                    if any(q in barrier_qubits for q in qubit_operands):
-                        accumulated_barriers = rearrange_barriers(ir, accumulated_barriers)
+        def insert_accumulated_bloch_sphere_rotations(qubits: list[Qubit]) -> None:
+            nonlocal statement_index
+            for qubit in qubits:
+                if not accumulators_per_qubit[qubit].is_identity():
+                    ir.statements.insert(statement_index, accumulators_per_qubit[qubit])
+                    accumulators_per_qubit[qubit] = I(qubit)
+                    statement_index += 1
 
-                    if isinstance(statement, Barrier):
-                        accumulated_barriers.append(statement)
-
-                accumulated_barriers = rearrange_barriers(ir, accumulated_barriers)
-                statement_index += 1
-
+        # For barrier directives, insert all accumulated Bloch sphere rotations
+        # For other instructions, insert accumulated Bloch sphere rotations on qubits used by those instructions
+        # In any case, reset the dictionary entry for the inserted accumulated Bloch sphere rotations
+        if isinstance(statement, Barrier):
+            insert_accumulated_bloch_sphere_rotations([Qubit(i) for i in range(circuit.qubit_register_size)])
+        else:
+            insert_accumulated_bloch_sphere_rotations(statement.get_qubit_operands())
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():

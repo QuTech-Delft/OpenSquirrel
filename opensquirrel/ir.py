@@ -293,7 +293,9 @@ class Axis(Sequence[np.float64], Expression):
 
 
 class Statement(IRNode, ABC):
-    pass
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        pass
 
 
 class Measure(Statement, ABC):
@@ -397,6 +399,7 @@ class Directive(Statement, ABC):
         Returns:
             List of qubits on which the Gate operates.
         """
+        pass
 
 
 class Barrier(Directive):
@@ -478,6 +481,7 @@ class Gate(Statement, ABC):
         Returns:
             List of qubits on which the Gate operates.
         """
+        pass
 
     @abstractmethod
     def is_identity(self) -> bool:
@@ -486,6 +490,7 @@ class Gate(Statement, ABC):
         Returns:
             Boolean value stating whether the Gate is an identity Gate.
         """
+        pass
 
 
 class BlochSphereRotation(Gate):
@@ -758,6 +763,9 @@ class Comment(Statement):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return []
 
 
 class IR:
