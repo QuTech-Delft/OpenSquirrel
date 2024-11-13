@@ -117,7 +117,7 @@ def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:
     index = -1
     adding_linked_barriers_to_group = False
     for statement in statements:
-        if not isinstance(statement, Barrier) or not adding_linked_barriers_to_group:
+        if not (adding_linked_barriers_to_group and isinstance(statement, Barrier)):
             index += 1
             ret.append([statement])
         else:
