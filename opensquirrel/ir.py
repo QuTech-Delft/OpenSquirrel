@@ -414,7 +414,6 @@ class Directive(Statement, ABC):
         Returns:
             List of qubits on which the Gate operates.
         """
-        pass
 
 
 class Barrier(Directive):
@@ -495,7 +494,6 @@ class Gate(Statement, ABC):
         Returns:
             List of qubits on which the Gate operates.
         """
-        pass
 
     @abstractmethod
     def is_identity(self) -> bool:
@@ -504,7 +502,6 @@ class Gate(Statement, ABC):
         Returns:
             Boolean value stating whether the Gate is an identity Gate.
         """
-        pass
 
 
 class BlochSphereRotation(Gate):

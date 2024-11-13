@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import copy
 from math import acos, cos, floor, log10, sin
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -91,9 +90,7 @@ def can_move_instruction_before_barrier(instruction: Statement, barriers: list[S
     """
     instruction_qubit_operands = instruction.get_qubit_operands()
     barriers_group_qubit_operands = set(flatten_list([barrier.get_qubit_operands() for barrier in barriers]))
-    if not any(qubit in barriers_group_qubit_operands for qubit in instruction_qubit_operands):
-        return True
-    return False
+    return not any(qubit in barriers_group_qubit_operands for qubit in instruction_qubit_operands)
 
 
 def can_move_before(statement: Statement, statement_group: list[Statement]) -> bool:
@@ -116,7 +113,7 @@ def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:
     Returns a list of lists of statements, where each list of statements is
     either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).
     """
-    ret: list[[Statement]] = []
+    ret: list[list[Statement]] = []
     index = -1
     adding_linked_barriers_to_group = False
     for statement in statements:
