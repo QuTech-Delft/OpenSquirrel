@@ -27,8 +27,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         raise ValueError(msg)
 
     acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
-    # This fixes float approximations like 1.0000000000002 which acos doesn't
-    # like.
+    # This fixes float approximations like 1.0000000000002 which acos doesn't like.
     acos_argument = max(min(acos_argument, 1.0), -1.0)
 
     combined_angle = 2 * acos(acos_argument)
@@ -185,13 +184,13 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
+        # Skip, since statement is a comment
         if isinstance(statement, Comment):
-            # Skip, since statement is a comment
             statement_index += 1
             continue
 
+        # Accumulate consecutive Bloch sphere rotations
         if isinstance(statement, BlochSphereRotation):
-            # Accumulate consecutive Bloch sphere rotations
             already_accumulated = accumulators_per_qubit[statement.qubit]
 
             composed = compose_bloch_sphere_rotations(statement, already_accumulated)
@@ -200,8 +199,9 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:
             del ir.statements[statement_index]
             continue
 
-        # Skip controlled-gates, measure, reset, and reset accumulator for
-        # their qubit operands
+        # For other instructions than Bloch sphere rotations,
+        # check if those instructions operate on qubits for which we keep an accumulated Bloch sphere rotation,
+        # and, in case they do, insert those corresponding accumulated Bloch sphere rotations
         for qubit_operand in statement.get_qubit_operands():  # type: ignore
             if not accumulators_per_qubit[qubit_operand].is_identity():
                 ir.statements.insert(statement_index, accumulators_per_qubit[qubit_operand])

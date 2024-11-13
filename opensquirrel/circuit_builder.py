@@ -138,12 +138,11 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary, DirectiveLibrary
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
 
-            # fix for python39
+            # Fix for Python 3.9
             try:
                 is_incorrect_type = not isinstance(args[i], expected_type)  # type: ignore
             except TypeError:
-                # expected type is probably a Union, which works differently in
-                # python39
+                # Expected type is probably a Union, which works differently in Python 3.9
                 is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
 
             if is_incorrect_type:

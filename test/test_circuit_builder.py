@@ -55,12 +55,7 @@ class TestCircuitBuilder:
 
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [
-            H(0),
-            CNOT(0, 1),
-            Measure(0, Bit(0)),
-            Measure(1, Bit(1)),
-        ]
+        assert circuit.ir.statements == [H(0), CNOT(0, 1), Measure(0, Bit(0)), Measure(1, Bit(1))]
 
     def test_chain(self) -> None:
         builder = CircuitBuilder(3)
@@ -82,7 +77,7 @@ class TestCircuitBuilder:
 
     def test_unknown_instruction(self) -> None:
         builder = CircuitBuilder(3)
-        with pytest.raises(ValueError, match="unknown instruction `unknown`"):
+        with pytest.raises(ValueError, match="unknown instruction 'unknown'"):
             builder.unknown(0)
 
     def test_wrong_number_of_arguments(self) -> None:

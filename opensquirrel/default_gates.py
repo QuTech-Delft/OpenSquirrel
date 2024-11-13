@@ -4,15 +4,7 @@ import math
 from collections.abc import Callable
 from typing import SupportsInt
 
-from opensquirrel.ir import (
-    BlochSphereRotation,
-    ControlledGate,
-    Float,
-    Gate,
-    Int,
-    QubitLike,
-    named_gate,
-)
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, QubitLike, named_gate
 
 
 @named_gate
@@ -106,9 +98,7 @@ def CZ(control: QubitLike, target: QubitLike) -> ControlledGate:  # noqa: N802
 
 
 @named_gate
-def CR(  # noqa: N802
-    control: QubitLike, target: QubitLike, theta: Float
-) -> ControlledGate:
+def CR(control: QubitLike, target: QubitLike, theta: Float) -> ControlledGate:  # noqa: N802
     return ControlledGate(
         control,
         BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2),
@@ -116,14 +106,9 @@ def CR(  # noqa: N802
 
 
 @named_gate
-def CRk(  # noqa: N802
-    control: QubitLike, target: QubitLike, k: SupportsInt
-) -> ControlledGate:
+def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate:  # noqa: N802
     theta = 2 * math.pi / (2 ** Int(k).value)
-    return ControlledGate(
-        control,
-        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2),
-    )
+    return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
 
 
 default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
