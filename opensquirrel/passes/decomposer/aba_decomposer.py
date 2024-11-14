@@ -70,37 +70,30 @@ class ABADecomposer(Decomposer, ABC):
                 p = math.pi
                 theta2 = 2 * math.acos(a_axis_value)
                 if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
-                    # This can be anything, but setting m = p means theta3 ==
-                    # 0, which is better for gate count.
+                    # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                     m = p
                 else:
                     m = 2 * math.acos(
-                        round(
-                            b_axis_value / math.sqrt(1 - a_axis_value**2),
-                            abs(math.floor(math.log10(ATOL))),
-                        )
+                        round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL)))),
                     )
 
         else:
             p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
             acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
 
-            # This fixes float approximations like 1.0000000000002, which acos
-            # does not like.
+            # This fixes float approximations like 1.0000000000002, which acos does not like.
             acos_argument = max(min(acos_argument, 1.0), -1.0)
 
             theta2 = 2 * math.acos(acos_argument)
             theta2 = math.copysign(theta2, alpha)
 
             if abs(math.sin(theta2 / 2)) < ATOL:
-                # This can be anything, but setting m = p means theta3 == 0,
-                # which is better for gate count.
+                # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
                 m = p
             else:
                 acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
-                # This fixes float approximations like 1.0000000000002, which
-                # acos does not like.
+                # This fixes float approximations like 1.0000000000002, which acos does not like.
                 acos_argument = max(min(acos_argument, 1.0), -1.0)
                 m = 2 * math.acos(acos_argument)
                 if math.pi - abs(m) > ATOL:

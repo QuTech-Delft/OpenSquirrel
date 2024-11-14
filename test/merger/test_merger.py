@@ -35,8 +35,7 @@ def test_single_gate() -> None:
 
     modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
 
-    # Check that when no fusion happens, generator and arguments of gates are
-    # preserved.
+    # Check that when no fusion happens, generator and arguments of gates are preserved.
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
     assert circuit.ir.statements[0].generator == Ry
     assert circuit.ir.statements[0].arguments == (Qubit(0), Float(1.2345))
@@ -85,12 +84,10 @@ def test_merge_different_qubits() -> None:
     modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
 
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
-    # When fusion happens, the resulting gate is anonymous.
-    assert circuit.ir.statements[0].is_anonymous
+    assert circuit.ir.statements[0].is_anonymous  # When fusion happens, the resulting gate is anonymous.
 
     assert isinstance(circuit.ir.statements[1], BlochSphereRotation)
-    # Otherwise it keeps the same generator and arguments.
-    assert circuit.ir.statements[1].generator == Rz
+    assert circuit.ir.statements[1].generator == Rz  # Otherwise it keeps the same generator and arguments.
     assert circuit.ir.statements[1].arguments == (Qubit(1), Float(1.2345))
 
     assert isinstance(circuit.ir.statements[2], BlochSphereRotation)

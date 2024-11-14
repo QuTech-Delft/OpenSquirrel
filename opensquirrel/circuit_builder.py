@@ -13,16 +13,7 @@ from opensquirrel.default_gates import default_gate_aliases, default_gate_set
 from opensquirrel.default_measures import default_measure_set
 from opensquirrel.default_resets import default_reset_set
 from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import (
-    ANNOTATIONS_TO_TYPE_MAP,
-    IR,
-    Comment,
-    Gate,
-    Measure,
-    Qubit,
-    QubitLike,
-    Reset,
-)
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -140,12 +131,11 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
 
-            # fix for python39
+            # Fix for Python 3.9
             try:
                 is_incorrect_type = not isinstance(args[i], expected_type)  # type: ignore
             except TypeError:
-                # expected type is probably a Union, which works differently in
-                # python39
+                # Expected type is probably a Union, which works differently in Python 3.9
                 is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
 
             if is_incorrect_type:

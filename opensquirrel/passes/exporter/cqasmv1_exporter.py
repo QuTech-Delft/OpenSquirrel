@@ -60,5 +60,5 @@ def export(circuit: Circuit) -> str:
 
     circuit.ir.accept(cqasmv1_creator)
 
-    # remove all trailing lines and leave only one
+    # Remove all trailing lines and leave only one
     return cqasmv1_creator.cqasmv1_string.rstrip() + "\n"
