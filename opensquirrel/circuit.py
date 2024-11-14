@@ -3,13 +3,12 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
+from opensquirrel.default_instructions import default_gate_aliases, default_gate_set, default_non_gate_set
 from opensquirrel.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
     from opensquirrel.decomposer import Decomposer
-    from opensquirrel.ir import IR, Gate, Measure
+    from opensquirrel.ir import IR, Gate, NonGate
     from opensquirrel.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
 
@@ -59,8 +58,8 @@ class Circuit:
         cls,
         cqasm3_string: str,
         gate_set: list[Callable[..., Gate]] = default_gate_set,
+        non_gate_set: list[Callable[..., NonGate]] = default_non_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: list[Callable[..., Measure]] = default_measure_set,
     ) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -72,16 +71,16 @@ class Circuit:
 
         Args:
             cqasm3_string: a cQASM 3 string
-            gate_set: an array of gate semantic functions. See default_gates for examples
+            gate_set: an array of gate semantic functions. See default_instructions for examples
+            non_gate_set: an array of non-gate semantic functions. See default_instructions for examples
             gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
-            measure_set: an array of measurement semantic functions. See default_measures for examples
         """
         from opensquirrel.parser.libqasm.parser import Parser
 
         parser = Parser(
             gate_set=gate_set,
+            non_gate_set=non_gate_set,
             gate_aliases=gate_aliases,
-            measure_set=measure_set,
         )
         return parser.circuit_from_string(cqasm3_string)
 

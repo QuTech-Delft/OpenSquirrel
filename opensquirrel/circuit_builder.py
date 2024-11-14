@@ -9,16 +9,13 @@ from typing import Any
 from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_directives import default_directive_set
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
-from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import DirectiveLibrary, GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Directive, Gate, Measure, Qubit, QubitLike, Reset
+from opensquirrel.default_instructions import default_gate_aliases, default_gate_set, default_non_gate_set
+from opensquirrel.instruction_library import InstructionLibrary
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, Instruction, IR, Comment, Gate, NonGate, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
-class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary, DirectiveLibrary):
+class CircuitBuilder(InstructionLibrary):
     """
     A class using the builder pattern to make construction of circuits easy from Python.
     Adds corresponding instruction when a method is called. Checks that instructions are known and called with the right
@@ -52,15 +49,10 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary, DirectiveLibrary
         qubit_register_size: int,
         bit_register_size: int = 0,
         gate_set: list[Callable[..., Gate]] = default_gate_set,
+        non_gate_set: list[Callable[..., NonGate]] = default_non_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: list[Callable[..., Measure]] = default_measure_set,
-        reset_set: list[Callable[..., Reset]] = default_reset_set,
-        directive_set: list[Callable[..., Directive]] = default_directive_set,
     ) -> None:
-        GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasureLibrary.__init__(self, measure_set)
-        ResetLibrary.__init__(self, reset_set)
-        DirectiveLibrary.__init__(self, directive_set)
+        InstructionLibrary.__init__(self, gate_set, non_gate_set, gate_aliases)
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
@@ -75,22 +67,18 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary, DirectiveLibrary
         return self
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
-        if any(attr == measure.__name__ for measure in self.measure_set):
-            generator_f_measure = MeasureLibrary.get_measure_f(self, attr)
-            self._check_generator_f_args(generator_f_measure, attr, args)
-            self.ir.add_measure(generator_f_measure(*args))
-        elif any(attr == reset.__name__ for reset in self.reset_set):
-            generator_f_reset = ResetLibrary.get_reset_f(self, attr)
-            self._check_generator_f_args(generator_f_reset, attr, args)
-            self.ir.add_reset(generator_f_reset(*args))
-        elif any(attr == directive.__name__ for directive in self.directive_set):
-            generator_f_directive = DirectiveLibrary.get_directive_f(self, attr)
-            self._check_generator_f_args(generator_f_directive, attr, args)
-            self.ir.add_directive(generator_f_directive(*args))
-        else:
-            generator_f_gate = GateLibrary.get_gate_f(self, attr)
+        try:
+            generator_f_gate = InstructionLibrary.get_gate_f(self, attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
             self.ir.add_gate(generator_f_gate(*args))
+        except ValueError:
+            try:
+                generator_f_non_gate = InstructionLibrary.get_non_gate_f(self, attr)
+                self._check_generator_f_args(generator_f_non_gate, attr, args)
+                self.ir.add_non_gate(generator_f_non_gate(*args))
+            except ValueError as exc:
+                msg = f"unknown instruction '{attr}'"
+                raise ValueError(msg) from exc
         return self
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
@@ -116,7 +104,7 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary, DirectiveLibrary
 
     def _check_generator_f_args(
         self,
-        generator_f: Callable[..., Gate | Measure | Reset | Directive],
+        generator_f: Callable[..., Instruction],
         attr: str,
         args: tuple[Any, ...],
     ) -> None:

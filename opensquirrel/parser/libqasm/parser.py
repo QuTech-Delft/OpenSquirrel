@@ -7,25 +7,20 @@ import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
-from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, Measure, Qubit, Reset, Statement
+from opensquirrel.default_instructions import default_gate_aliases, default_gate_set, default_non_gate_set
+from opensquirrel.instruction_library import InstructionLibrary
+from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, NonGate, Qubit, Statement
 from opensquirrel.register_manager import RegisterManager
 
 
-class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
+class Parser(InstructionLibrary):
     def __init__(
         self,
         gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
+        non_gate_set: Iterable[Callable[..., NonGate]] = default_non_gate_set,
         gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: Iterable[Callable[..., Measure]] = default_measure_set,
-        reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
     ) -> None:
-        GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasureLibrary.__init__(self, measure_set)
-        ResetLibrary.__init__(self, reset_set)
+        InstructionLibrary.__init__(self, gate_set, non_gate_set, gate_aliases)
         self.ir = None
 
     @staticmethod
@@ -206,13 +201,8 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             raise OSError(msg)
         return self.get_gate_f(gate_name)
 
-    def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., Statement]:
-        if "measure" in instruction.name:
-            return self.get_measure_f(instruction.name)
-        if "reset" in instruction.name:
-            return self.get_reset_f(instruction.name)
-        msg = "parsing error: unknown non-unitary instruction"
-        raise OSError(msg)
+    def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonGate]:
+        return self.get_non_gate_f(instruction.name)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages

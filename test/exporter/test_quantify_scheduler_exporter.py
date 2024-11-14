@@ -11,7 +11,7 @@ import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import H
+from opensquirrel.default_instructions import H
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.exporter import quantify_scheduler_exporter
 from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION

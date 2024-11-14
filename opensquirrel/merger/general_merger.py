@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import I, default_bloch_sphere_rotations_without_params
+from opensquirrel.default_instructions import I, default_bloch_sphere_rotations_without_params
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Comment, Qubit, Statement
 from opensquirrel.utils.list import flatten_list
 
