@@ -6,7 +6,7 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_gates import Ry, Rz
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Qubit
 from opensquirrel.merger import general_merger
-from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations
+from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 from test.ir_equality_test_base import modify_circuit_and_check
 
 
@@ -261,8 +261,6 @@ barrier q[3]
     ],
 )
 def test_rearrange_barriers(circuit: Circuit, expected_result: str) -> None:
-    from opensquirrel.merger.general_merger import rearrange_barriers
-
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result
 
@@ -362,9 +360,7 @@ barrier q[1]
     ],
     ids=["generic_case", "circuit_with_irregular_barrier_order", "repeating_barrier"],
 )
-def test_sticky_barriers(circuit: Circuit, expected_result: str) -> None:
+def test_rearrange_circuit_ir(circuit: Circuit, expected_result: str) -> None:
     circuit.merge_single_qubit_gates()
-    from opensquirrel.merger.general_merger import rearrange_barriers
-
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result
