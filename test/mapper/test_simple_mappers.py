@@ -4,7 +4,7 @@ import pytest
 
 from opensquirrel.passes.mapper import HardcodedMapper, IdentityMapper
 from opensquirrel.passes.mapper.mapping import Mapping
-from opensquirrel.utils.check_passes import check_mapper
+from opensquirrel.utils.check_mapper import check_mapper
 
 
 class TestIdentityMapper:
