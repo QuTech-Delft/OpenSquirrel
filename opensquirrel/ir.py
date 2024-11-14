@@ -308,7 +308,9 @@ class Axis(Sequence[np.float64], Expression):
 
 
 class Statement(IRNode, ABC):
-    pass
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        pass
 
 
 class Measure(Statement, ABC):
@@ -772,6 +774,9 @@ class Comment(Statement):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return []
 
 
 class IR:
