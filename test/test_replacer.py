@@ -23,13 +23,7 @@ class TestCheckGateReplacement:
             (H(0), [H(0), H(0), H(0)]),
             (CNOT(0, 1), [CNOT(0, 1), I(0)]),
             # Arbitrary global phase change is not considered an issue.
-            (
-                CNOT(0, 1),
-                [
-                    CNOT(0, 1),
-                    BlochSphereRotation(0, angle=0, axis=(1, 0, 0), phase=621.6546),
-                ],
-            ),
+            (CNOT(0, 1), [CNOT(0, 1), BlochSphereRotation(0, angle=0, axis=(1, 0, 0), phase=621.6546)]),
         ],
     )
     def test_valid_replacement(self, gate: Gate, replacement_gates: list[Gate]) -> None:
@@ -38,21 +32,9 @@ class TestCheckGateReplacement:
     @pytest.mark.parametrize(
         ("gate", "replacement_gates", "error_msg"),
         [
-            (
-                H(0),
-                [H(1)],
-                "replacement for gate H does not seem to operate on the right qubits",
-            ),
-            (
-                CNOT(0, 1),
-                [CNOT(2, 1)],
-                "replacement for gate CNOT does not seem to operate on the right qubits",
-            ),
-            (
-                CNOT(0, 1),
-                [CNOT(1, 0)],
-                "replacement for gate CNOT does not preserve the quantum state",
-            ),
+            (H(0), [H(1)], "replacement for gate H does not seem to operate on the right qubits"),
+            (CNOT(0, 1), [CNOT(2, 1)], "replacement for gate CNOT does not seem to operate on the right qubits"),
+            (CNOT(0, 1), [CNOT(1, 0)], "replacement for gate CNOT does not preserve the quantum state"),
         ],
     )
     def test_wrong_qubit(self, gate: Gate, replacement_gates: list[Gate], error_msg: str) -> None:
@@ -63,16 +45,10 @@ class TestCheckGateReplacement:
         # If we were building the whole circuit matrix, this would run out of memory.
         check_gate_replacement(H(9234687), [Y90(9234687), X(9234687)])
 
-        with pytest.raises(
-            ValueError,
-            match="replacement for gate H does not seem to operate on the right qubits",
-        ):
+        with pytest.raises(ValueError, match="replacement for gate H does not seem to operate on the right qubits"):
             check_gate_replacement(H(9234687), [Y90(698446519), X(9234687)])
 
-        with pytest.raises(
-            ValueError,
-            match="replacement for gate H does not preserve the quantum state",
-        ):
+        with pytest.raises(ValueError, match="replacement for gate H does not preserve the quantum state"):
             check_gate_replacement(H(9234687), [Y90(9234687), X(9234687), X(9234687)])
 
 

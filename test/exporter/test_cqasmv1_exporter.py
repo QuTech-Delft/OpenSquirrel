@@ -201,10 +201,7 @@ measure_z q[1]
     [
         BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23),
         ControlledGate(Qubit(0), BlochSphereRotation(Qubit(1), axis=(1, 1, 1), angle=1.23)),
-        MatrixGate(
-            np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]),
-            [Qubit(0), Qubit(1)],
-        ),
+        MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)]),
     ],
 )
 def test_anonymous_gates(gate: Gate) -> None:
