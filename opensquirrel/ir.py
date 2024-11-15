@@ -58,6 +58,12 @@ class IRVisitor:
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> Any:
         pass
 
+    def visit_directive(self, directive: Directive) -> Any:
+        pass
+
+    def visit_barrier(self, barrier: Barrier) -> Any:
+        pass
+
 
 class IRNode(ABC):
     @abstractmethod
@@ -302,7 +308,9 @@ class Axis(Sequence[np.float64], Expression):
 
 
 class Statement(IRNode, ABC):
-    pass
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        pass
 
 
 class Measure(Statement, ABC):
@@ -378,6 +386,66 @@ class Reset(Statement, ABC):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
+
+
+class Directive(Statement, ABC):
+    def __init__(
+        self,
+        generator: Callable[..., Directive] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+    ) -> None:
+        self.generator = generator
+        self.arguments = arguments
+
+    @property
+    def name(self) -> str:
+        if self.generator:
+            return self.generator.__name__
+        return "Anonymous directive: " + self.__repr__()
+
+    @property
+    def is_abstract(self) -> bool:
+        return self.arguments is None
+
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        """Get the qubit operands of the Gate.
+
+        Returns:
+            List of qubits on which the Gate operates.
+        """
+
+
+class Barrier(Directive):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        generator: Callable[..., Barrier] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+    ) -> None:
+        Directive.__init__(self, generator, arguments)
+        self.generator = generator
+        self.arguments = arguments
+        self.qubit = Qubit(qubit)
+
+    def __repr__(self) -> str:
+        return f"Barrier(qubit={self.qubit})"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Barrier):
+            return False
+
+        return self.qubit == other.qubit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_directive(self)
+        return visitor.visit_barrier(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+    def is_identity(self) -> bool:
+        return False
 
 
 class Gate(Statement, ABC):
@@ -657,6 +725,32 @@ def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
     return wrapper
 
 
+def named_directive(directive_generator: Callable[..., Directive]) -> Callable[..., Directive]:
+    @wraps(directive_generator)
+    def wrapper(*args: Any, **kwargs: Any) -> Directive:
+        result = directive_generator(*args, **kwargs)
+        result.generator = wrapper
+
+        all_args: list[Any] = []
+        for par in inspect.signature(directive_generator).parameters.values():
+            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
+            next_annotation = (
+                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
+            )
+
+            # Convert to correct expression for IR
+            if is_qubit_like_annotation(next_annotation):
+                next_arg = Qubit(next_arg)
+
+            # Append parsed argument
+            all_args.append(next_arg)
+
+        result.arguments = tuple(all_args)
+        return result
+
+    return wrapper
+
+
 def compare_gates(g1: Gate, g2: Gate) -> bool:
     union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
 
@@ -681,6 +775,9 @@ class Comment(Statement):
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_comment(self)
 
+    def get_qubit_operands(self) -> list[Qubit]:
+        return []
+
 
 class IR:
     # This is just a list of gates (for now?)
@@ -701,6 +798,9 @@ class IR:
 
     def add_comment(self, comment: Comment) -> None:
         self.statements.append(comment)
+
+    def add_directive(self, directive: Directive) -> None:
+        self.statements.append(directive)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):

@@ -2,7 +2,19 @@ import inspect
 from typing import SupportsInt
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import Bit, Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, QubitLike, Reset
+from opensquirrel.ir import (
+    Bit,
+    Comment,
+    Directive,
+    Float,
+    Gate,
+    Int,
+    IRVisitor,
+    Measure,
+    Qubit,
+    QubitLike,
+    Reset,
+)
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -53,6 +65,13 @@ class _WriterImpl(IRVisitor):
             return
         qubit_argument = reset.arguments[0].accept(self)  # type: ignore[index]
         self.output += f"{reset.name} {qubit_argument}\n"
+
+    def visit_directive(self, directive: Directive) -> None:
+        if directive.is_abstract:
+            self.output += f"{directive.name}\n"
+            return
+        qubit_argument = directive.arguments[0].accept(self)  # type: ignore[index]
+        self.output += f"{directive.name} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name
