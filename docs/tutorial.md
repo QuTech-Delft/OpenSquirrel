@@ -230,37 +230,37 @@ It accepts a qubit, an axis, an angle, and a phase as arguments.
 Below is shown how the X-gate is defined in the default gate set of OpenSquirrel:
 
 ```python
-from opensquirrel.ir import Gate, BlochSphereRotation, QubitLike, named_instruction
+from opensquirrel.ir import Gate, BlochSphereRotation, QubitLike, named_gate
 import math
 
-@named_instruction
-def X(q: QubitLike) -> Gate:
+@named_gate
+def x(q: QubitLike) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
 ```
 
-Notice the `@named_instruction` decorator.
-This _tells_ OpenSquirrel that the function defines an instruction and that it should,
+Notice the `@named_gate` decorator.
+This _tells_ OpenSquirrel that the function defines a gate and that it should,
 therefore, have all the nice properties OpenSquirrel expects of it.
 
 - The `ControlledGate` class is used to define a multiple qubit gate that comprises a controlled operation.
 For instance, the CNOT gate is defined in the default gate set of OpenSquirrel as follows:
 
 ```python
-from opensquirrel.ir import Gate, ControlledGate, QubitLike, named_instruction
+from opensquirrel.ir import Gate, ControlledGate, QubitLike, named_gate
 from opensquirrel.default_instructions import X
 
-@named_instruction
-def CNOT(control: QubitLike, target: QubitLike) -> Gate:
+@named_gate
+def cnot(control: QubitLike, target: QubitLike) -> Gate:
     return ControlledGate(control, X(target))
 ```
 
 - The `MatrixGate` class may be used to define a gate in the generic form of a matrix:
 
 ```python
-from opensquirrel.ir import Gate, MatrixGate, QubitLike, named_instruction
+from opensquirrel.ir import Gate, MatrixGate, QubitLike, named_gate
 
-@named_instruction
-def SWAP(q1: QubitLike, q2: QubitLike) -> Gate:
+@named_gate
+def swap(q1: QubitLike, q2: QubitLike) -> Gate:
     return MatrixGate(
         [
             [1, 0, 0, 0],
