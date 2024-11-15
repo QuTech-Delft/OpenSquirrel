@@ -7,7 +7,7 @@ import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
-from opensquirrel.default_instructions import default_gate_aliases, default_gate_set, default_non_gate_set
+from opensquirrel.default_instructions import default_gate_set, default_non_gate_set
 from opensquirrel.instruction_library import InstructionLibrary
 from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, NonGate, Qubit, Statement
 from opensquirrel.register_manager import RegisterManager
@@ -16,11 +16,10 @@ from opensquirrel.register_manager import RegisterManager
 class Parser(InstructionLibrary):
     def __init__(
         self,
-        gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
-        non_gate_set: Iterable[Callable[..., NonGate]] = default_non_gate_set,
-        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
+        gate_set: Mapping[str, Callable[..., Gate]] = default_gate_set,
+        non_gate_set: Mapping[str, Callable[..., NonGate]] = default_non_gate_set,
     ) -> None:
-        InstructionLibrary.__init__(self, gate_set, non_gate_set, gate_aliases)
+        InstructionLibrary.__init__(self, gate_set, non_gate_set)
         self.ir = None
 
     @staticmethod

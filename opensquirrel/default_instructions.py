@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
-from typing import SupportsInt
+from typing import SupportsInt, Mapping
 
 from opensquirrel.ir import (
     Barrier,
@@ -153,38 +153,49 @@ def barrier(q: QubitLike) -> Barrier:
     return Barrier(qubit=q)
 
 
-default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
-default_bloch_sphere_rotations_without_params = [
-    I,
-    H,
-    X,
-    X90,
-    mX90,
-    Y,
-    Y90,
-    mY90,
-    Z,
-    S,
-    Sdag,
-    T,
-    Tdag,
-]
-default_bloch_sphere_rotations: list[
-    Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, Float], BlochSphereRotation]
-]
-default_bloch_sphere_rotations = [
-    *default_bloch_sphere_rotations_without_params,
-    Rx,
-    Ry,
-    Rz,
-]
-default_gate_set: list[Callable[..., Gate]]
-default_gate_set = [*default_bloch_sphere_rotations, CNOT, CZ, CR, CRk]
-
-default_gate_aliases = {
+default_bloch_sphere_rotation_without_params_set = {
+    "H": H,
+    "I": I,
+    "S": S,
+    "Sdag": Sdag,
+    "T": T,
+    "Tdag": Tdag,
+    "X": X,
+    "X90": X90,
+    "Y": Y,
+    "Y90": Y90,
+    "Z": Z,
+    "mX90": mX90,
+    "mY90": mY90,
+}
+default_bloch_sphere_rotation_set = {
+    **default_bloch_sphere_rotation_without_params_set,
+    "Rx": Rx,
+    "Ry": Ry,
+    "Rz": Rz,
+}
+default_controlled_gate_set = {
+    "CNOT": CNOT,
+    "CR": CR,
+    "CRk": CRk,
+    "CZ": CZ,
+}
+default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
 }
-
-default_non_gate_set: list[Callable[..., NonGate]]
-default_non_gate_set = [measure_z, measure, reset, barrier]
+default_gate_set = {
+    **default_bloch_sphere_rotation_set,
+    **default_controlled_gate_set,
+    **default_gate_alias_set,
+}
+default_non_gate_set = {
+    "barrier": barrier,
+    "measure": measure,
+    "measure_z": measure_z,
+    "reset": reset,
+}
+default_instructions = {
+    **default_gate_set,
+    **default_non_gate_set,
+}

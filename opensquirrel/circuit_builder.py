@@ -9,7 +9,7 @@ from typing import Any
 from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_instructions import default_gate_aliases, default_gate_set, default_non_gate_set
+from opensquirrel.default_instructions import default_gate_set, default_non_gate_set
 from opensquirrel.instruction_library import InstructionLibrary
 from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Instruction, NonGate, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
@@ -27,7 +27,6 @@ class CircuitBuilder(InstructionLibrary):
         bit_register_size (int): Size of the bit register
         gate_set (list): Supported gates
         non_gate_set (list): Supported non-gates
-        gate_aliases (dict): Supported gate aliases
 
     Example:
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
@@ -48,11 +47,10 @@ class CircuitBuilder(InstructionLibrary):
         self,
         qubit_register_size: int,
         bit_register_size: int = 0,
-        gate_set: list[Callable[..., Gate]] = default_gate_set,
-        non_gate_set: list[Callable[..., NonGate]] = default_non_gate_set,
-        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
+        gate_set: Mapping[str, Callable[..., Gate]] = default_gate_set,
+        non_gate_set: Mapping[str, Callable[..., NonGate]] = default_non_gate_set,
     ) -> None:
-        InstructionLibrary.__init__(self, gate_set, non_gate_set, gate_aliases)
+        InstructionLibrary.__init__(self, gate_set, non_gate_set)
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
@@ -67,18 +65,17 @@ class CircuitBuilder(InstructionLibrary):
         return self
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
-        try:
-            generator_f_gate = InstructionLibrary.get_gate_f(self, attr)
+        if attr in self.gate_set:
+            generator_f_gate = self.get_gate_f(attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
             self.ir.add_gate(generator_f_gate(*args))
-        except ValueError:
-            try:
-                generator_f_non_gate = InstructionLibrary.get_non_gate_f(self, attr)
-                self._check_generator_f_args(generator_f_non_gate, attr, args)
-                self.ir.add_non_gate(generator_f_non_gate(*args))
-            except ValueError as exc:
-                msg = f"unknown instruction '{attr}'"
-                raise ValueError(msg) from exc
+        elif attr in self.non_gate_set:
+            generator_f_non_gate = self.get_non_gate_f(attr)
+            self._check_generator_f_args(generator_f_non_gate, attr, args)
+            self.ir.add_non_gate(generator_f_non_gate(*args))
+        else:
+            msg = f"unknown instruction '{attr}'"
+            raise ValueError(msg)
         return self
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
