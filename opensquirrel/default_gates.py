@@ -137,13 +137,7 @@ default_bloch_sphere_rotations = [
     Rz,
 ]
 default_gate_set: list[Callable[..., Gate]]
-default_gate_set = [
-    *default_bloch_sphere_rotations,
-    CNOT,
-    CZ,
-    CR,
-    CRk,
-]
+default_gate_set = [*default_bloch_sphere_rotations, CNOT, CZ, CR, CRk]
 
 default_gate_aliases = {
     "Hadamard": H,
