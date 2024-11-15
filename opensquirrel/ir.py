@@ -598,26 +598,14 @@ class ControlledGate(Gate):
         return self.target_gate.is_identity()
 
 
-@overload
-def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
-
-
-@overload
-def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
-
-
-@overload
-def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
-
-
-def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    @wraps(gate_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> Gate:
-        result = gate_generator(*args, **kwargs)
+def instruction_decorator(instruction_generator: Callable[..., Instruction]) -> Callable[..., Instruction]:
+    @wraps(instruction_generator)
+    def wrapper(*args: Any, **kwargs: Any) -> Instruction:
+        result = instruction_generator(*args, **kwargs)
         result.generator = wrapper
 
         all_args: list[Expression] = []
-        for par in inspect.signature(gate_generator).parameters.values():
+        for par in inspect.signature(instruction_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = (
                 ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
@@ -636,6 +624,22 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
         return result
 
     return wrapper
+
+
+@overload
+def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
+
+
+@overload
+def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
+
+
+@overload
+def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
+
+
+def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
+    return instruction_decorator(gate_generator)
 
 
 @overload
@@ -651,31 +655,7 @@ def non_gate(non_gate_generator: Callable[..., Barrier]) -> Callable[..., Barrie
 
 
 def non_gate(non_gate_generator: Callable[..., NonGate]) -> Callable[..., NonGate]:
-    @wraps(non_gate_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> NonGate:
-        result = non_gate_generator(*args, **kwargs)
-        result.generator = wrapper
-
-        all_args: list[Expression] = []
-        for par in inspect.signature(non_gate_generator).parameters.values():
-            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
-            )
-
-            # Convert to correct expression for IR
-            if is_int_annotation(next_annotation):
-                next_arg = Int(next_arg)
-            if is_qubit_like_annotation(next_annotation):
-                next_arg = Qubit(next_arg)
-
-            # Append parsed argument
-            all_args.append(next_arg)
-
-        result.arguments = tuple(all_args)
-        return result
-
-    return wrapper
+    return instruction_decorator(non_gate_generator)
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
