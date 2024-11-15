@@ -11,7 +11,7 @@ from typing_extensions import Self
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_gate_aliases, default_gate_set, default_non_gate_set
 from opensquirrel.instruction_library import InstructionLibrary
-from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, Instruction, IR, Comment, Gate, NonGate, Qubit, QubitLike
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Instruction, NonGate, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -26,8 +26,8 @@ class CircuitBuilder(InstructionLibrary):
         qubit_register_size (int): Size of the qubit register
         bit_register_size (int): Size of the bit register
         gate_set (list): Supported gates
+        non_gate_set (list): Supported non-gates
         gate_aliases (dict): Supported gate aliases
-        measure_set (list): Supported measure instructions
 
     Example:
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\

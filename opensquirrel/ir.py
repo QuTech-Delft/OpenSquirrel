@@ -314,7 +314,7 @@ class Statement(IRNode, ABC):
 class Instruction(Statement, ABC):
     def __init__(
         self,
-        generator: Callable[..., Gate] | None = None,
+        generator: Callable[..., Instruction] | None = None,
         arguments: tuple[Expression, ...] | None = None,
         *args: Any,
         **kwargs: Any,
@@ -330,7 +330,7 @@ class Instruction(Statement, ABC):
 class NonGate(Instruction, ABC):
     def __init__(
         self,
-        generator: Callable[..., Gate] | None = None,
+        generator: Callable[..., NonGate] | None = None,
         arguments: tuple[Expression, ...] | None = None,
         *args: Any,
         **kwargs: Any,
@@ -364,7 +364,9 @@ class Measure(NonGate):
         return f"Measure(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, Measure) and self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        return (
+            isinstance(other, Measure) and self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        )
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_non_gate(self)

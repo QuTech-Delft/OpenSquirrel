@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from math import acos, cos, floor, log10, sin
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import I, default_bloch_sphere_rotations_without_params
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Comment, Qubit, Statement
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Comment, Instruction, Qubit, Statement
 from opensquirrel.utils.list import flatten_list
 
 if TYPE_CHECKING:
@@ -84,7 +84,7 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     return bsr
 
 
-def can_move_instruction_before_barrier(instruction: Statement, barriers: list[Statement]) -> bool:
+def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:
     """Checks whether an instruction can be moved before a group of 'linked' barriers.
     Returns True if none of the qubits used by the instruction are part of any barrier, False otherwise.
     """
@@ -95,17 +95,20 @@ def can_move_instruction_before_barrier(instruction: Statement, barriers: list[S
 
 def can_move_before(statement: Statement, statement_group: list[Statement]) -> bool:
     """Checks whether a statement can be moved before a group of statements, following the logic below:
-    - An instruction cannot be moved before other instruction.
-    - An instruction may be moved before a group of 'linked' barriers.
+    - A barrier cannot be moved up.
+    - A (non-barrier) statement cannot be moved before another (non-barrier) statement.
+    - A comment can always be moved before a group of 'linked' barriers.
+    - A (non-barrier) statement may be moved before a group of 'linked' barriers.
     """
-    first_statement_from_group = statement_group[0]
-    if not isinstance(statement, Barrier) and not isinstance(first_statement_from_group, Barrier):
+    if isinstance(statement, Barrier):
         return False
-    if not isinstance(statement, Barrier) and isinstance(first_statement_from_group, Barrier):
-        return can_move_instruction_before_barrier(statement, statement_group)
-    if isinstance(statement, Barrier) and not isinstance(first_statement_from_group, Barrier):
-        return can_move_instruction_before_barrier(statement, statement_group)
-    return False
+    first_statement_from_group = statement_group[0]
+    if not isinstance(first_statement_from_group, Barrier):
+        return False
+    if isinstance(statement, Comment):
+        return True
+    instruction = cast(Instruction, statement)
+    return can_move_statement_before_barrier(instruction, cast(list[Instruction], statement_group))
 
 
 def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:
@@ -169,10 +172,11 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
             continue
 
         # Accumulate consecutive Bloch sphere rotations
-        if isinstance(statement, BlochSphereRotation):
-            already_accumulated = accumulators_per_qubit[statement.qubit]
-            composed = compose_bloch_sphere_rotations(statement, already_accumulated)
-            accumulators_per_qubit[statement.qubit] = composed
+        instruction: Instruction = cast(Instruction, statement)
+        if isinstance(instruction, BlochSphereRotation):
+            already_accumulated = accumulators_per_qubit[instruction.qubit]
+            composed = compose_bloch_sphere_rotations(instruction, already_accumulated)
+            accumulators_per_qubit[instruction.qubit] = composed
             del circuit.ir.statements[statement_index]
             continue
 
@@ -187,10 +191,10 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
         # For barrier directives, insert all accumulated Bloch sphere rotations
         # For other instructions, insert accumulated Bloch sphere rotations on qubits used by those instructions
         # In any case, reset the dictionary entry for the inserted accumulated Bloch sphere rotations
-        if isinstance(statement, Barrier):
+        if isinstance(instruction, Barrier):
             insert_accumulated_bloch_sphere_rotations([Qubit(i) for i in range(circuit.qubit_register_size)])
         else:
-            insert_accumulated_bloch_sphere_rotations(statement.get_qubit_operands())
+            insert_accumulated_bloch_sphere_rotations(instruction.get_qubit_operands())
         statement_index += 1
 
     for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():

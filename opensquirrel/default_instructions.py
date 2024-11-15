@@ -16,9 +16,8 @@ from opensquirrel.ir import (
     NonGate,
     QubitLike,
     Reset,
-    named_instruction
+    named_instruction,
 )
-
 
 ######################
 # Unitary instructions
