@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Callable
-from typing import SupportsInt, Mapping
+from typing import SupportsInt
 
 from opensquirrel.ir import (
     Barrier,
@@ -10,10 +9,8 @@ from opensquirrel.ir import (
     BlochSphereRotation,
     ControlledGate,
     Float,
-    Gate,
     Int,
     Measure,
-    NonGate,
     QubitLike,
     Reset,
     named_gate,

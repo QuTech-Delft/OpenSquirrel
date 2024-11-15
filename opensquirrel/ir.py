@@ -639,7 +639,7 @@ def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., C
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    return instruction_decorator(gate_generator)
+    return cast(Callable[..., Gate], instruction_decorator(gate_generator))
 
 
 @overload
@@ -655,7 +655,7 @@ def non_gate(non_gate_generator: Callable[..., Barrier]) -> Callable[..., Barrie
 
 
 def non_gate(non_gate_generator: Callable[..., NonGate]) -> Callable[..., NonGate]:
-    return instruction_decorator(non_gate_generator)
+    return cast(Callable[..., NonGate], instruction_decorator(non_gate_generator))
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
