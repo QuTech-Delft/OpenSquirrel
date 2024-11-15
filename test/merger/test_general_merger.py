@@ -360,7 +360,7 @@ barrier q[1]
     ],
     ids=["generic_case", "circuit_with_irregular_barrier_order", "repeating_barrier"],
 )
-def test_rearrange_circuit_ir(circuit: Circuit, expected_result: str) -> None:
+def test_rearrange_barriers_after_merge_single_qubit_gates(circuit: Circuit, expected_result: str) -> None:
     circuit.merge_single_qubit_gates()
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result

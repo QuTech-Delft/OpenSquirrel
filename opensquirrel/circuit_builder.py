@@ -32,7 +32,7 @@ class CircuitBuilder(InstructionLibrary):
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
         H(0).CNOT(0, 1).CNOT(0, 2).\
         to_circuit()
-        version 3.
+        version 3.0
         <BLANKLINE>
         qubit[3] q
         <BLANKLINE>
