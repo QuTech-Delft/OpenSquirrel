@@ -9,9 +9,9 @@ from typing import Any
 from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_instructions import default_gate_set, default_non_gate_set
+from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
 from opensquirrel.instruction_library import InstructionLibrary
-from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Instruction, NonGate, Qubit, QubitLike
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Instruction, NonUnitary, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -25,8 +25,8 @@ class CircuitBuilder(InstructionLibrary):
     Args:
         qubit_register_size (int): Size of the qubit register
         bit_register_size (int): Size of the bit register
-        gate_set (list): Supported gates
-        non_gate_set (list): Supported non-gates
+        gate_set (dictionary): Supported gates
+        non_unitary_set (dictionary): Supported non-unitary instructions
 
     Example:
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
@@ -48,9 +48,9 @@ class CircuitBuilder(InstructionLibrary):
         qubit_register_size: int,
         bit_register_size: int = 0,
         gate_set: Mapping[str, Callable[..., Gate]] = default_gate_set,
-        non_gate_set: Mapping[str, Callable[..., NonGate]] = default_non_gate_set,
+        non_unitary_set: Mapping[str, Callable[..., NonUnitary]] = default_non_unitary_set,
     ) -> None:
-        InstructionLibrary.__init__(self, gate_set, non_gate_set)
+        InstructionLibrary.__init__(self, gate_set, non_unitary_set)
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
@@ -69,10 +69,10 @@ class CircuitBuilder(InstructionLibrary):
             generator_f_gate = self.get_gate_f(attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
             self.ir.add_gate(generator_f_gate(*args))
-        elif attr in self.non_gate_set:
-            generator_f_non_gate = self.get_non_gate_f(attr)
-            self._check_generator_f_args(generator_f_non_gate, attr, args)
-            self.ir.add_non_gate(generator_f_non_gate(*args))
+        elif attr in self.non_unitary_set:
+            generator_f_non_unitary = self.get_non_unitary_f(attr)
+            self._check_generator_f_args(generator_f_non_unitary, attr, args)
+            self.ir.add_non_unitary(generator_f_non_unitary(*args))
         else:
             msg = f"unknown instruction '{attr}'"
             raise ValueError(msg)

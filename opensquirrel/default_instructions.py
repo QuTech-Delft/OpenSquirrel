@@ -14,7 +14,7 @@ from opensquirrel.ir import (
     QubitLike,
     Reset,
     named_gate,
-    non_gate,
+    non_unitary,
 )
 
 ######################
@@ -131,22 +131,22 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
 ##########################
 
 
-@non_gate
+@non_unitary
 def measure(q: QubitLike, b: Bit) -> Measure:
     return Measure(qubit=q, bit=b, axis=(0, 0, 1))
 
 
-@non_gate
+@non_unitary
 def measure_z(q: QubitLike, b: Bit) -> Measure:
     return Measure(qubit=q, bit=b, axis=(0, 0, 1))
 
 
-@non_gate
+@non_unitary
 def reset(q: QubitLike) -> Reset:
     return Reset(qubit=q)
 
 
-@non_gate
+@non_unitary
 def barrier(q: QubitLike) -> Barrier:
     return Barrier(qubit=q)
 
@@ -187,13 +187,14 @@ default_gate_set = {
     **default_controlled_gate_set,
     **default_gate_alias_set,
 }
-default_non_gate_set = {
+default_unitary_set = {**default_gate_set}
+default_non_unitary_set = {
     "barrier": barrier,
     "measure": measure,
     "measure_z": measure_z,
     "reset": reset,
 }
 default_instructions = {
-    **default_gate_set,
-    **default_non_gate_set,
+    **default_unitary_set,
+    **default_non_unitary_set,
 }

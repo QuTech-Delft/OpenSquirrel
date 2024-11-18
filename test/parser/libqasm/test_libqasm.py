@@ -2,14 +2,14 @@ import math
 
 import pytest
 
-from opensquirrel.default_instructions import CNOT, CR, CRk, H, I, Ry, X, default_gate_set, default_non_gate_set
+from opensquirrel.default_instructions import CNOT, CR, CRk, H, I, Ry, X, default_gate_set, default_non_unitary_set
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate
 from opensquirrel.parser.libqasm.parser import Parser
 
 
 @pytest.fixture(name="parser")
 def parser_fixture() -> Parser:
-    return Parser(gate_set=default_gate_set, non_gate_set=default_non_gate_set)
+    return Parser(gate_set=default_gate_set, non_unitary_set=default_non_unitary_set)
 
 
 def test_simple(parser: Parser) -> None:

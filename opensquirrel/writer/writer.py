@@ -9,7 +9,7 @@ from opensquirrel.ir import (
     Gate,
     Int,
     IRVisitor,
-    NonGate,
+    NonUnitary,
     Qubit,
     QubitLike,
 )
@@ -49,14 +49,14 @@ class _WriterImpl(IRVisitor):
     def visit_float(self, f: Float) -> str:
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
-    def visit_non_gate(self, non_gate: NonGate) -> None:
-        if non_gate.name == "measure":
-            bit_argument = non_gate.arguments[1].accept(self)  # type: ignore[index]
-            qubit_argument = non_gate.arguments[0].accept(self)  # type: ignore[index]
-            self.output += f"{bit_argument} = {non_gate.name} {qubit_argument}\n"
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
+        if non_unitary.name == "measure":
+            bit_argument = non_unitary.arguments[1].accept(self)  # type: ignore[index]
+            qubit_argument = non_unitary.arguments[0].accept(self)  # type: ignore[index]
+            self.output += f"{bit_argument} = {non_unitary.name} {qubit_argument}\n"
         else:
-            qubit_argument = non_gate.arguments[0].accept(self)  # type: ignore[index]
-            self.output += f"{non_gate.name} {qubit_argument}\n"
+            qubit_argument = non_unitary.arguments[0].accept(self)  # type: ignore[index]
+            self.output += f"{non_unitary.name} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name

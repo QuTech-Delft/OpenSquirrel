@@ -40,7 +40,7 @@ class IRVisitor:
     def visit_gate(self, gate: Gate) -> Any:
         pass
 
-    def visit_non_gate(self, gate: NonGate) -> Any:
+    def visit_non_unitary(self, gate: NonUnitary) -> Any:
         pass
 
     def visit_axis(self, axis: Axis) -> Any:
@@ -327,10 +327,10 @@ class Instruction(Statement, ABC):
         pass
 
 
-class NonGate(Instruction, ABC):
+class Unitary(Instruction, ABC):
     def __init__(
         self,
-        generator: Callable[..., NonGate] | None = None,
+        generator: Callable[..., Unitary] | None = None,
         arguments: tuple[Expression, ...] | None = None,
         *args: Any,
         **kwargs: Any,
@@ -339,14 +339,33 @@ class NonGate(Instruction, ABC):
 
     @property
     def name(self) -> str:
-        return self.generator.__name__ if self.generator else "Unknown non-gate: " + self.__repr__()
+        return self.generator.__name__ if self.generator else "Unknown unitary instruction: " + self.__repr__()
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
         pass
 
 
-class Measure(NonGate):
+class NonUnitary(Instruction, ABC):
+    def __init__(
+        self,
+        generator: Callable[..., NonUnitary] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        Instruction.__init__(self, generator, arguments)
+
+    @property
+    def name(self) -> str:
+        return self.generator.__name__ if self.generator else "Unknown non-unitary instruction: " + self.__repr__()
+
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        pass
+
+
+class Measure(NonUnitary):
     def __init__(
         self,
         qubit: QubitLike,
@@ -355,7 +374,7 @@ class Measure(NonGate):
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
-        NonGate.__init__(self, generator, arguments)
+        NonUnitary.__init__(self, generator, arguments)
         self.qubit = Qubit(qubit)
         self.bit: Bit = bit
         self.axis = Axis(axis)
@@ -369,7 +388,7 @@ class Measure(NonGate):
         )
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_gate(self)
+        visitor.visit_non_unitary(self)
         return visitor.visit_measure(self)
 
     def get_bit_operands(self) -> list[Bit]:
@@ -379,14 +398,14 @@ class Measure(NonGate):
         return [self.qubit]
 
 
-class Reset(NonGate):
+class Reset(NonUnitary):
     def __init__(
         self,
         qubit: QubitLike,
         generator: Callable[..., Reset] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
-        NonGate.__init__(self, generator, arguments)
+        NonUnitary.__init__(self, generator, arguments)
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
@@ -400,21 +419,21 @@ class Reset(NonGate):
         return isinstance(other, Reset) and self.qubit == other.qubit
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_gate(self)
+        visitor.visit_non_unitary(self)
         return visitor.visit_reset(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
 
-class Barrier(NonGate):
+class Barrier(NonUnitary):
     def __init__(
         self,
         qubit: QubitLike,
         generator: Callable[..., Barrier] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
-        NonGate.__init__(self, generator, arguments)
+        NonUnitary.__init__(self, generator, arguments)
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
@@ -424,14 +443,14 @@ class Barrier(NonGate):
         return isinstance(other, Barrier) and self.qubit == other.qubit
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_gate(self)
+        visitor.visit_non_unitary(self)
         return visitor.visit_barrier(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
 
-class Gate(Instruction, ABC):
+class Gate(Unitary, ABC):
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,
@@ -439,7 +458,7 @@ class Gate(Instruction, ABC):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        Instruction.__init__(self, generator, arguments)
+        Unitary.__init__(self, generator, arguments)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Gate):
@@ -643,19 +662,19 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
 
 
 @overload
-def non_gate(non_gate_generator: Callable[..., Measure]) -> Callable[..., Measure]: ...
+def non_unitary(non_unitary_generator: Callable[..., Measure]) -> Callable[..., Measure]: ...
 
 
 @overload
-def non_gate(non_gate_generator: Callable[..., Reset]) -> Callable[..., Reset]: ...
+def non_unitary(non_unitary_generator: Callable[..., Reset]) -> Callable[..., Reset]: ...
 
 
 @overload
-def non_gate(non_gate_generator: Callable[..., Barrier]) -> Callable[..., Barrier]: ...
+def non_unitary(non_unitary_generator: Callable[..., Barrier]) -> Callable[..., Barrier]: ...
 
 
-def non_gate(non_gate_generator: Callable[..., NonGate]) -> Callable[..., NonGate]:
-    return cast(Callable[..., NonGate], instruction_decorator(non_gate_generator))
+def non_unitary(non_unitary_generator: Callable[..., NonUnitary]) -> Callable[..., NonUnitary]:
+    return cast(Callable[..., NonUnitary], instruction_decorator(non_unitary_generator))
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
@@ -690,8 +709,8 @@ class IR:
     def add_gate(self, gate: Gate) -> None:
         self.statements.append(gate)
 
-    def add_non_gate(self, non_gate: NonGate) -> None:
-        self.statements.append(non_gate)
+    def add_non_unitary(self, non_unitary: NonUnitary) -> None:
+        self.statements.append(non_unitary)
 
     def add_statement(self, statement: Statement) -> None:
         self.statements.append(statement)
