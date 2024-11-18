@@ -22,9 +22,6 @@ def repr_round(
 
 
 class IRVisitor:
-    def visit_comment(self, comment: Comment) -> Any:
-        pass
-
     def visit_int(self, i: Int) -> Any:
         pass
 
@@ -689,19 +686,6 @@ def compare_gates(g1: Gate, g2: Gate) -> bool:
     return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
 
 
-@dataclass
-class Comment(Statement):
-    str: str
-
-    def __post_init__(self) -> None:
-        if "*/" in self.str:
-            msg = "comment contains illegal characters"
-            raise ValueError(msg)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_comment(self)
-
-
 class IR:
     def __init__(self) -> None:
         self.statements: list[Statement] = []
@@ -714,9 +698,6 @@ class IR:
 
     def add_statement(self, statement: Statement) -> None:
         self.statements.append(statement)
-
-    def add_comment(self, comment: Comment) -> None:
-        self.statements.append(comment)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):

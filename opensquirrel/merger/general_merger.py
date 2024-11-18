@@ -7,7 +7,7 @@ import numpy as np
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import I, default_bloch_sphere_rotation_without_params_set
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Comment, Instruction, Qubit, Statement
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Qubit, Statement
 from opensquirrel.utils.list import flatten_list
 
 if TYPE_CHECKING:
@@ -97,7 +97,6 @@ def can_move_before(statement: Statement, statement_group: list[Statement]) -> b
     """Checks whether a statement can be moved before a group of statements, following the logic below:
     - A barrier cannot be moved up.
     - A (non-barrier) statement cannot be moved before another (non-barrier) statement.
-    - A comment can always be moved before a group of 'linked' barriers.
     - A (non-barrier) statement may be moved before a group of 'linked' barriers.
     """
     if isinstance(statement, Barrier):
@@ -105,8 +104,6 @@ def can_move_before(statement: Statement, statement_group: list[Statement]) -> b
     first_statement_from_group = statement_group[0]
     if not isinstance(first_statement_from_group, Barrier):
         return False
-    if isinstance(statement, Comment):
-        return True
     instruction = cast(Instruction, statement)
     return can_move_statement_before_barrier(instruction, cast(list[Instruction], statement_group))
 
@@ -150,7 +147,7 @@ def rearrange_barriers(ir: IR) -> None:
     ir.statements = flatten_list(statements_groups)
 
 
-def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
+def merge_single_qubit_gates(circuit: Circuit) -> None:
     """Merge all consecutive 1-qubit gates in the circuit.
 
     Gates obtained from merging other gates become anonymous gates.
@@ -165,11 +162,6 @@ def merge_single_qubit_gates(circuit: Circuit) -> None:  # noqa: C901
     statement_index = 0
     while statement_index < len(circuit.ir.statements):
         statement = circuit.ir.statements[statement_index]
-
-        # Skip, since statement is a comment
-        if isinstance(statement, Comment):
-            statement_index += 1
-            continue
 
         # Accumulate consecutive Bloch sphere rotations
         instruction: Instruction = cast(Instruction, statement)

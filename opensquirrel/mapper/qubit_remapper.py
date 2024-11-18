@@ -3,7 +3,6 @@ from opensquirrel.ir import (
     IR,
     Barrier,
     BlochSphereRotation,
-    Comment,
     ControlledGate,
     IRVisitor,
     MatrixGate,
@@ -32,9 +31,6 @@ class _QubitRemapper(IRVisitor):
 
     def __init__(self, mapping: Mapping) -> None:
         self.mapping = mapping
-
-    def visit_comment(self, comment: Comment) -> Comment:
-        return comment
 
     def visit_qubit(self, qubit: Qubit) -> Qubit:
         qubit.index = self.mapping[qubit.index]
