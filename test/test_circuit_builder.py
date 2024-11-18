@@ -1,7 +1,7 @@
 import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_gates import CNOT, H, I
+from opensquirrel.default_instructions import CNOT, H, I
 from opensquirrel.ir import Bit, Comment, Measure
 
 

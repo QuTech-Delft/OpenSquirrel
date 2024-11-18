@@ -4,7 +4,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
-from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
+from opensquirrel.default_instructions import CNOT, CZ, H, Ry, Rz
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
 
 

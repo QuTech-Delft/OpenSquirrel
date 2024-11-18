@@ -3,7 +3,7 @@ import math
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.default_gates import Ry, Rz
+from opensquirrel.default_instructions import Ry, Rz
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Qubit
 from opensquirrel.merger import general_merger
 from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers

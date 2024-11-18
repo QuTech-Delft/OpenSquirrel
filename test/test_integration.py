@@ -9,7 +9,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.decomposer.aba_decomposer import XYXDecomposer
 from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
-from opensquirrel.default_gates import CNOT, CZ, H
+from opensquirrel.default_instructions import CNOT, CZ, H
 from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import Measure
 

@@ -6,7 +6,7 @@ import pytest
 
 from opensquirrel.decomposer.aba_decomposer import ZXZDecomposer
 from opensquirrel.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Ry, Rz, X, Y, Z
+from opensquirrel.default_instructions import CNOT, CR, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
 
 
