@@ -25,7 +25,7 @@ def _check_scenario(circuit: Circuit, mapper: Mapper) -> None:
 def check_mapper(mapper: Mapper) -> None:
     """Check if the `mapper` complies with the OpenSquirrel requirements.
 
-    If ``Mapper`` implementation passes these checks, it should be compatible with the ``Circuit.map`` method.
+    If a ``Mapper`` implementation passes these checks, it should be compatible with the ``Circuit.map`` method.
 
     Args:
         mapper: Mapper to check.
