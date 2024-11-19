@@ -10,10 +10,22 @@ from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
+def _check_scenario(circuit: Circuit, mapper: Mapper) -> None:
+    """Check if the given scenario can be mapped.
+
+    Args:
+        circuit: Circuit containing the scenario to check against.
+        mapper: Mapper to use.
+    """
+    ir_copy = deepcopy(circuit.ir)
+    circuit.map(mapper)
+    assert circuit.ir == ir_copy, "A Mapper pass should not change the IR"
+
+
 def check_mapper(mapper: Mapper) -> None:
     """Check if the `mapper` complies with the OpenSquirrel requirements.
 
-    If an implementation of ``Mapper`` passes these checks it should be compatible with the ``Circuit.map`` method.
+    If ``Mapper`` implementation passes these checks, it should be compatible with the ``Circuit.map`` method.
 
     Args:
         mapper: Mapper to check.
@@ -31,15 +43,3 @@ def check_mapper(mapper: Mapper) -> None:
     ir.add_non_unitary(Measure(42, Bit(42), (0, 0, 1)))
     Circuit(register_manager, ir)
     _check_scenario(circuit, mapper)
-
-
-def _check_scenario(circuit: Circuit, mapper: Mapper) -> None:
-    """Check if the given scenario can be mapped.
-
-    Args:
-        circuit: Circuit containing the scenario to check against.
-        mapper: Mapper to use.
-    """
-    ir_copy = deepcopy(circuit.ir)
-    circuit.map(mapper)
-    assert circuit.ir == ir_copy, "A Mapper pass should not change the IR"

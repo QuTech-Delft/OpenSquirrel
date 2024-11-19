@@ -3,18 +3,23 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING
 
+from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
+from opensquirrel.utils import Singleton
+
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate, NonUnitary
 
 
-class InstructionLibrary:
-    def __init__(
-        self,
-        gate_set: Mapping[str, Callable[..., Gate]],
-        non_unitary_set: Mapping[str, Callable[..., NonUnitary]],
-    ) -> None:
-        self.gate_set = gate_set
-        self.non_unitary_set = non_unitary_set
+class InstructionLibrary(metaclass=Singleton):
+    def __init__(self) -> None:
+        self.gate_set = default_gate_set
+        self.non_unitary_set = default_non_unitary_set
+
+    def get_gate_set(self) -> Mapping[str, Callable[..., Gate]]:
+        return self.gate_set
+
+    def get_non_unitary_set(self) -> Mapping[str, Callable[..., NonUnitary]]:
+        return self.non_unitary_set
 
     def get_gate_f(self, gate_name: str) -> Callable[..., Gate]:
         if gate_name not in self.gate_set:
