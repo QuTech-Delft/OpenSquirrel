@@ -10,7 +10,7 @@ from opensquirrel.ir import (
     Qubit,
     Reset,
 )
-from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.passes.mapper.mapping import Mapping
 
 
 class _QubitRemapper(IRVisitor):

@@ -4,11 +4,9 @@ import sympy as sp
 from IPython.display import display
 
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.decomposer.aba_decomposer import XZXDecomposer, ZYZDecomposer
-from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.default_instructions import H, Rx, Rz
 from opensquirrel.ir import Float
+from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XZXDecomposer, ZYZDecomposer
 
 
 class TestDecomposition:

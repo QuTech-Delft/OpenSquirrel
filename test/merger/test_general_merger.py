@@ -5,8 +5,8 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_instructions import Ry, Rz
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Qubit
-from opensquirrel.merger import general_merger
-from opensquirrel.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
+from opensquirrel.passes.merger import general_merger
+from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 from test.ir_equality_test_base import modify_circuit_and_check
 
 

@@ -97,7 +97,7 @@ The different decomposition strategies can be found in the
 In the example below, the circuit is decomposed using the Z-Y-Z decomposer.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
 
 qc.decompose(decomposer=ZYZDecomposer())
 ```

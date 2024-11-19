@@ -2,8 +2,8 @@ import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.mapper.mapping import Mapping
-from opensquirrel.mapper.qubit_remapper import get_remapped_ir, remap_ir
+from opensquirrel.passes.mapper.mapping import Mapping
+from opensquirrel.passes.mapper.qubit_remapper import get_remapped_ir, remap_ir
 
 
 class TestRemapper:

@@ -4,8 +4,8 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.ir import Bit
-from opensquirrel.mapper import HardcodedMapper, Mapper
-from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.passes.mapper import HardcodedMapper, Mapper
+from opensquirrel.passes.mapper.mapping import Mapping
 
 
 class TestMapper:

@@ -4,10 +4,10 @@ import math
 
 import pytest
 
-from opensquirrel.decomposer.aba_decomposer import YXYDecomposer
-from opensquirrel.decomposer.general_decomposer import check_gate_replacement
 from opensquirrel.default_instructions import CNOT, CR, H, I, Rx, Ry, S, X, Y
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.passes.decomposer import YXYDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 
 @pytest.fixture(name="decomposer")

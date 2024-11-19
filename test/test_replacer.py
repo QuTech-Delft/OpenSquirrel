@@ -3,10 +3,10 @@ from __future__ import annotations
 import pytest
 
 from opensquirrel import CircuitBuilder
-from opensquirrel.decomposer import Decomposer
-from opensquirrel.decomposer.general_decomposer import check_gate_replacement, decompose, replace
 from opensquirrel.default_instructions import CNOT, Y90, H, I, X
 from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.passes.decomposer import Decomposer
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement, decompose, replace
 
 
 class TestCheckGateReplacement:
