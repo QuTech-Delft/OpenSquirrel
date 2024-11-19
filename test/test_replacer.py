@@ -76,7 +76,6 @@ class TestReplacer:
     def test_replace(self) -> None:
         builder1 = CircuitBuilder(3)
         builder1.H(0)
-        builder1.comment("Test comment.")
         circuit = builder1.to_circuit()
 
         replace(circuit.ir, H, lambda q: [Y90(q), X(q)])
@@ -84,7 +83,6 @@ class TestReplacer:
         builder2 = CircuitBuilder(3)
         builder2.Y90(0)
         builder2.X(0)
-        builder2.comment("Test comment.")
         expected_circuit = builder2.to_circuit()
 
         assert expected_circuit == circuit

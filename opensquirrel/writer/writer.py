@@ -4,7 +4,6 @@ from typing import SupportsInt
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
     Bit,
-    Comment,
     Float,
     Gate,
     Int,
@@ -84,9 +83,6 @@ class _WriterImpl(IRVisitor):
                     qubit_args.append(Qubit(arg).accept(self))
 
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"
-
-    def visit_comment(self, comment: Comment) -> None:
-        self.output += f"\n/* {comment.str} */\n\n"
 
 
 def circuit_to_string(circuit: Circuit) -> str:

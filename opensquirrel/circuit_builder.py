@@ -11,7 +11,7 @@ from typing_extensions import Self
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
 from opensquirrel.instruction_library import InstructionLibrary
-from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Instruction, NonUnitary, Qubit, QubitLike
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Gate, Instruction, NonUnitary, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -55,14 +55,7 @@ class CircuitBuilder(InstructionLibrary):
         self.ir = IR()
 
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
-        if attr == "comment":
-            return self._add_comment
-
         return partial(self._add_instruction, attr)
-
-    def _add_comment(self, comment_string: str) -> Self:
-        self.ir.add_comment(Comment(comment_string))
-        return self
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
         if attr in self.gate_set:
