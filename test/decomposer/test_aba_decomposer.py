@@ -1,6 +1,9 @@
+from typing import Callable
+
 import pytest
 
 from opensquirrel.decomposer import (
+    Decomposer,
     XYXDecomposer,
     XZXDecomposer,
     YXYDecomposer,
@@ -15,7 +18,7 @@ DECOMPOSER = [XYXDecomposer, XZXDecomposer, YXYDecomposer, YZYDecomposer, ZXZDec
 
 
 @pytest.mark.parametrize("decomposer_class", DECOMPOSER)
-def test_specific_bloch_rotation(decomposer_class: DECOMPOSER) -> None:
+def test_specific_bloch_rotation(decomposer_class: Callable[..., Decomposer]) -> None:
     decomposer = decomposer_class()
     axis = [-0.53825, -0.65289, -0.53294]
     angle = 1.97871
@@ -26,7 +29,7 @@ def test_specific_bloch_rotation(decomposer_class: DECOMPOSER) -> None:
 
 
 @pytest.mark.parametrize("decomposer_class", DECOMPOSER)
-def test_negative_bloch_rotation(decomposer_class: DECOMPOSER) -> None:
+def test_negative_bloch_rotation(decomposer_class: Callable[..., Decomposer]) -> None:
     decomposer = decomposer_class()
     axis = [-0.5789, -0.9000, -3.53294]
     angle = 3.12
