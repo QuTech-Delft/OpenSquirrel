@@ -8,9 +8,7 @@ import pytest
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gates import CNOT, CZ, H
 from opensquirrel.ir import Measure
-from opensquirrel.passes.decomposer.aba_decomposer import XYXDecomposer
-from opensquirrel.passes.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XYXDecomposer
 from opensquirrel.passes.exporter.export_format import ExportFormat
 
 

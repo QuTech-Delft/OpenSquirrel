@@ -12,7 +12,7 @@ from opensquirrel.ir import (
     QubitLike,
     named_gate,
 )
-from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer import ZYZDecomposer
 
 
 def test_circuit_from_string() -> None:

@@ -6,9 +6,7 @@ from IPython.display import display
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.default_gates import H, Rx, Rz
 from opensquirrel.ir import Float
-from opensquirrel.passes.decomposer.aba_decomposer import XZXDecomposer, ZYZDecomposer
-from opensquirrel.passes.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XZXDecomposer, ZYZDecomposer
 
 
 class TestDecomposition:

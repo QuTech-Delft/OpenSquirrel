@@ -6,8 +6,8 @@ import pytest
 
 from opensquirrel.default_gates import CNOT, CR, X90, H, I, Rz, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
 
 
 @pytest.fixture(name="decomposer")

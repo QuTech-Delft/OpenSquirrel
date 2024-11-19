@@ -5,7 +5,7 @@ from math import atan2, cos, pi, sin, sqrt
 from opensquirrel.common import ATOL, normalize_angle
 from opensquirrel.default_gates import X90, Rz
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
-from opensquirrel.passes.decomposer.aba_decomposer import ZXZDecomposer
+from opensquirrel.passes.decomposer import ZXZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
