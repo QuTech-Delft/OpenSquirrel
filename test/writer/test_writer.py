@@ -108,24 +108,3 @@ Anonymous gate: MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1.+0.j 0.+0.j 0
 CR(1.234) q[0], q[1]
 """  # noqa: E501
     )
-
-
-def test_comment() -> None:
-    builder = CircuitBuilder(3)
-    builder.H(0)
-    builder.comment("My comment")
-    builder.CR(0, 1, Float(1.234))
-    circuit = builder.to_circuit()
-    assert (
-        writer.circuit_to_string(circuit)
-        == """version 3.0
-
-qubit[3] q
-
-H q[0]
-
-/* My comment */
-
-CR(1.234) q[0], q[1]
-"""
-    )

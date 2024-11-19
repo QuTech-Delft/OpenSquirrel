@@ -6,7 +6,7 @@ import importlib.util
 import pytest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import CNOT, CZ, H
+from opensquirrel.default_instructions import CNOT, CZ, H
 from opensquirrel.ir import Measure
 from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XYXDecomposer
 from opensquirrel.passes.exporter.export_format import ExportFormat

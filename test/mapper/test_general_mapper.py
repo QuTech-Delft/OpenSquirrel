@@ -34,7 +34,6 @@ class TestMapQubits:
         builder.H(0)
         builder.CNOT(0, 1)
         builder.CNOT(1, 2)
-        builder.comment("Qubit[1]")
         builder.measure(0, Bit(0))
         return builder.to_circuit()
 
@@ -44,7 +43,6 @@ class TestMapQubits:
         builder.H(1)
         builder.CNOT(1, 0)
         builder.CNOT(0, 2)
-        builder.comment("Qubit[1]")
         builder.measure(1, Bit(0))
         return builder.to_circuit()
 

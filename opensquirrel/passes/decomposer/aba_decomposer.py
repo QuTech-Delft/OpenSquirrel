@@ -9,7 +9,7 @@ from collections.abc import Callable
 from typing import ClassVar
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import Rx, Ry, Rz
+from opensquirrel.default_instructions import Rx, Ry, Rz
 from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.utils.identity_filter import filter_out_identities

@@ -4,16 +4,13 @@ from typing import SupportsInt
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
     Bit,
-    Comment,
-    Directive,
     Float,
     Gate,
     Int,
     IRVisitor,
-    Measure,
+    NonUnitary,
     Qubit,
     QubitLike,
-    Reset,
 )
 from opensquirrel.register_manager import RegisterManager
 
@@ -51,27 +48,14 @@ class _WriterImpl(IRVisitor):
     def visit_float(self, f: Float) -> str:
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
-    def visit_measure(self, measure: Measure) -> None:
-        if measure.is_abstract:
-            self.output += f"{measure.name}\n"
-            return
-        bit_argument = measure.arguments[1].accept(self)  # type: ignore[index]
-        qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
-        self.output += f"{bit_argument} = {measure.name} {qubit_argument}\n"
-
-    def visit_reset(self, reset: Reset) -> None:
-        if reset.is_abstract:
-            self.output += f"{reset.name}\n"
-            return
-        qubit_argument = reset.arguments[0].accept(self)  # type: ignore[index]
-        self.output += f"{reset.name} {qubit_argument}\n"
-
-    def visit_directive(self, directive: Directive) -> None:
-        if directive.is_abstract:
-            self.output += f"{directive.name}\n"
-            return
-        qubit_argument = directive.arguments[0].accept(self)  # type: ignore[index]
-        self.output += f"{directive.name} {qubit_argument}\n"
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
+        if non_unitary.name == "measure":
+            bit_argument = non_unitary.arguments[1].accept(self)  # type: ignore[index]
+            qubit_argument = non_unitary.arguments[0].accept(self)  # type: ignore[index]
+            self.output += f"{bit_argument} = {non_unitary.name} {qubit_argument}\n"
+        else:
+            qubit_argument = non_unitary.arguments[0].accept(self)  # type: ignore[index]
+            self.output += f"{non_unitary.name} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name
@@ -99,9 +83,6 @@ class _WriterImpl(IRVisitor):
                     qubit_args.append(Qubit(arg).accept(self))
 
         self.output += f"{gate_name} {', '.join(qubit_args)}\n"
-
-    def visit_comment(self, comment: Comment) -> None:
-        self.output += f"\n/* {comment.str} */\n\n"
 
 
 def circuit_to_string(circuit: Circuit) -> str:

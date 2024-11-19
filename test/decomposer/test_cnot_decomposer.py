@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz, X
+from opensquirrel.default_instructions import CNOT, CZ, H, Ry, Rz, X
 from opensquirrel.ir import ControlledGate, Float, Gate
 from opensquirrel.passes.decomposer import CNOTDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement

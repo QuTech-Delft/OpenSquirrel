@@ -1,31 +1,25 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Mapping
 from typing import Any, cast
 
 import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
-from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, Measure, Qubit, Reset, Statement
+from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
+from opensquirrel.instruction_library import InstructionLibrary
+from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, NonUnitary, Qubit, Statement
 from opensquirrel.register_manager import RegisterManager
 
 
-class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
+class Parser(InstructionLibrary):
     def __init__(
         self,
-        gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: Iterable[Callable[..., Measure]] = default_measure_set,
-        reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
+        gate_set: Mapping[str, Callable[..., Gate]] = default_gate_set,
+        non_unitary_set: Mapping[str, Callable[..., NonUnitary]] = default_non_unitary_set,
     ) -> None:
-        GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasureLibrary.__init__(self, measure_set)
-        ResetLibrary.__init__(self, reset_set)
+        InstructionLibrary.__init__(self, gate_set, non_unitary_set)
         self.ir = None
 
     @staticmethod
@@ -70,7 +64,7 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         return isinstance(ast_node, cqasm.semantic.GateInstruction)
 
     @staticmethod
-    def _is_non_gate_instruction(ast_node: Any) -> bool:
+    def _is_non_unitary_instruction(ast_node: Any) -> bool:
         return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
 
     @staticmethod
@@ -206,13 +200,8 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             raise OSError(msg)
         return self.get_gate_f(gate_name)
 
-    def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., Statement]:
-        if "measure" in instruction.name:
-            return self.get_measure_f(instruction.name)
-        if "reset" in instruction.name:
-            return self.get_reset_f(instruction.name)
-        msg = "parsing error: unknown non-unitary instruction"
-        raise OSError(msg)
+    def _get_non_unitary_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
+        return self.get_non_unitary_f(instruction.name)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
@@ -231,8 +220,8 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             if Parser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_f(statement)
                 expanded_args = Parser._get_expanded_gate_args(statement, register_manager)
-            elif Parser._is_non_gate_instruction(statement):
-                instruction_generator = self._get_non_gate_f(statement)
+            elif Parser._is_non_unitary_instruction(statement):
+                instruction_generator = self._get_non_unitary_f(statement)
                 if statement.name == "measure":
                     expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
                 else:

@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Rz, S, X, Z
+from opensquirrel.default_instructions import CNOT, CR, H, I, Rx, Rz, S, X, Z
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
 from opensquirrel.passes.decomposer import XZXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement

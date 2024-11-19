@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
+from opensquirrel.ir import Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -50,9 +50,6 @@ class _CQASMv1Creator(IRVisitor):
         self.cqasmv1_string += "{} {}{}\n".format(
             gate_name, ", ".join(qubit_args), ", " + ", ".join(params) if params else ""
         )
-
-    def visit_comment(self, comment: Comment) -> None:
-        self.cqasmv1_string += f"\n/* {comment.str} */\n\n"
 
 
 def export(circuit: Circuit) -> str:
