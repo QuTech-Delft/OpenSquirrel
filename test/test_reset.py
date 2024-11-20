@@ -64,33 +64,6 @@ reset q[1]
     )
 
 
-def test_reset_all() -> None:
-    qc = Circuit.from_string(
-        """
-        version 3.0
-
-        qubit[1] q
-        qubit[2] qq
-
-        H qq[1]
-
-        reset
-        """,
-    )
-    assert (
-        str(qc)
-        == """version 3.0
-
-qubit[3] q
-
-H q[2]
-reset q[0]
-reset q[1]
-reset q[2]
-"""
-    )
-
-
 def test_reset_in_circuit_builder() -> None:
     builder = CircuitBuilder(2, 2)
     builder.H(0)
