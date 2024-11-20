@@ -8,8 +8,8 @@ from typing import Any
 
 from typing_extensions import Self
 
+from opensquirrel import instruction_library
 from opensquirrel.circuit import Circuit
-from opensquirrel.instruction_library import InstructionLibrary
 from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
@@ -48,7 +48,6 @@ class CircuitBuilder:
         return partial(self._add_instruction, attr)
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
-        instruction_library = InstructionLibrary()
         if attr in instruction_library.gate_set:
             generator_f_gate = instruction_library.get_gate_f(attr)
             self._check_generator_f_args(generator_f_gate, attr, args)

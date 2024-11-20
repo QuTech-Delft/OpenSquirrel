@@ -5,9 +5,9 @@ from typing import Any, cast
 
 import cqasm.v3x as cqasm
 
+from opensquirrel import instruction_library
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
-from opensquirrel.instruction_library import InstructionLibrary
 from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, NonUnitary, Qubit, Statement
 from opensquirrel.register_manager import RegisterManager
 
@@ -193,11 +193,11 @@ class Parser:
                 return ControlGateModifier(modified_gate_f)
             msg = "parsing error: unknown unitary instruction"
             raise OSError(msg)
-        return InstructionLibrary().get_gate_f(gate_name)
+        return instruction_library.get_gate_f(gate_name)
 
     @staticmethod
     def _get_non_unitary_f(instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
-        return InstructionLibrary().get_non_unitary_f(instruction.name)
+        return instruction_library.get_non_unitary_f(instruction.name)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
