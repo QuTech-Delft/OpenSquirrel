@@ -180,10 +180,11 @@ class Parser:
         if isinstance(result, list):
             raise OSError("parsing error: " + ", ".join(result))
 
-    def _get_gate_f(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
+    @staticmethod
+    def _get_gate_f(instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
         gate_name = instruction.gate.name
         if gate_name in ["inv", "pow", "ctrl"]:
-            modified_gate_f = cast(Callable[..., BlochSphereRotation], self._get_gate_f(instruction.gate))
+            modified_gate_f = cast(Callable[..., BlochSphereRotation], Parser._get_gate_f(instruction.gate))
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_f)
             if gate_name == "pow":
@@ -194,7 +195,8 @@ class Parser:
             raise OSError(msg)
         return InstructionLibrary().get_gate_f(gate_name)
 
-    def _get_non_unitary_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
+    @staticmethod
+    def _get_non_unitary_f(instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
         return InstructionLibrary().get_non_unitary_f(instruction.name)
 
     def circuit_from_string(self, s: str) -> Circuit:
