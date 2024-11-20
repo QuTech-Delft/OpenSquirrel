@@ -3,14 +3,13 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
-from opensquirrel.exporter.export_format import ExportFormat
+from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
+from opensquirrel.passes.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.decomposer import Decomposer
-    from opensquirrel.ir import IR, Gate, Measure
-    from opensquirrel.mapper import Mapper
+    from opensquirrel.ir import IR, Gate, NonUnitary
+    from opensquirrel.passes.decomposer import Decomposer
+    from opensquirrel.passes.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -58,9 +57,8 @@ class Circuit:
     def from_string(
         cls,
         cqasm3_string: str,
-        gate_set: list[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: list[Callable[..., Measure]] = default_measure_set,
+        gate_set: Mapping[str, Callable[..., Gate]] = default_gate_set,
+        non_unitary_set: Mapping[str, Callable[..., NonUnitary]] = default_non_unitary_set,
     ) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
@@ -72,16 +70,14 @@ class Circuit:
 
         Args:
             cqasm3_string: a cQASM 3 string
-            gate_set: an array of gate semantic functions. See default_gates for examples
-            gate_aliases: a dictionary of extra gate aliases, mapping strings to functions in the gate set
-            measure_set: an array of measurement semantic functions. See default_measures for examples
+            gate_set: a dictionary of gates. See default_instructions for examples
+            non_unitary_set: a dictionary of non-unitary instructions. See default_instructions for examples
         """
         from opensquirrel.parser.libqasm.parser import Parser
 
         parser = Parser(
             gate_set=gate_set,
-            gate_aliases=gate_aliases,
-            measure_set=measure_set,
+            non_unitary_set=non_unitary_set,
         )
         return parser.circuit_from_string(cqasm3_string)
 
@@ -105,7 +101,7 @@ class Circuit:
         """Merge all consecutive 1-qubit gates in the circuit.
         Gates obtained from merging other gates become anonymous gates.
         """
-        from opensquirrel.merger import general_merger
+        from opensquirrel.passes.merger import general_merger
 
         general_merger.merge_single_qubit_gates(self)
 
@@ -113,7 +109,7 @@ class Circuit:
         """Generic decomposition pass.
         It applies the given decomposer function to every gate in the circuit.
         """
-        from opensquirrel.decomposer import general_decomposer
+        from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.decompose(self.ir, decomposer)
 
@@ -121,7 +117,7 @@ class Circuit:
         """Generic qubit mapper pass.
         Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
         """
-        from opensquirrel.mapper.qubit_remapper import remap_ir
+        from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
         remap_ir(self, mapper.get_mapping())
 
@@ -130,17 +126,17 @@ class Circuit:
         `f` is a callable that takes the arguments of the gate that is to be replaced and
         returns the decomposition as a list of gates.
         """
-        from opensquirrel.decomposer import general_decomposer
+        from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.replace(self.ir, gate_generator, f)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
-            from opensquirrel.exporter import quantify_scheduler_exporter
+            from opensquirrel.passes.exporter import quantify_scheduler_exporter
 
             return quantify_scheduler_exporter.export(self)
         if fmt == ExportFormat.CQASM_V1:
-            from opensquirrel.exporter import cqasmv1_exporter
+            from opensquirrel.passes.exporter import cqasmv1_exporter
 
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"

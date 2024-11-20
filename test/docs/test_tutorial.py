@@ -3,9 +3,9 @@ import math
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
-from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
+from opensquirrel.default_instructions import CNOT, CZ, H, Ry, Rz
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
+from opensquirrel.passes.decomposer import ZYZDecomposer
 
 
 def test_circuit_from_string() -> None:

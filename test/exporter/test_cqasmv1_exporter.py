@@ -3,8 +3,16 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.exporter.export_format import ExportFormat
-from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Float, Gate, MatrixGate, Qubit
+from opensquirrel.ir import (
+    Bit,
+    BlochSphereRotation,
+    ControlledGate,
+    Float,
+    Gate,
+    MatrixGate,
+    Qubit,
+)
+from opensquirrel.passes.exporter.export_format import ExportFormat
 
 
 def test_cqasm_v3_to_cqasm_v1() -> None:
@@ -202,25 +210,3 @@ def test_anonymous_gates(gate: Gate) -> None:
     with pytest.raises(UnsupportedGateError, match="not supported"):  # noqa: PT012
         qc = builder.to_circuit()
         qc.export(fmt=ExportFormat.CQASM_V1)
-
-
-def test_comment() -> None:
-    builder = CircuitBuilder(3)
-    builder.H(Qubit(0))
-    builder.comment("My comment")
-    builder.Rx(Qubit(0), Float(1.234))
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
-    assert (
-        cqasm_v1_string
-        == """version 1.0
-
-qubits 3
-
-h q[0]
-
-/* My comment */
-
-rx q[0], 1.234
-"""
-    )

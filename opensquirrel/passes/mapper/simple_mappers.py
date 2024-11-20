@@ -4,8 +4,8 @@
 * HardcodedMapper
 """
 
-from opensquirrel.mapper.general_mapper import Mapper
-from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.passes.mapper.general_mapper import Mapper
+from opensquirrel.passes.mapper.mapping import Mapping
 
 
 class IdentityMapper(Mapper):

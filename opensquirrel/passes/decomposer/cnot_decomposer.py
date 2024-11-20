@@ -3,11 +3,11 @@ from __future__ import annotations
 import math
 
 from opensquirrel.common import ATOL
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
-from opensquirrel.decomposer.general_decomposer import Decomposer
-from opensquirrel.default_gates import CNOT, Ry, Rz, X
+from opensquirrel.default_instructions import CNOT, Ry, Rz, X
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate
-from opensquirrel.merger import general_merger
+from opensquirrel.passes.decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
+from opensquirrel.passes.merger import general_merger
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 

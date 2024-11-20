@@ -3,10 +3,10 @@ from __future__ import annotations
 from math import atan2, cos, pi, sin, sqrt
 
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.decomposer.aba_decomposer import ZXZDecomposer
-from opensquirrel.decomposer.general_decomposer import Decomposer
-from opensquirrel.default_gates import X90, Rz
+from opensquirrel.default_instructions import X90, Rz
 from opensquirrel.ir import BlochSphereRotation, Float, Gate
+from opensquirrel.passes.decomposer import ZXZDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
 class McKayDecomposer(Decomposer):

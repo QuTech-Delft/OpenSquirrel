@@ -1,10 +1,25 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Callable
 from typing import SupportsInt
 
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate, Int, QubitLike, named_gate
+from opensquirrel.ir import (
+    Barrier,
+    Bit,
+    BlochSphereRotation,
+    ControlledGate,
+    Float,
+    Int,
+    Measure,
+    QubitLike,
+    Reset,
+    named_gate,
+    non_unitary,
+)
+
+######################
+# Unitary instructions
+######################
 
 
 @named_gate
@@ -111,41 +126,75 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
     return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
 
 
-default_bloch_sphere_rotations_without_params: list[Callable[[QubitLike], BlochSphereRotation]]
-default_bloch_sphere_rotations_without_params = [
-    I,
-    H,
-    X,
-    X90,
-    mX90,
-    Y,
-    Y90,
-    mY90,
-    Z,
-    S,
-    Sdag,
-    T,
-    Tdag,
-]
-default_bloch_sphere_rotations: list[
-    Callable[[QubitLike], BlochSphereRotation] | Callable[[QubitLike, Float], BlochSphereRotation]
-]
-default_bloch_sphere_rotations = [
-    *default_bloch_sphere_rotations_without_params,
-    Rx,
-    Ry,
-    Rz,
-]
-default_gate_set: list[Callable[..., Gate]]
-default_gate_set = [
-    *default_bloch_sphere_rotations,
-    CNOT,
-    CZ,
-    CR,
-    CRk,
-]
+##########################
+# Non-unitary instructions
+##########################
 
-default_gate_aliases = {
+
+@non_unitary
+def measure(q: QubitLike, b: Bit) -> Measure:
+    return Measure(qubit=q, bit=b, axis=(0, 0, 1))
+
+
+@non_unitary
+def measure_z(q: QubitLike, b: Bit) -> Measure:
+    return Measure(qubit=q, bit=b, axis=(0, 0, 1))
+
+
+@non_unitary
+def reset(q: QubitLike) -> Reset:
+    return Reset(qubit=q)
+
+
+@non_unitary
+def barrier(q: QubitLike) -> Barrier:
+    return Barrier(qubit=q)
+
+
+default_bloch_sphere_rotation_without_params_set = {
+    "H": H,
+    "I": I,
+    "S": S,
+    "Sdag": Sdag,
+    "T": T,
+    "Tdag": Tdag,
+    "X": X,
+    "X90": X90,
+    "Y": Y,
+    "Y90": Y90,
+    "Z": Z,
+    "mX90": mX90,
+    "mY90": mY90,
+}
+default_bloch_sphere_rotation_set = {
+    **default_bloch_sphere_rotation_without_params_set,
+    "Rx": Rx,
+    "Ry": Ry,
+    "Rz": Rz,
+}
+default_controlled_gate_set = {
+    "CNOT": CNOT,
+    "CR": CR,
+    "CRk": CRk,
+    "CZ": CZ,
+}
+default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
+}
+default_gate_set = {
+    **default_bloch_sphere_rotation_set,
+    **default_controlled_gate_set,
+    **default_gate_alias_set,
+}
+default_unitary_set = {**default_gate_set}
+default_non_unitary_set = {
+    "barrier": barrier,
+    "measure": measure,
+    "measure_z": measure_z,
+    "reset": reset,
+}
+default_instructions = {
+    **default_unitary_set,
+    **default_non_unitary_set,
 }
