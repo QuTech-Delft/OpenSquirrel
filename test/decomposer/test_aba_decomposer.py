@@ -2,7 +2,8 @@ from typing import Callable
 
 import pytest
 
-from opensquirrel.decomposer import (
+from opensquirrel.ir import BlochSphereRotation
+from opensquirrel.passes.decomposer import (
     Decomposer,
     XYXDecomposer,
     XZXDecomposer,
@@ -11,8 +12,7 @@ from opensquirrel.decomposer import (
     ZXZDecomposer,
     ZYZDecomposer,
 )
-from opensquirrel.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.ir import BlochSphereRotation
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 DECOMPOSER = [XYXDecomposer, XZXDecomposer, YXYDecomposer, YZYDecomposer, ZXZDecomposer, ZYZDecomposer]
 
