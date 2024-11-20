@@ -50,7 +50,7 @@ class CircuitBuilder:
         return partial(self._add_instruction, attr)
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
-        instruction_library = InstructionLibrary.get_instance()
+        instruction_library = InstructionLibrary()
         if attr in instruction_library.get_gate_set():
             generator_f_gate = instruction_library.get_gate_f(attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
