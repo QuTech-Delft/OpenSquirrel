@@ -107,8 +107,8 @@ class ABADecomposer(Decomposer, ABC):
         theta1 = (p + m) / 2
         theta3 = p - theta1
 
-        if all(i < 0 for i in axis):
-            return theta3, theta2, theta1
+        if all(component < 0 for component in axis):
+            theta1, theta3 = theta3, theta1
 
         return theta1, theta2, theta3
 
