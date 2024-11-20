@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import math
-from typing import SupportsInt
+from collections.abc import Mapping
+from typing import Callable, SupportsInt
 
 from opensquirrel.ir import (
     Barrier,
@@ -9,10 +10,14 @@ from opensquirrel.ir import (
     BlochSphereRotation,
     ControlledGate,
     Float,
+    Gate,
+    Instruction,
     Int,
     Measure,
+    NonUnitary,
     QubitLike,
     Reset,
+    Unitary,
     named_gate,
     non_unitary,
 )
@@ -182,18 +187,26 @@ default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
 }
+
+default_gate_set: Mapping[str, Callable[..., Gate]]
 default_gate_set = {
     **default_bloch_sphere_rotation_set,
     **default_controlled_gate_set,
     **default_gate_alias_set,
 }
+
+default_unitary_set: Mapping[str, Callable[..., Unitary]]
 default_unitary_set = {**default_gate_set}
+
+default_non_unitary_set: Mapping[str, Callable[..., NonUnitary]]
 default_non_unitary_set = {
     "barrier": barrier,
     "measure": measure,
     "measure_z": measure_z,
     "reset": reset,
 }
+
+default_instructions: Mapping[str, Callable[..., Instruction]]
 default_instructions = {
     **default_unitary_set,
     **default_non_unitary_set,

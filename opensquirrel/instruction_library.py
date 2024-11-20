@@ -12,14 +12,16 @@ if TYPE_CHECKING:
 
 class InstructionLibrary(metaclass=Singleton):
     def __init__(self) -> None:
-        self.gate_set = default_gate_set
-        self.non_unitary_set = default_non_unitary_set
+        self._gate_set = default_gate_set
+        self._non_unitary_set = default_non_unitary_set
 
-    def get_gate_set(self) -> Mapping[str, Callable[..., Gate]]:
-        return self.gate_set
+    @property
+    def gate_set(self) -> Mapping[str, Callable[..., Gate]]:
+        return self._gate_set
 
-    def get_non_unitary_set(self) -> Mapping[str, Callable[..., NonUnitary]]:
-        return self.non_unitary_set
+    @property
+    def non_unitary_set(self) -> Mapping[str, Callable[..., NonUnitary]]:
+        return self._non_unitary_set
 
     def get_gate_f(self, gate_name: str) -> Callable[..., Gate]:
         if gate_name not in self.gate_set:

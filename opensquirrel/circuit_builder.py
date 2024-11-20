@@ -24,8 +24,6 @@ class CircuitBuilder:
     Args:
         qubit_register_size (int): Size of the qubit register
         bit_register_size (int): Size of the bit register
-        gate_set (dictionary): Supported gates
-        non_unitary_set (dictionary): Supported non-unitary instructions
 
     Example:
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
@@ -51,11 +49,11 @@ class CircuitBuilder:
 
     def _add_instruction(self, attr: str, *args: Any) -> Self:
         instruction_library = InstructionLibrary()
-        if attr in instruction_library.get_gate_set():
+        if attr in instruction_library.gate_set:
             generator_f_gate = instruction_library.get_gate_f(attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
             self.ir.add_gate(generator_f_gate(*args))
-        elif attr in instruction_library.get_non_unitary_set():
+        elif attr in instruction_library.non_unitary_set:
             generator_f_non_unitary = instruction_library.get_non_unitary_f(attr)
             self._check_generator_f_args(generator_f_non_unitary, attr, args)
             self.ir.add_non_unitary(generator_f_non_unitary(*args))

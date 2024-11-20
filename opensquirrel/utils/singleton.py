@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import typing as t
+from typing import Any, ClassVar, Generic, TypeVar, cast
 
-_T = t.TypeVar("_T")
+_T = TypeVar("_T")
 
 
-class Singleton(type, t.Generic[_T]):
-    _instances: t.ClassVar[dict[type, t.Any]] = {}
+class Singleton(type, Generic[_T]):
+    _instances: ClassVar[dict[type, Any]] = {}
 
-    def __call__(cls, *args: t.Any, **kwargs: t.Any) -> _T:
+    def __call__(cls, *args: Any, **kwargs: Any) -> _T:
         if cls not in cls._instances:
             cls._instances[cls] = super().__call__(*args, **kwargs)
-        return t.cast(_T, cls._instances[cls])
+        return cast(_T, cls._instances[cls])
