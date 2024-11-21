@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
 from opensquirrel.passes.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IR, Gate, NonUnitary
+    from opensquirrel.ir import IR, Gate
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
@@ -54,12 +53,7 @@ class Circuit:
         return self.register_manager == other.register_manager and self.ir == other.ir
 
     @classmethod
-    def from_string(
-        cls,
-        cqasm3_string: str,
-        gate_set: Mapping[str, Callable[..., Gate]] = default_gate_set,
-        non_unitary_set: Mapping[str, Callable[..., NonUnitary]] = default_non_unitary_set,
-    ) -> Circuit:
+    def from_string(cls, cqasm3_string: str) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
@@ -70,16 +64,10 @@ class Circuit:
 
         Args:
             cqasm3_string: a cQASM 3 string
-            gate_set: a dictionary of gates. See default_instructions for examples
-            non_unitary_set: a dictionary of non-unitary instructions. See default_instructions for examples
         """
         from opensquirrel.parser.libqasm.parser import Parser
 
-        parser = Parser(
-            gate_set=gate_set,
-            non_unitary_set=non_unitary_set,
-        )
-        return parser.circuit_from_string(cqasm3_string)
+        return Parser().circuit_from_string(cqasm3_string)
 
     @property
     def qubit_register_size(self) -> int:
