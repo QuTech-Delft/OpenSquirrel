@@ -5,7 +5,7 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_instructions import Ry, Rz
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Qubit
-from opensquirrel.passes.merger import general_merger
+from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 from test.ir_equality_test_base import modify_circuit_and_check
 
@@ -35,7 +35,8 @@ def test_single_gate() -> None:
     builder2.Ry(0, Float(1.2345))
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
     # Check that when no fusion happens, generator and arguments of gates are preserved.
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
@@ -50,8 +51,8 @@ def test_two_hadamards() -> None:
     circuit = builder.to_circuit()
 
     expected_circuit = CircuitBuilder(4).to_circuit()
-
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
 def test_two_hadamards_different_qubits() -> None:
@@ -65,7 +66,8 @@ def test_two_hadamards_different_qubits() -> None:
     builder2.H(2)
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
 def test_merge_different_qubits() -> None:
@@ -83,7 +85,8 @@ def test_merge_different_qubits() -> None:
     builder2.Ry(2, Float(4.234))
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
     assert circuit.ir.statements[0].is_anonymous  # When fusion happens, the resulting gate is anonymous.
@@ -113,7 +116,8 @@ def test_merge_and_flush() -> None:
     builder2.Ry(0, Float(3.234))
     expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(circuit, general_merger.merge_single_qubit_gates, expected_circuit)
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
     assert circuit.ir.statements[0].is_anonymous
@@ -132,7 +136,9 @@ def test_merge_y90_x_to_h() -> None:
     builder2 = CircuitBuilder(1)
     builder2.H(0)
     expected_qc = builder2.to_circuit()
-    modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
+
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(qc, merger.merge, expected_qc)
 
 
 def test_no_merge_across_measure() -> None:
@@ -151,7 +157,9 @@ def test_no_merge_across_measure() -> None:
     builder2.H(0)
     builder2.measure(0, Bit(1))
     expected_qc = builder2.to_circuit()
-    modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
+
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(qc, merger.merge, expected_qc)
 
 
 def test_no_merge_across_reset() -> None:
@@ -170,7 +178,9 @@ def test_no_merge_across_reset() -> None:
     builder2.H(0)
     builder2.reset(0)
     expected_qc = builder2.to_circuit()
-    modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
+
+    merger = SingleQubitGatesMerger()
+    modify_circuit_and_check(qc, merger.merge, expected_qc)
 
 
 @pytest.mark.parametrize(

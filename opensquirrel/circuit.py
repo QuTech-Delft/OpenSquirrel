@@ -101,9 +101,10 @@ class Circuit:
         """Merge all consecutive 1-qubit gates in the circuit.
         Gates obtained from merging other gates become anonymous gates.
         """
-        from opensquirrel.passes.merger import general_merger
+        from opensquirrel.passes.merger import SingleQubitGatesMerger
 
-        general_merger.merge_single_qubit_gates(self)
+        merger = SingleQubitGatesMerger()
+        merger.merge(self)
 
     def decompose(self, decomposer: Decomposer) -> None:
         """Generic decomposition pass.
