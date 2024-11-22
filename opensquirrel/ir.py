@@ -233,8 +233,8 @@ class Axis(Sequence[np.float64], Expression):
     def _parse_and_validate_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
         """Parse and validate an ``AxisLike``.
 
-        Check if the `axis` can be cast to a 1DArray of length 3, raise an error
-        otherwise. After casting to an array, the axis is normalized.
+        Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
+        After casting to an array, the axis is normalized.
 
         Args:
             axis: ``AxisLike`` to validate and parse.
@@ -727,8 +727,7 @@ def is_qubit_like_annotation(annotation: Any) -> bool:
         annotation: annotation to check.
 
     Returns:
-        Boolean value stating wether the annotation is something that should be cast to
-        Qubit.
+        Boolean value stating whether the annotation is something that should be cast to Qubit.
     """
     return annotation in (QubitLike, Qubit)
 
@@ -740,8 +739,7 @@ def is_int_annotation(annotation: Any) -> bool:
         annotation: annotation to check.
 
     Returns:
-        Boolean value stating wether the annotation is something that should be cast to
-        int.
+        Boolean value stating whether the annotation is something that should be cast to int.
     """
     return annotation in (SupportsInt, Int)
 
@@ -753,8 +751,7 @@ def is_float_annotation(annotation: Any) -> bool:
         annotation: annotation to check.
 
     Returns:
-        Boolean value stating wether the annotation is something that should be cast to
-        float.
+        Boolean value stating whether the annotation is something that should be cast to float.
     """
     return annotation in (SupportsFloat, Float)
 
@@ -765,6 +762,8 @@ ANNOTATIONS_TO_TYPE_MAP = {
     "Bit": Bit,
     "BlochSphereRotation": BlochSphereRotation,
     "ControlledGate": ControlledGate,
+    "Float": Float,
+    "Int": Int,
     "MatrixGate": MatrixGate,
     "Measure": Measure,
     "Reset": Reset,

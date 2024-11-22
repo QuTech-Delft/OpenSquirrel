@@ -37,7 +37,6 @@ class CircuitBuilder:
         cnot q[0], q[1]
         cnot q[0], q[2]
         <BLANKLINE>
-
     """
 
     def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
@@ -88,14 +87,14 @@ class CircuitBuilder:
         attr: str,
         args: tuple[Any, ...],
     ) -> None:
-        """General instruction validation function. The function checks if each instruction has the proper arguments
+        """General instruction validation function.
+        The function checks if each instruction has the proper arguments
         and if the qubit and bits are within the register range.
 
         Args:
             generator_f: Instruction function
             attr: Type of instruction
             args: Arguments parsed into the function
-
         """
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
             try:

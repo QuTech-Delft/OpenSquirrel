@@ -47,9 +47,8 @@ class ABADecomposer(Decomposer, ABC):
             axis: _normalized_ axis of the Bloch sphere rotation
 
         Returns:
-            A triple (theta1, theta2, theta3) corresponding to the decomposition of the
-            arbitrary Bloch sphere rotation into U = Ra(theta3) Rb(theta2) Ra(theta1)
-
+            A triple (theta1, theta2, theta3) corresponding to the decomposition of the arbitrary Bloch sphere rotation
+            into U = Ra(theta3) Rb(theta2) Ra(theta1)
         """
         axis = Axis(axis)
         a_axis_value = axis[self.index_a]
