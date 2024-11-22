@@ -765,7 +765,6 @@ ANNOTATIONS_TO_TYPE_MAP = {
     "Bit": Bit,
     "BlochSphereRotation": BlochSphereRotation,
     "ControlledGate": ControlledGate,
-    "Float": Float,
     "MatrixGate": MatrixGate,
     "Measure": Measure,
     "Reset": Reset,
