@@ -1,23 +1,20 @@
 from __future__ import annotations
 
 import inspect
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from copy import deepcopy
 from functools import partial
 from typing import Any
 
 from typing_extensions import Self
 
+from opensquirrel import instruction_library
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
-from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Comment, Gate, Measure, Qubit, QubitLike, Reset
+from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
-class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
+class CircuitBuilder:
     """
     A class using the builder pattern to make construction of circuits easy from Python.
     Adds corresponding instruction when a method is called. Checks that instructions are known and called with the right
@@ -27,9 +24,6 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
     Args:
         qubit_register_size (int): Size of the qubit register
         bit_register_size (int): Size of the bit register
-        gate_set (list): Supported gates
-        gate_aliases (dict): Supported gate aliases
-        measure_set (list): Supported measure instructions
 
     Example:
         >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
@@ -46,44 +40,25 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
 
     """
 
-    def __init__(
-        self,
-        qubit_register_size: int,
-        bit_register_size: int = 0,
-        gate_set: list[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: list[Callable[..., Measure]] = default_measure_set,
-        reset_set: list[Callable[..., Reset]] = default_reset_set,
-    ) -> None:
-        GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasureLibrary.__init__(self, measure_set)
-        ResetLibrary.__init__(self, reset_set)
+    def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
-        if attr == "comment":
-            return self._add_comment
-
         return partial(self._add_instruction, attr)
 
-    def _add_comment(self, comment_string: str) -> Self:
-        self.ir.add_comment(Comment(comment_string))
-        return self
-
     def _add_instruction(self, attr: str, *args: Any) -> Self:
-        if any(attr == measure.__name__ for measure in self.measure_set):
-            generator_f_measure = MeasureLibrary.get_measure_f(self, attr)
-            self._check_generator_f_args(generator_f_measure, attr, args)
-            self.ir.add_measure(generator_f_measure(*args))
-        elif any(attr == reset.__name__ for reset in self.reset_set):
-            generator_f_reset = ResetLibrary.get_reset_f(self, attr)
-            self._check_generator_f_args(generator_f_reset, attr, args)
-            self.ir.add_reset(generator_f_reset(*args))
-        else:
-            generator_f_gate = GateLibrary.get_gate_f(self, attr)
+        if attr in instruction_library.gate_set:
+            generator_f_gate = instruction_library.get_gate_f(attr)
             self._check_generator_f_args(generator_f_gate, attr, args)
             self.ir.add_gate(generator_f_gate(*args))
+        elif attr in instruction_library.non_unitary_set:
+            generator_f_non_unitary = instruction_library.get_non_unitary_f(attr)
+            self._check_generator_f_args(generator_f_non_unitary, attr, args)
+            self.ir.add_non_unitary(generator_f_non_unitary(*args))
+        else:
+            msg = f"unknown instruction '{attr}'"
+            raise ValueError(msg)
         return self
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
@@ -109,7 +84,7 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
 
     def _check_generator_f_args(
         self,
-        generator_f: Callable[..., Gate | Measure | Reset],
+        generator_f: Callable[..., Instruction],
         attr: str,
         args: tuple[Any, ...],
     ) -> None:
@@ -131,12 +106,12 @@ class CircuitBuilder(GateLibrary, MeasureLibrary, ResetLibrary):
                 msg = "unknown annotation type"
                 raise TypeError(msg) from e
 
-            # fix for python39
+            # Fix for Python 3.9
             try:
-                is_incorrect_type = not isinstance(args[i], expected_type)
+                is_incorrect_type = not isinstance(args[i], expected_type)  # type: ignore
             except TypeError:
-                # expected type is probably a Union, which works differently in python39
-                is_incorrect_type = not isinstance(args[i], expected_type.__args__)
+                # Expected type is probably a Union, which works differently in Python 3.9
+                is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
 
             if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"

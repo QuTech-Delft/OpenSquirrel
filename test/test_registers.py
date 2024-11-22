@@ -1,5 +1,5 @@
 from opensquirrel import Circuit
-from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
+from opensquirrel.passes.decomposer import McKayDecomposer
 
 
 def test_qubit_variable_b_and_bit_variable_q() -> None:

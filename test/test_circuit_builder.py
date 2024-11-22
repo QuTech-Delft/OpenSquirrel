@@ -1,15 +1,14 @@
 import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_gates import CNOT, H, I
-from opensquirrel.ir import Bit, Comment, Measure
+from opensquirrel.default_instructions import CNOT, H, I
+from opensquirrel.ir import Bit, Measure
 
 
 class TestCircuitBuilder:
     def test_simple(self) -> None:
         builder = CircuitBuilder(2)
 
-        builder.comment("A single line comment.")
         builder.H(0)
         builder.CNOT(0, 1)
 
@@ -18,7 +17,6 @@ class TestCircuitBuilder:
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
         assert circuit.ir.statements == [
-            Comment("A single line comment."),
             H(0),
             CNOT(0, 1),
         ]
@@ -77,7 +75,7 @@ class TestCircuitBuilder:
 
     def test_unknown_instruction(self) -> None:
         builder = CircuitBuilder(3)
-        with pytest.raises(ValueError, match="unknown instruction `unknown`"):
+        with pytest.raises(ValueError, match="unknown instruction 'unknown'"):
             builder.unknown(0)
 
     def test_wrong_number_of_arguments(self) -> None:

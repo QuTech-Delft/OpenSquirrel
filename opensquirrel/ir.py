@@ -22,9 +22,6 @@ def repr_round(
 
 
 class IRVisitor:
-    def visit_comment(self, comment: Comment) -> Any:
-        pass
-
     def visit_int(self, i: Int) -> Any:
         pass
 
@@ -40,6 +37,9 @@ class IRVisitor:
     def visit_gate(self, gate: Gate) -> Any:
         pass
 
+    def visit_non_unitary(self, gate: NonUnitary) -> Any:
+        pass
+
     def visit_axis(self, axis: Axis) -> Any:
         pass
 
@@ -47,6 +47,9 @@ class IRVisitor:
         pass
 
     def visit_reset(self, reset: Reset) -> Any:
+        pass
+
+    def visit_barrier(self, barrier: Barrier) -> Any:
         pass
 
     def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
@@ -87,20 +90,21 @@ class Float(Expression):
         """
         if isinstance(value, SupportsFloat):
             self.value = float(value)
-        else:
-            msg = "value must be a float"
-            raise TypeError(msg)
+            return
+
+        msg = "value must be a float"
+        raise TypeError(msg)
+
+    def __float__(self) -> float:
+        """Cast the ``Float`` object to a built-in Python ``float``.
+
+        Returns:
+            Built-in Python ``float`` representation of the ``Float``.
+        """
+        return self.value
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_float(self)
-
-    def __float__(self) -> float:
-        """Cast the ``Float`` object to a building python ``float``.
-
-        Returns:
-            Building python ``float`` representation of the ``Float``.
-        """
-        return self.value
 
 
 @dataclass(init=False)
@@ -126,16 +130,16 @@ class Int(Expression):
         msg = "value must be an int"
         raise TypeError(msg)
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_int(self)
-
     def __int__(self) -> int:
-        """Cast the ``Int`` object to a building python ``int``.
+        """Cast the ``Int`` object to a built-in Python ``int``.
 
         Returns:
-            Building python ``int`` representation of the ``Int``.
+            Built-in Python ``int`` representation of the ``Int``.
         """
         return self.value
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_int(self)
 
 
 @dataclass
@@ -264,7 +268,13 @@ class Axis(Sequence[np.float64], Expression):
         """
         return axis / np.linalg.norm(axis)
 
-    def __getitem__(self, index: int, /) -> np.float64:  # type:ignore[override]
+    @overload
+    def __getitem__(self, i: int, /) -> np.float64: ...
+
+    @overload
+    def __getitem__(self, s: slice, /) -> list[np.float64]: ...
+
+    def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
         """Get the item at `index`."""
         return cast(np.float64, self.value[index])
 
@@ -298,7 +308,61 @@ class Statement(IRNode, ABC):
     pass
 
 
-class Measure(Statement, ABC):
+class Instruction(Statement, ABC):
+    def __init__(
+        self,
+        generator: Callable[..., Instruction] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        self.generator = generator
+        self.arguments = arguments
+
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        pass
+
+
+class Unitary(Instruction, ABC):
+    def __init__(
+        self,
+        generator: Callable[..., Unitary] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        Instruction.__init__(self, generator, arguments)
+
+    @property
+    def name(self) -> str:
+        return self.generator.__name__ if self.generator else "Unknown unitary instruction: " + self.__repr__()
+
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        pass
+
+
+class NonUnitary(Instruction, ABC):
+    def __init__(
+        self,
+        generator: Callable[..., NonUnitary] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        Instruction.__init__(self, generator, arguments)
+
+    @property
+    def name(self) -> str:
+        return self.generator.__name__ if self.generator else "Unknown non-unitary instruction: " + self.__repr__()
+
+    @abstractmethod
+    def get_qubit_operands(self) -> list[Qubit]:
+        pass
+
+
+class Measure(NonUnitary):
     def __init__(
         self,
         qubit: QubitLike,
@@ -307,8 +371,7 @@ class Measure(Statement, ABC):
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
-        self.generator = generator
-        self.arguments = arguments
+        NonUnitary.__init__(self, generator, arguments)
         self.qubit = Qubit(qubit)
         self.bit: Bit = bit
         self.axis = Axis(axis)
@@ -316,20 +379,13 @@ class Measure(Statement, ABC):
     def __repr__(self) -> str:
         return f"Measure(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
-    @property
-    def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<abstract_measure>"
-
-    @property
-    def is_abstract(self) -> bool:
-        return self.arguments is None
-
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Measure):
-            return False
-        return self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        return (
+            isinstance(other, Measure) and self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        )
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
         return visitor.visit_measure(self)
 
     def get_bit_operands(self) -> list[Bit]:
@@ -339,41 +395,59 @@ class Measure(Statement, ABC):
         return [self.qubit]
 
 
-class Reset(Statement, ABC):
+class Reset(NonUnitary):
     def __init__(
         self,
         qubit: QubitLike,
         generator: Callable[..., Reset] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
-        self.generator = generator
-        self.arguments = arguments
+        NonUnitary.__init__(self, generator, arguments)
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
         return f"Reset(qubit={self.qubit})"
 
     @property
-    def name(self) -> str:
-        return self.generator.__name__ if self.generator else "<abstract_reset>"
-
-    @property
     def is_abstract(self) -> bool:
         return self.arguments is None
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Reset):
-            return False
-        return self.qubit == other.qubit
+        return isinstance(other, Reset) and self.qubit == other.qubit
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
         return visitor.visit_reset(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
 
-class Gate(Statement, ABC):
+class Barrier(NonUnitary):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        generator: Callable[..., Barrier] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+    ) -> None:
+        NonUnitary.__init__(self, generator, arguments)
+        self.qubit = Qubit(qubit)
+
+    def __repr__(self) -> str:
+        return f"Barrier(qubit={self.qubit})"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Barrier) and self.qubit == other.qubit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_barrier(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+
+class Gate(Unitary, ABC):
     def __init__(
         self,
         generator: Callable[..., Gate] | None = None,
@@ -381,9 +455,7 @@ class Gate(Statement, ABC):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        # Note: two gates are considered equal even when their generators/arguments are different.
-        self.generator = generator
-        self.arguments = arguments
+        Unitary.__init__(self, generator, arguments)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Gate):
@@ -402,31 +474,15 @@ class Gate(Statement, ABC):
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:
-        """Check if qubit operands are repeated.
-
-        Args:
-            qubits: Sequence of qubits.
-
-        Returns:
-            Whether qubit operands are repeated.
-        """
         return len(qubits) != len(set(qubits))
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
-        """Get the qubit operands of the Gate.
-
-        Returns:
-            List of qubits on which the Gate operates.
-        """
+        pass
 
     @abstractmethod
     def is_identity(self) -> bool:
-        """Check whether the Gate is an identity Gate.
-
-        Returns:
-            Boolean value stating whether the Gate is an identity Gate.
-        """
+        pass
 
 
 class BlochSphereRotation(Gate):
@@ -558,26 +614,14 @@ class ControlledGate(Gate):
         return self.target_gate.is_identity()
 
 
-@overload
-def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
-
-
-@overload
-def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
-
-
-@overload
-def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
-
-
-def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    @wraps(gate_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> Gate:
-        result = gate_generator(*args, **kwargs)
+def instruction_decorator(instruction_generator: Callable[..., Instruction]) -> Callable[..., Instruction]:
+    @wraps(instruction_generator)
+    def wrapper(*args: Any, **kwargs: Any) -> Instruction:
+        result = instruction_generator(*args, **kwargs)
         result.generator = wrapper
 
         all_args: list[Expression] = []
-        for par in inspect.signature(gate_generator).parameters.values():
+        for par in inspect.signature(instruction_generator).parameters.values():
             next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
             next_annotation = (
                 ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
@@ -600,56 +644,36 @@ def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
     return wrapper
 
 
-def named_measure(measure_generator: Callable[..., Measure]) -> Callable[..., Measure]:
-    @wraps(measure_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> Measure:
-        result = measure_generator(*args, **kwargs)
-        result.generator = wrapper
-
-        all_args: list[Any] = []
-        for par in inspect.signature(measure_generator).parameters.values():
-            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
-            )
-
-            # Convert to correct expression for IR
-            if is_qubit_like_annotation(next_annotation):
-                next_arg = Qubit(next_arg)
-
-            # Append parsed argument
-            all_args.append(next_arg)
-
-        result.arguments = tuple(all_args)
-        return result
-
-    return wrapper
+@overload
+def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
 
 
-def named_reset(reset_generator: Callable[..., Reset]) -> Callable[..., Reset]:
-    @wraps(reset_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> Reset:
-        result = reset_generator(*args, **kwargs)
-        result.generator = wrapper
+@overload
+def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
 
-        all_args: list[Any] = []
-        for par in inspect.signature(reset_generator).parameters.values():
-            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
-            )
 
-            # Convert to correct expression for IR
-            if is_qubit_like_annotation(next_annotation):
-                next_arg = Qubit(next_arg)
+@overload
+def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
 
-            # Append parsed argument
-            all_args.append(next_arg)
 
-        result.arguments = tuple(all_args)
-        return result
+def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
+    return cast(Callable[..., Gate], instruction_decorator(gate_generator))
 
-    return wrapper
+
+@overload
+def non_unitary(non_unitary_generator: Callable[..., Measure]) -> Callable[..., Measure]: ...
+
+
+@overload
+def non_unitary(non_unitary_generator: Callable[..., Reset]) -> Callable[..., Reset]: ...
+
+
+@overload
+def non_unitary(non_unitary_generator: Callable[..., Barrier]) -> Callable[..., Barrier]: ...
+
+
+def non_unitary(non_unitary_generator: Callable[..., NonUnitary]) -> Callable[..., NonUnitary]:
+    return cast(Callable[..., NonUnitary], instruction_decorator(non_unitary_generator))
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
@@ -664,35 +688,18 @@ def compare_gates(g1: Gate, g2: Gate) -> bool:
     return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
 
 
-@dataclass
-class Comment(Statement):
-    str: str
-
-    def __post_init__(self) -> None:
-        if "*/" in self.str:
-            msg = "comment contains illegal characters"
-            raise ValueError(msg)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_comment(self)
-
-
 class IR:
-    # This is just a list of gates (for now?)
     def __init__(self) -> None:
         self.statements: list[Statement] = []
 
     def add_gate(self, gate: Gate) -> None:
         self.statements.append(gate)
 
-    def add_measure(self, measure: Measure) -> None:
-        self.statements.append(measure)
+    def add_non_unitary(self, non_unitary: NonUnitary) -> None:
+        self.statements.append(non_unitary)
 
-    def add_reset(self, reset: Reset) -> None:
-        self.statements.append(reset)
-
-    def add_comment(self, comment: Comment) -> None:
-        self.statements.append(comment)
+    def add_statement(self, statement: Statement) -> None:
+        self.statements.append(statement)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):
@@ -754,10 +761,14 @@ def is_float_annotation(annotation: Any) -> bool:
 
 ANNOTATIONS_TO_TYPE_MAP = {
     "AxisLike": AxisLike,
+    "Barrier": Barrier,
+    "Bit": Bit,
     "BlochSphereRotation": BlochSphereRotation,
     "ControlledGate": ControlledGate,
     "Float": Float,
     "MatrixGate": MatrixGate,
+    "Measure": Measure,
+    "Reset": Reset,
     "SupportsFloat": SupportsFloat,
     "SupportsInt": SupportsInt,
     "Qubit": Qubit,

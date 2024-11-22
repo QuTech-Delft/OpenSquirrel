@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import X, Z
+from opensquirrel.default_instructions import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Reset
 
@@ -88,7 +88,7 @@ class _ScheduleCreator(IRVisitor):
         qubit_index = g.qubit.index
         bit_index = g.bit.index
         acq_index = self.acq_index_record[qubit_index]
-        self.bit_string_mapping.insert(bit_index, (acq_index, qubit_index))
+        self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(g.qubit),

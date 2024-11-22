@@ -64,7 +64,7 @@ _Output_:
 For creation of a circuit through Python, the `CircuitBuilder` can be used accordingly:
 
 ```python
-from opensquirrel import CircuitBuilder
+from opensquirrel.circuit_builder import CircuitBuilder
 
 builder = CircuitBuilder(qubit_register_size=2)
 builder.Ry(0, 0.23).CNOT(0, 1)
@@ -84,6 +84,8 @@ _Output_:
 You can naturally use the functionalities available in Python to create your circuit:
 
 ```python
+from opensquirrel.circuit_builder import CircuitBuilder
+
 builder = CircuitBuilder(qubit_register_size=10)
 for i in range(0, 10, 2):
     builder.H(i)
@@ -106,6 +108,8 @@ _Output_:
 For instance, you can generate a quantum fourier transform (QFT) circuit as follows:
 
 ```python
+from opensquirrel.circuit_builder import CircuitBuilder
+
 qubit_register_size = 5
 builder = CircuitBuilder(qubit_register_size)
 for i in range(qubit_register_size):
@@ -143,6 +147,8 @@ _Output_:
 As you can see, gates require _strong types_. For instance, you cannot do:
 
 ```python
+from opensquirrel.circuit import Circuit
+
 try:
     Circuit.from_string(
         """
@@ -181,6 +187,8 @@ the semantic representation of the anonymous gate is exported.
     will not recognize it as a valid statement.
 
 ```python
+from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.ir import Float
 import math
 
 builder = CircuitBuilder(1)
@@ -221,6 +229,9 @@ It accepts a qubit, an axis, an angle, and a phase as arguments.
 Below is shown how the X-gate is defined in the default gate set of OpenSquirrel:
 
 ```python
+from opensquirrel.ir import Gate, BlochSphereRotation, QubitLike, named_gate
+import math
+
 @named_gate
 def x(q: QubitLike) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
@@ -234,14 +245,19 @@ therefore, have all the nice properties OpenSquirrel expects of it.
 For instance, the CNOT gate is defined in the default gate set of OpenSquirrel as follows:
 
 ```python
+from opensquirrel.ir import Gate, ControlledGate, QubitLike, named_gate
+from opensquirrel.default_instructions import X
+
 @named_gate
 def cnot(control: QubitLike, target: QubitLike) -> Gate:
-    return ControlledGate(control, x(target))
+    return ControlledGate(control, X(target))
 ```
 
 - The `MatrixGate` class may be used to define a gate in the generic form of a matrix:
 
 ```python
+from opensquirrel.ir import Gate, MatrixGate, QubitLike, named_gate
+
 @named_gate
 def swap(q1: QubitLike, q2: QubitLike) -> Gate:
     return MatrixGate(
@@ -279,7 +295,8 @@ This decomposition is demonstrated below using a Python _lambda function_,
 which requires the same parameters as the gate that is decomposed:
 
 ```python
-from opensquirrel.default_gates import CNOT, H, CZ
+from opensquirrel.circuit import Circuit
+from opensquirrel.default_instructions import CNOT, H, CZ
 
 qc = Circuit.from_string(
     """
@@ -322,6 +339,9 @@ For instance, an exception is thrown if we forget the final Hadamard,
 or H gate, in our custom-made decomposition:
 
 ```python
+from opensquirrel.circuit import Circuit
+from opensquirrel.default_instructions import CNOT, CZ, H
+
 qc = Circuit.from_string(
     """
     version 3.0
@@ -355,11 +375,14 @@ More in depth tutorials can be found in the [decomposition example Jupyter noteb
 
 One of the most common single qubit decomposition techniques is the Z-Y-Z decomposition.
 This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
-The decompositions are found in `opensquirrel.decomposer`,
+The decompositions are found in `opensquirrel.passes.decomposer`,
 an example can be seen below where a Hadamard, Z, Y and Rx gate are all decomposed on a single qubit circuit.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.passes.decomposer import ZYZDecomposer
+from opensquirrel.ir import Float
+import math
 
 builder = CircuitBuilder(qubit_register_size=1)
 builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
@@ -386,8 +409,8 @@ _Output_:
 Similarly, the decomposer can be used on individual gates.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import XZXDecomposer
-from opensquirrel.default_gates import H
+from opensquirrel.passes.decomposer import ZYZDecomposer
+from opensquirrel.default_instructions import H
 
 print(ZYZDecomposer().decompose(H(0)))
 ```

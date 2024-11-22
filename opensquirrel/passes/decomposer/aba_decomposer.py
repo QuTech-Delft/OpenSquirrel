@@ -9,9 +9,9 @@ from collections.abc import Callable
 from typing import ClassVar
 
 from opensquirrel.common import ATOL
-from opensquirrel.decomposer.general_decomposer import Decomposer
-from opensquirrel.default_gates import Rx, Ry, Rz
+from opensquirrel.default_instructions import Rx, Ry, Rz
 from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Gate
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 
@@ -70,7 +70,8 @@ class ABADecomposer(Decomposer, ABC):
                 p = math.pi
                 theta2 = 2 * math.acos(a_axis_value)
                 if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
-                    m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                    # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                    m = p
                 else:
                     m = 2 * math.acos(
                         round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL)))),
@@ -87,7 +88,8 @@ class ABADecomposer(Decomposer, ABC):
             theta2 = math.copysign(theta2, alpha)
 
             if abs(math.sin(theta2 / 2)) < ATOL:
-                m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                m = p
             else:
                 acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 

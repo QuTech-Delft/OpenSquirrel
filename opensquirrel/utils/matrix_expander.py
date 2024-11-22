@@ -96,8 +96,8 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> 
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
         qubit = Qubit(qubit)
-        expanded_ket &= ~(1 << qubit.index)  # Erase bit.
-        expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # Set bit to value from reduced_ket.
+        expanded_ket &= ~(1 << qubit.index)  # erase bit
+        expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # set bit to value from reduced_ket
 
     return expanded_ket
 

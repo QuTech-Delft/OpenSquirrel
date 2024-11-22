@@ -3,9 +3,9 @@ import math
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
-from opensquirrel.default_gates import CNOT, CZ, H, Ry, Rz
+from opensquirrel.default_instructions import CNOT, CZ, H, Ry, Rz
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, QubitLike, named_gate
+from opensquirrel.passes.decomposer import ZYZDecomposer
 
 
 def test_circuit_from_string() -> None:
@@ -112,7 +112,7 @@ H q[4]
     )
 
 
-def test_CNOT_strong_type_error_string() -> None:
+def test_CNOT_strong_type_error_string() -> None:  # noqa: N802
     with pytest.raises(OSError, match=r".* with argument pack .*") as e_info:
         Circuit.from_string(
             """
@@ -187,7 +187,7 @@ def test_predefined_decomposition() -> None:
 
         X q[0:2]  // Note that this notation is expanded in OpenSquirrel.
         CNOT q[0], q[1]
-        Ry q[2], 6.78
+        Ry(6.78) q[2]
         """
     )
     qc.replace(
@@ -224,7 +224,7 @@ def test_error_predefined_decomposition() -> None:
 
         X q[0:2]
         CNOT q[0], q[1]
-        Ry q[2], 6.78
+        Ry(6.78) q[2]
         """
     )
     with pytest.raises(ValueError, match=r"replacement for gate .*") as e_info:
