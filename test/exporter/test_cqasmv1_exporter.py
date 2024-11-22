@@ -23,9 +23,10 @@ def test_cqasm_v3_to_cqasm_v1() -> None:
     qubit[2] q
     bit[2] b
 
-    reset q
+    init q
     I q[0]
     H q[0]
+    reset q
     CNOT q[0], q[1]
     Rx(5.123) q[0]
     b = measure q
@@ -42,6 +43,8 @@ prep_z q[0]
 prep_z q[1]
 i q[0]
 h q[0]
+prep_z q[0]
+prep_z q[1]
 cnot q[0], q[1]
 rx q[0], 5.123
 measure_z q[0]
@@ -131,6 +134,24 @@ qubits 1
 
 h q[0]
 measure_z q[0]
+"""
+    )
+
+
+def test_init() -> None:
+    builder = CircuitBuilder(1, 1)
+    builder.init(0)
+    builder.H(0)
+    qc = builder.to_circuit()
+    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    assert (
+        cqasm_v1_string
+        == """version 1.0
+
+qubits 1
+
+prep_z q[0]
+h q[0]
 """
     )
 

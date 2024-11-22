@@ -46,10 +46,16 @@ class IRVisitor:
     def visit_measure(self, measure: Measure) -> Any:
         pass
 
+    def visit_init(self, init: Init) -> Any:
+        pass
+
     def visit_reset(self, reset: Reset) -> Any:
         pass
 
     def visit_barrier(self, barrier: Barrier) -> Any:
+        pass
+
+    def visit_wait(self, wait: Wait) -> Any:
         pass
 
     def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
@@ -395,6 +401,34 @@ class Measure(NonUnitary):
         return [self.qubit]
 
 
+class Init(NonUnitary):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        generator: Callable[..., Init] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+    ) -> None:
+        NonUnitary.__init__(self, generator, arguments)
+        self.qubit = Qubit(qubit)
+
+    def __repr__(self) -> str:
+        return f"Init(qubit={self.qubit})"
+
+    @property
+    def is_abstract(self) -> bool:
+        return self.arguments is None
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Init) and self.qubit == other.qubit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_init(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+
 class Reset(NonUnitary):
     def __init__(
         self,
@@ -442,6 +476,34 @@ class Barrier(NonUnitary):
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_non_unitary(self)
         return visitor.visit_barrier(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+
+class Wait(NonUnitary):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        time: SupportsInt,
+        generator: Callable[..., Wait] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+    ) -> None:
+        NonUnitary.__init__(self, generator, arguments)
+        self.qubit = Qubit(qubit)
+        self.time: SupportsInt = time
+
+    def __repr__(self) -> str:
+        return f"Wait(qubit={self.qubit}, time={self.time})"
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, Wait) and self.qubit == other.qubit and self.time == other.time
+        )
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_wait(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
@@ -663,11 +725,19 @@ def non_unitary(non_unitary_generator: Callable[..., Measure]) -> Callable[..., 
 
 
 @overload
+def non_unitary(non_unitary_generator: Callable[..., Init]) -> Callable[..., Init]: ...
+
+
+@overload
 def non_unitary(non_unitary_generator: Callable[..., Reset]) -> Callable[..., Reset]: ...
 
 
 @overload
 def non_unitary(non_unitary_generator: Callable[..., Barrier]) -> Callable[..., Barrier]: ...
+
+
+@overload
+def non_unitary(non_unitary_generator: Callable[..., Wait]) -> Callable[..., Wait]: ...
 
 
 def non_unitary(non_unitary_generator: Callable[..., NonUnitary]) -> Callable[..., NonUnitary]:
@@ -733,11 +803,13 @@ ANNOTATIONS_TO_TYPE_MAP = {
     "BlochSphereRotation": BlochSphereRotation,
     "ControlledGate": ControlledGate,
     "Float": Float,
+    "Init": Init,
     "MatrixGate": MatrixGate,
     "Measure": Measure,
+    "Qubit": Qubit,
+    "QubitLike": QubitLike,
     "Reset": Reset,
     "SupportsFloat": SupportsFloat,
     "SupportsInt": SupportsInt,
-    "Qubit": Qubit,
-    "QubitLike": QubitLike,
+    "Wait": Wait,
 }

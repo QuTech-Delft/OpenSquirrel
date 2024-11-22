@@ -62,7 +62,7 @@ class _WriterImpl(IRVisitor):
         gate_generator = []
         if gate.generator is not None:
             gate_generator = list(inspect.signature(gate.generator).parameters.keys())
-        qubit_function_keys = ["target", "control", "q"]
+        qubit_function_keys = ["target", "control", "qubit"]
         if gate.is_anonymous:
             if "MatrixGate" in gate_name:
                 # In the case of a MatrixGate the newlines should be removed from the array
