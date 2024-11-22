@@ -100,14 +100,16 @@ def CZ(control: QubitLike, target: QubitLike) -> ControlledGate:
 @named_gate
 def CR(control: QubitLike, target: QubitLike, theta: SupportsFloat) -> ControlledGate:
     return ControlledGate(
-        control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta.value / 2)
+        control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2)
     )
 
 
 @named_gate
 def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate:
     theta = 2 * math.pi / (2 ** int(k))
-    return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
+    return ControlledGate(
+        control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2)
+    )
 
 
 @named_gate
