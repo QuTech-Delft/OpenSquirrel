@@ -28,7 +28,7 @@ class IRVisitor:
     def visit_float(self, f: Float) -> Any:
         pass
 
-    def visit_bit(self, qubit: Bit) -> Any:
+    def visit_bit(self, bit: Bit) -> Any:
         pass
 
     def visit_qubit(self, qubit: Qubit) -> Any:
@@ -142,22 +142,24 @@ class Int(Expression):
         return visitor.visit_int(self)
 
 
-@dataclass
+@dataclass(init=False)
 class Bit(Expression):
     index: int
+
+    def __init__(self, index: BitLike) -> None:
+        if isinstance(index, SupportsInt):
+            self.index = int(index)
+        elif isinstance(index, Bit):
+            self.index = index.index
+        else:
+            msg = "index must be a BitLike"
+            raise TypeError(msg)
 
     def __hash__(self) -> int:
         return hash(str(self.__class__) + str(self.index))
 
     def __repr__(self) -> str:
         return f"Bit[{self.index}]"
-
-    def __post_init__(self) -> None:
-        if isinstance(self.index, SupportsInt):
-            self.index = int(self.index)
-        else:
-            msg = "index must be an int"
-            raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_bit(self)
@@ -174,11 +176,6 @@ class Qubit(Expression):
     index: int
 
     def __init__(self, index: QubitLike) -> None:
-        """Init of the ``Qubit`` object.
-
-        Args:
-            index: index of the ``Qubit`` object.
-        """
         if isinstance(index, SupportsInt):
             self.index = int(index)
         elif isinstance(index, Qubit):
@@ -188,11 +185,9 @@ class Qubit(Expression):
             raise TypeError(msg)
 
     def __hash__(self) -> int:
-        """Create a hash for this qubit."""
         return hash(str(self.__class__) + str(self.index))
 
     def __repr__(self) -> str:
-        """String representation of the Qubit."""
         return f"Qubit[{self.index}]"
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -366,14 +361,14 @@ class Measure(NonUnitary):
     def __init__(
         self,
         qubit: QubitLike,
-        bit: Bit,
+        bit: BitLike,
         axis: AxisLike = (0, 0, 1),
         generator: Callable[..., Measure] | None = None,
         arguments: tuple[Expression, ...] | None = None,
     ) -> None:
         NonUnitary.__init__(self, generator, arguments)
         self.qubit = Qubit(qubit)
-        self.bit: Bit = bit
+        self.bit = Bit(bit)
         self.axis = Axis(axis)
 
     def __repr__(self) -> str:
@@ -632,6 +627,8 @@ def instruction_decorator(instruction_generator: Callable[..., Instruction]) -> 
                 next_arg = Int(next_arg)
             elif is_float_annotation(next_annotation):
                 next_arg = Float(next_arg)
+            if is_bit_like_annotation(next_annotation):
+                next_arg = Bit(next_arg)
             if is_qubit_like_annotation(next_annotation):
                 next_arg = Qubit(next_arg)
 
@@ -717,7 +714,20 @@ class IR:
 
 # Type Aliases
 AxisLike = Union[ArrayLike, Axis]
+BitLike = Union[SupportsInt, Bit]
 QubitLike = Union[SupportsInt, Qubit]
+
+
+def is_bit_like_annotation(annotation: Any) -> bool:
+    """Check if the provided annotation should be cast to BitLike.
+
+    Args:
+        annotation: annotation to check.
+
+    Returns:
+        Boolean value stating whether the annotation is something that should be cast to Bit.
+    """
+    return annotation in (BitLike, Bit)
 
 
 def is_qubit_like_annotation(annotation: Any) -> bool:
@@ -760,6 +770,7 @@ ANNOTATIONS_TO_TYPE_MAP = {
     "AxisLike": AxisLike,
     "Barrier": Barrier,
     "Bit": Bit,
+    "BitLike": BitLike,
     "BlochSphereRotation": BlochSphereRotation,
     "ControlledGate": ControlledGate,
     "Float": Float,

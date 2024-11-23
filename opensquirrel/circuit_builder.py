@@ -10,7 +10,17 @@ from typing_extensions import Self
 
 from opensquirrel import instruction_library
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import ANNOTATIONS_TO_TYPE_MAP, IR, Instruction, Qubit, QubitLike
+from opensquirrel.ir import (
+    ANNOTATIONS_TO_TYPE_MAP,
+    IR,
+    Bit,
+    BitLike,
+    Instruction,
+    Qubit,
+    QubitLike,
+    is_bit_like_annotation,
+    is_qubit_like_annotation,
+)
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
@@ -71,12 +81,13 @@ class CircuitBuilder:
             msg = "qubit index is out of bounds"
             raise IndexError(msg)
 
-    def _check_bit_out_of_bounds_access(self, index: int) -> None:
-        """Throw error if bit index is outside the qubit register range.
+    def _check_bit_out_of_bounds_access(self, bit: BitLike) -> None:
+        """Throw error if bit index is outside the bit register range.
 
         Args:
-            index: bit index
+            bit: bit to check.
         """
+        index = Bit(bit).index
         if index >= self.register_manager.get_bit_register_size():
             msg = "bit index is out of bounds"
             raise IndexError(msg)
@@ -115,10 +126,10 @@ class CircuitBuilder:
             if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"
                 raise TypeError(msg)
-            if expected_type in (QubitLike, Qubit):
+            if is_qubit_like_annotation(expected_type):
                 self._check_qubit_out_of_bounds_access(args[i])
-            elif args[i].__class__.__name__ == "Bit":
-                self._check_bit_out_of_bounds_access(args[i].index)
+            elif is_bit_like_annotation(expected_type):
+                self._check_bit_out_of_bounds_access(args[i])
 
     def to_circuit(self) -> Circuit:
         return Circuit(deepcopy(self.register_manager), deepcopy(self.ir))

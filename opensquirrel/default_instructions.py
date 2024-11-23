@@ -6,7 +6,7 @@ from typing import Callable, SupportsFloat, SupportsInt
 
 from opensquirrel.ir import (
     Barrier,
-    Bit,
+    BitLike,
     BlochSphereRotation,
     ControlledGate,
     Gate,
@@ -137,12 +137,12 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
 
 
 @non_unitary
-def measure(q: QubitLike, b: Bit) -> Measure:
+def measure(q: QubitLike, b: BitLike) -> Measure:
     return Measure(qubit=q, bit=b, axis=(0, 0, 1))
 
 
 @non_unitary
-def measure_z(q: QubitLike, b: Bit) -> Measure:
+def measure_z(q: QubitLike, b: BitLike) -> Measure:
     return Measure(qubit=q, bit=b, axis=(0, 0, 1))
 
 

@@ -2,7 +2,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Gate, MatrixGate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate
 from opensquirrel.passes.exporter.export_format import ExportFormat
 
 
@@ -111,7 +111,7 @@ rx q[0], 1.6546515
 def test_measure() -> None:
     builder = CircuitBuilder(1, 1)
     builder.H(0)
-    builder.measure(0, Bit(0))
+    builder.measure(0, 0)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (
@@ -153,7 +153,7 @@ def test_all_supported_gates() -> None:
     builder.mX90(0).mY90(0)
     builder.S(0).Sdag(0).T(0).Tdag(0)
     builder.CZ(0, 1).CNOT(1, 0)
-    builder.measure(0, Bit(0)).measure(1, Bit(1))
+    builder.measure(0, 0).measure(1, 1)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (

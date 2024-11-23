@@ -1,5 +1,4 @@
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.ir import Bit
 
 
 def test_reset() -> None:
@@ -69,8 +68,8 @@ def test_reset_in_circuit_builder() -> None:
     builder.H(0)
     builder.CNOT(0, 1)
     builder.reset(0)
-    builder.measure(0, Bit(0))
-    builder.measure(1, Bit(1))
+    builder.measure(0, 0)
+    builder.measure(1, 1)
 
     qc = builder.to_circuit()
 

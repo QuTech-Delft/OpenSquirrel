@@ -1,5 +1,5 @@
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate
 from opensquirrel.writer import writer
 
 
@@ -72,7 +72,7 @@ CR(1.6546515) q[0], q[1]
 def test_measure() -> None:
     builder = CircuitBuilder(1, 1)
     builder.H(0)
-    builder.measure(0, Bit(0))
+    builder.measure(0, 0)
     circuit = builder.to_circuit()
     assert (
         writer.circuit_to_string(circuit)
