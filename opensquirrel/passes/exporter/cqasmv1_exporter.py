@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, SupportsInt, SupportsFloat
+from typing import TYPE_CHECKING, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
