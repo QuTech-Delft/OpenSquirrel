@@ -60,54 +60,38 @@ class ABADecomposer(Decomposer, ABC):
             msg = "angle needs to be normalized"
             raise ValueError(msg)
 
-        if abs(alpha - math.pi) < ATOL:
-            # alpha == pi, math.tan(alpha / 2) is not defined.
-            if abs(a_axis_value) < ATOL:
-                theta2 = math.pi
-                p = 0.0
-                m = 2 * math.acos(b_axis_value)
-            else:
-                p = math.pi
-                theta2 = 2 * math.acos(a_axis_value)
-                if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
-                    # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
-                    m = p
-                else:
-                    m = 2 * math.acos(
-                        round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL)))),
-                    )
+        p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
+        acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
 
+        # This fixes float approximations like 1.0000000000002, which acos does not like.
+        acos_argument = max(min(acos_argument, 1.0), -1.0)
+
+        theta2 = 2 * math.acos(acos_argument)
+        theta2 = math.copysign(theta2, alpha)
+
+        if abs(math.sin(theta2 / 2)) < ATOL:
+            # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+            m = p
         else:
-            p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
-            acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
+            acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
             # This fixes float approximations like 1.0000000000002, which acos does not like.
             acos_argument = max(min(acos_argument, 1.0), -1.0)
-
-            theta2 = 2 * math.acos(acos_argument)
-            theta2 = math.copysign(theta2, alpha)
-
-            if abs(math.sin(theta2 / 2)) < ATOL:
-                # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
-                m = p
-            else:
-                acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
-
-                # This fixes float approximations like 1.0000000000002, which acos does not like.
-                acos_argument = max(min(acos_argument, 1.0), -1.0)
-                m = 2 * math.acos(acos_argument)
-                if math.pi - abs(m) > ATOL:
-                    m_sign = 2 * math.atan2(c_axis_value, a_axis_value)
-                    m = math.copysign(m, m_sign)
+            m = 2 * math.acos(acos_argument)
+            if math.pi - abs(m) > ATOL:
+                m_sign = 2 * math.atan2(c_axis_value, a_axis_value)
+                m = math.copysign(m, m_sign)
 
         is_sin_m_negative = self.index_a - self.index_b in (-1, 2)
+        sign = bool(a_axis_value > 0 > c_axis_value and b_axis_value < 0)
+
         if is_sin_m_negative:
             m = m * -1
 
         theta1 = (p + m) / 2
         theta3 = p - theta1
 
-        if all(component < 0 for component in axis):
+        if all(component < 0 for component in axis) or sign:
             theta1, theta3 = theta3, theta1
 
         return theta1, theta2, theta3

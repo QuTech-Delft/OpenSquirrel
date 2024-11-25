@@ -1,5 +1,6 @@
 from typing import Callable
 
+import numpy as np
 import pytest
 
 from opensquirrel.ir import BlochSphereRotation
@@ -29,10 +30,15 @@ def test_specific_bloch_rotation(decomposer_class: Callable[..., Decomposer]) ->
 
 
 @pytest.mark.parametrize("decomposer_class", DECOMPOSER)
-def test_negative_bloch_rotation(decomposer_class: Callable[..., Decomposer]) -> None:
+def test_full_sphere(decomposer_class: Callable[..., Decomposer]) -> None:
     decomposer = decomposer_class()
-    axis = [-0.5789, -0.9000, -3.53294]
-    angle = 3.12
-    arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0)
-    decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
-    check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
+    steps = 6
+    coordinates = np.linspace(-1, 1, num=steps)
+    angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
+    axis_list = [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
+
+    for angle in angles:
+        for axis in axis_list:
+            arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0)
+            decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
+            check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)

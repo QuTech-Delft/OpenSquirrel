@@ -18,6 +18,10 @@ class Decomposer(ABC):
 def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> None:
     gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
     replacement_gates_qubit_indices = set()
+
+    if gate.is_identity():
+        return
+
     for g in replacement_gates:
         replacement_gates_qubit_indices.update([q.index for q in g.get_qubit_operands()])
 
