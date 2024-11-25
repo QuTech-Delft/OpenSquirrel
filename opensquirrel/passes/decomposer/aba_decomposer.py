@@ -10,7 +10,7 @@ from typing import ClassVar
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import Rx, Ry, Rz
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Gate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.utils.identity_filter import filter_out_identities
 
@@ -47,9 +47,8 @@ class ABADecomposer(Decomposer, ABC):
             axis: _normalized_ axis of the Bloch sphere rotation
 
         Returns:
-            A triple (theta1, theta2, theta3) corresponding to the decomposition of the
-            arbitrary Bloch sphere rotation into U = Ra(theta3) Rb(theta2) Ra(theta1)
-
+            A triple (theta1, theta2, theta3) corresponding to the decomposition of the arbitrary Bloch sphere rotation
+            into U = Ra(theta3) Rb(theta2) Ra(theta1)
         """
         axis = Axis(axis)
         a_axis_value = axis[self.index_a]
@@ -123,9 +122,9 @@ class ABADecomposer(Decomposer, ABC):
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)
-        a1 = self.ra(g.qubit, Float(theta1))
-        b = self.rb(g.qubit, Float(theta2))
-        a2 = self.ra(g.qubit, Float(theta3))
+        a1 = self.ra(g.qubit, theta1)
+        b = self.rb(g.qubit, theta2)
+        a2 = self.ra(g.qubit, theta3)
         return filter_out_identities([a1, b, a2])
 
 
