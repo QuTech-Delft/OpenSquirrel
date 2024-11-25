@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pytest
 
 from opensquirrel.default_instructions import CNOT, CR, X90, H, I, Rz, X, Y, Z
@@ -77,3 +78,16 @@ def test_arbitrary(decomposer: McKayDecomposer) -> None:
         X90(0),
         Rz(0, Float(2.2329420137988887)),
     ]
+
+
+def test_full_sphere(decomposer: McKayDecomposer) -> None:
+    steps = 6
+    coordinates = np.linspace(-1, 1, num=steps)
+    angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
+    axis_list = [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
+
+    for angle in angles:
+        for axis in axis_list:
+            arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0.0)
+            decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
+            check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
