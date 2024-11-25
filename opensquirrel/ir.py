@@ -492,9 +492,7 @@ class Wait(NonUnitary):
         return f"Wait(qubit={self.qubit}, time={self.time})"
 
     def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, Wait) and self.qubit == other.qubit and self.time == other.time
-        )
+        return isinstance(other, Wait) and self.qubit == other.qubit and self.time == other.time
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_non_unitary(self)

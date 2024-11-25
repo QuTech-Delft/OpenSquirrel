@@ -97,7 +97,7 @@ class Parser:
     def _get_instruction_operands(
         cls,
         instruction: cqasm.semantic.GateInstruction | cqasm.semantic.NonGateInstruction,
-        register_manager: RegisterManager
+        register_manager: RegisterManager,
     ) -> list[list[Any]]:
         """Get the list of lists of operands of a gate.
         Notice that a gate just has a list of operands. The outer list is needed to support SGMQ.
@@ -125,7 +125,7 @@ class Parser:
     def _get_expanded_instruction_args(
         cls,
         instruction: cqasm.semantic.GateInstruction | cqasm.semantic.NonGateInstruction,
-        register_manager: RegisterManager
+        register_manager: RegisterManager,
     ) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
         For example, for CRk(2) q[0, 1] q[2, 3], this function first constructs the list with a list of qubits
