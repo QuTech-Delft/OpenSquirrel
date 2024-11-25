@@ -3,12 +3,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 
-import numpy as np
-
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase
+from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.ir import IR, Gate
 from opensquirrel.reindexer import get_reindexed_circuit
+from opensquirrel.utils.identity_filter import is_matrix_identity
 
 
 class Decomposer(ABC):
@@ -21,9 +20,8 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
     gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
-    norm_matrix = np.abs(replaced_matrix)
 
-    if np.allclose(norm_matrix, np.eye(norm_matrix.shape[0]), atol=ATOL):
+    if is_matrix_identity(replaced_matrix):
         return
 
     for g in replacement_gates:
