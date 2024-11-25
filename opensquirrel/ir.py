@@ -363,10 +363,6 @@ class NonUnitary(Instruction, ABC):
         pass
 
 
-class BitLike:
-    ...
-
-
 class Measure(NonUnitary):
     def __init__(
         self,

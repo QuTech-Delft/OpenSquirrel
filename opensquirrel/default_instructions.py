@@ -137,7 +137,7 @@ def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate
 
 
 @named_gate
-def SWAP(qubit0: QubitLike, qubit1: QubitLike) -> MatrixGate:
+def SWAP(qubit0: QubitLike, qubit1: QubitLike) -> MatrixGate:  # noqa: N802
     return MatrixGate(
         np.array(
             [

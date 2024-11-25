@@ -56,7 +56,7 @@ class _WriterImpl(IRVisitor):
             bit_argument = non_unitary.arguments[1].accept(self)  # type: ignore[index]
             non_unitary_name = f"{bit_argument} = {non_unitary_name}"
         else:
-            params = [param.accept(self) for param in non_unitary.arguments[1::]]
+            params = [param.accept(self) for param in non_unitary.arguments[1::]]  # type: ignore[index]
             if params:
                 non_unitary_name = f"{non_unitary_name}({', '.join(params)})"
         self.output += f"{non_unitary_name} {qubit_argument}\n"

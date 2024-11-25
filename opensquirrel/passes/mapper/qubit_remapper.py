@@ -4,11 +4,13 @@ from opensquirrel.ir import (
     Barrier,
     BlochSphereRotation,
     ControlledGate,
+    Init,
     IRVisitor,
     MatrixGate,
     Measure,
     Qubit,
-    Reset, Init, Wait,
+    Reset,
+    Wait,
 )
 from opensquirrel.passes.mapper.mapping import Mapping
 

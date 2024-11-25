@@ -2,7 +2,7 @@ import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.default_instructions import CNOT, H, I
-from opensquirrel.ir import Measure, Init, Barrier, Wait
+from opensquirrel.ir import Barrier, Init, Measure, Wait
 
 
 class TestCircuitBuilder:

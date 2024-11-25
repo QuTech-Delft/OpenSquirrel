@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import Float, Gate, Int, IRVisitor, Measure, Qubit, Reset, Init, Barrier, Wait
+from opensquirrel.ir import Barrier, Float, Gate, Init, Int, IRVisitor, Measure, Qubit, Reset, Wait
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -51,7 +51,7 @@ class _CQASMv1Creator(IRVisitor):
 
     def visit_wait(self, wait: Wait) -> None:
         qubit_argument = wait.arguments[0].accept(self)  # type: ignore[index]
-        parameter = wait.arguments[1].accept(self)
+        parameter = wait.arguments[1].accept(self)  # type: ignore[index]
         self.cqasmv1_string += f"wait {qubit_argument}, {parameter}\n"
 
     def visit_gate(self, gate: Gate) -> None:
