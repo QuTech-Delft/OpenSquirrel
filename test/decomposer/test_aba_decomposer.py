@@ -39,6 +39,6 @@ def test_full_sphere(decomposer_class: Callable[..., Decomposer]) -> None:
 
     for angle in angles:
         for axis in axis_list:
-            arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0.0)
+            arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0.1)
             decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
             check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
