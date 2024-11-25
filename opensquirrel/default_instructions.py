@@ -2,19 +2,19 @@ from __future__ import annotations
 
 import math
 from collections.abc import Mapping
-from typing import Callable, SupportsInt
+from typing import Callable, SupportsFloat, SupportsInt
 
 import numpy as np
 
 from opensquirrel.ir import (
     Barrier,
-    Bit,
+    BitLike,
     BlochSphereRotation,
     ControlledGate,
-    Float,
     Gate,
+    Init,
     Instruction,
-    Int,
+    MatrixGate,
     Measure,
     NonUnitary,
     QubitLike,
@@ -22,7 +22,7 @@ from opensquirrel.ir import (
     Unitary,
     Wait,
     named_gate,
-    non_unitary, MatrixGate, Init,
+    non_unitary,
 )
 
 ######################
@@ -96,18 +96,18 @@ def Tdag(qubit: QubitLike) -> BlochSphereRotation:  # noqa: N802
 
 
 @named_gate
-def Rx(qubit: QubitLike, theta: Float) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=qubit, axis=(1, 0, 0), angle=theta.value, phase=0)
+def Rx(qubit: QubitLike, theta: SupportsFloat) -> BlochSphereRotation:  # noqa: N802
+    return BlochSphereRotation(qubit=qubit, axis=(1, 0, 0), angle=theta, phase=0)
 
 
 @named_gate
-def Ry(qubit: QubitLike, theta: Float) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=qubit, axis=(0, 1, 0), angle=theta.value, phase=0)
+def Ry(qubit: QubitLike, theta: SupportsFloat) -> BlochSphereRotation:  # noqa: N802
+    return BlochSphereRotation(qubit=qubit, axis=(0, 1, 0), angle=theta, phase=0)
 
 
 @named_gate
-def Rz(qubit: QubitLike, theta: Float) -> BlochSphereRotation:  # noqa: N802
-    return BlochSphereRotation(qubit=qubit, axis=(0, 0, 1), angle=theta.value, phase=0)
+def Rz(qubit: QubitLike, theta: SupportsFloat) -> BlochSphereRotation:  # noqa: N802
+    return BlochSphereRotation(qubit=qubit, axis=(0, 0, 1), angle=theta, phase=0)
 
 
 @named_gate
@@ -121,17 +121,19 @@ def CZ(control: QubitLike, target: QubitLike) -> ControlledGate:  # noqa: N802
 
 
 @named_gate
-def CR(control: QubitLike, target: QubitLike, theta: Float) -> ControlledGate:  # noqa: N802
+def CR(control: QubitLike, target: QubitLike, theta: SupportsFloat) -> ControlledGate:  # noqa: N802
     return ControlledGate(
         control,
-        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta.value, phase=theta.value / 2),
+        BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2),
     )
 
 
 @named_gate
 def CRk(control: QubitLike, target: QubitLike, k: SupportsInt) -> ControlledGate:  # noqa: N802
-    theta = 2 * math.pi / (2 ** Int(k).value)
-    return ControlledGate(control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=theta / 2))
+    theta = 2 * math.pi / (2 ** int(k))
+    return ControlledGate(
+        control, BlochSphereRotation(qubit=target, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2)
+    )
 
 
 @named_gate
@@ -155,12 +157,12 @@ def SWAP(qubit0: QubitLike, qubit1: QubitLike) -> MatrixGate:
 
 
 @non_unitary
-def measure(qubit: QubitLike, b: Bit) -> Measure:
+def measure(qubit: QubitLike, b: BitLike) -> Measure:
     return Measure(qubit=qubit, bit=b, axis=(0, 0, 1))
 
 
 @non_unitary
-def measure_z(qubit: QubitLike, b: Bit) -> Measure:
+def measure_z(qubit: QubitLike, b: BitLike) -> Measure:
     return Measure(qubit=qubit, bit=b, axis=(0, 0, 1))
 
 

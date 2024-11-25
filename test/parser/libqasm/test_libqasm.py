@@ -3,7 +3,7 @@ import math
 import pytest
 
 from opensquirrel.default_instructions import CNOT, CR, CRk, H, I, Ry, X
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
 from opensquirrel.parser.libqasm.parser import Parser
 
 
@@ -25,14 +25,7 @@ CRk(23) q[0], q[1]
 
     assert circuit.qubit_register_size == 2
     assert circuit.qubit_register_name == "q"
-    assert circuit.ir.statements == [
-        H(0),
-        I(0),
-        Ry(1, Float(1.234)),
-        CNOT(0, 1),
-        CR(1, 0, Float(5.123)),
-        CRk(0, 1, 23),
-    ]
+    assert circuit.ir.statements == [H(0), I(0), Ry(1, 1.234), CNOT(0, 1), CR(1, 0, 5.123), CRk(0, 1, 23)]
 
 
 def test_sgmq() -> None:

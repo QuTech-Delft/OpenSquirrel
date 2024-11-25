@@ -5,7 +5,6 @@ from IPython.display import display
 
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.default_instructions import H, Rx, Rz
-from opensquirrel.ir import Float
 from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XZXDecomposer, ZYZDecomposer
 
 
@@ -58,7 +57,7 @@ class TestDecomposition:
         builder.H(0)
         builder.Z(0)
         builder.Y(0)
-        builder.Rx(0, Float(math.pi / 3))
+        builder.Rx(0, math.pi / 3)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
@@ -80,7 +79,7 @@ Rx(1.0471976) q[0]
         builder.H(0)
         builder.Z(0)
         builder.Y(0)
-        builder.Rx(0, Float(math.pi / 3))
+        builder.Rx(0, math.pi / 3)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
@@ -101,18 +100,14 @@ Ry(1.0471976) q[0]
 Rz(-1.5707963) q[0]
 """
         )
-        assert XZXDecomposer().decompose(H(0)) == [
-            Rx(0, Float(math.pi / 2)),
-            Rz(0, Float(math.pi / 2)),
-            Rx(0, Float(math.pi / 2)),
-        ]
+        assert XZXDecomposer().decompose(H(0)) == [Rx(0, math.pi / 2), Rz(0, math.pi / 2), Rx(0, math.pi / 2)]
 
     def test_mckay_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=1)
         builder.H(0)
         builder.Z(0)
         builder.X(0)
-        builder.Rx(0, Float(math.pi / 3))
+        builder.Rx(0, math.pi / 3)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
@@ -153,8 +148,8 @@ Rz(-1.5707963) q[0]
     def test_cnot_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=2)
         builder.CZ(0, 1)
-        builder.CR(0, 1, Float(math.pi / 3))
-        builder.CR(1, 0, Float(math.pi / 2))
+        builder.CR(0, 1, math.pi / 3)
+        builder.CR(1, 0, math.pi / 2)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()

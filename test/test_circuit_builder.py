@@ -2,7 +2,7 @@ import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.default_instructions import CNOT, H, I
-from opensquirrel.ir import Bit, Measure, Init, Barrier, Wait
+from opensquirrel.ir import Measure, Init, Barrier, Wait
 
 
 class TestCircuitBuilder:
@@ -45,13 +45,13 @@ class TestCircuitBuilder:
 
     def test_single_measure(self) -> None:
         builder = CircuitBuilder(1, 1)
-        builder.measure(0, Bit(0))
+        builder.measure(0, 0)
 
         circuit = builder.to_circuit()
 
         assert circuit.qubit_register_size == 1
         assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [Measure(0, Bit(0))]
+        assert circuit.ir.statements == [Measure(0, 0)]
 
     def test_circuit_measure(self) -> None:
         builder = CircuitBuilder(2, 2)
@@ -61,8 +61,8 @@ class TestCircuitBuilder:
         builder.barrier(0)
         builder.wait(0, 3)
         builder.CNOT(0, 1)
-        builder.measure(0, Bit(0))
-        builder.measure(1, Bit(1))
+        builder.measure(0, 0)
+        builder.measure(1, 1)
 
         circuit = builder.to_circuit()
 
@@ -74,8 +74,8 @@ class TestCircuitBuilder:
             Barrier(0),
             Wait(0, 3),
             CNOT(0, 1),
-            Measure(0, Bit(0)),
-            Measure(1, Bit(1)),
+            Measure(0, 0),
+            Measure(1, 1),
         ]
 
     def test_chain(self) -> None:
@@ -94,7 +94,7 @@ class TestCircuitBuilder:
     def test_measure_index_error(self) -> None:
         builder = CircuitBuilder(2, 1)
         with pytest.raises(IndexError, match="bit index is out of bounds"):
-            builder.H(0).measure(0, Bit(10)).to_circuit()
+            builder.H(0).measure(0, 10).to_circuit()
 
     def test_unknown_instruction(self) -> None:
         builder = CircuitBuilder(3)
