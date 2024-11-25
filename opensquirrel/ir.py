@@ -491,7 +491,7 @@ class Wait(NonUnitary):
     ) -> None:
         NonUnitary.__init__(self, generator, arguments)
         self.qubit = Qubit(qubit)
-        self.time: SupportsInt = time
+        self.time = Int(time)
 
     def __repr__(self) -> str:
         return f"Wait(qubit={self.qubit}, time={self.time})"

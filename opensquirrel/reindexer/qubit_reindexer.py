@@ -4,7 +4,7 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 from opensquirrel.ir import IR, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Measure, Reset, \
-    Init, Barrier
+    Init, Barrier, Wait
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
@@ -28,17 +28,21 @@ class _QubitReindexer(IRVisitor):
     def __init__(self, qubit_indices: list[int]) -> None:
         self.qubit_indices = qubit_indices
 
-    def visit_measure(self, measure: Measure) -> Measure:
-        return Measure(qubit=self.qubit_indices.index(measure.qubit.index), bit=measure.bit, axis=measure.axis)
-
     def visit_init(self, init: Init) -> Init:
         return Init(qubit=self.qubit_indices.index(init.qubit.index))
 
+    def visit_measure(self, measure: Measure) -> Measure:
+        return Measure(qubit=self.qubit_indices.index(measure.qubit.index), bit=measure.bit, axis=measure.axis)
+
     def visit_reset(self, reset: Reset) -> Reset:
-        return Reset(qubit=self.qubit_indices.index(reset.qubit.index))
+        qubit_to_reset = self.qubit_indices.index(reset.qubit.index)
+        return Reset(qubit=qubit_to_reset)
 
     def visit_barrier(self, barrier: Barrier) -> Barrier:
         return Barrier(qubit=self.qubit_indices.index(barrier.qubit.index))
+
+    def visit_wait(self, wait: Wait) -> Wait:
+        return Wait(qubit=self.qubit_indices.index(wait.qubit.index), time=wait.time)
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(

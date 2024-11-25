@@ -6,7 +6,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_instructions import Y90, X
-from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure
+from opensquirrel.ir import Bit, BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure, Reset
 from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
 
 
@@ -32,16 +32,10 @@ def replacement_gates_2() -> list[Gate | Measure]:
 
 def circuit_2_reindexed() -> Circuit:
     builder = CircuitBuilder(4, 4)
-    builder.init(0)
-    builder.wait(0, 3)
-    builder.wait(1, 4)
     builder.measure(0, Bit(0))
-    builder.barrier(0)
-    builder.barrier(2)
     builder.ir.add_gate(BlochSphereRotation(2, axis=(0, 0, 1), angle=math.pi))
     builder.ir.add_gate(MatrixGate([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], [1, 2]))
     builder.ir.add_gate(ControlledGate(0, X(3)))
-    builder.ir.reset(0)
     return builder.to_circuit()
 
 

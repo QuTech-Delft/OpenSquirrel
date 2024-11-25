@@ -2,23 +2,35 @@ import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.default_instructions import CNOT, H, I
-from opensquirrel.ir import Bit, Measure
+from opensquirrel.ir import Bit, Measure, Init, Barrier, Wait
 
 
 class TestCircuitBuilder:
     def test_simple(self) -> None:
         builder = CircuitBuilder(2)
 
+        builder.init(0)
+        builder.init(1)
         builder.H(0)
+        builder.barrier(0)
+        builder.barrier(1)
         builder.CNOT(0, 1)
+        builder.wait(0, 3)
+        builder.wait(1, 3)
 
         circuit = builder.to_circuit()
 
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
         assert circuit.ir.statements == [
+            Init(0),
+            Init(1),
             H(0),
+            Barrier(0),
+            Barrier(1),
             CNOT(0, 1),
+            Wait(0, 3),
+            Wait(1, 3),
         ]
 
     def test_identity(self) -> None:
@@ -44,7 +56,10 @@ class TestCircuitBuilder:
     def test_circuit_measure(self) -> None:
         builder = CircuitBuilder(2, 2)
 
+        builder.init(0)
         builder.H(0)
+        builder.barrier(0)
+        builder.wait(0, 3)
         builder.CNOT(0, 1)
         builder.measure(0, Bit(0))
         builder.measure(1, Bit(1))
@@ -53,7 +68,15 @@ class TestCircuitBuilder:
 
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [H(0), CNOT(0, 1), Measure(0, Bit(0)), Measure(1, Bit(1))]
+        assert circuit.ir.statements == [
+            Init(0),
+            H(0),
+            Barrier(0),
+            Wait(0, 3),
+            CNOT(0, 1),
+            Measure(0, Bit(0)),
+            Measure(1, Bit(1)),
+        ]
 
     def test_chain(self) -> None:
         builder = CircuitBuilder(3)

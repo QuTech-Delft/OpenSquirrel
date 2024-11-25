@@ -211,6 +211,9 @@ default_controlled_gate_set = {
     "CRk": CRk,
     "CZ": CZ,
 }
+default_matrix_gate_set = {
+    "SWAP": SWAP,
+}
 default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
@@ -220,6 +223,7 @@ default_gate_set: Mapping[str, Callable[..., Gate]]
 default_gate_set = {
     **default_bloch_sphere_rotation_set,
     **default_controlled_gate_set,
+    **default_matrix_gate_set,
     **default_gate_alias_set,
 }
 

@@ -25,9 +25,11 @@ def test_cqasm_v3_to_cqasm_v1() -> None:
 
     init q
     I q[0]
+    barrier q[1]
     H q[0]
     reset q
     CNOT q[0], q[1]
+    wait(3) q
     Rx(5.123) q[0]
     b = measure q
     """
@@ -42,10 +44,13 @@ qubits 2
 prep_z q[0]
 prep_z q[1]
 i q[0]
+barrier q[1]
 h q[0]
 prep_z q[0]
 prep_z q[1]
 cnot q[0], q[1]
+wait q[0], 3
+wait q[1], 3
 rx q[0], 5.123
 measure_z q[0]
 measure_z q[1]
@@ -174,7 +179,7 @@ prep_z q[0]
     )
 
 
-def test_all_supported_gates() -> None:
+def test_all_instructions() -> None:
     builder = CircuitBuilder(2, 2)
     builder.reset(Qubit(0)).reset(Qubit(1))
     builder.I(Qubit(0)).X(Qubit(0)).Y(Qubit(0)).Z(Qubit(0))
@@ -182,7 +187,7 @@ def test_all_supported_gates() -> None:
     builder.X90(Qubit(0)).Y90(Qubit(0))
     builder.mX90(Qubit(0)).mY90(Qubit(0))
     builder.S(Qubit(0)).Sdag(Qubit(0)).T(Qubit(0)).Tdag(Qubit(0))
-    builder.CZ(Qubit(0), Qubit(1)).CNOT(Qubit(1), Qubit(0))
+    builder.CZ(Qubit(0), Qubit(1)).CNOT(Qubit(1), Qubit(0)).SWAP(Qubit(0), Qubit(1))
     builder.measure(Qubit(0), Bit(0)).measure(Qubit(1), Bit(1))
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
@@ -211,6 +216,7 @@ t q[0]
 tdag q[0]
 cz q[0], q[1]
 cnot q[1], q[0]
+swap q[0], q[1]
 measure_z q[0]
 measure_z q[1]
 """
