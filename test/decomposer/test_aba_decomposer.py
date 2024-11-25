@@ -4,18 +4,17 @@ import numpy as np
 import pytest
 
 from opensquirrel.ir import BlochSphereRotation
-from opensquirrel.passes.decomposer import (
-    Decomposer,
-    XYXDecomposer,
-    XZXDecomposer,
-    YXYDecomposer,
-    YZYDecomposer,
-    ZXZDecomposer,
-    ZYZDecomposer,
-)
+from opensquirrel.passes.decomposer import Decomposer, aba_decomposer as aba
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
-DECOMPOSER = [XYXDecomposer, XZXDecomposer, YXYDecomposer, YZYDecomposer, ZXZDecomposer, ZYZDecomposer]
+DECOMPOSER = [
+    aba.XYXDecomposer,
+    aba.XZXDecomposer,
+    aba.YXYDecomposer,
+    aba.YZYDecomposer,
+    aba.ZXZDecomposer,
+    aba.ZYZDecomposer,
+]
 
 
 @pytest.mark.parametrize("decomposer_class", DECOMPOSER)

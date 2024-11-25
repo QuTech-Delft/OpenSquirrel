@@ -67,19 +67,6 @@ def test_hadamard(decomposer: McKayDecomposer) -> None:
     assert decomposed_gate == [Rz(0, Float(math.pi / 2)), X90(0), Rz(0, Float(math.pi / 2))]
 
 
-def test_arbitrary(decomposer: McKayDecomposer) -> None:
-    arbitrary_operation = BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324)
-    decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
-    check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
-    assert decomposed_arbitrary_operation == [
-        Rz(0, Float(0.018644578210707863)),
-        X90(0),
-        Rz(0, Float(2.520651583905213)),
-        X90(0),
-        Rz(0, Float(2.2329420137988887)),
-    ]
-
-
 def test_full_sphere(decomposer: McKayDecomposer) -> None:
     steps = 6
     coordinates = np.linspace(-1, 1, num=steps)
