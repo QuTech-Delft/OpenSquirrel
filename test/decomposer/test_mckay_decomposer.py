@@ -80,7 +80,7 @@ def test_arbitrary(decomposer: McKayDecomposer) -> None:
     ]
 
 
-def test_full_sphere(decomposer: McKayDecomposer) -> None:
+def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> None:
     steps = 6
     coordinates = np.linspace(-1, 1, num=steps)
     angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
