@@ -1,17 +1,8 @@
-import numpy as np
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import (
-    Bit,
-    BlochSphereRotation,
-    ControlledGate,
-    Float,
-    Gate,
-    MatrixGate,
-    Qubit,
-)
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate
 from opensquirrel.passes.exporter.export_format import ExportFormat
 
 
@@ -85,8 +76,8 @@ qubits 3
 """
     )
 
-    builder.H(Qubit(0))
-    builder.CNOT(Qubit(0), Qubit(1))
+    builder.H(0)
+    builder.CNOT(0, 1)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (
@@ -103,7 +94,7 @@ cnot q[0], q[1]
 
 def test_float_precision() -> None:
     builder = CircuitBuilder(3)
-    builder.Rx(Qubit(0), Float(1.6546514861321684321654))
+    builder.Rx(0, 1.6546514861321684321654)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (
@@ -119,8 +110,8 @@ rx q[0], 1.6546515
 
 def test_measure() -> None:
     builder = CircuitBuilder(1, 1)
-    builder.H(Qubit(0))
-    builder.measure(Qubit(0), Bit(0))
+    builder.H(0)
+    builder.measure(0, 0)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (
@@ -137,8 +128,8 @@ measure_z q[0]
 
 def test_reset() -> None:
     builder = CircuitBuilder(1, 1)
-    builder.H(Qubit(0))
-    builder.reset(Qubit(0))
+    builder.H(0)
+    builder.reset(0)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (
@@ -155,14 +146,14 @@ prep_z q[0]
 
 def test_all_supported_gates() -> None:
     builder = CircuitBuilder(2, 2)
-    builder.reset(Qubit(0)).reset(Qubit(1))
-    builder.I(Qubit(0)).X(Qubit(0)).Y(Qubit(0)).Z(Qubit(0))
-    builder.Rx(Qubit(0), Float(1.234)).Ry(Qubit(0), Float(-1.234)).Rz(Qubit(0), Float(1.234))
-    builder.X90(Qubit(0)).Y90(Qubit(0))
-    builder.mX90(Qubit(0)).mY90(Qubit(0))
-    builder.S(Qubit(0)).Sdag(Qubit(0)).T(Qubit(0)).Tdag(Qubit(0))
-    builder.CZ(Qubit(0), Qubit(1)).CNOT(Qubit(1), Qubit(0))
-    builder.measure(Qubit(0), Bit(0)).measure(Qubit(1), Bit(1))
+    builder.reset(0).reset(1)
+    builder.I(0).X(0).Y(0).Z(0)
+    builder.Rx(0, 1.234).Ry(0, -1.234).Rz(0, 1.234)
+    builder.X90(0).Y90(0)
+    builder.mX90(0).mY90(0)
+    builder.S(0).Sdag(0).T(0).Tdag(0)
+    builder.CZ(0, 1).CNOT(1, 0)
+    builder.measure(0, 0).measure(1, 1)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (
@@ -199,9 +190,9 @@ measure_z q[1]
 @pytest.mark.parametrize(
     "gate",
     [
-        BlochSphereRotation(Qubit(0), axis=(1, 1, 1), angle=1.23),
-        ControlledGate(Qubit(0), BlochSphereRotation(Qubit(1), axis=(1, 1, 1), angle=1.23)),
-        MatrixGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]), [Qubit(0), Qubit(1)]),
+        BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23),
+        ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23)),
+        MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]),
     ],
 )
 def test_anonymous_gates(gate: Gate) -> None:

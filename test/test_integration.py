@@ -213,7 +213,7 @@ def test_hectoqubit_backend_allxy() -> None:
         qubit[3] q
         bit[10] b
 
-        reset
+        reset q
 
         Rx(0.0) q[0]
         Rx(0.0) q[0]

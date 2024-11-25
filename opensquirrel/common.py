@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from typing import SupportsFloat
 
 import numpy as np
 from numpy.typing import NDArray
@@ -8,7 +9,16 @@ from numpy.typing import NDArray
 ATOL = 0.0000001
 
 
-def normalize_angle(x: float) -> float:
+def normalize_angle(x: SupportsFloat) -> float:
+    r"""Normalize the angle to be in between the range of $(-\pi, \pi]$.
+
+    Args:
+        x: value to normalize.
+
+    Returns:
+        The normalized angle.
+    """
+    x = float(x)
     t = x - 2 * math.pi * (x // (2 * math.pi) + 1)
     if t < -math.pi + ATOL:
         t += 2 * math.pi
