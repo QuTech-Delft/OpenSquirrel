@@ -30,7 +30,7 @@ def test_specific_bloch_rotation(decomposer_class: Callable[..., Decomposer]) ->
 
 
 @pytest.mark.parametrize("decomposer_class", DECOMPOSER)
-def test_full_sphere(decomposer_class: Callable[..., Decomposer]) -> None:
+def test_all_octants_of_bloch_sphere_rotation(decomposer_class: Callable[..., Decomposer]) -> None:
     decomposer = decomposer_class()
     steps = 6
     coordinates = np.linspace(-1, 1, num=steps)
