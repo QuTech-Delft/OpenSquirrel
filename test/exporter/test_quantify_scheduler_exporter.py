@@ -11,11 +11,11 @@ import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import H
+from opensquirrel.default_instructions import H
 from opensquirrel.exceptions import ExporterError
-from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
-from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.passes.exporter import quantify_scheduler_exporter
+from opensquirrel.passes.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
 
 
 class FloatEq(float):
@@ -26,12 +26,12 @@ class FloatEq(float):
 class MockedQuantifyScheduler:
     def __enter__(self) -> tuple[Any, Any]:
         self.patch_qs = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler",
+            "opensquirrel.passes.exporter.quantify_scheduler_exporter.quantify_scheduler",
             create=True,
         )
 
         self.patch_qs_gates = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates",
+            "opensquirrel.passes.exporter.quantify_scheduler_exporter.quantify_scheduler_gates",
             create=True,
         )
 
@@ -52,11 +52,11 @@ class TestQuantifySchedulerExporter:
         builder.X(0)
         builder.CZ(0, 1)
         builder.reset(0)
-        builder.Rz(1, Float(2.34))
-        builder.Ry(2, Float(1.23))
-        builder.measure(0, Bit(0))
-        builder.measure(1, Bit(1))
-        builder.measure(2, Bit(2))
+        builder.Rz(1, 2.34)
+        builder.Ry(2, 1.23)
+        builder.measure(0, 0)
+        builder.measure(1, 1)
+        builder.measure(2, 2)
         circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):

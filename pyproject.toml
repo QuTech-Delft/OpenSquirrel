@@ -33,13 +33,13 @@ numpy = [
     { version = "^1.26", python = "<3.10" },
     { version = "^2.0", python = "^3.10" },
 ]
-libqasm = "0.6.7"
+libqasm = "0.6.9"
 networkx = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.3.2"}
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
-pytest-cov = ">=4.1,<6.0"
+pytest-cov = ">=4.1,<7.0"
 mypy = "^1.7.0"
 ruff = "^0.5.0"
 tox = "^4.16.0"
@@ -51,7 +51,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = {extras = ["python"], version = "^1.5.3"}
-mkdocstrings = {extras = ["python"], version = ">=0.24,<0.27"}
+mkdocstrings = {extras = ["python"], version = ">=0.24,<0.28"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
 mkdocs-material = "^9.4.12"
 mkdocs-literate-nav = "^0.6.1"
@@ -129,7 +129,7 @@ select = [
     "ISC", # flake8-implicit-str-concat
     "ICN", # flake8-import-conventions
     "LOG", # flake8-logging
-    #"N", # pep8-naming
+    "N", # pep8-naming
     "NPY", # NumPy-specific rules
     "PD", # pandas-vet
     "PERF", # Perflint
@@ -165,15 +165,16 @@ pydocstyle.convention = "google"
 flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "networkx", "collections"]
 
 [tool.ruff.lint.extend-per-file-ignores]
+"*.py" = [
+    "S101", # asserts allowed everywhere
+]
 "test/**/*.py" = [
-    "S101", # asserts allowed in tests
     "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
     "D", # No doc requirements in tests
-    "SLF001", # Testing private functions is ok
+    "SLF001", # Testing private functions is OK
 ]
 "check_*.py" = [
-    "S101", # asserts allowed in check functions
-    "SLF001", # Checking private functions is ok
+    "SLF001", # Checking private functions is OK
 ]
 
 [tool.mypy]

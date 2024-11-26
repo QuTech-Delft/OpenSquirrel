@@ -9,9 +9,9 @@ from collections.abc import Callable
 from typing import ClassVar
 
 from opensquirrel.common import ATOL
-from opensquirrel.decomposer.general_decomposer import Decomposer
-from opensquirrel.default_gates import Rx, Ry, Rz
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Float, Gate
+from opensquirrel.default_instructions import Rx, Ry, Rz
+from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Gate
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.utils.identity_filter import filter_out_identities
 
 
@@ -47,9 +47,8 @@ class ABADecomposer(Decomposer, ABC):
             axis: _normalized_ axis of the Bloch sphere rotation
 
         Returns:
-            A triple (theta1, theta2, theta3) corresponding to the decomposition of the
-            arbitrary Bloch sphere rotation into U = Ra(theta3) Rb(theta2) Ra(theta1)
-
+            A triple (theta1, theta2, theta3) corresponding to the decomposition of the arbitrary Bloch sphere rotation
+            into U = Ra(theta3) Rb(theta2) Ra(theta1)
         """
         axis = Axis(axis)
         a_axis_value = axis[self.index_a]
@@ -70,7 +69,8 @@ class ABADecomposer(Decomposer, ABC):
                 p = math.pi
                 theta2 = 2 * math.acos(a_axis_value)
                 if abs(a_axis_value - 1) < ATOL or abs(a_axis_value + 1) < ATOL:
-                    m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                    # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                    m = p
                 else:
                     m = 2 * math.acos(
                         round(b_axis_value / math.sqrt(1 - a_axis_value**2), abs(math.floor(math.log10(ATOL)))),
@@ -87,7 +87,8 @@ class ABADecomposer(Decomposer, ABC):
             theta2 = math.copysign(theta2, alpha)
 
             if abs(math.sin(theta2 / 2)) < ATOL:
-                m = p  # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
+                m = p
             else:
                 acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
 
@@ -121,9 +122,9 @@ class ABADecomposer(Decomposer, ABC):
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)
-        a1 = self.ra(g.qubit, Float(theta1))
-        b = self.rb(g.qubit, Float(theta2))
-        a2 = self.ra(g.qubit, Float(theta3))
+        a1 = self.ra(g.qubit, theta1)
+        b = self.rb(g.qubit, theta2)
+        a2 = self.ra(g.qubit, theta3)
         return filter_out_identities([a1, b, a2])
 
 

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
+from opensquirrel.ir import Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -25,10 +25,12 @@ class _CQASMv1Creator(IRVisitor):
         qubit_register_name = self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
 
-    def visit_int(self, i: Int) -> str:
+    def visit_int(self, i: SupportsInt) -> str:
+        i = Int(i)
         return f"{i.value}"
 
-    def visit_float(self, f: Float) -> str:
+    def visit_float(self, f: SupportsFloat) -> str:
+        f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
     def visit_measure(self, measure: Measure) -> None:
@@ -51,13 +53,11 @@ class _CQASMv1Creator(IRVisitor):
             gate_name, ", ".join(qubit_args), ", " + ", ".join(params) if params else ""
         )
 
-    def visit_comment(self, comment: Comment) -> None:
-        self.cqasmv1_string += f"\n/* {comment.str} */\n\n"
-
 
 def export(circuit: Circuit) -> str:
     cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
 
     circuit.ir.accept(cqasmv1_creator)
 
-    return cqasmv1_creator.cqasmv1_string.rstrip() + "\n"  # remove all trailing lines and leave only one
+    # Remove all trailing lines and leave only one
+    return cqasmv1_creator.cqasmv1_string.rstrip() + "\n"
