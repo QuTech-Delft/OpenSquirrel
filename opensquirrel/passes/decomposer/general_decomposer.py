@@ -7,7 +7,7 @@ from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.ir import IR, Gate
 from opensquirrel.reindexer import get_reindexed_circuit
-from opensquirrel.utils.identity_filter import is_matrix_identity
+from opensquirrel.utils.identity_filter import is_identity_matrix
 
 
 class Decomposer(ABC):
@@ -21,7 +21,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
 
-    if is_matrix_identity(replaced_matrix):
+    if is_identity_matrix(replaced_matrix):
         return
 
     for g in replacement_gates:
