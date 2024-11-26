@@ -67,7 +67,7 @@ def test_hadamard(decomposer: McKayDecomposer) -> None:
     assert decomposed_gate == [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]
 
 
-def test_full_sphere(decomposer: McKayDecomposer) -> None:
+def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> None:
     steps = 6
     coordinates = np.linspace(-1, 1, num=steps)
     angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
