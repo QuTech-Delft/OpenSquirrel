@@ -2,11 +2,15 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
+from dataclasses import dataclass
+
+import numpy as np
 
 from opensquirrel.passes.exporter.export_format import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IR, Gate
+    from numpy.typing import ArrayLike, NDArray
+    from opensquirrel.ir import IR, Gate, QubitLike
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
@@ -99,7 +103,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.decompose(self.ir, decomposer)
+        general_decomposer.decompose(self, decomposer)
 
     def map(self, mapper: Mapper) -> None:
         """Generic qubit mapper pass.
@@ -116,7 +120,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.replace(self.ir, gate_generator, f)
+        general_decomposer.replace(self, gate_generator, f)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
@@ -129,3 +133,31 @@ class Circuit:
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)
+
+
+@dataclass(init=False)
+class PhaseMap(Circuit):
+
+    def __init__(self, phase_map: ArrayLike[np.complex128]):
+        """Initialize a PhaseMap object."""
+        self.phase_map = phase_map
+
+    def __contains__(self, qubit: QubitLike) -> bool:
+        """Checks if qubit is in the phase map."""
+        if qubit in self.phase_map:
+            return True
+
+        return False
+
+    def set_phase_map(self, phase_map: NDArray[np.complex128]) -> None:
+        self.qubit_phase_map = phase_map
+
+    def add_qubit_phase(self, qubit: QubitLike, phase: np.complex128) -> None:
+        from opensquirrel.ir import Qubit
+
+        self.qubit_phase_map[Qubit(qubit).index] += phase
+
+    def get_qubit_phase(self, qubit: QubitLike) -> np.complex128:
+        from opensquirrel.ir import Qubit
+
+        return np.complex128(self.qubit_phase_map[Qubit(qubit).index])
