@@ -7,7 +7,7 @@ from opensquirrel.ir import BlochSphereRotation
 from opensquirrel.passes.decomposer import Decomposer, aba_decomposer as aba
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
-DECOMPOSER = [
+ABA_DECOMPOSER_LIST = [
     aba.XYXDecomposer,
     aba.XZXDecomposer,
     aba.YXYDecomposer,
@@ -17,7 +17,7 @@ DECOMPOSER = [
 ]
 
 
-@pytest.mark.parametrize("decomposer_class", DECOMPOSER)
+@pytest.mark.parametrize("aba_decomposer", DECOMPOSER)
 def test_specific_bloch_rotation(decomposer_class: Callable[..., Decomposer]) -> None:
     decomposer = decomposer_class()
     axis = [-0.53825, -0.65289, -0.53294]
@@ -34,7 +34,7 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer_class: Callable[..., De
     steps = 6
     coordinates = np.linspace(-1, 1, num=steps)
     angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
-    axis_list = [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
+    axes= [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
 
     for angle in angles:
         for axis in axis_list:
