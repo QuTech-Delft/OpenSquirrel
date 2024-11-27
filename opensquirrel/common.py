@@ -28,7 +28,7 @@ def normalize_angle(x: SupportsFloat) -> float:
 
 
 def are_matrices_equivalent_up_to_global_phase(
-    matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128]
+    matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128 | np.float64]
 ) -> bool:
     """Checks whether two matrices are equivalent up to a global phase.
 
@@ -49,3 +49,14 @@ def are_matrices_equivalent_up_to_global_phase(
     phase_difference = matrix_a[first_non_zero] / matrix_b[first_non_zero]
 
     return np.allclose(matrix_a, phase_difference * matrix_b)
+
+
+def is_identity_matrix(matrix: NDArray[np.complex128]) -> bool:
+    """Checks whether matrix is an identity matrix up to a global phase.
+
+    Args:
+        matrix: matrix to check.
+    Returns:
+        Whether matrix is an identity matrix up to a global phase.
+    """
+    return are_matrices_equivalent_up_to_global_phase(matrix, np.eye(matrix.shape[0]))

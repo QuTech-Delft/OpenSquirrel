@@ -4,10 +4,9 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
+from opensquirrel.common import are_matrices_equivalent_up_to_global_phase, is_identity_matrix
 from opensquirrel.ir import IR, Gate
 from opensquirrel.reindexer import get_reindexed_circuit
-from opensquirrel.utils.identity_filter import is_identity_matrix
 
 
 class Decomposer(ABC):
