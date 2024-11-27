@@ -6,7 +6,7 @@ from typing import SupportsFloat
 import numpy as np
 from numpy.typing import NDArray
 
-ATOL = 0.0000001
+ATOL = 0.000_000_1
 
 
 def normalize_angle(x: SupportsFloat) -> float:

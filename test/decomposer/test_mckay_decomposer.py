@@ -71,10 +71,10 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
     steps = 6
     coordinates = np.linspace(-1, 1, num=steps)
     angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
-    axis_list = [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
+    axes = [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
 
     for angle in angles:
-        for axis in axis_list:
+        for axis in axes:
             arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0.0)
             decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
             check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)

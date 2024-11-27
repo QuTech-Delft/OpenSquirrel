@@ -6,13 +6,13 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import Rx, Ry, Rz
 from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Gate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
-from opensquirrel.utils.identity_filter import filter_out_identities
+from opensquirrel.utils import acos, are_axes_consecutive, filter_out_identities
 
 
 class ABADecomposer(Decomposer, ABC):
@@ -50,50 +50,59 @@ class ABADecomposer(Decomposer, ABC):
             A triple (theta1, theta2, theta3) corresponding to the decomposition of the arbitrary Bloch sphere rotation
             into U = Ra(theta3) Rb(theta2) Ra(theta1)
         """
-        axis = Axis(axis)
-        a_axis_value = axis[self.index_a]
-        b_axis_value = axis[self.index_b]
-        c_axis_value = axis[self._find_unused_index()]
+
+        def _set_axes_values() -> tuple[Any, Any, Any]:
+            """Given a decomposition strategy and an input axis.
+            For example:
+            - a Z-X-Z decomposition, which sets ra=Z and rb=X, and thus
+              index_a = 2 (index of Z in [Rx, Ry, Rz]), index_b = 0, and index_c = 1 (unused). And
+            - an axis (x, y, z).
+
+             Returns:
+                 A tuple (a, b, c) where a = axis(index_a), b = axis(index_b), and c = axis(index_c).
+                 For the example above, a = z, b = x, and c = y.
+            """
+            _axis = Axis(axis)
+            return _axis[self.index_a], _axis[self.index_b], _axis[self._find_unused_index()]
+
+        def _calculate_primary_angle() -> float:
+            return 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
+
+        def _calculate_secondary_angle() -> float:
+            if abs(math.sin(theta_2 / 2)) < ATOL:
+                # This can be anything, but setting m = p means theta_3 == 0, which is better for gate count.
+                return p
+            ret: float = 2 * acos(float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta_2 / 2))
+            if math.pi - abs(ret) > ATOL:
+                ret_sign = 2 * math.atan2(c_axis_value, a_axis_value)
+                ret = math.copysign(ret, ret_sign)
+            return ret
+
+        def _calculate_theta_2() -> float:
+            ret = 2 * acos(math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2))
+            return math.copysign(ret, alpha)
 
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
             msg = "angle needs to be normalized"
             raise ValueError(msg)
 
-        p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
-        acos_argument = math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2)
+        a_axis_value, b_axis_value, c_axis_value = _set_axes_values()
+        p = _calculate_primary_angle()
+        theta_2 = _calculate_theta_2()
+        m = _calculate_secondary_angle()
 
-        # This fixes float approximations like 1.0000000000002, which acos does not like.
-        acos_argument = max(min(acos_argument, 1.0), -1.0)
+        # Check if the sign of the secondary angle has to be flipped
+        if are_axes_consecutive(self.index_a, self.index_b):
+            m = -m
 
-        theta2 = 2 * math.acos(acos_argument)
-        theta2 = math.copysign(theta2, alpha)
+        theta_1 = (p + m) / 2
+        theta_3 = p - theta_1
 
-        if abs(math.sin(theta2 / 2)) < ATOL:
-            # This can be anything, but setting m = p means theta3 == 0, which is better for gate count.
-            m = p
-        else:
-            acos_argument = float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta2 / 2)
+        # Check if theta 1 and theta 3 have to be swapped
+        if b_axis_value < 0 and c_axis_value < 0:
+            theta_1, theta_3 = theta_3, theta_1
 
-            # This fixes float approximations like 1.0000000000002, which acos does not like.
-            acos_argument = max(min(acos_argument, 1.0), -1.0)
-            m = 2 * math.acos(acos_argument)
-            if math.pi - abs(m) > ATOL:
-                m_sign = 2 * math.atan2(c_axis_value, a_axis_value)
-                m = math.copysign(m, m_sign)
-
-        is_sin_m_negative = self.index_a - self.index_b in (-1, 2)
-        sign = bool(a_axis_value > 0 > c_axis_value and b_axis_value < 0)
-
-        if is_sin_m_negative:
-            m = m * -1
-
-        theta1 = (p + m) / 2
-        theta3 = p - theta1
-
-        if all(component < 0 for component in axis) or sign:
-            theta1, theta3 = theta3, theta1
-
-        return theta1, theta2, theta3
+        return theta_1, theta_2, theta_3
 
     def decompose(self, g: Gate) -> list[Gate]:
         """General A-B-A decomposition function for a single gate.
