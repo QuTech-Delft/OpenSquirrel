@@ -17,7 +17,7 @@ ABA_DECOMPOSER_LIST = [
 ]
 
 
-@pytest.mark.parametrize("decomposer_class", DECOMPOSER)
+@pytest.mark.parametrize("aba_decomposer", DECOMPOSER)
 def test_specific_bloch_rotation(decomposer_class: Callable[..., Decomposer]) -> None:
     decomposer = decomposer_class()
     axis = [-0.53825, -0.65289, -0.53294]
