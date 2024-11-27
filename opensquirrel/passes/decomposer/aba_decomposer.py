@@ -38,63 +38,66 @@ class ABADecomposer(Decomposer, ABC):
         """
         return ({0, 1, 2} - {self.index_a, self.index_b}).pop()
 
-    def get_decomposition_angles(self, alpha: float, axis: AxisLike) -> tuple[float, float, float]:
-        """Gives the angles used in the A-B-A decomposition of the Bloch sphere rotation
-        characterized by a rotation around `axis` of angle `alpha`.
+    def _set_a_b_c_axes_values(self, axis: AxisLike) -> tuple[Any, Any, Any]:
+        """Given:
+        - an A-B-A decomposition strategy (where A and B can be either X, Y, or Z), and
+        - a rotation axis { X: x, Y: y, Z: z } corresponding to a Bloch sphere rotation.
+        Sets a new rotation axis (a, b, c) such that a = axis[A], b = axis[B], and c = axis[C].
+        For example, given a Z-X-Z decomposition strategy, and an axis (x, y, z), sets (a, b, c) = (z, x, y).
 
         Parameters:
-            alpha: angle of the Bloch sphere rotation
-            axis: _normalized_ axis of the Bloch sphere rotation
+            axis: _normalized_ axis of a Bloch sphere rotation
+
+         Returns:
+             A triplet (a, b, c) where a, b, and c are the values of x, y, and z reordered.
+        """
+        _axis = Axis(axis)
+        return _axis[self.index_a], _axis[self.index_b], _axis[self._find_unused_index()]
+
+    def get_decomposition_angles(self, axis: AxisLike, alpha: float) -> tuple[float, float, float]:
+        """Given:
+        - an A-B-A decomposition strategy (where A and B can be either X, Y, or Z), and
+        - the rotation axis and angle corresponding to a Bloch sphere rotation.
+        Calculates the rotation angles around axes A, B, and C,
+        such that the original Bloch sphere rotation can be expressed as U = Ra(theta3) Rb(theta2) Rc(theta1),
+        Rn meaning rotation around axis N
+
+        Parameters:
+            axis: _normalized_ axis of a Bloch sphere rotation
+            alpha: angle of a Bloch sphere rotation
 
         Returns:
-            A triple (theta1, theta2, theta3) corresponding to the decomposition of the arbitrary Bloch sphere rotation
-            into U = Ra(theta3) Rb(theta2) Ra(theta1)
+            A triplet (theta_1, theta_2, theta_3), where theta_1, theta_2, and theta_3 are the rotation angles around
+            axes A, B, and C, respectively.
         """
-
-        def _set_axes_values() -> tuple[Any, Any, Any]:
-            """Given a decomposition strategy and an input axis.
-            For example:
-            - a Z-X-Z decomposition, which sets ra=Z and rb=X, and thus
-              index_a = 2 (index of Z in [Rx, Ry, Rz]), index_b = 0, and index_c = 1 (unused). And
-            - an axis (x, y, z).
-
-             Returns:
-                 A tuple (a, b, c) where a = axis(index_a), b = axis(index_b), and c = axis(index_c).
-                 For the example above, a = z, b = x, and c = y.
-            """
-            _axis = Axis(axis)
-            return _axis[self.index_a], _axis[self.index_b], _axis[self._find_unused_index()]
-
-        def _calculate_primary_angle() -> float:
-            return 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
-
-        def _calculate_secondary_angle() -> float:
-            if abs(math.sin(theta_2 / 2)) < ATOL:
-                # This can be anything, but setting m = p means theta_3 == 0, which is better for gate count.
-                return p
-            ret: float = 2 * acos(float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta_2 / 2))
-            if math.pi - abs(ret) > ATOL:
-                ret_sign = 2 * math.atan2(c_axis_value, a_axis_value)
-                ret = math.copysign(ret, ret_sign)
-            return ret
-
-        def _calculate_theta_2() -> float:
-            ret = 2 * acos(math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2))
-            return math.copysign(ret, alpha)
-
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
             msg = "angle needs to be normalized"
             raise ValueError(msg)
 
-        a_axis_value, b_axis_value, c_axis_value = _set_axes_values()
-        p = _calculate_primary_angle()
-        theta_2 = _calculate_theta_2()
-        m = _calculate_secondary_angle()
+        a_axis_value, b_axis_value, c_axis_value = self._set_a_b_c_axes_values(axis)
+
+        # Calculate primary angle
+        p = 2 * math.atan2(a_axis_value * math.sin(alpha / 2), math.cos(alpha / 2))
+
+        # Calculate theta 2
+        theta_2 = 2 * acos(math.cos(alpha / 2) * math.sqrt(1 + (a_axis_value * math.tan(alpha / 2)) ** 2))
+        theta_2 = math.copysign(theta_2, alpha)
+
+        # Calculate secondary angle
+        if abs(math.sin(theta_2 / 2)) < ATOL:
+            # This can be anything, but setting m = p means theta_3 == 0, which is better for gate count.
+            m = p
+        else:
+            m = 2 * acos(float(b_axis_value) * math.sin(alpha / 2) / math.sin(theta_2 / 2))
+            if math.pi - abs(m) > ATOL:
+                ret_sign = 2 * math.atan2(c_axis_value, a_axis_value)
+                m = math.copysign(m, ret_sign)
 
         # Check if the sign of the secondary angle has to be flipped
         if are_axes_consecutive(self.index_a, self.index_b):
             m = -m
 
+        # Calculate theta 1 and theta 2
         theta_1 = (p + m) / 2
         theta_3 = p - theta_1
 
@@ -117,7 +120,7 @@ class ABADecomposer(Decomposer, ABC):
             # We only decompose Bloch sphere rotations.
             return [g]
 
-        theta1, theta2, theta3 = self.get_decomposition_angles(g.angle, g.axis)
+        theta1, theta2, theta3 = self.get_decomposition_angles(g.axis, g.angle)
         a1 = self.ra(g.qubit, theta1)
         b = self.rb(g.qubit, theta2)
         a2 = self.ra(g.qubit, theta3)
