@@ -7,7 +7,7 @@ from opensquirrel.ir import BlochSphereRotation
 from opensquirrel.passes.decomposer import Decomposer, aba_decomposer as aba
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
-DECOMPOSER = [
+ABA_DECOMPOSER_LIST = [
     aba.XYXDecomposer,
     aba.XZXDecomposer,
     aba.YXYDecomposer,
