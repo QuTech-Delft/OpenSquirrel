@@ -59,4 +59,4 @@ def is_identity_matrix_up_to_a_global_phase(matrix: NDArray[np.complex128]) -> b
     Returns:
         Whether matrix is an identity matrix up to a global phase.
     """
-    return are_matrices_equivalent_up_to_global_phase(matrix, np.eye(matrix.shape[0]))
+    return are_matrices_equivalent_up_to_global_phase(matrix, np.eye(matrix.shape[0], dtype=np.complex128))
