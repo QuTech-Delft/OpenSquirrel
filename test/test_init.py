@@ -1,90 +1,29 @@
+import pytest
+
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.ir import Bit
+from opensquirrel.ir import Init
 
 
-def test_init() -> None:
-    qc = Circuit.from_string(
-        """
-        version 3.0
-
-        qubit[2] q
-        bit[2] b
-        H q[0]
-        CNOT q[0], q[1]
-
-        init q[0]
-        b = measure q
-        """,
-    )
-    assert (
-        str(qc)
-        == """version 3.0
-
-qubit[2] q
-bit[2] b
-
-H q[0]
-CNOT q[0], q[1]
-init q[0]
-b[0] = measure q[0]
-b[1] = measure q[1]
-"""
-    )
-
-
-def test_init_sgmq() -> None:
-    qc = Circuit.from_string(
-        """
-        version 3.0
-
-        qubit[4] q
-
-        H q[0]
-        H q[1:2]
-        init q[2:3]
-        H q[3]
-        init q[0:1]
-        """,
-    )
-    assert (
-        str(qc)
-        == """version 3.0
-
-qubit[4] q
-
-H q[0]
-H q[1]
-H q[2]
-init q[2]
-init q[3]
-H q[3]
-init q[0]
-init q[1]
-"""
-    )
+@pytest.mark.parametrize(
+    ("cqasm_string", "expected_result"),
+    [
+        ("version 3.0; qubit[2] q; init q[1]; init q[0]", "version 3.0\n\nqubit[2] q\n\ninit q[1]\ninit q[0]\n"),
+        (
+            "version 3.0; qubit[4] q; init q[2:3]; init q[1, 0]",
+            "version 3.0\n\nqubit[4] q\n\ninit q[2]\ninit q[3]\ninit q[1]\ninit q[0]\n",
+        ),
+    ],
+    ids=["init", "init sgmq"],
+)
+def test_init_as_cqasm_string(cqasm_string: str, expected_result: str) -> None:
+    qc = Circuit.from_string(cqasm_string)
+    assert str(qc) == expected_result
 
 
 def test_init_in_circuit_builder() -> None:
-    builder = CircuitBuilder(2, 2)
-    builder.H(0)
-    builder.CNOT(0, 1)
-    builder.init(0)
-    builder.measure(0, Bit(0))
-    builder.measure(1, Bit(1))
-
+    builder = CircuitBuilder(2)
+    builder.init(0).init(1)
     qc = builder.to_circuit()
-
-    assert (
-        str(qc)
-        == """version 3.0
-
-qubit[2] q
-bit[2] b
-
-H q[0]
-CNOT q[0], q[1]
-init q[0]
-b[0] = measure q[0]
-b[1] = measure q[1]
-"""
-    )
+    assert qc.qubit_register_size == 2
+    assert qc.qubit_register_name == "q"
+    assert qc.ir.statements == [Init(0), Init(1)]
