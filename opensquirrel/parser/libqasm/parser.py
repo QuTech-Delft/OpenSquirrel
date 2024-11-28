@@ -96,7 +96,7 @@ class Parser:
     @classmethod
     def _get_instruction_operands(
         cls,
-        instruction: cqasm.semantic.GateInstruction | cqasm.semantic.NonGateInstruction,
+        instruction: cqasm.semantic.Instruction,
         register_manager: RegisterManager,
     ) -> list[list[Any]]:
         """Get the list of lists of operands of a gate.
@@ -208,10 +208,11 @@ class Parser:
                 expanded_args = Parser._get_expanded_instruction_args(statement, register_manager)
             elif Parser._is_non_unitary_instruction(statement):
                 instruction_generator = self._get_non_unitary_f(statement)
-                if statement.name == "measure":
-                    expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
-                else:
-                    expanded_args = Parser._get_expanded_instruction_args(statement, register_manager)
+                expanded_args = (
+                    Parser._get_expanded_measure_args(statement.operands, register_manager)
+                    if statement.name == "measure"
+                    else Parser._get_expanded_instruction_args(statement, register_manager)
+                )
             else:
                 msg = "parsing error: unknown statement"
                 raise OSError(msg)

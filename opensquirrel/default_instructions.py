@@ -162,11 +162,6 @@ def measure(qubit: QubitLike, b: BitLike) -> Measure:
 
 
 @non_unitary
-def measure_z(qubit: QubitLike, b: BitLike) -> Measure:
-    return Measure(qubit=qubit, bit=b, axis=(0, 0, 1))
-
-
-@non_unitary
 def init(qubit: QubitLike) -> Init:
     return Init(qubit=qubit)
 
@@ -237,7 +232,6 @@ default_non_unitary_set = {
     "barrier": barrier,
     "init": init,
     "measure": measure,
-    "measure_z": measure_z,
     "reset": reset,
     "wait": wait,
 }

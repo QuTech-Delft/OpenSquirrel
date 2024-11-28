@@ -117,19 +117,25 @@ rx q[0], 1.6546515
 
 
 def test_measure() -> None:
-    builder = CircuitBuilder(1, 1)
+    builder = CircuitBuilder(2, 2)
     builder.H(0)
     builder.measure(0, 0)
+    builder.measure(0, 1)
+    builder.measure(1, 0)
+    builder.measure(1, 1)
     qc = builder.to_circuit()
     cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
 
-qubits 1
+qubits 2
 
 h q[0]
 measure_z q[0]
+measure_z q[0]
+measure_z q[1]
+measure_z q[1]
 """
     )
 
@@ -172,7 +178,7 @@ prep_z q[0]
 
 def test_all_instructions() -> None:
     builder = CircuitBuilder(2, 2)
-    builder.reset(0).reset(1)
+    builder.init(0).reset(1).barrier(0).wait(1, 3)
     builder.I(0).X(0).Y(0).Z(0)
     builder.Rx(0, 1.234).Ry(0, -1.234).Rz(0, 1.234)
     builder.X90(0).Y90(0)
@@ -190,6 +196,8 @@ qubits 2
 
 prep_z q[0]
 prep_z q[1]
+barrier q[0]
+wait q[1], 3
 i q[0]
 x q[0]
 y q[0]

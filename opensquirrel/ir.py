@@ -409,10 +409,6 @@ class Init(NonUnitary):
     def __repr__(self) -> str:
         return f"Init(qubit={self.qubit})"
 
-    @property
-    def is_abstract(self) -> bool:
-        return self.arguments is None
-
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Init) and self.qubit == other.qubit
 
@@ -436,10 +432,6 @@ class Reset(NonUnitary):
 
     def __repr__(self) -> str:
         return f"Reset(qubit={self.qubit})"
-
-    @property
-    def is_abstract(self) -> bool:
-        return self.arguments is None
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Reset) and self.qubit == other.qubit
