@@ -6,6 +6,7 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_instructions import CNOT, CZ, H, Ry, Rz
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, MatrixGate, QubitLike, named_gate
 from opensquirrel.passes.decomposer import ZYZDecomposer
+from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
 
 def test_circuit_from_string() -> None:
@@ -132,7 +133,8 @@ def test_anonymous_gate() -> None:
         builder.Rx(0, Float(math.pi / 4))
     qc = builder.to_circuit()
 
-    qc.merge_single_qubit_gates()
+    merger = SingleQubitGatesMerger()
+    qc.merge_single_qubit_gates(merger)
 
     assert (
         str(qc)

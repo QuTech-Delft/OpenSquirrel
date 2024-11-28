@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.register_manager import RegisterManager
+    from opensquirrel.passes.merger.general_merger import Merger
 
 
 class Circuit:
@@ -97,14 +98,11 @@ class Circuit:
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
 
-    def merge_single_qubit_gates(self) -> None:
+    def merge_single_qubit_gates(self, merger: Merger) -> None:
         """Merge all consecutive 1-qubit gates in the circuit.
         Gates obtained from merging other gates become anonymous gates.
         """
-        from opensquirrel.passes.merger import SingleQubitGatesMerger
-
-        merger = SingleQubitGatesMerger()
-        merger.merge(self)
+        merger.merge(self.ir, self.qubit_register_size)
 
     def decompose(self, decomposer: Decomposer) -> None:
         """Generic decomposition pass.

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from math import acos, cos, floor, log10, sin
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import numpy as np
 
@@ -10,9 +10,6 @@ from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
 from opensquirrel.utils.list import flatten_list
-
-if TYPE_CHECKING:
-    from opensquirrel.circuit import Circuit
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -150,5 +147,5 @@ def rearrange_barriers(ir: IR) -> None:
 
 class Merger(ABC):
     @abstractmethod
-    def merge(self, circuit: Circuit) -> None:
+    def merge(self, ir: IR, qubit_register_size: int) -> None:
         raise NotImplementedError

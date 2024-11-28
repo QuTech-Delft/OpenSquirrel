@@ -8,6 +8,7 @@ from numpy.typing import NDArray
 
 from opensquirrel import Circuit, circuit_matrix_calculator
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
+from opensquirrel.ir import IR
 
 
 def check_equivalence_up_to_global_phase(matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128]) -> None:
@@ -16,7 +17,7 @@ def check_equivalence_up_to_global_phase(matrix_a: NDArray[np.complex128], matri
 
 def modify_circuit_and_check(
     circuit: Circuit,
-    action: Callable[[Circuit], Any],
+    action: Callable[[IR, int], Any],
     expected_circuit: Circuit | None = None,
 ) -> None:
     """
@@ -28,7 +29,7 @@ def modify_circuit_and_check(
     # Store matrix before decompositions.
     expected_matrix = circuit_matrix_calculator.get_circuit_matrix(circuit)
 
-    action(circuit)
+    action(circuit.ir, circuit.qubit_register_size)
 
     # Get matrix after decompositions.
     actual_matrix = circuit_matrix_calculator.get_circuit_matrix(circuit)

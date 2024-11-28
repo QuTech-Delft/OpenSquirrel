@@ -1,8 +1,16 @@
+import pytest
+
 from opensquirrel import Circuit
 from opensquirrel.passes.decomposer import McKayDecomposer
+from opensquirrel.passes.merger.general_merger import Merger
+from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
 
-def test_qubit_variable_b_and_bit_variable_q() -> None:
+@pytest.fixture(name="merger")
+def merger() -> SingleQubitGatesMerger:
+    return SingleQubitGatesMerger()
+
+def test_qubit_variable_b_and_bit_variable_q(merger: Merger) -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -18,7 +26,7 @@ def test_qubit_variable_b_and_bit_variable_q() -> None:
         q[0] = measure b[0]
         """,
     )
-    qc.merge_single_qubit_gates()
+    qc.merge_single_qubit_gates(merger)
     qc.decompose(decomposer=McKayDecomposer())
     assert (
         str(qc)

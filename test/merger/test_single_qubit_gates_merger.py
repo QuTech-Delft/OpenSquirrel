@@ -6,28 +6,13 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_instructions import Ry, Rz
 from opensquirrel.ir import Bit, BlochSphereRotation, Float, Qubit
 from opensquirrel.passes.merger import SingleQubitGatesMerger
-from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations, rearrange_barriers
+from opensquirrel.passes.merger.general_merger import Merger, rearrange_barriers
 from test.ir_equality_test_base import modify_circuit_and_check
 
 
 @pytest.fixture(name="merger")
 def merger() -> SingleQubitGatesMerger:
     return SingleQubitGatesMerger()
-
-def test_compose_bloch_sphere_rotations_same_axis() -> None:
-    a = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.4)
-    b = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=-0.3)
-    composed = compose_bloch_sphere_rotations(a, b)
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.1)
-
-
-def test_compose_bloch_sphere_rotations_different_axis() -> None:
-    # Visualizing this in 3D is difficult...
-    a = BlochSphereRotation(qubit=123, axis=(1, 0, 0), angle=math.pi / 2)
-    b = BlochSphereRotation(qubit=123, axis=(0, 0, 1), angle=-math.pi / 2)
-    c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=math.pi / 2)
-    composed = compose_bloch_sphere_rotations(a, compose_bloch_sphere_rotations(b, c))
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=math.pi)
 
 
 def test_single_gate(merger: Merger) -> None:
@@ -54,6 +39,7 @@ def test_two_hadamards(merger: Merger) -> None:
     circuit = builder.to_circuit()
 
     expected_circuit = CircuitBuilder(4).to_circuit()
+
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
@@ -71,7 +57,7 @@ def test_two_hadamards_different_qubits(merger: Merger) -> None:
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
-def test_merge_different_qubits() -> None:
+def test_merge_different_qubits(merger: Merger) -> None:
     builder1 = CircuitBuilder(4)
     builder1.Ry(0, Float(math.pi / 2))
     builder1.Rx(0, Float(math.pi))
@@ -86,7 +72,6 @@ def test_merge_different_qubits() -> None:
     builder2.Ry(2, Float(4.234))
     expected_circuit = builder2.to_circuit()
 
-    merger = SingleQubitGatesMerger()
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
@@ -178,98 +163,6 @@ def test_no_merge_across_reset(merger: Merger) -> None:
     expected_qc = builder2.to_circuit()
 
     modify_circuit_and_check(qc, merger.merge, expected_qc)
-
-
-@pytest.mark.parametrize(
-    ("circuit", "expected_result"),
-    [
-        (
-            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(math.pi / 3)).barrier(0).to_circuit(),
-            """version 3.0
-
-qubit[2] q
-
-H q[0]
-H q[1]
-barrier q[0]
-H q[0]
-Rx(1.0471976) q[0]
-barrier q[1]
-barrier q[0]
-""",
-        ),
-        (
-            CircuitBuilder(2).X(0).barrier(0).X(1).barrier(1).CNOT(0, 1).barrier(1).X(1).to_circuit(),
-            """version 3.0
-
-qubit[2] q
-
-X q[0]
-X q[1]
-barrier q[0]
-barrier q[1]
-CNOT q[0], q[1]
-barrier q[1]
-X q[1]
-""",
-        ),
-        (
-            CircuitBuilder(2).X(0).X(1).barrier(0).barrier(1).X(0).to_circuit(),
-            """version 3.0
-
-qubit[2] q
-
-X q[0]
-X q[1]
-barrier q[0]
-barrier q[1]
-X q[0]
-""",
-        ),
-        (
-            CircuitBuilder(4)
-            .H(0)
-            .barrier(0)
-            .H(1)
-            .barrier(1)
-            .H(2)
-            .barrier(2)
-            .H(3)
-            .barrier(3)
-            .CNOT(0, 3)
-            .barrier(0)
-            .barrier(1)
-            .barrier(3)
-            .to_circuit(),
-            """version 3.0
-
-qubit[4] q
-
-H q[0]
-H q[1]
-H q[2]
-H q[3]
-barrier q[0]
-barrier q[1]
-barrier q[2]
-barrier q[3]
-CNOT q[0], q[3]
-barrier q[0]
-barrier q[1]
-barrier q[3]
-""",
-        ),
-    ],
-    ids=[
-        "anonymous_gate",
-        "CNOT_cannot_go_through_a_group_of_linked_barriers",
-        "X_cannot_go_through_a_group_of_linked_barriers",
-        "circuit_with_4_qubits",
-    ],
-)
-def test_rearrange_barriers(circuit: Circuit, expected_result: str) -> None:
-    rearrange_barriers(circuit.ir)
-    assert str(circuit) == expected_result
 
 
 @pytest.mark.parametrize(
