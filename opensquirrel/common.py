@@ -6,7 +6,7 @@ from typing import SupportsFloat
 import numpy as np
 from numpy.typing import NDArray
 
-ATOL = 0.0000001
+ATOL = 0.000_000_1
 
 
 def normalize_angle(x: SupportsFloat) -> float:
@@ -49,3 +49,14 @@ def are_matrices_equivalent_up_to_global_phase(
     phase_difference = matrix_a[first_non_zero] / matrix_b[first_non_zero]
 
     return np.allclose(matrix_a, phase_difference * matrix_b)
+
+
+def is_identity_matrix_up_to_a_global_phase(matrix: NDArray[np.complex128]) -> bool:
+    """Checks whether matrix is an identity matrix up to a global phase.
+
+    Args:
+        matrix: matrix to check.
+    Returns:
+        Whether matrix is an identity matrix up to a global phase.
+    """
+    return are_matrices_equivalent_up_to_global_phase(matrix, np.eye(matrix.shape[0], dtype=np.complex128))
