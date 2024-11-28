@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from opensquirrel import Circuit, circuit_matrix_calculator
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
-from opensquirrel.ir import IR
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import IR
 
 
 def check_equivalence_up_to_global_phase(matrix_a: NDArray[np.complex128], matrix_b: NDArray[np.complex128]) -> None:

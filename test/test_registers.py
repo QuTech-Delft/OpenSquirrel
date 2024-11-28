@@ -10,6 +10,7 @@ from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGate
 def merger() -> SingleQubitGatesMerger:
     return SingleQubitGatesMerger()
 
+
 def test_qubit_variable_b_and_bit_variable_q(merger: Merger) -> None:
     qc = Circuit.from_string(
         """

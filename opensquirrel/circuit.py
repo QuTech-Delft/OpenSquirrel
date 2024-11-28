@@ -10,8 +10,8 @@ if TYPE_CHECKING:
     from opensquirrel.ir import IR, Gate, NonUnitary
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
-    from opensquirrel.register_manager import RegisterManager
     from opensquirrel.passes.merger.general_merger import Merger
+    from opensquirrel.register_manager import RegisterManager
 
 
 class Circuit:
