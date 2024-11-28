@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-from opensquirrel.common import are_matrices_equivalent_up_to_global_phase, is_identity_matrix
+from opensquirrel.common import are_matrices_equivalent_up_to_global_phase, is_identity_matrix_up_to_a_global_phase
 from opensquirrel.ir import IR, Gate
 from opensquirrel.reindexer import get_reindexed_circuit
 
@@ -20,7 +20,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
 
-    if is_identity_matrix(replaced_matrix):
+    if is_identity_matrix_up_to_a_global_phase(replaced_matrix):
         return
 
     for g in replacement_gates:
