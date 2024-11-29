@@ -4,7 +4,7 @@ import math
 
 from opensquirrel.default_instructions import CZ, Ry
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate
-from opensquirrel.passes.decomposer import Decomposer
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
 class CNOT2CZDecomposer(Decomposer):
@@ -34,7 +34,7 @@ class CNOT2CZDecomposer(Decomposer):
             # If CNOT is not implemented as a ControlledGate, but e.g. as a MatrixGate.
             control_qubit, target_qubit = gate.get_qubit_operands()
         return [
-            Ry(target_qubit, Float(-math.pi / 2)),
+            Ry(target_qubit, -math.pi / 2),
             CZ(control_qubit, target_qubit),
-            Ry(target_qubit, Float(math.pi / 2)),
+            Ry(target_qubit, math.pi / 2),
         ]

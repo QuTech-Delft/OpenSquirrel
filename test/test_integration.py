@@ -127,14 +127,7 @@ def test_hectoqubit_backend() -> None:
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+    qc.decompose(decomposer=CNOT2CZDecomposer())
 
     # Merge single-qubit gates and decompose with the Rx-Ry-Rx decomposer.
     qc.merge_single_qubit_gates()
