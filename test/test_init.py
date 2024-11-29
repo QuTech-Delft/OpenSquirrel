@@ -7,7 +7,10 @@ from opensquirrel.ir import Init
 @pytest.mark.parametrize(
     ("cqasm_string", "expected_result"),
     [
-        ("version 3.0; qubit[2] q; init q[1]; init q[0]", "version 3.0\n\nqubit[2] q\n\ninit q[1]\ninit q[0]\n"),
+        (
+            "version 3.0; qubit[2] q; init q[1]; init q[0]",
+            "version 3.0\n\nqubit[2] q\n\ninit q[1]\ninit q[0]\n",
+        ),  # fmt: skip
         (
             "version 3.0; qubit[4] q; init q[2:3]; init q[1, 0]",
             "version 3.0\n\nqubit[4] q\n\ninit q[2]\ninit q[3]\ninit q[1]\ninit q[0]\n",

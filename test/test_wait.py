@@ -11,7 +11,7 @@ from opensquirrel.ir import Barrier, Wait
         (
             "version 3.0; qubit[2] q; wait(3) q[1]; wait(1) q[0]",
             "version 3.0\n\nqubit[2] q\n\nwait(3) q[1]\nwait(1) q[0]\n",
-        ),
+        ),  # fmt: skip
         (
             "version 3.0; qubit[4] q; wait(3) q[2:3]; wait(1) q[1, 0]",
             "version 3.0\n\nqubit[4] q\n\nwait(3) q[2]\nwait(3) q[3]\nwait(1) q[1]\nwait(1) q[0]\n",
