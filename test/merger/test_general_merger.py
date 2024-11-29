@@ -31,7 +31,7 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
     assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=math.pi)
 
 
-def test_single_gate(merger: Merger) -> None:
+def test_single_gate(merger: SingleQubitGatesMerger) -> None:
     builder1 = CircuitBuilder(1)
     builder1.Ry(0, 1.2345)
     circuit = builder1.to_circuit()
