@@ -138,7 +138,7 @@ b[0] = measure q[0]
     )
 
 
-def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions(merger: Merger) -> None:
+def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
