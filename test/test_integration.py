@@ -123,7 +123,7 @@ b[3] = measure q[3]
     )
 
 
-def test_hectoqubit_backend(merger: Merger) -> None:
+def test_hectoqubit_backend() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
