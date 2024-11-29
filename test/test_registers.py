@@ -27,7 +27,7 @@ def test_qubit_variable_b_and_bit_variable_q(merger: Merger) -> None:
         q[0] = measure b[0]
         """,
     )
-    qc.merge_single_qubit_gates(merger)
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=McKayDecomposer())
     assert (
         str(qc)
