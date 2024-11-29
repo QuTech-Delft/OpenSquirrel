@@ -156,7 +156,7 @@ def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions(mer
         b0 = measure q0
         """,
     )
-    qc.merge_single_qubit_gates(merger)
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=McKayDecomposer())
     assert (
         str(qc)
