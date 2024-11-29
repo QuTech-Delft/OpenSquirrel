@@ -11,8 +11,8 @@ from test.ir_equality_test_base import modify_circuit_and_check
 
 
 @pytest.fixture(name="merger")
-def merger() -> SingleQubitGatesMerger:
-    return SingleQubitGatesMerger()
+def merger() -> type[SingleQubitGatesMerger]:
+    return SingleQubitGatesMerger
 
 
 def test_single_gate(merger: Merger) -> None:
@@ -261,8 +261,8 @@ barrier q[1]
     ids=["generic_case", "circuit_with_irregular_barrier_order", "repeating_barrier"],
 )
 def test_rearrange_barriers_after_merge_single_qubit_gates(
-    circuit: Circuit, expected_result: str, merger: Merger
+    circuit: Circuit, expected_result: str, merger: type[Merger]
 ) -> None:
-    circuit.merge_single_qubit_gates(merger)
+    circuit.merge(merger)
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result

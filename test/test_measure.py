@@ -1,11 +1,6 @@
-import pytest
-
 from opensquirrel import Circuit
 from opensquirrel.passes.decomposer import McKayDecomposer
-from opensquirrel.passes.merger.general_merger import Merger
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
-
-
 
 
 def test_measure() -> None:
@@ -118,7 +113,7 @@ def test_measure_order() -> None:
         b[1, 0] = measure q[1, 0]
         """,
     )
-    qc.merge(merger=SingleQubitGatesMerger())
+    qc.merge(merger=SingleQubitGatesMerger)
     qc.decompose(decomposer=McKayDecomposer())
     assert (
         str(qc)
@@ -153,7 +148,7 @@ def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions() -
         b0 = measure q0
         """,
     )
-    qc.merge(merger=SingleQubitGatesMerger())
+    qc.merge(merger=SingleQubitGatesMerger)
     qc.decompose(decomposer=McKayDecomposer())
     assert (
         str(qc)

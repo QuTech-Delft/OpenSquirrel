@@ -197,8 +197,7 @@ for _ in range(4):
     builder.Rx(0, math.pi / 4)
 qc = builder.to_circuit()
 
-merger = SingleQubitGatesMerger()
-qc.merge_single_qubit_gates(merger)
+qc.merge_single_qubit_gates(SingleQubitGatesMerger)
 
 print(qc)
 ```

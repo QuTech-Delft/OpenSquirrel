@@ -11,8 +11,8 @@ from test.ir_equality_test_base import modify_circuit_and_check
 
 
 @pytest.fixture(name="merger")
-def merger() -> SingleQubitGatesMerger:
-    return SingleQubitGatesMerger()
+def merger() -> type[SingleQubitGatesMerger]:
+    return SingleQubitGatesMerger
 
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
@@ -72,7 +72,7 @@ def test_two_hadamards_different_qubits(merger: Merger) -> None:
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
-def test_merge_different_qubits() -> None:
+def test_merge_different_qubits(merger: Merger) -> None:
     builder1 = CircuitBuilder(4)
     builder1.Ry(0, math.pi / 2)
     builder1.Rx(0, math.pi)
@@ -87,7 +87,6 @@ def test_merge_different_qubits() -> None:
     builder2.Ry(2, 4.234)
     expected_circuit = builder2.to_circuit()
 
-    merger = SingleQubitGatesMerger()
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
     assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
@@ -369,8 +368,8 @@ barrier q[1]
     ids=["generic_case", "circuit_with_irregular_barrier_order", "repeating_barrier"],
 )
 def test_rearrange_barriers_after_merge_single_qubit_gates(
-    circuit: Circuit, expected_result: str, merger: Merger
+    circuit: Circuit, expected_result: str, merger: type[Merger]
 ) -> None:
-    circuit.merge_single_qubit_gates(merger)
+    circuit.merge(merger)
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result

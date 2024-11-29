@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import numpy as np
 from numpy.typing import NDArray
@@ -19,7 +19,7 @@ def check_equivalence_up_to_global_phase(matrix_a: NDArray[np.complex128], matri
 
 def modify_circuit_and_check(
     circuit: Circuit,
-    action: Callable[[IR, int], Any],
+    action: Callable[[IR, int], None],
     expected_circuit: Circuit | None = None,
 ) -> None:
     """
