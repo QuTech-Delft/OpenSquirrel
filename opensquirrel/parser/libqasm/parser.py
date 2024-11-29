@@ -99,8 +99,8 @@ class Parser:
         instruction: cqasm.semantic.Instruction,
         register_manager: RegisterManager,
     ) -> list[list[Any]]:
-        """Get the list of lists of operands of a gate.
-        Notice that a gate just has a list of operands. The outer list is needed to support SGMQ.
+        """Get the list of lists of operands of an instruction.
+        Notice that an instruction just has a list of operands. The outer list is needed to support SGMQ.
         For example, for CNOT q[0, 1] q[2, 3], this function returns [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]].
         """
         ret: list[list[Any]] = []
