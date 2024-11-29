@@ -1,8 +1,8 @@
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.default_instructions import H, CNOT
-from opensquirrel.ir import Wait, Barrier
+from opensquirrel.default_instructions import CNOT, H
+from opensquirrel.ir import Barrier, Wait
 
 
 @pytest.mark.parametrize(
