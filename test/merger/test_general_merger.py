@@ -173,6 +173,25 @@ def test_no_merge_across_reset() -> None:
     modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
 
 
+def test_no_merge_across_wait() -> None:
+    builder = CircuitBuilder(2)
+    builder.H(0)
+    builder.wait(0, 3)
+    builder.H(0)
+    builder.H(1)
+    builder.wait(0, 3)
+    builder.H(1)
+    qc = builder.to_circuit()
+
+    builder2 = CircuitBuilder(2)
+    builder2.H(0)
+    builder2.wait(0, 3)
+    builder2.H(0)
+    builder2.wait(0, 3)
+    expected_qc = builder2.to_circuit()
+    modify_circuit_and_check(qc, general_merger.merge_single_qubit_gates, expected_qc)
+
+
 @pytest.mark.parametrize(
     ("circuit", "expected_result"),
     [

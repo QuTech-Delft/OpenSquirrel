@@ -1,8 +1,8 @@
 import pytest
 
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_instructions import CNOT, H, I
-from opensquirrel.ir import Measure
+from opensquirrel.default_instructions import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
+from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
 
 
 class TestCircuitBuilder:
@@ -21,39 +21,27 @@ class TestCircuitBuilder:
             CNOT(0, 1),
         ]
 
-    def test_identity(self) -> None:
-        builder = CircuitBuilder(1)
-        builder.I(0)
-
+    @pytest.mark.parametrize(
+        ("builder", "expected_result"),
+        [
+            (CircuitBuilder(2, 2).I(0).X(0).Y(0).Z(0), [I(0), X(0), Y(0), Z(0)]),
+            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, 3.14), [Rx(0, -1), Ry(1, 1), Rz(0, 3.14)]),
+            (CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1), [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]),
+            (CircuitBuilder(2, 2).measure(0, 0).measure(1, 1), [Measure(0, 0), Measure(1, 1)]),
+            (CircuitBuilder(2, 2).init(0).init(1), [Init(0), Init(1)]),
+            (CircuitBuilder(2, 2).reset(0).reset(1), [Reset(0), Reset(1)]),
+            (CircuitBuilder(2, 2).barrier(0).barrier(1), [Barrier(0), Barrier(1)]),
+            (CircuitBuilder(2, 2).wait(0, 1).wait(1, 2), [Wait(0, 1), Wait(1, 2)]),
+        ],
+        ids=["Pauli_gates", "rotation_gates", "two-qubit_gates", "measure", "init", "reset", "barrier", "wait"],
+    )
+    def test_instructions(self, builder: CircuitBuilder, expected_result: list[Instruction]) -> None:
         circuit = builder.to_circuit()
-
-        assert circuit.qubit_register_size == 1
-        assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [I(0)]
-
-    def test_single_measure(self) -> None:
-        builder = CircuitBuilder(1, 1)
-        builder.measure(0, 0)
-
-        circuit = builder.to_circuit()
-
-        assert circuit.qubit_register_size == 1
-        assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [Measure(0, 0)]
-
-    def test_circuit_measure(self) -> None:
-        builder = CircuitBuilder(2, 2)
-
-        builder.H(0)
-        builder.CNOT(0, 1)
-        builder.measure(0, 0)
-        builder.measure(1, 1)
-
-        circuit = builder.to_circuit()
-
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [H(0), CNOT(0, 1), Measure(0, 0), Measure(1, 1)]
+        assert circuit.bit_register_size == 2
+        assert circuit.bit_register_name == "b"
+        assert circuit.ir.statements == expected_result
 
     def test_chain(self) -> None:
         builder = CircuitBuilder(3)

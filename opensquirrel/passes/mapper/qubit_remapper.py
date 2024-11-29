@@ -4,11 +4,13 @@ from opensquirrel.ir import (
     Barrier,
     BlochSphereRotation,
     ControlledGate,
+    Init,
     IRVisitor,
     MatrixGate,
     Measure,
     Qubit,
     Reset,
+    Wait,
 )
 from opensquirrel.passes.mapper.mapping import Mapping
 
@@ -40,6 +42,10 @@ class _QubitRemapper(IRVisitor):
         measure.qubit.accept(self)
         return measure
 
+    def visit_init(self, init: Init) -> Init:
+        init.qubit.accept(self)
+        return init
+
     def visit_reset(self, reset: Reset) -> Reset:
         reset.qubit.accept(self)
         return reset
@@ -47,6 +53,10 @@ class _QubitRemapper(IRVisitor):
     def visit_barrier(self, barrier: Barrier) -> Barrier:
         barrier.qubit.accept(self)
         return barrier
+
+    def visit_wait(self, wait: Wait) -> Wait:
+        wait.qubit.accept(self)
+        return wait
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         g.qubit.accept(self)
