@@ -11,7 +11,7 @@ def merger() -> SingleQubitGatesMerger:
     return SingleQubitGatesMerger()
 
 
-def test_qubit_variable_b_and_bit_variable_q(merger: Merger) -> None:
+def test_qubit_variable_b_and_bit_variable_q() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
