@@ -105,7 +105,7 @@ b[5] = measure q[5]
     )
 
 
-def test_measure_order(merger: Merger) -> None:
+def test_measure_order() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
