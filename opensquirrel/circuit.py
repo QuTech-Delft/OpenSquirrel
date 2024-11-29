@@ -86,7 +86,7 @@ class Circuit:
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
 
-    def merge(self, merger: type[Merger]) -> None:
+    def merge(self, merger: Merger) -> None:
         """Generic merge pass.
         It applies the given merger to the circuit.
         """

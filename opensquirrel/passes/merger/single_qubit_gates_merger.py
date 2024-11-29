@@ -6,7 +6,6 @@ from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphe
 
 
 class SingleQubitGatesMerger(Merger):
-    @staticmethod
     def merge(ir: IR, qubit_register_size: int) -> None:
         """Merge all consecutive 1-qubit gates in the circuit.
 

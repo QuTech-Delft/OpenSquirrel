@@ -52,7 +52,7 @@ def test_Spin2_backend() -> None:  # noqa: N802
     )
 
     # Merge single-qubit gates and decompose with McKay decomposition.
-    qc.merge(merger=SingleQubitGatesMerger)
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=McKayDecomposer())
 
     assert (
@@ -145,7 +145,7 @@ def test_hectoqubit_backend() -> None:
     )
 
     # Merge single-qubit gates and decompose with the Rx-Ry-Rx decomposer.
-    qc.merge(merger=SingleQubitGatesMerger)
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=XYXDecomposer())
 
     if importlib.util.find_spec("quantify_scheduler") is None:

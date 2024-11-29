@@ -171,7 +171,7 @@ The issue is that the CNOT expects a qubit as second input argument where an int
 
 ### Merging single qubit gates
 
-All single-qubit gates appearing in a circuit can be merged by applying `merge_single_qubit_gates(merger)` to the circuit.
+All single-qubit gates appearing in a circuit can be merged by applying `merge(merger=SingleQubitGatesMerger())` to the circuit.
 Note that multi-qubit gates remain untouched and single-qubit gates are not merged across any multi-qubit gates.
 The gate that results from the merger of single-qubit gates will, in general,
 comprise an arbitrary rotation and, therefore, not be a known gate.
@@ -197,7 +197,7 @@ for _ in range(4):
     builder.Rx(0, math.pi / 4)
 qc = builder.to_circuit()
 
-qc.merge_single_qubit_gates(SingleQubitGatesMerger)
+qc.merge(merger=SingleQubitGatesMerger())
 
 print(qc)
 ```

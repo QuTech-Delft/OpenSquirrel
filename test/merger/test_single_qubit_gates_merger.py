@@ -11,11 +11,11 @@ from test.ir_equality_test_base import modify_circuit_and_check
 
 
 @pytest.fixture(name="merger")
-def merger() -> type[SingleQubitGatesMerger]:
-    return SingleQubitGatesMerger
+def merger_fixture() -> SingleQubitGatesMerger:
+    return SingleQubitGatesMerger()
 
 
-def test_single_gate(merger: Merger) -> None:
+def test_single_gate(merger: SingleQubitGatesMerger) -> None:
     builder1 = CircuitBuilder(1)
     builder1.Ry(0, Float(1.2345))
     circuit = builder1.to_circuit()
@@ -32,7 +32,7 @@ def test_single_gate(merger: Merger) -> None:
     assert circuit.ir.statements[0].arguments == (Qubit(0), Float(1.2345))
 
 
-def test_two_hadamards(merger: Merger) -> None:
+def test_two_hadamards(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(4)
     builder.H(2)
     builder.H(2)
@@ -43,7 +43,7 @@ def test_two_hadamards(merger: Merger) -> None:
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
-def test_two_hadamards_different_qubits(merger: Merger) -> None:
+def test_two_hadamards_different_qubits(merger: SingleQubitGatesMerger) -> None:
     builder1 = CircuitBuilder(4)
     builder1.H(0)
     builder1.H(2)
@@ -57,7 +57,7 @@ def test_two_hadamards_different_qubits(merger: Merger) -> None:
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
-def test_merge_different_qubits(merger: Merger) -> None:
+def test_merge_different_qubits(merger: SingleQubitGatesMerger) -> None:
     builder1 = CircuitBuilder(4)
     builder1.Ry(0, Float(math.pi / 2))
     builder1.Rx(0, Float(math.pi))
@@ -85,7 +85,7 @@ def test_merge_different_qubits(merger: Merger) -> None:
     assert circuit.ir.statements[2].is_anonymous
 
 
-def test_merge_and_flush(merger: Merger) -> None:
+def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
     builder1 = CircuitBuilder(4)
     builder1.Ry(0, Float(math.pi / 2))
     builder1.Rz(1, Float(1.5))
@@ -112,7 +112,7 @@ def test_merge_and_flush(merger: Merger) -> None:
     assert circuit.ir.statements[3].arguments == (Qubit(0), Float(3.234))
 
 
-def test_merge_y90_x_to_h(merger: Merger) -> None:
+def test_merge_y90_x_to_h(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(1)
     builder.Y90(0)
     builder.X(0)
@@ -125,7 +125,7 @@ def test_merge_y90_x_to_h(merger: Merger) -> None:
     modify_circuit_and_check(qc, merger.merge, expected_qc)
 
 
-def test_no_merge_across_measure(merger: Merger) -> None:
+def test_no_merge_across_measure(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(2, 2)
     builder.H(0)
     builder.measure(0, Bit(0))
@@ -145,7 +145,7 @@ def test_no_merge_across_measure(merger: Merger) -> None:
     modify_circuit_and_check(qc, merger.merge, expected_qc)
 
 
-def test_no_merge_across_reset(merger: Merger) -> None:
+def test_no_merge_across_reset(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(2)
     builder.H(0)
     builder.reset(0)
@@ -261,8 +261,8 @@ barrier q[1]
     ids=["generic_case", "circuit_with_irregular_barrier_order", "repeating_barrier"],
 )
 def test_rearrange_barriers_after_merge_single_qubit_gates(
-    circuit: Circuit, expected_result: str, merger: type[Merger]
+    circuit: Circuit, expected_result: str, merger: SingleQubitGatesMerger
 ) -> None:
-    circuit.merge(merger)
+    circuit.merge(merger=merger)
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result
