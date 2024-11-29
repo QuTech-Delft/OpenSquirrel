@@ -124,7 +124,7 @@ class Parser:
     @classmethod
     def _get_expanded_instruction_args(
         cls,
-        instruction: cqasm.semantic.GateInstruction | cqasm.semantic.NonGateInstruction,
+        instruction: cqasm.semantic.Instruction,
         register_manager: RegisterManager,
     ) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.

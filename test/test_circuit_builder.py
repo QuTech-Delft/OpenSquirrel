@@ -24,14 +24,38 @@ class TestCircuitBuilder:
     @pytest.mark.parametrize(
         ("builder", "expected_result"),
         [
-            (CircuitBuilder(2, 2).I(0).X(0).Y(0).Z(0), [I(0), X(0), Y(0), Z(0)]),
-            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, 3.14), [Rx(0, -1), Ry(1, 1), Rz(0, 3.14)]),
-            (CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1), [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]),
-            (CircuitBuilder(2, 2).measure(0, 0).measure(1, 1), [Measure(0, 0), Measure(1, 1)]),
-            (CircuitBuilder(2, 2).init(0).init(1), [Init(0), Init(1)]),
-            (CircuitBuilder(2, 2).reset(0).reset(1), [Reset(0), Reset(1)]),
-            (CircuitBuilder(2, 2).barrier(0).barrier(1), [Barrier(0), Barrier(1)]),
-            (CircuitBuilder(2, 2).wait(0, 1).wait(1, 2), [Wait(0, 1), Wait(1, 2)]),
+            (
+                CircuitBuilder(2, 2).I(0).X(0).Y(0).Z(0),
+                [I(0), X(0), Y(0), Z(0)]
+            ),
+            (
+                CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, 3.14),
+                [Rx(0, -1), Ry(1, 1), Rz(0, 3.14)]
+            ),
+            (
+                CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1),
+                [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]
+            ),
+            (
+                CircuitBuilder(2, 2).measure(0, 0).measure(1, 1),
+                [Measure(0, 0), Measure(1, 1)]
+            ),
+            (
+                CircuitBuilder(2, 2).init(0).init(1),
+                [Init(0), Init(1)]
+            ),
+            (
+                CircuitBuilder(2, 2).reset(0).reset(1),
+                [Reset(0), Reset(1)]
+            ),
+            (
+                CircuitBuilder(2, 2).barrier(0).barrier(1),
+                [Barrier(0), Barrier(1)]
+            ),
+            (
+                CircuitBuilder(2, 2).wait(0, 1).wait(1, 2),
+                [Wait(0, 1), Wait(1, 2)]
+            ),
         ],
         ids=["pauli gates", "rotation gates", "two-qubit gates", "measure", "init", "reset", "barrier", "wait"],
     )
