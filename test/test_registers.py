@@ -6,9 +6,6 @@ from opensquirrel.passes.merger.general_merger import Merger
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
 
-@pytest.fixture(name="merger")
-def merger() -> SingleQubitGatesMerger:
-    return SingleQubitGatesMerger()
 
 
 def test_qubit_variable_b_and_bit_variable_q() -> None:
