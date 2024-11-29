@@ -8,14 +8,16 @@ import numpy as np
 
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
 from opensquirrel.utils.list import flatten_list
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
     The first rotation is applied and then the second.
-    The resulting gate is anonymous except if `a` is the identity and `b` is not anonymous, or vice versa.
+    The resulting gate is anonymous except if:
+    - `a` is the identity and `b` is not anonymous, or vice versa, or
+    - `a` and `b` are the same named gate (have the same generator).
 
     Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
     """
@@ -48,8 +50,18 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
     combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
 
-    generator = b.generator if a.is_identity() else a.generator if b.is_identity() else None
-    arguments = b.arguments if a.is_identity() else a.arguments if b.is_identity() else None
+    if a.is_identity():
+        generator = b.generator
+        arguments = b.arguments
+    elif b.is_identity():
+        generator = a.generator
+        arguments = a.arguments
+    elif a.generator == b.generator:
+        generator = a.generator
+        arguments = (a.qubit, Float(combined_angle))
+    else:
+        generator = None
+        arguments = None
 
     return BlochSphereRotation(
         qubit=a.qubit,

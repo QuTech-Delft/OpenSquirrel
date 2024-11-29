@@ -82,7 +82,7 @@ def test_merge_different_qubits(merger: SingleQubitGatesMerger) -> None:
     assert circuit.ir.statements[1].arguments == (Qubit(1), Float(1.2345))
 
     assert isinstance(circuit.ir.statements[2], BlochSphereRotation)
-    assert circuit.ir.statements[2].is_anonymous
+    assert not circuit.ir.statements[2].is_anonymous
 
 
 def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
