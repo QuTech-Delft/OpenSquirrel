@@ -154,7 +154,7 @@ def test_hectoqubit_backend() -> None:
     )
 
     # Merge single-qubit gates and decompose with the Rx-Ry-Rx decomposer.
-    qc.merge_single_qubit_gates(merger)
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=XYXDecomposer())
 
     if importlib.util.find_spec("quantify_scheduler") is None:
