@@ -2,18 +2,13 @@ import math
 
 import pytest
 
-from opensquirrel.default_gates import CNOT, CR, CRk, H, I, Ry, X, default_gate_aliases, default_gate_set
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Float, Gate
+from opensquirrel.default_instructions import CNOT, CR, CRk, H, I, Ry, X
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
 from opensquirrel.parser.libqasm.parser import Parser
 
 
-@pytest.fixture(name="parser")
-def parser_fixture() -> Parser:
-    return Parser(gate_set=default_gate_set, gate_aliases=default_gate_aliases)
-
-
-def test_simple(parser: Parser) -> None:
-    circuit = parser.circuit_from_string(
+def test_simple() -> None:
+    circuit = Parser().circuit_from_string(
         """
 version 3.0
 
@@ -30,18 +25,11 @@ CRk(23) q[0], q[1]
 
     assert circuit.qubit_register_size == 2
     assert circuit.qubit_register_name == "q"
-    assert circuit.ir.statements == [
-        H(0),
-        I(0),
-        Ry(1, Float(1.234)),
-        CNOT(0, 1),
-        CR(1, 0, Float(5.123)),
-        CRk(0, 1, 23),
-    ]
+    assert circuit.ir.statements == [H(0), I(0), Ry(1, 1.234), CNOT(0, 1), CR(1, 0, 5.123), CRk(0, 1, 23)]
 
 
-def test_sgmq(parser: Parser) -> None:
-    circuit = parser.circuit_from_string(
+def test_sgmq() -> None:
+    circuit = Parser().circuit_from_string(
         """
 version 3.0
 
@@ -68,12 +56,12 @@ CRk(23) q[0, 3], q[1, 4]
     ]
 
 
-def test_error(parser: Parser) -> None:
+def test_error() -> None:
     with pytest.raises(
         IOError,
         match="Error at <unknown file name>:1:30..31: failed to resolve variable 'q'",
     ):
-        parser.circuit_from_string("version 3.0; qubit[20] qu; H q[5]")
+        Parser().circuit_from_string("version 3.0; qubit[20] qu; H q[5]")
 
 
 @pytest.mark.parametrize(
@@ -118,8 +106,8 @@ def test_error(parser: Parser) -> None:
         "semicolon_bit",
     ],
 )
-def test_simplest(parser: Parser, circuit_string: str, expected_output: str) -> None:
-    circuit = parser.circuit_from_string(circuit_string)
+def test_simplest(circuit_string: str, expected_output: str) -> None:
+    circuit = Parser().circuit_from_string(circuit_string)
     assert str(circuit) == expected_output
 
 
@@ -149,6 +137,6 @@ def test_simplest(parser: Parser, circuit_string: str, expected_output: str) -> 
     ],
     ids=["inv", "pow_2_Rx", "pow_2_inv", "ctrl_pow_2_inv"],
 )
-def test_gate_modifiers(parser: Parser, circuit_string: str, expected_result: list[Gate]) -> None:
-    circuit = parser.circuit_from_string(circuit_string)
+def test_gate_modifiers(circuit_string: str, expected_result: list[Gate]) -> None:
+    circuit = Parser().circuit_from_string(circuit_string)
     assert circuit.ir.statements == expected_result

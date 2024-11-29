@@ -6,10 +6,10 @@ import importlib.util
 import pytest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.decomposer import XYXDecomposer, CNOTDecomposer, McKayDecomposer, CNOT2CZDecomposer
-from opensquirrel.default_gates import CNOT, CZ, H
-from opensquirrel.exporter.export_format import ExportFormat
+from opensquirrel.default_instructions import CNOT, CZ, H
 from opensquirrel.ir import Measure
+from opensquirrel.passes.decomposer import CNOT2CZDecomposer, CNOTDecomposer, McKayDecomposer, XYXDecomposer
+from opensquirrel.passes.exporter.export_format import ExportFormat
 
 
 def test_Spin2_backend() -> None:  # noqa: N802
@@ -206,7 +206,7 @@ def test_hectoqubit_backend_allxy() -> None:
         qubit[3] q
         bit[10] b
 
-        reset
+        reset q
 
         Rx(0.0) q[0]
         Rx(0.0) q[0]

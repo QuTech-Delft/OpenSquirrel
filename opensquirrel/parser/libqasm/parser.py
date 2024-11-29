@@ -1,31 +1,19 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable
 from typing import Any, cast
 
 import cqasm.v3x as cqasm
 
+from opensquirrel import instruction_library
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
-from opensquirrel.default_gates import default_gate_aliases, default_gate_set
-from opensquirrel.default_measures import default_measure_set
-from opensquirrel.default_resets import default_reset_set
-from opensquirrel.instruction_library import GateLibrary, MeasureLibrary, ResetLibrary
-from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, Measure, Qubit, Reset, Statement
+from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, NonUnitary, Qubit, Statement
 from opensquirrel.register_manager import RegisterManager
 
 
-class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
-    def __init__(
-        self,
-        gate_set: Iterable[Callable[..., Gate]] = default_gate_set,
-        gate_aliases: Mapping[str, Callable[..., Gate]] = default_gate_aliases,
-        measure_set: Iterable[Callable[..., Measure]] = default_measure_set,
-        reset_set: Iterable[Callable[..., Reset]] = default_reset_set,
-    ) -> None:
-        GateLibrary.__init__(self, gate_set, gate_aliases)
-        MeasureLibrary.__init__(self, measure_set)
-        ResetLibrary.__init__(self, reset_set)
+class Parser:
+    def __init__(self) -> None:
         self.ir = None
 
     @staticmethod
@@ -70,7 +58,7 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         return isinstance(ast_node, cqasm.semantic.GateInstruction)
 
     @staticmethod
-    def _is_non_gate_instruction(ast_node: Any) -> bool:
+    def _is_non_unitary_instruction(ast_node: Any) -> bool:
         return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
 
     @staticmethod
@@ -106,11 +94,13 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         return ret
 
     @classmethod
-    def _get_gate_operands(
-        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
+    def _get_instruction_operands(
+        cls,
+        instruction: cqasm.semantic.Instruction,
+        register_manager: RegisterManager,
     ) -> list[list[Any]]:
-        """Get the list of lists of operands of a gate.
-        Notice that a gate just has a list of operands. The outer list is needed to support SGMQ.
+        """Get the list of lists of operands of an instruction.
+        Notice that an instruction just has a list of operands. The outer list is needed to support SGMQ.
         For example, for CNOT q[0, 1] q[2, 3], this function returns [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]].
         """
         ret: list[list[Any]] = []
@@ -132,17 +122,22 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         return cls._ast_literal_to_ir_literal(gate.parameter)
 
     @classmethod
-    def _get_expanded_gate_args(
-        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
+    def _get_expanded_instruction_args(
+        cls,
+        instruction: cqasm.semantic.Instruction,
+        register_manager: RegisterManager,
     ) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
         For example, for CRk(2) q[0, 1] q[2, 3], this function first constructs the list with a list of qubits
         [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]], then appends the list of parameters [Int(2), Int(2)],
         and finally zips the whole list and returns [(Qubit(0), Qubit(1), Int(2)), (Qubit(2), Qubit(3), Int(2))]
         """
-        ret = cls._get_gate_operands(instruction, register_manager)
-        gate_parameter = cls._get_named_gate_param(instruction.gate)
-        if gate_parameter is not None:
+        ret = cls._get_instruction_operands(instruction, register_manager)
+        if isinstance(instruction, cqasm.semantic.GateInstruction):
+            gate_parameter = cls._get_named_gate_param(instruction.gate)
+        else:
+            gate_parameter = cls._ast_literal_to_ir_literal(instruction.parameter)
+        if gate_parameter:
             number_of_operands = len(ret[0])
             ret.append([gate_parameter] * number_of_operands)
         return zip(*ret)
@@ -165,23 +160,6 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
                 raise TypeError(msg)
         return zip(*expanded_args)
 
-    @classmethod
-    def _get_expanded_reset_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
-        """Construct a list of qubits and return a zip.
-        For example: [Qubit(0), Qubit(1), Qubit(2)]
-        """
-        expanded_args: list[Any] = []
-        if len(ast_args) < 1:
-            expanded_args += [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
-            return zip(expanded_args)
-        for ast_arg in ast_args:
-            if cls._is_qubit_type(ast_arg):
-                expanded_args += cls._get_qubits(ast_arg, register_manager)
-            else:
-                msg = "argument is not of qubit type"
-                raise TypeError(msg)
-        return zip(expanded_args)
-
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
         without_defaults = False
@@ -192,10 +170,11 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
         if isinstance(result, list):
             raise OSError("parsing error: " + ", ".join(result))
 
-    def _get_gate_f(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
+    @staticmethod
+    def _get_gate_f(instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
         gate_name = instruction.gate.name
         if gate_name in ["inv", "pow", "ctrl"]:
-            modified_gate_f = cast(Callable[..., BlochSphereRotation], self._get_gate_f(instruction.gate))
+            modified_gate_f = cast(Callable[..., BlochSphereRotation], Parser._get_gate_f(instruction.gate))
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_f)
             if gate_name == "pow":
@@ -204,15 +183,11 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
                 return ControlGateModifier(modified_gate_f)
             msg = "parsing error: unknown unitary instruction"
             raise OSError(msg)
-        return self.get_gate_f(gate_name)
+        return instruction_library.get_gate_f(gate_name)
 
-    def _get_non_gate_f(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., Statement]:
-        if "measure" in instruction.name:
-            return self.get_measure_f(instruction.name)
-        if "reset" in instruction.name:
-            return self.get_reset_f(instruction.name)
-        msg = "parsing error: unknown non-unitary instruction"
-        raise OSError(msg)
+    @staticmethod
+    def _get_non_unitary_f(instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
+        return instruction_library.get_non_unitary_f(instruction.name)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
@@ -230,13 +205,14 @@ class Parser(GateLibrary, MeasureLibrary, ResetLibrary):
             instruction_generator: Callable[..., Statement]
             if Parser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_f(statement)
-                expanded_args = Parser._get_expanded_gate_args(statement, register_manager)
-            elif Parser._is_non_gate_instruction(statement):
-                instruction_generator = self._get_non_gate_f(statement)
-                if statement.name == "measure":
-                    expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
-                else:
-                    expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
+                expanded_args = Parser._get_expanded_instruction_args(statement, register_manager)
+            elif Parser._is_non_unitary_instruction(statement):
+                instruction_generator = self._get_non_unitary_f(statement)
+                expanded_args = (
+                    Parser._get_expanded_measure_args(statement.operands, register_manager)
+                    if statement.name == "measure"
+                    else Parser._get_expanded_instruction_args(statement, register_manager)
+                )
             else:
                 msg = "parsing error: unknown statement"
                 raise OSError(msg)

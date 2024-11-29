@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import Comment, Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
+from opensquirrel.ir import Barrier, Float, Gate, Init, Int, IRVisitor, Measure, Qubit, Reset, Wait
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -25,19 +25,34 @@ class _CQASMv1Creator(IRVisitor):
         qubit_register_name = self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
 
-    def visit_int(self, i: Int) -> str:
+    def visit_int(self, i: SupportsInt) -> str:
+        i = Int(i)
         return f"{i.value}"
 
-    def visit_float(self, f: Float) -> str:
+    def visit_float(self, f: SupportsFloat) -> str:
+        f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
     def visit_measure(self, measure: Measure) -> None:
         qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
         self.cqasmv1_string += f"{measure.name}_z {qubit_argument}\n"
 
+    def visit_init(self, init: Init) -> None:
+        qubit_argument = init.arguments[0].accept(self)  # type: ignore[index]
+        self.cqasmv1_string += f"prep_z {qubit_argument}\n"
+
     def visit_reset(self, reset: Reset) -> None:
         qubit_argument = reset.arguments[0].accept(self)  # type: ignore[index]
         self.cqasmv1_string += f"prep_z {qubit_argument}\n"
+
+    def visit_barrier(self, barrier: Barrier) -> None:
+        qubit_argument = barrier.arguments[0].accept(self)  # type: ignore[index]
+        self.cqasmv1_string += f"barrier {qubit_argument}\n"
+
+    def visit_wait(self, wait: Wait) -> None:
+        qubit_argument = wait.arguments[0].accept(self)  # type: ignore[index]
+        parameter = wait.arguments[1].accept(self)  # type: ignore[index]
+        self.cqasmv1_string += f"wait {qubit_argument}, {parameter}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name.lower()
@@ -50,9 +65,6 @@ class _CQASMv1Creator(IRVisitor):
         self.cqasmv1_string += "{} {}{}\n".format(
             gate_name, ", ".join(qubit_args), ", " + ", ".join(params) if params else ""
         )
-
-    def visit_comment(self, comment: Comment) -> None:
-        self.cqasmv1_string += f"\n/* {comment.str} */\n\n"
 
 
 def export(circuit: Circuit) -> str:
