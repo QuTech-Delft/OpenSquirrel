@@ -133,8 +133,7 @@ def test_anonymous_gate() -> None:
         builder.Rx(0, math.pi / 4)
     qc = builder.to_circuit()
 
-    merger = SingleQubitGatesMerger()
-    qc.merge_single_qubit_gates(merger)
+    qc.merge_single_qubit_gates(SingleQubitGatesMerger())
 
     assert (
         str(qc)
