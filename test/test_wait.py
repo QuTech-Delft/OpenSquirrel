@@ -1,7 +1,8 @@
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.ir import Wait
+from opensquirrel.default_instructions import H, CNOT
+from opensquirrel.ir import Wait, Barrier
 
 
 @pytest.mark.parametrize(
@@ -30,3 +31,22 @@ def test_wait_in_circuit_builder() -> None:
     assert qc.qubit_register_size == 2
     assert qc.qubit_register_name == "q"
     assert qc.ir.statements == [Wait(0, 3), Wait(1, 1)]
+
+
+def test_wait_in_instruction_context() -> None:
+    builder = CircuitBuilder(2)
+    builder.H(0).H(1).wait(0, 1).barrier(1).wait(1, 3).barrier(0).CNOT(0, 1).wait(0, 3)
+    qc = builder.to_circuit()
+    assert qc.qubit_register_size == 2
+    assert qc.qubit_register_name == "q"
+    assert qc.ir.statements == [
+        H(0),
+        H(1),
+        Wait(0, 1),
+        Barrier(1),
+        Wait(1, 3),
+        Barrier(0),
+        CNOT(0, 1),
+        Wait(0, 3),
+    ]
+
