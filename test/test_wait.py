@@ -49,4 +49,3 @@ def test_wait_in_instruction_context() -> None:
         CNOT(0, 1),
         Wait(0, 3),
     ]
-
