@@ -118,7 +118,7 @@ def test_measure_order() -> None:
         b[1, 0] = measure q[1, 0]
         """,
     )
-    qc.merge_single_qubit_gates(merger)
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=McKayDecomposer())
     assert (
         str(qc)
