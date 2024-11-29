@@ -147,5 +147,5 @@ def rearrange_barriers(ir: IR) -> None:
 
 class Merger(ABC):
     @abstractmethod
-    def merge(ir: IR, qubit_register_size: int) -> None:
+    def merge(self, ir: IR, qubit_register_size: int) -> None:
         raise NotImplementedError
