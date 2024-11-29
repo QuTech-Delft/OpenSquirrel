@@ -22,7 +22,7 @@ def merger() -> SingleQubitGatesMerger:
     return SingleQubitGatesMerger()
 
 
-def test_Spin2_backend(merger: Merger) -> None:  # noqa: N802
+def test_Spin2_backend() -> None:  # noqa: N802
     qc = Circuit.from_string(
         """
         version 3.0
