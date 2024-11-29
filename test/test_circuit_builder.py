@@ -33,7 +33,7 @@ class TestCircuitBuilder:
             (CircuitBuilder(2, 2).barrier(0).barrier(1), [Barrier(0), Barrier(1)]),
             (CircuitBuilder(2, 2).wait(0, 1).wait(1, 2), [Wait(0, 1), Wait(1, 2)]),
         ],
-        ids=["pauli gates", "rotation gates", "two-qubit gates", "measure", "init", "reset", "barrier", "wait"],
+        ids=["Pauli_gates", "rotation_gates", "two-qubit_gates", "measure", "init", "reset", "barrier", "wait"],
     )
     def test_instructions(self, builder: CircuitBuilder, expected_result: list[Instruction]) -> None:
         circuit = builder.to_circuit()
