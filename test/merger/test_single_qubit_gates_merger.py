@@ -25,11 +25,7 @@ def test_single_gate(merger: SingleQubitGatesMerger) -> None:
     expected_circuit = builder2.to_circuit()
 
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
-
-    # Check that when no fusion happens, generator and arguments of gates are preserved.
-    assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
-    assert circuit.ir.statements[0].generator == Ry
-    assert circuit.ir.statements[0].arguments == (Qubit(0), Float(1.2345))
+    assert circuit.ir.statements == [Ry(0, 1.2345)]
 
 
 def test_two_hadamards(merger: SingleQubitGatesMerger) -> None:
