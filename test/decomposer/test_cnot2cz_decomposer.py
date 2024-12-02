@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from opensquirrel.default_instructions import CNOT, CZ, H, Ry, Rz, X, CR, CRk, SWAP
+from opensquirrel.default_instructions import CNOT, CR, CZ, SWAP, CRk, H, Ry, X
 from opensquirrel.ir import ControlledGate, Gate
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
@@ -21,7 +21,7 @@ def decomposer_fixture() -> CNOT2CZDecomposer:
         (H(0), [H(0)]),
         (Ry(0, 2.345), [Ry(0, 2.345)]),
     ],
-    ids=["Hadamard", "rotation_gate"]
+    ids=["Hadamard", "rotation_gate"],
 )
 def test_ignores_1q_gates(decomposer: CNOT2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     check_gate_replacement(gate, expected_result)
@@ -36,7 +36,7 @@ def test_ignores_1q_gates(decomposer: CNOT2CZDecomposer, gate: Gate, expected_re
         (CZ(0, 1), [CZ(0, 1)]),
         (SWAP(0, 1), [SWAP(0, 1)]),
     ],
-    ids=["CR_gate", "CRk_gate", "CZ_gate", "SWAP_gate"]
+    ids=["CR_gate", "CRk_gate", "CZ_gate", "SWAP_gate"],
 )
 def test_ignores_2q_gates(decomposer: CNOT2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     check_gate_replacement(gate, expected_result)
@@ -53,10 +53,10 @@ def test_ignores_double_controlled(decomposer: CNOT2CZDecomposer) -> None:
 @pytest.mark.parametrize(
     ("gate", "expected_result"),
     [
-        (CNOT(0, 1), [Ry(1, -math.pi/2), CZ(0, 1), Ry(1, math.pi/2)]),
-        (CNOT(1, 0), [Ry(0, -math.pi/2), CZ(1, 0), Ry(0, math.pi/2)]),
+        (CNOT(0, 1), [Ry(1, -math.pi / 2), CZ(0, 1), Ry(1, math.pi / 2)]),
+        (CNOT(1, 0), [Ry(0, -math.pi / 2), CZ(1, 0), Ry(0, math.pi / 2)]),
     ],
-    ids=["CNOT_0_1", "CNOT_1_0"]
+    ids=["CNOT_0_1", "CNOT_1_0"],
 )
 def test_decomposes_CNOT(decomposer: CNOT2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # noqa: N802
     decomposed_gate = decomposer.decompose(gate)

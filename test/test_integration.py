@@ -6,13 +6,12 @@ import importlib.util
 import pytest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_instructions import CNOT, CZ, H
 from opensquirrel.ir import Measure
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer, CNOTDecomposer, McKayDecomposer, XYXDecomposer
 from opensquirrel.passes.exporter.export_format import ExportFormat
 
 
-def test_Spin2_backend() -> None:  # noqa: N802
+def test_spin_backend() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -57,48 +56,44 @@ bit[4] b
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
-Rz(0.0081037174) q[0]
+Rz(1.5789) q[0]
 X90 q[0]
-Rz(1.5707964) q[0]
-X90 q[0]
-Rz(-1.3707963) q[0]
+Rz(-2.9415926) q[0]
 CZ q[1], q[0]
 Rz(1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
-Rz(1.0615) q[3]
+Rz(2.6322964) q[3]
 X90 q[3]
-Rz(1.5707963) q[3]
-X90 q[3]
+Rz(-1.5707963) q[3]
 CZ q[2], q[3]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 X90 q[3]
 Rz(2.0800926) q[3]
 X90 q[3]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 CZ q[2], q[3]
-Rz(1.5707963) q[0]
+Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
-Rz(1.8468982) q[2]
+Rz(3.4176945) q[2]
 X90 q[2]
-Rz(1.5707963) q[2]
-X90 q[2]
+Rz(-1.5707963) q[2]
 CZ q[0], q[2]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 X90 q[2]
-Rz(2.3561945) q[2]
+Rz(2.3561946) q[2]
 X90 q[2]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 CZ q[0], q[2]
 Rz(0.78539816) q[0]
 b[0] = measure q[0]
 b[1] = measure q[1]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
 b[2] = measure q[2]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 X90 q[3]
 Rz(1.5707963) q[3]
 b[3] = measure q[3]
@@ -150,22 +145,22 @@ def test_hectoqubit_backend() -> None:
         ]
 
         assert operations == [
+            "Rxy(180, 0, 'q[1]')",
             "Rxy(90, 90, 'q[1]')",
             "Rxy(180, 0, 'q[1]')",
             "CZ (q[0], q[1])",
-            "Rxy(90, 90, 'q[1]')",
             "Rxy(180, 0, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rxy(11.25, 0, 'q[1]')",
+            "Rxy(90, 90, 'q[1]')",
             "CZ (q[0], q[1])",
             "Rxy(-11.25, 0, 'q[1]')",
+            "CZ (q[0], q[1])",
+            "Rxy(11.25, 0, 'q[1]')",
             "CZ (q[0], q[1])",
             "Rxy(180, 0, 'q[0]')",
             "Rxy(-90, 90, 'q[0]')",
             "Rxy(11.25, 0, 'q[0]')",
             "Measure q[0]",
             "Rxy(90, 90, 'q[1]')",
-            "Rxy(180, 0, 'q[1]')",
             "Measure q[1]",
         ]
 
