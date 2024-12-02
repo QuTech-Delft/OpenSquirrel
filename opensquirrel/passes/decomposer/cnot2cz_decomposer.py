@@ -20,7 +20,6 @@ class CNOT2CZDecomposer(Decomposer):
 
     def decompose(self, gate: Gate) -> list[Gate]:
         if gate.name != "CNOT":
-            # Do nothing.
             return [gate]
         if isinstance(gate, ControlledGate):
             if not isinstance(gate.target_gate, BlochSphereRotation):
