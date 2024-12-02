@@ -144,7 +144,7 @@ def test_hectoqubit_backend() -> None:
         ],
     )
 
-    # Merge single-qubit gates and decompose with the Rx-Ry-Rx decomposer.
+    # Merge single-qubit gates and decompose with the XYX decomposer.
     qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=XYXDecomposer())
 
