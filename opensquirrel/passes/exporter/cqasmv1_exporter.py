@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import Float, Gate, Int, IRVisitor, Measure, Qubit, Reset
+from opensquirrel.ir import Barrier, Float, Gate, Init, Int, IRVisitor, Measure, Qubit, Reset, Wait
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -37,9 +37,22 @@ class _CQASMv1Creator(IRVisitor):
         qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
         self.cqasmv1_string += f"{measure.name}_z {qubit_argument}\n"
 
+    def visit_init(self, init: Init) -> None:
+        qubit_argument = init.arguments[0].accept(self)  # type: ignore[index]
+        self.cqasmv1_string += f"prep_z {qubit_argument}\n"
+
     def visit_reset(self, reset: Reset) -> None:
         qubit_argument = reset.arguments[0].accept(self)  # type: ignore[index]
         self.cqasmv1_string += f"prep_z {qubit_argument}\n"
+
+    def visit_barrier(self, barrier: Barrier) -> None:
+        qubit_argument = barrier.arguments[0].accept(self)  # type: ignore[index]
+        self.cqasmv1_string += f"barrier {qubit_argument}\n"
+
+    def visit_wait(self, wait: Wait) -> None:
+        qubit_argument = wait.arguments[0].accept(self)  # type: ignore[index]
+        parameter = wait.arguments[1].accept(self)  # type: ignore[index]
+        self.cqasmv1_string += f"wait {qubit_argument}, {parameter}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name.lower()

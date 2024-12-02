@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pytest
 
 from opensquirrel.default_instructions import CNOT, CR, X90, H, I, Rz, X, Y, Z
@@ -66,14 +67,17 @@ def test_hadamard(decomposer: McKayDecomposer) -> None:
     assert decomposed_gate == [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]
 
 
-def test_arbitrary(decomposer: McKayDecomposer) -> None:
-    arbitrary_operation = BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324)
-    decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
-    check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
-    assert decomposed_arbitrary_operation == [
-        Rz(0, 0.018644578210707863),
-        X90(0),
-        Rz(0, 2.520651583905213),
-        X90(0),
-        Rz(0, 2.2329420137988887),
-    ]
+def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> None:
+    steps = 6
+    phase_steps = 3
+    coordinates = np.linspace(-1, 1, num=steps)
+    angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
+    phases = np.linspace(-np.pi, np.pi, num=phase_steps)
+    axes = [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
+
+    for angle in angles:
+        for axis in axes:
+            for phase in phases:
+                arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=phase)
+                decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
+                check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
