@@ -30,7 +30,7 @@ class CNOT2CZDecomposer(Decomposer):
             control_qubit = gate.control_qubit
             target_qubit = gate.target_gate.qubit
         else:
-            # If CNOT is not implemented as a ControlledGate, but e.g. as a MatrixGate.
+            # If CNOT is not implemented as a ControlledGate but, e.g., as a MatrixGate.
             control_qubit, target_qubit = gate.get_qubit_operands()
         return [
             Ry(target_qubit, -math.pi / 2),
