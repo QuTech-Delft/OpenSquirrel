@@ -15,12 +15,11 @@ class SWAP2CNOTDecomposer(Decomposer):
        |     →      |    |    |
     ---x---     ---[X]---•---[X]---
     Note:
-        (CHECK: Does this decomposition preserve the global phase?)
+        This decomposition preserves the global phase of the SWAP gate.
     """
 
     def decompose(self, gate: Gate) -> list[Gate]:
         if gate.name != "SWAP":
-            # Do nothing.
             return [gate]
         qubit0, qubit1 = gate.get_qubit_operands()
         return [
