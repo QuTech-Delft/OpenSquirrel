@@ -4,7 +4,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.default_instructions import Ry, Rz
-from opensquirrel.ir import Bit, BlochSphereRotation, Float, Qubit
+from opensquirrel.ir import BlochSphereRotation, Float, Qubit
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
 from test.ir_equality_test_base import modify_circuit_and_check
@@ -160,6 +160,7 @@ def test_no_merge_across_reset(merger: SingleQubitGatesMerger) -> None:
 
     modify_circuit_and_check(qc, merger.merge, expected_qc)
 
+
 def test_no_merge_across_wait(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(2)
     builder.H(0)
@@ -176,7 +177,8 @@ def test_no_merge_across_wait(merger: SingleQubitGatesMerger) -> None:
     builder2.H(0)
     builder2.wait(0, 3)
     expected_qc = builder2.to_circuit()
-    modify_circuit_and_check(qc, merger.merge, expected_qc)    
+    modify_circuit_and_check(qc, merger.merge, expected_qc)
+
 
 @pytest.mark.parametrize(
     ("circuit", "expected_result"),
