@@ -16,7 +16,6 @@ class CNOT2CZDecomposer(Decomposer):
 
     Note:
         This decomposition preserves the global phase of the CNOT gate.
-
     """
 
     def decompose(self, gate: Gate) -> list[Gate]:
