@@ -23,7 +23,6 @@ class CNOT2CZDecomposer(Decomposer):
             return [gate]
         if isinstance(gate, ControlledGate):
             if not isinstance(gate.target_gate, BlochSphereRotation):
-                # Do nothing.
                 # ControlledGate's with 2+ control qubits are ignored.
                 return [gate]
             control_qubit = gate.control_qubit
