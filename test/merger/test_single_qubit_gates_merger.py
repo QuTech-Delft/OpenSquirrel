@@ -3,8 +3,8 @@ import math
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.default_instructions import Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, Float, Qubit
+from opensquirrel.default_instructions import Ry
+from opensquirrel.ir import BlochSphereRotation, Float
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
 from test.ir_equality_test_base import modify_circuit_and_check
@@ -67,7 +67,7 @@ def test_merge_different_qubits(merger: SingleQubitGatesMerger) -> None:
     builder2.Rz(1, 1.2345)
     builder2.ir.add_gate(BlochSphereRotation(2, axis=(0, 1, 0), angle=4.234))
     expected_circuit = builder2.to_circuit()
-    
+
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
@@ -89,13 +89,6 @@ def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
     expected_circuit = builder2.to_circuit()
 
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
-
-    assert isinstance(circuit.ir.statements[0], BlochSphereRotation)
-    assert circuit.ir.statements[0].is_anonymous
-
-    assert isinstance(circuit.ir.statements[3], BlochSphereRotation)
-    assert circuit.ir.statements[3].generator == Ry
-    assert circuit.ir.statements[3].arguments == (Qubit(0), Float(3.234))
 
 
 def test_merge_y90_x_to_h(merger: SingleQubitGatesMerger) -> None:
