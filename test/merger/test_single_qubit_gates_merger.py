@@ -3,7 +3,6 @@ import math
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.default_instructions import Ry
 from opensquirrel.ir import BlochSphereRotation, Float
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
