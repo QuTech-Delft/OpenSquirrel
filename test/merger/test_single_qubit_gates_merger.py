@@ -25,7 +25,6 @@ def test_single_gate(merger: SingleQubitGatesMerger) -> None:
     expected_circuit = builder2.to_circuit()
 
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
-    assert circuit.ir.statements == [Ry(0, 1.2345)]
 
 
 def test_two_hadamards(merger: SingleQubitGatesMerger) -> None:
