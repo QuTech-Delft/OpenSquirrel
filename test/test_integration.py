@@ -10,6 +10,7 @@ from opensquirrel.default_instructions import CNOT, CZ, H
 from opensquirrel.ir import Measure
 from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XYXDecomposer
 from opensquirrel.passes.exporter.export_format import ExportFormat
+from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
 
 def test_Spin2_backend() -> None:  # noqa: N802
@@ -51,7 +52,7 @@ def test_Spin2_backend() -> None:  # noqa: N802
     )
 
     # Merge single-qubit gates and decompose with McKay decomposition.
-    qc.merge_single_qubit_gates()
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=McKayDecomposer())
 
     assert (
@@ -143,8 +144,8 @@ def test_hectoqubit_backend() -> None:
         ],
     )
 
-    # Merge single-qubit gates and decompose with the Rx-Ry-Rx decomposer.
-    qc.merge_single_qubit_gates()
+    # Merge single-qubit gates and decompose with the XYX decomposer.
+    qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=XYXDecomposer())
 
     if importlib.util.find_spec("quantify_scheduler") is None:
