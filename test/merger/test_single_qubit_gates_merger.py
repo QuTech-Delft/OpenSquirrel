@@ -159,7 +159,6 @@ def test_no_merge_across_wait(merger: SingleQubitGatesMerger) -> None:
     builder2.H(0)
     builder2.wait(0, 3)
     expected_qc = builder2.to_circuit()
-    
     modify_circuit_and_check(qc, merger.merge, expected_qc)
 
 
