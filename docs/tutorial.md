@@ -377,8 +377,8 @@ To this end a `CNOT2CZDecomposer` has been implemented that decomposes any `CNOT
 
 <p align="center"> <img width="600" src="_static/cnot2cz.png"> </p>
 
-`Ry` gates are used instead of, _e.g._, `H` gates,
-as they are generally already more likely to be supported by target backends.
+`Ry` gates are used instead of, _e.g._, `H` gates, as they are, generally,
+more likely to be supported already by target backends.
 
 #### 2. Inferred decomposition
 
