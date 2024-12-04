@@ -369,16 +369,16 @@ _Output_:
 
     replacement for gate CNOT does not preserve the quantum state
 
-##### _CNOT to CZ decomposer_
+##### _`CNOT` to `CZ` decomposer_
 
 The decomposition of the `CNOT` gate into a `CZ` gate (with additional single-qubit gates) is used frequently.
 To this end a `CNOT2CZDecomposer` has been implemented that decomposes any `CNOT`s in a circuit to a
-`Ry(-π/2)`-`CZ`-`Ry(π/2)`; the decomposition is illustrated in the image below.
+`Ry(-π/2)`-`CZ`-`Ry(π/2)`. The decomposition is illustrated in the image below.
 
 <p align="center"> <img width="600" src="_static/cnot2cz.png"> </p>
 
 `Ry` gates are used instead of, _e.g._, `H` gates,
-as they are generally more likely to be supported by target backends.
+as they are generally already more likely to be supported by target backends.
 
 #### 2. Inferred decomposition
 
