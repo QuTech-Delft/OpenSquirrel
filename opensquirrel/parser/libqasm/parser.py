@@ -94,11 +94,13 @@ class Parser:
         return ret
 
     @classmethod
-    def _get_gate_operands(
-        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
+    def _get_instruction_operands(
+        cls,
+        instruction: cqasm.semantic.Instruction,
+        register_manager: RegisterManager,
     ) -> list[list[Any]]:
-        """Get the list of lists of operands of a gate.
-        Notice that a gate just has a list of operands. The outer list is needed to support SGMQ.
+        """Get the list of lists of operands of an instruction.
+        Notice that an instruction just has a list of operands. The outer list is needed to support SGMQ.
         For example, for CNOT q[0, 1] q[2, 3], this function returns [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]].
         """
         ret: list[list[Any]] = []
@@ -120,17 +122,22 @@ class Parser:
         return cls._ast_literal_to_ir_literal(gate.parameter)
 
     @classmethod
-    def _get_expanded_gate_args(
-        cls, instruction: cqasm.semantic.GateInstruction, register_manager: RegisterManager
+    def _get_expanded_instruction_args(
+        cls,
+        instruction: cqasm.semantic.Instruction,
+        register_manager: RegisterManager,
     ) -> zip[tuple[Any, ...]]:
         """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
         For example, for CRk(2) q[0, 1] q[2, 3], this function first constructs the list with a list of qubits
         [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]], then appends the list of parameters [Int(2), Int(2)],
         and finally zips the whole list and returns [(Qubit(0), Qubit(1), Int(2)), (Qubit(2), Qubit(3), Int(2))]
         """
-        ret = cls._get_gate_operands(instruction, register_manager)
-        gate_parameter = cls._get_named_gate_param(instruction.gate)
-        if gate_parameter is not None:
+        ret = cls._get_instruction_operands(instruction, register_manager)
+        if isinstance(instruction, cqasm.semantic.GateInstruction):
+            gate_parameter = cls._get_named_gate_param(instruction.gate)
+        else:
+            gate_parameter = cls._ast_literal_to_ir_literal(instruction.parameter)
+        if gate_parameter:
             number_of_operands = len(ret[0])
             ret.append([gate_parameter] * number_of_operands)
         return zip(*ret)
@@ -152,23 +159,6 @@ class Parser:
                 msg = "argument is neither of qubit nor bit type"
                 raise TypeError(msg)
         return zip(*expanded_args)
-
-    @classmethod
-    def _get_expanded_reset_args(cls, ast_args: Any, register_manager: RegisterManager) -> zip[tuple[Any, ...]]:
-        """Construct a list of qubits and return a zip.
-        For example: [Qubit(0), Qubit(1), Qubit(2)]
-        """
-        expanded_args: list[Any] = []
-        if len(ast_args) < 1:
-            expanded_args += [Qubit(qubit_index) for qubit_index in range(register_manager.get_qubit_register_size())]
-            return zip(expanded_args)
-        for ast_arg in ast_args:
-            if cls._is_qubit_type(ast_arg):
-                expanded_args += cls._get_qubits(ast_arg, register_manager)
-            else:
-                msg = "argument is not of qubit type"
-                raise TypeError(msg)
-        return zip(expanded_args)
 
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
@@ -215,13 +205,14 @@ class Parser:
             instruction_generator: Callable[..., Statement]
             if Parser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_f(statement)
-                expanded_args = Parser._get_expanded_gate_args(statement, register_manager)
+                expanded_args = Parser._get_expanded_instruction_args(statement, register_manager)
             elif Parser._is_non_unitary_instruction(statement):
                 instruction_generator = self._get_non_unitary_f(statement)
-                if statement.name == "measure":
-                    expanded_args = Parser._get_expanded_measure_args(statement.operands, register_manager)
-                else:
-                    expanded_args = Parser._get_expanded_reset_args(statement.operands, register_manager)
+                expanded_args = (
+                    Parser._get_expanded_measure_args(statement.operands, register_manager)
+                    if statement.name == "measure"
+                    else Parser._get_expanded_instruction_args(statement, register_manager)
+                )
             else:
                 msg = "parsing error: unknown statement"
                 raise OSError(msg)

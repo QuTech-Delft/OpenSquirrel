@@ -87,9 +87,7 @@ class Circuit:
         return self.register_manager.get_bit_register_name()
 
     def merge(self, merger: Merger) -> None:
-        """Generic merge pass.
-        It applies the given merger to the circuit.
-        """
+        """Generic merge pass. It applies the given merger to the circuit."""
         merger.merge(self.ir, self.qubit_register_size)
 
     def decompose(self, decomposer: Decomposer) -> None:

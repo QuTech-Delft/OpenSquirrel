@@ -50,20 +50,23 @@ class _WriterImpl(IRVisitor):
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
     def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
+        output_instruction = non_unitary.name
+        qubit_argument = non_unitary.arguments[0].accept(self)  # type: ignore[index]
         if non_unitary.name == "measure":
             bit_argument = non_unitary.arguments[1].accept(self)  # type: ignore[index]
-            qubit_argument = non_unitary.arguments[0].accept(self)  # type: ignore[index]
-            self.output += f"{bit_argument} = {non_unitary.name} {qubit_argument}\n"
+            output_instruction = f"{bit_argument} = {non_unitary.name}"
         else:
-            qubit_argument = non_unitary.arguments[0].accept(self)  # type: ignore[index]
-            self.output += f"{non_unitary.name} {qubit_argument}\n"
+            params = [param.accept(self) for param in non_unitary.arguments[1::]]  # type: ignore[index]
+            if params:
+                output_instruction = f"{non_unitary.name}({', '.join(params)})"
+        self.output += f"{output_instruction} {qubit_argument}\n"
 
     def visit_gate(self, gate: Gate) -> None:
         gate_name = gate.name
         gate_generator = []
         if gate.generator is not None:
             gate_generator = list(inspect.signature(gate.generator).parameters.keys())
-        qubit_function_keys = ["target", "control", "q"]
+        qubit_function_keys = ["target", "control", "qubit"]
         if gate.is_anonymous:
             if "MatrixGate" in gate_name:
                 # In the case of a MatrixGate the newlines should be removed from the array
