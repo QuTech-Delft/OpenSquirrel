@@ -380,6 +380,14 @@ To this end a `CNOT2CZDecomposer` has been implemented that decomposes any `CNOT
 `Ry` gates are used instead of, _e.g._, `H` gates, as they are, generally,
 more likely to be supported already by target backends.
 
+##### _`SWAP` to `CNOT` decomposer_
+
+The `SWAP2CNOTDecomposer` implements the predefined decomposition of the `SWAP` gate into 3 `CNOT` gates.
+The decomposition is illustrated in the image below.
+
+<p align="center"> <img width="600" src="_static/swap2cnot.png"> </p>
+
+
 #### 2. Inferred decomposition
 
 OpenSquirrel has a variety inferred decomposition strategies.
