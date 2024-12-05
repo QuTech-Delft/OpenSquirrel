@@ -8,7 +8,7 @@ import pytest
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import CNOT, CZ, H
 from opensquirrel.ir import Measure
-from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XYXDecomposer
+from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, SWAP2CNOTDecomposer, XYXDecomposer
 from opensquirrel.passes.exporter.export_format import ExportFormat
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
@@ -34,12 +34,15 @@ def test_Spin2_backend() -> None:  # noqa: N802
         CNOT q[1], q[0]
         CR(2.123) q[2], q[3]
         CRk(2) q[0], q[2]
+        SWAP q[0], q[1]
         b = measure q
         """,
     )
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
+
+    qc.decompose(decomposer=SWAP2CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
     qc.replace(
@@ -100,7 +103,28 @@ X90 q[2]
 Rz(1.5707963) q[2]
 CZ q[0], q[2]
 Rz(0.78539816) q[0]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+CZ q[0], q[1]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
+CZ q[1], q[0]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+CZ q[0], q[1]
 b[0] = measure q[0]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
 b[1] = measure q[1]
 Rz(1.5707963) q[2]
 X90 q[2]
