@@ -1,6 +1,6 @@
 from typing import cast
 
-from opensquirrel.default_instructions import I
+from opensquirrel import I
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Qubit
 from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations, try_name_anonymous_bloch
 

@@ -1,7 +1,6 @@
 import pytest
 
-from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.default_instructions import CNOT, H
+from opensquirrel import CNOT, Circuit, CircuitBuilder, H
 from opensquirrel.ir import Barrier, Wait
 
 

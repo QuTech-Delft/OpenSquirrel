@@ -5,11 +5,11 @@ import importlib.util
 
 import pytest
 
+from opensquirrel import CNOT, CZ, H
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_instructions import CNOT, CZ, H
 from opensquirrel.ir import Measure
 from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XYXDecomposer
-from opensquirrel.passes.exporter.export_format import ExportFormat
+from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
 

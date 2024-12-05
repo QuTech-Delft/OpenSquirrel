@@ -1,7 +1,7 @@
 import pytest
 
+from opensquirrel import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_instructions import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
 
 
