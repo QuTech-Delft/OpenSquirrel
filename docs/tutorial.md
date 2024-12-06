@@ -165,7 +165,7 @@ _Output_:
 
     Parsing error: failed to resolve overload for cnot with argument pack (qubit, int)
 
-The issue is that the CNOT expects a qubit as second input argument where an integer has been provided.
+The issue is that the `CNOT` expects a qubit as second input argument where an integer has been provided.
 
 ## Modifying a circuit
 
@@ -243,7 +243,7 @@ This _tells_ OpenSquirrel that the function defines a gate and that it should,
 therefore, have all the nice properties OpenSquirrel expects of it.
 
 - The `ControlledGate` class is used to define a multiple qubit gate that comprises a controlled operation.
-For instance, the CNOT gate is defined in the default gate set of OpenSquirrel as follows:
+For instance, the `CNOT` gate is defined in the default gate set of OpenSquirrel as follows:
 
 ```python
 from opensquirrel.ir import Gate, ControlledGate, QubitLike, named_gate
@@ -290,8 +290,8 @@ Decompositions can be:
 #### 1. Predefined decomposition
 
 The first kind of decomposition is when you want to replace a particular gate in the circuit,
-like the CNOT gate, with a fixed list of gates.
-It is commonly known that CNOT can be decomposed as H-CZ-H.
+like the `CNOT` gate, with a fixed list of gates.
+It is commonly known that `CNOT` can be decomposed as `H`-`CZ`-`H`.
 This decomposition is demonstrated below using a Python _lambda function_,
 which requires the same parameters as the gate that is decomposed:
 
@@ -369,6 +369,17 @@ _Output_:
 
     replacement for gate CNOT does not preserve the quantum state
 
+##### _`CNOT` to `CZ` decomposer_
+
+The decomposition of the `CNOT` gate into a `CZ` gate (with additional single-qubit gates) is used frequently.
+To this end a `CNOT2CZDecomposer` has been implemented that decomposes any `CNOT`s in a circuit to a
+`Ry(-π/2)`-`CZ`-`Ry(π/2)`. The decomposition is illustrated in the image below.
+
+<p align="center"> <img width="600" src="_static/cnot2cz.png"> </p>
+
+`Ry` gates are used instead of, _e.g._, `H` gates, as they are, generally,
+more likely to be supported already by target backends.
+
 ##### _`SWAP` to `CNOT` decomposer_
 
 The `SWAP2CNOTDecomposer` implements the predefined decomposition of the `SWAP` gate into 3 `CNOT` gates.
@@ -376,20 +387,20 @@ The decomposition is illustrated in the image below.
 
 <p align="center"> <img width="600" src="_static/swap2cnot.png"> </p>
 
+
 #### 2. Inferred decomposition
 
 OpenSquirrel has a variety inferred decomposition strategies.
 More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
 
-One of the most common single qubit decomposition techniques is the Z-Y-Z decomposition.
+One of the most common single qubit decomposition techniques is the ZYZ decomposition.
 This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
 The decompositions are found in `opensquirrel.passes.decomposer`,
-an example can be seen below where a Hadamard, Z, Y and Rx gate are all decomposed on a single qubit circuit.
+an example can be seen below where a `H`, `Z`, `Y`, and `Rx` gate are all decomposed on a single qubit circuit.
 
 ```python
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.passes.decomposer import ZYZDecomposer
-from opensquirrel.ir import Float
 import math
 
 builder = CircuitBuilder(qubit_register_size=1)

@@ -5,15 +5,20 @@ import importlib.util
 
 import pytest
 
-from opensquirrel import CNOT, CZ, H
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Measure
-from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, SWAP2CNOTDecomposer, XYXDecomposer
+from opensquirrel.passes.decomposer import (
+    CNOT2CZDecomposer,
+    CNOTDecomposer,
+    McKayDecomposer,
+    SWAP2CNOTDecomposer,
+    XYXDecomposer,
+)
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
 
-def test_Spin2_backend() -> None:  # noqa: N802
+def test_spin_backend() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -45,17 +50,12 @@ def test_Spin2_backend() -> None:  # noqa: N802
     qc.decompose(decomposer=SWAP2CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+    qc.decompose(decomposer=CNOT2CZDecomposer())
 
-    # Merge single-qubit gates and decompose with McKay decomposition.
+    # Merge single-qubit gates
     qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to spin backend native gates with McKay decomposer
     qc.decompose(decomposer=McKayDecomposer())
 
     assert (
@@ -68,69 +68,65 @@ bit[4] b
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
-Rz(0.0081037174) q[0]
+Rz(1.5789) q[0]
 X90 q[0]
-Rz(1.5707964) q[0]
-X90 q[0]
-Rz(-1.3707963) q[0]
+Rz(-2.9415926) q[0]
 CZ q[1], q[0]
 Rz(1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
-Rz(1.0615) q[3]
+Rz(2.6322964) q[3]
 X90 q[3]
-Rz(1.5707963) q[3]
-X90 q[3]
+Rz(-1.5707963) q[3]
 CZ q[2], q[3]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 X90 q[3]
 Rz(2.0800926) q[3]
 X90 q[3]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 CZ q[2], q[3]
-Rz(1.5707963) q[0]
+Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
-Rz(1.8468982) q[2]
+Rz(3.4176945) q[2]
 X90 q[2]
-Rz(1.5707963) q[2]
-X90 q[2]
+Rz(-1.5707963) q[2]
 CZ q[0], q[2]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 X90 q[2]
-Rz(2.3561945) q[2]
+Rz(2.3561946) q[2]
 X90 q[2]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 CZ q[0], q[2]
 Rz(0.78539816) q[0]
 Rz(1.5707963) q[1]
 X90 q[1]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 CZ q[0], q[1]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
 Rz(1.5707963) q[0]
 X90 q[0]
-Rz(1.5707963) q[0]
+Rz(-1.5707963) q[0]
 CZ q[1], q[0]
-Rz(1.5707963) q[0]
+Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
 Rz(1.5707963) q[1]
 X90 q[1]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 CZ q[0], q[1]
 b[0] = measure q[0]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
 b[1] = measure q[1]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
 b[2] = measure q[2]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 X90 q[3]
 Rz(1.5707963) q[3]
 b[3] = measure q[3]
@@ -159,17 +155,12 @@ def test_hectoqubit_backend() -> None:
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+    qc.decompose(decomposer=CNOT2CZDecomposer())
 
-    # Merge single-qubit gates and decompose with the XYX decomposer.
+    # Merge single-qubit gates
     qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
     qc.decompose(decomposer=XYXDecomposer())
 
     if importlib.util.find_spec("quantify_scheduler") is None:
@@ -189,22 +180,22 @@ def test_hectoqubit_backend() -> None:
         ]
 
         assert operations == [
+            "Rxy(180, 0, 'q[1]')",
             "Rxy(90, 90, 'q[1]')",
             "Rxy(180, 0, 'q[1]')",
             "CZ (q[0], q[1])",
-            "Rxy(90, 90, 'q[1]')",
             "Rxy(180, 0, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rxy(11.25, 0, 'q[1]')",
+            "Rxy(90, 90, 'q[1]')",
             "CZ (q[0], q[1])",
             "Rxy(-11.25, 0, 'q[1]')",
+            "CZ (q[0], q[1])",
+            "Rxy(11.25, 0, 'q[1]')",
             "CZ (q[0], q[1])",
             "Rxy(180, 0, 'q[0]')",
             "Rxy(-90, 90, 'q[0]')",
             "Rxy(11.25, 0, 'q[0]')",
             "Measure q[0]",
             "Rxy(90, 90, 'q[1]')",
-            "Rxy(180, 0, 'q[1]')",
             "Measure q[1]",
         ]
 
