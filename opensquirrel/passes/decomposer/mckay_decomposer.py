@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from math import atan2, cos, pi, sin, sqrt
 
+from opensquirrel import X90, Rz
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.default_instructions import X90, Rz
 from opensquirrel.ir import BlochSphereRotation, Gate
 from opensquirrel.passes.decomposer import ZXZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
@@ -59,8 +59,7 @@ class McKayDecomposer(Decomposer):
         decomposed_g: list[Gate] = []
 
         if abs(theta) < ATOL and lam == phi:
-            decomposed_g.append(X90(g.qubit))
-            decomposed_g.append(X90(g.qubit))
+            decomposed_g.extend((X90(g.qubit), X90(g.qubit)))
             return decomposed_g
 
         if abs(lam) > ATOL:

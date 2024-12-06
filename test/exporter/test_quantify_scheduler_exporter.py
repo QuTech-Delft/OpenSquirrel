@@ -9,9 +9,8 @@ from typing import Any
 
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import CircuitBuilder, H
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import H
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.ir import BlochSphereRotation, Gate
 from opensquirrel.passes.exporter import quantify_scheduler_exporter

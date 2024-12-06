@@ -247,7 +247,7 @@ For instance, the CNOT gate is defined in the default gate set of OpenSquirrel a
 
 ```python
 from opensquirrel.ir import Gate, ControlledGate, QubitLike, named_gate
-from opensquirrel.default_instructions import X
+from opensquirrel import X
 
 @named_gate
 def cnot(control: QubitLike, target: QubitLike) -> Gate:
@@ -297,7 +297,7 @@ which requires the same parameters as the gate that is decomposed:
 
 ```python
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_instructions import CNOT, H, CZ
+from opensquirrel import CNOT, H, CZ
 
 qc = Circuit.from_string(
     """
@@ -341,7 +341,7 @@ or H gate, in our custom-made decomposition:
 
 ```python
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_instructions import CNOT, CZ, H
+from opensquirrel import CNOT, CZ, H
 
 qc = Circuit.from_string(
     """
@@ -368,6 +368,13 @@ except Exception as e:
 _Output_:
 
     replacement for gate CNOT does not preserve the quantum state
+
+##### _`SWAP` to `CNOT` decomposer_
+
+The `SWAP2CNOTDecomposer` implements the predefined decomposition of the `SWAP` gate into 3 `CNOT` gates.
+The decomposition is illustrated in the image below.
+
+<p align="center"> <img width="600" src="_static/swap2cnot.png"> </p>
 
 #### 2. Inferred decomposition
 
@@ -411,7 +418,7 @@ Similarly, the decomposer can be used on individual gates.
 
 ```python
 from opensquirrel.passes.decomposer import ZYZDecomposer
-from opensquirrel.default_instructions import H
+from opensquirrel import H
 
 print(ZYZDecomposer().decompose(H(0)))
 ```

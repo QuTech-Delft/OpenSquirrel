@@ -9,7 +9,7 @@ import numpy as np
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
-from opensquirrel.utils.list import flatten_list
+from opensquirrel.utils import flatten_list
 
 
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
@@ -86,9 +86,9 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     for gate_function in default_bloch_sphere_rotation_without_params_set.values():
         gate = gate_function(*bsr.get_qubit_operands())
         if (
-            np.allclose(gate.axis, bsr.axis)
-            and np.allclose(gate.angle, bsr.angle)
-            and np.allclose(gate.phase, bsr.phase)
+            np.allclose(gate.axis, bsr.axis, atol=ATOL)
+            and np.allclose(gate.angle, bsr.angle, atol=ATOL)
+            and np.allclose(gate.phase, bsr.phase, atol=ATOL)
         ):
             return gate
     return bsr

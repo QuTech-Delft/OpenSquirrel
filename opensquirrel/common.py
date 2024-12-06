@@ -48,7 +48,7 @@ def are_matrices_equivalent_up_to_global_phase(
 
     phase_difference = matrix_a[first_non_zero] / matrix_b[first_non_zero]
 
-    return np.allclose(matrix_a, phase_difference * matrix_b)
+    return np.allclose(matrix_a, phase_difference * matrix_b, atol=ATOL)
 
 
 def is_identity_matrix_up_to_a_global_phase(matrix: NDArray[np.complex128]) -> bool:
