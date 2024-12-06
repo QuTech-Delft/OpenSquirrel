@@ -5,10 +5,15 @@ import importlib.util
 
 import pytest
 
-from opensquirrel import CNOT, CZ, H
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Measure
-from opensquirrel.passes.decomposer import CNOT2CZDecomposer, CNOTDecomposer, McKayDecomposer, SWAP2CNOTDecomposer, XYXDecomposer
+from opensquirrel.passes.decomposer import (
+    CNOT2CZDecomposer,
+    CNOTDecomposer,
+    McKayDecomposer,
+    SWAP2CNOTDecomposer,
+    XYXDecomposer,
+)
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
@@ -47,8 +52,10 @@ def test_spin_backend() -> None:
     # Replace CNOT gates with CZ gates
     qc.decompose(decomposer=CNOT2CZDecomposer())
 
-    # Merge single-qubit gates and decompose with McKay decomposition.
+    # Merge single-qubit gates
     qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to spin backend native gates with McKay decomposer
     qc.decompose(decomposer=McKayDecomposer())
 
     assert (
@@ -94,24 +101,24 @@ CZ q[0], q[2]
 Rz(0.78539816) q[0]
 Rz(1.5707963) q[1]
 X90 q[1]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 CZ q[0], q[1]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
 Rz(1.5707963) q[0]
 X90 q[0]
-Rz(1.5707963) q[0]
+Rz(-1.5707963) q[0]
 CZ q[1], q[0]
-Rz(1.5707963) q[0]
+Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
 Rz(1.5707963) q[1]
 X90 q[1]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 CZ q[0], q[1]
 b[0] = measure q[0]
-Rz(1.5707963) q[1]
+Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
 b[1] = measure q[1]
@@ -150,8 +157,10 @@ def test_hectoqubit_backend() -> None:
     # Replace CNOT gates with CZ gates
     qc.decompose(decomposer=CNOT2CZDecomposer())
 
-    # Merge single-qubit gates and decompose with the XYX decomposer.
+    # Merge single-qubit gates
     qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
     qc.decompose(decomposer=XYXDecomposer())
 
     if importlib.util.find_spec("quantify_scheduler") is None:
