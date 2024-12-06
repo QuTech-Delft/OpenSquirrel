@@ -1,15 +1,16 @@
 from __future__ import annotations
 
+import inspect
 from abc import ABC, abstractmethod
 from math import acos, cos, floor, log10, sin
-from typing import cast
+from typing import cast, Callable
 
 import numpy as np
 
 from opensquirrel import I
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
+from opensquirrel.default_instructions import default_bloch_sphere_rotation_set
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement, Gate
 from opensquirrel.utils import flatten_list
 
 
@@ -62,7 +63,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         arguments = (a.qubit, Float(combined_angle))
     else:
         generator = None
-        arguments = None
+        arguments = (a.qubit,)
 
     return BlochSphereRotation(
         qubit=a.qubit,
@@ -71,6 +72,37 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         phase=combined_phase,
         generator=generator,  # type: ignore[arg-type]
         arguments=arguments,
+    )
+
+
+def can_invoke_bsr_callable(bsr_callable: Callable[..., BlochSphereRotation], bsr: BlochSphereRotation) -> bool:
+    """Given a callable that returns a BSR and a BSR.
+    Check that the BSR returned by the callable can be invoked with the arguments of the BSR instance.
+
+    Args:
+        bsr_callable: A callable returning a BlochSphereRotation object.
+        bsr: A BlochSphereRotation instance.
+
+    Returns:
+        True if the BSR returned by the callable can be invoked with the arguments of the BSR instance, False otherwise.
+    """
+    bsr_callable_signature = inspect.signature(bsr_callable)
+    bsr_callable_param_types = [
+        param.annotation
+        for param in bsr_callable_signature.parameters.values()
+        if param.annotation is not inspect.Parameter.empty
+    ]
+
+    bsr_arg_types = [type(arg) for arg in bsr.arguments]
+
+    # Check we have the same number of arguments and parameters, and arguments types can be used as parameters
+    return (
+        len(bsr_arg_types) == len(bsr_callable_param_types)
+        and all(
+            issubclass(bsr_arg_type, bsr_callable_param_type)
+            if isinstance(bsr_callable_param_type, type) else bsr_arg_type == bsr_callable_param_type
+            for bsr_arg_type, bsr_callable_param_type in zip(bsr_arg_types, bsr_callable_param_types)
+        )
     )
 
 
@@ -84,14 +116,15 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
          A default BlockSphereRotation if this BlochSphereRotation is close to it,
          or the input BlochSphereRotation otherwise.
     """
-    for gate_function in default_bloch_sphere_rotation_without_params_set.values():
-        gate = gate_function(*bsr.get_qubit_operands())
-        if (
-            np.allclose(gate.axis, bsr.axis, atol=ATOL)
-            and np.allclose(gate.angle, bsr.angle, atol=ATOL)
-            and np.allclose(gate.phase, bsr.phase, atol=ATOL)
-        ):
-            return gate
+    for default_bsr_callable in default_bloch_sphere_rotation_set.values():
+        if can_invoke_bsr_callable(default_bsr_callable, bsr):
+            default_bsr = default_bsr_callable(*bsr.get_qubit_operands())
+            if (
+                np.allclose(default_bsr.axis, bsr.axis, atol=ATOL)
+                and np.allclose(default_bsr.angle, bsr.angle, atol=ATOL)
+                and np.allclose(default_bsr.phase, bsr.phase, atol=ATOL)
+            ):
+                return default_bsr
     return bsr
 
 
