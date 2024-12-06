@@ -17,9 +17,9 @@ from opensquirrel.utils import flatten_list
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
     The first rotation is applied and then the second.
-    The resulting Bloch sphere rotation is
+    The resulting Bloch sphere rotation is always tried to be named, in case it were anonymous.
 
-    Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
+    Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
     if a.qubit != b.qubit:
         msg = "cannot merge two BlochSphereRotation's on different qubits"
@@ -76,7 +76,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
 
 def can_invoke_bsr_callable(bsr_callable: Callable[..., BlochSphereRotation], bsr: BlochSphereRotation) -> bool:
-    """Given a callable that returns a BSR and a BSR.
+    """Given a callable that returns a BSR, and a BSR instance.
     Check that the BSR returned by the callable can be invoked with the arguments of the BSR instance.
 
     Args:
@@ -95,7 +95,7 @@ def can_invoke_bsr_callable(bsr_callable: Callable[..., BlochSphereRotation], bs
 
     bsr_arg_types = [type(arg) for arg in bsr.arguments] if bsr.arguments is not None else []
 
-    # Check we have the same number of arguments and parameters, and arguments types can be used as parameters
+    # Check that number of arguments and parameters is the same, and that argument types can be used as parameters
     return len(bsr_arg_types) == len(bsr_callable_param_types) and all(
         issubclass(bsr_arg_type, bsr_callable_param_type)
         if isinstance(bsr_callable_param_type, type)
