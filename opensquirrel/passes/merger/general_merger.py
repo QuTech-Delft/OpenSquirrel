@@ -6,8 +6,8 @@ from typing import cast
 
 import numpy as np
 
-from opensquirrel import default_bloch_sphere_rotation_without_params_set
 from opensquirrel.common import ATOL
+from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
 from opensquirrel.utils import flatten_list
 
