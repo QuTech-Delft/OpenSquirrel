@@ -59,8 +59,7 @@ class McKayDecomposer(Decomposer):
         decomposed_g: list[Gate] = []
 
         if abs(theta) < ATOL and lam == phi:
-            decomposed_g.append(X90(g.qubit))
-            decomposed_g.append(X90(g.qubit))
+            decomposed_g.extend((X90(g.qubit), X90(g.qubit)))
             return decomposed_g
 
         if abs(lam) > ATOL:

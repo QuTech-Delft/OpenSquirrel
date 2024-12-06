@@ -7,12 +7,12 @@ from opensquirrel.utils.matrix_expander import can1, expand_ket, get_matrix, get
 __all__ = [
     "acos",
     "are_axes_consecutive",
+    "can1",
+    "check_mapper",
+    "expand_ket",
     "filter_out_identities",
     "flatten_list",
     "get_matrix",
-    "check_mapper",
-    "expand_ket",
-    "get_reduced_ket",
-    "can1",
     "get_matrix",
+    "get_reduced_ket",
 ]

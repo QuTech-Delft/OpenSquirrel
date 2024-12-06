@@ -104,6 +104,7 @@ line-length = 120
 target-version = "py39"
 
 [tool.ruff.lint]
+preview = true
 select = [
     "A", # flake8-builtins
     "ANN", # flake8-annotations
@@ -139,6 +140,7 @@ select = [
     "FURB", # refurb
     "RET", # flake8-return
     "RUF", # Ruff-specific rules
+    "RUF022",
     "S", # flake8-bandit
     "SIM", # flake8-simplify
     "SLF", # flake8-self
@@ -153,11 +155,13 @@ select = [
     "YTT", # flake8-2020
 ]
 ignore = [
+    "A005", # module `math` is shadowing a Python builtin module
     "ANN101", # self should not be typed
     "ANN102", # cls should not be typed
-    "ANN401", # typing.Any is can be usefull (for example in __eq__)
+    "ANN401", # typing.Any can be useful (for example in __eq__)
     "COM812", # Conflicts with ruff format
     "ISC001", # Possible conflicts with ruff format
+    "RUF028", # invalid suppression comment
     "W605", # deprecated in Python 3.6
 ]
 isort.combine-as-imports = true
