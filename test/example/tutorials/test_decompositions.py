@@ -3,8 +3,8 @@ import math
 import sympy as sp
 from IPython.display import display
 
+from opensquirrel import H, Rx, Rz
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_instructions import H, Rx, Rz
 from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XZXDecomposer, ZYZDecomposer
 
 
@@ -172,11 +172,11 @@ CR(1.5707963) q[1], q[0]
 
 qubit[2] q
 
-Rz(-3.1415927) q[1]
+Rz(3.1415927) q[1]
 Ry(1.5707963) q[1]
 CNOT q[0], q[1]
 Ry(-1.5707963) q[1]
-Rz(3.1415927) q[1]
+Rz(-3.1415927) q[1]
 Rz(0.52359878) q[1]
 CNOT q[0], q[1]
 Rz(-0.52359878) q[1]

@@ -13,16 +13,15 @@ from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.swap2cnot_decomposer import SWAP2CNOTDecomposer
 
 __all__ = [
+    "CNOT2CZDecomposer",
     "CNOTDecomposer",
     "Decomposer",
     "McKayDecomposer",
+    "SWAP2CNOTDecomposer",
     "XYXDecomposer",
     "XZXDecomposer",
     "YXYDecomposer",
     "YZYDecomposer",
     "ZXZDecomposer",
     "ZYZDecomposer",
-    "CNOTDecomposer",
-    "CNOT2CZDecomposer",
-    "SWAP2CNOTDecomposer",
 ]

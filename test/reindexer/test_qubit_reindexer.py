@@ -4,8 +4,7 @@ import math
 
 import pytest
 
-from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.default_instructions import Y90, X
+from opensquirrel import Y90, Circuit, CircuitBuilder, X
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure
 from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
 

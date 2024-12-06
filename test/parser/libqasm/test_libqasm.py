@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from opensquirrel.default_instructions import CNOT, CR, CRk, H, I, Ry, X
+from opensquirrel import CNOT, CR, CRk, H, I, Ry, X
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
 from opensquirrel.parser.libqasm.parser import Parser
 
