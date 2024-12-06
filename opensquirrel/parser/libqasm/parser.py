@@ -5,7 +5,8 @@ from typing import Any, cast
 
 import cqasm.v3x as cqasm
 
-from opensquirrel import ControlGateModifier, InverseGateModifier, PowerGateModifier, instruction_library
+from opensquirrel import instruction_library
+from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import IR, Bit, BlochSphereRotation, Float, Gate, Int, NonUnitary, Qubit, Statement
 from opensquirrel.register_manager import RegisterManager
