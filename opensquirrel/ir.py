@@ -296,7 +296,7 @@ class Axis(Sequence[np.float64], Expression):
         return visitor.visit_axis(self)
 
     def __eq__(self, other: Any) -> bool:
-        """Check if `self` is equal to other.
+        """Check if `self` is equal to `other`.
 
         Two ``Axis`` objects are considered equal if their axes are equal.
         """
@@ -568,9 +568,9 @@ class BlochSphereRotation(Gate):
         if abs(self.phase - other.phase) > ATOL:
             return False
 
-        if np.allclose(self.axis, other.axis):
+        if np.allclose(self.axis, other.axis, atol=ATOL):
             return abs(self.angle - other.angle) < ATOL
-        if np.allclose(self.axis, -other.axis.value):
+        if np.allclose(self.axis, -other.axis.value, atol=ATOL):
             return abs(self.angle + other.angle) < ATOL
         return False
 
@@ -628,7 +628,7 @@ class MatrixGate(Gate):
         return self.operands
 
     def is_identity(self) -> bool:
-        return np.allclose(self.matrix, np.eye(2 ** len(self.operands)))
+        return np.allclose(self.matrix, np.eye(2 ** len(self.operands)), atol=ATOL)
 
 
 class ControlledGate(Gate):

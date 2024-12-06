@@ -102,7 +102,11 @@ class ABADecomposer(Decomposer, ABC):
         theta_3 = p - theta_1
 
         # Check if theta 1 and theta 3 have to be swapped
-        if b_axis_value < 0 and c_axis_value < 0:
+        if (
+            (b_axis_value < 0 or abs(b_axis_value) < ATOL)
+            and (c_axis_value < 0 or abs(c_axis_value) < ATOL)
+            and not (abs(b_axis_value) < ATOL and abs(c_axis_value) < ATOL)
+        ):
             theta_1, theta_3 = theta_3, theta_1
 
         return theta_1, theta_2, theta_3

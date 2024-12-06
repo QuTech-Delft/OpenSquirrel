@@ -74,9 +74,9 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     for gate_function in default_bloch_sphere_rotation_without_params_set.values():
         gate = gate_function(*bsr.get_qubit_operands())
         if (
-            np.allclose(gate.axis, bsr.axis)
-            and np.allclose(gate.angle, bsr.angle)
-            and np.allclose(gate.phase, bsr.phase)
+            np.allclose(gate.axis, bsr.axis, atol=ATOL)
+            and np.allclose(gate.angle, bsr.angle, atol=ATOL)
+            and np.allclose(gate.phase, bsr.phase, atol=ATOL)
         ):
             return gate
     return bsr
