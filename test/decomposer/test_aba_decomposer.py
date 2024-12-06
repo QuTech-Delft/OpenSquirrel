@@ -1,3 +1,4 @@
+import itertools
 from typing import Callable
 
 import numpy as np
@@ -37,11 +38,9 @@ def test_all_octants_of_bloch_sphere_rotation(aba_decomposer: Callable[..., Deco
     coordinates = np.linspace(-1, 1, num=steps)
     angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
     phases = np.linspace(-np.pi, np.pi, num=phase_steps)
-    axes = [[i, j, z] for i in coordinates for j in coordinates for z in coordinates]
+    axes = [[x, y, z] for x, y, z in list(itertools.permutations(coordinates, 3)) if not [x, y, z] == [0, 0, 0]]
 
     for axis in axes:
-        if all(abs(component) < ATOL for component in axis):  # not a valid axis
-            continue
         for angle in angles:
             for phase in phases:
                 arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=phase)
