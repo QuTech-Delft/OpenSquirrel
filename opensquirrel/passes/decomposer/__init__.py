@@ -15,11 +15,11 @@ __all__ = [
     "CNOTDecomposer",
     "Decomposer",
     "McKayDecomposer",
+    "SWAP2CNOTDecomposer",
     "XYXDecomposer",
     "XZXDecomposer",
     "YXYDecomposer",
     "YZYDecomposer",
     "ZXZDecomposer",
     "ZYZDecomposer",
-    "SWAP2CNOTDecomposer",
 ]
