@@ -3,8 +3,8 @@ import math
 import sympy as sp
 from IPython.display import display
 
+from opensquirrel import H, Rx, Rz
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_instructions import H, Rx, Rz
 from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XZXDecomposer, ZYZDecomposer
 
 

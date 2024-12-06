@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.passes.exporter.export_format import ExportFormat
+from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
     from opensquirrel.ir import IR, Gate
@@ -44,7 +44,7 @@ class Circuit:
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
-        from opensquirrel.writer import writer
+        from opensquirrel import writer
 
         return writer.circuit_to_string(self)
 

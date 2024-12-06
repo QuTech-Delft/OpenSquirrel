@@ -3,7 +3,7 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate
-from opensquirrel.passes.exporter.export_format import ExportFormat
+from opensquirrel.passes.exporter import ExportFormat
 
 
 def test_cqasm_v3_to_cqasm_v1() -> None:

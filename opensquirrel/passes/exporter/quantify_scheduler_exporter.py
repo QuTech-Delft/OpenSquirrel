@@ -3,9 +3,9 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING, Any
 
+from opensquirrel import X, Z
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import X, Z
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Reset
 

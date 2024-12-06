@@ -1,7 +1,9 @@
+import math
+
 import pytest
 
+from opensquirrel import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_instructions import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
 
 
@@ -25,7 +27,7 @@ class TestCircuitBuilder:
         ("builder", "expected_result"),
         [
             (CircuitBuilder(2, 2).I(0).X(0).Y(0).Z(0), [I(0), X(0), Y(0), Z(0)]),
-            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, 3.14), [Rx(0, -1), Ry(1, 1), Rz(0, 3.14)]),
+            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, math.pi), [Rx(0, -1), Ry(1, 1), Rz(0, math.pi)]),
             (CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1), [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]),
             (CircuitBuilder(2, 2).measure(0, 0).measure(1, 1), [Measure(0, 0), Measure(1, 1)]),
             (CircuitBuilder(2, 2).init(0).init(1), [Init(0), Init(1)]),
