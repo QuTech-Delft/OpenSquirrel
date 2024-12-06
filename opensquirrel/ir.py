@@ -517,7 +517,7 @@ class Gate(Unitary, ABC):
 
     @property
     def is_anonymous(self) -> bool:
-        return self.arguments is None
+        return self.generator is None
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:
