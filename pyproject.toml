@@ -155,13 +155,12 @@ select = [
     "YTT", # flake8-2020
 ]
 ignore = [
-    "A005", # module `math` is shadowing a Python builtin module
+    "A005", # module shadowing a Python builtin module
     "ANN101", # self should not be typed
     "ANN102", # cls should not be typed
     "ANN401", # typing.Any can be useful (for example in __eq__)
     "COM812", # Conflicts with ruff format
     "ISC001", # Possible conflicts with ruff format
-    "RUF028", # invalid suppression comment
     "W605", # deprecated in Python 3.6
 ]
 isort.combine-as-imports = true
