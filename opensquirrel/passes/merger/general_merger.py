@@ -63,7 +63,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         arguments = (a.qubit, Float(combined_angle))
     else:
         generator = None
-        arguments = (a.qubit,)
+        arguments = (a.qubit, Float(combined_angle))
 
     return BlochSphereRotation(
         qubit=a.qubit,
