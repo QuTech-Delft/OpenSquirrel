@@ -49,13 +49,13 @@ def test_zxz_decomposer(decomposer: ZXZDecomposer, gate: Gate, expected_result: 
 @pytest.mark.parametrize(
     "gate",
     [
-        Ry(0, -math.pi/2),
-        BlochSphereRotation(0, axis=[0., 1.,  0.], angle=-math.pi/2, phase=0.0),
-        BlochSphereRotation(0, axis=[0., -1.,  0.], angle=math.pi/2, phase=0.0),
+        Ry(0, -math.pi / 2),
+        BlochSphereRotation(0, axis=[0.0, 1.0, 0.0], angle=-math.pi / 2, phase=0.0),
+        BlochSphereRotation(0, axis=[0.0, -1.0, 0.0], angle=math.pi / 2, phase=0.0),
     ],
     ids=["Ry(-pi/2)", "BSR_1 of Ry(-pi/2)", "BSR_2 of Ry(-pi/2)"],
 )
-def test_specific_gate(decomposer: ZXZDecomposer, gate) -> None:
+def test_specific_gate(decomposer: ZXZDecomposer, gate: Gate) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
 
