@@ -6,6 +6,7 @@ from typing import cast
 
 import numpy as np
 
+from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
@@ -32,7 +33,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     combined_angle = 2 * acos(acos_argument)
 
     if abs(sin(combined_angle / 2)) < ATOL:
-        return BlochSphereRotation.identity(a.qubit)
+        return I(a.qubit)
 
     order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(

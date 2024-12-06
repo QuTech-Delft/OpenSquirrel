@@ -32,7 +32,7 @@ from opensquirrel.ir import (
 
 @named_gate
 def I(qubit: QubitLike) -> BlochSphereRotation:  # noqa: E743, N802
-    return BlochSphereRotation.identity(qubit)
+    return BlochSphereRotation(qubit=qubit, axis=(1, 0, 0), angle=0, phase=0)
 
 
 @named_gate

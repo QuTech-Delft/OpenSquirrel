@@ -548,10 +548,6 @@ class BlochSphereRotation(Gate):
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
 
-    @staticmethod
-    def identity(q: QubitLike) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
-
     def __repr__(self) -> str:
         return (
             f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
