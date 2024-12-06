@@ -17,9 +17,7 @@ from opensquirrel.utils import flatten_list
 def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
     The first rotation is applied and then the second.
-    The resulting gate is anonymous except if:
-    - `a` is the identity and `b` is not anonymous, or vice versa, or
-    - `a` and `b` are the same named gate (have the same generator).
+    The resulting Bloch sphere rotation is
 
     Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
     """
@@ -65,13 +63,15 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
         generator = None
         arguments = (a.qubit, Float(combined_angle))
 
-    return BlochSphereRotation(
-        qubit=a.qubit,
-        axis=combined_axis,
-        angle=combined_angle,
-        phase=combined_phase,
-        generator=generator,  # type: ignore[arg-type]
-        arguments=arguments,
+    return try_name_anonymous_bloch(
+        BlochSphereRotation(
+            qubit=a.qubit,
+            axis=combined_axis,
+            angle=combined_angle,
+            phase=combined_phase,
+            generator=generator,  # type: ignore[arg-type]
+            arguments=arguments,
+        )
     )
 
 
@@ -114,6 +114,8 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
          A default BlockSphereRotation if this BlochSphereRotation is close to it,
          or the input BlochSphereRotation otherwise.
     """
+    if not bsr.is_anonymous:
+        return bsr
     for default_bsr_callable in default_bloch_sphere_rotation_set.values():
         if can_invoke_bsr_callable(default_bsr_callable, bsr):
             default_bsr = default_bsr_callable(*bsr.get_qubit_operands())
