@@ -3,14 +3,14 @@ from __future__ import annotations
 import inspect
 from abc import ABC, abstractmethod
 from math import acos, cos, floor, log10, sin
-from typing import cast, Callable
+from typing import Callable, cast
 
 import numpy as np
 
 from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import default_bloch_sphere_rotation_set
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement, Gate
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
 from opensquirrel.utils import flatten_list
 
 
@@ -93,16 +93,14 @@ def can_invoke_bsr_callable(bsr_callable: Callable[..., BlochSphereRotation], bs
         if param.annotation is not inspect.Parameter.empty
     ]
 
-    bsr_arg_types = [type(arg) for arg in bsr.arguments]
+    bsr_arg_types = [type(arg) for arg in bsr.arguments] if bsr.arguments is not None else []
 
     # Check we have the same number of arguments and parameters, and arguments types can be used as parameters
-    return (
-        len(bsr_arg_types) == len(bsr_callable_param_types)
-        and all(
-            issubclass(bsr_arg_type, bsr_callable_param_type)
-            if isinstance(bsr_callable_param_type, type) else bsr_arg_type == bsr_callable_param_type
-            for bsr_arg_type, bsr_callable_param_type in zip(bsr_arg_types, bsr_callable_param_types)
-        )
+    return len(bsr_arg_types) == len(bsr_callable_param_types) and all(
+        issubclass(bsr_arg_type, bsr_callable_param_type)
+        if isinstance(bsr_callable_param_type, type)
+        else bsr_arg_type == bsr_callable_param_type
+        for bsr_arg_type, bsr_callable_param_type in zip(bsr_arg_types, bsr_callable_param_types)
     )
 
 
