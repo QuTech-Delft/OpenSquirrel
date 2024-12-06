@@ -33,6 +33,7 @@ class ABADecomposer(Decomposer, ABC):
     def _find_unused_index(self) -> int:
         """Finds the index of the axis object that is not used in the decomposition.
         For example, if one selects the ZYZ decomposition, the integer returned will be 0 (since it is X).
+
         Returns:
             Index of the axis object that is not used in the decomposition.
         """
@@ -53,6 +54,23 @@ class ABADecomposer(Decomposer, ABC):
         """
         _axis = Axis(axis)
         return _axis[self.index_a], _axis[self.index_b], _axis[self._find_unused_index()]
+
+    @staticmethod
+    def _are_b_and_c_axes_in_negative_octant(b_axis_value: float, c_axis_value: float) -> bool:
+        """Given an ABC axis system, and the values for axes B and C.
+        Checks if the values for the B and C axes fall in one of the two negative octants:
+        - one where the value of A is positive, and the values of B and C are negative (or one of them zero).
+        - one where the value of A is negative, and the values of B and C are negative (or one of them zero).
+
+        Returns:
+            True if the values for axis B and C are both negative or zero, but not zero at the same time.
+            False otherwise.
+        """
+        return (
+            (b_axis_value < 0 or abs(b_axis_value) < ATOL)
+            and (c_axis_value < 0 or abs(c_axis_value) < ATOL)
+            and not (abs(b_axis_value) < ATOL and abs(c_axis_value) < ATOL)
+        )
 
     def get_decomposition_angles(self, axis: AxisLike, alpha: float) -> tuple[float, float, float]:
         """Given:
@@ -102,11 +120,7 @@ class ABADecomposer(Decomposer, ABC):
         theta_3 = p - theta_1
 
         # Check if theta 1 and theta 3 have to be swapped
-        if (
-            (b_axis_value < 0 or abs(b_axis_value) < ATOL)
-            and (c_axis_value < 0 or abs(c_axis_value) < ATOL)
-            and not (abs(b_axis_value) < ATOL and abs(c_axis_value) < ATOL)
-        ):
+        if ABADecomposer._are_b_and_c_axes_in_negative_octant(b_axis_value, c_axis_value):
             theta_1, theta_3 = theta_3, theta_1
 
         return theta_1, theta_2, theta_3

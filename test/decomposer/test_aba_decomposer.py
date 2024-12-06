@@ -4,7 +4,6 @@ from typing import Callable
 import numpy as np
 import pytest
 
-from opensquirrel.common import ATOL
 from opensquirrel.ir import BlochSphereRotation
 from opensquirrel.passes.decomposer import Decomposer, aba_decomposer as aba
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
@@ -38,7 +37,7 @@ def test_all_octants_of_bloch_sphere_rotation(aba_decomposer: Callable[..., Deco
     coordinates = np.linspace(-1, 1, num=steps)
     angles = np.linspace(-2 * np.pi, 2 * np.pi, num=steps)
     phases = np.linspace(-np.pi, np.pi, num=phase_steps)
-    axes = [[x, y, z] for x, y, z in list(itertools.permutations(coordinates, 3)) if not [x, y, z] == [0, 0, 0]]
+    axes = [[x, y, z] for x, y, z in list(itertools.permutations(coordinates, 3)) if [x, y, z] != [0, 0, 0]]
 
     for axis in axes:
         for angle in angles:
