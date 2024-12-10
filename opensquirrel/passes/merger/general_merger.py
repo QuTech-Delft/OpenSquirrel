@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from abc import ABC, abstractmethod
-from math import acos, cos, floor, log10, sin
+from math import cos, floor, isclose, log10, sin
 from typing import Callable, cast
 
 import numpy as np
@@ -11,28 +11,27 @@ from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import default_bloch_sphere_rotation_set
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
-from opensquirrel.utils import flatten_list
+from opensquirrel.utils import acos, flatten_list
 
 
-def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
+def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSphereRotation) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
     The first rotation is applied and then the second.
-    The resulting Bloch sphere rotation is always tried to be named, in case it were anonymous.
+    If the final Bloch sphere rotation is anonymous, we will try to match it to a default gate.
 
     Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
-    if a.qubit != b.qubit:
-        msg = "cannot merge two BlochSphereRotation's on different qubits"
+    if bsr_a.qubit != bsr_b.qubit:
+        msg = "cannot merge two Bloch sphere rotations on different qubits"
         raise ValueError(msg)
 
-    acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
-    # This fixes float approximations like 1.0000000000002 which acos doesn't like.
-    acos_argument = max(min(acos_argument, 1.0), -1.0)
-
+    acos_argument = cos(bsr_a.angle / 2) * cos(bsr_b.angle / 2) - sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.dot(
+        bsr_a.axis, bsr_b.axis
+    )
     combined_angle = 2 * acos(acos_argument)
 
     if abs(sin(combined_angle / 2)) < ATOL:
-        return I(a.qubit)
+        return I(bsr_a.qubit)
 
     order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
@@ -40,32 +39,32 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
             1
             / sin(combined_angle / 2)
             * (
-                sin(a.angle / 2) * cos(b.angle / 2) * a.axis.value
-                + cos(a.angle / 2) * sin(b.angle / 2) * b.axis.value
-                + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
+                sin(bsr_a.angle / 2) * cos(bsr_b.angle / 2) * bsr_a.axis.value
+                + cos(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * bsr_b.axis.value
+                + sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.cross(bsr_a.axis, bsr_b.axis)
             )
         ),
         order_of_magnitude,
     )
 
-    combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
+    combined_phase = np.round(bsr_a.phase + bsr_b.phase, order_of_magnitude)
 
-    if a.is_identity():
-        generator = b.generator
-        arguments = b.arguments
-    elif b.is_identity():
-        generator = a.generator
-        arguments = a.arguments
-    elif a.generator == b.generator:
-        generator = a.generator
-        arguments = (a.qubit, Float(combined_angle))
+    if bsr_a.is_identity():
+        generator = bsr_b.generator
+        arguments = bsr_b.arguments
+    elif bsr_b.is_identity():
+        generator = bsr_a.generator
+        arguments = bsr_a.arguments
+    elif bsr_a.generator == bsr_b.generator:
+        generator = bsr_a.generator
+        arguments = (bsr_a.qubit, Float(combined_angle))
     else:
         generator = None
-        arguments = (a.qubit, Float(combined_angle))
+        arguments = (bsr_a.qubit, Float(combined_angle))
 
     return try_name_anonymous_bloch(
         BlochSphereRotation(
-            qubit=a.qubit,
+            qubit=bsr_a.qubit,
             axis=combined_axis,
             angle=combined_angle,
             phase=combined_phase,
@@ -121,8 +120,8 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
             default_bsr = default_bsr_callable(*bsr.get_qubit_operands())
             if (
                 np.allclose(default_bsr.axis, bsr.axis, atol=ATOL)
-                and np.allclose(default_bsr.angle, bsr.angle, atol=ATOL)
-                and np.allclose(default_bsr.phase, bsr.phase, atol=ATOL)
+                and isclose(default_bsr.angle, bsr.angle, rel_tol=ATOL)
+                and isclose(default_bsr.phase, bsr.phase, rel_tol=ATOL)
             ):
                 return default_bsr
     return bsr

@@ -58,9 +58,8 @@ class ABADecomposer(Decomposer, ABC):
     @staticmethod
     def _are_b_and_c_axes_in_negative_octant(b_axis_value: float, c_axis_value: float) -> bool:
         """Given an ABC axis system, and the values for axes B and C.
-        Checks if the values for the B and C axes fall in one of the two negative octants:
-        - one where the value of A is positive, and the values of B and C are negative (or one of them zero).
-        - one where the value of A is negative, and the values of B and C are negative (or one of them zero).
+        Checks if the values for the B and C axes fall in one of the two negative octants (A positive or negative,
+        and B and C negative, or one of them zero).
 
         Returns:
             True if the values for axis B and C are both negative or zero, but not zero at the same time.
