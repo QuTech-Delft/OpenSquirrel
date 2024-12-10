@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import inspect
 from abc import ABC, abstractmethod
 from math import cos, floor, isclose, log10, sin
-from typing import Callable, cast
+from typing import cast
 
 import numpy as np
 
@@ -95,7 +94,7 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
                 and isclose(default_bsr.phase, bsr.phase, rel_tol=ATOL)
             ):
                 return default_bsr
-        except TypeError:
+        except TypeError:  # noqa: PERF203
             pass
     return bsr
 
