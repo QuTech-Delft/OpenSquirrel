@@ -215,6 +215,29 @@ class Axis(Sequence[np.float64], Expression):
         """
         axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
         self._value = self._parse_and_validate_axislike(axis_to_parse)
+        if not self.has_valid_value(axis_to_parse):
+            raise ValueError
+
+    @staticmethod
+    def has_valid_value(*axis: AxisLike) -> bool:
+        """Check if the axis has a valid value.
+
+        Args:
+            axis: An ``AxisLike`` to validate.
+
+        Returns:
+            True if the axis is valid, False otherwise.
+        """
+        try:
+            axis_to_check = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
+            axis_array = np.asarray(axis_to_check, dtype=float).flatten()
+            if len(axis_array) != 3:
+                return False
+            if np.all(axis_array == 0):
+                return False
+            return True
+        except (ValueError, TypeError):
+            return False
 
     @property
     def value(self) -> NDArray[np.float64]:
