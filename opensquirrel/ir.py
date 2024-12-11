@@ -214,9 +214,9 @@ class Axis(Sequence[np.float64], Expression):
         axis: An ``AxisLike`` to create the axis from.
         """
         axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
-        self._value = self._parse_and_validate_axislike(axis_to_parse)
         if not self.has_valid_value(axis_to_parse):
             raise ValueError
+        self._value = self._parse_and_validate_axislike(axis_to_parse)
 
     @staticmethod
     def has_valid_value(*axis: AxisLike) -> bool:
@@ -233,9 +233,7 @@ class Axis(Sequence[np.float64], Expression):
             axis_array = np.asarray(axis_to_check, dtype=float).flatten()
             if len(axis_array) != 3:
                 return False
-            if np.all(axis_array == 0):
-                return False
-            return True
+            return not np.all(axis_array == 0)
         except (ValueError, TypeError):
             return False
 
