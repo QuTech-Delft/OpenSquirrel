@@ -37,11 +37,11 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
     ids=[
         "[bsr_a == I]",
         "[bsr_b == I]",
-        "[bsr_a.generator == bsr_b.generator] X + X == I",
-        "[bsr_a.generator == bsr_b.generator] H + H == I",
-        "[bsr_a.generator == bsr_b.generator] Rx(pi) + Rx(pi) == I",
-        "[bsr_a.generator == bsr_b.generator] Rx(pi/2) + Rx(pi/2) != X",
-        "[bsr_a.generator != bsr_b.generator] Rx(pi) + Ry(pi/2) != H",
+        "[bsr_a.generator == bsr_b.generator] X * X == I",
+        "[bsr_a.generator == bsr_b.generator] H * H == I",
+        "[bsr_a.generator == bsr_b.generator] Rx(pi) * Rx(pi) == I",
+        "[bsr_a.generator == bsr_b.generator] Rx(pi/2) * Rx(pi/2) = Rx(pi) ~ X",
+        "[bsr_a.generator != bsr_b.generator] Rx(pi) * Ry(pi/2) ~ H",
     ],
 )
 def test_compose_bloch_sphere_rotations(
