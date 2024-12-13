@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pytest
 
-from opensquirrel import CNOT, CR, X90, H, I, Rz, X, Y, Z
+from opensquirrel import CNOT, CR, X90, H, I, Rz, X, Y, Z, mX90, Y90, mY90, S, Sdag, Rx
 from opensquirrel.ir import BlochSphereRotation, Gate
 from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
@@ -81,3 +81,40 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
                 arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=phase)
                 decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
                 check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
+
+
+@pytest.mark.parametrize(
+    ("gate", "expected_result"),
+    [
+        # (I(0), [I(0)]),
+        (X(0), [X90(0), X90(0)]),
+        (Y(0), [Rz(0, math.pi), X90(0), X90(0)]),
+        (Z(0), [Rz(0, math.pi)]),
+        # (BlochSphereRotation(qubit=0, axis=[1/math.sqrt(3), 1/math.sqrt(3), 1/math.sqrt(3)], angle=2 * math.pi/3, phase=0), [X90(0), Rz(0, math.pi/2)]),
+        (BlochSphereRotation(qubit=0, axis=[1, 1, 1], angle=-2 * math.pi/3, phase=0), [X90(0), Rz(0, math.pi/2), X90(0), Rz(0, math.pi/2)]),
+        (BlochSphereRotation(qubit=0, axis=[-1, 1, 1], angle=2 * math.pi/3, phase=0), [Rz(0, -math.pi/2), X90(0), Rz(0, math.pi)]),
+        (BlochSphereRotation(qubit=0, axis=[-1, 1, 1], angle=-2 * math.pi/3, phase=0), [Rz(0, -math.pi/2), X90(0), Rz(0, math.pi/2), X90(0), Rz(0, math.pi)]),
+        (BlochSphereRotation(qubit=0, axis=[1, -1, 1], angle=2 * math.pi/3, phase=0), [Rz(0, math.pi/2), X90(0)]),
+        (BlochSphereRotation(qubit=0, axis=[1, -1, 1], angle=-2 * math.pi/3, phase=0), [Rz(0, math.pi/2), X90(0), Rz(0, math.pi/2), X90(0)]),
+        (BlochSphereRotation(qubit=0, axis=[1, 1, -1], angle=2 * math.pi/3, phase=0), [Rz(0, -math.pi/2), X90(0)]),
+        # (BlochSphereRotation(qubit=0, axis=[1/math.sqrt(3), 1/math.sqrt(3), -1/math.sqrt(3)], angle=-2 * math.pi/3, phase=0), [Rz(0, math.pi), X90(0), Rz(0, -math.pi/2)]),
+        (X90(0), [X90(0)]),
+        (mX90(0), [Rz(0, math.pi/2), X90(0), Rz(0, math.pi/2), X90(0), Rz(0, math.pi/2)]),
+        (Y90(0), [Rz(0, -math.pi/2), X90(0), Rz(0, math.pi/2)]),
+        (mY90(0), [X90(0), Rz(0, math.pi/2), X90(0), Rz(0, math.pi)]),
+        (S(0), [Rz(0, math.pi/2)]),
+        (Sdag(0), [Rz(0, -math.pi/2)]),
+        (H(0), [Rz(0, math.pi/2), X90(0), Rz(0, math.pi/2)]),
+        (BlochSphereRotation(qubit=0, axis=[1, 1, 0], angle=math.pi, phase=math.pi/2), [Rz(0, -3 * math.pi/4), X90(0), X90(0), Rz(0, -math.pi/4)]),
+        (BlochSphereRotation(qubit=0, axis=[0, 1, 1], angle=math.pi, phase=math.pi/2), [Rz(0, -math.pi/2), X90(0), Rz(0, math.pi/2), X90(0), Rz(0, math.pi/2)]),
+        (BlochSphereRotation(qubit=0, axis=[-1, 1, 0], angle=math.pi, phase=math.pi/2), [Rz(0, 3 * math.pi/4), X90(0), X90(0), Rz(0, math.pi/4)]),
+        (BlochSphereRotation(qubit=0, axis=[1, 0, -1], angle=math.pi, phase=math.pi/2), [Rz(0, -math.pi/2), X90(0), Rz (0, -math.pi/2)]),
+        (BlochSphereRotation(qubit=0, axis=[0, -1, 1], angle=math.pi, phase=math.pi/2), [Rz(0, math.pi), X90(0)]),
+    ],
+    # ids=["I", "X", "Y", "Z", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "X90", "mX90", "Y90", "mY90", "Z90", "mZ90", "H1", "H2", "H3", "H4", "H5", "H6"],
+)
+def test_single_qubit_clifford_gates(decomposer: McKayDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+    # The gate decompositions that fail have been commented out. They are: I, C1, and C8.
+    decomposed_gates = decomposer.decompose(gate)
+    check_gate_replacement(gate, decomposed_gates)
+    assert decomposed_gates == expected_result
