@@ -1,3 +1,4 @@
+from opensquirrel.utils.bit_register_mapping import BitStringMapping
 from opensquirrel.utils.check_mapper import check_mapper
 from opensquirrel.utils.identity_filter import filter_out_identities
 from opensquirrel.utils.list import flatten_list
@@ -5,6 +6,7 @@ from opensquirrel.utils.math import acos, are_axes_consecutive
 from opensquirrel.utils.matrix_expander import can1, expand_ket, get_matrix, get_reduced_ket
 
 __all__ = [
+    "BitStringMapping",
     "acos",
     "are_axes_consecutive",
     "can1",

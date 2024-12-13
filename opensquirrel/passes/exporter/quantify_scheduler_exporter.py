@@ -8,6 +8,7 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Reset
+from opensquirrel.utils import BitStringMapping
 
 try:
     import quantify_scheduler
@@ -30,11 +31,8 @@ class _ScheduleCreator(IRVisitor):
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
-        self.qubit_register_size = register_manager.get_qubit_register_size()
         self.qubit_register_name = register_manager.get_qubit_register_name()
-        self.bit_register_size = register_manager.get_bit_register_size()
-        self.acq_index_record = [0] * self.qubit_register_size
-        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
+        self.bit_string_mapping = BitStringMapping()
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
@@ -85,20 +83,16 @@ class _ScheduleCreator(IRVisitor):
         raise UnsupportedGateError(g)
 
     def visit_measure(self, g: Measure) -> None:
-        qubit_index = g.qubit.index
-        bit_index = g.bit.index
-        acq_index = self.acq_index_record[qubit_index]
-        self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
+        self.bit_string_mapping.add_measure(g)
+        acq_channel, acq_index = self.bit_string_mapping.get_last_added_acq()
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(g.qubit),
-                acq_channel=qubit_index,
+                acq_channel=acq_channel,
                 acq_index=acq_index,
                 acq_protocol="ThresholdedAcquisition",
             )
         )
-        self.acq_index_record[qubit_index] += 1
-        return
 
     def visit_reset(self, g: Reset) -> Any:
         self.schedule.add(quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit)))
@@ -126,4 +120,4 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         )
         raise ExporterError(msg) from e
-    return schedule_creator.schedule, schedule_creator.bit_string_mapping
+    return schedule_creator.schedule, schedule_creator.bit_string_mapping.to_export_format()
