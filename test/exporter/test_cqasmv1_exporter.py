@@ -242,9 +242,9 @@ def test_anonymous_gates(gate: Gate) -> None:
     ("v3_input", "v3_output", "v1_output"),
     [
         (
-            """version 3.0; qubit[1] q; barrier q[0]",
-            """version 3.0\n\nqubit[1] q\n\nbarrier q[0]\n",
-            """version 1.0\n\nqubits 1\n\nbarrier q[0]\n",
+            "version 3.0; qubit[1] q; barrier q[0]",
+            "version 3.0\n\nqubit[1] q\n\nbarrier q[0]\n",
+            "version 1.0\n\nqubits 1\n\nbarrier q[0]\n",
         ),
         (
             "version 3.0; qubit[3] q; barrier q[0:2]",
@@ -258,17 +258,17 @@ def test_anonymous_gates(gate: Gate) -> None:
         ),
         (
             "version 3.0; qubit[6] q; barrier q[0:2, 5, 3, 4, 1]",
-            "version 3.0\n\nqubit[6] q\n\nbarrier q[0]\nbarrier q[1]\nbarrier q[2]\nbarrier q[5]\nbarrier q[3]
-barrier q[4]\nbarrier q[1]\n",
+            "version 3.0\n\nqubit[6] q\n\nbarrier q[0]\nbarrier q[1]\nbarrier q[2]\nbarrier q[5]\nbarrier q[3]\n"
+            "barrier q[4]\nbarrier q[1]\n",
             "version 1.0\n\nqubits 6\n\nbarrier q[0, 1, 2, 5, 3, 4, 1]\n",
         ),
         (
-            "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];
-            barrier q[0]",
-            "version 3.0\n\nqubit[5] q\n\nbarrier q[0]\nH q[1]\nbarrier q[1]\nbarrier q[2]\nX q[2]
-barrier q[3]\nbarrier q[4]\nbarrier q[1]\nY q[3]\nbarrier q[0]\n",
-            "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]
-barrier q[0]\n",
+            "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];"
+            "barrier q[0]",
+            "version 3.0\n\nqubit[5] q\n\nbarrier q[0]\nH q[1]\nbarrier q[1]\nbarrier q[2]\nX q[2]\n"
+            "barrier q[3]\nbarrier q[4]\nbarrier q[1]\nY q[3]\nbarrier q[0]\n",
+            "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]\n"
+            "barrier q[0]\n",
         ),
         (
             "version 3.0; qubit[3] q; barrier q[0]; barrier q[1]; X q[2]; barrier q[1]",
