@@ -98,7 +98,7 @@ class _ScheduleCreator(IRVisitor):
         self.schedule.add(quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit)))
 
 
-def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:
+def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, dict[str, dict[str, int]]]:
     if "quantify_scheduler" not in globals():
 
         class QuantifySchedulerNotInstalled:
