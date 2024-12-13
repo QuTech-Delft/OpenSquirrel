@@ -18,7 +18,7 @@ class _CQASMv1Creator(IRVisitor):
     def __init__(self, register_manager: RegisterManager, barrier_links: list[list[Statement]]) -> None:
         self.register_manager = register_manager
         qubit_register_size = self.register_manager.get_qubit_register_size()
-        self.cqasm_v1_string = "version 1.0\n\n{}\n\n".format(
+        self.output = "version 1.0\n\n{}\n\n".format(
             f"qubits {qubit_register_size}" if qubit_register_size > 0 else ""
         )
         self.barrier_links = barrier_links
