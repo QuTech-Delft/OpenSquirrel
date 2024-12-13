@@ -7,4 +7,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [ 0.2.0 ] - [ xxxx-yy-zz ]
 
 ### Added
-- Restoring SGMQ notation for barrier links in cQASMv1 Exporter (with tests).
+- Restore SGMQ notation for barrier links in cQASMv1 Exporter (with tests).
