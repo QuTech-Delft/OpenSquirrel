@@ -239,7 +239,7 @@ def test_anonymous_gates(gate: Gate) -> None:
 
 
 @pytest.mark.parametrize(
-    ("v3_input", "v3_output", "v1_output"),
+    ("program",  "expected_output"),
     [
         (
             "version 3.0; qubit[1] q; barrier q[0]",
