@@ -17,28 +17,26 @@ class BitStringMapping:
         self._mapping: defaultdict[int, list[int]] = defaultdict(list)
         self._bit_allocation: dict[int, int] = {}
 
-    def add_measure(self, g: Measure) -> None:
-        """Add a acquisition_channel and bitstring_index of `g` to the mapping.
+    def add_measure(self, measure: Measure) -> None:
+        """Add an acquisition channel and bitstring index of `measure` to the mapping.
 
         Args:
-            g: measurement to add the acquisition_channel and bitstring_index from.
+            measure: measurement to add the acquisition channel and bitstring index from.
         """
-        acq_channel = g.qubit.index
-        bit_idx = g.bit.index
+        acq_channel = measure.qubit.index
+        bit_idx = measure.bit.index
 
         self._mapping[acq_channel].append(bit_idx)
         self._bit_allocation[bit_idx] = acq_channel
 
-    def get_last_added_acq(self) -> tuple[int, int]:
-        """Get the last added acquisition_channel corresponding acquisition_index.
+    def get_last_added_acq_channel_and_index(self) -> tuple[int, int]:
+        """Get the last added acquisition channel corresponding acquisition index.
 
-        Especially useful when exporting to ``quantify_scheduler``, since not only the
-        final acquisition_channel-acquisition_index pairs are needed, but also all
-        intermediate pairs.
+        Especially useful when exporting to ``quantify_scheduler``, since not only the final (acquisition channel,
+        acquisition index) pairs are needed, but also all intermediate pairs.
 
         Returns:
-            Tuple containing the last added acquisition_channel and corresponding
-            acquisition_index.
+            Tuple containing the last added acquisition channel and corresponding acquisition index.
         """
         try:
             acq_channel = next(reversed(self._mapping))
@@ -49,7 +47,7 @@ class BitStringMapping:
         return acq_channel, acq_idx
 
     def to_export_format(self) -> dict[str, dict[str, int]]:
-        """Export to json format.
+        """Export to JSON serializable format.
 
         For each bit, only the last executed measurement remains in the mapping.
 

@@ -84,7 +84,7 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_measure(self, g: Measure) -> None:
         self.bit_string_mapping.add_measure(g)
-        acq_channel, acq_index = self.bit_string_mapping.get_last_added_acq()
+        acq_channel, acq_index = self.bit_string_mapping.get_last_added_acq_channel_and_index()
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(g.qubit),

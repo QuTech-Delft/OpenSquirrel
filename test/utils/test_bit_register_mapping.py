@@ -34,20 +34,20 @@ def test_add_measure(
     assert bit_string_mapping._bit_allocation == expected_bit_allocation
 
 
-def test_get_last_added_acq(bit_string_mapping: BitStringMapping) -> None:
+def test_get_last_added_acq_channel_and_index(bit_string_mapping: BitStringMapping) -> None:
     bit_string_mapping.add_measure(measure(0, 0))
-    assert bit_string_mapping.get_last_added_acq() == (0, 0)
+    assert bit_string_mapping.get_last_added_acq_channel_and_index() == (0, 0)
     bit_string_mapping.add_measure(measure(0, 0))
-    assert bit_string_mapping.get_last_added_acq() == (0, 1)
+    assert bit_string_mapping.get_last_added_acq_channel_and_index() == (0, 1)
     bit_string_mapping.add_measure(measure(1, 0))
-    assert bit_string_mapping.get_last_added_acq() == (1, 0)
+    assert bit_string_mapping.get_last_added_acq_channel_and_index() == (1, 0)
     bit_string_mapping.add_measure(measure(2, 1))
-    assert bit_string_mapping.get_last_added_acq() == (2, 0)
+    assert bit_string_mapping.get_last_added_acq_channel_and_index() == (2, 0)
 
 
-def test_get_last_added_acq_error(bit_string_mapping: BitStringMapping) -> None:
+def test_get_last_added_acq_channel_and_index_error(bit_string_mapping: BitStringMapping) -> None:
     with pytest.raises(ValueError, match="BitStringMapping is empty, so there is no acq to get"):
-        bit_string_mapping.get_last_added_acq()
+        bit_string_mapping.get_last_added_acq_channel_and_index()
 
 
 def test_to_export_format(bit_string_mapping: BitStringMapping) -> None:
