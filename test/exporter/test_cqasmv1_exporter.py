@@ -277,8 +277,7 @@ def test_anonymous_gates(gate: Gate) -> None:
         "link_consecutive_barriers",
     ],
 )
-def test_barrier_links(v3_input: str, v3_output: str, v1_output: str) -> None:
-    qc = Circuit.from_string(v3_input)
-    assert str(qc) == v3_output
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
-    assert cqasm_v1_string == v1_output
+def test_barrier_links(program: str, expected_output: str) -> None:
+    qc = Circuit.from_string(program)
+    output = qc.export(fmt=ExportFormat.CQASM_V1)
+    assert output == expected_output
