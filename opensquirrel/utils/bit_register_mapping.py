@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class BitStringMapping:
-    """Utility class to create bitstringmappings for opensquirrel exporter passes."""
+    """Utility class to create bit string mappings for OpenSquirrel exporter passes."""
 
     def __init__(self) -> None:
         """Init of the ``BitStringMapping``."""
