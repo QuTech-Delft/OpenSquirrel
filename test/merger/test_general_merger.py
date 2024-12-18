@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X
+from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Z
 from opensquirrel.ir import BlochSphereRotation, Float
 from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 
@@ -26,6 +26,8 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
 @pytest.mark.parametrize(
     ("bsr_a", "bsr_b", "expected_result"),
     [
+        (Z(0), X(0), BlochSphereRotation(0, axis=(0, -1, 0), angle=math.pi, phase=math.pi)),
+        (X(0), Z(0), BlochSphereRotation(0, axis=(0, 1, 0), angle=math.pi, phase=math.pi)),
         (I(0), Rx(0, theta=math.pi), Rx(0, theta=math.pi)),
         (Rx(0, theta=math.pi), I(0), Rx(0, theta=math.pi)),
         (X(0), X(0), I(0)),
@@ -35,6 +37,8 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
         (Rx(0, theta=math.pi), Ry(0, theta=math.pi / 2), BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi)),
     ],
     ids=[
+        "[bsr_a = Z, bsr_b = X] X * Z = -iY",  # Note that in X * Z, Z is applied first on a qubit state.
+        "[bsr_a = X, bsr_b = Z] Z * X = iY",  # Note that in Z * X, X is applied first on a qubit state.
         "[bsr_a == I]",
         "[bsr_b == I]",
         "[bsr_a.generator == bsr_b.generator] X * X == I",
