@@ -7,8 +7,7 @@ from typing import cast
 import numpy as np
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import I
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, I, Instruction, Statement
 from opensquirrel.utils import flatten_list
 
 
@@ -48,7 +47,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
     combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
 
-    return BlochSphereRotation.try_name(
+    return BlochSphereRotation.try_match_replace_with_default(
         BlochSphereRotation(
             qubit=a.qubit,
             axis=combined_axis,

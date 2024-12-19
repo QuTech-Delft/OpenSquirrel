@@ -1,6 +1,6 @@
 from opensquirrel.circuit import Circuit
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_instructions import (
+from opensquirrel.ir import (
     CNOT,
     CR,
     CZ,

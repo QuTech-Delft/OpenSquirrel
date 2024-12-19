@@ -59,7 +59,7 @@ def decompose(ir: IR, decomposer: Decomposer) -> None:
 
 
 class _GenericReplacer(Decomposer):
-    def __init__(self, gate_type: type(Gate), replacement_gates_function: Callable[..., list[Gate]]) -> None:
+    def __init__(self, gate_type: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
         self.gate_type = gate_type
         self.replacement_gates_function = replacement_gates_function
 
@@ -69,7 +69,7 @@ class _GenericReplacer(Decomposer):
         return self.replacement_gates_function(*gate.arguments)
 
 
-def replace(ir: IR, gate: type(Gate), replacement_gates_function: Callable[..., list[Gate]]) -> None:
+def replace(ir: IR, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
     """Does the same as decomposer, but only applies to a given gate."""
     generic_replacer = _GenericReplacer(gate, replacement_gates_function)
 

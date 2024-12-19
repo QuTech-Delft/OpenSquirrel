@@ -471,20 +471,24 @@ class BlochSphereRotation(Gate):
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
 
     @staticmethod
-    def try_name(bsr: BlochSphereRotation) -> BlochSphereRotation:
-        """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
-         It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
-
-        Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
+    def try_match_replace_with_default(bsr: BlochSphereRotation) -> BlochSphereRotation:
+        """Try replacing a given BlochSphereRotation with a default BlochSphereRotation.
+         It does that by matching the input BlochSphereRotation to a default BlochSphereRotation.
 
         Returns:
              A default BlockSphereRotation if this BlochSphereRotation is close to it,
              or the input BlochSphereRotation otherwise.
         """
-        from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
+        from opensquirrel.default_instructions import (
+            default_bloch_sphere_rotation_set,
+            default_bsr_with_angle_param_set,
+        )
 
-        for gate_function in default_bloch_sphere_rotation_without_params_set.values():
-            gate = gate_function(*bsr.get_qubit_operands())
+        for gate_name in default_bloch_sphere_rotation_set:
+            arguments: tuple[Any, ...] = (bsr.qubit,)
+            if gate_name in default_bsr_with_angle_param_set:
+                arguments += (Float(bsr.angle),)
+            gate = default_bloch_sphere_rotation_set[gate_name](*arguments)
             if (
                 np.allclose(gate.axis, bsr.axis, atol=ATOL)
                 and np.allclose(gate.angle, bsr.angle, atol=ATOL)
@@ -789,7 +793,7 @@ class CRk(ControlledGate):
 class NonUnitary(Instruction, ABC):
     def __init__(self, qubit: QubitLike, name: str) -> None:
         Instruction.__init__(self, name)
-        self.qubit = qubit
+        self.qubit = Qubit(qubit)
 
     @property
     @abstractmethod

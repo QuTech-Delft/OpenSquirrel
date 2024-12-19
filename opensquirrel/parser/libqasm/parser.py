@@ -24,7 +24,6 @@ from opensquirrel.register_manager import RegisterManager
 class Parser:
     def __init__(self) -> None:
         self.ir = IR()
-        self.register_manager = None
 
     @staticmethod
     def _ast_literal_to_ir_literal(
@@ -133,7 +132,7 @@ class Parser:
         if gate_parameter:
             number_of_operands = len(expanded_args[0])
             expanded_args.append([gate_parameter] * number_of_operands)
-        return zip(*expanded_args)
+        return list(zip(*expanded_args))
 
     def _get_expanded_measure_args(self, ast_args: Any) -> list[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
@@ -150,7 +149,7 @@ class Parser:
             else:
                 msg = "argument is neither of qubit nor bit type"
                 raise TypeError(msg)
-        return zip(*expanded_args)
+        return list(zip(*expanded_args))
 
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
@@ -212,7 +211,6 @@ class Parser:
             # expanded_args will contain a list with the list of qubits for each individual instruction,
             # while args will contain the list of qubits of an individual instruction
             for args in expanded_args:
-                blah = instruction_generator(*args)
-                self.ir.add_statement(blah)
+                self.ir.add_statement(instruction_generator(*args))
 
         return Circuit(self.register_manager, self.ir)

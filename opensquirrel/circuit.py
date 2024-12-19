@@ -106,7 +106,7 @@ class Circuit:
 
         remap_ir(self, mapper.get_mapping())
 
-    def replace(self, gate: type(Gate), replacement_gates_function: Callable[..., list[Gate]]) -> None:
+    def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
         `replacement_gates_function` is a callable that takes the arguments of the gate that is to be replaced and
         returns the decomposition as a list of gates.

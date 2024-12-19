@@ -100,24 +100,24 @@ class _CQASMv1Creator(IRVisitor):
         self.output += f"crk({k_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
 
     def visit_measure(self, measure: Measure) -> None:
-        qubit_argument = measure.arguments[0].accept(self)  # type: ignore[index]
+        qubit_argument = measure.arguments[0].accept(self)
         self.output += f"measure_z {qubit_argument}\n"
 
     def visit_init(self, init: Init) -> None:
-        qubit_argument = init.arguments[0].accept(self)  # type: ignore[index]
+        qubit_argument = init.arguments[0].accept(self)
         self.output += f"prep_z {qubit_argument}\n"
 
     def visit_reset(self, reset: Reset) -> None:
-        qubit_argument = reset.arguments[0].accept(self)  # type: ignore[index]
+        qubit_argument = reset.arguments[0].accept(self)
         self.output += f"prep_z {qubit_argument}\n"
 
     def visit_barrier(self, barrier: Barrier) -> None:
-        qubit_argument = barrier.arguments[0].accept(self)  # type: ignore[index]
+        qubit_argument = barrier.arguments[0].accept(self)
         self.output += f"barrier {qubit_argument}\n"
 
     def visit_wait(self, wait: Wait) -> None:
-        qubit_argument = wait.arguments[0].accept(self)  # type: ignore[index]
-        parameter = wait.arguments[1].accept(self)  # type: ignore[index]
+        qubit_argument = wait.arguments[0].accept(self)
+        parameter = wait.arguments[1].accept(self)
         self.output += f"wait {qubit_argument}, {parameter}\n"
 
 

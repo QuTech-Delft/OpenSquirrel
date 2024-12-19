@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import math
 
-from opensquirrel.default_instructions import CZ, Ry
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
+from opensquirrel.ir import CZ, BlochSphereRotation, ControlledGate, Gate, Ry
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 

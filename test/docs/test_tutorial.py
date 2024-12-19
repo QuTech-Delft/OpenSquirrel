@@ -129,8 +129,8 @@ def test_CNOT_strong_type_error_string() -> None:  # noqa: N802
 
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
-    for _ in range(4):
-        builder.Rx(0, math.pi / 4)
+    builder.Rx(0, math.pi / 4)
+    builder.Rz(0, math.pi / 4)
     qc = builder.to_circuit()
 
     qc.merge(merger=SingleQubitGatesMerger())
@@ -141,7 +141,7 @@ def test_anonymous_gate() -> None:
 
 qubit[1] q
 
-BlochSphereRotation(qubit=Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
+BlochSphereRotation(qubit=Qubit[0], axis=[0.6786  0.28108 0.6786 ], angle=1.09606, phase=0.0)
 """
     )
 
