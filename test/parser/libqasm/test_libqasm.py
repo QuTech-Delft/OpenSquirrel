@@ -119,6 +119,10 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
             [BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi * -1, phase=math.pi / 2 * -1)],
         ),
         (
+            "version 3.0; qubit q; inv.inv.X q",
+            [X(qubit=0)],
+        ),
+        (
             "version 3.0; qubit q; pow(2).Rx(pi) q",
             [BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi * 2, phase=0)],
         ),
@@ -135,7 +139,7 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
             ],
         ),
     ],
-    ids=["inv", "pow_2_Rx", "pow_2_inv", "ctrl_pow_2_inv"],
+    ids=["inv_X", "inv_inv_X", "pow_2_Rx", "pow_2_inv_X", "ctrl_pow_2_inv_X"],
 )
 def test_gate_modifiers(circuit_string: str, expected_result: list[Gate]) -> None:
     circuit = Parser().circuit_from_string(circuit_string)

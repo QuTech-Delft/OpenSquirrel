@@ -103,15 +103,6 @@ class IRVisitor:
     def visit_wait(self, wait: Wait) -> Any:
         pass
 
-    def visit_inverse_gate_modifier(self, modifier: InverseGateModifier) -> Any:
-        pass
-
-    def visit_power_gate_modifier(self, modifier: PowerGateModifier) -> Any:
-        pass
-
-    def visit_control_gate_modifier(self, modifier: ControlGateModifier) -> Any:
-        pass
-
 
 class IRNode(ABC):
     @abstractmethod
@@ -478,6 +469,29 @@ class BlochSphereRotation(Gate):
     def is_identity(self) -> bool:
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
+
+    @staticmethod
+    def try_name(bsr: BlochSphereRotation) -> BlochSphereRotation:
+        """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
+         It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
+
+        Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
+
+        Returns:
+             A default BlockSphereRotation if this BlochSphereRotation is close to it,
+             or the input BlochSphereRotation otherwise.
+        """
+        from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
+
+        for gate_function in default_bloch_sphere_rotation_without_params_set.values():
+            gate = gate_function(*bsr.get_qubit_operands())
+            if (
+                np.allclose(gate.axis, bsr.axis, atol=ATOL)
+                and np.allclose(gate.angle, bsr.angle, atol=ATOL)
+                and np.allclose(gate.phase, bsr.phase, atol=ATOL)
+            ):
+                return gate
+        return bsr
 
 
 class BsrWithoutParams(BlochSphereRotation):
@@ -895,62 +909,6 @@ class Wait(NonUnitary):
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_non_unitary(self)
         return visitor.visit_wait(self)
-
-
-class GateModifier(Gate, ABC):
-    def __init__(self, gate: Gate, name: str) -> None:
-        Gate.__init__(self, name)
-        self.gate = gate
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.gate.arguments
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return self.gate.get_qubit_operands()
-
-    def get_bit_operands(self) -> list[Bit]:
-        return self.gate.get_bit_operands()
-
-    def is_identity(self) -> bool:
-        return self.gate.is_identity()
-
-    @abstractmethod
-    def accept(self, visitor: IRVisitor) -> Any:
-        pass
-
-
-class InverseGateModifier(GateModifier):
-    def __init__(self, gate: BlochSphereRotation) -> None:
-        modified_angle = gate.angle * -1
-        modified_phase = gate.phase * -1
-        gate = BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
-        GateModifier.__init__(self, gate=gate, name="inv")
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_inverse_gate_modifier(self)
-
-
-class PowerGateModifier(GateModifier):
-    def __init__(self, exponent: SupportsFloat, gate: BlochSphereRotation) -> None:
-        self.exponent = exponent
-        modified_angle = gate.angle * float(self.exponent)
-        modified_phase = gate.phase * float(self.exponent)
-        gate = BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
-        GateModifier.__init__(self, gate=gate, name="pow")
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_power_gate_modifier(self)
-
-
-class ControlGateModifier(GateModifier):
-    def __init__(self, control_qubit: QubitLike, gate: BlochSphereRotation) -> None:
-        self.control_qubit = control_qubit
-        gate = ControlledGate(self.control_qubit, gate)
-        GateModifier.__init__(self, gate=gate, name="control")
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_control_gate_modifier(self)
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:

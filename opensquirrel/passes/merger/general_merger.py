@@ -7,7 +7,7 @@ from typing import cast
 import numpy as np
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import I, default_bloch_sphere_rotation_without_params_set
+from opensquirrel.default_instructions import I
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
 from opensquirrel.utils import flatten_list
 
@@ -48,7 +48,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
     combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
 
-    return try_name_anonymous_bloch(
+    return BlochSphereRotation.try_name(
         BlochSphereRotation(
             qubit=a.qubit,
             axis=combined_axis,
@@ -56,27 +56,6 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
             phase=combined_phase,
         )
     )
-
-
-def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
-    """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
-     It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
-
-    Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
-
-    Returns:
-         A default BlockSphereRotation if this BlochSphereRotation is close to it,
-         or the input BlochSphereRotation otherwise.
-    """
-    for gate_function in default_bloch_sphere_rotation_without_params_set.values():
-        gate = gate_function(*bsr.get_qubit_operands())
-        if (
-            np.allclose(gate.axis, bsr.axis, atol=ATOL)
-            and np.allclose(gate.angle, bsr.angle, atol=ATOL)
-            and np.allclose(gate.phase, bsr.phase, atol=ATOL)
-        ):
-            return gate
-    return bsr
 
 
 def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:

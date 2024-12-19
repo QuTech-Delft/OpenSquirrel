@@ -1,24 +1,22 @@
 from __future__ import annotations
 
-from itertools import starmap
-from typing import Any, cast
+from typing import Any, Callable, cast
 
 import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
+from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
 from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
 from opensquirrel.ir import (
     IR,
     Bit,
     BlochSphereRotation,
-    ControlGateModifier,
     Float,
     Gate,
     Int,
-    InverseGateModifier,
     NonUnitary,
-    PowerGateModifier,
     Qubit,
+    Statement,
 )
 from opensquirrel.register_manager import RegisterManager
 
@@ -164,29 +162,24 @@ class Parser:
         if isinstance(result, list):
             raise OSError("parsing error: " + ", ".join(result))
 
-    def _get_gates(
-        self, instruction: cqasm.semantic.GateInstruction, expanded_args: list[tuple[Any, ...]]
-    ) -> list[Gate]:
+    def _get_gate_generator(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
         gate_name = instruction.gate.name
-        if gate_name == "ctrl":
-            control_qubits = [args[0] for args in expanded_args]
-            expanded_args = [args[1:] for args in expanded_args]
-            modified_gates = cast(list[BlochSphereRotation], self._get_gates(instruction.gate, expanded_args))
-            return [
-                ControlGateModifier(control_qubits[i], modified_gate) for i, modified_gate in enumerate(modified_gates)
-            ]
-        if gate_name in ["inv", "pow"]:
-            modified_gates = cast(list[BlochSphereRotation], self._get_gates(instruction.gate, expanded_args))
+        if gate_name in ["inv", "pow", "ctrl"]:
+            modified_gate_generator = cast(
+                Callable[..., BlochSphereRotation], self._get_gate_generator(instruction.gate)
+            )
             if gate_name == "inv":
-                return [InverseGateModifier(modified_gate) for modified_gate in modified_gates]
-            exponent = instruction.gate.parameter.value
-            return [PowerGateModifier(exponent, modified_gate) for modified_gate in modified_gates]
-        return list(starmap(default_gate_set[gate_name], expanded_args))
+                return InverseGateModifier(modified_gate_generator)
+            if gate_name == "pow":
+                return PowerGateModifier(instruction.gate.parameter.value, modified_gate_generator)
+            if gate_name == "ctrl":
+                return ControlGateModifier(modified_gate_generator)
+            msg = "parsing error: unknown unitary instruction"
+            raise OSError(msg)
+        return lambda *args: default_gate_set[gate_name](*args)
 
-    def _get_non_unitaries(
-        self, instruction: cqasm.semantic.NonGateInstruction, expanded_args: list[tuple[Any, ...]]
-    ) -> list[NonUnitary]:
-        return list(starmap(default_non_unitary_set[instruction.name], expanded_args))
+    def _get_non_unitary_generator(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
+        return lambda *args: default_non_unitary_set[instruction.name](*args)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
@@ -200,23 +193,26 @@ class Parser:
 
         # Parse statements
         for statement in ast.block.statements:
-            # For an SGMQ instruction:
-            # expanded_args will contain a list with the list of qubits for each individual instruction,
-            # while args will contain the list of qubits of an individual instruction
+            instruction_generator: Callable[..., Statement]
             if Parser._is_gate_instruction(statement):
+                instruction_generator = self._get_gate_generator(statement)
                 expanded_args = self._get_expanded_instruction_args(statement)
-                for gate in self._get_gates(statement, expanded_args):
-                    self.ir.add_statement(gate)
             elif Parser._is_non_unitary_instruction(statement):
+                instruction_generator = self._get_non_unitary_generator(statement)
                 expanded_args = (
                     self._get_expanded_measure_args(statement.operands)
                     if statement.name == "measure"
                     else self._get_expanded_instruction_args(statement)
                 )
-                for non_unitary in self._get_non_unitaries(statement, expanded_args):
-                    self.ir.add_statement(non_unitary)
             else:
                 msg = "parsing error: unknown statement"
                 raise OSError(msg)
+
+            # For an SGMQ instruction:
+            # expanded_args will contain a list with the list of qubits for each individual instruction,
+            # while args will contain the list of qubits of an individual instruction
+            for args in expanded_args:
+                blah = instruction_generator(*args)
+                self.ir.add_statement(blah)
 
         return Circuit(self.register_manager, self.ir)

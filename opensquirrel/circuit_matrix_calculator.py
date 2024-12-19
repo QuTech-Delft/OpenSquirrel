@@ -13,14 +13,11 @@ from opensquirrel.ir import (
     BlochSphereRotation,
     BsrWithAngleParam,
     BsrWithoutParams,
-    ControlGateModifier,
     ControlledGate,
     CRk,
     Gate,
-    InverseGateModifier,
     IRVisitor,
     MatrixGate,
-    PowerGateModifier,
 )
 from opensquirrel.utils import get_matrix
 
@@ -66,15 +63,6 @@ class _CircuitMatrixCalculator(IRVisitor):
 
     def visit_crk(self, gate: CRk) -> None:
         self.visit_gate(gate)
-
-    def visit_inverse_gate_modifier(self, modifier: InverseGateModifier) -> None:
-        self.visit_gate(modifier.gate)
-
-    def visit_power_gate_modifier(self, modifier: PowerGateModifier) -> None:
-        self.visit_gate(modifier.gate)
-
-    def visit_control_gate_modifier(self, modifier: ControlGateModifier) -> None:
-        self.visit_gate(modifier.gate)
 
 
 def get_circuit_matrix(circuit: Circuit) -> NDArray[np.complex128]:
