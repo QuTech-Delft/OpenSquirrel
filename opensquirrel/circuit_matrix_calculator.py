@@ -5,7 +5,23 @@ from typing import TYPE_CHECKING
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import Gate, IRVisitor
+from opensquirrel.ir import (
+    CNOT,
+    CR,
+    CZ,
+    SWAP,
+    BlochSphereRotation,
+    BsrWithAngleParam,
+    BsrWithoutParams,
+    ControlGateModifier,
+    ControlledGate,
+    CRk,
+    Gate,
+    InverseGateModifier,
+    IRVisitor,
+    MatrixGate,
+    PowerGateModifier,
+)
 from opensquirrel.utils import get_matrix
 
 if TYPE_CHECKING:
@@ -20,6 +36,45 @@ class _CircuitMatrixCalculator(IRVisitor):
     def visit_gate(self, gate: Gate) -> None:
         big_matrix = get_matrix(gate, qubit_register_size=self.qubit_register_size)
         self.matrix = big_matrix @ self.matrix
+
+    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
+        self.visit_gate(gate)
+
+    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> None:
+        self.visit_gate(gate)
+
+    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> None:
+        self.visit_gate(gate)
+
+    def visit_matrix_gate(self, gate: MatrixGate) -> None:
+        self.visit_gate(gate)
+
+    def visit_swap(self, gate: SWAP) -> None:
+        self.visit_gate(gate)
+
+    def visit_controlled_gate(self, gate: ControlledGate) -> None:
+        self.visit_gate(gate)
+
+    def visit_cnot(self, gate: CNOT) -> None:
+        self.visit_gate(gate)
+
+    def visit_cz(self, gate: CZ) -> None:
+        self.visit_gate(gate)
+
+    def visit_cr(self, gate: CR) -> None:
+        self.visit_gate(gate)
+
+    def visit_crk(self, gate: CRk) -> None:
+        self.visit_gate(gate)
+
+    def visit_inverse_gate_modifier(self, modifier: InverseGateModifier) -> None:
+        self.visit_gate(modifier.gate)
+
+    def visit_power_gate_modifier(self, modifier: PowerGateModifier) -> None:
+        self.visit_gate(modifier.gate)
+
+    def visit_control_gate_modifier(self, modifier: ControlGateModifier) -> None:
+        self.visit_gate(modifier.gate)
 
 
 def get_circuit_matrix(circuit: Circuit) -> NDArray[np.complex128]:

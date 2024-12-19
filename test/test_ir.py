@@ -16,6 +16,7 @@ from opensquirrel.ir import (
     ControlledGate,
     Expression,
     Float,
+    I,
     Int,
     MatrixGate,
     Measure,
@@ -209,10 +210,6 @@ class TestBlochSphereRotation:
     def gate_fixture(self) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau)
 
-    def test_identity(self) -> None:
-        expected_result = BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=0)
-        assert BlochSphereRotation.identity(42) == expected_result
-
     @pytest.mark.parametrize(
         "other_gate",
         [
@@ -245,7 +242,7 @@ class TestBlochSphereRotation:
         assert gate.get_qubit_operands() == [Qubit(42)]
 
     def test_is_identity(self, gate: BlochSphereRotation) -> None:
-        assert BlochSphereRotation.identity(42).is_identity()
+        assert I(42).is_identity()
         assert not gate.is_identity()
 
 
@@ -263,9 +260,8 @@ class TestMatrixGate:
     def test_array_like(self) -> None:
         gate = MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1])
         assert (
-            repr(gate) == "MatrixGate(qubits=[Qubit[0], Qubit[1]], "
-            "matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n "
-            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 1.+0.j]\n [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
+            repr(gate) == "MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] "
+            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
         )
 
     def test_incorrect_array(self) -> None:
@@ -275,9 +271,8 @@ class TestMatrixGate:
 
     def test_repr(self, gate: MatrixGate) -> None:
         assert (
-            repr(gate) == "MatrixGate(qubits=[Qubit[42], Qubit[100]], "
-            "matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n "
-            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 1.+0.j]\n [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
+            repr(gate) == "MatrixGate(qubits=[Qubit[42], Qubit[100]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] "
+            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
         )
 
     def test_get_qubit_operands(self, gate: MatrixGate) -> None:
@@ -288,7 +283,7 @@ class TestMatrixGate:
         assert not gate.is_identity()
 
     def test_matrix_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
+        with pytest.raises(ValueError, match="operands cannot be the same"):
             MatrixGate(np.eye(4, dtype=np.complex128), [0, 0])
 
 

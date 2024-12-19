@@ -101,9 +101,9 @@ qubit[2] q
 bit[2] b
 
 H q[0]
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)
-Anonymous gate: ControlledGate(control_qubit=Qubit[0], BlochSphereRotation(Qubit[1], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
-Anonymous gate: MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])
+BlochSphereRotation(qubit=Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)
+ControlledGate(control_qubit=Qubit[0], target_gate=BlochSphereRotation(qubit=Qubit[1], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
+MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])
 CR(1.234) q[0], q[1]
 """  # noqa: E501
     )

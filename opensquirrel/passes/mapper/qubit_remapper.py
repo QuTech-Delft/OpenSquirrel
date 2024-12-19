@@ -1,9 +1,16 @@
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
+    CNOT,
+    CR,
+    CZ,
     IR,
+    SWAP,
     Barrier,
     BlochSphereRotation,
+    BsrWithAngleParam,
+    BsrWithoutParams,
     ControlledGate,
+    CRk,
     Init,
     IRVisitor,
     MatrixGate,
@@ -58,19 +65,40 @@ class _QubitRemapper(IRVisitor):
         wait.qubit.accept(self)
         return wait
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
-        g.qubit.accept(self)
-        return g
+    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> BlochSphereRotation:
+        bloch_sphere_rotation.qubit.accept(self)
+        return bloch_sphere_rotation
 
-    def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
-        for op in g.operands:
+    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> BlochSphereRotation:
+        return self.visit_bloch_sphere_rotation(gate)
+
+    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> BlochSphereRotation:
+        return self.visit_bloch_sphere_rotation(gate)
+
+    def visit_matrix_gate(self, matrix_gate: MatrixGate) -> MatrixGate:
+        for op in matrix_gate.operands:
             op.accept(self)
-        return g
+        return matrix_gate
+
+    def visit_swap(self, gate: SWAP) -> MatrixGate:
+        return self.visit_matrix_gate(gate)
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
         controlled_gate.control_qubit.accept(self)
         controlled_gate.target_gate.accept(self)
         return controlled_gate
+
+    def visit_cnot(self, gate: CNOT) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
+
+    def visit_cz(self, gate: CZ) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
+
+    def visit_cr(self, gate: CR) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
+
+    def visit_crk(self, gate: CRk) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
 
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:

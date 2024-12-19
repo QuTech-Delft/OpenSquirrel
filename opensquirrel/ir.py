@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import inspect
+import math
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from functools import wraps
 from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 
 import numpy as np
@@ -15,10 +14,17 @@ from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase
 REPR_DECIMALS = 5
 
 
-def repr_round(
-    value: float | Axis | NDArray[np.complex64 | np.complex128], decimals: int = REPR_DECIMALS
-) -> float | NDArray[np.complex64 | np.complex128]:
-    return np.round(value, decimals)
+def repr_round(value: float | Axis | NDArray[np.complex128], decimals: int = REPR_DECIMALS) -> str:
+    """
+    Given a numerical value (of type `float`, `Axis`, or `NDArray[np.complex128]`):
+    - rounds it to `REPR_DECIMALS`,
+    - converts it to string, and
+    - removes the newlines.
+
+    Returns:
+        A single-line string representation of a numerical value.
+    """
+    return f"{np.round(value, decimals)}".replace("\n", "")
 
 
 class IRVisitor:
@@ -34,13 +40,52 @@ class IRVisitor:
     def visit_qubit(self, qubit: Qubit) -> Any:
         pass
 
+    def visit_axis(self, axis: Axis) -> Any:
+        pass
+
+    def visit_statement(self, statement: Statement) -> Any:
+        pass
+
+    def visit_instruction(self, instruction: Instruction) -> Any:
+        pass
+
+    def visit_unitary(self, unitary: Unitary) -> Any:
+        pass
+
     def visit_gate(self, gate: Gate) -> Any:
         pass
 
-    def visit_non_unitary(self, gate: NonUnitary) -> Any:
+    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
         pass
 
-    def visit_axis(self, axis: Axis) -> Any:
+    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> Any:
+        pass
+
+    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> Any:
+        pass
+
+    def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
+        pass
+
+    def visit_swap(self, gate: SWAP) -> Any:
+        pass
+
+    def visit_controlled_gate(self, gate: ControlledGate) -> Any:
+        pass
+
+    def visit_cnot(self, gate: CNOT) -> Any:
+        pass
+
+    def visit_cz(self, gate: CZ) -> Any:
+        pass
+
+    def visit_cr(self, gate: CR) -> Any:
+        pass
+
+    def visit_crk(self, gate: CRk) -> Any:
+        pass
+
+    def visit_non_unitary(self, gate: NonUnitary) -> Any:
         pass
 
     def visit_measure(self, measure: Measure) -> Any:
@@ -58,13 +103,13 @@ class IRVisitor:
     def visit_wait(self, wait: Wait) -> Any:
         pass
 
-    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
+    def visit_inverse_gate_modifier(self, modifier: InverseGateModifier) -> Any:
         pass
 
-    def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
+    def visit_power_gate_modifier(self, modifier: PowerGateModifier) -> Any:
         pass
 
-    def visit_controlled_gate(self, controlled_gate: ControlledGate) -> Any:
+    def visit_control_gate_modifier(self, modifier: ControlGateModifier) -> Any:
         pass
 
 
@@ -310,199 +355,44 @@ class Statement(IRNode, ABC):
 
 
 class Instruction(Statement, ABC):
-    def __init__(
-        self,
-        generator: Callable[..., Instruction] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-        *args: Any,
-        **kwargs: Any,
-    ) -> None:
-        self.generator = generator
-        self.arguments = arguments
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+    @property
+    @abstractmethod
+    def arguments(self) -> tuple[Expression, ...]:
+        pass
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
+        pass
+
+    @abstractmethod
+    def get_bit_operands(self) -> list[Bit]:
         pass
 
 
 class Unitary(Instruction, ABC):
-    def __init__(
-        self,
-        generator: Callable[..., Unitary] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-        *args: Any,
-        **kwargs: Any,
-    ) -> None:
-        Instruction.__init__(self, generator, arguments)
+    def __init__(self, name: str) -> None:
+        Instruction.__init__(self, name)
 
     @property
-    def name(self) -> str:
-        return self.generator.__name__ if self.generator else "Unknown unitary instruction: " + self.__repr__()
+    @abstractmethod
+    def arguments(self) -> tuple[Expression, ...]:
+        pass
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
         pass
 
-
-class NonUnitary(Instruction, ABC):
-    def __init__(
-        self,
-        generator: Callable[..., NonUnitary] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-        *args: Any,
-        **kwargs: Any,
-    ) -> None:
-        Instruction.__init__(self, generator, arguments)
-
-    @property
-    def name(self) -> str:
-        return self.generator.__name__ if self.generator else "Unknown non-unitary instruction: " + self.__repr__()
-
     @abstractmethod
-    def get_qubit_operands(self) -> list[Qubit]:
-        pass
-
-
-class Measure(NonUnitary):
-    def __init__(
-        self,
-        qubit: QubitLike,
-        bit: BitLike,
-        axis: AxisLike = (0, 0, 1),
-        generator: Callable[..., Measure] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-    ) -> None:
-        NonUnitary.__init__(self, generator, arguments)
-        self.qubit = Qubit(qubit)
-        self.bit = Bit(bit)
-        self.axis = Axis(axis)
-
-    def __repr__(self) -> str:
-        return f"Measure(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
-
-    def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, Measure) and self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
-        )
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_measure(self)
-
     def get_bit_operands(self) -> list[Bit]:
-        return [self.bit]
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
-
-
-class Init(NonUnitary):
-    def __init__(
-        self,
-        qubit: QubitLike,
-        generator: Callable[..., Init] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-    ) -> None:
-        NonUnitary.__init__(self, generator, arguments)
-        self.qubit = Qubit(qubit)
-
-    def __repr__(self) -> str:
-        return f"Init(qubit={self.qubit})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Init) and self.qubit == other.qubit
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_init(self)
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
-
-
-class Reset(NonUnitary):
-    def __init__(
-        self,
-        qubit: QubitLike,
-        generator: Callable[..., Reset] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-    ) -> None:
-        NonUnitary.__init__(self, generator, arguments)
-        self.qubit = Qubit(qubit)
-
-    def __repr__(self) -> str:
-        return f"Reset(qubit={self.qubit})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Reset) and self.qubit == other.qubit
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_reset(self)
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
-
-
-class Barrier(NonUnitary):
-    def __init__(
-        self,
-        qubit: QubitLike,
-        generator: Callable[..., Barrier] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-    ) -> None:
-        NonUnitary.__init__(self, generator, arguments)
-        self.qubit = Qubit(qubit)
-
-    def __repr__(self) -> str:
-        return f"Barrier(qubit={self.qubit})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Barrier) and self.qubit == other.qubit
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_barrier(self)
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
-
-
-class Wait(NonUnitary):
-    def __init__(
-        self,
-        qubit: QubitLike,
-        time: SupportsInt,
-        generator: Callable[..., Wait] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-    ) -> None:
-        NonUnitary.__init__(self, generator, arguments)
-        self.qubit = Qubit(qubit)
-        self.time = Int(time)
-
-    def __repr__(self) -> str:
-        return f"Wait(qubit={self.qubit}, time={self.time})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Wait) and self.qubit == other.qubit and self.time == other.time
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_wait(self)
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
+        pass
 
 
 class Gate(Unitary, ABC):
-    def __init__(
-        self,
-        generator: Callable[..., Gate] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-        *args: Any,
-        **kwargs: Any,
-    ) -> None:
-        Unitary.__init__(self, generator, arguments)
+    def __init__(self, name: str) -> None:
+        Unitary.__init__(self, name)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Gate):
@@ -510,14 +400,13 @@ class Gate(Unitary, ABC):
         return compare_gates(self, other)
 
     @property
-    def name(self) -> str:
-        if self.generator:
-            return self.generator.__name__
-        return "Anonymous gate: " + self.__repr__()
+    @abstractmethod
+    def arguments(self) -> tuple[Expression, ...]:
+        pass
 
     @property
     def is_anonymous(self) -> bool:
-        return self.arguments is None
+        return type(self) in [BlochSphereRotation, BsrWithoutParams, BsrWithAngleParam, MatrixGate, ControlledGate]
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:
@@ -525,6 +414,10 @@ class Gate(Unitary, ABC):
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
+        pass
+
+    @abstractmethod
+    def get_bit_operands(self) -> list[Bit]:
         pass
 
     @abstractmethod
@@ -539,23 +432,18 @@ class BlochSphereRotation(Gate):
         axis: AxisLike,
         angle: SupportsFloat,
         phase: SupportsFloat = 0,
-        generator: Callable[..., BlochSphereRotation] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
+        name: str = "BlochSphereRotation",
     ) -> None:
-        Gate.__init__(self, generator, arguments)
+        Gate.__init__(self, name)
         self.qubit = Qubit(qubit)
         self.axis = Axis(axis)
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
 
-    @staticmethod
-    def identity(q: QubitLike) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
-
     def __repr__(self) -> str:
         return (
-            f"BlochSphereRotation({self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)},"
-            f" phase={repr_round(self.phase)})"
+            f"{self.name}(qubit={self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)}, "
+            f"phase={repr_round(self.phase)})"
         )
 
     def __eq__(self, other: object) -> bool:
@@ -574,72 +462,220 @@ class BlochSphereRotation(Gate):
             return abs(self.angle + other.angle) < ATOL
         return False
 
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return ()
+
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_gate(self)
         return visitor.visit_bloch_sphere_rotation(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
+
+    def get_bit_operands(self) -> list[Bit]:
+        return []
 
     def is_identity(self) -> bool:
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
 
 
-class MatrixGate(Gate):
+class BsrWithoutParams(BlochSphereRotation):
     def __init__(
         self,
-        matrix: ArrayLike | list[list[int | DTypeLike]],
-        operands: Iterable[QubitLike],
-        generator: Callable[..., MatrixGate] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
+        qubit: QubitLike,
+        axis: AxisLike,
+        angle: SupportsFloat,
+        phase: SupportsFloat = 0,
+        name: str = "BsrWithoutParams",
     ) -> None:
-        Gate.__init__(self, generator, arguments)
+        BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
 
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return (self.qubit,)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_bsr_without_params(self)
+
+
+class I(BsrWithoutParams):  # noqa: E742
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=0, phase=0, name="I")
+
+
+class H(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2, name="H")
+
+
+class X(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2, name="X")
+
+
+class X90(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi / 2, phase=0, name="X90")
+
+
+class MinusX90(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0, name="mX90")
+
+
+class Y(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2, name="Y")
+
+
+class Y90(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi / 2, phase=0, name="Y90")
+
+
+class MinusY90(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=-math.pi / 2, phase=0, name="mY90")
+
+
+class Z(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2, name="Z")
+
+
+class S(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 2, phase=0, name="S")
+
+
+class SDagger(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 2, phase=0, name="Sdag")
+
+
+class T(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 4, phase=0, name="T")
+
+
+class TDagger(BsrWithoutParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=0, name="Tdag")
+
+
+class BsrWithAngleParam(BlochSphereRotation):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        axis: AxisLike,
+        angle: SupportsFloat,
+        phase: SupportsFloat = 0,
+        name: str = "BsrWithoutParams",
+    ) -> None:
+        BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
+        self.theta = Float(angle)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.qubit, self.theta
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_bsr_with_angle_params(self)
+
+
+class Rx(BsrWithAngleParam):
+    def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
+        BsrWithAngleParam.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=theta, phase=0, name="Rx")
+
+
+class Ry(BsrWithAngleParam):
+    def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
+        BsrWithAngleParam.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=theta, phase=0, name="Ry")
+
+
+class Rz(BsrWithAngleParam):
+    def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
+        BsrWithAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=0, name="Rz")
+
+
+class MatrixGate(Gate):
+    def __init__(
+        self, matrix: ArrayLike | list[list[int | DTypeLike]], operands: Iterable[QubitLike], name: str = "MatrixGate"
+    ) -> None:
+        Gate.__init__(self, name)
         qubit_operands = [Qubit(operand) for operand in operands]
         if len(qubit_operands) < 2:
             msg = "for 1q gates, please use BlochSphereRotation"
             raise ValueError(msg)
 
         if self._check_repeated_qubit_operands(qubit_operands):
-            msg = "control and target qubit cannot be the same"
+            msg = "operands cannot be the same"
             raise ValueError(msg)
 
         matrix = np.asarray(matrix, dtype=np.complex128)
 
-        if matrix.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
+        expected_number_of_rows = 1 << len(qubit_operands)
+        expected_number_of_cols = expected_number_of_rows
+        if matrix.shape != (expected_number_of_rows, expected_number_of_cols):
             msg = (
                 f"incorrect matrix shape. "
-                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))} but received {matrix.shape}"
+                f"Expected {(expected_number_of_rows, expected_number_of_cols)} but received {matrix.shape}"
             )
             raise ValueError(msg)
 
         self.matrix = matrix
         self.operands = qubit_operands
 
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return ()
+
     def __repr__(self) -> str:
-        return f"MatrixGate(qubits={self.operands}, matrix={repr_round(self.matrix)})"
+        return f"{self.name}(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return self.operands
 
+    def get_bit_operands(self) -> list[Bit]:
+        return []
+
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(2 ** len(self.operands)), atol=ATOL)
 
 
+class SWAP(MatrixGate):
+    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike) -> None:
+        MatrixGate.__init__(
+            self,
+            matrix=np.array(
+                [
+                    [1, 0, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 1, 0, 0],
+                    [0, 0, 0, 1],
+                ],
+            ),
+            operands=[qubit_0, qubit_1],
+            name="SWAP",
+        )
+        self.qubit_0 = Qubit(qubit_0)
+        self.qubit_1 = Qubit(qubit_1)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.qubit_0, self.qubit_1
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_swap(self)
+
+
 class ControlledGate(Gate):
-    def __init__(
-        self,
-        control_qubit: QubitLike,
-        target_gate: Gate,
-        generator: Callable[..., ControlledGate] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-    ) -> None:
-        Gate.__init__(self, generator, arguments)
+    def __init__(self, control_qubit: QubitLike, target_gate: Gate, name: str = "ControlledGate") -> None:
+        Gate.__init__(self, name)
         self.control_qubit = Qubit(control_qubit)
         self.target_gate = target_gate
 
@@ -648,89 +684,273 @@ class ControlledGate(Gate):
             raise ValueError(msg)
 
     def __repr__(self) -> str:
-        return f"ControlledGate(control_qubit={self.control_qubit}, {self.target_gate})"
+        return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate})"
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return ()
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.control_qubit, *self.target_gate.get_qubit_operands()]
+
+    def get_bit_operands(self) -> list[Bit]:
+        return []
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
 
 
-def instruction_decorator(instruction_generator: Callable[..., Instruction]) -> Callable[..., Instruction]:
-    @wraps(instruction_generator)
-    def wrapper(*args: Any, **kwargs: Any) -> Instruction:
-        result = instruction_generator(*args, **kwargs)
-        result.generator = wrapper
+class CNOT(ControlledGate):
+    def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike) -> None:
+        ControlledGate.__init__(self, control_qubit=control_qubit, target_gate=X(target_qubit), name="CNOT")
+        self.control_qubit = Qubit(control_qubit)
+        self.target_qubit = Qubit(target_qubit)
 
-        all_args: list[Expression] = []
-        for par in inspect.signature(instruction_generator).parameters.values():
-            next_arg = kwargs[par.name] if par.name in kwargs else args[len(all_args)]
-            next_annotation = (
-                ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
-            )
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.control_qubit, self.target_qubit
 
-            # Convert to correct expression for IR
-            if is_int_annotation(next_annotation):
-                next_arg = Int(next_arg)
-            elif is_float_annotation(next_annotation):
-                next_arg = Float(next_arg)
-            if is_bit_like_annotation(next_annotation):
-                next_arg = Bit(next_arg)
-            if is_qubit_like_annotation(next_annotation):
-                next_arg = Qubit(next_arg)
-
-            # Append parsed argument
-            all_args.append(next_arg)
-
-        result.arguments = tuple(all_args)
-        return result
-
-    return wrapper
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_cnot(self)
 
 
-@overload
-def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[..., BlochSphereRotation]: ...
+class CZ(ControlledGate):
+    def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike) -> None:
+        ControlledGate.__init__(self, control_qubit=control_qubit, target_gate=Z(target_qubit), name="CZ")
+        self.control_qubit = Qubit(control_qubit)
+        self.target_qubit = Qubit(target_qubit)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.control_qubit, self.target_qubit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_cz(self)
 
 
-@overload
-def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
+class CR(ControlledGate):
+    def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, theta: SupportsFloat) -> None:
+        ControlledGate.__init__(
+            self,
+            control_qubit=control_qubit,
+            target_gate=BlochSphereRotation(qubit=target_qubit, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2),
+            name="CR",
+        )
+        self.control_qubit = Qubit(control_qubit)
+        self.target_qubit = Qubit(target_qubit)
+        self.theta = Float(theta)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.control_qubit, self.target_qubit, self.theta
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_cr(self)
 
 
-@overload
-def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...
+class CRk(ControlledGate):
+    def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, k: SupportsInt) -> None:
+        theta = 2 * math.pi / (2 ** int(k))
+        ControlledGate.__init__(
+            self,
+            control_qubit=control_qubit,
+            target_gate=BlochSphereRotation(qubit=target_qubit, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2),
+            name="CRk",
+        )
+        self.control_qubit = Qubit(control_qubit)
+        self.target_qubit = Qubit(target_qubit)
+        self.k = Int(k)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.control_qubit, self.target_qubit, self.k
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_crk(self)
 
 
-def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    return cast(Callable[..., Gate], instruction_decorator(gate_generator))
+class NonUnitary(Instruction, ABC):
+    def __init__(self, qubit: QubitLike, name: str) -> None:
+        Instruction.__init__(self, name)
+        self.qubit = qubit
+
+    @property
+    @abstractmethod
+    def arguments(self) -> tuple[Expression, ...]:
+        pass
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+    def get_bit_operands(self) -> list[Bit]:
+        return []
 
 
-@overload
-def non_unitary(non_unitary_generator: Callable[..., Measure]) -> Callable[..., Measure]: ...
+class Measure(NonUnitary):
+    def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
+        NonUnitary.__init__(self, qubit=qubit, name="Measure")
+        self.qubit = Qubit(qubit)
+        self.bit = Bit(bit)
+        self.axis = Axis(axis)
+
+    def __repr__(self) -> str:
+        return f"{self.name}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, Measure) and self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        )
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.qubit, self.bit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_measure(self)
+
+    def get_bit_operands(self) -> list[Bit]:
+        return [self.bit]
 
 
-@overload
-def non_unitary(non_unitary_generator: Callable[..., Init]) -> Callable[..., Init]: ...
+class Init(NonUnitary):
+    def __init__(self, qubit: QubitLike) -> None:
+        NonUnitary.__init__(self, qubit=qubit, name="Init")
+        self.qubit = Qubit(qubit)
+
+    def __repr__(self) -> str:
+        return f"{self.name}(qubit={self.qubit})"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Init) and self.qubit == other.qubit
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return (self.qubit,)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_init(self)
 
 
-@overload
-def non_unitary(non_unitary_generator: Callable[..., Reset]) -> Callable[..., Reset]: ...
+class Reset(NonUnitary):
+    def __init__(self, qubit: QubitLike) -> None:
+        NonUnitary.__init__(self, qubit=qubit, name="Reset")
+        self.qubit = Qubit(qubit)
+
+    def __repr__(self) -> str:
+        return f"{self.name}(qubit={self.qubit})"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Reset) and self.qubit == other.qubit
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return (self.qubit,)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_reset(self)
 
 
-@overload
-def non_unitary(non_unitary_generator: Callable[..., Barrier]) -> Callable[..., Barrier]: ...
+class Barrier(NonUnitary):
+    def __init__(self, qubit: QubitLike) -> None:
+        NonUnitary.__init__(self, qubit=qubit, name="Barrier")
+        self.qubit = Qubit(qubit)
+
+    def __repr__(self) -> str:
+        return f"{self.name}(qubit={self.qubit})"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Barrier) and self.qubit == other.qubit
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return (self.qubit,)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_barrier(self)
 
 
-@overload
-def non_unitary(non_unitary_generator: Callable[..., Wait]) -> Callable[..., Wait]: ...
+class Wait(NonUnitary):
+    def __init__(self, qubit: QubitLike, time: SupportsInt) -> None:
+        NonUnitary.__init__(self, qubit=qubit, name="Wait")
+        self.qubit = Qubit(qubit)
+        self.time = Int(time)
+
+    def __repr__(self) -> str:
+        return f"{self.name}(qubit={self.qubit}, time={self.time})"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Wait) and self.qubit == other.qubit and self.time == other.time
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.qubit, self.time
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_non_unitary(self)
+        return visitor.visit_wait(self)
 
 
-def non_unitary(non_unitary_generator: Callable[..., NonUnitary]) -> Callable[..., NonUnitary]:
-    return cast(Callable[..., NonUnitary], instruction_decorator(non_unitary_generator))
+class GateModifier(Gate, ABC):
+    def __init__(self, gate: Gate, name: str) -> None:
+        Gate.__init__(self, name)
+        self.gate = gate
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.gate.arguments
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return self.gate.get_qubit_operands()
+
+    def get_bit_operands(self) -> list[Bit]:
+        return self.gate.get_bit_operands()
+
+    def is_identity(self) -> bool:
+        return self.gate.is_identity()
+
+    @abstractmethod
+    def accept(self, visitor: IRVisitor) -> Any:
+        pass
+
+
+class InverseGateModifier(GateModifier):
+    def __init__(self, gate: BlochSphereRotation) -> None:
+        modified_angle = gate.angle * -1
+        modified_phase = gate.phase * -1
+        gate = BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
+        GateModifier.__init__(self, gate=gate, name="inv")
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_inverse_gate_modifier(self)
+
+
+class PowerGateModifier(GateModifier):
+    def __init__(self, exponent: SupportsFloat, gate: BlochSphereRotation) -> None:
+        self.exponent = exponent
+        modified_angle = gate.angle * float(self.exponent)
+        modified_phase = gate.phase * float(self.exponent)
+        gate = BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
+        GateModifier.__init__(self, gate=gate, name="pow")
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_power_gate_modifier(self)
+
+
+class ControlGateModifier(GateModifier):
+    def __init__(self, control_qubit: QubitLike, gate: BlochSphereRotation) -> None:
+        self.control_qubit = control_qubit
+        gate = ControlledGate(self.control_qubit, gate)
+        GateModifier.__init__(self, gate=gate, name="control")
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_control_gate_modifier(self)
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
@@ -776,72 +996,3 @@ class IR:
 AxisLike = Union[ArrayLike, Axis]
 BitLike = Union[SupportsInt, Bit]
 QubitLike = Union[SupportsInt, Qubit]
-
-
-def is_bit_like_annotation(annotation: Any) -> bool:
-    """Check if the provided annotation should be cast to BitLike.
-
-    Args:
-        annotation: annotation to check.
-
-    Returns:
-        Boolean value stating whether the annotation is something that should be cast to Bit.
-    """
-    return annotation in (BitLike, Bit)
-
-
-def is_qubit_like_annotation(annotation: Any) -> bool:
-    """Check if the provided annotation should be cast to QubitLike.
-
-    Args:
-        annotation: annotation to check.
-
-    Returns:
-        Boolean value stating whether the annotation is something that should be cast to Qubit.
-    """
-    return annotation in (QubitLike, Qubit)
-
-
-def is_int_annotation(annotation: Any) -> bool:
-    """Check if the provided annotation should be cast to Int.
-
-    Args:
-        annotation: annotation to check.
-
-    Returns:
-        Boolean value stating whether the annotation is something that should be cast to int.
-    """
-    return annotation in (SupportsInt, Int)
-
-
-def is_float_annotation(annotation: Any) -> bool:
-    """Check if the provided annotation should be cast to Float.
-
-    Args:
-        annotation: annotation to check.
-
-    Returns:
-        Boolean value stating whether the annotation is something that should be cast to float.
-    """
-    return annotation in (SupportsFloat, Float)
-
-
-ANNOTATIONS_TO_TYPE_MAP = {
-    "AxisLike": AxisLike,
-    "Barrier": Barrier,
-    "Bit": Bit,
-    "BitLike": BitLike,
-    "BlochSphereRotation": BlochSphereRotation,
-    "ControlledGate": ControlledGate,
-    "Float": Float,
-    "Init": Init,
-    "Int": Int,
-    "MatrixGate": MatrixGate,
-    "Measure": Measure,
-    "Qubit": Qubit,
-    "QubitLike": QubitLike,
-    "Reset": Reset,
-    "SupportsFloat": SupportsFloat,
-    "SupportsInt": SupportsInt,
-    "Wait": Wait,
-}

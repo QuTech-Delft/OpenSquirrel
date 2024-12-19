@@ -7,7 +7,7 @@ from typing import cast
 import numpy as np
 
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
+from opensquirrel.default_instructions import I, default_bloch_sphere_rotation_without_params_set
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
 from opensquirrel.utils import flatten_list
 
@@ -30,7 +30,7 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
     combined_angle = 2 * acos(acos_argument)
 
     if abs(sin(combined_angle / 2)) < ATOL:
-        return BlochSphereRotation.identity(a.qubit)
+        return I(a.qubit)
 
     order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
@@ -48,16 +48,13 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
 
     combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
 
-    generator = b.generator if a.is_identity() else a.generator if b.is_identity() else None
-    arguments = b.arguments if a.is_identity() else a.arguments if b.is_identity() else None
-
-    return BlochSphereRotation(
-        qubit=a.qubit,
-        axis=combined_axis,
-        angle=combined_angle,
-        phase=combined_phase,
-        generator=generator,  # type: ignore[arg-type]
-        arguments=arguments,
+    return try_name_anonymous_bloch(
+        BlochSphereRotation(
+            qubit=a.qubit,
+            axis=combined_axis,
+            angle=combined_angle,
+            phase=combined_phase,
+        )
     )
 
 

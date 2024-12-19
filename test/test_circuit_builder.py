@@ -71,7 +71,7 @@ class TestCircuitBuilder:
     def test_wrong_number_of_arguments(self) -> None:
         builder = CircuitBuilder(3)
 
-        with pytest.raises(TypeError, match=".* takes 1 positional argument but 2 were given"):
+        with pytest.raises(TypeError, match=".* with the wrong number or type of arguments: .*"):
             builder.H(0, 1)
 
     def test_decoupling_circuit_and_builder(self) -> None:

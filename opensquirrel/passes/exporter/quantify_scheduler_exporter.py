@@ -3,11 +3,24 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel import X, Z
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, IRVisitor, MatrixGate, Measure, Reset
+from opensquirrel.ir import (
+    CNOT,
+    CR,
+    CZ,
+    SWAP,
+    BlochSphereRotation,
+    BsrWithAngleParam,
+    BsrWithoutParams,
+    ControlledGate,
+    CRk,
+    IRVisitor,
+    MatrixGate,
+    Measure,
+    Reset,
+)
 
 try:
     import quantify_scheduler
@@ -57,31 +70,44 @@ class _ScheduleCreator(IRVisitor):
 
         raise UnsupportedGateError(g)
 
+    def visit_bsr_without_params(self, g: BsrWithoutParams) -> None:
+        self.visit_bloch_sphere_rotation(g)
+
+    def visit_bsr_with_angle_params(self, g: BsrWithAngleParam) -> None:
+        self.visit_bloch_sphere_rotation(g)
+
     def visit_matrix_gate(self, g: MatrixGate) -> None:
+        raise UnsupportedGateError(g)
+
+    def visit_swap(self, g: SWAP) -> None:
         raise UnsupportedGateError(g)
 
     def visit_controlled_gate(self, g: ControlledGate) -> None:
         if not isinstance(g.target_gate, BlochSphereRotation):
             raise UnsupportedGateError(g)
 
-        if g.target_gate == X(g.target_gate.qubit):
-            self.schedule.add(
-                quantify_scheduler_gates.CNOT(
-                    qC=self._get_qubit_string(g.control_qubit),
-                    qT=self._get_qubit_string(g.target_gate.qubit),
-                ),
-            )
-            return
+    def visit_cnot(self, g: CNOT) -> None:
+        self.schedule.add(
+            quantify_scheduler_gates.CNOT(
+                qC=self._get_qubit_string(g.control_qubit),
+                qT=self._get_qubit_string(g.target_qubit),
+            ),
+        )
+        return
 
-        if g.target_gate == Z(g.target_gate.qubit):
-            self.schedule.add(
-                quantify_scheduler_gates.CZ(
-                    qC=self._get_qubit_string(g.control_qubit),
-                    qT=self._get_qubit_string(g.target_gate.qubit),
-                ),
-            )
-            return
+    def visit_cz(self, g: CZ) -> None:
+        self.schedule.add(
+            quantify_scheduler_gates.CZ(
+                qC=self._get_qubit_string(g.control_qubit),
+                qT=self._get_qubit_string(g.target_qubit),
+            ),
+        )
+        return
 
+    def visit_cr(self, g: CR) -> None:
+        raise UnsupportedGateError(g)
+
+    def visit_crk(self, g: CRk) -> None:
         raise UnsupportedGateError(g)
 
     def visit_measure(self, g: Measure) -> None:
