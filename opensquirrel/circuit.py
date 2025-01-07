@@ -86,7 +86,7 @@ class Circuit:
     @property
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
-    
+
     def route(self, router: Router) -> None:
         """Generic router pass"""
         router.route()
