@@ -238,46 +238,46 @@ def test_anonymous_gates(gate: Gate) -> None:
         qc.export(fmt=ExportFormat.CQASM_V1)
 
 
-# @pytest.mark.parametrize(
-#     ("program", "expected_output"),
-#     [
-#         (
-#             "version 3.0; qubit[1] q; barrier q[0]",
-#             "version 1.0\n\nqubits 1\n\nbarrier q[0]\n",
-#         ),
-#         (
-#             "version 3.0; qubit[3] q; barrier q[0:2]",
-#             "version 1.0\n\nqubits 3\n\nbarrier q[0, 1, 2]\n",
-#         ),
-#         (
-#             "version 3.0; qubit[1] q; barrier q[0, 0]",
-#             "version 1.0\n\nqubits 1\n\nbarrier q[0, 0]\n",
-#         ),
-#         (
-#             "version 3.0; qubit[6] q; barrier q[0:2, 5, 3, 4, 1]",
-#             "version 1.0\n\nqubits 6\n\nbarrier q[0, 1, 2, 5, 3, 4, 1]\n",
-#         ),
-#         (
-#             "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];"
-#             "barrier q[0]",
-#             "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]\n"
-#             "barrier q[0]\n",
-#         ),
-#         (
-#             "version 3.0; qubit[3] q; barrier q[0]; barrier q[1]; X q[2]; barrier q[1]",
-#             "version 1.0\n\nqubits 3\n\nbarrier q[0, 1]\nx q[2]\nbarrier q[1]\n",
-#         ),
-#     ],
-#     ids=[
-#         "no_link",
-#         "single_link",
-#         "repeated_index",
-#         "preserve_order",
-#         "with_instructions",
-#         "link_consecutive_barriers",
-#     ],
-# )
-# def test_barrier_links(program: str, expected_output: str) -> None:
-#     qc = Circuit.from_string(program)
-#     output = qc.export(fmt=ExportFormat.CQASM_V1)
-#     assert output == expected_output
+@pytest.mark.parametrize(
+    ("program", "expected_output"),
+    [
+        (
+            "version 3.0; qubit[1] q; barrier q[0];",
+            "version 1.0\n\nqubits 1\n\nbarrier q[0]\n",
+        ),
+        (
+            "version 3.0; qubit[3] q; barrier q[0:2]",
+            "version 1.0\n\nqubits 3\n\nbarrier q[0, 1, 2]\n",
+        ),
+        (
+            "version 3.0; qubit[1] q; barrier q[0, 0]",
+            "version 1.0\n\nqubits 1\n\nbarrier q[0, 0]\n",
+        ),
+        (
+            "version 3.0; qubit[6] q; barrier q[0:2, 5, 3, 4, 1]",
+            "version 1.0\n\nqubits 6\n\nbarrier q[0, 1, 2, 5, 3, 4, 1]\n",
+        ),
+        (
+            "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];"
+            "barrier q[0]; barrier q[2]",
+            "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]\n"
+            "barrier q[0, 2]\n",
+        ),
+        (
+            "version 3.0; qubit[3] q; barrier q[0]; barrier q[1]; X q[2]; barrier q[1]; X q[2]",
+            "version 1.0\n\nqubits 3\n\nbarrier q[0, 1]\nx q[2]\nbarrier q[1]\nx q[2]\n",
+        ),
+    ],
+    ids=[
+        "no_group",
+        "single_group",
+        "repeated_index",
+        "preserve_order",
+        "with_instructions",
+        "group_consecutive_barriers",
+    ],
+)
+def test_barrier_groups(program: str, expected_output: str) -> None:
+    qc = Circuit.from_string(program)
+    output = qc.export(fmt=ExportFormat.CQASM_V1)
+    assert output == expected_output

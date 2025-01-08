@@ -63,10 +63,38 @@ class _CQASMv1Creator(IRVisitor):
         self.output += "{} {}{}\n".format(gate_name, ", ".join(qubit_args), ", " + ", ".join(params) if params else "")
 
 
+def post_process(output: str) -> str:
+    post_output = _merge_barrier_groups(output)
+    return post_output.rstrip() + "\n"
+
+
+def _merge_barrier_groups(output: str) -> str:
+    post_output: str = ""
+    barrier_group_indices: list[int] = []
+    for line in output.split("\n"):
+        if not line.startswith("barrier"):
+            if barrier_group_indices:
+                post_output += _dump_barrier_group(barrier_group_indices)
+                barrier_group_indices = []
+            post_output += f"{line}\n"
+        else:
+            barrier_group_indices.append(_get_barrier_index(line))
+    return post_output
+
+
+def _dump_barrier_group(indices: list[int]) -> str:
+    return "barrier q[{}]\n".format(", ".join(map(str, indices)) if len(indices) != 0 else "")
+
+
+def _get_barrier_index(line: str) -> int:
+    return int("".join(s for s in line if s.isdigit()))
+
+
 def export(circuit: Circuit) -> str:
     cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
 
     circuit.ir.accept(cqasmv1_creator)
 
     # Remove all trailing lines and leave only one
-    return cqasmv1_creator.output.rstrip() + "\n"
+    output = cqasmv1_creator.output.rstrip() + "\n"
+    return post_process(output)
