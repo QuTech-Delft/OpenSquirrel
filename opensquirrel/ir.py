@@ -522,7 +522,7 @@ class Gate(Unitary, ABC):
 
     @property
     def is_anonymous(self) -> bool:
-        return self.arguments is None
+        return self.generator is None
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:
@@ -552,10 +552,6 @@ class BlochSphereRotation(Gate):
         self.axis = Axis(axis)
         self.angle = normalize_angle(angle)
         self.phase = normalize_angle(phase)
-
-    @staticmethod
-    def identity(q: QubitLike) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=0, phase=0)
 
     def __repr__(self) -> str:
         return (

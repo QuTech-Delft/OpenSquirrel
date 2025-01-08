@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
     Axis,
@@ -267,10 +268,6 @@ class TestBlochSphereRotation:
     def gate_fixture(self) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau)
 
-    def test_identity(self) -> None:
-        expected_result = BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=0)
-        assert BlochSphereRotation.identity(42) == expected_result
-
     @pytest.mark.parametrize(
         "other_gate",
         [
@@ -303,7 +300,7 @@ class TestBlochSphereRotation:
         assert gate.get_qubit_operands() == [Qubit(42)]
 
     def test_is_identity(self, gate: BlochSphereRotation) -> None:
-        assert BlochSphereRotation.identity(42).is_identity()
+        assert I(42).is_identity()
         assert not gate.is_identity()
 
 
