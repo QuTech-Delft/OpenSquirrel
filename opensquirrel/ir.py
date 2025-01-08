@@ -214,28 +214,8 @@ class Axis(Sequence[np.float64], Expression):
         axis: An ``AxisLike`` to create the axis from.
         """
         axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
-        if not self.has_valid_value(axis_to_parse):
-            raise ValueError
-        self._value = self._parse_and_validate_axislike(axis_to_parse)
-
-    @staticmethod
-    def has_valid_value(*axis: AxisLike) -> bool:
-        """Check if the axis has a valid value.
-
-        Args:
-            axis: An ``AxisLike`` to validate.
-
-        Returns:
-            True if the axis is valid, False otherwise.
-        """
-        try:
-            axis_to_check = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
-            axis_array = np.asarray(axis_to_check, dtype=float).flatten()
-            if len(axis_array) != 3:
-                return False
-            return not np.all(axis_array == 0)
-        except (ValueError, TypeError):
-            return False
+        self._value = self.parse(axis_to_parse)
+        self._value = self.normalize(self._value)
 
     @property
     def value(self) -> NDArray[np.float64]:
@@ -249,10 +229,11 @@ class Axis(Sequence[np.float64], Expression):
         Args:
             axis: An ``AxisLike`` to create the axis from.
         """
-        self._value = self._parse_and_validate_axislike(axis)
+        self._value = self.parse(axis)
+        self._value = self.normalize(self._value)
 
     @classmethod
-    def _parse_and_validate_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
+    def parse(cls, axis: AxisLike) -> NDArray[np.float64]:
         """Parse and validate an ``AxisLike``.
 
         Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
@@ -276,10 +257,13 @@ class Axis(Sequence[np.float64], Expression):
         if len(axis) != 3:
             msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
             raise ValueError(msg)
-        return cls._normalize_axis(axis)
+        if np.any(axis != 0).item():
+            return axis
+        msg = "axis requires at least one element to be non-zero"
+        raise ValueError(msg)
 
     @staticmethod
-    def _normalize_axis(axis: NDArray[np.float64]) -> NDArray[np.float64]:
+    def normalize(axis: NDArray[np.float64]) -> NDArray[np.float64]:
         """Normalize a NDArray.
 
         Args:

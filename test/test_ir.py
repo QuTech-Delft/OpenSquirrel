@@ -6,7 +6,7 @@ from typing import Any, SupportsInt
 
 import numpy as np
 import pytest
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
@@ -44,7 +44,7 @@ class TestAxis:
             (Axis(0, 1, 0), [0, 1, 0]),
         ],
     )
-    def test_axis_setter_no_error(self, axis: Axis, new_axis: ArrayLike, expected_axis: ArrayLike) -> None:
+    def test_axis_setter_no_error(self, axis: Axis, new_axis: AxisLike, expected_axis: list[float]) -> None:
         axis.value = new_axis  # type: ignore[assignment]
         np.testing.assert_array_equal(axis, expected_axis)
 
@@ -96,27 +96,59 @@ class TestAxis:
     @pytest.mark.parametrize(
         ("axis", "expected"),
         [
-            ([1, 0, 0], True),
-            ([0, 0, 0], False),
-            ([1, 2], False),
-            ([1, 2, 3, 4], False),
-            ([0, 1, 0], True),
-        ],
-    )
-    def test_has_valid_value(self, axis: AxisLike, expected: bool) -> None:
-        assert Axis.has_valid_value(axis) == expected
-
-    @pytest.mark.parametrize(
-        ("axis", "expected_error"),
-        [
+            ([1, 0, 0], np.array([1, 0, 0], dtype=np.float64)),
             ([0, 0, 0], ValueError),
             ([1, 2], ValueError),
             ([1, 2, 3, 4], ValueError),
+            ([0, 1, 0], np.array([0, 1, 0], dtype=np.float64)),
+            (["a", "b", "c"], TypeError),
         ],
     )
-    def test_init_with_invalid_value(self, axis: AxisLike, expected_error: type[Exception]) -> None:
-        with pytest.raises(expected_error):
-            Axis(axis)
+    def test_constructor(self, axis: AxisLike, expected: Any) -> None:
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                Axis(axis)
+        else:
+            assert isinstance(expected, np.ndarray)
+            obj = Axis(axis)
+            np.testing.assert_array_equal(obj.value, expected)
+
+    @pytest.mark.parametrize(
+        ("axis", "expected"),
+        [
+            ([1, 0, 0], np.array([1, 0, 0], dtype=np.float64)),
+            ([0, 0, 0], ValueError),
+            ([1, 2], ValueError),
+            ([1, 2, 3, 4], ValueError),
+            ([0, 1, 0], np.array([0, 1, 0], dtype=np.float64)),
+            (["a", "b", "c"], TypeError),
+        ],
+    )
+    def test_parser(self, axis: AxisLike, expected: Any) -> None:
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                Axis.parse(axis)
+        else:
+            assert isinstance(expected, np.ndarray)
+            obj = Axis.parse(axis)
+            np.testing.assert_array_equal(obj, expected)
+
+    @pytest.mark.parametrize(
+        ("axis", "expected"),
+        [
+            (np.array([1, 0, 0], dtype=np.float64), np.array([1, 0, 0], dtype=np.float64)),
+            (np.array([0, 1, 0], dtype=np.float64), np.array([0, 1, 0], dtype=np.float64)),
+            (np.array([0, 0, 1], dtype=np.float64), np.array([0, 0, 1], dtype=np.float64)),
+            (
+                np.array([1, 1, 1], dtype=np.float64),
+                np.array([1 / np.sqrt(3), 1 / np.sqrt(3), 1 / np.sqrt(3)], dtype=np.float64),
+            ),
+        ],
+    )
+    def test_normalize(self, axis: AxisLike, expected: NDArray[np.float64]) -> None:
+        obj = Axis.normalize(np.array(axis, dtype=np.float64))
+        assert isinstance(expected, np.ndarray)
+        np.testing.assert_array_almost_equal(obj, expected)
 
 
 class TestIR:
