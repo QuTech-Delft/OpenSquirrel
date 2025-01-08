@@ -171,7 +171,6 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
     ],
 )
 def test_single_qubit_clifford_gates(decomposer: McKayDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
-    # The gate decompositions that fail have been commented out. They are: I, C1, and C8.
     decomposed_gates = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gates)
     assert decomposed_gates == expected_result
