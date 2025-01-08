@@ -21,5 +21,5 @@ def test_routing_checker_possible_121_mapping(router: RoutingChecker) -> None:
 
 def test_routing_checker_impossible_121_mapping(router: RoutingChecker) -> None:
     interactions = [(0, 1), (0, 3), (1, 2), (1, 3), (2, 3), (3, 4), (0, 4)]
-    with pytest.raises(ValueError, match="The algorithm can not be mapped to the hardware"):
+    with pytest.raises(ValueError, match="The qubit interactions: .* prevent a 121 mapping"):
         router.route(interactions)
