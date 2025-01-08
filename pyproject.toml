@@ -30,16 +30,16 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.9"
 numpy = [
-    { version = "1.24", python = "<3.9" },
-    { version = ">=1.26", python = "^3.9" },
+    { version = "^1.26", python = "<3.10" },
+    { version = "^2.0", python = "^3.10" },
 ]
-libqasm = "0.6.7"
+libqasm = "0.6.9"
 networkx = "^3.0.0"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.3.2"}
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
-pytest-cov = ">=4.1,<6.0"
+pytest-cov = ">=4.1,<7.0"
 mypy = "^1.7.0"
 ruff = ">=0.5,<0.7"
 tox = "^4.16.0"
@@ -51,7 +51,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = {extras = ["python"], version = "^1.5.3"}
-mkdocstrings = {extras = ["python"], version = ">=0.24,<0.27"}
+mkdocstrings = {extras = ["python"], version = ">=0.24,<0.28"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
 mkdocs-material = "^9.4.12"
 mkdocs-literate-nav = "^0.6.1"
@@ -104,6 +104,7 @@ line-length = 120
 target-version = "py39"
 
 [tool.ruff.lint]
+preview = true
 select = [
     "A", # flake8-builtins
     "ANN", # flake8-annotations
@@ -129,7 +130,7 @@ select = [
     "ISC", # flake8-implicit-str-concat
     "ICN", # flake8-import-conventions
     "LOG", # flake8-logging
-    #"N", # pep8-naming
+    "N", # pep8-naming
     "NPY", # NumPy-specific rules
     "PD", # pandas-vet
     "PERF", # Perflint
@@ -139,6 +140,7 @@ select = [
     "FURB", # refurb
     "RET", # flake8-return
     "RUF", # Ruff-specific rules
+    "RUF022",
     "S", # flake8-bandit
     "SIM", # flake8-simplify
     "SLF", # flake8-self
@@ -153,9 +155,10 @@ select = [
     "YTT", # flake8-2020
 ]
 ignore = [
+    "A005", # module shadowing a Python builtin module
     "ANN101", # self should not be typed
     "ANN102", # cls should not be typed
-    "ANN401", # typing.Any is can be usefull (for example in __eq__)
+    "ANN401", # typing.Any can be useful (for example in __eq__)
     "COM812", # Conflicts with ruff format
     "ISC001", # Possible conflicts with ruff format
     "W605", # deprecated in Python 3.6
@@ -165,15 +168,16 @@ pydocstyle.convention = "google"
 flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "networkx", "collections"]
 
 [tool.ruff.lint.extend-per-file-ignores]
+"*.py" = [
+    "S101", # asserts allowed everywhere
+]
 "test/**/*.py" = [
-    "S101", # asserts allowed in tests
     "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
     "D", # No doc requirements in tests
-    "SLF001", # Testing private functions is ok
+    "SLF001", # Testing private functions is OK
 ]
 "check_*.py" = [
-    "S101", # asserts allowed in check functions
-    "SLF001", # Checking private functions is ok
+    "SLF001", # Checking private functions is OK
 ]
 
 [tool.mypy]

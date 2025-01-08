@@ -1,124 +1,88 @@
-import re
+import math
 
 import pytest
 
+from opensquirrel import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.default_gates import CNOT, H, I
-from opensquirrel.ir import Bit, Comment, Measure, Qubit
+from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
 
 
 class TestCircuitBuilder:
     def test_simple(self) -> None:
         builder = CircuitBuilder(2)
 
-        builder.comment("A single line comment.")
-        builder.H(Qubit(0))
-        builder.CNOT(Qubit(0), Qubit(1))
+        builder.H(0)
+        builder.CNOT(0, 1)
 
         circuit = builder.to_circuit()
 
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
         assert circuit.ir.statements == [
-            Comment("A single line comment."),
-            H(Qubit(0)),
-            CNOT(Qubit(0), Qubit(1)),
+            H(0),
+            CNOT(0, 1),
         ]
 
-    def test_identity(self) -> None:
-        builder = CircuitBuilder(1)
-        builder.I(Qubit(0))
-
+    @pytest.mark.parametrize(
+        ("builder", "expected_result"),
+        [
+            (CircuitBuilder(2, 2).I(0).X(0).Y(0).Z(0), [I(0), X(0), Y(0), Z(0)]),
+            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, math.pi), [Rx(0, -1), Ry(1, 1), Rz(0, math.pi)]),
+            (CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1), [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]),
+            (CircuitBuilder(2, 2).measure(0, 0).measure(1, 1), [Measure(0, 0), Measure(1, 1)]),
+            (CircuitBuilder(2, 2).init(0).init(1), [Init(0), Init(1)]),
+            (CircuitBuilder(2, 2).reset(0).reset(1), [Reset(0), Reset(1)]),
+            (CircuitBuilder(2, 2).barrier(0).barrier(1), [Barrier(0), Barrier(1)]),
+            (CircuitBuilder(2, 2).wait(0, 1).wait(1, 2), [Wait(0, 1), Wait(1, 2)]),
+        ],
+        ids=["Pauli_gates", "rotation_gates", "two-qubit_gates", "measure", "init", "reset", "barrier", "wait"],
+    )
+    def test_instructions(self, builder: CircuitBuilder, expected_result: list[Instruction]) -> None:
         circuit = builder.to_circuit()
-
-        assert circuit.qubit_register_size == 1
-        assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [
-            I(Qubit(0)),
-        ]
-
-    def test_single_measure(self) -> None:
-        builder = CircuitBuilder(1, 1)
-        builder.measure(Qubit(0), Bit(0))
-
-        circuit = builder.to_circuit()
-
-        assert circuit.qubit_register_size == 1
-        assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [
-            Measure(Qubit(0), Bit(0)),
-        ]
-
-    def test_circuit_measure(self) -> None:
-        builder = CircuitBuilder(2, 2)
-
-        builder.H(Qubit(0))
-        builder.CNOT(Qubit(0), Qubit(1))
-        builder.measure(Qubit(0), Bit(0))
-        builder.measure(Qubit(1), Bit(1))
-
-        circuit = builder.to_circuit()
-
         assert circuit.qubit_register_size == 2
         assert circuit.qubit_register_name == "q"
-        assert circuit.ir.statements == [
-            H(Qubit(0)),
-            CNOT(Qubit(0), Qubit(1)),
-            Measure(Qubit(0), Bit(0)),
-            Measure(Qubit(1), Bit(1)),
-        ]
+        assert circuit.bit_register_size == 2
+        assert circuit.bit_register_name == "b"
+        assert circuit.ir.statements == expected_result
 
     def test_chain(self) -> None:
         builder = CircuitBuilder(3)
 
-        circuit = builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(1)).to_circuit()
+        circuit = builder.H(0).CNOT(0, 1).to_circuit()
 
-        assert circuit.ir.statements == [
-            H(Qubit(0)),
-            CNOT(Qubit(0), Qubit(1)),
-        ]
+        assert circuit.ir.statements == [H(0), CNOT(0, 1)]
 
     def test_gate_index_error(self) -> None:
         builder = CircuitBuilder(2)
 
-        with pytest.raises(IndexError) as exception_info:
-            builder.H(Qubit(0)).CNOT(Qubit(0), Qubit(12)).to_circuit()
-        assert re.search("qubit index is out of bounds", str(exception_info.value))
+        with pytest.raises(IndexError, match="qubit index is out of bounds"):
+            builder.H(0).CNOT(0, 12).to_circuit()
 
     def test_measure_index_error(self) -> None:
         builder = CircuitBuilder(2, 1)
-        with pytest.raises(IndexError) as exception_info:
-            builder.H(Qubit(0)).measure(Qubit(0), Bit(10)).to_circuit()
-        assert re.search("bit index is out of bounds", str(exception_info.value))
+        with pytest.raises(IndexError, match="bit index is out of bounds"):
+            builder.H(0).measure(0, 10).to_circuit()
 
     def test_unknown_instruction(self) -> None:
         builder = CircuitBuilder(3)
-        with pytest.raises(ValueError, match="unknown instruction `unknown`"):
+        with pytest.raises(ValueError, match="unknown instruction 'unknown'"):
             builder.unknown(0)
 
     def test_wrong_number_of_arguments(self) -> None:
         builder = CircuitBuilder(3)
 
-        with pytest.raises(TypeError) as exception_info:
-            builder.H(Qubit(0), Qubit(1))
-        assert re.search(r"H\(\) takes 1 positional argument but 2 were given", str(exception_info.value))
-
-    def test_wrong_argument_type(self) -> None:
-        builder = CircuitBuilder(3)
-
-        with pytest.raises(TypeError) as exception_info:
-            builder.H(0)
-
-        assert re.search(
-            "wrong argument type for instruction `H`, got <class 'int'> but expected <class 'opensquirrel.ir.Qubit'>",
-            str(exception_info.value),
-        ) or re.search(
-            "wrong argument type for instruction `H`, got <class 'int'> but expected Qubit",
-            str(exception_info.value),
-        )
+        with pytest.raises(TypeError, match=".* takes 1 positional argument but 2 were given"):
+            builder.H(0, 1)
 
     def test_decoupling_circuit_and_builder(self) -> None:
         builder = CircuitBuilder(1)
         circuit = builder.to_circuit()
         assert circuit.ir is not builder.ir
         assert circuit.register_manager is not builder.register_manager
+
+    def test_int_qubit_parsing(self) -> None:
+        builder = CircuitBuilder(3)
+
+        circuit = builder.H(0).CNOT(0, 1).to_circuit()
+
+        assert circuit.ir.statements == [H(0), CNOT(0, 1)]

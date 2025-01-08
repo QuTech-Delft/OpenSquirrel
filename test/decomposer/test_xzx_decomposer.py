@@ -4,10 +4,10 @@ import math
 
 import pytest
 
-from opensquirrel.decomposer.aba_decomposer import XZXDecomposer
-from opensquirrel.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.default_gates import CNOT, CR, H, I, Rx, Rz, S, X, Z
-from opensquirrel.ir import BlochSphereRotation, Float, Gate, Qubit
+from opensquirrel import CNOT, CR, H, I, Rx, Rz, S, X, Z
+from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.passes.decomposer import XZXDecomposer
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 
 @pytest.fixture(name="decomposer")
@@ -16,7 +16,7 @@ def decomposer_fixture() -> XZXDecomposer:
 
 
 def test_identity(decomposer: XZXDecomposer) -> None:
-    gate = I(Qubit(0))
+    gate = I(0)
     decomposed_gate = decomposer.decompose(gate)
     assert decomposed_gate == []
 
@@ -24,28 +24,17 @@ def test_identity(decomposer: XZXDecomposer) -> None:
 @pytest.mark.parametrize(
     ("gate", "expected_result"),
     [
-        (CNOT(Qubit(0), Qubit(1)), [CNOT(Qubit(0), Qubit(1))]),
-        (CR(Qubit(2), Qubit(3), Float(2.123)), [CR(Qubit(2), Qubit(3), Float(2.123))]),
-        (S(Qubit(0)), [Rz(Qubit(0), Float(math.pi / 2))]),
-        (Z(Qubit(0)), [Rz(Qubit(0), Float(math.pi))]),
-        (Rz(Qubit(0), Float(0.9)), [Rz(Qubit(0), Float(0.9))]),
-        (X(Qubit(0)), [Rx(Qubit(0), Float(math.pi))]),
-        (Rx(Qubit(0), Float(0.123)), [Rx(Qubit(0), Float(0.123))]),
+        (CNOT(0, 1), [CNOT(0, 1)]),
+        (CR(2, 3, 2.123), [CR(2, 3, 2.123)]),
+        (S(0), [Rz(0, math.pi / 2)]),
+        (Z(0), [Rz(0, math.pi)]),
+        (Rz(0, 0.9), [Rz(0, 0.9)]),
+        (X(0), [Rx(0, math.pi)]),
+        (Rx(0, 0.123), [Rx(0, 0.123)]),
+        (H(0), [Rx(0, math.pi / 2), Rz(0, math.pi / 2), Rx(0, math.pi / 2)]),
         (
-            H(Qubit(0)),
-            [
-                Rx(Qubit(0), Float(math.pi / 2)),
-                Rz(Qubit(0), Float(math.pi / 2)),
-                Rx(Qubit(0), Float(math.pi / 2)),
-            ],
-        ),
-        (
-            BlochSphereRotation(qubit=Qubit(0), angle=5.21, axis=(1, 2, 3), phase=0.324),
-            [
-                Rx(Qubit(0), Float(0.43035280630630446)),
-                Rz(Qubit(0), Float(-1.030183660156084)),
-                Rx(Qubit(0), Float(-0.7456524007888308)),
-            ],
+            BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
+            [Rx(0, 0.43035280630630446), Rz(0, -1.030183660156084), Rx(0, -0.7456524007888308)],
         ),
     ],
     ids=["CNOT", "CR", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],

@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import Comment, Gate, IRVisitor
-from opensquirrel.utils.matrix_expander import get_matrix
+from opensquirrel.ir import Gate, IRVisitor
+from opensquirrel.utils import get_matrix
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -20,9 +20,6 @@ class _CircuitMatrixCalculator(IRVisitor):
     def visit_gate(self, gate: Gate) -> None:
         big_matrix = get_matrix(gate, qubit_register_size=self.qubit_register_size)
         self.matrix = big_matrix @ self.matrix
-
-    def visit_comment(self, comment: Comment) -> None:
-        pass
 
 
 def get_circuit_matrix(circuit: Circuit) -> NDArray[np.complex128]:

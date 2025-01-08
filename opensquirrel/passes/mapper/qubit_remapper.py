@@ -1,16 +1,18 @@
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
     IR,
+    Barrier,
     BlochSphereRotation,
-    Comment,
     ControlledGate,
+    Init,
     IRVisitor,
     MatrixGate,
     Measure,
     Qubit,
     Reset,
+    Wait,
 )
-from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.passes.mapper.mapping import Mapping
 
 
 class _QubitRemapper(IRVisitor):
@@ -32,27 +34,37 @@ class _QubitRemapper(IRVisitor):
     def __init__(self, mapping: Mapping) -> None:
         self.mapping = mapping
 
-    def visit_comment(self, comment: Comment) -> Comment:
-        return comment
-
     def visit_qubit(self, qubit: Qubit) -> Qubit:
         qubit.index = self.mapping[qubit.index]
         return qubit
+
+    def visit_measure(self, measure: Measure) -> Measure:
+        measure.qubit.accept(self)
+        return measure
+
+    def visit_init(self, init: Init) -> Init:
+        init.qubit.accept(self)
+        return init
 
     def visit_reset(self, reset: Reset) -> Reset:
         reset.qubit.accept(self)
         return reset
 
-    def visit_measure(self, measure: Measure) -> Measure:
-        measure.qubit.accept(self)
-        return measure
+    def visit_barrier(self, barrier: Barrier) -> Barrier:
+        barrier.qubit.accept(self)
+        return barrier
+
+    def visit_wait(self, wait: Wait) -> Wait:
+        wait.qubit.accept(self)
+        return wait
 
     def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
         g.qubit.accept(self)
         return g
 
     def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
-        [op.accept(self) for op in g.operands]
+        for op in g.operands:
+            op.accept(self)
         return g
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
