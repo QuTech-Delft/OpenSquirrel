@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from opensquirrel import Circuit, CircuitBuilder
+from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X
 from opensquirrel.ir import BlochSphereRotation, Float
 from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 
@@ -21,6 +21,33 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
     c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=math.pi / 2)
     composed = compose_bloch_sphere_rotations(a, compose_bloch_sphere_rotations(b, c))
     assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=math.pi)
+
+
+@pytest.mark.parametrize(
+    ("bsr_a", "bsr_b", "expected_result"),
+    [
+        (I(0), Rx(0, theta=math.pi), Rx(0, theta=math.pi)),
+        (Rx(0, theta=math.pi), I(0), Rx(0, theta=math.pi)),
+        (X(0), X(0), I(0)),
+        (H(0), H(0), I(0)),
+        (Rx(0, theta=math.pi), Rx(0, theta=math.pi), I(0)),
+        (Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi)),
+        (Rx(0, theta=math.pi), Ry(0, theta=math.pi / 2), BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi)),
+    ],
+    ids=[
+        "[bsr_a == I]",
+        "[bsr_b == I]",
+        "[bsr_a.generator == bsr_b.generator] X * X == I",
+        "[bsr_a.generator == bsr_b.generator] H * H == I",
+        "[bsr_a.generator == bsr_b.generator] Rx(pi) * Rx(pi) == I",
+        "[bsr_a.generator == bsr_b.generator] Rx(pi/2) * Rx(pi/2) = Rx(pi) ~ X",
+        "[bsr_a.generator != bsr_b.generator] Rx(pi) * Ry(pi/2) ~ H",
+    ],
+)
+def test_compose_bloch_sphere_rotations(
+    bsr_a: BlochSphereRotation, bsr_b: BlochSphereRotation, expected_result: BlochSphereRotation
+) -> None:
+    assert compose_bloch_sphere_rotations(bsr_a, bsr_b) == expected_result
 
 
 @pytest.mark.parametrize(

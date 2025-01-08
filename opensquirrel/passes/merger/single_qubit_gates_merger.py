@@ -2,7 +2,7 @@ from typing import cast
 
 from opensquirrel import I
 from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Qubit
-from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations, try_name_anonymous_bloch
+from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations
 
 
 class SingleQubitGatesMerger(Merger):
@@ -49,6 +49,4 @@ class SingleQubitGatesMerger(Merger):
 
         for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():
             if not accumulated_bloch_sphere_rotation.is_identity():
-                if accumulated_bloch_sphere_rotation.is_anonymous:
-                    accumulated_bloch_sphere_rotation = try_name_anonymous_bloch(accumulated_bloch_sphere_rotation)
                 ir.statements.append(accumulated_bloch_sphere_rotation)
