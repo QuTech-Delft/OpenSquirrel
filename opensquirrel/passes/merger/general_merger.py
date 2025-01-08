@@ -1,36 +1,36 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import acos, cos, floor, log10, sin
+from math import cos, floor, isclose, log10, sin
 from typing import cast
 
 import numpy as np
 
+from opensquirrel import I
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import default_bloch_sphere_rotation_without_params_set
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
-from opensquirrel.utils import flatten_list
+from opensquirrel.default_instructions import default_bloch_sphere_rotation_set
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
+from opensquirrel.utils import acos, flatten_list
 
 
-def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
+def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSphereRotation) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
     The first rotation is applied and then the second.
-    The resulting gate is anonymous except if `a` is the identity and `b` is not anonymous, or vice versa.
+    If the final Bloch sphere rotation is anonymous, we will try to match it to a default gate.
 
-    Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
+    Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
-    if a.qubit != b.qubit:
-        msg = "cannot merge two BlochSphereRotation's on different qubits"
+    if bsr_a.qubit != bsr_b.qubit:
+        msg = "cannot merge two Bloch sphere rotations on different qubits"
         raise ValueError(msg)
 
-    acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
-    # This fixes float approximations like 1.0000000000002 which acos doesn't like.
-    acos_argument = max(min(acos_argument, 1.0), -1.0)
-
+    acos_argument = cos(bsr_a.angle / 2) * cos(bsr_b.angle / 2) - sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.dot(
+        bsr_a.axis, bsr_b.axis
+    )
     combined_angle = 2 * acos(acos_argument)
 
     if abs(sin(combined_angle / 2)) < ATOL:
-        return BlochSphereRotation.identity(a.qubit)
+        return I(bsr_a.qubit)
 
     order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
@@ -38,26 +38,40 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
             1
             / sin(combined_angle / 2)
             * (
-                sin(a.angle / 2) * cos(b.angle / 2) * a.axis.value
-                + cos(a.angle / 2) * sin(b.angle / 2) * b.axis.value
-                + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
+                sin(bsr_a.angle / 2) * cos(bsr_b.angle / 2) * bsr_a.axis.value
+                + cos(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * bsr_b.axis.value
+                + sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.cross(bsr_a.axis, bsr_b.axis)
             )
         ),
         order_of_magnitude,
     )
 
-    combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
+    combined_phase = np.round(bsr_a.phase + bsr_b.phase, order_of_magnitude)
 
-    generator = b.generator if a.is_identity() else a.generator if b.is_identity() else None
-    arguments = b.arguments if a.is_identity() else a.arguments if b.is_identity() else None
+    if bsr_a.is_identity():
+        generator = bsr_b.generator
+        arguments = bsr_b.arguments
+    elif bsr_b.is_identity():
+        generator = bsr_a.generator
+        arguments = bsr_a.arguments
+    elif bsr_a.generator == bsr_b.generator:
+        generator = bsr_a.generator
+        arguments = (bsr_a.qubit,)
+        if bsr_a.arguments is not None and len(bsr_a.arguments) == 2 and isinstance(bsr_a.arguments[1], Float):
+            arguments += (Float(combined_angle),)
+    else:
+        generator = None
+        arguments = None
 
-    return BlochSphereRotation(
-        qubit=a.qubit,
-        axis=combined_axis,
-        angle=combined_angle,
-        phase=combined_phase,
-        generator=generator,  # type: ignore[arg-type]
-        arguments=arguments,
+    return try_name_anonymous_bloch(
+        BlochSphereRotation(
+            qubit=bsr_a.qubit,
+            axis=combined_axis,
+            angle=combined_angle,
+            phase=combined_phase,
+            generator=generator,  # type: ignore[arg-type]
+            arguments=arguments,
+        )
     )
 
 
@@ -65,20 +79,23 @@ def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
     """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
      It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
 
-    Notice we don't try to match Rx, Ry, and Rz rotations, as those gates use an extra angle parameter.
-
     Returns:
          A default BlockSphereRotation if this BlochSphereRotation is close to it,
          or the input BlochSphereRotation otherwise.
     """
-    for gate_function in default_bloch_sphere_rotation_without_params_set.values():
-        gate = gate_function(*bsr.get_qubit_operands())
-        if (
-            np.allclose(gate.axis, bsr.axis, atol=ATOL)
-            and np.allclose(gate.angle, bsr.angle, atol=ATOL)
-            and np.allclose(gate.phase, bsr.phase, atol=ATOL)
-        ):
-            return gate
+    if not bsr.is_anonymous:
+        return bsr
+    for default_bsr_callable in default_bloch_sphere_rotation_set.values():
+        try:
+            default_bsr = default_bsr_callable(*bsr.get_qubit_operands())
+            if (
+                np.allclose(default_bsr.axis, bsr.axis, atol=ATOL)
+                and isclose(default_bsr.angle, bsr.angle, rel_tol=ATOL)
+                and isclose(default_bsr.phase, bsr.phase, rel_tol=ATOL)
+            ):
+                return default_bsr
+        except TypeError:  # noqa: PERF203
+            pass
     return bsr
 
 
