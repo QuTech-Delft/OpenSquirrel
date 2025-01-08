@@ -1,5 +1,3 @@
-from typing import Any
-
 from opensquirrel.passes.router.general_router import Router
 
 
@@ -18,6 +16,3 @@ class RoutingChecker(Router):
         if non_executable_interactions:
             error_message = f"The qubit interactions: {non_executable_interactions} prevent a 121 mapping"
             raise ValueError(error_message)
-        print("The algorithm can be mapped to the target backend")
-
-
