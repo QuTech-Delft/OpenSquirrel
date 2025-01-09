@@ -33,7 +33,7 @@ class TestDecomposition:
             sp.Eq(rhs_simplified.b, q.b),
             sp.Eq(rhs_simplified.c, q.c),
             sp.Eq(rhs_simplified.d, q.d),
-        )
+        )  # type: ignore[no-untyped-call]
 
         sp.trigsimp(sp.Eq(rhs_simplified.a, q.a).subs(sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)))
 
