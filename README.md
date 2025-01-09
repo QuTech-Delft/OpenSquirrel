@@ -63,11 +63,11 @@ Here is an example of building a circuit using the `CircuitBuilder`:
 ```python
 import math
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.ir import Qubit, Float
+from opensquirrel.ir import Qubit
 
 # Initialize the builder and build your circuit
 builder = CircuitBuilder(qubit_register_size=1)
-builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), Float(math.pi / 3))
+builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), math.pi / 3)
 
 # Get the circuit from the circuit builder
 qc = builder.to_circuit()
@@ -97,7 +97,7 @@ The different decomposition strategies can be found in the
 In the example below, the circuit is decomposed using the Z-Y-Z decomposer.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
 
 qc.decompose(decomposer=ZYZDecomposer())
 ```

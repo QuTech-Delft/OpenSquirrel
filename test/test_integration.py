@@ -1,19 +1,24 @@
 # This integration test also serves as example and code documentation.
+from __future__ import annotations
 
 import importlib.util
 
 import pytest
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.decomposer.aba_decomposer import XYXDecomposer, XZXDecomposer, ZYZDecomposer
-from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
-from opensquirrel.default_gates import CNOT, CZ, H
-from opensquirrel.exporter.export_format import ExportFormat
 from opensquirrel.ir import Measure
+from opensquirrel.passes.decomposer import (
+    CNOT2CZDecomposer,
+    CNOTDecomposer,
+    McKayDecomposer,
+    SWAP2CNOTDecomposer,
+    XYXDecomposer,
+)
+from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
 
-def test_Spin2_backend() -> None:
+def test_spin_backend() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -34,6 +39,7 @@ def test_Spin2_backend() -> None:
         CNOT q[1], q[0]
         CR(2.123) q[2], q[3]
         CRk(2) q[0], q[2]
+        SWAP q[0], q[1]
         b = measure q
         """,
     )
@@ -41,18 +47,15 @@ def test_Spin2_backend() -> None:
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
-    # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+    qc.decompose(decomposer=SWAP2CNOTDecomposer())
 
-    # Merge single-qubit gates and decompose with McKay decomposition.
-    qc.merge_single_qubit_gates()
+    # Replace CNOT gates with CZ gates
+    qc.decompose(decomposer=CNOT2CZDecomposer())
+
+    # Merge single-qubit gates
+    qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to spin backend native gates with McKay decomposer
     qc.decompose(decomposer=McKayDecomposer())
 
     assert (
@@ -65,48 +68,65 @@ bit[4] b
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
-Rz(0.0081037174) q[0]
+Rz(1.5789) q[0]
 X90 q[0]
-Rz(1.5707964) q[0]
-X90 q[0]
-Rz(-1.3707963) q[0]
+Rz(-2.9415926) q[0]
 CZ q[1], q[0]
 Rz(1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
-Rz(1.0615) q[3]
+Rz(2.6322964) q[3]
 X90 q[3]
-Rz(1.5707963) q[3]
-X90 q[3]
+Rz(-1.5707963) q[3]
 CZ q[2], q[3]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 X90 q[3]
 Rz(2.0800926) q[3]
 X90 q[3]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 CZ q[2], q[3]
-Rz(1.5707963) q[0]
+Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
-Rz(1.8468982) q[2]
+Rz(3.4176945) q[2]
 X90 q[2]
-Rz(1.5707963) q[2]
-X90 q[2]
+Rz(-1.5707963) q[2]
 CZ q[0], q[2]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 X90 q[2]
-Rz(2.3561945) q[2]
+Rz(2.3561946) q[2]
 X90 q[2]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 CZ q[0], q[2]
 Rz(0.78539816) q[0]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(-1.5707963) q[1]
+CZ q[0], q[1]
+Rz(-1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(-1.5707963) q[0]
+CZ q[1], q[0]
+Rz(-1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(-1.5707963) q[1]
+CZ q[0], q[1]
 b[0] = measure q[0]
+Rz(-1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
 b[1] = measure q[1]
-Rz(1.5707963) q[2]
+Rz(-1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
 b[2] = measure q[2]
-Rz(1.5707963) q[3]
+Rz(-1.5707963) q[3]
 X90 q[3]
 Rz(1.5707963) q[3]
 b[3] = measure q[3]
@@ -127,26 +147,21 @@ def test_hectoqubit_backend() -> None:
         CNOT q[0], q[1]
         CRk(4) q[0], q[1]
         H q[0]
-        b[0:1] = measure q[0:1]
-        """,
+        b[1:2] = measure q[0:1]
+        """
     )
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+    qc.decompose(decomposer=CNOT2CZDecomposer())
 
-    # Merge single-qubit gates and decompose with the Rz-Ry-Rz decomposer.
-    qc.merge_single_qubit_gates()
-    qc.decompose(decomposer=ZYZDecomposer())
+    # Merge single-qubit gates
+    qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
+    qc.decompose(decomposer=XYXDecomposer())
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
@@ -155,7 +170,7 @@ def test_hectoqubit_backend() -> None:
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
         assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
@@ -165,25 +180,21 @@ def test_hectoqubit_backend() -> None:
         ]
 
         assert operations == [
-            "Rz(180, 'q[1]')",
+            "Rxy(180, 0, 'q[1]')",
+            "Rxy(90, 90, 'q[1]')",
+            "Rxy(180, 0, 'q[1]')",
+            "CZ (q[0], q[1])",
+            "Rxy(180, 0, 'q[1]')",
             "Rxy(90, 90, 'q[1]')",
             "CZ (q[0], q[1])",
-            "Rz(180, 'q[1]')",
-            "Rxy(90, 90, 'q[1]')",
+            "Rxy(-11.25, 0, 'q[1]')",
             "CZ (q[0], q[1])",
-            "Rz(90, 'q[1]')",
-            "Rxy(11.25, 90, 'q[1]')",
-            "Rz(-90, 'q[1]')",
+            "Rxy(11.25, 0, 'q[1]')",
             "CZ (q[0], q[1])",
-            "Rz(90, 'q[1]')",
-            "Rxy(-11.25, 90, 'q[1]')",
-            "Rz(-90, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rz(11.25, 'q[0]')",
+            "Rxy(180, 0, 'q[0]')",
             "Rxy(-90, 90, 'q[0]')",
-            "Rz(180, 'q[0]')",
+            "Rxy(11.25, 0, 'q[0]')",
             "Measure q[0]",
-            "Rz(180, 'q[1]')",
             "Rxy(90, 90, 'q[1]')",
             "Measure q[1]",
         ]
@@ -195,133 +206,138 @@ def test_hectoqubit_backend() -> None:
             if operation.data["gate_info"]["operation_type"] == "measure"
         ]
 
+        ir_acq_index_record = [0] * qc.qubit_register_size
+        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size
         for i, ir_measure in enumerate(ir_measures):
-            assert qs_measures[i]["acq_channel_override"] == ir_measure.qubit.index
-            assert qs_measures[i]["acq_index"] == ir_measure.qubit.index
+            qubit_index = ir_measure.qubit.index
+            ir_acq_index = ir_acq_index_record[qubit_index]
+            ir_bit_string_mapping[ir_measure.bit.index] = (ir_acq_index, qubit_index)
+            assert qs_measures[i]["acq_channel_override"] == qubit_index
+            assert qs_measures[i]["acq_index"] == ir_acq_index
             assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
+            ir_acq_index_record[qubit_index] += 1
+
+        assert len(bit_string_mapping) == qc.bit_register_size
+        assert bit_string_mapping == ir_bit_string_mapping
 
 
-def test_hectoqubit_circuit_xyx() -> None:
+def test_hectoqubit_backend_allxy() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
 
         qubit[3] q
-        bit[3] b
+        bit[10] b
 
-        H q[1]
-        CZ q[0], q[1]
-        CNOT q[0], q[1]
-        CRk(4) q[0], q[1]
-        H q[0]
-        b[0:1] = measure q[0:1]
-        """,
-    )
+        reset q
 
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer())
+        Rx(0.0) q[0]
+        Rx(0.0) q[0]
+        b[0] = measure q[0]
 
-    # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+        Rx(3.141592653589793) q[1]
+        Rx(3.141592653589793) q[1]
+        b[1] = measure q[1]
 
-    # Merge single-qubit gates and decompose with the Rx-Ry-Rx decomposer.
-    qc.merge_single_qubit_gates()
-    qc.decompose(decomposer=XYXDecomposer())
-    assert (
-        str(qc)
-        == """version 3.0
+        Ry(3.141592653589793) q[0]
+        Ry(3.141592653589793) q[0]
+        b[2] = measure q[0]
 
-qubit[3] q
-bit[3] b
+        Rx(3.141592653589793) q[2]
+        Ry(3.141592653589793) q[2]
+        b[3] = measure q[2]
 
-Ry(1.5707963) q[1]
-Rx(3.1415927) q[1]
-CZ q[0], q[1]
-Ry(1.5707963) q[1]
-Rx(3.1415927) q[1]
-CZ q[0], q[1]
-Rx(0.1963496) q[1]
-CZ q[0], q[1]
-Rx(-0.1963496) q[1]
-CZ q[0], q[1]
-Rx(-3.1415927) q[0]
-Ry(-1.5707963) q[0]
-Rx(0.1963496) q[0]
-b[0] = measure q[0]
-Ry(1.5707963) q[1]
-Rx(3.1415927) q[1]
-b[1] = measure q[1]
-"""
-    )
+        Ry(3.141592653589793) q[0]
+        Rx(3.141592653589793) q[0]
+        b[4] = measure q[0]
 
+        Rx(3.141592653589793) q[0]
+        Rx(0.0) q[0]
+        Ry(3.141592653589793) q[2]
+        Rx(0.0) q[2]
+        Rx(1.5707963267948966) q[1]
+        Rx(1.5707963267948966) q[1]
 
-def test_HectoQubit_circuit_xzx() -> None:
-    qc = Circuit.from_string(
+        b[6] = measure q[2]
+        b[5] = measure q[0]
+        b[8] = measure q[0]
+        b[7] = measure q[1]
+
+        b[9] = measure q[0]
         """
-        version 3.0
-
-        qubit[3] q
-        bit[3] b
-
-        H q[1]
-        CZ q[0], q[1]
-        CNOT q[0], q[1]
-        CRk(4) q[0], q[1]
-        H q[0]
-        b[0:1] = measure q[0:1]
-        """,
     )
 
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer())
+    # No compilation passes are performed
 
-    # Replace CNOT gates with CZ gates
-    qc.replace(
-        CNOT,
-        lambda control, target: [
-            H(target),
-            CZ(control, target),
-            H(target),
-        ],
-    )
+    if importlib.util.find_spec("quantify_scheduler") is None:
+        with pytest.raises(
+            Exception,
+            match="quantify-scheduler is not installed, or cannot be installed on " "your system",
+        ):
+            qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+    else:
+        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
-    # Merge single-qubit gates and decompose with the Rx-Ry-Rx decomposer.
-    qc.merge_single_qubit_gates()
-    qc.decompose(decomposer=XZXDecomposer())
+        assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
-    assert (
-        str(qc)
-        == """version 3.0
+        operations = [
+            exported_schedule.operations[schedulable["operation_id"]].name
+            for schedulable in exported_schedule.schedulables.values()
+        ]
 
-qubit[3] q
-bit[3] b
+        assert operations == [
+            "Reset q[0]",
+            "Reset q[1]",
+            "Reset q[2]",
+            "Rxy(0, 0, 'q[0]')",
+            "Rxy(0, 0, 'q[0]')",
+            "Measure q[0]",
+            "Rxy(180, 0, 'q[1]')",
+            "Rxy(180, 0, 'q[1]')",
+            "Measure q[1]",
+            "Rxy(180, 90, 'q[0]')",
+            "Rxy(180, 90, 'q[0]')",
+            "Measure q[0]",
+            "Rxy(180, 0, 'q[2]')",
+            "Rxy(180, 90, 'q[2]')",
+            "Measure q[2]",
+            "Rxy(180, 90, 'q[0]')",
+            "Rxy(180, 0, 'q[0]')",
+            "Measure q[0]",
+            "Rxy(180, 0, 'q[0]')",
+            "Rxy(0, 0, 'q[0]')",
+            "Rxy(180, 90, 'q[2]')",
+            "Rxy(0, 0, 'q[2]')",
+            "Rxy(90, 0, 'q[1]')",
+            "Rxy(90, 0, 'q[1]')",
+            "Measure q[2]",
+            "Measure q[0]",
+            "Measure q[0]",
+            "Measure q[1]",
+            "Measure q[0]",
+        ]
 
-Rx(1.5707963) q[1]
-Rz(1.5707963) q[1]
-Rx(1.5707963) q[1]
-CZ q[0], q[1]
-Rx(1.5707963) q[1]
-Rz(1.5707963) q[1]
-Rx(1.5707963) q[1]
-CZ q[0], q[1]
-Rx(0.1963496) q[1]
-CZ q[0], q[1]
-Rx(-0.1963496) q[1]
-CZ q[0], q[1]
-Rx(-1.5707964) q[0]
-Rz(-1.5707963) q[0]
-Rx(-1.3744467) q[0]
-b[0] = measure q[0]
-Rx(1.5707963) q[1]
-Rz(1.5707963) q[1]
-Rx(1.5707963) q[1]
-b[1] = measure q[1]
-"""
-    )
+        qs_measures = [
+            operation.data["gate_info"]
+            for operation in exported_schedule.operations.values()
+            if operation.data["gate_info"]["operation_type"] == "measure"
+        ]
+
+        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
+
+        ir_acq_index_record = [0] * qc.qubit_register_size
+        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size
+        for i, ir_measurement in enumerate(ir_measures):
+            qubit_index = ir_measurement.qubit.index
+            ir_acq_index = ir_acq_index_record[qubit_index]
+            ir_bit_string_mapping[ir_measurement.bit.index] = (
+                ir_acq_index,
+                qubit_index,
+            )
+            assert qs_measures[i]["acq_channel_override"] == qubit_index
+            assert qs_measures[i]["acq_index"] == ir_acq_index
+            assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
+            ir_acq_index_record[qubit_index] += 1
+
+        assert len(bit_string_mapping) == qc.bit_register_size
+        assert bit_string_mapping == ir_bit_string_mapping

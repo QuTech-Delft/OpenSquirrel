@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from opensquirrel.mapper.mapping import Mapping
+from opensquirrel.passes.mapper.mapping import Mapping
 
 
 class Mapper:

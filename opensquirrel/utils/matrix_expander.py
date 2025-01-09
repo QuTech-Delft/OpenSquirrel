@@ -3,15 +3,24 @@ from __future__ import annotations
 import cmath
 import math
 from collections.abc import Iterable
-from typing import cast
 
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, ControlledGate, Gate, IRVisitor, MatrixGate, Qubit
+from opensquirrel.ir import (
+    Axis,
+    AxisLike,
+    BlochSphereRotation,
+    ControlledGate,
+    Gate,
+    IRVisitor,
+    MatrixGate,
+    Qubit,
+    QubitLike,
+)
 
 
-def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
+def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
     """
     Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
     where only the given qubits appear, in order.
@@ -41,12 +50,13 @@ def get_reduced_ket(ket: int, qubits: Iterable[Qubit]) -> int:
     """
     reduced_ket = 0
     for i, qubit in enumerate(qubits):
+        qubit = Qubit(qubit)
         reduced_ket |= ((ket & (1 << qubit.index)) >> qubit.index) << i
 
     return reduced_ket
 
 
-def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
+def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> int:
     """
     Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
     where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.
@@ -84,8 +94,9 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[Qubit]) -> int:
     """
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
-        expanded_ket &= ~(1 << qubit.index)  # Erase bit.
-        expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # Set bit to value from reduced_ket.
+        qubit = Qubit(qubit)
+        expanded_ket &= ~(1 << qubit.index)  # erase bit
+        expanded_ket |= ((reduced_ket & (1 << i)) >> i) << qubit.index  # set bit to value from reduced_ket
 
     return expanded_ket
 
@@ -109,7 +120,7 @@ class MatrixExpander(IRVisitor):
         if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
             msg = "result has incorrect shape"
             ValueError(msg)
-        return result
+        return np.asarray(result, dtype=np.complex128)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
         if gate.control_qubit.index >= self.qubit_register_size:
@@ -191,13 +202,13 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
 
     Examples:
         >>> X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
-        >>> get_matrix(X(Qubit(1)), 2).astype(int)           # X q[1]
+        >>> get_matrix(X(1), 2).astype(int)           # X q[1]
         array([[0, 0, 1, 0],
                [0, 0, 0, 1],
                [1, 0, 0, 0],
                [0, 1, 0, 0]])
 
-        >>> CNOT02 = ControlledGate(Qubit(0), X(Qubit(2)))
+        >>> CNOT02 = ControlledGate(0, X(2))
         >>> get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]
         array([[1, 0, 0, 0, 0, 0, 0, 0],
                [0, 0, 0, 0, 0, 1, 0, 0],
@@ -207,7 +218,7 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 1, 0, 0, 0, 0, 0, 0],
                [0, 0, 0, 0, 0, 0, 1, 0],
                [0, 0, 0, 1, 0, 0, 0, 0]])
-        >>> get_matrix(ControlledGate(Qubit(1), X(Qubit(2))), 3).astype(int)     # CNOT q[1], q[2]
+        >>> get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]
         array([[1, 0, 0, 0, 0, 0, 0, 0],
                [0, 1, 0, 0, 0, 0, 0, 0],
                [0, 0, 0, 0, 0, 0, 1, 0],
@@ -218,4 +229,4 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
     expander = MatrixExpander(qubit_register_size)
-    return cast(NDArray[np.complex128], gate.accept(expander))
+    return np.asarray(gate.accept(expander), dtype=np.complex128)

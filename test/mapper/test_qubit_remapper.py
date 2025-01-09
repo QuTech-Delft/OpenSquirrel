@@ -2,51 +2,50 @@ import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import Qubit
-from opensquirrel.mapper.mapping import Mapping
-from opensquirrel.mapper.qubit_remapper import get_remapped_ir, remap_ir
+from opensquirrel.passes.mapper.mapping import Mapping
+from opensquirrel.passes.mapper.qubit_remapper import get_remapped_ir, remap_ir
 
 
 class TestRemapper:
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_3(self) -> Circuit:
         builder = CircuitBuilder(3)
-        builder.H(Qubit(0))
-        builder.CNOT(Qubit(0), Qubit(1))
-        builder.H(Qubit(2))
+        builder.H(0)
+        builder.CNOT(0, 1)
+        builder.H(2)
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_3_remapped(self) -> Circuit:
         builder = CircuitBuilder(3)
-        builder.H(Qubit(2))
-        builder.CNOT(Qubit(2), Qubit(1))
-        builder.H(Qubit(0))
+        builder.H(2)
+        builder.CNOT(2, 1)
+        builder.H(0)
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_4(self) -> Circuit:
         builder = CircuitBuilder(4)
-        builder.H(Qubit(0))
-        builder.CNOT(Qubit(0), Qubit(1))
-        builder.X(Qubit(2))
-        builder.Y(Qubit(3))
+        builder.H(0)
+        builder.CNOT(0, 1)
+        builder.X(2)
+        builder.Y(3)
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def circuit_4_remapped(self) -> Circuit:
         builder = CircuitBuilder(4)
-        builder.H(Qubit(3))
-        builder.CNOT(Qubit(3), Qubit(1))
-        builder.X(Qubit(0))
-        builder.Y(Qubit(2))
+        builder.H(3)
+        builder.CNOT(3, 1)
+        builder.X(0)
+        builder.Y(2)
         return builder.to_circuit()
 
-    @pytest.fixture()
+    @pytest.fixture
     def mapping_3(self) -> Mapping:
         return Mapping([2, 1, 0])
 
-    @pytest.fixture()
+    @pytest.fixture
     def mapping_4(self) -> Mapping:
         return Mapping([3, 1, 0, 2])
 

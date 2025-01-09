@@ -3,12 +3,9 @@ import math
 import sympy as sp
 from IPython.display import display
 
+from opensquirrel import H, Rx, Rz
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.decomposer.aba_decomposer import XZXDecomposer, ZYZDecomposer
-from opensquirrel.decomposer.cnot_decomposer import CNOTDecomposer
-from opensquirrel.decomposer.mckay_decomposer import McKayDecomposer
-from opensquirrel.default_gates import H, Rx, Rz
-from opensquirrel.ir import Float, Qubit
+from opensquirrel.passes.decomposer import CNOTDecomposer, McKayDecomposer, XZXDecomposer, ZYZDecomposer
 
 
 class TestDecomposition:
@@ -36,7 +33,7 @@ class TestDecomposition:
             sp.Eq(rhs_simplified.b, q.b),
             sp.Eq(rhs_simplified.c, q.c),
             sp.Eq(rhs_simplified.d, q.d),
-        )
+        )  # type: ignore[no-untyped-call]
 
         sp.trigsimp(sp.Eq(rhs_simplified.a, q.a).subs(sp.cos(theta2 / 2), nz * sp.sin(alpha / 2) / sp.sin(p / 2)))
 
@@ -57,17 +54,10 @@ class TestDecomposition:
         """This test uses the `CircuitBuilder` to build a circuit that serves as input to the ABA decomposer."""
 
         builder = CircuitBuilder(qubit_register_size=1)
-        # Add Hadamard to the circuit
-        builder.H(Qubit(0))
-
-        # Add Z to the circuit
-        builder.Z(Qubit(0))
-
-        # Add Y to the circuit
-        builder.Y(Qubit(0))
-
-        # Add a pi/3 rotation in the X axis to the circuit
-        builder.Rx(Qubit(0), Float(math.pi / 3))
+        builder.H(0)
+        builder.Z(0)
+        builder.Y(0)
+        builder.Rx(0, math.pi / 3)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
@@ -86,17 +76,10 @@ Rx(1.0471976) q[0]
 
     def test_zyz_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=1)
-        # Add Hadamard to the circuit
-        builder.H(Qubit(0))
-
-        # Add Z to the circuit
-        builder.Z(Qubit(0))
-
-        # Add Y to the circuit
-        builder.Y(Qubit(0))
-
-        # Add a pi/3 rotation in the X axis to the circuit
-        builder.Rx(Qubit(0), Float(math.pi / 3))
+        builder.H(0)
+        builder.Z(0)
+        builder.Y(0)
+        builder.Rx(0, math.pi / 3)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
@@ -117,25 +100,14 @@ Ry(1.0471976) q[0]
 Rz(-1.5707963) q[0]
 """
         )
-        assert XZXDecomposer().decompose(H(Qubit(0))) == [
-            Rx(Qubit(0), Float(math.pi / 2)),
-            Rz(Qubit(0), Float(math.pi / 2)),
-            Rx(Qubit(0), Float(math.pi / 2)),
-        ]
+        assert XZXDecomposer().decompose(H(0)) == [Rx(0, math.pi / 2), Rz(0, math.pi / 2), Rx(0, math.pi / 2)]
 
     def test_mckay_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=1)
-        # Add Hadamard to the circuit
-        builder.H(Qubit(0))
-
-        # Add Z to the circuit
-        builder.Z(Qubit(0))
-
-        # Add X to the circuit
-        builder.X(Qubit(0))
-
-        # Add a pi/3 rotation in the X axis to the circuit
-        builder.Rx(Qubit(0), Float(math.pi / 3))
+        builder.H(0)
+        builder.Z(0)
+        builder.X(0)
+        builder.Rx(0, math.pi / 3)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
@@ -175,14 +147,9 @@ Rz(-1.5707963) q[0]
 
     def test_cnot_decomposer(self) -> None:
         builder = CircuitBuilder(qubit_register_size=2)
-        # Add Hadamard to the circuit
-        builder.CZ(Qubit(0), Qubit(1))
-
-        # Add Hadamard to the circuit
-        builder.CR(Qubit(0), Qubit(1), Float(math.pi / 3))
-
-        # Add Hadamard to the circuit
-        builder.CR(Qubit(1), Qubit(0), Float(math.pi / 2))
+        builder.CZ(0, 1)
+        builder.CR(0, 1, math.pi / 3)
+        builder.CR(1, 0, math.pi / 2)
 
         # Convert the builder object into a circuit
         circuit = builder.to_circuit()
@@ -205,11 +172,11 @@ CR(1.5707963) q[1], q[0]
 
 qubit[2] q
 
-Rz(-3.1415927) q[1]
+Rz(3.1415927) q[1]
 Ry(1.5707963) q[1]
 CNOT q[0], q[1]
 Ry(-1.5707963) q[1]
-Rz(3.1415927) q[1]
+Rz(-3.1415927) q[1]
 Rz(0.52359878) q[1]
 CNOT q[0], q[1]
 Rz(-0.52359878) q[1]
