@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
 
 class Router(ABC):
     @abstractmethod
-    def route(self, *args: Any, **kwargs: Any) -> None:
+    def route(self, interactions: list[tuple[int, int]]) -> None:
         pass

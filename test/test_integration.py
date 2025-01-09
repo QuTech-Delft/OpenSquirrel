@@ -48,8 +48,7 @@ def test_spin_backend() -> None:
     # Check whether the above algorithm can be mapped to a dummy chip topology
     connectivity = {0: [1, 2], 1: [0], 2: [0, 3], 3: [2]}
 
-    qc.route(router=RoutingChecker(connectivity))
-
+    qc.route(interactions=[(0, 1), (2, 3), (0, 2)], router=RoutingChecker(connectivity))
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
