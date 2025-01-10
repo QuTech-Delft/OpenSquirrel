@@ -85,8 +85,10 @@ def _dump_barrier_group(indices: list[int]) -> str:
     return "barrier q[{}]\n".format(", ".join(map(str, indices)) if len(indices) != 0 else "")
 
 
+import re
+
 def _get_barrier_index(line: str) -> int:
-    return int("".join(s for s in line if s.isdigit()))
+    return int(re.find('\d+', line))
 
 
 def export(circuit: Circuit) -> str:
