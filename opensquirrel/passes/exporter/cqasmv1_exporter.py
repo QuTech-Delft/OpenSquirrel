@@ -64,8 +64,7 @@ class _CQASMv1Creator(IRVisitor):
 
 
 def post_process(output: str) -> str:
-    post_output = _merge_barrier_groups(output)
-    return post_output.rstrip() + "\n"
+    return _merge_barrier_groups(output)
 
 
 def _merge_barrier_groups(output: str) -> str:
