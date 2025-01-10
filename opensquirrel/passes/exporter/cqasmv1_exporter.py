@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
@@ -85,10 +86,8 @@ def _dump_barrier_group(indices: list[int]) -> str:
     return "barrier q[{}]\n".format(", ".join(map(str, indices)) if len(indices) != 0 else "")
 
 
-import re
-
 def _get_barrier_index(line: str) -> int:
-    return int(re.find('\d+', line))
+    return int(re.findall("\d+", line)[0])
 
 
 def export(circuit: Circuit) -> str:
@@ -97,5 +96,4 @@ def export(circuit: Circuit) -> str:
     circuit.ir.accept(cqasmv1_creator)
 
     # Remove all trailing lines and leave only one
-    output = cqasmv1_creator.output.rstrip() + "\n"
-    return post_process(output)
+    return post_process(cqasmv1_creator.output).rstrip() + "\n"

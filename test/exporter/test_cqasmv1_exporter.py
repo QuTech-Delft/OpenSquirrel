@@ -267,6 +267,10 @@ def test_anonymous_gates(gate: Gate) -> None:
             "version 3.0; qubit[3] q; barrier q[0]; barrier q[1]; X q[2]; barrier q[1]; X q[2]",
             "version 1.0\n\nqubits 3\n\nbarrier q[0, 1]\nx q[2]\nbarrier q[1]\nx q[2]\n",
         ),
+        (
+            "version 3.0; qubit[20] q; barrier q[14]; barrier q[9:12]; X q[2]; barrier q[19]",
+            "version 1.0\n\nqubits 20\n\nbarrier q[14, 9, 10, 11, 12]\nx q[2]\nbarrier q[19]\n",
+        ),
     ],
     ids=[
         "no_group",
@@ -275,6 +279,7 @@ def test_anonymous_gates(gate: Gate) -> None:
         "preserve_order",
         "with_instructions",
         "group_consecutive_barriers",
+        "double_digit_register_size",
     ],
 )
 def test_barrier_groups(program: str, expected_output: str) -> None:
