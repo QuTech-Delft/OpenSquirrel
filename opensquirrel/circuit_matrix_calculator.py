@@ -19,7 +19,7 @@ class _CircuitMatrixCalculator(IRVisitor):
 
     def visit_gate(self, gate: Gate) -> None:
         big_matrix = get_matrix(gate, qubit_register_size=self.qubit_register_size)
-        self.matrix = big_matrix @ self.matrix
+        self.matrix = np.asarray(big_matrix @ self.matrix, dtype=np.complex128)
 
 
 def get_circuit_matrix(circuit: Circuit) -> NDArray[np.complex128]:

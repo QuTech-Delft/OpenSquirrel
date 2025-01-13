@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from math import atan2, cos, pi, sin, sqrt
 
-from opensquirrel import X90, Rz
+from opensquirrel import X90, I, Rz
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.ir import Axis, BlochSphereRotation, Gate
 from opensquirrel.passes.decomposer import ZXZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
@@ -25,7 +25,7 @@ class McKayDecomposer(Decomposer):
             return [g]
 
         if abs(g.angle) < ATOL:
-            return []
+            return [I(g.qubit)]
 
         if g.axis[0] == 0 and g.axis[1] == 0:
             rz_angle = float(g.angle * g.axis[2])
@@ -33,12 +33,18 @@ class McKayDecomposer(Decomposer):
 
         zxz_decomposition = ZXZDecomposer().decompose(g)
         zxz_angle = 0.0
-        if len(zxz_decomposition) >= 2 and isinstance(zxz_decomposition[1], BlochSphereRotation):
-            zxz_angle = zxz_decomposition[1].angle
+        if len(zxz_decomposition) >= 2:
+            zxz_angle = next(
+                gate.angle
+                for gate in zxz_decomposition
+                if isinstance(gate, BlochSphereRotation) and gate.axis == Axis(1, 0, 0)
+            )
 
         if abs(zxz_angle - pi / 2) < ATOL:
-            zxz_decomposition[1] = X90(g.qubit)
-            return zxz_decomposition
+            return [
+                X90(g.qubit) if isinstance(gate, BlochSphereRotation) and gate.axis == Axis(1, 0, 0) else gate
+                for gate in zxz_decomposition
+            ]
 
         # McKay decomposition
         za_mod = sqrt(cos(g.angle / 2) ** 2 + (g.axis[2] * sin(g.angle / 2)) ** 2)
