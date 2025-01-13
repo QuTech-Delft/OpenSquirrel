@@ -6,8 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Types of changes:
 * **Added** for new features.
 * **Changed** for changes in existing functionality.
-* **Removed** for now removed features.
 * **Fixed** for any bug fixes.
+* **Removed** for now removed features.
 
 
 ## [ 0.2.0 ] - [ xxxx-yy-zz ]
