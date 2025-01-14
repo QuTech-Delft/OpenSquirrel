@@ -34,7 +34,7 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
         (H(0), H(0), I(0)),
         (Rx(0, theta=math.pi), Rx(0, theta=math.pi), I(0)),
         (Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi)),
-        (Rx(0, theta=math.pi), Ry(0, theta=math.pi / 2), BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi)),
+        (Rx(0, theta=math.pi), Ry(0, theta=-math.pi/2), BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi)),
     ],
     ids=[
         "[bsr_a = Z, bsr_b = X] X * Z = -iY",  # Note that in X * Z, Z is applied first on a qubit state.
@@ -45,7 +45,7 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
         "[bsr_a.generator == bsr_b.generator] H * H == I",
         "[bsr_a.generator == bsr_b.generator] Rx(pi) * Rx(pi) == I",
         "[bsr_a.generator == bsr_b.generator] Rx(pi/2) * Rx(pi/2) = Rx(pi) ~ X",
-        "[bsr_a.generator != bsr_b.generator] Rx(pi) * Ry(pi/2) ~ H",
+        "[bsr_a.generator != bsr_b.generator] Ry(-pi/2) * Rx(pi) ~ H",
     ],
 )
 def test_compose_bloch_sphere_rotations(

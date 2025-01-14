@@ -40,7 +40,7 @@ def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSpher
             * (
                 sin(bsr_a.angle / 2) * cos(bsr_b.angle / 2) * bsr_a.axis.value
                 + cos(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * bsr_b.axis.value
-                + sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.cross(bsr_a.axis, bsr_b.axis)
+                + sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.cross(bsr_b.axis, bsr_a.axis)
             )
         ),
         order_of_magnitude,
