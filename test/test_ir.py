@@ -60,6 +60,7 @@ class TestAxis:
                 ValueError,
                 "axis requires an ArrayLike of length 3, but received an ArrayLike of length 4",
             ),
+            ([0, 0, 0], ValueError, "axis requires at least one element to be non-zero"),
         ],
     )
     def test_axis_setter_with_error(
@@ -125,7 +126,7 @@ class TestAxis:
             (["a", "b", "c"], TypeError),
         ],
     )
-    def test_parser(self, axis: AxisLike, expected: Any) -> None:
+    def test_parse(self, axis: AxisLike, expected: Any) -> None:
         if isinstance(expected, type) and issubclass(expected, Exception):
             with pytest.raises(expected):
                 Axis.parse(axis)
