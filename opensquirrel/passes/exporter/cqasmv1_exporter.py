@@ -69,17 +69,17 @@ def post_process(output: str) -> str:
 
 
 def _merge_barrier_groups(output: str) -> str:
-    post_output: str = ""
+    ret: str = ""
     barrier_group_indices: list[int] = []
     for line in output.split("\n"):
         if not line.startswith("barrier"):
             if barrier_group_indices:
-                post_output += _dump_barrier_group(barrier_group_indices)
+                ret += _dump_barrier_group(barrier_group_indices)
                 barrier_group_indices = []
-            post_output += f"{line}\n"
+            ret += f"{line}\n"
         else:
             barrier_group_indices.append(_get_barrier_index(line))
-    return post_output
+    return ret
 
 
 def _dump_barrier_group(indices: list[int]) -> str:
