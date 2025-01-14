@@ -87,7 +87,10 @@ def _dump_barrier_group(indices: list[int]) -> str:
 
 
 def _get_barrier_index(line: str) -> int:
-    return int(re.findall("\d+", line)[0])
+    barrier_index_match = re.search("\d+", line)
+    if not barrier_index_match:
+        raise CqasmV1ExporterParseError("expecting a barrier index but found none")       
+    return int(barrier_index_match.group(0))
 
 
 def export(circuit: Circuit) -> str:
