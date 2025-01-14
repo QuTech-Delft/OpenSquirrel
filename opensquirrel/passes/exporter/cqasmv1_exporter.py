@@ -86,10 +86,15 @@ def _dump_barrier_group(indices: list[int]) -> str:
     return "barrier q[{}]\n".format(", ".join(map(str, indices)) if len(indices) != 0 else "")
 
 
+class CqasmV1ExporterParseError(Exception):
+    pass
+
+
 def _get_barrier_index(line: str) -> int:
     barrier_index_match = re.search("\d+", line)
     if not barrier_index_match:
-        raise CqasmV1ExporterParseError("expecting a barrier index but found none")       
+        msg = "expecting a barrier index but found none"
+        raise CqasmV1ExporterParseError(msg)
     return int(barrier_index_match.group(0))
 
 
