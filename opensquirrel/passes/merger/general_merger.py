@@ -15,8 +15,16 @@ from opensquirrel.utils import acos, flatten_list
 
 def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSphereRotation) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
-    The first rotation is applied and then the second.
-    If the final Bloch sphere rotation is anonymous, we will try to match it to a default gate.
+    The first rotation (A) is applied and then the second (B):
+
+    As separate gates:
+        A q
+        B q
+
+    A linear operations:
+        B * A q
+
+    If the final Bloch sphere rotation is anonymous, we try to match it to a named gate.
 
     Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
