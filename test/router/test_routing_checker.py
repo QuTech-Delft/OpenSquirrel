@@ -2,6 +2,8 @@
 
 import pytest
 
+from opensquirrel import CircuitBuilder
+from opensquirrel.circuit import Circuit
 from opensquirrel.passes.router.routing_checker import RoutingChecker
 
 
@@ -11,15 +13,40 @@ def router_fixture() -> RoutingChecker:
     return RoutingChecker(backend_connectivity_diagram)
 
 
-def test_routing_checker_possible_121_mapping(router: RoutingChecker) -> None:
-    interactions = [(0, 1), (1, 2), (2, 4), (3, 4)]
+@pytest.fixture
+def circuit1() -> Circuit:
+    builder = CircuitBuilder(5)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    builder.H(2)
+    builder.CNOT(1, 2)
+    builder.CNOT(2, 4)
+    builder.CNOT(3, 4)
+    return builder.to_circuit()
+
+
+@pytest.fixture
+def circuit2() -> Circuit:
+    builder = CircuitBuilder(5)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    builder.CNOT(0, 3)
+    builder.H(2)
+    builder.CNOT(1, 2)
+    builder.CNOT(1, 3)
+    builder.CNOT(2, 3)
+    builder.CNOT(3, 4)
+    builder.CNOT(0, 4)
+    return builder.to_circuit()
+
+
+def test_routing_checker_possible_1to1_mapping(router: RoutingChecker, circuit1: Circuit) -> None:
     try:
-        router.route(interactions)
+        router.route(circuit1.ir)
     except ValueError:
-        pytest.fail("route() raised ValueError")
+        pytest.fail("route() raised ValueError unexpectedly")
 
 
-def test_routing_checker_impossible_121_mapping(router: RoutingChecker) -> None:
-    interactions = [(0, 1), (0, 3), (1, 2), (1, 3), (2, 3), (3, 4), (0, 4)]
-    with pytest.raises(ValueError, match="The qubit interactions: .* prevent a 121 mapping"):
-        router.route(interactions)
+def test_routing_checker_impossible_1to1_mapping(router: RoutingChecker, circuit2: Circuit) -> None:
+    with pytest.raises(ValueError, match="The following qubit interactions in the circuit prevent a 1-to-1 mapping:.*"):
+        router.route(circuit2.ir)

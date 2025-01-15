@@ -87,9 +87,9 @@ class Circuit:
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
 
-    def route(self, interactions: list[tuple[int, int]], router: Router) -> None:
-        """Generic router pass"""
-        router.route(interactions)
+    def route(self, router: Router) -> None:
+        """Generic router pass. It applies the given Router to the circuit."""
+        router.route(self.ir)
 
     def merge(self, merger: Merger) -> None:
         """Generic merge pass. It applies the given merger to the circuit."""

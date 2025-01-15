@@ -1,18 +1,28 @@
+from typing import cast
+
+from opensquirrel.ir import IR, Instruction, Qubit
 from opensquirrel.passes.router.general_router import Router
 
 
 class RoutingChecker(Router):
     def __init__(self, backend_connectivity_diagram: dict[int, list[int]]) -> None:
-        super().__init__()
         self.backend_connectivity_diagram = backend_connectivity_diagram
 
-    def route(self, interactions: list[tuple[int, int]]) -> None:
+    def route(self, ir: IR) -> None:
         non_executable_interactions = []
-
-        for q1, q2 in interactions:
-            if q2 not in self.backend_connectivity_diagram.get(q1, []):
-                non_executable_interactions.append((q1, q2))
+        for statement in ir.statements:
+            instruction: Instruction = cast(Instruction, statement)
+            args = instruction.arguments
+            if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
+                qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
+                qubit_index_pairs = [(q0.index, q1.index) for q0, q1 in zip(qubit_args[:-1], qubit_args[1:])]
+                for i, j in qubit_index_pairs:
+                    if j not in self.backend_connectivity_diagram.get(i, []):
+                        non_executable_interactions.append((i, j))
 
         if non_executable_interactions:
-            error_message = f"The qubit interactions: {non_executable_interactions} prevent a 121 mapping"
+            error_message = (
+                f"The following qubit interactions in the circuit prevent a 1-to-1 mapping:"
+                f"{set(non_executable_interactions)}"
+            )
             raise ValueError(error_message)
