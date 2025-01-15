@@ -256,7 +256,7 @@ class Axis(Sequence[np.float64], Expression):
         if len(axis) != 3:
             msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
             raise ValueError(msg)
-        if np.all(axis == 0).item():
+        if np.all(axis == 0):
             msg = "axis requires at least one element to be non-zero"
             raise ValueError(msg)
         return axis
