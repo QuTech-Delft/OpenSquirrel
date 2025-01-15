@@ -11,6 +11,10 @@ if TYPE_CHECKING:
     from opensquirrel.register_manager import RegisterManager
 
 
+class CqasmV1ExporterParseError(Exception):
+    pass
+
+
 class _CQASMv1Creator(IRVisitor):
     # Precision used when writing out a float number
     FLOAT_PRECISION = 8
@@ -84,10 +88,6 @@ def _merge_barrier_groups(output: str) -> str:
 
 def _dump_barrier_group(indices: list[int]) -> str:
     return "barrier q[{}]\n".format(", ".join(map(str, indices)) if len(indices) != 0 else "")
-
-
-class CqasmV1ExporterParseError(Exception):
-    pass
 
 
 def _get_barrier_index(line: str) -> int:
