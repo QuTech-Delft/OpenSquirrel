@@ -16,6 +16,7 @@ from opensquirrel.passes.decomposer import (
 )
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
+from opensquirrel.passes.router.routing_checker import RoutingChecker
 
 
 def test_spin_backend() -> None:
@@ -44,6 +45,10 @@ def test_spin_backend() -> None:
         """,
     )
 
+    # Check whether the above algorithm can be mapped to a dummy chip topology
+    connectivity = {0: [1, 2], 1: [0], 2: [0, 3], 3: [2]}
+
+    qc.route(router=RoutingChecker(connectivity))
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 
