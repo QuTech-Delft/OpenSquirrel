@@ -7,6 +7,7 @@ import pytest
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Measure
+from opensquirrel.passes.checker.native_gate_checker import NativeGateChecker
 from opensquirrel.passes.decomposer import (
     CNOT2CZDecomposer,
     CNOTDecomposer,
@@ -49,6 +50,13 @@ def test_spin_backend() -> None:
     connectivity = {0: [1, 2], 1: [0], 2: [0, 3], 3: [2]}
 
     qc.route(router=RoutingChecker(connectivity))
+
+    # Check whether the gates in the circuit match the native gate set of the backend
+
+    native_gate_set = ["Rx", "Ry", "H", "Rz", "CR", "CRk", "SWAP", "CNOT", "measure"]
+
+    qc.check(checker=NativeGateChecker(native_gate_set))
+
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
 

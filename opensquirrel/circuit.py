@@ -7,6 +7,7 @@ from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
     from opensquirrel.ir import IR, Gate
+    from opensquirrel.passes.checker.general_checker import Checker
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.passes.merger.general_merger import Merger
@@ -86,6 +87,10 @@ class Circuit:
     @property
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
+
+    def check(self, checker: Checker) -> None:
+        """Generic checker pass. It applies the given Checker to the circuit."""
+        checker.check(self.ir)
 
     def route(self, router: Router) -> None:
         """Generic router pass. It applies the given Router to the circuit."""
