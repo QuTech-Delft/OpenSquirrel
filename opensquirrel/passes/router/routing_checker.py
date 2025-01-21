@@ -5,8 +5,8 @@ from opensquirrel.passes.router.general_router import Router
 
 
 class RoutingChecker(Router):
-    def __init__(self, backend_connectivity_diagram: dict[int, list[int]]) -> None:
-        self.backend_connectivity_diagram = backend_connectivity_diagram
+    def __init__(self, connectivity: dict[str, list[int]]) -> None:
+        self.connectivity = connectivity
 
     def route(self, ir: IR) -> None:
         non_executable_interactions = []
@@ -17,7 +17,7 @@ class RoutingChecker(Router):
                 qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
                 qubit_index_pairs = [(q0.index, q1.index) for q0, q1 in zip(qubit_args[:-1], qubit_args[1:])]
                 for i, j in qubit_index_pairs:
-                    if j not in self.backend_connectivity_diagram.get(i, []):
+                    if j not in self.connectivity.get(str(i), []):
                         non_executable_interactions.append((i, j))
 
         if non_executable_interactions:

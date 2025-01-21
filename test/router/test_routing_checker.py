@@ -9,8 +9,8 @@ from opensquirrel.passes.router.routing_checker import RoutingChecker
 
 @pytest.fixture(name="router")
 def router_fixture() -> RoutingChecker:
-    backend_connectivity_diagram = {0: [1, 2], 1: [0, 2, 3], 2: [0, 1, 4], 3: [1, 4], 4: [2, 3]}
-    return RoutingChecker(backend_connectivity_diagram)
+    connectivity = {"0": [1, 2], "1": [0, 2, 3], "2": [0, 1, 4], "3": [1, 4], "4": [2, 3]}
+    return RoutingChecker(connectivity)
 
 
 @pytest.fixture
