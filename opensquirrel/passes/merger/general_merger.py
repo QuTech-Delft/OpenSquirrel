@@ -24,7 +24,7 @@ def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSpher
     A linear operations:
         (B * A) q
 
-    If the final Bloch sphere rotation is anonymous, we try to match it to a named gate.
+    If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.
 
     Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
