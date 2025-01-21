@@ -64,11 +64,10 @@ _Output_:
 For creation of a circuit through Python, the `CircuitBuilder` can be used accordingly:
 
 ```python
-from opensquirrel import CircuitBuilder
-from opensquirrel.ir import Float
+from opensquirrel.circuit_builder import CircuitBuilder
 
 builder = CircuitBuilder(qubit_register_size=2)
-builder.Ry(0, Float(0.23)).CNOT(0, 1)
+builder.Ry(0, 0.23).CNOT(0, 1)
 qc = builder.to_circuit()
 
 print(qc)
@@ -85,6 +84,8 @@ _Output_:
 You can naturally use the functionalities available in Python to create your circuit:
 
 ```python
+from opensquirrel.circuit_builder import CircuitBuilder
+
 builder = CircuitBuilder(qubit_register_size=10)
 for i in range(0, 10, 2):
     builder.H(i)
@@ -107,6 +108,8 @@ _Output_:
 For instance, you can generate a quantum fourier transform (QFT) circuit as follows:
 
 ```python
+from opensquirrel.circuit_builder import CircuitBuilder
+
 qubit_register_size = 5
 builder = CircuitBuilder(qubit_register_size)
 for i in range(qubit_register_size):
@@ -144,6 +147,8 @@ _Output_:
 As you can see, gates require _strong types_. For instance, you cannot do:
 
 ```python
+from opensquirrel.circuit import Circuit
+
 try:
     Circuit.from_string(
         """
@@ -160,13 +165,13 @@ _Output_:
 
     Parsing error: failed to resolve overload for cnot with argument pack (qubit, int)
 
-The issue is that the CNOT expects a qubit as second input argument where an integer has been provided.
+The issue is that the `CNOT` expects a qubit as second input argument where an integer has been provided.
 
 ## Modifying a circuit
 
 ### Merging single qubit gates
 
-All single-qubit gates appearing in a circuit can be merged by applying `merge_single_qubit_gates()` to the circuit.
+All single-qubit gates appearing in a circuit can be merged by applying `merge(merger=SingleQubitGatesMerger())` to the circuit.
 Note that multi-qubit gates remain untouched and single-qubit gates are not merged across any multi-qubit gates.
 The gate that results from the merger of single-qubit gates will, in general,
 comprise an arbitrary rotation and, therefore, not be a known gate.
@@ -182,14 +187,17 @@ the semantic representation of the anonymous gate is exported.
     will not recognize it as a valid statement.
 
 ```python
+from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.passes.merger import SingleQubitGatesMerger
+from opensquirrel.ir import Float
 import math
 
 builder = CircuitBuilder(1)
 for _ in range(4):
-    builder.Rx(0, Float(math.pi / 4))
+    builder.Rx(0, math.pi / 4)
 qc = builder.to_circuit()
 
-qc.merge_single_qubit_gates()
+qc.merge(merger=SingleQubitGatesMerger())
 
 print(qc)
 ```
@@ -222,6 +230,9 @@ It accepts a qubit, an axis, an angle, and a phase as arguments.
 Below is shown how the X-gate is defined in the default gate set of OpenSquirrel:
 
 ```python
+from opensquirrel.ir import Gate, BlochSphereRotation, QubitLike, named_gate
+import math
+
 @named_gate
 def x(q: QubitLike) -> Gate:
     return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
@@ -232,17 +243,22 @@ This _tells_ OpenSquirrel that the function defines a gate and that it should,
 therefore, have all the nice properties OpenSquirrel expects of it.
 
 - The `ControlledGate` class is used to define a multiple qubit gate that comprises a controlled operation.
-For instance, the CNOT gate is defined in the default gate set of OpenSquirrel as follows:
+For instance, the `CNOT` gate is defined in the default gate set of OpenSquirrel as follows:
 
 ```python
+from opensquirrel.ir import Gate, ControlledGate, QubitLike, named_gate
+from opensquirrel import X
+
 @named_gate
 def cnot(control: QubitLike, target: QubitLike) -> Gate:
-    return ControlledGate(control, x(target))
+    return ControlledGate(control, X(target))
 ```
 
 - The `MatrixGate` class may be used to define a gate in the generic form of a matrix:
 
 ```python
+from opensquirrel.ir import Gate, MatrixGate, QubitLike, named_gate
+
 @named_gate
 def swap(q1: QubitLike, q2: QubitLike) -> Gate:
     return MatrixGate(
@@ -274,13 +290,14 @@ Decompositions can be:
 #### 1. Predefined decomposition
 
 The first kind of decomposition is when you want to replace a particular gate in the circuit,
-like the CNOT gate, with a fixed list of gates.
-It is commonly known that CNOT can be decomposed as H-CZ-H.
+like the `CNOT` gate, with a fixed list of gates.
+It is commonly known that `CNOT` can be decomposed as `H`-`CZ`-`H`.
 This decomposition is demonstrated below using a Python _lambda function_,
 which requires the same parameters as the gate that is decomposed:
 
 ```python
-from opensquirrel.default_gates import CNOT, H, CZ
+from opensquirrel.circuit import Circuit
+from opensquirrel import CNOT, H, CZ
 
 qc = Circuit.from_string(
     """
@@ -323,6 +340,9 @@ For instance, an exception is thrown if we forget the final Hadamard,
 or H gate, in our custom-made decomposition:
 
 ```python
+from opensquirrel.circuit import Circuit
+from opensquirrel import CNOT, CZ, H
+
 qc = Circuit.from_string(
     """
     version 3.0
@@ -349,21 +369,42 @@ _Output_:
 
     replacement for gate CNOT does not preserve the quantum state
 
+##### _`CNOT` to `CZ` decomposer_
+
+The decomposition of the `CNOT` gate into a `CZ` gate (with additional single-qubit gates) is used frequently.
+To this end a `CNOT2CZDecomposer` has been implemented that decomposes any `CNOT`s in a circuit to a
+`Ry(-π/2)`-`CZ`-`Ry(π/2)`. The decomposition is illustrated in the image below.
+
+<p align="center"> <img width="600" src="_static/cnot2cz.png"> </p>
+
+`Ry` gates are used instead of, _e.g._, `H` gates, as they are, generally,
+more likely to be supported already by target backends.
+
+##### _`SWAP` to `CNOT` decomposer_
+
+The `SWAP2CNOTDecomposer` implements the predefined decomposition of the `SWAP` gate into 3 `CNOT` gates.
+The decomposition is illustrated in the image below.
+
+<p align="center"> <img width="600" src="_static/swap2cnot.png"> </p>
+
+
 #### 2. Inferred decomposition
 
 OpenSquirrel has a variety inferred decomposition strategies.
 More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
 
-One of the most common single qubit decomposition techniques is the Z-Y-Z decomposition.
+One of the most common single qubit decomposition techniques is the ZYZ decomposition.
 This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
-The decompositions are found in `opensquirrel.decomposer`,
-an example can be seen below where a Hadamard, Z, Y and Rx gate are all decomposed on a single qubit circuit.
+The decompositions are found in `opensquirrel.passes.decomposer`,
+an example can be seen below where a `H`, `Z`, `Y`, and `Rx` gate are all decomposed on a single qubit circuit.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import ZYZDecomposer
+from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.passes.decomposer import ZYZDecomposer
+import math
 
 builder = CircuitBuilder(qubit_register_size=1)
-builder.H(0).Z(0).Y(0).Rx(0, Float(math.pi / 3))
+builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
 qc = builder.to_circuit()
 
 qc.decompose(decomposer=ZYZDecomposer())
@@ -387,8 +428,8 @@ _Output_:
 Similarly, the decomposer can be used on individual gates.
 
 ```python
-from opensquirrel.decomposer.aba_decomposer import XZXDecomposer
-from opensquirrel.default_gates import H
+from opensquirrel.passes.decomposer import ZYZDecomposer
+from opensquirrel import H
 
 print(ZYZDecomposer().decompose(H(0)))
 ```

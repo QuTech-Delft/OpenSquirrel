@@ -9,13 +9,12 @@ from typing import Any
 
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import CircuitBuilder, H
 from opensquirrel.common import ATOL
-from opensquirrel.default_gates import CCZ, SWAP, H
 from opensquirrel.exceptions import ExporterError
-from opensquirrel.exporter import quantify_scheduler_exporter
-from opensquirrel.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
-from opensquirrel.ir import Bit, BlochSphereRotation, Float, Gate
+from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.passes.exporter import quantify_scheduler_exporter
+from opensquirrel.passes.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
 
 
 class FloatEq(float):
@@ -26,12 +25,12 @@ class FloatEq(float):
 class MockedQuantifyScheduler:
     def __enter__(self) -> tuple[Any, Any]:
         self.patch_qs = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler",
+            "opensquirrel.passes.exporter.quantify_scheduler_exporter.quantify_scheduler",
             create=True,
         )
 
         self.patch_qs_gates = unittest.mock.patch(
-            "opensquirrel.exporter.quantify_scheduler_exporter.quantify_scheduler_gates",
+            "opensquirrel.passes.exporter.quantify_scheduler_exporter.quantify_scheduler_gates",
             create=True,
         )
 
@@ -52,11 +51,11 @@ class TestQuantifySchedulerExporter:
         builder.X(0)
         builder.CZ(0, 1)
         builder.reset(0)
-        builder.Rz(1, Float(2.34))
-        builder.Ry(2, Float(1.23))
-        builder.measure(0, Bit(0))
-        builder.measure(1, Bit(1))
-        builder.measure(2, Bit(2))
+        builder.Rz(1, 2.34)
+        builder.Ry(2, 1.23)
+        builder.measure(0, 0)
+        builder.measure(1, 1)
+        builder.measure(2, 2)
         circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
@@ -77,7 +76,7 @@ class TestQuantifySchedulerExporter:
                     ),
                 ],
             )
-            mock_quantify_scheduler_gates.Reset.assert_called_once_with(qubit="q[0]")
+            mock_quantify_scheduler_gates.Reset.assert_called_once_with("q[0]")
             mock_quantify_scheduler_gates.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
             mock_quantify_scheduler_gates.Rz.assert_called_once_with(
                 theta=FloatEq(round(math.degrees(2.34), FIXED_POINT_DEG_PRECISION)),
@@ -87,8 +86,8 @@ class TestQuantifySchedulerExporter:
 
     @pytest.mark.parametrize(
         "gate",
-        [H(0), SWAP(0, 1), BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34), CCZ(0, 1, 2)],
-        ids=["H", "SWAP", "BSR", "CCZ"],
+        [H(0), BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34)],
+        ids=["H", "BSR"],
     )
     def test_gates_not_supported(self, gate: Gate) -> None:
         builder = CircuitBuilder(3)

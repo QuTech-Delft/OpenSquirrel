@@ -6,11 +6,13 @@ from typing import Any, SupportsInt
 
 import numpy as np
 import pytest
-from numpy.typing import ArrayLike
+from numpy.typing import NDArray
 
+from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
     Axis,
+    AxisLike,
     Bit,
     BlochSphereRotation,
     ControlledGate,
@@ -43,7 +45,7 @@ class TestAxis:
             (Axis(0, 1, 0), [0, 1, 0]),
         ],
     )
-    def test_axis_setter_no_error(self, axis: Axis, new_axis: ArrayLike, expected_axis: ArrayLike) -> None:
+    def test_axis_setter_no_error(self, axis: Axis, new_axis: AxisLike, expected_axis: list[float]) -> None:
         axis.value = new_axis  # type: ignore[assignment]
         np.testing.assert_array_equal(axis, expected_axis)
 
@@ -58,6 +60,7 @@ class TestAxis:
                 ValueError,
                 "axis requires an ArrayLike of length 3, but received an ArrayLike of length 4",
             ),
+            ([0, 0, 0], ValueError, "axis requires at least one element to be non-zero"),
         ],
     )
     def test_axis_setter_with_error(
@@ -91,6 +94,63 @@ class TestAxis:
     @pytest.mark.parametrize("other", ["test", Axis(0, 1, 0)])
     def test_eq_false(self, axis: Axis, other: Any) -> None:
         assert axis != other
+
+    @pytest.mark.parametrize(
+        ("axis", "expected"),
+        [
+            ([1, 0, 0], np.array([1, 0, 0], dtype=np.float64)),
+            ([0, 0, 0], ValueError),
+            ([1, 2], ValueError),
+            ([1, 2, 3, 4], ValueError),
+            ([0, 1, 0], np.array([0, 1, 0], dtype=np.float64)),
+            (["a", "b", "c"], TypeError),
+        ],
+    )
+    def test_constructor(self, axis: AxisLike, expected: Any) -> None:
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                Axis(axis)
+        else:
+            assert isinstance(expected, np.ndarray)
+            obj = Axis(axis)
+            np.testing.assert_array_equal(obj.value, expected)
+
+    @pytest.mark.parametrize(
+        ("axis", "expected"),
+        [
+            ([1, 0, 0], np.array([1, 0, 0], dtype=np.float64)),
+            ([0, 0, 0], ValueError),
+            ([1, 2], ValueError),
+            ([1, 2, 3, 4], ValueError),
+            ([0, 1, 0], np.array([0, 1, 0], dtype=np.float64)),
+            (["a", "b", "c"], TypeError),
+        ],
+    )
+    def test_parse(self, axis: AxisLike, expected: Any) -> None:
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                Axis.parse(axis)
+        else:
+            assert isinstance(expected, np.ndarray)
+            obj = Axis.parse(axis)
+            np.testing.assert_array_equal(obj, expected)
+
+    @pytest.mark.parametrize(
+        ("axis", "expected"),
+        [
+            (np.array([1, 0, 0], dtype=np.float64), np.array([1, 0, 0], dtype=np.float64)),
+            (np.array([0, 1, 0], dtype=np.float64), np.array([0, 1, 0], dtype=np.float64)),
+            (np.array([0, 0, 1], dtype=np.float64), np.array([0, 0, 1], dtype=np.float64)),
+            (
+                np.array([1, 1, 1], dtype=np.float64),
+                np.array([1 / np.sqrt(3), 1 / np.sqrt(3), 1 / np.sqrt(3)], dtype=np.float64),
+            ),
+        ],
+    )
+    def test_normalize(self, axis: AxisLike, expected: NDArray[np.float64]) -> None:
+        obj = Axis.normalize(np.array(axis, dtype=np.float64))
+        assert isinstance(expected, np.ndarray)
+        np.testing.assert_array_almost_equal(obj, expected)
 
 
 class TestIR:
@@ -179,19 +239,19 @@ class TestIR:
 class TestMeasure:
     @pytest.fixture(name="measure")
     def measure_fixture(self) -> Measure:
-        return Measure(42, Bit(42), axis=(0, 0, 1))
+        return Measure(42, 42, axis=(0, 0, 1))
 
     def test_repr(self, measure: Measure) -> None:
         expected_repr = "Measure(qubit=Qubit[42], bit=Bit[42], axis=Axis[0. 0. 1.])"
         assert repr(measure) == expected_repr
 
     def test_equality(self, measure: Measure) -> None:
-        measure_eq = Measure(42, Bit(42), axis=(0, 0, 1))
+        measure_eq = Measure(42, 42, axis=(0, 0, 1))
         assert measure == measure_eq
 
     @pytest.mark.parametrize(
         "other_measure",
-        [Measure(43, Bit(43), axis=(0, 0, 1)), Measure(42, Bit(42), axis=(1, 0, 0)), "test"],
+        [Measure(43, 43, axis=(0, 0, 1)), Measure(42, 42, axis=(1, 0, 0)), "test"],
         ids=["qubit", "axis", "type"],
     )
     def test_inequality(self, measure: Measure, other_measure: Measure | str) -> None:
@@ -208,10 +268,6 @@ class TestBlochSphereRotation:
     @pytest.fixture(name="gate")
     def gate_fixture(self) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau)
-
-    def test_identity(self) -> None:
-        expected_result = BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=0)
-        assert BlochSphereRotation.identity(42) == expected_result
 
     @pytest.mark.parametrize(
         "other_gate",
@@ -245,7 +301,7 @@ class TestBlochSphereRotation:
         assert gate.get_qubit_operands() == [Qubit(42)]
 
     def test_is_identity(self, gate: BlochSphereRotation) -> None:
-        assert BlochSphereRotation.identity(42).is_identity()
+        assert I(42).is_identity()
         assert not gate.is_identity()
 
 
@@ -320,7 +376,7 @@ class TestInt:
 
 class TestBit:
     def test_type_error(self) -> None:
-        with pytest.raises(TypeError, match="index must be an int"):
+        with pytest.raises(TypeError, match="index must be a BitLike"):
             Bit("f")  # type: ignore
 
     def test_init(self) -> None:
