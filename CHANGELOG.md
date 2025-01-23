@@ -1,0 +1,44 @@
+
+# Changelog
+
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](http://semver.org/).
+
+### Types of changes:
+* **Added** for new features.
+* **Changed** for changes in existing functionality.
+* **Fixed** for any bug fixes.
+* **Removed** for now removed features.
+
+
+## [ 0.3.0 ] - [ xxxx-yy-zz ]
+
+
+## [ 0.2.0 ] - [ 2025-01-21 ]
+
+### Added
+
+- `init` non-unitary instruction
+- `SWAP` two-qubit unitary instruction
+- `barrier` and `wait` control instructions
+- `SingleQubitGatesMerger` merger pass
+- `SWAP2CNOTDecomposer` decomposer pass
+- `CNOT2CZDecomposer` decomposer pass
+- `RoutingChecker` routing pass
+- `NativeGateValidator` validator pass
+- Restore SGMQ notation for barrier groups in cQASMv1 Exporter
+
+### Changed
+
+- Importing modules, classes, and functionalities simplified
+- `merge_single_qubit_gates` method of `Circuit` class,
+changed to general `merge` method that accepts custom merger passes
+- libQASM 0.6.9 integrated (updated from 0.6.7)
+- Refactor: code base adheres to the PEP8 style guide
+- Refactor: instruction library simplified
+- Refactor: comment nodes removed from IR
+
+### Fixed
+
+- Bug in ABA-decomposer
+- Bug in McKay-decomposer (all single-qubit Clifford gates are verified)

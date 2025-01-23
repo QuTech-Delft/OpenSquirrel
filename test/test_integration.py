@@ -7,7 +7,6 @@ import pytest
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Measure
-from opensquirrel.passes.checker.native_gate_checker import NativeGateChecker
 from opensquirrel.passes.decomposer import (
     CNOT2CZDecomposer,
     CNOTDecomposer,
@@ -18,6 +17,7 @@ from opensquirrel.passes.decomposer import (
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 from opensquirrel.passes.router.routing_checker import RoutingChecker
+from opensquirrel.passes.validator.native_gate_validator import NativeGateValidator
 
 
 def test_spin_backend() -> None:
@@ -48,14 +48,9 @@ def test_spin_backend() -> None:
 
     # Check whether the above algorithm can be mapped to a dummy chip topology
     connectivity = {0: [1, 2], 1: [0], 2: [0, 3], 3: [2]}
+    native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
 
     qc.route(router=RoutingChecker(connectivity))
-
-    # Check whether the gates in the circuit match the native gate set of the backend
-
-    native_gate_set = ["Rx", "Ry", "H", "Rz", "CR", "CRk", "SWAP", "CNOT", "measure"]
-
-    qc.check(checker=NativeGateChecker(native_gate_set))
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
@@ -70,6 +65,10 @@ def test_spin_backend() -> None:
 
     # Decompose single-qubit gates to spin backend native gates with McKay decomposer
     qc.decompose(decomposer=McKayDecomposer())
+
+    # Check whether the gates in the circuit match the native gate set of the backend
+
+    qc.validate(validator=NativeGateValidator(native_gate_set))
 
     assert (
         str(qc)

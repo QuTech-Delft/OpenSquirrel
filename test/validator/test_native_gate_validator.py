@@ -7,13 +7,13 @@ import pytest
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Float
-from opensquirrel.passes.checker.native_gate_checker import NativeGateChecker
+from opensquirrel.passes.validator.native_gate_validator import NativeGateValidator
 
 
-@pytest.fixture(name="checker")
-def checker_fixture() -> NativeGateChecker:
+@pytest.fixture(name="validator")
+def validator_fixture() -> NativeGateValidator:
     native_gate_set = ["H", "Z", "Y", "Rx", "CNOT"]
-    return NativeGateChecker(native_gate_set)
+    return NativeGateValidator(native_gate_set)
 
 
 @pytest.fixture
@@ -43,13 +43,13 @@ def circuit_with_4_cnot() -> Circuit:
     return builder.to_circuit()
 
 
-def test_matching_gates(checker: NativeGateChecker, circuit_with_3_cnot: Circuit) -> None:
+def test_matching_gates(validator: NativeGateValidator, circuit_with_3_cnot: Circuit) -> None:
     try:
-        checker.check(circuit_with_3_cnot.ir)
+        validator.validate(circuit_with_3_cnot.ir)
     except ValueError:
         pytest.fail("check() raised ValueError unexpectedly")
 
 
-def test_non_matching_gates(checker: NativeGateChecker, circuit_with_4_cnot: Circuit) -> None:
+def test_non_matching_gates(validator: NativeGateValidator, circuit_with_4_cnot: Circuit) -> None:
     with pytest.raises(ValueError, match="The following gates are not in the native gate set:.*"):
-        checker.check(circuit_with_4_cnot.ir)
+        validator.validate(circuit_with_4_cnot.ir)
