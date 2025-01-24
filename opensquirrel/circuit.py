@@ -89,11 +89,11 @@ class Circuit:
         return self.register_manager.get_bit_register_name()
 
     def validate(self, validator: Validator) -> None:
-        """Generic validator pass. It applies the given Validator to the circuit."""
+        """Generic validator pass. It applies the given validator to the circuit."""
         validator.validate(self.ir)
 
     def route(self, router: Router) -> None:
-        """Generic router pass. It applies the given Router to the circuit."""
+        """Generic router pass. It applies the given router to the circuit."""
         router.route(self.ir)
 
     def merge(self, merger: Merger) -> None:
