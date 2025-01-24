@@ -15,9 +15,9 @@ from opensquirrel.passes.decomposer import (
     XYXDecomposer,
 )
 from opensquirrel.passes.exporter import ExportFormat
-from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
-from opensquirrel.passes.router.routing_checker import RoutingChecker
-from opensquirrel.passes.validator.native_gate_validator import NativeGateValidator
+from opensquirrel.passes.merger import SingleQubitGatesMerger
+from opensquirrel.passes.router import RoutingChecker
+from opensquirrel.passes.validator import NativeGateValidator
 
 
 def test_spin_backend() -> None:
