@@ -17,7 +17,7 @@ def validator_fixture() -> NativeGateValidator:
 
 
 @pytest.fixture
-def circuit_with_3_cnot() -> Circuit:
+def circuit_with_matching_gate_set() -> Circuit:
     builder = CircuitBuilder(5)
     builder.H(0)
     builder.CNOT(0, 1)
@@ -31,7 +31,7 @@ def circuit_with_3_cnot() -> Circuit:
 
 
 @pytest.fixture
-def circuit_with_4_cnot() -> Circuit:
+def circuit_with_unmatching_gate_set() -> Circuit:
     builder = CircuitBuilder(5)
     builder.H(0)
     builder.CNOT(0, 1)
@@ -43,13 +43,13 @@ def circuit_with_4_cnot() -> Circuit:
     return builder.to_circuit()
 
 
-def test_matching_gates(validator: NativeGateValidator, circuit_with_3_cnot: Circuit) -> None:
+def test_matching_gates(validator: NativeGateValidator, circuit_with_matching_gate_set: Circuit) -> None:
     try:
-        validator.validate(circuit_with_3_cnot.ir)
+        validator.validate(circuit_with_matching_gate_set.ir)
     except ValueError:
         pytest.fail("check() raised ValueError unexpectedly")
 
 
-def test_non_matching_gates(validator: NativeGateValidator, circuit_with_4_cnot: Circuit) -> None:
+def test_non_matching_gates(validator: NativeGateValidator, circuit_with_unmatching_gate_set: Circuit) -> None:
     with pytest.raises(ValueError, match="The following gates are not in the native gate set:.*"):
-        validator.validate(circuit_with_4_cnot.ir)
+        validator.validate(circuit_with_unmatching_gate_set.ir)
