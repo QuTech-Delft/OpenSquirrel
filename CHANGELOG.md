@@ -13,6 +13,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [ 0.3.0 ] - [ xxxx-yy-zz ]
 
+### Added
+
+- `NativeGateValidator` validator pass
 
 ## [ 0.2.0 ] - [ 2025-01-21 ]
 
