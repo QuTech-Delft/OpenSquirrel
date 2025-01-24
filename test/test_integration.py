@@ -67,7 +67,6 @@ def test_spin_backend() -> None:
     qc.decompose(decomposer=McKayDecomposer())
 
     # Check whether the gates in the circuit match the native gate set of the backend
-
     qc.validate(validator=NativeGateValidator(native_gate_set))
 
     assert (
