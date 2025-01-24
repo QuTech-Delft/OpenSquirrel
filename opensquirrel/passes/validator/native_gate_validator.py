@@ -3,7 +3,6 @@ from opensquirrel.passes.validator import Validator
 
 
 class NativeGateValidator(Validator):
-
     def __init__(self, native_gate_set: list[str]) -> None:
         self.native_gate_set = native_gate_set
 
@@ -18,7 +17,8 @@ class NativeGateValidator(Validator):
             ValueError: If any unitary gate in the circuit is not part of the native gate set.
         """
         gates_not_in_native_gate_set = [
-            statement.name for statement in ir.statements
+            statement.name
+            for statement in ir.statements
             if isinstance(statement, Unitary) and statement.name not in self.native_gate_set
         ]
         if gates_not_in_native_gate_set:

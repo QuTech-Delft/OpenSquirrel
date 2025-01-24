@@ -9,9 +9,9 @@ if TYPE_CHECKING:
     from opensquirrel.ir import IR, Gate
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
-    from opensquirrel.passes.merger.general_merger import Merger
-    from opensquirrel.passes.router.general_router import Router
-    from opensquirrel.passes.validator.general_validator import Validator
+    from opensquirrel.passes.merger import Merger
+    from opensquirrel.passes.router import Router
+    from opensquirrel.passes.validator import Validator
     from opensquirrel.register_manager import RegisterManager
 
 
