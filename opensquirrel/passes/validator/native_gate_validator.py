@@ -1,5 +1,5 @@
 from opensquirrel.ir import IR, Unitary
-from opensquirrel.passes.validator.general_validator import Validator
+from opensquirrel.passes.validator import Validator
 
 
 class NativeGateValidator(Validator):
