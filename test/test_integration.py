@@ -47,7 +47,7 @@ def test_spin2plus_backend() -> None:
     )
 
     # Check whether the above algorithm can be mapped to a dummy chip topology
-    connectivity = {0: [1, 2], 1: [0], 2: [0, 3], 3: [2]}
+    connectivity = {"0": [1], "1": [0]}
     native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
 
     qc.route(router=RoutingChecker(connectivity))
