@@ -20,7 +20,7 @@ from opensquirrel.passes.router import RoutingChecker
 from opensquirrel.passes.validator import NativeGateValidator
 
 
-def test_spin_backend() -> None:
+def test_spin2plus_backend() -> None:
     qc = Circuit.from_string(
         """
         version 3.0
@@ -31,18 +31,18 @@ def test_spin_backend() -> None:
         /* This is a multi-
         line comment block */
 
-        qubit[4] q
+        qubit[2] q
         bit[4] b
 
-        H q[0:2]
+        H q[0:1]
         Rx(1.5789) q[0]
         Ry(-0.2) q[0]
         Rz(1.5707963) q[0]
         CNOT q[1], q[0]
-        CR(2.123) q[2], q[3]
-        CRk(2) q[0], q[2]
+        CR(2.123) q[0], q[1]
+        CRk(2) q[0], q[1]
         SWAP q[0], q[1]
-        b = measure q
+        b[1,3] = measure q
         """,
     )
 
@@ -56,6 +56,9 @@ def test_spin_backend() -> None:
     qc.decompose(decomposer=CNOTDecomposer())
 
     qc.decompose(decomposer=SWAP2CNOTDecomposer())
+
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    qc.decompose(decomposer=CNOTDecomposer())
 
     # Replace CNOT gates with CZ gates
     qc.decompose(decomposer=CNOT2CZDecomposer())
@@ -73,7 +76,7 @@ def test_spin_backend() -> None:
         str(qc)
         == """version 3.0
 
-qubit[4] q
+qubit[2] q
 bit[4] b
 
 Rz(1.5707963) q[1]
@@ -83,36 +86,33 @@ Rz(1.5789) q[0]
 X90 q[0]
 Rz(-2.9415926) q[0]
 CZ q[1], q[0]
-Rz(1.5707963) q[2]
-X90 q[2]
-Rz(1.5707963) q[2]
-Rz(2.6322964) q[3]
-X90 q[3]
-Rz(-1.5707963) q[3]
-CZ q[2], q[3]
-Rz(-1.5707963) q[3]
-X90 q[3]
-Rz(2.0800926) q[3]
-X90 q[3]
-Rz(-1.5707963) q[3]
-CZ q[2], q[3]
 Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
-Rz(3.4176945) q[2]
-X90 q[2]
-Rz(-1.5707963) q[2]
-CZ q[0], q[2]
-Rz(-1.5707963) q[2]
-X90 q[2]
-Rz(2.3561946) q[2]
-X90 q[2]
-Rz(-1.5707963) q[2]
-CZ q[0], q[2]
-Rz(0.78539816) q[0]
-Rz(1.5707963) q[1]
+Rz(2.6322964) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
+CZ q[0], q[1]
+Rz(-1.5707963) q[1]
+X90 q[1]
+Rz(2.0800926) q[1]
+X90 q[1]
+Rz(-1.5707963) q[1]
+CZ q[0], q[1]
+Rz(1.0615) q[0]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(2.3561946) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+CZ q[0], q[1]
+Rz(-1.5707963) q[1]
+X90 q[1]
+Rz(2.3561946) q[1]
+X90 q[1]
+Rz(-1.5707963) q[1]
+CZ q[0], q[1]
+Rz(0.78539816) q[0]
 CZ q[0], q[1]
 Rz(-1.5707963) q[1]
 X90 q[1]
@@ -128,19 +128,11 @@ Rz(1.5707963) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
-b[0] = measure q[0]
+b[1] = measure q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
-b[1] = measure q[1]
-Rz(-1.5707963) q[2]
-X90 q[2]
-Rz(1.5707963) q[2]
-b[2] = measure q[2]
-Rz(-1.5707963) q[3]
-X90 q[3]
-Rz(1.5707963) q[3]
-b[3] = measure q[3]
+b[3] = measure q[1]
 """
     )
 

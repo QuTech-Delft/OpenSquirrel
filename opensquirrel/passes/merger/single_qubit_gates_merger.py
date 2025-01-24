@@ -25,7 +25,7 @@ class SingleQubitGatesMerger(Merger):
             instruction: Instruction = cast(Instruction, statement)
             if isinstance(instruction, BlochSphereRotation):
                 already_accumulated = accumulators_per_qubit[instruction.qubit]
-                composed = compose_bloch_sphere_rotations(instruction, already_accumulated)
+                composed = compose_bloch_sphere_rotations(already_accumulated, instruction)
                 accumulators_per_qubit[instruction.qubit] = composed
                 del ir.statements[statement_index]
                 continue

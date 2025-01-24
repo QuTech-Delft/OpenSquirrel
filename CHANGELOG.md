@@ -1,4 +1,3 @@
-
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -17,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - `NativeGateValidator` validator pass
 
+
 ## [ 0.2.0 ] - [ 2025-01-21 ]
 
 ### Added
@@ -28,7 +28,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `SWAP2CNOTDecomposer` decomposer pass
 - `CNOT2CZDecomposer` decomposer pass
 - `RoutingChecker` routing pass
-- `NativeGateValidator` validator pass
 - Restore SGMQ notation for barrier groups in cQASMv1 Exporter
 
 ### Changed
