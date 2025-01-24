@@ -5,7 +5,6 @@ from opensquirrel.passes.validator import Validator
 class NativeGateValidator(Validator):
 
     def __init__(self, native_gate_set: list[str]) -> None:
-        super().__init__()
         self.native_gate_set = native_gate_set
 
     def validate(self, ir: IR) -> None:
