@@ -52,7 +52,7 @@ class ABADecomposer(Decomposer, ABC):
          Returns:
              A triplet (a, b, c) where a, b, and c are the values of x, y, and z reordered.
         """
-        _axis = Axis(axis)
+        _axis = Axis(axis)  # noqa: RUF052
         return _axis[self.index_a], _axis[self.index_b], _axis[self._find_unused_index()]
 
     @staticmethod
