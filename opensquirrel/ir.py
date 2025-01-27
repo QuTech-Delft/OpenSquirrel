@@ -521,7 +521,7 @@ class Gate(Unitary, ABC):
 
     @property
     def is_named_gate(self) -> bool:
-        return bool(self.generator and self.generator.__name__)
+        return not (self.generator is None or self.generator.__name__ is None)
 
     @property
     def is_anonymous(self) -> bool:
