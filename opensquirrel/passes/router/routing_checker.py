@@ -22,7 +22,7 @@ class RoutingChecker(Router):
 
         if non_executable_interactions:
             error_message = (
-                f"The following qubit interactions in the circuit prevent a 1-to-1 mapping:"
+                f"the following qubit interactions in the circuit prevent a 1-to-1 mapping:"
                 f"{set(non_executable_interactions)}"
             )
             raise ValueError(error_message)
