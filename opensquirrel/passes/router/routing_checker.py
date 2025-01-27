@@ -11,7 +11,7 @@ class RoutingChecker(Router):
     def route(self, ir: IR) -> None:
         non_executable_interactions = []
         for statement in ir.statements:
-            instruction: Instruction = cast(Instruction, statement)
+            instruction: Instruction = cast("Instruction", statement)
             args = instruction.arguments
             if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
                 qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
@@ -22,7 +22,7 @@ class RoutingChecker(Router):
 
         if non_executable_interactions:
             error_message = (
-                f"The following qubit interactions in the circuit prevent a 1-to-1 mapping:"
+                f"the following qubit interactions in the circuit prevent a 1-to-1 mapping:"
                 f"{set(non_executable_interactions)}"
             )
             raise ValueError(error_message)

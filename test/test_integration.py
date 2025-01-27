@@ -275,7 +275,7 @@ def test_hectoqubit_backend_allxy() -> None:
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
             Exception,
-            match="quantify-scheduler is not installed, or cannot be installed on " "your system",
+            match="quantify-scheduler is not installed, or cannot be installed on your system",
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:

@@ -22,7 +22,7 @@ class SingleQubitGatesMerger(Merger):
             statement = ir.statements[statement_index]
 
             # Accumulate consecutive Bloch sphere rotations
-            instruction: Instruction = cast(Instruction, statement)
+            instruction: Instruction = cast("Instruction", statement)
             if isinstance(instruction, BlochSphereRotation):
                 already_accumulated = accumulators_per_qubit[instruction.qubit]
                 composed = compose_bloch_sphere_rotations(already_accumulated, instruction)

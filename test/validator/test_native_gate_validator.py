@@ -48,5 +48,5 @@ def test_matching_gates(validator: NativeGateValidator, circuit_with_matching_ga
 
 
 def test_non_matching_gates(validator: NativeGateValidator, circuit_with_unmatching_gate_set: Circuit) -> None:
-    with pytest.raises(ValueError, match="The following gates are not in the native gate set:.*"):
+    with pytest.raises(ValueError, match=r"the following gates are not in the native gate set:.*"):
         validator.validate(circuit_with_unmatching_gate_set.ir)

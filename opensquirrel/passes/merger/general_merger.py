@@ -127,8 +127,8 @@ def can_move_before(statement: Statement, statement_group: list[Statement]) -> b
     first_statement_from_group = statement_group[0]
     if not isinstance(first_statement_from_group, Barrier):
         return False
-    instruction = cast(Instruction, statement)
-    return can_move_statement_before_barrier(instruction, cast(list[Instruction], statement_group))
+    instruction = cast("Instruction", statement)
+    return can_move_statement_before_barrier(instruction, cast("list[Instruction]", statement_group))
 
 
 def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:
