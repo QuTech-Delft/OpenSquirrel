@@ -22,5 +22,5 @@ class NativeGateValidator(Validator):
             if isinstance(statement, Unitary) and statement.name not in self.native_gate_set
         ]
         if gates_not_in_native_gate_set:
-            error_message = f"The following gates are not in the native gate set: {set(gates_not_in_native_gate_set)}"
+            error_message = f"the following gates are not in the native gate set: {set(gates_not_in_native_gate_set)}"
             raise ValueError(error_message)

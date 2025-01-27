@@ -52,8 +52,8 @@ class ABADecomposer(Decomposer, ABC):
          Returns:
              A triplet (a, b, c) where a, b, and c are the values of x, y, and z reordered.
         """
-        _axis = Axis(axis)  # noqa: RUF052
-        return _axis[self.index_a], _axis[self.index_b], _axis[self._find_unused_index()]
+        axis_ = Axis(axis)
+        return axis_[self.index_a], axis_[self.index_b], axis_[self._find_unused_index()]
 
     @staticmethod
     def _are_b_and_c_axes_in_negative_octant(b_axis_value: float, c_axis_value: float) -> bool:
