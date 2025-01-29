@@ -29,10 +29,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-numpy = [
-    { version = "^1.26", python = "<3.10" },
-    { version = "^2.0", python = "^3.10" },
-]
+numpy = ">=1.26"
 libqasm = "0.6.9"
 networkx = "^3.0.0"
 tox = "^4.24.1"

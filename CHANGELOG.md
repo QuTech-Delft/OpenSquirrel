@@ -16,6 +16,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - `NativeGateValidator` validator pass
 
+### Changed
+
+- Relaxed NumPy version requirement to `>=1.26` for all supported Python versions
+
 
 ## [ 0.2.0 ] - [ 2025-01-21 ]
 
