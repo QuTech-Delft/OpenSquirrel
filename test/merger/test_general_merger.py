@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X
+from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Float
 from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 
@@ -19,29 +19,45 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
     a = BlochSphereRotation(qubit=123, axis=(1, 0, 0), angle=math.pi / 2)
     b = BlochSphereRotation(qubit=123, axis=(0, 0, 1), angle=-math.pi / 2)
     c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=math.pi / 2)
-    composed = compose_bloch_sphere_rotations(a, compose_bloch_sphere_rotations(b, c))
+    composed = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(c, b), a)
     assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=math.pi)
 
 
 @pytest.mark.parametrize(
     ("bsr_a", "bsr_b", "expected_result"),
     [
+        (Y(0), X(0), BlochSphereRotation(0, axis=(0, 0, 1), angle=math.pi, phase=math.pi)),
+        (X(0), Y(0), BlochSphereRotation(0, axis=(0, 0, -1), angle=math.pi, phase=math.pi)),
+        (Z(0), Y(0), BlochSphereRotation(0, axis=(1, 0, 0), angle=math.pi, phase=math.pi)),
+        (Y(0), Z(0), BlochSphereRotation(0, axis=(-1, 0, 0), angle=math.pi, phase=math.pi)),
+        (Z(0), X(0), BlochSphereRotation(0, axis=(0, -1, 0), angle=math.pi, phase=math.pi)),
+        (X(0), Z(0), BlochSphereRotation(0, axis=(0, 1, 0), angle=math.pi, phase=math.pi)),
+        (
+            Rx(0, theta=math.pi),
+            Ry(0, theta=-math.pi / 2),
+            BlochSphereRotation(0, axis=(0.70711, 0.0, 0.70711), angle=math.pi, phase=0.0),
+        ),
         (I(0), Rx(0, theta=math.pi), Rx(0, theta=math.pi)),
         (Rx(0, theta=math.pi), I(0), Rx(0, theta=math.pi)),
         (X(0), X(0), I(0)),
         (H(0), H(0), I(0)),
         (Rx(0, theta=math.pi), Rx(0, theta=math.pi), I(0)),
         (Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi)),
-        (Rx(0, theta=math.pi), Ry(0, theta=math.pi / 2), BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi)),
     ],
     ids=[
+        "[bsr_a = Y, bsr_b = X] X * Y = iZ",
+        "[bsr_a = X, bsr_b = Y] Y * X = -iZ",
+        "[bsr_a = Z, bsr_b = Y] Y * Z = iX",
+        "[bsr_a = Y, bsr_b = Z] Z * Y = -iX",
+        "[bsr_a = Z, bsr_b = X] X * Z = -iY",
+        "[bsr_a = X, bsr_b = Z] Z * X = iY",
+        "[bsr_a = Rx(pi), bsr_b = Ry(-pi/2)] Ry(-pi/2) * Rx(pi) ~ H",
         "[bsr_a == I]",
         "[bsr_b == I]",
         "[bsr_a.generator == bsr_b.generator] X * X == I",
         "[bsr_a.generator == bsr_b.generator] H * H == I",
         "[bsr_a.generator == bsr_b.generator] Rx(pi) * Rx(pi) == I",
         "[bsr_a.generator == bsr_b.generator] Rx(pi/2) * Rx(pi/2) = Rx(pi) ~ X",
-        "[bsr_a.generator != bsr_b.generator] Rx(pi) * Ry(pi/2) ~ H",
     ],
 )
 def test_compose_bloch_sphere_rotations(

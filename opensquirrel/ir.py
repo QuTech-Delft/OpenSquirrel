@@ -213,7 +213,7 @@ class Axis(Sequence[np.float64], Expression):
 
         axis: An ``AxisLike`` to create the axis from.
         """
-        axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
+        axis_to_parse = axis[0] if len(axis) == 1 else cast("AxisLike", axis)
         self._value = self.normalize(self.parse(axis_to_parse))
 
     @property
@@ -281,7 +281,7 @@ class Axis(Sequence[np.float64], Expression):
 
     def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
         """Get the item at `index`."""
-        return cast(np.float64, self.value[index])
+        return cast("np.float64", self.value[index])
 
     def __len__(self) -> int:
         """Length of the axis, which is always 3."""
@@ -520,8 +520,12 @@ class Gate(Unitary, ABC):
         return "Anonymous gate: " + self.__repr__()
 
     @property
+    def is_named_gate(self) -> bool:
+        return not (self.generator is None or self.generator.__name__ is None)
+
+    @property
     def is_anonymous(self) -> bool:
-        return self.generator is None
+        return not self.is_named_gate
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:
@@ -706,7 +710,7 @@ def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., C
 
 
 def named_gate(gate_generator: Callable[..., Gate]) -> Callable[..., Gate]:
-    return cast(Callable[..., Gate], instruction_decorator(gate_generator))
+    return cast("Callable[..., Gate]", instruction_decorator(gate_generator))
 
 
 @overload
@@ -730,7 +734,7 @@ def non_unitary(non_unitary_generator: Callable[..., Wait]) -> Callable[..., Wai
 
 
 def non_unitary(non_unitary_generator: Callable[..., NonUnitary]) -> Callable[..., NonUnitary]:
-    return cast(Callable[..., NonUnitary], instruction_decorator(non_unitary_generator))
+    return cast("Callable[..., NonUnitary]", instruction_decorator(non_unitary_generator))
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:

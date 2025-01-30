@@ -48,5 +48,7 @@ def test_routing_checker_possible_1to1_mapping(router: RoutingChecker, circuit1:
 
 
 def test_routing_checker_impossible_1to1_mapping(router: RoutingChecker, circuit2: Circuit) -> None:
-    with pytest.raises(ValueError, match="The following qubit interactions in the circuit prevent a 1-to-1 mapping:.*"):
+    with pytest.raises(
+        ValueError, match=r"the following qubit interactions in the circuit prevent a 1-to-1 mapping:.*"
+    ):
         router.route(circuit2.ir)

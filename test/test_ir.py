@@ -325,7 +325,7 @@ class TestMatrixGate:
         )
 
     def test_incorrect_array(self) -> None:
-        with pytest.raises(ValueError, match=".* inhomogeneous shape after .*") as e_info:
+        with pytest.raises(ValueError, match=r".* inhomogeneous shape after .*") as e_info:
             MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 0]], [0, 1])
         assert "setting an array element with a sequence." in str(e_info.value)
 

@@ -174,7 +174,7 @@ class Parser:
     def _get_gate_f(instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
         gate_name = instruction.gate.name
         if gate_name in ["inv", "pow", "ctrl"]:
-            modified_gate_f = cast(Callable[..., BlochSphereRotation], Parser._get_gate_f(instruction.gate))
+            modified_gate_f = cast("Callable[..., BlochSphereRotation]", Parser._get_gate_f(instruction.gate))
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_f)
             if gate_name == "pow":

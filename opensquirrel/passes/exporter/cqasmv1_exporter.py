@@ -91,7 +91,7 @@ def _dump_barrier_group(indices: list[int]) -> str:
 
 
 def _get_barrier_index(line: str) -> int:
-    barrier_index_match = re.search("\d+", line)
+    barrier_index_match = re.search(r"\d+", line)
     if not barrier_index_match:
         msg = "expecting a barrier index but found none"
         raise CqasmV1ExporterParseError(msg)
