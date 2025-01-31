@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Removed** for now removed features.
 
 
-## [0.4.0] - [ xxxx-yy-zz ]
+## [0.3.1] - [ 2025-01-31 ]
 
 ### Fixed
 
