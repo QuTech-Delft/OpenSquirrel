@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opensquirrel"
-version = "0.2.0"
+version = "0.3.0"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
     "Quantum Inspire <support@quantum-inspire.com>"

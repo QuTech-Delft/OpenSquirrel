@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Bug in the writing of SWAP instructions
 
+
 ## [ 0.3.0 ] - [ 2025-01-30 ]
 
 ### Added
@@ -25,6 +26,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Relaxed NumPy version requirement to `>=1.26` for all supported Python versions
+
+### Fixed
+
+- Fixed order of merging Bloch sphere rotations
 
 
 ## [ 0.2.0 ] - [ 2025-01-21 ]
