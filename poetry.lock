@@ -2048,31 +2048,15 @@ test = ["pytest (>=7.4)", "pytest-cov (>=4.1)"]
 
 [[package]]
 name = "libqasm"
-version = "0.6.9"
+version = "1.0.0"
 description = "libqasm Python Package"
 optional = false
 python-versions = "*"
 files = [
-    {file = "libqasm-0.6.9-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:31da6dbeaf14df4c3c796f1ae09d49bcdd5a52fb85ab8a7aa7475ad099691521"},
-    {file = "libqasm-0.6.9-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:3b66ec559db7ffaea0bd586139e4119fdbfaebd0c7c47ed899bb6744ba7964ef"},
-    {file = "libqasm-0.6.9-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:6db57611f5e048b04fede7f6dd102f5d94dfef6e77ac7301185d55673f122dab"},
-    {file = "libqasm-0.6.9-cp310-cp310-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:62017c9630f20f3fa775dddae09dc1c70e7c44afeb26fde93c082c38393c5902"},
-    {file = "libqasm-0.6.9-cp310-cp310-win_amd64.whl", hash = "sha256:1f5f80f2ca02c16f590d0c02c6065ce400c39bdc7b3406d33934a63d54d5cf82"},
-    {file = "libqasm-0.6.9-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:e3cb4a7f75de569a23c43581b6d0e793c6218334b1b4d8d56b1ab8954083a5fd"},
-    {file = "libqasm-0.6.9-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:06b1227deb4711bd8318abf8bea3f37c1c65bd0003ff4b4b2f286e0a1601a734"},
-    {file = "libqasm-0.6.9-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:72cccc68793785e55cc16a288c7502781b324830ce868ce59fb09a35e75bfad0"},
-    {file = "libqasm-0.6.9-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4c5ec4d7eccbc06a49591c10101b2c6e5f76901854c9c998b0f216f0f11d2607"},
-    {file = "libqasm-0.6.9-cp311-cp311-win_amd64.whl", hash = "sha256:aaea4dad2c3742dc8e5d885363a2670249270f87c9c9030f67ae2b20355eeedb"},
-    {file = "libqasm-0.6.9-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:64b2fe7ce804b26e107ec1e5ddae4c37e311f056331b4fae723933fcd0901d54"},
-    {file = "libqasm-0.6.9-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:67ecc40f9c6f50dd5db0f1b949f677b3d8126b1bd3836fdf544c1e56d5fc11ba"},
-    {file = "libqasm-0.6.9-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:68ff5857a877be0d44ea3d746c936ccc112b10312d686b74d890b8effb000799"},
-    {file = "libqasm-0.6.9-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:822bbec51dba5cdf2fe865fa74b6a0e01c2c46fefc84c18a3e9159d6f1f1c33b"},
-    {file = "libqasm-0.6.9-cp312-cp312-win_amd64.whl", hash = "sha256:84c99d94a9d45c9487f6ff9be31ac849a4c8a704396ae67254db78b384942b7a"},
-    {file = "libqasm-0.6.9-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:49a04ccc5c271b496ecbc83c42beae95b3753f1180e19e242b613314e495874d"},
-    {file = "libqasm-0.6.9-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:79c2340455a85603ba8d1fd63f78e79bde1dd2902fed89b5bd40a8a643c15273"},
-    {file = "libqasm-0.6.9-cp39-cp39-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a9e1e46d170ebe820e4e1215be56cbd2b83a5963638e2f69cc10269514b32e6d"},
-    {file = "libqasm-0.6.9-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4ebb0890a90cf9a31bc3d8be9d208aca7f906a7420d7eced54678df2ed72da53"},
-    {file = "libqasm-0.6.9-cp39-cp39-win_amd64.whl", hash = "sha256:388c42972ca6700dd64612d6e5d7e1627ca37e1b9ed5e3eb69f85d68b0cb3508"},
+    {file = "libqasm-1.0.0-cp310-cp310-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:357cbef99b25e682c9c584acdfc2eaff16a51cf9a374b372dc1d925d8e45fcb8"},
+    {file = "libqasm-1.0.0-cp311-cp311-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:752cbd2dc8a09bd379f25a72c26c54826d47a85d3173c21b934bcef4a34867ed"},
+    {file = "libqasm-1.0.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:88c18e3e2199c5b94a81654c21f6bd52c30ed051bbfd6db6297b5de0faf37c87"},
+    {file = "libqasm-1.0.0-cp39-cp39-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:2e74f23cc1f1faf324597570549c28895da2ee8dbc36788172c3e6ff6a0990e1"},
 ]
 
 [package.dependencies]
@@ -6043,4 +6027,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b1f0fdb291d1e7ec5e1db189fbe56d4bd278bd3fba447af40247e9464d321791"
+content-hash = "153ccb78ae40edae793319e7ccb45723145d8ba14052fc94422e856faa5a6116"
