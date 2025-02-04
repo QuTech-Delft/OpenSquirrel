@@ -367,19 +367,6 @@ class Unitary(Instruction, ABC):
     def __init__(self, name: str) -> None:
         Instruction.__init__(self, name)
 
-    @property
-    @abstractmethod
-    def arguments(self) -> tuple[Expression, ...]:
-        pass
-
-    @abstractmethod
-    def get_qubit_operands(self) -> list[Qubit]:
-        pass
-
-    @abstractmethod
-    def get_bit_operands(self) -> list[Bit]:
-        pass
-
 
 class Gate(Unitary, ABC):
     def __init__(self, name: str) -> None:

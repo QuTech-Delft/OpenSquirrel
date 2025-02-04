@@ -62,44 +62,44 @@ class _QubitReindexer(IRVisitor):
     def visit_wait(self, wait: Wait) -> Wait:
         return Wait(qubit=self.qubit_indices.index(wait.qubit.index), time=wait.time)
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> BlochSphereRotation:
+    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> BlochSphereRotation:
         return BlochSphereRotation(
-            qubit=self.qubit_indices.index(g.qubit.index),
-            axis=g.axis,
-            angle=g.angle,
-            phase=g.phase,
-            name=g.name,
+            qubit=self.qubit_indices.index(gate.qubit.index),
+            axis=gate.axis,
+            angle=gate.angle,
+            phase=gate.phase,
+            name=gate.name,
         )
 
-    def visit_bsr_without_params(self, g: BsrWithoutParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(g)
+    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> BlochSphereRotation:
+        return self.visit_bloch_sphere_rotation(gate)
 
-    def visit_bsr_with_angle_params(self, g: BsrWithAngleParam) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(g)
+    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> BlochSphereRotation:
+        return self.visit_bloch_sphere_rotation(gate)
 
-    def visit_matrix_gate(self, g: MatrixGate) -> MatrixGate:
-        reindexed_operands = [self.qubit_indices.index(op.index) for op in g.operands]
-        return MatrixGate(matrix=g.matrix, operands=reindexed_operands)
+    def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:
+        reindexed_operands = [self.qubit_indices.index(op.index) for op in gate.operands]
+        return MatrixGate(matrix=gate.matrix, operands=reindexed_operands)
 
-    def visit_swap(self, g: SWAP) -> MatrixGate:
-        return self.visit_matrix_gate(g)
+    def visit_swap(self, gate: SWAP) -> MatrixGate:
+        return self.visit_matrix_gate(gate)
 
-    def visit_controlled_gate(self, g: ControlledGate) -> ControlledGate:
-        control_qubit = self.qubit_indices.index(g.control_qubit.index)
-        target_gate = g.target_gate.accept(self)
+    def visit_controlled_gate(self, gate: ControlledGate) -> ControlledGate:
+        control_qubit = self.qubit_indices.index(gate.control_qubit.index)
+        target_gate = gate.target_gate.accept(self)
         return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
 
-    def visit_cnot(self, g: CNOT) -> ControlledGate:
-        return self.visit_controlled_gate(g)
+    def visit_cnot(self, gate: CNOT) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
 
-    def visit_cz(self, g: CZ) -> ControlledGate:
-        return self.visit_controlled_gate(g)
+    def visit_cz(self, gate: CZ) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
 
-    def visit_cr(self, g: CR) -> ControlledGate:
-        return self.visit_controlled_gate(g)
+    def visit_cr(self, gate: CR) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
 
-    def visit_crk(self, g: CRk) -> ControlledGate:
-        return self.visit_controlled_gate(g)
+    def visit_crk(self, gate: CRk) -> ControlledGate:
+        return self.visit_controlled_gate(gate)
 
 
 def get_reindexed_circuit(

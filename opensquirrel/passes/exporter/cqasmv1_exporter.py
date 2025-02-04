@@ -9,6 +9,7 @@ from opensquirrel.ir import (
     CZ,
     SWAP,
     Barrier,
+    BlochSphereRotation,
     BsrWithAngleParam,
     BsrWithoutParams,
     ControlledGate,
@@ -54,7 +55,7 @@ class _CQASMv1Creator(IRVisitor):
     def visit_gate(self, gate: Gate) -> None:
         raise UnsupportedGateError(gate)
 
-    def visit_bloch_sphere_rotation(self, gate: Gate) -> None:
+    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         raise UnsupportedGateError(gate)
 
     def visit_bsr_without_params(self, gate: BsrWithoutParams) -> None:

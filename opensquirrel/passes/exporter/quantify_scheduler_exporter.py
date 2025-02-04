@@ -38,8 +38,8 @@ FIXED_POINT_DEG_PRECISION = 5
 
 
 class _ScheduleCreator(IRVisitor):
-    def _get_qubit_string(self, q: Qubit) -> str:
-        return f"{self.qubit_register_name}[{q.index}]"
+    def _get_qubit_string(self, qubit: Qubit) -> str:
+        return f"{self.qubit_register_name}[{qubit.index}]"
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
@@ -50,74 +50,76 @@ class _ScheduleCreator(IRVisitor):
         self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
-    def visit_bloch_sphere_rotation(self, g: BlochSphereRotation) -> None:
+    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
         # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
         # Depending on the system the angle may be stored as either 180 or -180 degrees.
         # This ambiguity has no physical consequences, but may cause the exporter test fail.
-        if abs(g.axis[2]) < ATOL:
+        if abs(gate.axis[2]) < ATOL:
             # Rxy rotation.
-            theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            phi: float = round(math.degrees(math.atan2(g.axis[1], g.axis[0])), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(g.qubit)))
+            theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
+            phi: float = round(math.degrees(math.atan2(gate.axis[1], gate.axis[0])), FIXED_POINT_DEG_PRECISION)
+            self.schedule.add(
+                quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit))
+            )
             return
 
-        if abs(g.axis[0]) < ATOL and abs(g.axis[1]) < ATOL:
+        if abs(gate.axis[0]) < ATOL and abs(gate.axis[1]) < ATOL:
             # Rz rotation.
-            theta = round(math.degrees(g.angle), FIXED_POINT_DEG_PRECISION)
-            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(g.qubit)))
+            theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
+            self.schedule.add(quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)))
             return
 
-        raise UnsupportedGateError(g)
+        raise UnsupportedGateError(gate)
 
-    def visit_bsr_without_params(self, g: BsrWithoutParams) -> None:
-        self.visit_bloch_sphere_rotation(g)
+    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> None:
+        self.visit_bloch_sphere_rotation(gate)
 
-    def visit_bsr_with_angle_params(self, g: BsrWithAngleParam) -> None:
-        self.visit_bloch_sphere_rotation(g)
+    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> None:
+        self.visit_bloch_sphere_rotation(gate)
 
-    def visit_matrix_gate(self, g: MatrixGate) -> None:
-        raise UnsupportedGateError(g)
+    def visit_matrix_gate(self, gate: MatrixGate) -> None:
+        raise UnsupportedGateError(gate)
 
-    def visit_swap(self, g: SWAP) -> None:
-        raise UnsupportedGateError(g)
+    def visit_swap(self, gate: SWAP) -> None:
+        raise UnsupportedGateError(gate)
 
-    def visit_controlled_gate(self, g: ControlledGate) -> None:
-        if not isinstance(g.target_gate, BlochSphereRotation):
-            raise UnsupportedGateError(g)
+    def visit_controlled_gate(self, gate: ControlledGate) -> None:
+        if not isinstance(gate.target_gate, BlochSphereRotation):
+            raise UnsupportedGateError(gate)
 
-    def visit_cnot(self, g: CNOT) -> None:
+    def visit_cnot(self, gate: CNOT) -> None:
         self.schedule.add(
             quantify_scheduler_gates.CNOT(
-                qC=self._get_qubit_string(g.control_qubit),
-                qT=self._get_qubit_string(g.target_qubit),
+                qC=self._get_qubit_string(gate.control_qubit),
+                qT=self._get_qubit_string(gate.target_qubit),
             ),
         )
         return
 
-    def visit_cz(self, g: CZ) -> None:
+    def visit_cz(self, gate: CZ) -> None:
         self.schedule.add(
             quantify_scheduler_gates.CZ(
-                qC=self._get_qubit_string(g.control_qubit),
-                qT=self._get_qubit_string(g.target_qubit),
+                qC=self._get_qubit_string(gate.control_qubit),
+                qT=self._get_qubit_string(gate.target_qubit),
             ),
         )
         return
 
-    def visit_cr(self, g: CR) -> None:
-        raise UnsupportedGateError(g)
+    def visit_cr(self, gate: CR) -> None:
+        raise UnsupportedGateError(gate)
 
-    def visit_crk(self, g: CRk) -> None:
-        raise UnsupportedGateError(g)
+    def visit_crk(self, gate: CRk) -> None:
+        raise UnsupportedGateError(gate)
 
-    def visit_measure(self, g: Measure) -> None:
-        qubit_index = g.qubit.index
-        bit_index = g.bit.index
+    def visit_measure(self, gate: Measure) -> None:
+        qubit_index = gate.qubit.index
+        bit_index = gate.bit.index
         acq_index = self.acq_index_record[qubit_index]
         self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
         self.schedule.add(
             quantify_scheduler_gates.Measure(
-                self._get_qubit_string(g.qubit),
+                self._get_qubit_string(gate.qubit),
                 acq_channel=qubit_index,
                 acq_index=acq_index,
                 acq_protocol="ThresholdedAcquisition",
@@ -126,8 +128,8 @@ class _ScheduleCreator(IRVisitor):
         self.acq_index_record[qubit_index] += 1
         return
 
-    def visit_reset(self, g: Reset) -> Any:
-        self.schedule.add(quantify_scheduler_gates.Reset(self._get_qubit_string(g.qubit)))
+    def visit_reset(self, gate: Reset) -> Any:
+        self.schedule.add(quantify_scheduler_gates.Reset(self._get_qubit_string(gate.qubit)))
 
 
 def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:
