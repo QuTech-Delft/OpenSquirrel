@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import cos, floor, isclose, log10, sin
+from math import cos, floor, log10, sin
 from typing import cast
 
 import numpy as np
@@ -57,7 +57,7 @@ def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSpher
 
     return BlochSphereRotation.try_match_replace_with_default(
         BlochSphereRotation(
-            qubit=a.qubit,
+            qubit=bsr_a.qubit,
             axis=combined_axis,
             angle=combined_angle,
             phase=combined_phase,

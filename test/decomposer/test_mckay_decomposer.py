@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pytest
 
-from opensquirrel import CNOT, CR, X90, Y90, H, I, Rz, S, Sdag, X, Y, Z, mX90, mY90
+from opensquirrel import CNOT, CR, X90, Y90, H, I, MinusX90, MinusY90, Rz, S, SDagger, X, Y, Z
 from opensquirrel.ir import BlochSphereRotation, Gate
 from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
@@ -122,11 +122,11 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
             [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi)],
         ),
         (X90(0), [X90(0)]),
-        (mX90(0), [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]),
+        (MinusX90(0), [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]),
         (Y90(0), [Rz(0, -math.pi / 2), X90(0), Rz(0, math.pi / 2)]),
-        (mY90(0), [X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi)]),
+        (MinusY90(0), [X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi)]),
         (S(0), [Rz(0, math.pi / 2)]),
-        (Sdag(0), [Rz(0, -math.pi / 2)]),
+        (SDagger(0), [Rz(0, -math.pi / 2)]),
         (H(0), [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]),
         (
             BlochSphereRotation(qubit=0, axis=[1, 1, 0], angle=math.pi, phase=math.pi / 2),

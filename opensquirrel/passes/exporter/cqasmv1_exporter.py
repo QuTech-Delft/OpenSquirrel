@@ -107,25 +107,17 @@ class _CQASMv1Creator(IRVisitor):
 
     def visit_measure(self, measure: Measure) -> None:
         qubit_argument = measure.arguments[0].accept(self)
-        self.output += f"{measure.name}_z {qubit_argument}\n"
-        qubit_argument = measure.arguments[0].accept(self)
         self.output += f"measure_z {qubit_argument}\n"
 
     def visit_init(self, init: Init) -> None:
-        qubit_argument = init.arguments[0].accept(self)
-        self.output += f"prep_z {qubit_argument}\n"
         qubit_argument = init.arguments[0].accept(self)
         self.output += f"prep_z {qubit_argument}\n"
 
     def visit_reset(self, reset: Reset) -> None:
         qubit_argument = reset.arguments[0].accept(self)
         self.output += f"prep_z {qubit_argument}\n"
-        qubit_argument = reset.arguments[0].accept(self)
-        self.output += f"prep_z {qubit_argument}\n"
 
     def visit_barrier(self, barrier: Barrier) -> None:
-        qubit_argument = barrier.arguments[0].accept(self)
-        self.output += f"barrier {qubit_argument}\n"
         qubit_argument = barrier.arguments[0].accept(self)
         self.output += f"barrier {qubit_argument}\n"
 

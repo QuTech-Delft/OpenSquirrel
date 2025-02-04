@@ -8,7 +8,6 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
     Axis,
