@@ -59,7 +59,7 @@ CRk(23) q[0, 3], q[1, 4]
 def test_error() -> None:
     with pytest.raises(
         IOError,
-        match="Error at <unknown file name>:1:30..31: failed to resolve variable 'q'",
+        match=r"Error at <unknown file name>:1:30..31: failed to resolve variable 'q'",
     ):
         Parser().circuit_from_string("version 3.0; qubit[20] qu; H q[5]")
 

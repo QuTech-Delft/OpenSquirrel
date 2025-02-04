@@ -9,7 +9,9 @@ if TYPE_CHECKING:
     from opensquirrel.ir import IR, Gate
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
-    from opensquirrel.passes.merger.general_merger import Merger
+    from opensquirrel.passes.merger import Merger
+    from opensquirrel.passes.router import Router
+    from opensquirrel.passes.validator import Validator
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -85,6 +87,14 @@ class Circuit:
     @property
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
+
+    def validate(self, validator: Validator) -> None:
+        """Generic validator pass. It applies the given validator to the circuit."""
+        validator.validate(self.ir)
+
+    def route(self, router: Router) -> None:
+        """Generic router pass. It applies the given router to the circuit."""
+        router.route(self.ir)
 
     def merge(self, merger: Merger) -> None:
         """Generic merge pass. It applies the given merger to the circuit."""

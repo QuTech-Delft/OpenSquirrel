@@ -1,35 +1,43 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import acos, cos, floor, log10, sin
+from math import cos, floor, isclose, log10, sin
 from typing import cast
 
 import numpy as np
 
+from opensquirrel import I
 from opensquirrel.common import ATOL
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, I, Instruction, Statement
-from opensquirrel.utils import flatten_list
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
+from opensquirrel.utils import acos, flatten_list
 
 
-def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotation) -> BlochSphereRotation:
+def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSphereRotation) -> BlochSphereRotation:
     """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
-    The first rotation is applied and then the second.
-    The resulting gate is anonymous except if `a` is the identity and `b` is not anonymous, or vice versa.
+    The first rotation (A) is applied and then the second (B):
 
-    Uses Rodrigues' rotation formula, see for instance https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula.
+    As separate gates:
+        A q
+        B q
+
+    A linear operations:
+        (B * A) q
+
+    If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.
+
+    Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
-    if a.qubit != b.qubit:
-        msg = "cannot merge two BlochSphereRotation's on different qubits"
+    if bsr_a.qubit != bsr_b.qubit:
+        msg = "cannot merge two Bloch sphere rotations on different qubits"
         raise ValueError(msg)
 
-    acos_argument = cos(a.angle / 2) * cos(b.angle / 2) - sin(a.angle / 2) * sin(b.angle / 2) * np.dot(a.axis, b.axis)
-    # This fixes float approximations like 1.0000000000002 which acos doesn't like.
-    acos_argument = max(min(acos_argument, 1.0), -1.0)
-
+    acos_argument = cos(bsr_a.angle / 2) * cos(bsr_b.angle / 2) - sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.dot(
+        bsr_a.axis, bsr_b.axis
+    )
     combined_angle = 2 * acos(acos_argument)
 
     if abs(sin(combined_angle / 2)) < ATOL:
-        return I(a.qubit)
+        return I(bsr_a.qubit)
 
     order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
@@ -37,15 +45,15 @@ def compose_bloch_sphere_rotations(a: BlochSphereRotation, b: BlochSphereRotatio
             1
             / sin(combined_angle / 2)
             * (
-                sin(a.angle / 2) * cos(b.angle / 2) * a.axis.value
-                + cos(a.angle / 2) * sin(b.angle / 2) * b.axis.value
-                + sin(a.angle / 2) * sin(b.angle / 2) * np.cross(a.axis, b.axis)
+                sin(bsr_a.angle / 2) * cos(bsr_b.angle / 2) * bsr_a.axis.value
+                + cos(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * bsr_b.axis.value
+                + sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.cross(bsr_b.axis, bsr_a.axis)
             )
         ),
         order_of_magnitude,
     )
 
-    combined_phase = np.round(a.phase + b.phase, order_of_magnitude)
+    combined_phase = np.round(bsr_a.phase + bsr_b.phase, order_of_magnitude)
 
     return BlochSphereRotation.try_match_replace_with_default(
         BlochSphereRotation(
@@ -77,8 +85,8 @@ def can_move_before(statement: Statement, statement_group: list[Statement]) -> b
     first_statement_from_group = statement_group[0]
     if not isinstance(first_statement_from_group, Barrier):
         return False
-    instruction = cast(Instruction, statement)
-    return can_move_statement_before_barrier(instruction, cast(list[Instruction], statement_group))
+    instruction = cast("Instruction", statement)
+    return can_move_statement_before_barrier(instruction, cast("list[Instruction]", statement_group))
 
 
 def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:

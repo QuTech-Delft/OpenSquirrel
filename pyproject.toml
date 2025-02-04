@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opensquirrel"
-version = "0.0.5"
+version = "0.3.0"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
     "Quantum Inspire <support@quantum-inspire.com>"
@@ -29,29 +29,27 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-numpy = [
-    { version = "^1.26", python = "<3.10" },
-    { version = "^2.0", python = "^3.10" },
-]
+numpy = ">=1.26"
 libqasm = "0.6.9"
 networkx = "^3.0.0"
+tox = "^4.24.1"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.3.2"}
 pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = ">=4.1,<7.0"
 mypy = "^1.7.0"
-ruff = "^0.5.0"
+ruff = ">=0.5,<0.10"
 tox = "^4.16.0"
 sympy = "^1.13.1"
-IPython = "^7.12.0"
+IPython = ">=7.12,<9.0"
 
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = {extras = ["python"], version = "^1.5.3"}
-mkdocstrings = {extras = ["python"], version = ">=0.24,<0.28"}
+mkdocstrings = {extras = ["python"], version = ">=0.24,<0.29"}
 mkdocs_gen_files = {extras = ["python"], version = "^0.5.0"}
 mkdocs-material = "^9.4.12"
 mkdocs-literate-nav = "^0.6.1"
@@ -156,8 +154,6 @@ select = [
 ]
 ignore = [
     "A005", # module shadowing a Python builtin module
-    "ANN101", # self should not be typed
-    "ANN102", # cls should not be typed
     "ANN401", # typing.Any can be useful (for example in __eq__)
     "COM812", # Conflicts with ruff format
     "ISC001", # Possible conflicts with ruff format

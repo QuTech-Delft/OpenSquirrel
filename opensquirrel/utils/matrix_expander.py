@@ -3,7 +3,7 @@ from __future__ import annotations
 import cmath
 import math
 from collections.abc import Iterable
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -128,7 +128,7 @@ class MatrixExpander(IRVisitor):
         if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
             msg = "result has incorrect shape"
             ValueError(msg)
-        return result
+        return np.asarray(result, dtype=np.complex128)
 
     def visit_bsr_without_params(self, gate: BsrWithoutParams) -> NDArray[np.complex128]:
         return self.visit_bloch_sphere_rotation(gate)
@@ -231,13 +231,13 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
 
     Examples:
         >>> X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
-        >>> get_matrix(X(Qubit(1)), 2).astype(int)           # X q[1]
+        >>> get_matrix(X(1), 2).astype(int)           # X q[1]
         array([[0, 0, 1, 0],
                [0, 0, 0, 1],
                [1, 0, 0, 0],
                [0, 1, 0, 0]])
 
-        >>> CNOT02 = ControlledGate(Qubit(0), X(Qubit(2)))
+        >>> CNOT02 = ControlledGate(0, X(2))
         >>> get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]
         array([[1, 0, 0, 0, 0, 0, 0, 0],
                [0, 0, 0, 0, 0, 1, 0, 0],
@@ -247,7 +247,7 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 1, 0, 0, 0, 0, 0, 0],
                [0, 0, 0, 0, 0, 0, 1, 0],
                [0, 0, 0, 1, 0, 0, 0, 0]])
-        >>> get_matrix(ControlledGate(Qubit(1), X(Qubit(2))), 3).astype(int)     # CNOT q[1], q[2]
+        >>> get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]
         array([[1, 0, 0, 0, 0, 0, 0, 0],
                [0, 1, 0, 0, 0, 0, 0, 0],
                [0, 0, 0, 0, 0, 0, 1, 0],
@@ -258,4 +258,4 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
     expander = MatrixExpander(qubit_register_size)
-    return cast(NDArray[np.complex128], gate.accept(expander))
+    return np.asarray(gate.accept(expander), dtype=np.complex128)

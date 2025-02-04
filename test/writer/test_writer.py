@@ -86,6 +86,22 @@ b[0] = measure q[0]
     )
 
 
+def test_swap() -> None:
+    builder = CircuitBuilder(2, 2)
+    builder.SWAP(0, 1)
+    circuit = builder.to_circuit()
+    assert (
+        writer.circuit_to_string(circuit)
+        == """version 3.0
+
+qubit[2] q
+bit[2] b
+
+SWAP q[0], q[1]
+"""
+    )
+
+
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(2, 2)
     builder.H(0)

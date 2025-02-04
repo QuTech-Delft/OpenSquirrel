@@ -249,8 +249,8 @@ class Axis(Sequence[np.float64], Expression):
 
         axis: An ``AxisLike`` to create the axis from.
         """
-        axis_to_parse = axis[0] if len(axis) == 1 else cast(AxisLike, axis)
-        self._value = self._parse_and_validate_axislike(axis_to_parse)
+        axis_to_parse = axis[0] if len(axis) == 1 else cast("AxisLike", axis)
+        self._value = self.normalize(self.parse(axis_to_parse))
 
     @property
     def value(self) -> NDArray[np.float64]:
@@ -264,10 +264,11 @@ class Axis(Sequence[np.float64], Expression):
         Args:
             axis: An ``AxisLike`` to create the axis from.
         """
-        self._value = self._parse_and_validate_axislike(axis)
+        self._value = self.parse(axis)
+        self._value = self.normalize(self._value)
 
-    @classmethod
-    def _parse_and_validate_axislike(cls, axis: AxisLike) -> NDArray[np.float64]:
+    @staticmethod
+    def parse(axis: AxisLike) -> NDArray[np.float64]:
         """Parse and validate an ``AxisLike``.
 
         Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
@@ -291,10 +292,13 @@ class Axis(Sequence[np.float64], Expression):
         if len(axis) != 3:
             msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
             raise ValueError(msg)
-        return cls._normalize_axis(axis)
+        if np.all(axis == 0):
+            msg = "axis requires at least one element to be non-zero"
+            raise ValueError(msg)
+        return axis
 
     @staticmethod
-    def _normalize_axis(axis: NDArray[np.float64]) -> NDArray[np.float64]:
+    def normalize(axis: NDArray[np.float64]) -> NDArray[np.float64]:
         """Normalize a NDArray.
 
         Args:
@@ -313,7 +317,7 @@ class Axis(Sequence[np.float64], Expression):
 
     def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
         """Get the item at `index`."""
-        return cast(np.float64, self.value[index])
+        return cast("np.float64", self.value[index])
 
     def __len__(self) -> int:
         """Length of the axis, which is always 3."""
