@@ -165,7 +165,7 @@ class Parser:
         gate_name = instruction.gate.name
         if gate_name in ["inv", "pow", "ctrl"]:
             modified_gate_generator = cast(
-                Callable[..., BlochSphereRotation], self._get_gate_generator(instruction.gate)
+                "Callable[..., BlochSphereRotation]", self._get_gate_generator(instruction.gate)
             )
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_generator)
