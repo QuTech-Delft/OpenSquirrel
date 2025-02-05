@@ -58,10 +58,10 @@ class IRVisitor:
     def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
         pass
 
-    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> Any:
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
         pass
 
-    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> Any:
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
         pass
 
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
@@ -388,7 +388,7 @@ class Gate(Unitary, ABC):
 
     @property
     def is_anonymous(self) -> bool:
-        return type(self) in [BlochSphereRotation, BsrWithoutParams, BsrWithAngleParam, MatrixGate, ControlledGate]
+        return type(self) in [BlochSphereRotation, BsrNoParams, BsrAngleParam, MatrixGate, ControlledGate]
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:
@@ -489,14 +489,14 @@ class BlochSphereRotation(Gate):
         return bsr
 
 
-class BsrWithoutParams(BlochSphereRotation):
+class BsrNoParams(BlochSphereRotation):
     def __init__(
         self,
         qubit: QubitLike,
         axis: AxisLike,
         angle: SupportsFloat,
         phase: SupportsFloat = 0,
-        name: str = "BsrWithoutParams",
+        name: str = "BsrNoParams",
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
 
@@ -505,82 +505,82 @@ class BsrWithoutParams(BlochSphereRotation):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_without_params(self)
+        return visitor.visit_bsr_no_params(self)
 
 
-class I(BsrWithoutParams):  # noqa: E742
+class I(BsrNoParams):  # noqa: E742
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=0, phase=0, name="I")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=0, phase=0, name="I")
 
 
-class H(BsrWithoutParams):
+class H(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2, name="H")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2, name="H")
 
 
-class X(BsrWithoutParams):
+class X(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2, name="X")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2, name="X")
 
 
-class X90(BsrWithoutParams):
+class X90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi / 2, phase=0, name="X90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi / 2, phase=0, name="X90")
 
 
-class MinusX90(BsrWithoutParams):
+class MinusX90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0, name="mX90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0, name="mX90")
 
 
-class Y(BsrWithoutParams):
+class Y(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2, name="Y")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi, phase=math.pi / 2, name="Y")
 
 
-class Y90(BsrWithoutParams):
+class Y90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi / 2, phase=0, name="Y90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi / 2, phase=0, name="Y90")
 
 
-class MinusY90(BsrWithoutParams):
+class MinusY90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=-math.pi / 2, phase=0, name="mY90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=-math.pi / 2, phase=0, name="mY90")
 
 
-class Z(BsrWithoutParams):
+class Z(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2, name="Z")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2, name="Z")
 
 
-class S(BsrWithoutParams):
+class S(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 2, phase=0, name="S")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 2, phase=0, name="S")
 
 
-class SDagger(BsrWithoutParams):
+class SDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 2, phase=0, name="Sdag")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 2, phase=0, name="Sdag")
 
 
-class T(BsrWithoutParams):
+class T(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 4, phase=0, name="T")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 4, phase=0, name="T")
 
 
-class TDagger(BsrWithoutParams):
+class TDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrWithoutParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=0, name="Tdag")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=0, name="Tdag")
 
 
-class BsrWithAngleParam(BlochSphereRotation):
+class BsrAngleParam(BlochSphereRotation):
     def __init__(
         self,
         qubit: QubitLike,
         axis: AxisLike,
         angle: SupportsFloat,
         phase: SupportsFloat = 0,
-        name: str = "BsrWithoutParams",
+        name: str = "BsrNoParams",
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
         self.theta = Float(angle)
@@ -590,22 +590,22 @@ class BsrWithAngleParam(BlochSphereRotation):
         return self.qubit, self.theta
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_with_angle_params(self)
+        return visitor.visit_bsr_angle_param(self)
 
 
-class Rx(BsrWithAngleParam):
+class Rx(BsrAngleParam):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
-        BsrWithAngleParam.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=theta, phase=0, name="Rx")
+        BsrAngleParam.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=theta, phase=0, name="Rx")
 
 
-class Ry(BsrWithAngleParam):
+class Ry(BsrAngleParam):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
-        BsrWithAngleParam.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=theta, phase=0, name="Ry")
+        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=theta, phase=0, name="Ry")
 
 
-class Rz(BsrWithAngleParam):
+class Rz(BsrAngleParam):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
-        BsrWithAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=0, name="Rz")
+        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=0, name="Rz")
 
 
 class MatrixGate(Gate):

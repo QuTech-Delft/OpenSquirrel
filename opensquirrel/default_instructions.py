@@ -11,8 +11,8 @@ from opensquirrel.ir import (
     Y90,
     Barrier,
     BlochSphereRotation,
-    BsrWithAngleParam,
-    BsrWithoutParams,
+    BsrAngleParam,
+    BsrNoParams,
     ControlledGate,
     CRk,
     Gate,
@@ -40,7 +40,7 @@ from opensquirrel.ir import (
     Z,
 )
 
-default_bsr_without_params_set: Mapping[str, type[BsrWithoutParams]]
+default_bsr_without_params_set: Mapping[str, type[BsrNoParams]]
 default_bsr_without_params_set = {
     "H": H,
     "I": I,
@@ -56,7 +56,7 @@ default_bsr_without_params_set = {
     "mX90": MinusX90,
     "mY90": MinusY90,
 }
-default_bsr_with_angle_param_set: Mapping[str, type[BsrWithAngleParam]]
+default_bsr_with_angle_param_set: Mapping[str, type[BsrAngleParam]]
 default_bsr_with_angle_param_set = {
     "Rx": Rx,
     "Ry": Ry,

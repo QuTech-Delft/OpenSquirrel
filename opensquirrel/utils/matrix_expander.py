@@ -16,8 +16,8 @@ from opensquirrel.ir import (
     Axis,
     AxisLike,
     BlochSphereRotation,
-    BsrWithAngleParam,
-    BsrWithoutParams,
+    BsrAngleParam,
+    BsrNoParams,
     ControlledGate,
     CRk,
     Gate,
@@ -130,10 +130,10 @@ class MatrixExpander(IRVisitor):
             ValueError(msg)
         return np.asarray(result, dtype=np.complex128)
 
-    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> NDArray[np.complex128]:
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> NDArray[np.complex128]:
         return self.visit_bloch_sphere_rotation(gate)
 
-    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> NDArray[np.complex128]:
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> NDArray[np.complex128]:
         return self.visit_bloch_sphere_rotation(gate)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:

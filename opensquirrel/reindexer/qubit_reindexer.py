@@ -11,8 +11,8 @@ from opensquirrel.ir import (
     SWAP,
     Barrier,
     BlochSphereRotation,
-    BsrWithAngleParam,
-    BsrWithoutParams,
+    BsrAngleParam,
+    BsrNoParams,
     ControlledGate,
     CRk,
     Gate,
@@ -71,10 +71,10 @@ class _QubitReindexer(IRVisitor):
             name=gate.name,
         )
 
-    def visit_bsr_without_params(self, gate: BsrWithoutParams) -> BlochSphereRotation:
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> BlochSphereRotation:
         return self.visit_bloch_sphere_rotation(gate)
 
-    def visit_bsr_with_angle_params(self, gate: BsrWithAngleParam) -> BlochSphereRotation:
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> BlochSphereRotation:
         return self.visit_bloch_sphere_rotation(gate)
 
     def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:
