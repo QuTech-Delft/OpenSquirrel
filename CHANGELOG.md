@@ -10,6 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Removed** for now removed features.
 
 
+## [0.3.2] - [ xxxx-yy-zz ]
+
+### Changed
+
+- Refactor: removed generators
+
+
 ## [0.3.1] - [ 2025-01-31 ]
 
 ### Fixed
