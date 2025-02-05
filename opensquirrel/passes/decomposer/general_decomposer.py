@@ -5,6 +5,7 @@ from collections.abc import Callable, Iterable
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase, is_identity_matrix_up_to_a_global_phase
+from opensquirrel.default_instructions import is_anonymous_gate
 from opensquirrel.ir import IR, Gate
 from opensquirrel.reindexer import get_reindexed_circuit
 
@@ -64,7 +65,7 @@ class _GenericReplacer(Decomposer):
         self.replacement_gates_function = replacement_gates_function
 
     def decompose(self, gate: Gate) -> list[Gate]:
-        if gate.is_anonymous or type(gate) is not self.gate_type:
+        if is_anonymous_gate(gate.name) or type(gate) is not self.gate_type:
             return [gate]
         return self.replacement_gates_function(*gate.arguments)
 

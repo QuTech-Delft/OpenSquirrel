@@ -108,3 +108,7 @@ default_instruction_set = {
     **default_unitary_set,
     **default_non_unitary_set,
 }
+
+
+def is_anonymous_gate(name: str) -> bool:
+    return name not in default_gate_set

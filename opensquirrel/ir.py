@@ -386,10 +386,6 @@ class Gate(Unitary, ABC):
     def arguments(self) -> tuple[Expression, ...]:
         pass
 
-    @property
-    def is_anonymous(self) -> bool:
-        return type(self) in [BlochSphereRotation, BsrNoParams, BsrAngleParam, MatrixGate, ControlledGate]
-
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:
         return len(qubits) != len(set(qubits))
