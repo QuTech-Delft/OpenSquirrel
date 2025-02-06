@@ -207,7 +207,7 @@ _Output_:
 
     qubit[1] q
 
-    Anonymous gate: BlochSphereRotation(Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
+    BlochSphereRotation(qubit=Qubit[0], axis=[1. 0. 0.], angle=3.14159, phase=0.0)
 
 In the above example, OpenSquirrel has merged all the Rx gates together.
 Yet, for now, OpenSquirrel does not recognize that this results in a single Rx
@@ -435,9 +435,9 @@ print(ZYZDecomposer().decompose(H(0)))
 ```
 _Output_:
 
-    [BlochSphereRotation(Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0),
-     BlochSphereRotation(Qubit[0], axis=Axis[0. 1. 0.], angle=1.5707963267948966, phase=0.0),
-     BlochSphereRotation(Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0)]
+    [BlochSphereRotation(qubit=Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0),
+     BlochSphereRotation(qubit=Qubit[0], axis=Axis[0. 1. 0.], angle=1.5707963267948966, phase=0.0),
+     BlochSphereRotation(qubit=Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0)]
 
 
 ## Exporting a circuit

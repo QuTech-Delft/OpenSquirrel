@@ -116,14 +116,14 @@ class Circuit:
 
         remap_ir(self, mapper.get_mapping())
 
-    def replace(self, gate_generator: Callable[..., Gate], f: Callable[..., list[Gate]]) -> None:
+    def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
-        `f` is a callable that takes the arguments of the gate that is to be replaced and
+        `replacement_gates_function` is a callable that takes the arguments of the gate that is to be replaced and
         returns the decomposition as a list of gates.
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.replace(self.ir, gate_generator, f)
+        general_decomposer.replace(self.ir, gate, replacement_gates_function)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
