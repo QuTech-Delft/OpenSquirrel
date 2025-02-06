@@ -344,3 +344,142 @@ def test_hectoqubit_backend_allxy() -> None:
 
         assert len(bit_string_mapping) == qc.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
+
+
+def test_hectoqubit_backend_bell_states() -> None:
+    qc = Circuit.from_string(
+        """
+        version 3.0
+
+        qubit[2] q
+        bit[8] b
+
+        barrier q
+        reset q
+        H q[0]
+        CNOT q[0], q[1]
+        barrier q
+        b[0, 1] = measure q
+
+        barrier q
+        reset q
+        H q[0]
+        Z q[0]
+        CNOT q[0], q[1]
+        barrier q
+        b[2, 3] = measure q
+
+        barrier q
+        reset q
+        H q[0]
+        X q[1]
+        CNOT q[0], q[1]
+        barrier q
+        b[4, 5] = measure q
+
+        barrier q
+        reset q
+        H q[0]
+        Z q[0]
+        X q[1]
+        CNOT q[0], q[1]
+        barrier q
+        b[6, 7] = measure q
+        """
+    )
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    qc.decompose(decomposer=CNOTDecomposer())
+
+    # Replace CNOT gates with CZ gates
+    qc.decompose(decomposer=CNOT2CZDecomposer())
+
+    # Merge single-qubit gates
+    qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
+    qc.decompose(decomposer=XYXDecomposer())
+
+    if importlib.util.find_spec("quantify_scheduler") is None:
+        with pytest.raises(
+            Exception,
+            match="quantify-scheduler is not installed, or cannot be installed on your system",
+        ):
+            qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+    else:
+        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+
+        assert exported_schedule.name == "Exported OpenSquirrel circuit"
+
+        operations = [
+            exported_schedule.operations[schedulable["operation_id"]].name
+            for schedulable in exported_schedule.schedulables.values()
+        ]
+
+        print(operations)
+
+        from quantify_scheduler import Schedule
+        import quantify_scheduler.operations.gate_library as qs_instructions
+
+        # Expected quantify-scheduler Schedule
+        schedule = Schedule("Predefined schedule")
+        schedule.add(qs_instructions.Reset('q[0]'))
+        schedule.add(qs_instructions.Reset('q[1]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[0]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[0]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[1]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[1]'))
+        schedule.add(qs_instructions.CZ('q[0]', 'q[1]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Measure('q[0]'))
+        schedule.add(qs_instructions.Measure('q[1]'))
+        schedule.add(qs_instructions.Reset('q[0]'))
+        schedule.add(qs_instructions.Reset('q[1]'))
+        schedule.add(qs_instructions.Rxy(-90, 90, 'q[0]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[1]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[1]'))
+        schedule.add(qs_instructions.CZ('q[0]', 'q[1]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Measure('q[0]'))
+        schedule.add(qs_instructions.Measure('q[1]'))
+        schedule.add(qs_instructions.Reset('q[0]'))
+        schedule.add(qs_instructions.Reset('q[1]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[0]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[0]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[1]'))
+        schedule.add(qs_instructions.CZ(q[0], q[1]))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Measure('q[0]'))
+        schedule.add(qs_instructions.Measure('q[1]'))
+        schedule.add(qs_instructions.Reset('q[0]'))
+        schedule.add(qs_instructions.Reset('q[1]'))
+        schedule.add(qs_instructions.Rxy(-90, 90, 'q[0]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Rxy(180, 0, 'q[1]'))
+        schedule.add(qs_instructions.CZ('q[0]', 'q[1]'))
+        schedule.add(qs_instructions.Rxy(90, 90, 'q[1]'))
+        schedule.add(qs_instructions.Measure('q[0]'))
+        schedule.add(qs_instructions.Measure('q[1]'))
+
+        schedule.plot_circuit_diagram()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
