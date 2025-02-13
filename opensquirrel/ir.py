@@ -349,7 +349,7 @@ class Statement(IRNode, ABC):
     pass
 
 
-class Instruction(Statement, ABC):
+class Instruction(Statement):
     def __init__(self, name: str) -> None:
         self.name = name
 
@@ -365,6 +365,9 @@ class Instruction(Statement, ABC):
     @abstractmethod
     def get_bit_operands(self) -> list[Bit]:
         pass
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_instruction(self)
 
 
 class Unitary(Instruction, ABC):
