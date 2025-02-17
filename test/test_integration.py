@@ -20,6 +20,100 @@ from opensquirrel.passes.router import RoutingChecker
 from opensquirrel.passes.validator import NativeGateValidator
 
 
+def test_bug_in_cz() -> None:
+    qc1 = Circuit.from_string(
+        """
+        version 3.0
+
+        qubit[2] q
+        bit[2] b
+
+        H q[0]
+        X q[0]
+        H q[1]
+
+        CZ q[0],q[1]
+
+        H q[0]
+        X q[0]
+        H q[1]
+        """,
+    )
+
+    qc2 = Circuit.from_string(
+        """
+        version 3.0
+
+        qubit[2] q
+        bit[2] b
+
+        H q[0]
+        X q[0]
+        H q[1]
+        """,
+    )
+
+    # Check whether the above algorithm can be mapped to a dummy chip topology
+    connectivity = {"0": [1], "1": [0]}
+    native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
+
+    qc1.route(router=RoutingChecker(connectivity))
+    qc1.decompose(decomposer=CNOTDecomposer())
+    qc1.decompose(decomposer=CNOT2CZDecomposer())
+    qc1.merge(merger=SingleQubitGatesMerger())
+    qc1.decompose(decomposer=McKayDecomposer())
+    qc1.validate(validator=NativeGateValidator(native_gate_set))
+    print(qc1)
+
+    """
+    version 3.0
+
+    qubit[2] q
+    bit[2] b
+
+    Rz(3.1415927) q[0]
+    X90 q[0]
+    Rz(1.5707963) q[0]
+    X90 q[0]
+    Rz(1.5707963) q[1]
+    X90 q[1]
+    Rz(-1.5707963) q[1]
+    CZ q[0], q[1]
+    Rz(3.1415927) q[0]
+    X90 q[0]
+    Rz(1.5707963) q[0]
+    X90 q[0]
+    Rz(3.1415927) q[1]
+    X90 q[1]
+    Rz(1.5707963) q[1]
+    X90 q[1]
+    """
+
+    qc2.route(router=RoutingChecker(connectivity))
+    qc2.decompose(decomposer=CNOTDecomposer())
+    qc2.decompose(decomposer=CNOT2CZDecomposer())
+    qc2.merge(merger=SingleQubitGatesMerger())
+    qc2.decompose(decomposer=McKayDecomposer())
+    qc2.validate(validator=NativeGateValidator(native_gate_set))
+    print(qc2)
+
+    """
+    version 3.0
+
+    qubit[2] q
+    bit[2] b
+
+    Rz(3.1415927) q[0]
+    X90 q[0]
+    Rz(1.5707963) q[0]
+    X90 q[0]
+    Rz(1.5707963) q[1]
+    X90 q[1]
+    Rz(1.5707963) q[1]
+    """
+
+
+
 def test_spin2plus_backend() -> None:
     qc = Circuit.from_string(
         """
