@@ -16,8 +16,7 @@ from opensquirrel.passes.decomposer import (
 )
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger import SingleQubitGatesMerger
-from opensquirrel.passes.router import RoutingChecker
-from opensquirrel.passes.validator import NativeGateValidator
+from opensquirrel.passes.validator import NativeGateValidator, RoutingValidator
 
 
 def test_spin2plus_backend() -> None:
@@ -50,7 +49,7 @@ def test_spin2plus_backend() -> None:
     connectivity = {"0": [1], "1": [0]}
     native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
 
-    qc.route(router=RoutingChecker(connectivity))
+    qc.validate(validator=RoutingValidator(connectivity))
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
