@@ -1,16 +1,16 @@
-# Tests for routing checker pass
+# Tests for routing validator pass
 
 import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.passes.router.routing_checker import RoutingChecker
+from opensquirrel.passes.validator import RoutingValidator
 
 
-@pytest.fixture(name="router")
-def router_fixture() -> RoutingChecker:
+@pytest.fixture(name="validator")
+def router_fixture() -> RoutingValidator:
     connectivity = {"0": [1, 2], "1": [0, 2, 3], "2": [0, 1, 4], "3": [1, 4], "4": [2, 3]}
-    return RoutingChecker(connectivity)
+    return RoutingValidator(connectivity)
 
 
 @pytest.fixture
@@ -40,15 +40,15 @@ def circuit2() -> Circuit:
     return builder.to_circuit()
 
 
-def test_routing_checker_possible_1to1_mapping(router: RoutingChecker, circuit1: Circuit) -> None:
+def test_routing_checker_possible_1to1_mapping(validator: RoutingValidator, circuit1: Circuit) -> None:
     try:
-        router.route(circuit1.ir)
+        validator.validate(circuit1.ir)
     except ValueError:
         pytest.fail("route() raised ValueError unexpectedly")
 
 
-def test_routing_checker_impossible_1to1_mapping(router: RoutingChecker, circuit2: Circuit) -> None:
+def test_routing_checker_impossible_1to1_mapping(validator: RoutingValidator, circuit2: Circuit) -> None:
     with pytest.raises(
         ValueError, match=r"the following qubit interactions in the circuit prevent a 1-to-1 mapping:.*"
     ):
-        router.route(circuit2.ir)
+        validator.validate(circuit2.ir)
