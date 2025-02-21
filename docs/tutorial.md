@@ -387,6 +387,14 @@ The decomposition is illustrated in the image below.
 
 <p align="center"> <img width="600" src="_static/swap2cnot.png"> </p>
 
+##### _`SWAP` to `CZ` decomposer_
+
+The `SWAP2CZDecomposer` implements the predefined decomposition of the `SWAP` gate into `Ry` rotations and 3 `CZ`
+gates.
+The decomposition is illustrated in the image below.
+
+<p align="center"> <img width="600" src="_static/swap2cz.png"> </p>
+
 
 #### 2. Inferred decomposition
 
