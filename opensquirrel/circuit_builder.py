@@ -108,6 +108,7 @@ class CircuitBuilder:
             args: Arguments parsed into the function
         """
         for i, par in enumerate(inspect.signature(generator_f).parameters.values()):
+
             try:
                 expected_type = (
                     ANNOTATIONS_TO_TYPE_MAP[par.annotation] if isinstance(par.annotation, str) else par.annotation
@@ -118,10 +119,16 @@ class CircuitBuilder:
 
             # Fix for Python 3.9
             try:
-                is_incorrect_type = not isinstance(args[i], expected_type)  # type: ignore
+                if isinstance(args[i], (list, tuple)):
+                    is_incorrect_type = False
+                else:
+                    is_incorrect_type = not isinstance(args[i], expected_type)  # type: ignore
             except TypeError:
                 # Expected type is probably a Union, which works differently in Python 3.9
-                is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
+                if isinstance(args[i], (list, tuple)):
+                    is_incorrect_type = False
+                else:
+                    is_incorrect_type = not isinstance(args[i], expected_type.__args__)  # type: ignore
 
             if is_incorrect_type:
                 msg = f"wrong argument type for instruction `{attr}`, got {type(args[i])} but expected {expected_type}"

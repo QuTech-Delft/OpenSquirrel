@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
@@ -8,7 +9,6 @@ from functools import wraps
 from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 
 import numpy as np
-import math
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
@@ -70,6 +70,7 @@ class IRVisitor:
 
     def visit_canonical_gate(self, canonical_gate: CanonicalGate) -> Any:
         pass
+
 
 class IRNode(ABC):
     @abstractmethod
@@ -652,16 +653,21 @@ class CanonicalGate(Gate):
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
         self.canonical_axis = canonical_axis
+        self.operands = self.get_qubit_operands()
 
         if self.control_qubit == self.target_qubit:
             msg = "control and target qubit cannot be the same"
             raise ValueError(msg)
 
-        if len(self.canonical_axis) != 3:
-            msg = f"The canonical axis has {len(self.canonical_axis)}, but requires 3!"
+        if not hasattr(self.canonical_axis, "__len__") or self.canonical_axis.__len__() != 3:
+            msg = "The canonical axis requires 3 values!"
+            raise ValueError(msg)
 
     def __repr__(self) -> str:
-        return f"ControlledGate(control_qubit={self.control_qubit},target_qubit= {self.target_qubit}, axis = {self.canonical_axis})"
+        return (
+            f"ControlledGate(control_qubit={self.control_qubit!r},"
+            f"target_qubit= {self.target_qubit!r}, axis = {self.canonical_axis!r})"
+            )
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.control_qubit, self.target_qubit]
@@ -671,9 +677,10 @@ class CanonicalGate(Gate):
         return visitor.visit_canonical_gate(self)
 
     def get_matrix(self) -> NDArray[np.complex128]:
-        t_x = float(self.canonical_axis[0])
-        t_y = float(self.canonical_axis[1])
-        t_z = float(self.canonical_axis[2])
+        canonical_axis = np.array(self.canonical_axis)
+        t_x = float(canonical_axis[0])
+        t_y = float(canonical_axis[1])
+        t_z = float(canonical_axis[2])
 
         cost_x = math.cos(t_x * math.pi / 2)
         sint_x = math.sin(t_x * math.pi / 2)
@@ -699,9 +706,11 @@ class CanonicalGate(Gate):
             [0, 0, 0, np.exp(-1j * math.pi / 2 * t_z)]
         ])
 
-        return np.matmul(np.matmul(xx, yy), zz)
+        matrix = np.matmul(np.matmul(xx, yy), zz)
 
-    def to_matrix_gate(self):
+        return np.array(matrix, dtype=np.complex128)
+
+    def to_matrix_gate(self) -> MatrixGate:
 
         can_matrix = self.get_matrix()
 
@@ -709,6 +718,10 @@ class CanonicalGate(Gate):
             can_matrix,
             operands=[self.control_qubit, self.target_qubit]
         )
+
+    def is_identity(self) -> bool:
+        return np.allclose(self.get_matrix(), np.eye(2 ** len(self.operands)), atol=ATOL)
+
 
 class ControlledGate(Gate):
     def __init__(
@@ -779,6 +792,8 @@ def named_gate(gate_generator: Callable[..., BlochSphereRotation]) -> Callable[.
 @overload
 def named_gate(gate_generator: Callable[..., MatrixGate]) -> Callable[..., MatrixGate]: ...
 
+@overload
+def named_gate(gate_generator: Callable[..., CanonicalGate]) -> Callable[..., CanonicalGate]: ...
 
 @overload
 def named_gate(gate_generator: Callable[..., ControlledGate]) -> Callable[..., ControlledGate]: ...

@@ -1,7 +1,7 @@
 import math
 
-import pytest
 import numpy as np
+import pytest
 from numpy.typing import NDArray
 
 from opensquirrel import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
@@ -115,5 +115,8 @@ class TestCircuitBuilder:
         ],
         ids=["Y_and_Z", "two_Z", "S_S_dagger", "asymmetric_Y_Z_Y"],
     )
-    def test_can_circuit(self, can_circuit_matrix: NDArray[np.complex128], expected_matrix: NDArray[np.complex128]) -> None:
+    def test_can_circuit(self,
+                         can_circuit_matrix: NDArray[np.complex128],
+                         expected_matrix: NDArray[np.complex128]
+                         ) -> None:
         assert are_matrices_equivalent_up_to_global_phase(can_circuit_matrix, expected_matrix)
