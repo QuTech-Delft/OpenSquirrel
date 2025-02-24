@@ -8,6 +8,7 @@ from functools import wraps
 from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
 
 import numpy as np
+import math
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
 from opensquirrel.common import ATOL, are_matrices_equivalent_up_to_global_phase, normalize_angle
@@ -67,6 +68,8 @@ class IRVisitor:
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> Any:
         pass
 
+    def visit_canonical_gate(self, canonical_gate: CanonicalGate) -> Any:
+        pass
 
 class IRNode(ABC):
     @abstractmethod
@@ -634,6 +637,78 @@ class MatrixGate(Gate):
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(2 ** len(self.operands)), atol=ATOL)
 
+
+class CanonicalGate(Gate):
+    def __init__(
+        self,
+        control_qubit: QubitLike,
+        target_qubit: QubitLike,
+        canonical_axis: AxisLike,
+        generator: Callable[..., CanonicalGate] | None = None,
+        arguments: tuple[Expression, ...] | None = None,
+        ) -> None:
+
+        Gate.__init__(self, generator, arguments)
+        self.control_qubit = Qubit(control_qubit)
+        self.target_qubit = Qubit(target_qubit)
+        self.canonical_axis = canonical_axis
+
+        if self.control_qubit == self.target_qubit:
+            msg = "control and target qubit cannot be the same"
+            raise ValueError(msg)
+
+        if len(self.canonical_axis) != 3:
+            msg = f"The canonical axis has {len(self.canonical_axis)}, but requires 3!"
+
+    def __repr__(self) -> str:
+        return f"ControlledGate(control_qubit={self.control_qubit},target_qubit= {self.target_qubit}, axis = {self.canonical_axis})"
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.control_qubit, self.target_qubit]
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
+        return visitor.visit_canonical_gate(self)
+
+    def get_matrix(self) -> NDArray[np.complex128]:
+        t_x = float(self.canonical_axis[0])
+        t_y = float(self.canonical_axis[1])
+        t_z = float(self.canonical_axis[2])
+
+        cost_x = math.cos(t_x * math.pi / 2)
+        sint_x = math.sin(t_x * math.pi / 2)
+        cost_y = math.cos(t_y * math.pi / 2)
+        sint_y = math.sin(t_y * math.pi / 2)
+
+        xx = np.array([
+            [cost_x, 0, 0, -1j * sint_x],
+            [0, cost_x, -1j * sint_x, 0],
+            [0, -1j * sint_x, cost_x, 0],
+            [-1j * sint_x, 0, 0, cost_x],
+        ])
+        yy = np.array([
+            [cost_y, 0, 0, 1j * sint_y],
+            [0, cost_y, -1j * sint_y, 0],
+            [0, -1j * sint_y, cost_y, 0],
+            [1j * sint_y, 0, 0, cost_y],
+        ])
+        zz = np.array([
+            [np.exp(-1j * math.pi / 2 * t_z), 0, 0, 0],
+            [0, np.exp(1j * math.pi / 2 * t_z), 0, 0],
+            [0, 0, np.exp(1j * math.pi / 2 * t_z), 0],
+            [0, 0, 0, np.exp(-1j * math.pi / 2 * t_z)]
+        ])
+
+        return np.matmul(np.matmul(xx, yy), zz)
+
+    def to_matrix_gate(self):
+
+        can_matrix = self.get_matrix()
+
+        return MatrixGate(
+            can_matrix,
+            operands=[self.control_qubit, self.target_qubit]
+        )
 
 class ControlledGate(Gate):
     def __init__(

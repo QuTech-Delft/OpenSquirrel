@@ -7,10 +7,12 @@ from typing import Callable, SupportsFloat, SupportsInt
 import numpy as np
 
 from opensquirrel.ir import (
+    AxisLike,
     Barrier,
     BitLike,
     BlochSphereRotation,
     ControlledGate,
+    CanonicalGate,
     Gate,
     Init,
     Instruction,
@@ -151,6 +153,13 @@ def SWAP(qubit0: QubitLike, qubit1: QubitLike) -> MatrixGate:  # noqa: N802
     )
 
 
+@named_gate
+def Can(control: QubitLike,  # noqa: N802
+        target: QubitLike,
+        canonical_axis: AxisLike) -> CanonicalGate:
+
+    return CanonicalGate(control, target, canonical_axis)
+
 ##########################
 # Non-unitary instructions
 ##########################
@@ -210,6 +219,7 @@ default_controlled_gate_set = {
 }
 default_matrix_gate_set = {
     "SWAP": SWAP,
+    "Can": Can
 }
 default_gate_alias_set = {
     "Hadamard": H,
