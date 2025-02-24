@@ -1,9 +1,13 @@
 import math
 
 import pytest
+import numpy as np
+from numpy.typing import NDArray
 
 from opensquirrel import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.circuit_builder import CircuitBuilder
+from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
+from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
 
 
@@ -86,3 +90,30 @@ class TestCircuitBuilder:
         circuit = builder.H(0).CNOT(0, 1).to_circuit()
 
         assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+
+    @pytest.mark.parametrize(
+        ("can_circuit_matrix", "expected_matrix"),
+        [
+            (
+                get_circuit_matrix(CircuitBuilder(2).Can(0, 1, [-1 / 4, -1 / 4, 1 / 4]).to_circuit()),
+                get_circuit_matrix(CircuitBuilder(2).Z(0).Can(0, 1, [1 / 4, 1 / 4, 1 / 4]).Z(0).to_circuit())
+            ),
+            (
+                get_circuit_matrix(CircuitBuilder(2).Can(0, 1, [2 / 3 - 1, 1 / 4, 1 / 4]).to_circuit()),
+                get_circuit_matrix(CircuitBuilder(2).Y(0).Y(1).Can(0, 1, [2 / 3, 1 / 4, 1 / 4]).Z(0).Z(1).to_circuit())
+            ),
+            (
+                get_circuit_matrix(CircuitBuilder(2).Can(0, 1, [1 / 4, 1 / 4, 1 / 4]).to_circuit()),
+                get_circuit_matrix(
+                    CircuitBuilder(2).S(0).S(1).Can(0, 1, [1 / 4, 1 / 4, 1 / 4]).Sdag(0).Sdag(1).to_circuit()
+                )
+            ),
+            (
+                get_circuit_matrix(CircuitBuilder(2).Can(0, 1, [1 - 1 / 2, 1 / 2, 0]).to_circuit()),
+                get_circuit_matrix(CircuitBuilder(2).Y(1).Can(0, 1, [1 / 2, 1 / 2, 0]).Z(0).Y(0).Z(1).to_circuit())
+            ),
+        ],
+        ids=["Y_and_Z", "two_Z", "S_S_dagger", "asymmetric_Y_Z_Y"],
+    )
+    def test_can_circuit(self, can_circuit_matrix: NDArray[np.complex128], expected_matrix: NDArray[np.complex128]) -> None:
+        assert are_matrices_equivalent_up_to_global_phase(can_circuit_matrix, expected_matrix)

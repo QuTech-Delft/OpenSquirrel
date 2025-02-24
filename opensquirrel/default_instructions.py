@@ -15,6 +15,7 @@ from opensquirrel.ir import (
     BsrNoParams,
     ControlledGate,
     CRk,
+    Can,
     Gate,
     H,
     I,
@@ -77,6 +78,7 @@ default_controlled_gate_set = {
 default_matrix_gate_set: Mapping[str, type[MatrixGate]]
 default_matrix_gate_set = {
     "SWAP": SWAP,
+    "Can": Can
 }
 default_gate_alias_set = {
     "Hadamard": H,
