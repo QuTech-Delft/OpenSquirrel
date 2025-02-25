@@ -17,6 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Refactor: removed generators
 - Changed the `RoutingChecker` pass to a `RoutingValidator` pass
 
+### Added
+
+- `RandomMapper` mapper pass
 
 ## [0.3.1] - [ 2025-01-31 ]
 
