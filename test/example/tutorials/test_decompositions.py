@@ -28,7 +28,7 @@ class TestDecomposition:
             {nx**2 + ny**2 + nz**2: 1}  # We assume the axis is normalized.
         )
 
-        display(    # type: ignore
+        display(  # type: ignore
             sp.Eq(rhs_simplified.a, q.a),
             sp.Eq(rhs_simplified.b, q.b),
             sp.Eq(rhs_simplified.c, q.c),

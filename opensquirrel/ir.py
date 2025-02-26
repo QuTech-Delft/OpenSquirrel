@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-import inspect
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
@@ -69,6 +68,9 @@ class IRVisitor:
         pass
 
     def visit_swap(self, gate: SWAP) -> Any:
+        pass
+
+    def visit_can(self, gate: Can) -> Any:
         pass
 
     def visit_controlled_gate(self, gate: ControlledGate) -> Any:
@@ -684,15 +686,9 @@ class SWAP(MatrixGate):
 
 class CanonicalGate(Gate):
     def __init__(
-        self,
-        control_qubit: QubitLike,
-        target_qubit: QubitLike,
-        canonical_axis: AxisLike,
-        generator: Callable[..., CanonicalGate] | None = None,
-        arguments: tuple[Expression, ...] | None = None,
-        ) -> None:
-
-        Gate.__init__(self, generator, arguments)
+        self, control_qubit: QubitLike, target_qubit: QubitLike, canonical_axis: AxisLike, name: str = "CanonicalGate"
+    ) -> None:
+        Gate.__init__(self, name)
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
         self.canonical_axis = canonical_axis
@@ -708,12 +704,15 @@ class CanonicalGate(Gate):
 
     def __repr__(self) -> str:
         return (
-            f"ControlledGate(control_qubit={self.control_qubit!r},"
+            f"CanonicalGate(control_qubit={self.control_qubit!r},"
             f"target_qubit= {self.target_qubit!r}, axis = {self.canonical_axis!r})"
-            )
+        )
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.control_qubit, self.target_qubit]
+
+    def get_bit_operands(self) -> list[Bit]:
+        return []
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_gate(self)
@@ -730,40 +729,56 @@ class CanonicalGate(Gate):
         cost_y = math.cos(t_y * math.pi / 2)
         sint_y = math.sin(t_y * math.pi / 2)
 
-        xx = np.array([
-            [cost_x, 0, 0, -1j * sint_x],
-            [0, cost_x, -1j * sint_x, 0],
-            [0, -1j * sint_x, cost_x, 0],
-            [-1j * sint_x, 0, 0, cost_x],
-        ])
-        yy = np.array([
-            [cost_y, 0, 0, 1j * sint_y],
-            [0, cost_y, -1j * sint_y, 0],
-            [0, -1j * sint_y, cost_y, 0],
-            [1j * sint_y, 0, 0, cost_y],
-        ])
-        zz = np.array([
-            [np.exp(-1j * math.pi / 2 * t_z), 0, 0, 0],
-            [0, np.exp(1j * math.pi / 2 * t_z), 0, 0],
-            [0, 0, np.exp(1j * math.pi / 2 * t_z), 0],
-            [0, 0, 0, np.exp(-1j * math.pi / 2 * t_z)]
-        ])
+        xx = np.array(
+            [
+                [cost_x, 0, 0, -1j * sint_x],
+                [0, cost_x, -1j * sint_x, 0],
+                [0, -1j * sint_x, cost_x, 0],
+                [-1j * sint_x, 0, 0, cost_x],
+            ]
+        )
+        yy = np.array(
+            [
+                [cost_y, 0, 0, 1j * sint_y],
+                [0, cost_y, -1j * sint_y, 0],
+                [0, -1j * sint_y, cost_y, 0],
+                [1j * sint_y, 0, 0, cost_y],
+            ]
+        )
+        zz = np.array(
+            [
+                [np.exp(-1j * math.pi / 2 * t_z), 0, 0, 0],
+                [0, np.exp(1j * math.pi / 2 * t_z), 0, 0],
+                [0, 0, np.exp(1j * math.pi / 2 * t_z), 0],
+                [0, 0, 0, np.exp(-1j * math.pi / 2 * t_z)],
+            ]
+        )
 
         matrix = np.matmul(np.matmul(xx, yy), zz)
 
         return np.array(matrix, dtype=np.complex128)
 
     def to_matrix_gate(self) -> MatrixGate:
-
         can_matrix = self.get_matrix()
 
-        return MatrixGate(
-            can_matrix,
-            operands=[self.control_qubit, self.target_qubit]
-        )
+        return MatrixGate(can_matrix, operands=[self.control_qubit, self.target_qubit])
 
     def is_identity(self) -> bool:
         return np.allclose(self.get_matrix(), np.eye(2 ** len(self.operands)), atol=ATOL)
+
+
+class Can(CanonicalGate):
+    def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, canonical_axis: AxisLike) -> None:
+        CanonicalGate.__init__(
+            self, control_qubit=control_qubit, target_qubit=target_qubit, canonical_axis=canonical_axis
+        )
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.control_qubit, self.target_qubit
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_can(self)
 
 
 class ControlledGate(Gate):
