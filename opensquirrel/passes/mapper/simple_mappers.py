@@ -19,13 +19,24 @@ class IdentityMapper(Mapper):
 
 class HardcodedMapper(Mapper):
     def __init__(self, qubit_register_size: int, mapping: Mapping) -> None:
-        """A ``HardcodedMapper`` maps each virtual qubit to a hardcoded physical qubit"""
+        """
+        A ``HardcodedMapper`` maps each virtual qubit to a hardcoded physical qubit
+
+        Args:
+            qubit_register_size: The number of qubits in the physical qubit register
+            mapping: The mapping from virtual to physical qubits
+        """
         super().__init__(qubit_register_size, mapping)
 
 
 class RandomMapper(Mapper):
     def __init__(self, qubit_register_size: int) -> None:
-        """A ``RandomMapper`` maps each virtual qubit to a random physical qubit."""
+        """
+        A ``RandomMapper`` maps each virtual qubit to a random physical qubit.
+
+        Args:
+            qubit_register_size: The number of qubits in the physical qubit register
+        """
         physical_qubit_register = list(range(qubit_register_size))
         random.shuffle(physical_qubit_register)
         random_mapping = Mapping(physical_qubit_register)
