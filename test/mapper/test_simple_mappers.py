@@ -1,4 +1,7 @@
+# Tests for the simple mapper passes
 from __future__ import annotations
+
+import random
 
 import pytest
 
@@ -43,3 +46,11 @@ class TestRandomMapper:
 
     def test_get_mapping(self, mapper: RandomMapper) -> None:
         assert len(mapper.get_mapping()) == 5
+
+    @pytest.mark.parametrize("seed", [42, 123, 456])
+    def test_mapping_uniqueness(self, seed: int, mapper: RandomMapper) -> None:
+        random.seed(seed)
+        new_mapper = RandomMapper(qubit_register_size=5)
+        original_mapping = mapper.get_mapping()
+        new_mapping = new_mapper.get_mapping()
+        assert new_mapping != original_mapping
