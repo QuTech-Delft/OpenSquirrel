@@ -47,10 +47,10 @@ class TestRandomMapper:
     def test_get_mapping(self, mapper: RandomMapper) -> None:
         assert len(mapper.get_mapping()) == 5
 
-    @pytest.mark.parametrize("seed", [42, 123, 456])
-    def test_mapping_uniqueness(self, seed: int, mapper: RandomMapper) -> None:
+    @pytest.mark.parametrize("seed, qubit_register_size", [(42, 5), (123, 10), (456, 20)])  # noqa PT006
+    def test_mapping_uniqueness(self, seed: int, qubit_register_size: int) -> None:
         random.seed(seed)
-        new_mapper = RandomMapper(qubit_register_size=5)
-        original_mapping = mapper.get_mapping()
-        new_mapping = new_mapper.get_mapping()
+        mapper = RandomMapper(qubit_register_size=qubit_register_size)
+        original_mapping = Mapping(list(range(qubit_register_size)))
+        new_mapping = mapper.get_mapping()
         assert new_mapping != original_mapping
