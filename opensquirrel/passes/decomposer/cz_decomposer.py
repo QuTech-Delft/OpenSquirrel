@@ -18,11 +18,12 @@ if TYPE_CHECKING:
 
 class CZDecomposer(Decomposer):
     """
-        Decomposes 2-qubit controlled unitary gates to CNOT + Rz/Ry.
-        Applying single-qubit gate fusion after this pass might be beneficial.
+    Decomposes 2-qubit controlled unitary gates to CNOT + Rz/Ry.
+    Applying single-qubit gate fusion after this pass might be beneficial.
 
-        Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
-        """
+    Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
+    """
+
     @staticmethod
     def _decompose_bloch_rotations(gates: list[Gate] | list[BlochSphereRotation]) -> list[BlochSphereRotation]:
         bloch_gates = []
