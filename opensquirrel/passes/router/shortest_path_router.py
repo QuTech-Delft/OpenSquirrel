@@ -27,7 +27,7 @@ class ShortestPathRouter(Router):
                         shortest_path = nx.shortest_path(graph, source=q0.index, target=q1.index)
                         for start_qubit_index, end_qubit_index in zip(shortest_path[:-1], shortest_path[1:]):
                             ir.statements.insert(instruction_counter, SWAP(start_qubit_index, end_qubit_index))
-                            instruction_counter += 1 
+                            instruction_counter += 1
                     except nx.NetworkXNoPath:
                         print(f"No routing path available between qubit {q0.index} and qubit {q1.index}")  # noqa: T201
             instruction_counter += 1
