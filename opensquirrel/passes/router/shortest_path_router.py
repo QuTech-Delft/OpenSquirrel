@@ -1,35 +1,34 @@
 import networkx as nx
 
-from opensquirrel.ir import IR, SWAP, Gate, Qubit
+from opensquirrel.ir import IR, SWAP, Gate
 from opensquirrel.passes.router import Router
 
 
 class ShortestPathRouter(Router):
-    def __init__(self, connectivity_scheme: dict[int, list[int]]) -> None:
-        self.connectivity_scheme = connectivity_scheme
+    def __init__(self, connectivity: dict[str, list[int]]) -> None:
+        self.connectivity = connectivity
 
     def route(self, ir: IR) -> IR:
         """
-        Routes the given intermediate representation (IR) by inserting SWAP gates
-        to make the circuit executable on the given hardware connectivity scheme.
-
+        Routes the circuit by inserting SWAP gates to make it executable given the hardware connectivity.
         Args:
-            ir (IR): The intermediate representation of the circuit to be routed.
-
+            ir: The intermediate representation of the circuit.
         Returns:
-            new_ir (IR): The new intermediate representation with the additional SWAP gates.
+            The intermediate representation of the routed circuit (including the additional SWAP gates).
         """
-        graph = nx.Graph(self.connectivity_scheme)
-        new_ir = IR()
-        for statement in ir.statements:
+        graph = nx.Graph({int(k): [int(v) for v in values] for k, values in self.connectivity.items()})
+        instruction_counter = 0
+        while instruction_counter < len(ir.statements):
+            statement = ir.statements[instruction_counter]
             if isinstance(statement, Gate) and len(statement.get_qubit_operands()) == 2:
                 q0, q1 = statement.get_qubit_operands()
                 if not graph.has_edge(q0.index, q1.index):
                     try:
                         shortest_path = nx.shortest_path(graph, source=q0.index, target=q1.index)
-                        for i, j in zip(shortest_path[:-1], shortest_path[1:]):
-                            new_ir.add_gate(SWAP(Qubit(i), Qubit(j)))
+                        for start_qubit_index, end_qubit_index in zip(shortest_path[:-1], shortest_path[1:]):
+                            ir.statements.insert(instruction_counter, SWAP(start_qubit_index, end_qubit_index))
+                            instruction_counter += 1 
                     except nx.NetworkXNoPath:
-                        print(f"No path between {q0.index} and {q1.index}")  # noqa: T201
-            new_ir.add_statement(statement)
-        return new_ir
+                        print(f"No routing path available between qubit {q0.index} and qubit {q1.index}")  # noqa: T201
+            instruction_counter += 1
+        return ir

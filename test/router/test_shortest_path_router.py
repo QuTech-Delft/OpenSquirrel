@@ -1,5 +1,6 @@
 # Tests for the ShortestPathRouter class
 import pytest
+from pytest_lazy_fixtures import lf
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
@@ -9,31 +10,31 @@ from opensquirrel.passes.router import ShortestPathRouter
 
 @pytest.fixture(name="router1")
 def router_fixture1() -> ShortestPathRouter:
-    connectivity_scheme = {0: [1], 1: [0, 2], 2: [1, 3], 3: [2, 4], 4: [3]}
-    return ShortestPathRouter(connectivity_scheme)
+    connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
+    return ShortestPathRouter(connectivity)
 
 
 @pytest.fixture(name="router2")
 def router_fixture2() -> ShortestPathRouter:
-    connectivity_scheme = {0: [1, 2], 1: [0, 3], 2: [0, 4], 3: [1, 5], 4: [2, 5], 5: [3, 4, 6], 6: [5]}
-    return ShortestPathRouter(connectivity_scheme)
+    connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
+    return ShortestPathRouter(connectivity)
 
 
 @pytest.fixture(name="router3")
 def router_fixture3() -> ShortestPathRouter:
-    connectivity_scheme = {
-        0: [1, 2, 5],
-        1: [0, 3, 6],
-        2: [0, 4, 7],
-        3: [1, 5, 8],
-        4: [2, 6, 9],
-        5: [0, 3, 7],
-        6: [1, 4, 8],
-        7: [2, 5, 9],
-        8: [3, 6, 9],
-        9: [4, 7, 8],
+    connectivity = {
+        "0": [1, 2, 5],
+        "1": [0, 3, 6],
+        "2": [0, 4, 7],
+        "3": [1, 5, 8],
+        "4": [2, 6, 9],
+        "5": [0, 3, 7],
+        "6": [1, 4, 8],
+        "7": [2, 5, 9],
+        "8": [3, 6, 9],
+        "9": [4, 7, 8],
     }
-    return ShortestPathRouter(connectivity_scheme)
+    return ShortestPathRouter(connectivity)
 
 
 @pytest.fixture(name="circuit1")
@@ -81,19 +82,11 @@ def circuit_fixture3() -> Circuit:
     return builder.to_circuit()
 
 
-def test_simple_case(router1: ShortestPathRouter, circuit1: Circuit) -> None:
-    new_ir = router1.route(circuit1.ir)
+@pytest.mark.parametrize(
+    "router, circuit, expected_swap_count",  # noqa: PT006
+    [(lf("router1"), lf("circuit1"), 4), (lf("router2"), lf("circuit2"), 8), (lf("router3"), lf("circuit3"), 15)],
+)
+def test_router(router: ShortestPathRouter, circuit: Circuit, expected_swap_count: int) -> None:
+    new_ir = router.route(circuit.ir)
     swap_count = sum(1 for statement in new_ir.statements if isinstance(statement, SWAP))
-    assert swap_count == 4
-
-
-def test_medium_case(router2: ShortestPathRouter, circuit2: Circuit) -> None:
-    new_ir = router2.route(circuit2.ir)
-    swap_count = sum(1 for statement in new_ir.statements if isinstance(statement, SWAP))
-    assert swap_count == 8
-
-
-def test_complex_case(router3: ShortestPathRouter, circuit3: Circuit) -> None:
-    new_ir = router3.route(circuit3.ir)
-    swap_count = sum(1 for statement in new_ir.statements if isinstance(statement, SWAP))
-    assert swap_count == 15
+    assert swap_count == expected_swap_count

@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.3.2] - [ xxxx-yy-zz ]
 
+### Added
+
+- `ShortestPathRouter` router pass
+
 ### Changed
 
 - Refactor: removed generators
