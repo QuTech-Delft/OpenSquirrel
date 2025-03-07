@@ -16,7 +16,8 @@ class ShortestPathRouter(Router):
         Returns:
             The intermediate representation of the routed circuit (including the additional SWAP gates).
         """
-        graph = nx.Graph({int(k): [int(v) for v in values] for k, values in self.connectivity.items()})
+        graph_data = {int(start_node): end_nodes for start_node, end_nodes in self.connectivity.items()}
+        graph = nx.Graph(graph_data)
         instruction_counter = 0
         while instruction_counter < len(ir.statements):
             statement = ir.statements[instruction_counter]
