@@ -1,6 +1,5 @@
 # Tests for the ShortestPathRouter class
 import pytest
-from pytest_lazy_fixtures import lf
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
@@ -84,15 +83,13 @@ def circuit_fixture3() -> Circuit:
 
 @pytest.mark.parametrize(
     "router, circuit, expected_swap_count",  # noqa: PT006
-    [
-        ("router1", "circuit1", 4),
-        ("router2", "circuit2", 8),
-        ("router3", "circuit3", 15)
-    ],
+    [("router1", "circuit1", 4), ("router2", "circuit2", 8), ("router3", "circuit3", 15)],
 )
-def test_router(router: ShortestPathRouter, circuit: Circuit, expected_swap_count: int, request) -> None:
-    circuit = request.getfixturevalue(circuit)
-    router = request.getfixturevalue(router)
+def test_router(
+    router: ShortestPathRouter, circuit: Circuit, expected_swap_count: int, request: pytest.FixtureRequest
+) -> None:
+    circuit = request.getfixturevalue(circuit)  # type: ignore[arg-type]
+    router = request.getfixturevalue(router)  # type: ignore[arg-type]
     circuit.route(router=router)
     swap_count = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
     assert swap_count == expected_swap_count
