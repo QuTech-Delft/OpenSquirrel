@@ -84,9 +84,15 @@ def circuit_fixture3() -> Circuit:
 
 @pytest.mark.parametrize(
     "router, circuit, expected_swap_count",  # noqa: PT006
-    [(lf("router1"), lf("circuit1"), 4), (lf("router2"), lf("circuit2"), 8), (lf("router3"), lf("circuit3"), 15)],
+    [
+        ("router1", "circuit1", 4),
+        ("router2", "circuit2", 8),
+        ("router3", "circuit3", 15)
+    ],
 )
-def test_router(router: ShortestPathRouter, circuit: Circuit, expected_swap_count: int) -> None:
-    new_ir = router.route(circuit.ir)
-    swap_count = sum(1 for statement in new_ir.statements if isinstance(statement, SWAP))
+def test_router(router: ShortestPathRouter, circuit: Circuit, expected_swap_count: int, request) -> None:
+    circuit = request.getfixturevalue(circuit)
+    router = request.getfixturevalue(router)
+    circuit.route(router=router)
+    swap_count = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
     assert swap_count == expected_swap_count
