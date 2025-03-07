@@ -18,7 +18,7 @@ class ShortestPathRouter(Router):
         """
         graph_data = {int(start_node): end_nodes for start_node, end_nodes in self.connectivity.items()}
         graph = nx.Graph(graph_data)
-        instruction_counter = 0
+        statement_index = 0
         while instruction_counter < len(ir.statements):
             statement = ir.statements[instruction_counter]
             if isinstance(statement, Gate) and len(statement.get_qubit_operands()) == 2:
