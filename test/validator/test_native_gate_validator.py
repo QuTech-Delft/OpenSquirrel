@@ -1,4 +1,4 @@
-# Tests for native gate checker pass
+# Tests for native gate validator pass
 import pytest
 
 from opensquirrel import CircuitBuilder
