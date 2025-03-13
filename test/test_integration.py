@@ -16,13 +16,13 @@ from opensquirrel.passes.decomposer import (
 )
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger import SingleQubitGatesMerger
-from opensquirrel.passes.router import RoutingChecker
-from opensquirrel.passes.validator import NativeGateValidator
+from opensquirrel.passes.validator import NativeGateValidator, RoutingValidator
 
 
 def test_spin2plus_backend() -> None:
     qc = Circuit.from_string(
         """
+        // Version statement
         version 3.0
 
         // This is a single line comment which ends on the newline.
@@ -31,30 +31,62 @@ def test_spin2plus_backend() -> None:
         /* This is a multi-
         line comment block */
 
-        qubit[2] q
+        // (Qu)bit declaration
+        qubit[2] q  // Sping-2+ has a 2-qubit register
         bit[4] b
 
-        H q[0:1]
-        Rx(1.5789) q[0]
-        Ry(-0.2) q[0]
-        Rz(1.5707963) q[0]
-        CNOT q[1], q[0]
-        CR(2.123) q[0], q[1]
-        CRk(2) q[0], q[1]
+        // Initialization
+        init q
+
+        // Single-qubit gates
+        I q[0]
+        H q[1]
+        X q[0]
+        X90 q[1]
+        mX90 q[0]
+        Y q[1]
+        Y90 q[0]
+        mY90 q[1]
+        Z q[0]
+        S q[1]
+        Sdag q[0]
+        T q[1]
+        Tdag q[0]
+        Rx(pi/2) q[1]
+        Ry(pi/2) q[0]
+        Rz(tau) q[1]
+
+        // Mid-circuit measurement
+        b[0,2] = measure q
+
+        // Two-qubit gates
+        CNOT q[0], q[1]
+        CZ q[1], q[0]
+        CR(pi) q[0], q[1]
+        CRk(2) q[1], q[0]
         SWAP q[0], q[1]
+
+        // Control instructions
+        barrier q
+        wait(3) q
+
+        // Final measurement
         b[1,3] = measure q
         """,
     )
 
-    # Check whether the above algorithm can be mapped to a dummy chip topology
+    """
+    Spin-2+ chip topology:
+        0 <--> 1
+    """
     connectivity = {"0": [1], "1": [0]}
+
     native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
 
-    qc.route(router=RoutingChecker(connectivity))
+    # Validate that the interactions in the circuit are possible given the chip topology
+    qc.validate(validator=RoutingValidator(connectivity))
 
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer())
-
+    # Decompose SWAP gate into 3 CNOT gates
     qc.decompose(decomposer=SWAP2CNOTDecomposer())
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
@@ -69,7 +101,7 @@ def test_spin2plus_backend() -> None:
     # Decompose single-qubit gates to spin backend native gates with McKay decomposer
     qc.decompose(decomposer=McKayDecomposer())
 
-    # Check whether the gates in the circuit match the native gate set of the backend
+    # Validate that the compiled circuit is composed of gates that are in the native gate set
     qc.validate(validator=NativeGateValidator(native_gate_set))
 
     assert (
@@ -79,59 +111,70 @@ def test_spin2plus_backend() -> None:
 qubit[2] q
 bit[4] b
 
+init q[0]
+init q[1]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(0.78539813) q[0]
+X90 q[0]
+Rz(-1.5707964) q[0]
+b[0] = measure q[0]
+Rz(2.3561946) q[1]
+X90 q[1]
+Rz(-3.1415927) q[1]
+b[2] = measure q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
+Rz(-1.5707963) q[1]
+CZ q[0], q[1]
+Rz(-1.5707963) q[1]
+X90 q[1]
 Rz(1.5707963) q[1]
-Rz(1.5789) q[0]
+Rz(3.1415927) q[0]
+CZ q[1], q[0]
+Rz(3.1415927) q[0]
+Rz(3.1415927) q[1]
+CZ q[0], q[1]
+Rz(3.1415927) q[1]
+Rz(2.3561944) q[0]
 X90 q[0]
-Rz(-2.9415926) q[0]
+Rz(-1.5707963) q[0]
 CZ q[1], q[0]
 Rz(-1.5707963) q[0]
 X90 q[0]
-Rz(1.5707963) q[0]
-Rz(2.6322964) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(2.0800926) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(1.0615) q[0]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(2.3561946) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(2.3561946) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(0.78539816) q[0]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-Rz(1.5707963) q[0]
+Rz(2.3561946) q[0]
 X90 q[0]
 Rz(-1.5707963) q[0]
 CZ q[1], q[0]
 Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
+Rz(2.3561944) q[1]
+X90 q[1]
+Rz(-1.5707963) q[1]
+CZ q[0], q[1]
+Rz(-1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+Rz(1.5707963) q[0]
+X90 q[0]
+Rz(-1.5707963) q[0]
+CZ q[1], q[0]
+Rz(-1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
 Rz(1.5707963) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
+Rz(-1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+barrier q[0]
+barrier q[1]
+wait(3) q[0]
+wait(3) q[1]
 b[1] = measure q[0]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
 b[3] = measure q[1]
 """
     )
@@ -140,19 +183,93 @@ b[3] = measure q[1]
 def test_hectoqubit_backend() -> None:
     qc = Circuit.from_string(
         """
+        // Version statement
         version 3.0
 
-        qubit[3] q
-        bit[3] b
+        // This is a single line comment which ends on the newline.
+        // The cQASM string must begin with the version instruction (apart from any preceding comments).
 
+        /* This is a multi-
+        line comment block */
+
+        // (Qu)bit declaration
+        qubit[5] q  // Tuna-5 has a 5-qubit register
+        bit[7] b
+
+        // Initialization
+        init q
+
+        // Single-qubit gates
+        I q[0]
         H q[1]
-        CZ q[0], q[1]
+        X q[2]
+        X90 q[3]
+        mX90 q[4]
+        Y q[0]
+        Y90 q[1]
+        mY90 q[2]
+        Z q[3]
+        S q[4]
+        Sdag q[0]
+        T q[1]
+        Tdag q[2]
+        Rx(pi/2) q[3]
+        Ry(pi/2) q[4]
+        Rz(tau) q[0]
+
+        barrier q  // to ensure all measurements occur simultaneously
+        // Mid-circuit measurement
+        b[0:4] = measure q
+
+        // Two-qubit gates
         CNOT q[0], q[1]
-        CRk(4) q[0], q[1]
-        H q[0]
-        b[1:2] = measure q[0:1]
+        CZ q[2], q[3]
+        CR(pi) q[4], q[0]
+        CRk(2) q[1], q[2]
+        SWAP q[3], q[4]
+
+        // Control instructions
+        barrier q
+        // wait(3) q  // not supported by HectoQubit/2 atm
+
+        // Final measurement
+        b[2:6] = measure q
         """
     )
+
+    # HectoQubit/2 chip is Tuna-5 (full-connectivity assumed for now)
+    connectivity = {
+        "0": [1, 2, 3, 4],
+        "1": [0, 2, 3, 4],
+        "2": [0, 1, 3, 4],
+        "3": [0, 1, 2, 4],
+        "4": [0, 1, 2, 3],
+    }
+    native_gate_set = [
+        "I",
+        "X",
+        "X90",
+        "mX90",
+        "Y",
+        "Y90",
+        "mY90",
+        "Z",
+        "S",
+        "Sdag",
+        "T",
+        "Tdag",
+        "Rx",
+        "Ry",
+        "Rz",
+        "CNOT",
+        "CZ",
+    ]
+
+    # Validate that the interactions in the circuit are possible given the chip topology
+    qc.validate(validator=RoutingValidator(connectivity))
+
+    # Decompose SWAP gate into 3 CNOT gates
+    qc.decompose(decomposer=SWAP2CNOTDecomposer())
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
     qc.decompose(decomposer=CNOTDecomposer())
@@ -165,6 +282,9 @@ def test_hectoqubit_backend() -> None:
 
     # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
     qc.decompose(decomposer=XYXDecomposer())
+
+    # Validate that the compiled circuit is composed of gates that are in the native gate set
+    qc.validate(validator=NativeGateValidator(native_gate_set))
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
@@ -183,23 +303,75 @@ def test_hectoqubit_backend() -> None:
         ]
 
         assert operations == [
-            "Rxy(180, 0, 'q[1]')",
-            "Rxy(90, 90, 'q[1]')",
-            "Rxy(180, 0, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rxy(180, 0, 'q[1]')",
-            "Rxy(90, 90, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rxy(-11.25, 0, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rxy(11.25, 0, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rxy(180, 0, 'q[0]')",
-            "Rxy(-90, 90, 'q[0]')",
-            "Rxy(11.25, 0, 'q[0]')",
+            "Rxy(90, 0, 'q[0]')",
+            "Rxy(90, 90, 'q[0]')",
+            "Rxy(90, 0, 'q[0]')",
+            "Rxy(90, 0, 'q[1]')",
+            "Rxy(45, 90, 'q[1]')",
+            "Rxy(90, 0, 'q[1]')",
+            "Rxy(-45, 0, 'q[2]')",
+            "Rxy(90, 90, 'q[2]')",
+            "Rxy(180, 0, 'q[2]')",
+            "Rxy(-90, 0, 'q[3]')",
+            "Rxy(180, 90, 'q[3]')",
+            "Rxy(90, 0, 'q[3]')",
+            "Rxy(-90, 0, 'q[4]')",
+            "Rxy(90, 90, 'q[4]')",
+            "Rxy(90, 0, 'q[4]')",
             "Measure q[0]",
-            "Rxy(90, 90, 'q[1]')",
             "Measure q[1]",
+            "Measure q[2]",
+            "Measure q[3]",
+            "Measure q[4]",
+            "Rxy(180, 0, 'q[1]')",
+            "Rxy(90, 90, 'q[1]')",
+            "Rxy(180, 0, 'q[1]')",
+            "CZ (q[0], q[1])",
+            "Rxy(-90, 0, 'q[3]')",
+            "Rxy(180, 90, 'q[3]')",
+            "Rxy(90, 0, 'q[3]')",
+            "CZ (q[2], q[3])",
+            "Rxy(-90, 0, 'q[0]')",
+            "Rxy(180, 90, 'q[0]')",
+            "Rxy(90, 0, 'q[0]')",
+            "CZ (q[4], q[0])",
+            "Rxy(90, 90, 'q[1]')",
+            "Rxy(180, 0, 'q[2]')",
+            "Rxy(90, 90, 'q[2]')",
+            "Rxy(135, 0, 'q[2]')",
+            "CZ (q[1], q[2])",
+            "Rxy(45, 0, 'q[2]')",
+            "CZ (q[1], q[2])",
+            "Rxy(-90, 0, 'q[3]')",
+            "Rxy(180, 90, 'q[3]')",
+            "Rxy(90, 0, 'q[3]')",
+            "Rxy(180, 0, 'q[4]')",
+            "Rxy(90, 90, 'q[4]')",
+            "Rxy(180, 0, 'q[4]')",
+            "CZ (q[3], q[4])",
+            "Rxy(90, 90, 'q[4]')",
+            "Rxy(180, 0, 'q[3]')",
+            "Rxy(90, 90, 'q[3]')",
+            "Rxy(180, 0, 'q[3]')",
+            "CZ (q[4], q[3])",
+            "Rxy(90, 90, 'q[3]')",
+            "Rxy(180, 0, 'q[4]')",
+            "Rxy(90, 90, 'q[4]')",
+            "Rxy(180, 0, 'q[4]')",
+            "CZ (q[3], q[4])",
+            "Rxy(-90, 0, 'q[0]')",
+            "Rxy(180, 90, 'q[0]')",
+            "Rxy(90, 0, 'q[0]')",
+            "Rxy(-90, 0, 'q[1]')",
+            "Rxy(45, 90, 'q[1]')",
+            "Rxy(90, 0, 'q[1]')",
+            "Rxy(90, 90, 'q[2]')",
+            "Rxy(90, 90, 'q[4]')",
+            "Measure q[0]",
+            "Measure q[1]",
+            "Measure q[2]",
+            "Measure q[3]",
+            "Measure q[4]",
         ]
 
         ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
@@ -344,3 +516,170 @@ def test_hectoqubit_backend_allxy() -> None:
 
         assert len(bit_string_mapping) == qc.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
+
+
+def test_starmon7_backend() -> None:
+    qc = Circuit.from_string(
+        """
+        // Version statement
+        version 3.0
+
+        // This is a single line comment which ends on the newline.
+        // The cQASM string must begin with the version instruction (apart from any preceding comments).
+
+        /* This is a multi-
+        line comment block */
+
+        // (Qu)bit declaration
+        qubit[7] q  // Starmon-7 has a 7-qubit register
+        bit[14] b
+
+        // Initialization
+        init q
+
+        // Single-qubit gates
+        I q[0]
+        H q[1]
+        X q[2]
+        X90 q[3]
+        mX90 q[4]
+        Y q[5]
+        Y90 q[6]
+        mY90 q[0]
+        Z q[1]
+        S q[2]
+        Sdag q[3]
+        T q[4]
+        Tdag q[5]
+        Rx(pi/2) q[6]
+        Ry(pi/2) q[0]
+        Rz(tau) q[1]
+
+        barrier q  // to ensure all measurements occur simultaneously
+        // Mid-circuit measurement
+        b[0:6] = measure q
+
+        // Two-qubit gates
+        CNOT q[0], q[2]
+        CZ q[1], q[6]
+        CR(pi) q[5], q[3]
+        CRk(2) q[2], q[4]
+        SWAP q[5], q[0]
+
+        // Control instructions
+        barrier q
+        wait(3) q
+
+        // Final measurement
+        b[7:13] = measure q
+        """,
+    )
+
+    """
+    Starmon-7 chip topology:
+       0 = 5 = 3
+       \\     //
+           2
+       //     \\
+       1 = 6 = 4
+    """
+    connectivity = {
+        "0": [2, 5],
+        "1": [2, 6],
+        "2": [0, 1, 3, 4],
+        "3": [2, 5],
+        "4": [2, 6],
+        "5": [0, 3],
+        "6": [1, 4],
+    }
+    native_gate_set = [
+        "I",
+        "H",
+        "X",
+        "X90",
+        "mX90",
+        "Y",
+        "Y90",
+        "mY90",
+        "Z",
+        "S",
+        "Sdag",
+        "T",
+        "Tdag",
+        "Rx",
+        "Ry",
+        "Rz",
+        "CNOT",
+        "CZ",
+        "CR",
+        "CRk",
+        "SWAP",
+    ]
+
+    # Validate that the interactions in the circuit are possible given the chip topology
+    qc.validate(validator=RoutingValidator(connectivity))
+
+    # Validate that the compiled circuit is composed of gates that are in the native gate set
+    qc.validate(validator=NativeGateValidator(native_gate_set))
+
+    exported_circuit = qc.export(fmt=ExportFormat.CQASM_V1)
+
+    assert (
+        exported_circuit
+        == """version 1.0
+
+qubits 7
+
+prep_z q[0]
+prep_z q[1]
+prep_z q[2]
+prep_z q[3]
+prep_z q[4]
+prep_z q[5]
+prep_z q[6]
+i q[0]
+h q[1]
+x q[2]
+x90 q[3]
+mx90 q[4]
+y q[5]
+y90 q[6]
+my90 q[0]
+z q[1]
+s q[2]
+sdag q[3]
+t q[4]
+tdag q[5]
+rx q[6], 1.5707963
+ry q[0], 1.5707963
+rz q[1], 6.2831853
+barrier q[0, 1, 2, 3, 4, 5, 6]
+measure_z q[0]
+measure_z q[1]
+measure_z q[2]
+measure_z q[3]
+measure_z q[4]
+measure_z q[5]
+measure_z q[6]
+cnot q[0], q[2]
+cz q[1], q[6]
+cr(3.1415927) q[5], q[3]
+crk(2) q[2], q[4]
+swap q[5], q[0]
+barrier q[0, 1, 2, 3, 4, 5, 6]
+wait q[0], 3
+wait q[1], 3
+wait q[2], 3
+wait q[3], 3
+wait q[4], 3
+wait q[5], 3
+wait q[6], 3
+measure_z q[0]
+measure_z q[1]
+measure_z q[2]
+measure_z q[3]
+measure_z q[4]
+measure_z q[5]
+measure_z q[6]
+"""
+    )

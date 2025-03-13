@@ -185,12 +185,12 @@ def test_no_merge_across_wait(merger: SingleQubitGatesMerger) -> None:
 
 qubit[2] q
 
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.60376 -0.52053  0.60376], angle=-2.18173, phase=1.5708)
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[0.36644 0.85525 0.36644], angle=-1.72653, phase=1.5708)
+BlochSphereRotation(qubit=Qubit[0], axis=[ 0.60376 -0.52053  0.60376], angle=-2.18173, phase=1.5708)
+BlochSphereRotation(qubit=Qubit[1], axis=[0.36644 0.85525 0.36644], angle=-1.72653, phase=1.5708)
 barrier q[0]
 barrier q[1]
 H q[0]
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[ 0.28903 -0.42028 -0.86013], angle=1.66208, phase=1.5708)
+BlochSphereRotation(qubit=Qubit[1], axis=[ 0.28903 -0.42028 -0.86013], angle=1.66208, phase=1.5708)
 barrier q[0]
 barrier q[1]
 """,
@@ -215,12 +215,12 @@ barrier q[1]
 
 qubit[3] q
 
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+BlochSphereRotation(qubit=Qubit[0], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
 barrier q[2]
 barrier q[0]
 barrier q[1]
 H q[0]
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+BlochSphereRotation(qubit=Qubit[1], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
 H q[2]
 barrier q[1]
 barrier q[2]
@@ -244,12 +244,12 @@ barrier q[1]
 
 qubit[2] q
 
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+BlochSphereRotation(qubit=Qubit[0], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
 barrier q[1]
 barrier q[0]
 barrier q[1]
 H q[0]
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+BlochSphereRotation(qubit=Qubit[1], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
 barrier q[1]
 """,
         ),

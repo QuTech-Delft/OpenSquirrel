@@ -3,15 +3,23 @@ from __future__ import annotations
 import cmath
 import math
 from collections.abc import Iterable
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 
 from opensquirrel.ir import (
+    CNOT,
+    CR,
+    CZ,
+    SWAP,
     Axis,
     AxisLike,
     BlochSphereRotation,
+    BsrAngleParam,
+    BsrNoParams,
     ControlledGate,
+    CRk,
     Gate,
     IRVisitor,
     MatrixGate,
@@ -105,22 +113,28 @@ class MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
-    def visit_bloch_sphere_rotation(self, rot: BlochSphereRotation) -> NDArray[np.complex128]:
-        if rot.qubit.index >= self.qubit_register_size:
+    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> NDArray[np.complex128]:
+        if gate.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
 
         result = np.kron(
             np.kron(
-                np.eye(1 << (self.qubit_register_size - rot.qubit.index - 1)),
-                can1(rot.axis, rot.angle, rot.phase),
+                np.eye(1 << (self.qubit_register_size - gate.qubit.index - 1)),
+                can1(gate.axis, gate.angle, gate.phase),
             ),
-            np.eye(1 << rot.qubit.index),
+            np.eye(1 << gate.qubit.index),
         )
         if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
             msg = "result has incorrect shape"
             ValueError(msg)
         return np.asarray(result, dtype=np.complex128)
+
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> NDArray[np.complex128]:
+        return self.visit_bloch_sphere_rotation(gate)
+
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> NDArray[np.complex128]:
+        return self.visit_bloch_sphere_rotation(gate)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
         if gate.control_qubit.index >= self.qubit_register_size:
@@ -134,6 +148,18 @@ class MatrixExpander(IRVisitor):
                 col[col_index] = 1
         return np.asarray(expanded_matrix, dtype=np.complex128)
 
+    def visit_cnot(self, gate: CNOT) -> Any:
+        return self.visit_controlled_gate(gate)
+
+    def visit_cz(self, gate: CZ) -> Any:
+        return self.visit_controlled_gate(gate)
+
+    def visit_cr(self, gate: CR) -> Any:
+        return self.visit_controlled_gate(gate)
+
+    def visit_crk(self, gate: CRk) -> Any:
+        return self.visit_controlled_gate(gate)
+
     def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex128]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as
@@ -142,7 +168,7 @@ class MatrixExpander(IRVisitor):
         #   0, 0, 0, 1
         #   0, 0, 1, 0
         # which corresponds to control being q[1] and target being q[0],
-        # since qubit #i corresponds to the i-th LEAST significant bit.
+        # since qubit #i corresponds to the i-th least significant bit.
         qubit_operands = list(reversed(gate.operands))
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
@@ -171,6 +197,9 @@ class MatrixExpander(IRVisitor):
             msg = "expended matrix has incorrect shape"
             raise ValueError(msg)
         return expanded_matrix
+
+    def visit_swap(self, gate: SWAP) -> NDArray[np.complex128]:
+        return self.visit_matrix_gate(gate)
 
 
 X = np.array([[0, 1], [1, 0]])

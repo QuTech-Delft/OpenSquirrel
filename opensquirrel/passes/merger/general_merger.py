@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import cos, floor, isclose, log10, sin
+from math import cos, floor, log10, sin
 from typing import cast
 
 import numpy as np
 
 from opensquirrel import I
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import default_bloch_sphere_rotation_set
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Float, Instruction, Statement
+from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
 from opensquirrel.utils import acos, flatten_list
 
 
@@ -56,55 +55,14 @@ def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSpher
 
     combined_phase = np.round(bsr_a.phase + bsr_b.phase, order_of_magnitude)
 
-    if bsr_a.is_identity():
-        generator = bsr_b.generator
-        arguments = bsr_b.arguments
-    elif bsr_b.is_identity():
-        generator = bsr_a.generator
-        arguments = bsr_a.arguments
-    elif bsr_a.generator == bsr_b.generator:
-        generator = bsr_a.generator
-        arguments = (bsr_a.qubit,)
-        if bsr_a.arguments is not None and len(bsr_a.arguments) == 2 and isinstance(bsr_a.arguments[1], Float):
-            arguments += (Float(combined_angle),)
-    else:
-        generator = None
-        arguments = None
-
-    return try_name_anonymous_bloch(
+    return BlochSphereRotation.try_match_replace_with_default(
         BlochSphereRotation(
             qubit=bsr_a.qubit,
             axis=combined_axis,
             angle=combined_angle,
             phase=combined_phase,
-            generator=generator,  # type: ignore[arg-type]
-            arguments=arguments,
         )
     )
-
-
-def try_name_anonymous_bloch(bsr: BlochSphereRotation) -> BlochSphereRotation:
-    """Try converting a given BlochSphereRotation to a default BlochSphereRotation.
-     It does that by checking if the input BlochSphereRotation is close to a default BlochSphereRotation.
-
-    Returns:
-         A default BlockSphereRotation if this BlochSphereRotation is close to it,
-         or the input BlochSphereRotation otherwise.
-    """
-    if not bsr.is_anonymous:
-        return bsr
-    for default_bsr_callable in default_bloch_sphere_rotation_set.values():
-        try:
-            default_bsr = default_bsr_callable(*bsr.get_qubit_operands())
-            if (
-                np.allclose(default_bsr.axis, bsr.axis, atol=ATOL)
-                and isclose(default_bsr.angle, bsr.angle, rel_tol=ATOL)
-                and isclose(default_bsr.phase, bsr.phase, rel_tol=ATOL)
-            ):
-                return default_bsr
-        except TypeError:  # noqa: PERF203
-            pass
-    return bsr
 
 
 def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:

@@ -1,14 +1,23 @@
 from typing import cast
 
 from opensquirrel.ir import IR, Instruction, Qubit
-from opensquirrel.passes.router.general_router import Router
+from opensquirrel.passes.validator import Validator
 
 
-class RoutingChecker(Router):
+class RoutingValidator(Validator):
     def __init__(self, connectivity: dict[str, list[int]]) -> None:
         self.connectivity = connectivity
 
-    def route(self, ir: IR) -> None:
+    def validate(self, ir: IR) -> None:
+        """
+        Check if the circuit interactions faciliate a 1-to-1 mapping to the target hardware.
+
+        Args:
+            ir (IR): The intermediate representation of the circuit to be checked.
+
+        Raises:
+            ValueError: If the circuit can't be mapped to the target hardware.
+        """
         non_executable_interactions = []
         for statement in ir.statements:
             instruction: Instruction = cast("Instruction", statement)
