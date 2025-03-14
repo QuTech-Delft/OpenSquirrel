@@ -4,8 +4,8 @@ import math
 
 import pytest
 
-from opensquirrel import CNOT, CZ, H, Ry, Rz, X
-from opensquirrel.ir import CR, ControlledGate, CRk, Gate
+from opensquirrel import CNOT, CR, CRk, CZ, H, X, Ry, Rz
+from opensquirrel.ir import ControlledGate, Gate
 from opensquirrel.passes.decomposer import CNOTDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
@@ -52,7 +52,7 @@ def test_CZ(decomposer: CNOTDecomposer) -> None:  # noqa: N802
         CRk(0, 1, 2),
         CRk(0, 1, 16),
     ],
-    ids=["CR_1", "CR_2", "CR_2", "CRk_1", "CRk_2", "CRk_2"],
+    ids=["CR_1", "CR_2", "CR_3", "CRk_1", "CRk_2", "CRk_3"],
 )
 def test_controlled_gates(decomposer: CNOTDecomposer, controlled_gate: ControlledGate) -> None:
     decomposed_gate = decomposer.decompose(controlled_gate)
