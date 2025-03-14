@@ -1,45 +1,23 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, cast
 
-from opensquirrel import CZ, H, Ry, Rz, X
+from opensquirrel import CZ, Rx, Ry, Rz, Z
 from opensquirrel.common import ATOL
-from opensquirrel.ir import BlochSphereRotation, ControlledGate
-from opensquirrel.passes.decomposer import ZYZDecomposer
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
+from opensquirrel.passes.decomposer import XYXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.passes.merger import general_merger
-from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations
 from opensquirrel.utils import filter_out_identities
-
-if TYPE_CHECKING:
-    from opensquirrel.ir import Gate
 
 
 class CZDecomposer(Decomposer):
     """
-    Decomposes 2-qubit controlled unitary gates to CNOT + Rz/Ry.
+    Decomposes 2-qubit controlled unitary gates to CZ + Rx/Ry.
     Applying single-qubit gate fusion after this pass might be beneficial.
 
     Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
     """
-
-    @staticmethod
-    def _decompose_bloch_rotations(gates: list[Gate] | list[BlochSphereRotation]) -> list[BlochSphereRotation]:
-        bloch_gates = []
-        for gate in gates:
-            decomposition = ZYZDecomposer().decompose(gate)
-            bloch_gates.extend(cast("list[BlochSphereRotation]", decomposition))
-
-        def accumulate_bloch(_gates: list[BlochSphereRotation]) -> BlochSphereRotation:
-            if len(_gates) == 1:
-                return _gates[0]
-            _gates[0] = compose_bloch_sphere_rotations(_gates[0], _gates[1])
-            del _gates[1]
-            return accumulate_bloch(_gates)
-
-        accumulated_bloch = accumulate_bloch(bloch_gates)
-        return cast("list[BlochSphereRotation]", ZYZDecomposer().decompose(accumulated_bloch))
 
     def decompose(self, g: Gate) -> list[Gate]:
         if not isinstance(g, ControlledGate):
@@ -55,22 +33,21 @@ class CZDecomposer(Decomposer):
 
         target_qubit = g.target_gate.qubit
 
-        # Perform ZYZ decomposition on the target gate.
-        # This gives us an ABC decomposition (U = AXBXC, ABC = I) of the target gate.
+        # Perform XYX decomposition on the target gate.
+        # This gives us an ABC decomposition (U = exp(i phase) * AZBZC, ABC = I) of the target gate.
         # See https://threeplusone.com/pubs/on_gates.pdf
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
-        controlled_rotation_times_x = general_merger.compose_bloch_sphere_rotations(g.target_gate, X(target_qubit))
-        theta0_with_x, theta1_with_x, theta2_with_x = ZYZDecomposer().get_decomposition_angles(
-            controlled_rotation_times_x.axis,
-            controlled_rotation_times_x.angle,
+        # Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I
+        controlled_rotation_times_z = general_merger.compose_bloch_sphere_rotations(g.target_gate, Z(target_qubit))
+        theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer().get_decomposition_angles(
+            controlled_rotation_times_z.axis,
+            controlled_rotation_times_z.angle,
         )
-        if abs((theta0_with_x - theta2_with_x) % (2 * math.pi)) < ATOL:
-            # The decomposition can use a single CNOT according to the lemma.
-            A = [H(target_qubit), Ry(target_qubit, -theta1_with_x / 2), Rz(target_qubit, -theta2_with_x)]  # noqa: N806
-            A = self._decompose_bloch_rotations(A)  # noqa: N806
-            B = [Rz(target_qubit, theta2_with_x), Ry(target_qubit, theta1_with_x / 2), H(target_qubit)]  # noqa: N806
-            B = self._decompose_bloch_rotations(B)  # noqa: N806
+        if abs((theta0_with_z - theta2_with_z) % (2 * math.pi)) < ATOL:
+            # The decomposition can use a single CZ according to the lemma.
+            A = [Ry(target_qubit, theta1_with_z / 2), Rx(target_qubit, theta2_with_z)]  # noqa: N806
+            B = [Rx(target_qubit, -theta2_with_z), Ry(target_qubit, -theta1_with_z / 2)]  # noqa: N806
             return filter_out_identities(
                 [
                     *B,
@@ -80,14 +57,11 @@ class CZDecomposer(Decomposer):
                 ],
             )
 
-        theta0, theta1, theta2 = ZYZDecomposer().get_decomposition_angles(g.target_gate.axis, g.target_gate.angle)
+        theta0, theta1, theta2 = XYXDecomposer().get_decomposition_angles(g.target_gate.axis, g.target_gate.angle)
 
-        A = [H(target_qubit), Ry(target_qubit, theta1 / 2), Rz(target_qubit, theta2)]  # noqa: N806
-        A = self._decompose_bloch_rotations(A)  # noqa: N806
-        B = [H(target_qubit), Rz(target_qubit, -(theta0 + theta2) / 2), Ry(target_qubit, -theta1 / 2), H(target_qubit)]  # noqa: N806
-        B = self._decompose_bloch_rotations(B)  # noqa: N806
-        C = [H(target_qubit), Rz(target_qubit, (theta0 - theta2) / 2)]  # noqa: N806
-        C = self._decompose_bloch_rotations(C)  # noqa: N806
+        A = [Ry(target_qubit, theta1 / 2), Rx(target_qubit, theta2)]  # noqa: N806
+        B = [Rx(target_qubit, -(theta0 + theta2) / 2), Ry(target_qubit, -theta1 / 2)]  # noqa: N806
+        C = [Rx(target_qubit, (theta0 - theta2) / 2)]  # noqa: N806
 
         return filter_out_identities(
             [

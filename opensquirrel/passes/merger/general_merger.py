@@ -20,7 +20,7 @@ def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSpher
         A q
         B q
 
-    A linear operations:
+    As linear operations:
         (B * A) q
 
     If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.
