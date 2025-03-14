@@ -10,13 +10,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Removed** for now removed features.
 
 
-## [0.3.2] - [ xxxx-yy-zz ]
+## [0.4.0] - [ xxxx-yy-zz ]
+
+### Added
+
+- `CZDecomposer` decomposer pass
+- `ShortestPathRouter` router pass
+- `RandomMapper` mapper pass
 
 ### Changed
 
 - Refactor: removed generators
 - Changed the `RoutingChecker` pass to a `RoutingValidator` pass
-
 
 ## [0.3.1] - [ 2025-01-31 ]
 
