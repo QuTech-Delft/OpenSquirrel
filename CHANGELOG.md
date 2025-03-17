@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Removed** for now removed features.
 
 
-## [0.3.2] - [ xxxx-yy-zz ]
+## [0.4.0] - [ xxxx-yy-zz ]
 
 ### Added
 
@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Update libQASM to 1.1.0 (from 0.6.9)
 - Refactor: removed generators
 - Changed the `RoutingChecker` pass to a `RoutingValidator` pass
 
