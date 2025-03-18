@@ -19,7 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Update libQASM to 1.1.0 (from 0.6.9)
+- libQASM 1.1.0 integrated (updated from 0.6.9)
 - Refactor: removed generators
 - Changed the `RoutingChecker` pass to a `RoutingValidator` pass
 
