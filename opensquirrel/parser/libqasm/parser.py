@@ -170,7 +170,9 @@ class Parser:
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_generator)
             if gate_name == "pow":
-                return PowerGateModifier(instruction.gate.parameters[0].value, modified_gate_generator)
+                gate = instruction.gate
+                exponent = gate.parameters[0].value
+                return PowerGateModifier(exponent, modified_gate_generator)
             if gate_name == "ctrl":
                 return ControlGateModifier(modified_gate_generator)
             msg = "parsing error: unknown unitary instruction"
