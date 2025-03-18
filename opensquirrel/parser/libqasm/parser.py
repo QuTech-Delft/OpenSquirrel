@@ -109,13 +109,13 @@ class Parser:
         return ret
 
     @classmethod
-    def _get_named_gate_param(cls, gate: cqasm.semantic.Gate) -> Any:
-        """Get the parameter of a named gate.
+    def _get_named_gate_parameters(cls, gate: cqasm.semantic.Gate) -> Any:
+        """Get the parameters of a named gate.
         Notice the input gate can be a composition of gate modifiers acting on a named gate.
         """
         if gate.name in ["inv", "pow", "ctrl"]:
-            return cls._get_named_gate_param(gate.gate)
-        return cls._ast_literal_to_ir_literal(gate.parameter)
+            return cls._get_named_gate_parameters(gate.gate)
+        return [cls._ast_literal_to_ir_literal(parameter) for parameter in gate.parameters]
 
     def _get_expanded_instruction_args(self, instruction: cqasm.semantic.Instruction) -> list[tuple[Any, ...]]:
         """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
@@ -126,12 +126,12 @@ class Parser:
         """
         expanded_args = self._get_instruction_operands(instruction)
         if isinstance(instruction, cqasm.semantic.GateInstruction):
-            gate_parameter = self._get_named_gate_param(instruction.gate)
+            gate_parameters = self._get_named_gate_parameters(instruction.gate)
         else:
-            gate_parameter = self._ast_literal_to_ir_literal(instruction.parameter)
-        if gate_parameter:
+            gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]
+        if gate_parameters:
             number_of_operands = len(expanded_args[0])
-            expanded_args.append([gate_parameter] * number_of_operands)
+            expanded_args.append(gate_parameters * number_of_operands)
         return list(zip(*expanded_args))
 
     def _get_expanded_measure_args(self, ast_args: Any) -> list[tuple[Any, ...]]:
@@ -170,10 +170,13 @@ class Parser:
             if gate_name == "inv":
                 return InverseGateModifier(modified_gate_generator)
             if gate_name == "pow":
-                return PowerGateModifier(instruction.gate.parameter.value, modified_gate_generator)
+                gate = instruction.gate
+                exponent = gate.parameters[0].value
+                return PowerGateModifier(exponent, modified_gate_generator)
             if gate_name == "ctrl":
                 return ControlGateModifier(modified_gate_generator)
             msg = "parsing error: unknown unitary instruction"
+
             raise OSError(msg)
         return lambda *args: default_gate_set[gate_name](*args)
 
