@@ -526,6 +526,73 @@ def test_hectoqubit_backend_allxy() -> None:
         assert bit_string_mapping == ir_bit_string_mapping
 
 
+def test_hectoqubit_backend_bell_states() -> None:
+    # This test is used for the implementation of the wait and barrier instructions
+    # in the quantify-scheduler Exporter. It should be rewritten to a standard test
+    # before this feature branch is merged into develop.
+    qc = Circuit.from_string(
+        """
+        version 3.0
+
+        qubit[2] q
+        bit[8] b
+
+        barrier q
+        init q
+        H q[0]
+        CNOT q[0], q[1]
+        barrier q
+        b[0, 1] = measure q
+
+        barrier q
+        reset q
+        H q[0]
+        Z q[0]
+        CNOT q[0], q[1]
+        barrier q
+        b[2, 3] = measure q
+
+        barrier q
+        reset q
+        H q[0]
+        X q[1]
+        CNOT q[0], q[1]
+        barrier q
+        b[4, 5] = measure q
+
+        barrier q
+        reset q
+        H q[0]
+        Z q[0]
+        X q[1]
+        CNOT q[0], q[1]
+        barrier q
+        b[6, 7] = measure q
+        """
+    )
+
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    qc.decompose(decomposer=CNOTDecomposer())
+
+    # Replace CNOT gates with CZ gates
+    qc.decompose(decomposer=CNOT2CZDecomposer())
+
+    # Merge single-qubit gate
+    qc.merge(merger=SingleQubitGatesMerger())
+
+    # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
+    qc.decompose(decomposer=XYXDecomposer())
+
+    if importlib.util.find_spec("quantify_scheduler") is None:
+        with pytest.raises(
+            Exception,
+            match="quantify-scheduler is not installed, or cannot be installed on your system",
+        ):
+            qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+    else:
+        qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+
+
 def test_starmon7_backend() -> None:
     qc = Circuit.from_string(
         """
@@ -693,76 +760,3 @@ measure_z q[5]
 measure_z q[6]
 """
     )
-
-
-def test_hectoqubit_backend_bell_states() -> None:
-    qc = Circuit.from_string(
-        """
-        version 3.0
-
-        qubit[2] q
-        bit[8] b
-
-        barrier q
-        init q
-        H q[0]
-        CNOT q[0], q[1]
-        barrier q
-        b[0, 1] = measure q
-
-        barrier q
-        reset q
-        H q[0]
-        Z q[0]
-        CNOT q[0], q[1]
-        barrier q
-        b[2, 3] = measure q
-
-        barrier q
-        reset q
-        H q[0]
-        X q[1]
-        CNOT q[0], q[1]
-        barrier q
-        b[4, 5] = measure q
-
-        barrier q
-        reset q
-        H q[0]
-        Z q[0]
-        X q[1]
-        CNOT q[0], q[1]
-        barrier q
-        b[6, 7] = measure q
-        """
-    )
-
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    # Note that this pass could generate arbitrary single-qubit gates
-    # (a single-qubit gate decomposer might be necessary)
-    qc.decompose(decomposer=CNOTDecomposer())
-
-    # Replace CNOT gates with CZ gates
-    qc.decompose(decomposer=CNOT2CZDecomposer())
-
-    # Merge single-qubit gate
-    # Note that this pass could generate arbitrary single-qubit gates
-    # (a single-qubit gate decomposer might be necessary)
-    qc.merge(merger=SingleQubitGatesMerger())
-
-    # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
-    qc.decompose(decomposer=XYXDecomposer())
-
-    if importlib.util.find_spec("quantify_scheduler") is None:
-        with pytest.raises(
-            Exception,
-            match="quantify-scheduler is not installed, or cannot be installed on your system",
-        ):
-            qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-    else:
-        exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-
-        fig, _ = exported_schedule.plot_circuit_diagram(figsize=(35, 6))
-        fig.set_dpi(300)
-        fig.savefig("example.png")
-        fig.show()
