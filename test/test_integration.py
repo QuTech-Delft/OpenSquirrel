@@ -238,7 +238,14 @@ def test_hectoqubit_backend() -> None:
         """
     )
 
-    # HectoQubit/2 chip is Tuna-5 (full-connectivity assumed for now)
+    """
+    Tuna-5 chip topology:
+       0       1
+       \\     //
+           2
+       //     \\
+       3       4
+    """
     connectivity = {
         "0": [2],
         "1": [2],
