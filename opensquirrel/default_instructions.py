@@ -26,6 +26,7 @@ from opensquirrel.ir import (
     MinusY90,
     NonUnitary,
     Reset,
+    Rn,
     Rx,
     Ry,
     Rz,
@@ -64,6 +65,7 @@ default_bsr_with_angle_param_set = {
 }
 default_bloch_sphere_rotation_set: Mapping[str, type[BlochSphereRotation]]
 default_bloch_sphere_rotation_set = {
+    "Rn": Rn,
     **default_bsr_without_params_set,
     **default_bsr_with_angle_param_set,
 }

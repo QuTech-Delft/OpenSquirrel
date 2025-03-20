@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import cmath
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
@@ -310,10 +311,12 @@ class Axis(Sequence[np.float64], Expression):
         return axis / np.linalg.norm(axis)
 
     @overload
-    def __getitem__(self, i: int, /) -> np.float64: ...
+    def __getitem__(self, i: int, /) -> np.float64:
+        ...
 
     @overload
-    def __getitem__(self, s: slice, /) -> list[np.float64]: ...
+    def __getitem__(self, s: slice, /) -> list[np.float64]:
+        ...
 
     def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
         """Get the item at `index`."""
@@ -453,6 +456,16 @@ class BlochSphereRotation(Gate):
     def get_bit_operands(self) -> list[Bit]:
         return []
 
+    def get_matrix(self) -> NDArray[np.complex128]:
+        phase = cmath.exp(1j * self.phase)
+        nx, ny, nz = self.axis
+        Im = np.asarray([[1, 0], [0, 1]], dtype=np.complex128)
+        Xm = np.asarray([[0, 1], [1, 0]], dtype=np.complex128)
+        Ym = np.asarray([[0, -1j], [1j, 0]], dtype=np.complex128)
+        Zm = np.asarray([[1, 0], [0, -1]], dtype=np.complex128)
+        Can1 = (math.cos(self.angle / 2) * Im - 1j * math.sin(self.angle / 2) * (nx * Xm + ny * Ym + nz * Zm))
+        return phase * Can1
+
     def is_identity(self) -> bool:
         # Angle and phase are already normalized.
         return abs(self.angle) < ATOL and abs(self.phase) < ATOL
@@ -483,6 +496,17 @@ class BlochSphereRotation(Gate):
             ):
                 return gate
         return bsr
+
+
+class Rn(BlochSphereRotation):  # noqa: E742
+    def __init__(
+        self,
+        qubit: QubitLike,
+        axis: AxisLike,
+        theta: SupportsFloat,
+        phase: SupportsFloat
+    ) -> None:
+        BlochSphereRotation.__init__(self, qubit=qubit, axis=axis, angle=theta, phase=phase, name="Rn")
 
 
 class BsrNoParams(BlochSphereRotation):
