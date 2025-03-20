@@ -569,10 +569,10 @@ def test_starmon7_backend() -> None:
 
         // Two-qubit gates
         CNOT q[0], q[2]
-        CZ q[1], q[6]
+        CZ q[1], q[4]
         CR(pi) q[5], q[3]
-        CRk(2) q[2], q[4]
-        SWAP q[5], q[0]
+        CRk(2) q[3], q[6]
+        SWAP q[5], q[2]
 
         // Control instructions
         barrier q
@@ -585,21 +585,23 @@ def test_starmon7_backend() -> None:
 
     """
     Starmon-7 chip topology:
-       0 = 5 = 3
+       1 = 4 = 6
        \\     //
-           2
+           3
        //     \\
-       1 = 6 = 4
+       0 = 2 = 5
     """
+
     connectivity = {
-        "0": [2, 5],
-        "1": [2, 6],
-        "2": [0, 1, 3, 4],
-        "3": [2, 5],
-        "4": [2, 6],
-        "5": [0, 3],
-        "6": [1, 4],
+        "0": [2, 3],
+        "1": [3, 4],
+        "2": [0, 5],
+        "3": [0, 1, 5, 6],
+        "4": [1, 6],
+        "5": [2, 3],
+        "6": [3, 4],
     }
+
     native_gate_set = [
         "I",
         "H",
@@ -670,10 +672,10 @@ measure_z q[4]
 measure_z q[5]
 measure_z q[6]
 cnot q[0], q[2]
-cz q[1], q[6]
+cz q[1], q[4]
 cr(3.1415927) q[5], q[3]
-crk(2) q[2], q[4]
-swap q[5], q[0]
+crk(2) q[3], q[6]
+swap q[5], q[2]
 barrier q[0, 1, 2, 3, 4, 5, 6]
 wait q[0], 3
 wait q[1], 3
