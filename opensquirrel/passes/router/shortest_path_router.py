@@ -11,7 +11,8 @@ class ShortestPathRouter(Router):
 
     def route(self, ir: IR) -> IR:
         """
-        Routes the circuit by inserting SWAP gates to make it executable given the hardware connectivity.
+        Routes the circuit by inserting SWAP gates along the shortest path between qubits which can not  # noqa: W291
+        interact with each other, to make it executable given the hardware connectivity.
         Args:
             ir: The intermediate representation of the circuit.
         Returns:

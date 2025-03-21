@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import math
 
 import networkx as nx
@@ -5,16 +7,17 @@ import networkx as nx
 from opensquirrel.exceptions import NoRoutingPathError
 from opensquirrel.ir import IR, SWAP, Gate
 from opensquirrel.passes.router import Router
+from opensquirrel.passes.router.heuristics import DISTANCE_FUNCTIONS, DistanceMetric
 
 
 class AStarRouter(Router):
-    def __init__(self, connectivity: dict[str, list[int]], heuristic=None) -> None:  # type: ignore[no-untyped-def] # noqa: ANN001
+    def __init__(self, connectivity: dict[str, list[int]], heuristic: DistanceMetric | None = None) -> None:
         self.connectivity = connectivity
-        self.heuristic = heuristic or (lambda a, b, num_columns: 0)
+        self.heuristic = heuristic or None
 
     def route(self, ir: IR) -> IR:
         """
-        Routes the circuit by inserting SWAP gates to make it executable given the hardware connectivity.
+        Routes the circuit by inserting SWAP gates, with A*, to make it executable given the hardware connectivity.
         Args:
             ir: The intermediate representation of the circuit.
         Returns:
@@ -22,8 +25,11 @@ class AStarRouter(Router):
         """
         graph_data = {int(start_node): end_nodes for start_node, end_nodes in self.connectivity.items()}
         graph = nx.Graph(graph_data)
-        num_qubits = max(graph.nodes) + 1
-        num_columns = math.ceil(math.sqrt(num_qubits))
+        num_available_qubits = max(graph.nodes) + 1
+        # Calculate the number of columns in a grid layout of the qubits.
+        # This assumes the qubits are arranged in a square or rectangular grid.
+        # The number of columns is derived from the total number of qubits on the hardware.
+        num_columns = math.ceil(math.sqrt(num_available_qubits))
         statement_index = 0
         while statement_index < len(ir.statements):
             statement = ir.statements[statement_index]
@@ -31,12 +37,15 @@ class AStarRouter(Router):
                 q0, q1 = statement.get_qubit_operands()
                 if not graph.has_edge(q0.index, q1.index):
                     try:
-                        shortest_path = nx.astar_path(
-                            graph,
-                            source=q0.index,
-                            target=q1.index,
-                            heuristic=lambda u, v: self.heuristic(u, v, num_columns),
-                        )
+                        if self.heuristic is None:
+                            shortest_path = nx.astar_path(graph, source=q0.index, target=q1.index)
+                        else:
+                            shortest_path = nx.astar_path(
+                                graph,
+                                source=q0.index,
+                                target=q1.index,
+                                heuristic=lambda u, v: DISTANCE_FUNCTIONS[self.heuristic](u, v, num_columns),
+                            )
                         for start_qubit_index, end_qubit_index in zip(shortest_path[:-1], shortest_path[1:]):
                             ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
                             statement_index += 1

@@ -1,23 +1,23 @@
-# Tests for the AstarhRouter class
+# Tests for the AStarRouter class
 import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.heuristics import chebyshev_distance, euclidean_distance, manhattan_distance
 from opensquirrel.ir import SWAP
 from opensquirrel.passes.router import AStarRouter
+from opensquirrel.passes.router.heuristics import DistanceMetric
 
 
 @pytest.fixture(name="router1")
 def router_fixture1() -> AStarRouter:
     connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
-    return AStarRouter(connectivity, manhattan_distance)
+    return AStarRouter(connectivity, heuristic=DistanceMetric.MANHATTAN)
 
 
 @pytest.fixture(name="router2")
 def router_fixture2() -> AStarRouter:
     connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
-    return AStarRouter(connectivity, euclidean_distance)
+    return AStarRouter(connectivity, heuristic=DistanceMetric.EUCLIDEAN)
 
 
 @pytest.fixture(name="router3")
@@ -34,7 +34,7 @@ def router_fixture3() -> AStarRouter:
         "8": [3, 6, 9],
         "9": [4, 7, 8],
     }
-    return AStarRouter(connectivity, chebyshev_distance)
+    return AStarRouter(connectivity, heuristic=DistanceMetric.CHEBYSHEV)
 
 
 @pytest.fixture(name="circuit1")
