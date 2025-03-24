@@ -1,7 +1,6 @@
 # This module defines basic distance metrics that can be used as heuristics in routing algorithms.
 
 from enum import Enum
-from typing import Callable
 
 
 class DistanceMetric(Enum):
@@ -26,9 +25,9 @@ def calculate_distance(a: int, b: int, num_columns: int, distance_metric: Distan
 
     if distance_metric == DistanceMetric.MANHATTAN:
         return abs(x1 - x2) + abs(y1 - y2)
-    elif distance_metric == DistanceMetric.EUCLIDEAN:
-        return ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
-    elif distance_metric == DistanceMetric.CHEBYSHEV:
+    if distance_metric == DistanceMetric.EUCLIDEAN:
+        return float(((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5)
+    if distance_metric == DistanceMetric.CHEBYSHEV:
         return max(abs(x1 - x2), abs(y1 - y2))
-    else:
-        raise ValueError("Invalid distance metric. Choose Manhattan, Euclidean, or Chebyshev.")
+    msg = "Invalid distance metric. Choose Manhattan, Euclidean, or Chebyshev."
+    raise ValueError(msg)

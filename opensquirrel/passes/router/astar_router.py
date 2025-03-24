@@ -11,7 +11,7 @@ from opensquirrel.passes.router.heuristics import DistanceMetric, calculate_dist
 
 
 class AStarRouter(Router):
-    def __init__(self, connectivity: dict[str, list[int]], distance_metric: DistanceMetric = None) -> None:
+    def __init__(self, connectivity: dict[str, list[int]], distance_metric: DistanceMetric = None) -> None:  # type: ignore[assignment]
         self.connectivity = connectivity
         self.distance_metric = distance_metric
 
