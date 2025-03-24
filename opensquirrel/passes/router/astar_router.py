@@ -7,13 +7,13 @@ import networkx as nx
 from opensquirrel.exceptions import NoRoutingPathError
 from opensquirrel.ir import IR, SWAP, Gate
 from opensquirrel.passes.router import Router
-from opensquirrel.passes.router.heuristics import DISTANCE_FUNCTIONS, DistanceMetric
+from opensquirrel.passes.router.heuristics import DistanceMetric, calculate_distance
 
 
 class AStarRouter(Router):
-    def __init__(self, connectivity: dict[str, list[int]], heuristic: DistanceMetric | None = None) -> None:
+    def __init__(self, connectivity: dict[str, list[int]], distance_metric: DistanceMetric = None) -> None:
         self.connectivity = connectivity
-        self.heuristic = heuristic or None
+        self.distance_metric = distance_metric
 
     def route(self, ir: IR) -> IR:
         """
@@ -37,14 +37,14 @@ class AStarRouter(Router):
                 q0, q1 = statement.get_qubit_operands()
                 if not graph.has_edge(q0.index, q1.index):
                     try:
-                        if self.heuristic is None:
+                        if self.distance_metric is None:
                             shortest_path = nx.astar_path(graph, source=q0.index, target=q1.index)
                         else:
                             shortest_path = nx.astar_path(
                                 graph,
                                 source=q0.index,
                                 target=q1.index,
-                                heuristic=lambda u, v: DISTANCE_FUNCTIONS[self.heuristic](u, v, num_columns),
+                                heuristic=lambda u, v: calculate_distance(u, v, num_columns, self.distance_metric),
                             )
                         for start_qubit_index, end_qubit_index in zip(shortest_path[:-1], shortest_path[1:]):
                             ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
