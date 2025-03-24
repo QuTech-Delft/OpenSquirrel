@@ -13,6 +13,7 @@ from opensquirrel.passes.decomposer import (
     McKayDecomposer,
     SWAP2CNOTDecomposer,
     XYXDecomposer,
+    ZXZDecomposer,
 )
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger import SingleQubitGatesMerger
@@ -222,11 +223,11 @@ def test_hectoqubit_backend() -> None:
         b[0:4] = measure q
 
         // Two-qubit gates
-        CNOT q[0], q[1]
+        CNOT q[2], q[0]
         CZ q[2], q[3]
-        CR(pi) q[4], q[0]
+        CR(pi) q[4], q[2]
         CRk(2) q[1], q[2]
-        SWAP q[3], q[4]
+        SWAP q[0], q[2]
 
         // Control instructions
         barrier q
@@ -237,32 +238,41 @@ def test_hectoqubit_backend() -> None:
         """
     )
 
-    # HectoQubit/2 chip is Tuna-5 (full-connectivity assumed for now)
+    """
+    Tuna-5 chip topology:
+       0       1
+       \\     //
+           2
+       //     \\
+       3       4
+    """
     connectivity = {
-        "0": [1, 2, 3, 4],
-        "1": [0, 2, 3, 4],
+        "0": [2],
+        "1": [2],
         "2": [0, 1, 3, 4],
-        "3": [0, 1, 2, 4],
-        "4": [0, 1, 2, 3],
+        "3": [2],
+        "4": [2],
     }
     native_gate_set = [
         "I",
+        "Rx",
         "X",
         "X90",
         "mX90",
+        "Ry",
         "Y",
         "Y90",
         "mY90",
+        "Rz",
         "Z",
         "S",
         "Sdag",
         "T",
         "Tdag",
-        "Rx",
-        "Ry",
-        "Rz",
-        "CNOT",
         "CZ",
+        "measure",
+        "reset",
+        "barrier",
     ]
 
     # Validate that the interactions in the circuit are possible given the chip topology
@@ -281,7 +291,7 @@ def test_hectoqubit_backend() -> None:
     qc.merge(merger=SingleQubitGatesMerger())
 
     # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
-    qc.decompose(decomposer=XYXDecomposer())
+    qc.decompose(decomposer=ZXZDecomposer())
 
     # Validate that the compiled circuit is composed of gates that are in the native gate set
     qc.validate(validator=NativeGateValidator(native_gate_set))
@@ -303,72 +313,87 @@ def test_hectoqubit_backend() -> None:
         ]
 
         assert operations == [
-            "Rxy(90, 0, 'q[0]')",
-            "Rxy(90, 90, 'q[0]')",
-            "Rxy(90, 0, 'q[0]')",
-            "Rxy(90, 0, 'q[1]')",
-            "Rxy(45, 90, 'q[1]')",
-            "Rxy(90, 0, 'q[1]')",
-            "Rxy(-45, 0, 'q[2]')",
-            "Rxy(90, 90, 'q[2]')",
-            "Rxy(180, 0, 'q[2]')",
-            "Rxy(-90, 0, 'q[3]')",
-            "Rxy(180, 90, 'q[3]')",
-            "Rxy(90, 0, 'q[3]')",
-            "Rxy(-90, 0, 'q[4]')",
-            "Rxy(90, 90, 'q[4]')",
-            "Rxy(90, 0, 'q[4]')",
+            # init q
+            "Reset q[0]",
+            "Reset q[1]",
+            "Reset q[2]",
+            "Reset q[3]",
+            "Reset q[4]",
+            # I q[0]
+            # Y q[0]
+            # Sdag q[0]
+            # Rz(tau) q[0]
+            "Rz(-45, 'q[0]')",
+            "Rxy(180, 0, 'q[0]')",
+            "Rz(45, 'q[0]')",
+            # H q[1]
+            # Y90 q[1]
+            # T q[1]
+            "Rz(-22.5, 'q[1]')",
+            "Rxy(180, 0, 'q[1]')",
+            "Rz(22.5, 'q[1]')",
+            # X q[2]
+            # mY90 q[2]
+            # Tdag q[2]
+            "Rz(90, 'q[2]')",
+            "Rxy(90, 0, 'q[2]')",
+            "Rz(45, 'q[2]')",
+            # X90 q[3]
+            # Z q[3]
+            # Rx(pi/2) q[3]
+            "Rz(180, 'q[3]')",
+            # mX90 q[4]
+            # S q[4]
+            # Ry(pi/2) q[4]
+            "Rz(90, 'q[4]')",
+            # barrier q
+            # b[0:4] = measure q
             "Measure q[0]",
             "Measure q[1]",
             "Measure q[2]",
             "Measure q[3]",
             "Measure q[4]",
-            "Rxy(180, 0, 'q[1]')",
-            "Rxy(90, 90, 'q[1]')",
-            "Rxy(180, 0, 'q[1]')",
-            "CZ (q[0], q[1])",
-            "Rxy(-90, 0, 'q[3]')",
-            "Rxy(180, 90, 'q[3]')",
-            "Rxy(90, 0, 'q[3]')",
-            "CZ (q[2], q[3])",
-            "Rxy(-90, 0, 'q[0]')",
-            "Rxy(180, 90, 'q[0]')",
-            "Rxy(90, 0, 'q[0]')",
-            "CZ (q[4], q[0])",
-            "Rxy(90, 90, 'q[1]')",
-            "Rxy(180, 0, 'q[2]')",
-            "Rxy(90, 90, 'q[2]')",
-            "Rxy(135, 0, 'q[2]')",
-            "CZ (q[1], q[2])",
-            "Rxy(45, 0, 'q[2]')",
-            "CZ (q[1], q[2])",
-            "Rxy(-90, 0, 'q[3]')",
-            "Rxy(180, 90, 'q[3]')",
-            "Rxy(90, 0, 'q[3]')",
-            "Rxy(180, 0, 'q[4]')",
-            "Rxy(90, 90, 'q[4]')",
-            "Rxy(180, 0, 'q[4]')",
-            "CZ (q[3], q[4])",
-            "Rxy(90, 90, 'q[4]')",
-            "Rxy(180, 0, 'q[3]')",
-            "Rxy(90, 90, 'q[3]')",
-            "Rxy(180, 0, 'q[3]')",
-            "CZ (q[4], q[3])",
-            "Rxy(90, 90, 'q[3]')",
-            "Rxy(180, 0, 'q[4]')",
-            "Rxy(90, 90, 'q[4]')",
-            "Rxy(180, 0, 'q[4]')",
-            "CZ (q[3], q[4])",
-            "Rxy(-90, 0, 'q[0]')",
-            "Rxy(180, 90, 'q[0]')",
-            "Rxy(90, 0, 'q[0]')",
-            "Rxy(-90, 0, 'q[1]')",
-            "Rxy(45, 90, 'q[1]')",
-            "Rxy(90, 0, 'q[1]')",
-            "Rxy(90, 90, 'q[2]')",
-            "Rxy(90, 90, 'q[4]')",
+            # Two-qubit gates
+            "Rz(90, 'q[0]')",  # CNOT q[2], q[0]
+            "Rxy(90, 0, 'q[0]')",  # CNOT q[2], q[0]
+            "Rz(-90, 'q[0]')",  # CNOT q[2], q[0]
+            "CZ (q[2], q[0])",  # CNOT q[2], q[0]
+            "Rz(180, 'q[3]')",  # CZ q[2], q[3]
+            "CZ (q[2], q[3])",  # CZ q[2], q[3]
+            "Rz(180, 'q[2]')",  # CR(pi) q[4], q[2]
+            "CZ (q[4], q[2])",  # CR(pi) q[4], q[2]
+            "Rz(-45, 'q[2]')",  # CRk(2) q[1], q[2]
+            "Rxy(90, 0, 'q[2]')",  # CRk(2) q[1], q[2]
+            "Rz(-90, 'q[2]')",  # CRk(2) q[1], q[2]
+            "CZ (q[1], q[2])",  # CRk(2) q[1], q[2]
+            "Rxy(45, 0, 'q[2]')",  # CRk(2) q[1], q[2]
+            "CZ (q[1], q[2])",  # CRk(2) q[1], q[2]
+            "Rz(-90, 'q[0]')",  # CNOT q[2], q[0]
+            "Rxy(90, 0, 'q[0]')",  # CNOT q[2], q[0]
+            "Rz(90, 'q[0]')",  # CNOT q[2], q[0]
+            "CZ (q[0], q[2])",  # SWAP q[0], q[2]
+            "Rz(-90, 'q[2]')",  # SWAP q[0], q[2]
+            "Rxy(90, 0, 'q[2]')",  # SWAP q[0], q[2]
+            "Rz(90, 'q[2]')",  # SWAP q[0], q[2]
+            "Rz(90, 'q[0]')",  # SWAP q[0], q[2]
+            "Rxy(90, 0, 'q[0]')",  # SWAP q[0], q[2]
+            "Rz(-90, 'q[0]')",  # SWAP q[0], q[2]
+            "CZ (q[2], q[0])",  # SWAP q[0], q[2]
+            "Rz(-90, 'q[0]')",  # SWAP q[0], q[2]
+            "Rxy(90, 0, 'q[0]')",  # SWAP q[0], q[2]
+            "Rz(90, 'q[0]')",  # SWAP q[0], q[2]
+            "Rz(90, 'q[2]')",  # SWAP q[0], q[2]
+            "Rxy(90, 0, 'q[2]')",  # SWAP q[0], q[2]
+            "Rz(-90, 'q[2]')",  # SWAP q[0], q[2]
+            "CZ (q[0], q[2])",  # SWAP q[0], q[2]
+            "Rz(45, 'q[1]')",  # CRk(2) q[1], q[2]
+            "Rz(-90, 'q[2]')",  # CRk(2) q[1], q[2]
+            "Rxy(90, 0, 'q[2]')",  # CRk(2) q[1], q[2]
+            "Rz(90, 'q[2]')",  # CR(pi) q[4], q[2] and CRk(2) q[1], q[2]
+            "Rz(180, 'q[3]')",  # CZ q[2], q[3]
+            # barrier q
+            # b[2:6] = measure q
             "Measure q[0]",
-            "Rxy(90, 90, 'q[1]')",
             "Measure q[1]",
             "Measure q[2]",
             "Measure q[3]",
@@ -583,12 +608,7 @@ def test_hectoqubit_backend_bell_states() -> None:
         ):
             qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-
-        # fig, _ = exported_schedule.plot_circuit_diagram(figsize=(35, 6))
-        # fig.set_dpi(300)
-        # fig.savefig("example.png")
-        # fig.show()
+        qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
 
 def test_starmon7_backend() -> None:
