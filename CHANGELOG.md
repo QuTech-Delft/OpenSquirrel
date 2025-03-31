@@ -15,8 +15,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `Rn` unitary instruction
+- `CZDecomposer` decomposer pass
 - `ShortestPathRouter` router pass
 - `RandomMapper` mapper pass
+- `AStarRouter` router pass
 
 ### Changed
 
