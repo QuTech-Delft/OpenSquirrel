@@ -121,18 +121,22 @@ class Parser:
         """Construct a list with a list of qubits and a list of parameters, then return a zip of both lists.
         For example, for CRk(2) q[0, 1] q[2, 3], this function:
         1. constructs the list with a list of qubits [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]],
-        2. appends the list of parameters [Int(2), Int(2)],
+        2. appends the list of parameters [[Int(2)], [Int(2)]],
         3. zips the whole list and returns [(Qubit(0), Qubit(2), Int(2)), (Qubit(1), Qubit(3), Int(2))]
         """
-        expanded_args = self._get_instruction_operands(instruction)
+        extended_operands = self._get_instruction_operands(instruction)
         if isinstance(instruction, cqasm.semantic.GateInstruction):
             gate_parameters = self._get_named_gate_parameters(instruction.gate)
         else:
             gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]
         if gate_parameters:
-            number_of_operands = len(expanded_args[0])
-            expanded_args.append(gate_parameters * number_of_operands)
-        return list(zip(*expanded_args))
+            number_of_operands = len(extended_operands[0])
+            extended_gate_parameters = [gate_parameters] * number_of_operands
+            return [
+                (*operands, *parameters)
+                for operands, parameters in zip(zip(*extended_operands), extended_gate_parameters)
+            ]
+        return list(zip(*extended_operands))
 
     def _get_expanded_measure_args(self, ast_args: Any) -> list[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
