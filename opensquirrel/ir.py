@@ -349,6 +349,10 @@ class Statement(IRNode, ABC):
     pass
 
 
+class AsmDeclaration(Statement):
+    pass
+
+
 class Instruction(Statement, ABC):
     def __init__(self, name: str) -> None:
         self.name = name

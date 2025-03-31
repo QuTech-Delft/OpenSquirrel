@@ -16,7 +16,7 @@ from opensquirrel.ir import (
     Int,
     NonUnitary,
     Qubit,
-    Statement,
+    Statement, AsmDeclaration,
 )
 from opensquirrel.register_manager import RegisterManager
 
@@ -69,6 +69,10 @@ class Parser:
     @staticmethod
     def _is_non_unitary_instruction(ast_node: Any) -> bool:
         return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
+
+    @staticmethod
+    def _is_asm_declaration(ast_node: Any) -> bool:
+        return isinstance(ast_node, cqasm.semantic.AsmDeclaration)
 
     def _get_qubits(self, ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef) -> list[Qubit]:
         ret = []
@@ -206,6 +210,9 @@ class Parser:
                     if statement.name == "measure"
                     else self._get_expanded_instruction_args(statement)
                 )
+            elif Parser._is_asm_declaration(statement):
+                asm_declaration = AsmDeclaration(statement)
+                self.ir.add_statement(asm_declaration)
             else:
                 msg = "parsing error: unknown statement"
                 raise OSError(msg)
