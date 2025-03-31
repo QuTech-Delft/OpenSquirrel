@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `Rn` unitary instruction
 - `ShortestPathRouter` router pass
 - `RandomMapper` mapper pass
 
