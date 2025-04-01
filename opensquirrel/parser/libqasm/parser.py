@@ -9,6 +9,7 @@ from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGate
 from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
 from opensquirrel.ir import (
     IR,
+    AsmDeclaration,
     Bit,
     BlochSphereRotation,
     Float,
@@ -16,7 +17,7 @@ from opensquirrel.ir import (
     Int,
     NonUnitary,
     Qubit,
-    Statement, AsmDeclaration,
+    Statement,
 )
 from opensquirrel.register_manager import RegisterManager
 
@@ -198,6 +199,7 @@ class Parser:
         self.register_manager = RegisterManager.from_ast(ast)
 
         # Parse statements
+        expanded_args: list[tuple[Any, ...]] = []
         for statement in ast.block.statements:
             instruction_generator: Callable[..., Statement]
             if Parser._is_gate_instruction(statement):
@@ -211,7 +213,7 @@ class Parser:
                     else self._get_expanded_instruction_args(statement)
                 )
             elif Parser._is_asm_declaration(statement):
-                asm_declaration = AsmDeclaration(statement)
+                asm_declaration = AsmDeclaration(statement.backend_name, statement.backend_code)
                 self.ir.add_statement(asm_declaration)
             else:
                 msg = "parsing error: unknown statement"
@@ -220,7 +222,9 @@ class Parser:
             # For an SGMQ instruction:
             # expanded_args will contain a list with the list of qubits for each individual instruction,
             # while args will contain the list of qubits of an individual instruction
-            for args in expanded_args:
-                self.ir.add_statement(instruction_generator(*args))
+            if expanded_args:
+                for args in expanded_args:
+                    self.ir.add_statement(instruction_generator(*args))
+                expanded_args = []
 
         return Circuit(self.register_manager, self.ir)
