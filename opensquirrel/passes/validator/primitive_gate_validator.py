@@ -22,5 +22,7 @@ class PrimitiveGateValidator(Validator):
             if isinstance(statement, Unitary) and statement.name not in self.primitive_gate_set
         ]
         if gates_not_in_primitive_gate_set:
-            error_message = f"the following gates are not in the primitive gate set: {set(gates_not_in_primitive_gate_set)}"
+            error_message = (
+                f"the following gates are not in the primitive gate set: {set(gates_not_in_primitive_gate_set)}"
+            )
             raise ValueError(error_message)
