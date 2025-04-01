@@ -12,6 +12,7 @@ from opensquirrel.ir import (
     Barrier,
     BlochSphereRotation,
     BsrAngleParam,
+    BsrFullParams,
     BsrNoParams,
     ControlledGate,
     CRk,
@@ -66,6 +67,9 @@ class _CQASMv1Creator(IRVisitor):
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name.lower()} {qubit_operand}\n"
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
+        raise UnsupportedGateError(gate)
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
         theta_argument = gate.theta.accept(self)

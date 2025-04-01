@@ -11,6 +11,7 @@ from opensquirrel.ir import (
     Bit,
     BlochSphereRotation,
     BsrAngleParam,
+    BsrFullParams,
     BsrNoParams,
     ControlledGate,
     CRk,
@@ -84,6 +85,15 @@ class _WriterImpl(IRVisitor):
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name} {qubit_operand}\n"
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
+        nx = gate.nx.accept(self)
+        ny = gate.ny.accept(self)
+        nz = gate.nz.accept(self)
+        theta_argument = gate.theta.accept(self)
+        phi_argument = gate.phi.accept(self)
+        qubit_operand = gate.qubit.accept(self)
+        self.output += f"{gate.name}({nx}, {ny}, {nz}, {theta_argument}, {phi_argument}) {qubit_operand}\n"
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
         theta_argument = gate.theta.accept(self)
