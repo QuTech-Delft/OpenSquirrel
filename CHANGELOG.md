@@ -25,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - libQASM 1.1.0 integrated (updated from 0.6.9)
 - Refactor: removed generators
 - Changed the `RoutingChecker` pass to a `RoutingValidator` pass
+- Changed use of `native` to `primitive`, e.g. `NativeGateValidator` is now `PrimitiveGateValidator`
 
 ## [0.3.1] - [ 2025-01-31 ]
 

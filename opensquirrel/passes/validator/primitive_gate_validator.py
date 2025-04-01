@@ -1,0 +1,26 @@
+from opensquirrel.ir import IR, Unitary
+from opensquirrel.passes.validator import Validator
+
+
+class PrimitiveGateValidator(Validator):
+    def __init__(self, primitive_gate_set: list[str]) -> None:
+        self.primitive_gate_set = primitive_gate_set
+
+    def validate(self, ir: IR) -> None:
+        """
+        Check if all unitary gates in the circuit are part of the primitive gate set.
+
+        Args:
+            ir (IR): The intermediate representation of the circuit to be checked.
+
+        Raises:
+            ValueError: If any unitary gate in the circuit is not part of the primitive gate set.
+        """
+        gates_not_in_primitive_gate_set = [
+            statement.name
+            for statement in ir.statements
+            if isinstance(statement, Unitary) and statement.name not in self.primitive_gate_set
+        ]
+        if gates_not_in_primitive_gate_set:
+            error_message = f"the following gates are not in the primitive gate set: {set(gates_not_in_primitive_gate_set)}"
+            raise ValueError(error_message)

@@ -16,7 +16,7 @@ from opensquirrel.passes.decomposer import (
 )
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger import SingleQubitGatesMerger
-from opensquirrel.passes.validator import NativeGateValidator, RoutingValidator
+from opensquirrel.passes.validator import PrimitiveGateValidator, RoutingValidator
 
 
 def test_spin2plus_backend() -> None:
@@ -81,7 +81,7 @@ def test_spin2plus_backend() -> None:
     """
     connectivity = {"0": [1], "1": [0]}
 
-    native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
+    primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
 
     # Validate that the interactions in the circuit are possible given the chip topology
     qc.validate(validator=RoutingValidator(connectivity))
@@ -98,11 +98,11 @@ def test_spin2plus_backend() -> None:
     # Merge single-qubit gates
     qc.merge(merger=SingleQubitGatesMerger())
 
-    # Decompose single-qubit gates to spin backend native gates with McKay decomposer
+    # Decompose single-qubit gates to primitive gates with McKay decomposer
     qc.decompose(decomposer=McKayDecomposer())
 
-    # Validate that the compiled circuit is composed of gates that are in the native gate set
-    qc.validate(validator=NativeGateValidator(native_gate_set))
+    # Validate that the compiled circuit is composed of gates that are in the primitive gate set
+    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
 
     assert (
         str(qc)
@@ -245,7 +245,7 @@ def test_hectoqubit_backend() -> None:
         "3": [0, 1, 2, 4],
         "4": [0, 1, 2, 3],
     }
-    native_gate_set = [
+    primitive_gate_set = [
         "I",
         "X",
         "X90",
@@ -280,11 +280,11 @@ def test_hectoqubit_backend() -> None:
     # Merge single-qubit gates
     qc.merge(merger=SingleQubitGatesMerger())
 
-    # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
+    # Decompose single-qubit gates to primitive gates with the XYX decomposer
     qc.decompose(decomposer=XYXDecomposer())
 
-    # Validate that the compiled circuit is composed of gates that are in the native gate set
-    qc.validate(validator=NativeGateValidator(native_gate_set))
+    # Validate that the compiled circuit is composed of gates that are in the primitive gate set
+    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
@@ -594,7 +594,7 @@ def test_starmon7_backend() -> None:
         "6": [3, 4],
     }
 
-    native_gate_set = [
+    primitive_gate_set = [
         "I",
         "H",
         "X",
@@ -621,8 +621,8 @@ def test_starmon7_backend() -> None:
     # Validate that the interactions in the circuit are possible given the chip topology
     qc.validate(validator=RoutingValidator(connectivity))
 
-    # Validate that the compiled circuit is composed of gates that are in the native gate set
-    qc.validate(validator=NativeGateValidator(native_gate_set))
+    # Validate that the compiled circuit is composed of gates that are in the primitive gate set
+    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
 
     exported_circuit = qc.export(fmt=ExportFormat.CQASM_V1)
 
