@@ -1,4 +1,4 @@
-from opensquirrel.ir import IR, Unitary
+from opensquirrel.ir import IR, Instruction
 from opensquirrel.passes.validator import Validator
 
 
@@ -19,10 +19,9 @@ class PrimitiveGateValidator(Validator):
         gates_not_in_primitive_gate_set = [
             statement.name
             for statement in ir.statements
-            if isinstance(statement, Unitary) and statement.name not in self.primitive_gate_set
+            if isinstance(statement, Instruction) and statement.name not in self.primitive_gate_set
         ]
         if gates_not_in_primitive_gate_set:
-            error_message = (
-                f"the following gates are not in the primitive gate set: {set(gates_not_in_primitive_gate_set)}"
-            )
+            unsupported_gates = list(set(gates_not_in_primitive_gate_set))
+            error_message = f"the following gates are not in the primitive gate set: " + ", ".join(unsupported_gates)
             raise ValueError(error_message)

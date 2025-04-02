@@ -81,7 +81,7 @@ def test_spin2plus_backend() -> None:
     """
     connectivity = {"0": [1], "1": [0]}
 
-    primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
+    primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ", "measure", "wait", "init", "barrier"]
 
     # Validate that the interactions in the circuit are possible given the chip topology
     qc.validate(validator=RoutingValidator(connectivity))
@@ -263,6 +263,10 @@ def test_hectoqubit_backend() -> None:
         "Rz",
         "CNOT",
         "CZ",
+        "measure",
+        "wait",
+        "init",
+        "barrier",
     ]
 
     # Validate that the interactions in the circuit are possible given the chip topology
@@ -616,6 +620,10 @@ def test_starmon7_backend() -> None:
         "CR",
         "CRk",
         "SWAP",
+        "measure",
+        "wait",
+        "init",
+        "barrier",
     ]
 
     # Validate that the interactions in the circuit are possible given the chip topology
