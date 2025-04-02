@@ -2213,7 +2213,7 @@ test = ["pytest (>=7.4)", "pytest-cov (>=4.1)"]
 
 [[package]]
 name = "libqasm"
-version = "1.1.0"
+version = "1.2.0"
 description = "libqasm Python Package"
 optional = false
 python-versions = "*"
@@ -6326,4 +6326,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.9"
-content-hash = "7c194d34bc6fdeaf3f6a7d982b491a3a8cbfe8fb17da29f9296903c451140648"
+content-hash = "eb1750007482f69f3fa4a92b31bcb5204cb7ac759e0cb50ca201df8823be48d2"

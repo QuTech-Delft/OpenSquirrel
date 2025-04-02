@@ -13,6 +13,7 @@ from opensquirrel.ir import (
     SWAP,
     BlochSphereRotation,
     BsrAngleParam,
+    BsrFullParams,
     BsrNoParams,
     ControlledGate,
     CRk,
@@ -73,6 +74,9 @@ class _ScheduleCreator(IRVisitor):
         raise UnsupportedGateError(gate)
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
+        self.visit_bloch_sphere_rotation(gate)
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
         self.visit_bloch_sphere_rotation(gate)
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:

@@ -47,7 +47,6 @@ class CNOTDecomposer(Decomposer):
             # The decomposition can use a single CNOT according to the lemma.
             A = [Ry(target_qubit, -theta1_with_x / 2), Rz(target_qubit, -theta2_with_x)]  # noqa: N806
             B = [Rz(target_qubit, theta2_with_x), Ry(target_qubit, theta1_with_x / 2)]  # noqa: N806
-
             return filter_out_identities(
                 [
                     *B,

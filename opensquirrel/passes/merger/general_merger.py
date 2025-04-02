@@ -20,13 +20,14 @@ def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSpher
         A q
         B q
 
-    A linear operations:
+    As linear operations:
         (B * A) q
 
     If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.
 
     Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
+
     if bsr_a.qubit != bsr_b.qubit:
         msg = "cannot merge two Bloch sphere rotations on different qubits"
         raise ValueError(msg)
