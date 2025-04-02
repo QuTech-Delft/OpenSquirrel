@@ -837,13 +837,13 @@ class NonUnitary(Instruction, ABC):
 
 class Measure(NonUnitary):
     def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Measure")
+        NonUnitary.__init__(self, qubit=qubit, name="measure")
         self.qubit = Qubit(qubit)
         self.bit = Bit(bit)
         self.axis = Axis(axis)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
+        return f"{self.__class__.__name__}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
     def __eq__(self, other: object) -> bool:
         return (
@@ -864,11 +864,11 @@ class Measure(NonUnitary):
 
 class Init(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Init")
+        NonUnitary.__init__(self, qubit=qubit, name="init")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Init) and self.qubit == other.qubit
@@ -884,11 +884,11 @@ class Init(NonUnitary):
 
 class Reset(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Reset")
+        NonUnitary.__init__(self, qubit=qubit, name="reset")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Reset) and self.qubit == other.qubit
@@ -904,11 +904,11 @@ class Reset(NonUnitary):
 
 class Barrier(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Barrier")
+        NonUnitary.__init__(self, qubit=qubit, name="barrier")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Barrier) and self.qubit == other.qubit
@@ -924,7 +924,7 @@ class Barrier(NonUnitary):
 
 class Wait(NonUnitary):
     def __init__(self, qubit: QubitLike, time: SupportsInt) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Wait")
+        NonUnitary.__init__(self, qubit=qubit, name="wait")
         self.qubit = Qubit(qubit)
         self.time = Int(time)
 
