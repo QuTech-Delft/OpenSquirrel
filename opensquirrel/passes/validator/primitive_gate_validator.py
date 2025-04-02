@@ -23,5 +23,5 @@ class PrimitiveGateValidator(Validator):
         ]
         if gates_not_in_primitive_gate_set:
             unsupported_gates = list(set(gates_not_in_primitive_gate_set))
-            error_message = f"the following gates are not in the primitive gate set: " + ", ".join(unsupported_gates)
+            error_message = "the following gates are not in the primitive gate set: " + ", ".join(unsupported_gates)
             raise ValueError(error_message)
