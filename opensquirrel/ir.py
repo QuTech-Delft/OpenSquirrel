@@ -61,6 +61,9 @@ class IRVisitor:
     def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
         pass
 
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
+        pass
+
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
         pass
 
@@ -470,22 +473,24 @@ class BlochSphereRotation(Gate):
              or the input BlochSphereRotation otherwise.
         """
         from opensquirrel.default_instructions import (
-            default_bloch_sphere_rotation_set,
             default_bsr_with_angle_param_set,
+            default_bsr_without_params_set,
         )
 
-        for gate_name in default_bloch_sphere_rotation_set:
+        bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
+        for gate_name in bsr_set_without_rn:
             arguments: tuple[Any, ...] = (bsr.qubit,)
             if gate_name in default_bsr_with_angle_param_set:
                 arguments += (Float(bsr.angle),)
-            gate = default_bloch_sphere_rotation_set[gate_name](*arguments)
+            gate = bsr_set_without_rn[gate_name](*arguments)
             if (
                 np.allclose(gate.axis, bsr.axis, atol=ATOL)
                 and np.allclose(gate.angle, bsr.angle, atol=ATOL)
                 and np.allclose(gate.phase, bsr.phase, atol=ATOL)
             ):
                 return gate
-        return bsr
+        nx, ny, nz = (Float(component) for component in bsr.axis)
+        return Rn(bsr.qubit, nx, ny, nz, Float(bsr.angle), Float(bsr.phase))
 
 
 class BsrNoParams(BlochSphereRotation):
@@ -570,6 +575,42 @@ class T(BsrNoParams):
 class TDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=0, name="Tdag")
+
+
+class BsrFullParams(BlochSphereRotation):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        axis: AxisLike,
+        angle: SupportsFloat,
+        phase: SupportsFloat,
+        name: str = "BsrFullParams",
+    ) -> None:
+        BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
+        self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
+        self.theta = Float(angle)
+        self.phi = Float(phase)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_bsr_full_params(self)
+
+
+class Rn(BsrFullParams):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        nx: SupportsFloat,
+        ny: SupportsFloat,
+        nz: SupportsFloat,
+        theta: SupportsFloat,
+        phi: SupportsFloat,
+    ) -> None:
+        axis: AxisLike = Axis(np.asarray([nx, ny, nz], dtype=np.float64))
+        BsrFullParams.__init__(self, qubit=qubit, axis=axis, angle=theta, phase=phi, name="Rn")
 
 
 class BsrAngleParam(BlochSphereRotation):
@@ -799,13 +840,13 @@ class NonUnitary(Instruction, ABC):
 
 class Measure(NonUnitary):
     def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Measure")
+        NonUnitary.__init__(self, qubit=qubit, name="measure")
         self.qubit = Qubit(qubit)
         self.bit = Bit(bit)
         self.axis = Axis(axis)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
+        return f"{self.__class__.__name__}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
     def __eq__(self, other: object) -> bool:
         return (
@@ -826,11 +867,11 @@ class Measure(NonUnitary):
 
 class Init(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Init")
+        NonUnitary.__init__(self, qubit=qubit, name="init")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Init) and self.qubit == other.qubit
@@ -846,11 +887,11 @@ class Init(NonUnitary):
 
 class Reset(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Reset")
+        NonUnitary.__init__(self, qubit=qubit, name="reset")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Reset) and self.qubit == other.qubit
@@ -866,11 +907,11 @@ class Reset(NonUnitary):
 
 class Barrier(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Barrier")
+        NonUnitary.__init__(self, qubit=qubit, name="barrier")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Barrier) and self.qubit == other.qubit
@@ -886,7 +927,7 @@ class Barrier(NonUnitary):
 
 class Wait(NonUnitary):
     def __init__(self, qubit: QubitLike, time: SupportsInt) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Wait")
+        NonUnitary.__init__(self, qubit=qubit, name="wait")
         self.qubit = Qubit(qubit)
         self.time = Int(time)
 
