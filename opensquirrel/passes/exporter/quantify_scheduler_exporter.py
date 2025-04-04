@@ -23,7 +23,9 @@ from opensquirrel.ir import (
     IRVisitor,
     MatrixGate,
     Measure,
-    Reset, Wait,
+    Reset,
+    Wait,
+    IR,
 )
 
 try:
@@ -86,11 +88,12 @@ class OperationRecord:
 
         params = {"label": operation_id}
         if not ref_operation_id:
-            params["ref_pt"] = "start"
+            params["ref_pt"] = "end"
+            params["ref_pt_new"] = "end"
         else:
             params["ref_op"] = ref_operation_id
-            params["ref_pt"] = "end"
-            params["ref_pt_new"] = "start"
+            params["ref_pt"] = "start"
+            params["ref_pt_new"] = "end"
         if waiting_times:
             params["rel_time"] = max(waiting_times) * CYCLE_TIME
         return params
@@ -249,8 +252,12 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
     schedule_creator = _ScheduleCreator(circuit.register_manager)
+
+    reversed_ir = IR()
+    for statement in circuit.ir.statements[::-1]:
+        reversed_ir.add_statement(statement)
     try:
-        circuit.ir.accept(schedule_creator)
+        reversed_ir.accept(schedule_creator)
     except UnsupportedGateError as e:
         msg = (
             f"cannot export circuit: {e}. "
