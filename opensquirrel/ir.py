@@ -398,6 +398,28 @@ class Statement(IRNode, ABC):
     pass
 
 
+class AsmDeclaration(Statement):
+    """``AsmDeclaration`` is used to define an assembly declaration statement in the IR.
+
+        Args:
+            backend_name: Name of the backend that is to process the provided backend code.
+            backend_code: (Assembly) code to be processed by the specified backend.
+    """
+
+    def __init__(
+        self,
+        backend_name: SupportsStr,
+        backend_code: SupportsStr,
+    ) -> None:
+        self.backend_name = String(backend_name)
+        self.backend_code = String(backend_code)
+        Statement.__init__(self)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_statement(self)
+        return visitor.visit_asm_declaration(self)
+
+
 class Instruction(Statement, ABC):
     def __init__(self, name: str) -> None:
         self.name = name
@@ -450,21 +472,6 @@ class Gate(Unitary, ABC):
     @abstractmethod
     def is_identity(self) -> bool:
         pass
-
-
-class AsmDeclaration(Statement):
-    def __init__(
-        self,
-        backend_name: SupportsStr,
-        backend_code: SupportsStr,
-    ) -> None:
-        self.backend_name = String(backend_name)
-        self.backend_code = String(backend_code)
-        Statement.__init__(self)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_statement(self)
-        return visitor.visit_asm_declaration(self)
 
 
 class BlochSphereRotation(Gate):
