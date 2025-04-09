@@ -401,9 +401,9 @@ class Statement(IRNode, ABC):
 class AsmDeclaration(Statement):
     """``AsmDeclaration`` is used to define an assembly declaration statement in the IR.
 
-        Args:
-            backend_name: Name of the backend that is to process the provided backend code.
-            backend_code: (Assembly) code to be processed by the specified backend.
+    Args:
+        backend_name: Name of the backend that is to process the provided backend code.
+        backend_code: (Assembly) code to be processed by the specified backend.
     """
 
     def __init__(
