@@ -4,7 +4,7 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
+from typing import Any, Protocol, SupportsFloat, SupportsInt, Union, cast, overload, runtime_checkable
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -28,6 +28,9 @@ def repr_round(value: float | Axis | NDArray[np.complex128], decimals: int = REP
 
 
 class IRVisitor:
+    def visit_str(self, s: String) -> Any:
+        pass
+
     def visit_int(self, i: Int) -> Any:
         pass
 
@@ -44,6 +47,9 @@ class IRVisitor:
         pass
 
     def visit_statement(self, statement: Statement) -> Any:
+        pass
+
+    def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> Any:
         pass
 
     def visit_instruction(self, instruction: Instruction) -> Any:
@@ -115,6 +121,46 @@ class IRNode(ABC):
 
 class Expression(IRNode, ABC):
     pass
+
+
+@runtime_checkable
+class SupportsStr(Protocol):
+    def __str__(self) -> str: ...
+
+
+@dataclass(init=False)
+class String(Expression):
+    """Strings used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``String`` object.
+    """
+
+    value: str
+
+    def __init__(self, value: SupportsStr) -> None:
+        """Init of the ``String`` object.
+
+        Args:
+            value: value of the ``String`` object.
+        """
+        if isinstance(value, SupportsStr):
+            self.value = str(value)
+            return
+
+        msg = "value must be a str"
+        raise TypeError(msg)
+
+    def __str__(self) -> str:
+        """Cast the ``String`` object to a built-in Python ``str``.
+
+        Returns:
+            Built-in Python ``str`` representation of the ``String``.
+        """
+        return self.value
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_str(self)
 
 
 @dataclass(init=False)
@@ -350,6 +396,28 @@ class Axis(Sequence[np.float64], Expression):
 
 class Statement(IRNode, ABC):
     pass
+
+
+class AsmDeclaration(Statement):
+    """``AsmDeclaration`` is used to define an assembly declaration statement in the IR.
+
+    Args:
+        backend_name: Name of the backend that is to process the provided backend code.
+        backend_code: (Assembly) code to be processed by the specified backend.
+    """
+
+    def __init__(
+        self,
+        backend_name: SupportsStr,
+        backend_code: SupportsStr,
+    ) -> None:
+        self.backend_name = String(backend_name)
+        self.backend_code = String(backend_code)
+        Statement.__init__(self)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_statement(self)
+        return visitor.visit_asm_declaration(self)
 
 
 class Instruction(Statement, ABC):
@@ -958,6 +1026,9 @@ def compare_gates(g1: Gate, g2: Gate) -> bool:
 class IR:
     def __init__(self) -> None:
         self.statements: list[Statement] = []
+
+    def add_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
+        self.statements.append(asm_declaration)
 
     def add_gate(self, gate: Gate) -> None:
         self.statements.append(gate)
