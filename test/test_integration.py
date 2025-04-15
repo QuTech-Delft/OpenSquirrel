@@ -80,29 +80,33 @@ def test_spin2plus_backend() -> None:
         0 <--> 1
     """
     connectivity = {"0": [1], "1": [0]}
-
     primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ", "measure", "wait", "init", "barrier"]
 
+    data = {
+        "connectivity": connectivity,
+        "primitive_gate_set": primitive_gate_set,
+    }
+
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(connectivity))
+    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
-    qc.decompose(decomposer=SWAP2CNOTDecomposer())
-
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer())
-
-    # Replace CNOT gates with CZ gates
-    qc.decompose(decomposer=CNOT2CZDecomposer())
-
-    # Merge single-qubit gates
-    qc.merge(merger=SingleQubitGatesMerger())
-
-    # Decompose single-qubit gates to primitive gates with McKay decomposer
-    qc.decompose(decomposer=McKayDecomposer())
+    qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
+    #
+    # # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    qc.decompose(decomposer=CNOTDecomposer(**data))
+    #
+    # # Replace CNOT gates with CZ gates
+    qc.decompose(decomposer=CNOT2CZDecomposer(**data))
+    #
+    # # Merge single-qubit gates
+    qc.merge(merger=SingleQubitGatesMerger(**data))
+    #
+    # # Decompose single-qubit gates to primitive gates with McKay decomposer
+    qc.decompose(decomposer=McKayDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
+    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     assert (
         str(qc)
@@ -269,26 +273,31 @@ def test_hectoqubit_backend() -> None:
         "barrier",
     ]
 
+    data = {
+        "connectivity": connectivity,
+        "primitive_gate_set": primitive_gate_set,
+    }
+
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(connectivity))
+    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
-    qc.decompose(decomposer=SWAP2CNOTDecomposer())
+    qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer())
+    qc.decompose(decomposer=CNOTDecomposer(**data))
 
     # Replace CNOT gates with CZ gates
-    qc.decompose(decomposer=CNOT2CZDecomposer())
+    qc.decompose(decomposer=CNOT2CZDecomposer(**data))
 
     # Merge single-qubit gates
-    qc.merge(merger=SingleQubitGatesMerger())
+    qc.merge(merger=SingleQubitGatesMerger(**data))
 
     # Decompose single-qubit gates to primitive gates with the XYX decomposer
-    qc.decompose(decomposer=XYXDecomposer())
+    qc.decompose(decomposer=XYXDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
+    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
@@ -597,7 +606,6 @@ def test_starmon7_backend() -> None:
         "5": [2, 3],
         "6": [3, 4],
     }
-
     primitive_gate_set = [
         "I",
         "H",
@@ -626,11 +634,16 @@ def test_starmon7_backend() -> None:
         "barrier",
     ]
 
+    data = {
+        "connectivity": connectivity,
+        "primitive_gate_set": primitive_gate_set,
+    }
+
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(connectivity))
+    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
+    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     exported_circuit = qc.export(fmt=ExportFormat.CQASM_V1)
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
+from typing import Any
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase, is_identity_matrix_up_to_a_global_phase
@@ -11,6 +12,8 @@ from opensquirrel.reindexer import get_reindexed_circuit
 
 
 class Decomposer(ABC):
+    def __init__(self, **kwargs: Any) -> None: ...
+
     @abstractmethod
     def decompose(self, gate: Gate) -> list[Gate]:
         raise NotImplementedError()
