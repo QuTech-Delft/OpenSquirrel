@@ -5,7 +5,25 @@ use_directory_urls: false
 
 nav:
   - Home: index.md
-  - Tutorial: tutorial.md
+  - Tutorial: 
+    - General Overview: tutorial/tutorial_overview.md
+    - Creating a circuit: 
+      - From a cQASM string: tutorial/circuit_creation/circ_from_cqasm.md
+      - Using the CircuitBuilder: tutorial/circuit_creation/circ_from_builder.md
+      - Strong Types: tutorial/circuit_creation/strong_types.md
+    - Modifying a Circuit:
+      - Merging single qubit gates: tutorial/circuit_modification/merging_single.md
+      - Defining your own quantum gates: tutorial/circuit_modification/custom_gates.md
+      - Gate Decomposition:
+        - Predefined Decomposition: tutorial/circuit_modification/decomposition/predefined.md
+        - Inferred Decomposition: tutorial/circuit_modification/decomposition/inferred.md
+    - Compilation Passes:
+      - Decomposer Passes: tutorial/passes/decomposer.md
+      - Mapper Passes: tutorial/passes/mapper.md
+      - Router Passes: tutorial/passes/router.md
+      - Validator Passes: tutorial/passes/validator.md
+      - Merger Passes: tutorial/passes/merger.md
+  - Passes: overview_passes.md
   - API documentation: reference/
 
 theme:
