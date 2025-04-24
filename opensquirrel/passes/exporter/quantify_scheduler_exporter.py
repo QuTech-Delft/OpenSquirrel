@@ -39,6 +39,18 @@ if TYPE_CHECKING:
 
 FIXED_POINT_DEG_PRECISION = 5   # Radian to degree conversion outcome precision
 CYCLE_TIME = 20e-9              # Operation cycle time (set at 20ns)
+NAMED_GATES_MAP = {
+    "H": "H",
+    "X": "X",
+    "X90": "X90",
+    "Y": "Y",
+    "Y90": "Y90",
+    "Z": "Z",
+    "S": "S",
+    "SDagger": "SDagger",
+    "T": "T",
+    "TDagger": "TDagger"
+}
 
 class OperationRecord:
     qubit_register_size: int
@@ -133,6 +145,15 @@ class _ScheduleCreator(IRVisitor):
             gate.name + f"({gate.angle:.2f})",
             gate.get_qubit_operands()
         )
+
+        if gate.name in NAMED_GATES_MAP:
+            named_gate = getattr(quantify_scheduler_gates, NAMED_GATES_MAP[gate.name])
+            self.schedule.add(
+                named_gate(self._get_qubit_string(gate.qubit)),
+                **operation_params
+            )
+            return
+
         if abs(gate.axis[2]) < ATOL:
             # Rxy rotation.
             theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
