@@ -39,6 +39,18 @@ if TYPE_CHECKING:
 
 FIXED_POINT_DEG_PRECISION = 5   # Radian to degree conversion outcome precision
 CYCLE_TIME = 20e-9              # Operation cycle time (set at 20ns)
+NAMED_GATES_MAP = {
+    "H": "H",
+    "X": "X",
+    "X90": "X90",
+    "Y": "Y",
+    "Y90": "Y90",
+    "Z": "Z",
+    "S": "S",
+    "SDagger": "SDagger",
+    "T": "T",
+    "TDagger": "TDagger"
+}
 
 class OperationRecord:
     qubit_register_size: int
