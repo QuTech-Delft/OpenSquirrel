@@ -1,11 +1,12 @@
-from typing import cast
+from typing import Any, cast
 
 from opensquirrel.ir import IR, Instruction, Qubit
 from opensquirrel.passes.validator import Validator
 
 
 class RoutingValidator(Validator):
-    def __init__(self, connectivity: dict[str, list[int]]) -> None:
+    def __init__(self, connectivity: dict[str, list[int]], **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.connectivity = connectivity
 
     def validate(self, ir: IR) -> None:

@@ -1,3 +1,5 @@
+from typing import Any
+
 import networkx as nx
 
 from opensquirrel.exceptions import NoRoutingPathError
@@ -6,7 +8,8 @@ from opensquirrel.passes.router import Router
 
 
 class ShortestPathRouter(Router):
-    def __init__(self, connectivity: dict[str, list[int]]) -> None:
+    def __init__(self, connectivity: dict[str, list[int]], **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.connectivity = connectivity
 
     def route(self, ir: IR) -> IR:

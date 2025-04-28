@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from math import cos, floor, log10, sin
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
 
@@ -130,6 +130,8 @@ def rearrange_barriers(ir: IR) -> None:
 
 
 class Merger(ABC):
+    def __init__(self, **kwargs: Any) -> None: ...
+
     @abstractmethod
     def merge(self, ir: IR, qubit_register_size: int) -> None:
         raise NotImplementedError
