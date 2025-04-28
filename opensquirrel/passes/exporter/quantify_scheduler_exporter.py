@@ -276,7 +276,7 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
         )
         raise ExporterError(msg) from e
 
-    schedulables = schedule_creator.schedule.schedulables.values().list()
+    schedulables = list(schedule_creator.schedule.schedulables.values())
     scheduler = _Scheduler(circuit.register_manager, schedulables)
     circuit.ir.reverse().accept(scheduler)
 
