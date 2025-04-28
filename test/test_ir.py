@@ -8,7 +8,6 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
     Axis,
@@ -18,6 +17,7 @@ from opensquirrel.ir import (
     ControlledGate,
     Expression,
     Float,
+    I,
     Int,
     MatrixGate,
     Measure,
@@ -319,9 +319,8 @@ class TestMatrixGate:
     def test_array_like(self) -> None:
         gate = MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1])
         assert (
-            repr(gate) == "MatrixGate(qubits=[Qubit[0], Qubit[1]], "
-            "matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n "
-            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 1.+0.j]\n [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
+            repr(gate) == "MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] "
+            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
         )
 
     def test_incorrect_array(self) -> None:
@@ -331,9 +330,8 @@ class TestMatrixGate:
 
     def test_repr(self, gate: MatrixGate) -> None:
         assert (
-            repr(gate) == "MatrixGate(qubits=[Qubit[42], Qubit[100]], "
-            "matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j]\n "
-            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j]\n [0.+0.j 0.+0.j 0.+0.j 1.+0.j]\n [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
+            repr(gate) == "MatrixGate(qubits=[Qubit[42], Qubit[100]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] "
+            "[0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])"
         )
 
     def test_get_qubit_operands(self, gate: MatrixGate) -> None:
@@ -344,7 +342,7 @@ class TestMatrixGate:
         assert not gate.is_identity()
 
     def test_matrix_gate_same_control_and_target_qubit(self) -> None:
-        with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
+        with pytest.raises(ValueError, match="operands cannot be the same"):
             MatrixGate(np.eye(4, dtype=np.complex128), [0, 0])
 
 

@@ -1,15 +1,15 @@
-# Tests for native gate checker pass
+# Tests for primitive gate validator pass
 import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.passes.validator import NativeGateValidator
+from opensquirrel.passes.validator import PrimitiveGateValidator
 
 
 @pytest.fixture(name="validator")
-def validator_fixture() -> NativeGateValidator:
-    native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
-    return NativeGateValidator(native_gate_set)
+def validator_fixture() -> PrimitiveGateValidator:
+    primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
+    return PrimitiveGateValidator(primitive_gate_set)
 
 
 @pytest.fixture
@@ -40,13 +40,13 @@ def circuit_with_unmatching_gate_set() -> Circuit:
     return builder.to_circuit()
 
 
-def test_matching_gates(validator: NativeGateValidator, circuit_with_matching_gate_set: Circuit) -> None:
+def test_matching_gates(validator: PrimitiveGateValidator, circuit_with_matching_gate_set: Circuit) -> None:
     try:
         validator.validate(circuit_with_matching_gate_set.ir)
     except ValueError:
         pytest.fail("validate() raised ValueError unexpectedly")
 
 
-def test_non_matching_gates(validator: NativeGateValidator, circuit_with_unmatching_gate_set: Circuit) -> None:
-    with pytest.raises(ValueError, match=r"the following gates are not in the native gate set:.*"):
+def test_non_matching_gates(validator: PrimitiveGateValidator, circuit_with_unmatching_gate_set: Circuit) -> None:
+    with pytest.raises(ValueError, match=r"the following gates are not in the primitive gate set:.*"):
         validator.validate(circuit_with_unmatching_gate_set.ir)

@@ -1,7 +1,7 @@
 from typing import cast
 
 from opensquirrel import I
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Qubit
+from opensquirrel.ir import IR, AsmDeclaration, Barrier, BlochSphereRotation, Instruction, Qubit
 from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations
 
 
@@ -41,7 +41,7 @@ class SingleQubitGatesMerger(Merger):
             # For barrier directives, insert all accumulated Bloch sphere rotations
             # For other instructions, insert accumulated Bloch sphere rotations on qubits used by those instructions
             # In any case, reset the dictionary entry for the inserted accumulated Bloch sphere rotations
-            if isinstance(instruction, Barrier):
+            if isinstance(instruction, Barrier) or isinstance(statement, AsmDeclaration):
                 insert_accumulated_bloch_sphere_rotations([Qubit(i) for i in range(qubit_register_size)])
             else:
                 insert_accumulated_bloch_sphere_rotations(instruction.get_qubit_operands())

@@ -3,7 +3,7 @@ import math
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.ir import BlochSphereRotation, Float
+from opensquirrel.ir import BlochSphereRotation, Float, Rn
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
 from test.ir_equality_test_base import modify_circuit_and_check
@@ -61,7 +61,7 @@ def test_merge_different_qubits(merger: SingleQubitGatesMerger) -> None:
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi))  # this is Hadamard with 0 phase
+    builder2.ir.add_gate(Rn(0, 1, 0, 1, math.pi, 0))  # this is Hadamard with 0 phase
     builder2.Rz(1, 1.2345)
     builder2.Ry(2, Float(4.234))
     expected_circuit = builder2.to_circuit()
@@ -185,12 +185,12 @@ def test_no_merge_across_wait(merger: SingleQubitGatesMerger) -> None:
 
 qubit[2] q
 
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.60376 -0.52053  0.60376], angle=-2.18173, phase=1.5708)
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[0.36644 0.85525 0.36644], angle=-1.72653, phase=1.5708)
+Rn(0.60376021, -0.52052591, 0.60376021, -2.1817262, 1.5707963) q[0]
+Rn(0.36643768, 0.85524666, 0.36643768, -1.7265283, 1.5707963) q[1]
 barrier q[0]
 barrier q[1]
 H q[0]
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[ 0.28903 -0.42028 -0.86013], angle=1.66208, phase=1.5708)
+Rn(0.28903179, -0.42027578, -0.86013307, 1.6620774, 1.5707963) q[1]
 barrier q[0]
 barrier q[1]
 """,
@@ -215,12 +215,12 @@ barrier q[1]
 
 qubit[3] q
 
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+Rn(0.97706127, 0.0, -0.21295839, 3.1415927, 1.5707963) q[0]
 barrier q[2]
 barrier q[0]
 barrier q[1]
 H q[0]
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+Rn(0.97706127, 0.0, -0.21295839, 3.1415927, 1.5707963) q[1]
 H q[2]
 barrier q[1]
 barrier q[2]
@@ -244,12 +244,12 @@ barrier q[1]
 
 qubit[2] q
 
-Anonymous gate: BlochSphereRotation(Qubit[0], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+Rn(0.97706127, 0.0, -0.21295839, 3.1415927, 1.5707963) q[0]
 barrier q[1]
 barrier q[0]
 barrier q[1]
 H q[0]
-Anonymous gate: BlochSphereRotation(Qubit[1], axis=[ 0.97706  0.      -0.21296], angle=3.14159, phase=1.5708)
+Rn(0.97706127, 0.0, -0.21295839, 3.1415927, 1.5707963) q[1]
 barrier q[1]
 """,
         ),

@@ -1,9 +1,10 @@
 import math
 
+import numpy as np
 import pytest
 
 from opensquirrel import CNOT, CZ, Circuit, CircuitBuilder, H, Ry, Rz
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, QubitLike, named_gate
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, QubitLike
 from opensquirrel.passes.decomposer import ZYZDecomposer
 from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGatesMerger
 
@@ -128,8 +129,8 @@ def test_CNOT_strong_type_error_string() -> None:  # noqa: N802
 
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
-    for _ in range(4):
-        builder.Rx(0, math.pi / 4)
+    builder.Rx(0, math.pi / 4)
+    builder.Rz(0, math.pi / 4)
     qc = builder.to_circuit()
 
     qc.merge(merger=SingleQubitGatesMerger())
@@ -140,42 +141,49 @@ def test_anonymous_gate() -> None:
 
 qubit[1] q
 
-Rx(3.1415927) q[0]
+Rn(0.67859835, 0.28108462, 0.67859835, 1.0960568, 0.0) q[0]
 """
     )
 
 
 def test_create_custom_gates() -> None:
-    @named_gate
-    def x(q: QubitLike) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
+    class x(BlochSphereRotation):  # noqa: N801
+        def __init__(self, qubit: QubitLike) -> None:
+            BlochSphereRotation.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2, name="x")
 
-    @named_gate
-    def cnot(control: QubitLike, target: QubitLike) -> ControlledGate:
-        return ControlledGate(control, x(target))
+    class cnot(ControlledGate):  # noqa: N801
+        def __init__(self, control: QubitLike, target: QubitLike) -> None:
+            ControlledGate.__init__(self, control_qubit=control, target_gate=x(target), name="cnot")
 
-    @named_gate
-    def swap(q1: QubitLike, q2: QubitLike) -> MatrixGate:
-        return MatrixGate(
+    class swap(MatrixGate):  # noqa: N801
+        def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike) -> None:
+            MatrixGate.__init__(
+                self,
+                matrix=np.array(
+                    [
+                        [1, 0, 0, 0],
+                        [0, 0, 1, 0],
+                        [0, 1, 0, 0],
+                        [0, 0, 0, 1],
+                    ]
+                ),
+                operands=[qubit_0, qubit_1],
+                name="swap",
+            )
+
+    assert x(0) == BlochSphereRotation(0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2, name="x")
+    assert cnot(0, 1) == ControlledGate(0, x(1), name="cnot")
+    assert swap(0, 1) == MatrixGate(
+        matrix=np.array(
             [
                 [1, 0, 0, 0],
                 [0, 0, 1, 0],
                 [0, 1, 0, 0],
                 [0, 0, 0, 1],
-            ],
-            [q1, q2],
-        )
-
-    assert x(0) == BlochSphereRotation(0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
-    assert cnot(0, 1) == ControlledGate(0, x(1))
-    assert swap(0, 1) == MatrixGate(
-        [
-            [1, 0, 0, 0],
-            [0, 0, 1, 0],
-            [0, 1, 0, 0],
-            [0, 0, 0, 1],
-        ],
-        [0, 1],
+            ]
+        ),
+        operands=[0, 1],
+        name="swap",
     )
 
 
@@ -228,7 +236,7 @@ def test_error_predefined_decomposition() -> None:
         """
     )
     with pytest.raises(ValueError, match=r"replacement for gate .*") as e_info:
-        qc.replace(CNOT, lambda control, target: [H(target), CZ(control, target)])
+        qc.replace(CNOT, lambda control_qubit, target_qubit: [H(target_qubit), CZ(control_qubit, target_qubit)])
 
     assert str(e_info.value) == "replacement for gate CNOT does not preserve the quantum state"
 
