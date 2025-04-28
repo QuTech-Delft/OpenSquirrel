@@ -5,25 +5,33 @@ use_directory_urls: false
 
 nav:
   - Home: index.md
-  - Tutorial: 
-    - General Overview: tutorial/tutorial_overview.md
-    - Creating a circuit: 
-      - From a cQASM string: tutorial/circuit_creation/circ_from_cqasm.md
-      - Using the CircuitBuilder: tutorial/circuit_creation/circ_from_builder.md
-      - Strong Types: tutorial/circuit_creation/strong_types.md
-    - Modifying a Circuit:
-      - Merging single qubit gates: tutorial/circuit_modification/merging_single.md
-      - Defining your own quantum gates: tutorial/circuit_modification/custom_gates.md
+  - Tutorial:
+    - Overview: tutorial/overview.md
+    - Creating a circuit:
+      - From a cQASM string: tutorial/creating-a-circuit/from-a-cqasm-string.md
+      - Using the circuit builder: tutorial/creating-a-circuit/using-the-circuit-builder.md
+      - Strong Types: tutorial/creating-a-circuit/strong-types.md
+    - Applying compilation passes:
+      - Merging single qubit gates: tutorial/applying-compilation-passes/merging-single.md
+      - Defining your own quantum gates: tutorial/applying-compilation-passes/custom-gates.md
       - Gate Decomposition:
-        - Predefined Decomposition: tutorial/circuit_modification/decomposition/predefined.md
-        - Inferred Decomposition: tutorial/circuit_modification/decomposition/inferred.md
-    - Compilation Passes:
-      - Decomposer Passes: tutorial/passes/decomposer.md
-      - Mapper Passes: tutorial/passes/mapper.md
-      - Router Passes: tutorial/passes/router.md
-      - Validator Passes: tutorial/passes/validator.md
-      - Merger Passes: tutorial/passes/merger.md
-  - Passes: overview_passes.md
+        - Predefined Decomposition: tutorial/applying-compilation-passes/decomposition/predefined.md
+        - Inferred Decomposition: tutorial/applying-compilation-passes/decomposition/inferred.md
+  - Circuit builder:
+    - Overview: circuit-builder/overview.md
+    - Instructions:
+        - Gates: circuit-builder/instructions/gates.md
+        - Non-unitaries: circuit-builder/instructions/non-unitaries.md
+        - Control instructions: circuit-builder/instructions/control-instructions.md
+  - Compilation passes:
+    - Overview: compilation-passes/overview.md
+    - Passes:
+      - Decomposers: compilation-passes/passes/decomposers/decomposers.md
+      - Exporters: compilation-passes/passes/exporters/exporters.md
+      - Mappers: compilation-passes/passes/mappers/mappers.md
+      - Mergers: compilation-passes/passes/mergers/mergers.md
+      - Routers: compilation-passes/passes/routers/routers.md
+      - Validators: compilation-passes/passes/validators/validators.md
   - API documentation: reference/
 
 theme:

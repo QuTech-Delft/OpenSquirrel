@@ -10,11 +10,10 @@ It is developed in modern Python and follows best practices.
 
 ## Table of Contents
 
-The following documentation structure is used: [Diátaxis documentation framework](https://diataxis.fr/).
-
-1. [Tutorial](tutorial/tutorial_overview.md)
-2. [Passes](overview_passes.md)
-3. [Reference](reference/reference.md)
+- [Tutorial](tutorial/overview.md)
+- [Circuit builder](circuit-builder/overview.md)
+- [Passes](compilation-passes/overview.md)
+- [Reference](reference/reference.md)
 
 ## Authors
 
