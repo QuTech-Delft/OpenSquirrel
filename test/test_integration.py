@@ -10,11 +10,11 @@ from opensquirrel.ir import Measure
 from opensquirrel.passes.decomposer import (
     CNOT2CZDecomposer,
     CNOTDecomposer,
+    CZDecomposer,
     McKayDecomposer,
     SWAP2CNOTDecomposer,
     XYXDecomposer,
     ZXZDecomposer,
-    CZDecomposer,
 )
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger import SingleQubitGatesMerger
@@ -562,6 +562,7 @@ def test_hectoqubit_alap() -> None:
         barrier q
         H q[0]
         CNOT q[0], q[1]
+        wait(3) q[1]
         b[0, 1] = measure q
         """
     )

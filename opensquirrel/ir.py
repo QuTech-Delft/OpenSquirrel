@@ -88,7 +88,7 @@ class IRVisitor:
     def visit_crk(self, gate: CRk) -> Any:
         pass
 
-    def visit_non_unitary(self, gate: NonUnitary) -> Any:
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> Any:
         pass
 
     def visit_measure(self, measure: Measure) -> Any:
@@ -408,6 +408,9 @@ class Gate(Unitary, ABC):
     def is_identity(self) -> bool:
         pass
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_gate(self)
+
 
 class BlochSphereRotation(Gate):
     def __init__(
@@ -451,6 +454,7 @@ class BlochSphereRotation(Gate):
         return ()
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_bloch_sphere_rotation(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
@@ -509,6 +513,7 @@ class BsrNoParams(BlochSphereRotation):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_bsr_no_params(self)
 
 
@@ -596,6 +601,7 @@ class BsrFullParams(BlochSphereRotation):
         return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_bsr_full_params(self)
 
 
@@ -630,6 +636,7 @@ class BsrAngleParam(BlochSphereRotation):
         return self.qubit, self.theta
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_bsr_angle_param(self)
 
 
@@ -684,6 +691,7 @@ class MatrixGate(Gate):
         return f"{self.name}(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_matrix_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
@@ -719,6 +727,7 @@ class SWAP(MatrixGate):
         return self.qubit_0, self.qubit_1
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_swap(self)
 
 
@@ -736,6 +745,7 @@ class ControlledGate(Gate):
         return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate})"
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_controlled_gate(self)
 
     @property
@@ -763,6 +773,7 @@ class CNOT(ControlledGate):
         return self.control_qubit, self.target_qubit
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_cnot(self)
 
 
@@ -777,6 +788,7 @@ class CZ(ControlledGate):
         return self.control_qubit, self.target_qubit
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_cz(self)
 
 
@@ -797,6 +809,7 @@ class CR(ControlledGate):
         return self.control_qubit, self.target_qubit, self.theta
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_cr(self)
 
 
@@ -818,6 +831,7 @@ class CRk(ControlledGate):
         return self.control_qubit, self.target_qubit, self.k
 
     def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_gate(self)
         return visitor.visit_crk(self)
 
 
@@ -836,6 +850,9 @@ class NonUnitary(Instruction, ABC):
 
     def get_bit_operands(self) -> list[Bit]:
         return []
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_non_unitary(self)
 
 
 class Measure(NonUnitary):
@@ -960,28 +977,47 @@ def compare_gates(g1: Gate, g2: Gate) -> bool:
 
 class IR:
     def __init__(self) -> None:
-        self.statements: list[Statement] = []
+        self._statements: list[Statement] = []
+
+    @property
+    def statements(self) -> list[Statement]:
+        return self._statements
+
+    @statements.setter
+    def statements(self, value: list[Statement]) -> None:
+        self._statements = value
 
     def add_gate(self, gate: Gate) -> None:
-        self.statements.append(gate)
+        self._statements.append(gate)
 
     def add_non_unitary(self, non_unitary: NonUnitary) -> None:
-        self.statements.append(non_unitary)
+        self._statements.append(non_unitary)
 
     def add_statement(self, statement: Statement) -> None:
-        self.statements.append(statement)
+        self._statements.append(statement)
+
+    def reverse(self) -> IR:
+        ir = IR()
+        for statement in self._statements[::-1]:
+            ir.add_statement(statement)
+        return ir
+
+    def __len__(self) -> int:
+        return len(self._statements)
+
+    def __getitem__(self, index: int) -> Statement:
+        return self._statements[index]
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):
             return False
-
-        return self.statements == other.statements
+        return self._statements == other.statements
 
     def __repr__(self) -> str:
-        return f"IR: {self.statements}"
+        return f"IR: {self._statements}"
 
     def accept(self, visitor: IRVisitor) -> None:
-        for statement in self.statements:
+        for statement in self._statements:
             statement.accept(visitor)
 
 
