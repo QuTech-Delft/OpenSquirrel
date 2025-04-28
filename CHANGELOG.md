@@ -27,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Refactor: removed generators
 - Changed the `RoutingChecker` pass to a `RoutingValidator` pass
 - Changed use of `native` to `primitive`, e.g. `NativeGateValidator` is now `PrimitiveGateValidator`
+- Compilation passes accept `kwargs` as input
 
 ## [0.3.1] - [ 2025-01-31 ]
 
