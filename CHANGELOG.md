@@ -10,12 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Removed** for now removed features.
 
 
-## [0.4.0] - [ xxxx-yy-zz ]
+## [ 0.4.0 ] - [ 2025-04-28 ]
 
 ### Added
 
 - Assembly declaration
 - `Rn` unitary instruction
+- `SWAP2CZDecomposer` decomposer pass
 - `CZDecomposer` decomposer pass
 - `ShortestPathRouter` router pass
 - `RandomMapper` mapper pass
@@ -29,7 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Changed use of `native` to `primitive`, e.g. `NativeGateValidator` is now `PrimitiveGateValidator`
 - Compilation passes accept `kwargs` as input
 
-## [0.3.1] - [ 2025-01-31 ]
+## [ 0.3.1 ] - [ 2025-01-31 ]
 
 ### Fixed
 
