@@ -502,13 +502,12 @@ class BlochSphereRotation(Gate):
         if self.qubit != other.qubit:
             return False
 
-        if abs(self.phase - other.phase) > ATOL:
-            return False
-
         if np.allclose(self.axis, other.axis, atol=ATOL):
-            return abs(self.angle - other.angle) < ATOL
+            return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
+
         if np.allclose(self.axis, -other.axis.value, atol=ATOL):
-            return abs(self.angle + other.angle) < ATOL
+            return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
+
         return False
 
     @property
@@ -542,17 +541,14 @@ class BlochSphereRotation(Gate):
             default_bsr_without_params_set,
         )
 
-        bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
-        for gate_name in bsr_set_without_rn:
+        default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
+        for gate_name in default_bsr_set_without_rn:
             arguments: tuple[Any, ...] = (bsr.qubit,)
             if gate_name in default_bsr_with_angle_param_set:
                 arguments += (Float(bsr.angle),)
-            gate = bsr_set_without_rn[gate_name](*arguments)
-            if (
-                np.allclose(gate.axis, bsr.axis, atol=ATOL)
-                and np.allclose(gate.angle, bsr.angle, atol=ATOL)
-                and np.allclose(gate.phase, bsr.phase, atol=ATOL)
-            ):
+            gate = default_bsr_set_without_rn[gate_name](*arguments)
+            gate_bsr = BlochSphereRotation(gate.qubit, axis=gate.axis, angle=gate.angle, phase=gate.phase)
+            if bsr == gate_bsr:
                 return gate
         nx, ny, nz = (Float(component) for component in bsr.axis)
         return Rn(bsr.qubit, nx, ny, nz, Float(bsr.angle), Float(bsr.phase))
@@ -579,7 +575,7 @@ class BsrNoParams(BlochSphereRotation):
 
 class I(BsrNoParams):  # noqa: E742
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=0, phase=0, name="I")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=0, phase=0, name="I")
 
 
 class H(BsrNoParams):
@@ -594,12 +590,12 @@ class X(BsrNoParams):
 
 class X90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi / 2, phase=0, name="X90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi / 2, phase=math.pi / 4, name="X90")
 
 
 class MinusX90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0, name="mX90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=-math.pi / 2, phase=-math.pi / 4, name="mX90")
 
 
 class Y(BsrNoParams):
@@ -609,12 +605,12 @@ class Y(BsrNoParams):
 
 class Y90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi / 2, phase=0, name="Y90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi / 2, phase=math.pi / 4, name="Y90")
 
 
 class MinusY90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=-math.pi / 2, phase=0, name="mY90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=-math.pi / 2, phase=-math.pi / 4, name="mY90")
 
 
 class Z(BsrNoParams):
@@ -624,22 +620,22 @@ class Z(BsrNoParams):
 
 class S(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 2, phase=0, name="S")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 2, phase=math.pi / 4, name="S")
 
 
 class SDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 2, phase=0, name="Sdag")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 2, phase=-math.pi / 4, name="Sdag")
 
 
 class T(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 4, phase=0, name="T")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 4, phase=math.pi / 8, name="T")
 
 
 class TDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=0, name="Tdag")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=-math.pi / 8, name="Tdag")
 
 
 class BsrFullParams(BlochSphereRotation):
