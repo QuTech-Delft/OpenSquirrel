@@ -19,6 +19,7 @@ from opensquirrel.ir import (
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
+    CanonicalGate,
     ControlledGate,
     CRk,
     Gate,
@@ -261,5 +262,8 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 0, 1, 0, 0, 0, 0, 0],
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
+    if isinstance(gate, CanonicalGate):
+        return gate.get_matrix()
+
     expander = MatrixExpander(qubit_register_size)
     return np.asarray(gate.accept(expander), dtype=np.complex128)
