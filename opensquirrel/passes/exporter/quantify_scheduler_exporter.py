@@ -4,8 +4,6 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
-
-
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
@@ -281,6 +279,6 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
     circuit.ir.reverse().accept(scheduler)
 
     for name, schedulable in schedule_creator.schedule.schedulables.items():
-        schedulable.add_timing_constraint(**scheduler.operation_record.schedulable_timing_constraints[name])
+        schedulable["timing_constraints"] = [scheduler.operation_record.schedulable_timing_constraints[name]]
 
     return schedule_creator.schedule, schedule_creator.bit_string_mapping
