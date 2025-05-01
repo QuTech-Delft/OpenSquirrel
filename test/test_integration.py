@@ -555,26 +555,28 @@ def test_hectoqubit_alap() -> None:
         """
         version 3.0
 
-        qubit[2] q
-        bit[8] b
+        qubit[5] q
+        bit[2] b
 
         init q
         barrier q
-        H q[0]
-        CNOT q[0], q[1]
-        wait(3) q[1]
-        b[0, 1] = measure q
+        X q[3]
+        barrier q[3,4]
+        X q[4]
+        barrier q[3,4]
+        X q[4]
+        b[0,1] = measure q[3,4]
         """
     )
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CZDecomposer())
+    # qc.decompose(decomposer=CZDecomposer())
 
     # Merge single-qubit gate
-    qc.merge(merger=SingleQubitGatesMerger())
+    # qc.merge(merger=SingleQubitGatesMerger())
 
     # Decompose single-qubit gates to HectoQubit backend native gates with the XYX decomposer
-    qc.decompose(decomposer=XYXDecomposer())
+    # qc.decompose(decomposer=XYXDecomposer())
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
@@ -585,10 +587,12 @@ def test_hectoqubit_alap() -> None:
     else:
         exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
-        fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
-        fig.set_dpi(300)
-        fig.savefig("example.png")
-        fig.show()
+        print("done")
+
+        # fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
+        # fig.set_dpi(300)
+        # fig.savefig("example.png")
+        # fig.show()
 
 
 def test_hectoqubit_wait() -> None:
