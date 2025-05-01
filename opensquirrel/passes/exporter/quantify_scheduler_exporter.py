@@ -86,7 +86,7 @@ class OperationRecord:
         ref_schedulable = self._ref_schedulables[relevant_qubit_index]
 
         # This operation/schedulable
-        schedulable: Schedulable = self._schedulables.pop()
+        schedulable: Schedulable = self._schedulables.pop(0)
         waiting_times: list[int] = []
         for qubit_index in qubit_indices:
             self._schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
@@ -270,9 +270,11 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
     schedule_creator = _ScheduleCreator(circuit.register_manager)
+    schedule_creator_for_bit_string_mapping = _ScheduleCreator(circuit.register_manager)
 
     try:
-        circuit.ir.accept(schedule_creator)
+        circuit.ir.reverse().accept(schedule_creator)
+        circuit.ir.accept(schedule_creator_for_bit_string_mapping)
     except UnsupportedGateError as e:
         msg = (
             f"cannot export circuit: {e}. "
@@ -287,4 +289,4 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
     for name, schedulable in schedule_creator.schedule.schedulables.items():
         schedulable["timing_constraints"] = [scheduler.operation_record.schedulable_timing_constraints[name]]
 
-    return schedule_creator.schedule, schedule_creator.bit_string_mapping
+    return schedule_creator.schedule, schedule_creator_for_bit_string_mapping.bit_string_mapping

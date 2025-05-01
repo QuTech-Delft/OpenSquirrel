@@ -587,12 +587,10 @@ def test_hectoqubit_alap() -> None:
     else:
         exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
-        print("done")
-
-        # fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
-        # fig.set_dpi(300)
-        # fig.savefig("example.png")
-        # fig.show()
+        fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
+        fig.set_dpi(300)
+        fig.savefig("example.png")
+        fig.show()
 
 
 def test_hectoqubit_wait() -> None:
