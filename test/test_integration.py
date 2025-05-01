@@ -4,6 +4,7 @@ from __future__ import annotations
 import importlib.util
 
 import pytest
+from quantify_scheduler.compilation import _determine_absolute_timing_schedule
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Measure
@@ -552,20 +553,20 @@ def test_hectoqubit_alap() -> None:
     # in the quantify-scheduler Exporter. It should be rewritten to a standard test
     # before this feature branch is merged into develop.
     qc = Circuit.from_string(
-        """
-        version 3.0
+        """version 3.0
 
-        qubit[5] q
-        bit[2] b
+qubit[5]  q
+bit[5]  b
 
-        init q
-        barrier q
-        X q[3]
-        barrier q[3,4]
-        X q[4]
-        barrier q[3,4]
-        X q[4]
-        b[0,1] = measure q[3,4]
+reset q
+barrier q
+X q[0]
+X q[0:1]
+X q[0:2]
+X q[0:3]
+X q[0:4]
+barrier q
+b = measure q
         """
     )
 
