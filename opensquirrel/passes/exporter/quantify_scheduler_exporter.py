@@ -83,10 +83,6 @@ class OperationRecord:
     def set_schedulable_timing_constraints(self, qubit_indices: list[int]) -> None:
         self._process_barriers()
 
-        for qubit_index in qubit_indices:
-            if qubit_index in self._barrier_record:
-                self._barrier_record.remove(qubit_index)
-
         # The reference schedulable
         schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in qubit_indices]
         relevant_qubit_index = qubit_indices[self._get_index_of_max_value(schedulable_counts)]
@@ -98,7 +94,7 @@ class OperationRecord:
         waiting_times: list[int] = []
         for qubit_index in qubit_indices:
             self._schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
-            self._ref_indices[qubit_index] = ref_qubit_index
+            self._ref_indices[qubit_index] = qubit_index
             self._ref_schedulables[qubit_index] = schedulable
             if qubit_index in self.wait_record:
                 waiting_times.append(self.wait_record[qubit_index])
@@ -129,6 +125,7 @@ class OperationRecord:
                     continue
                 self._ref_indices[qubit_index] = ref_qubit_index
                 self._ref_schedulables[qubit_index] = ref_schedulable
+            self.barrier_record = []
 
     @staticmethod
     def _get_index_of_max_value(input_list: list[int]) -> int:
