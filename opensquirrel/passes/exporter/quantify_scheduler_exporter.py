@@ -68,6 +68,10 @@ class OperationRecord:
     def barrier_record(self, value: list[int]) -> None:
         self._barrier_record = value
 
+    def add_qubit_index_to_barrier_record(self, qubit_index: int) -> None:
+        br = self._barrier_record
+        self._barrier_record.append(qubit_index) if qubit_index not in br else self._barrier_record
+
     @property
     def wait_record(self) -> dict[int, int]:
         return self._wait_record
@@ -146,7 +150,7 @@ class _Scheduler(IRVisitor):
 
     def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
         if isinstance(non_unitary, Barrier):
-            self._operation_record.barrier_record.append(non_unitary.qubit.index)
+            self._operation_record.add_qubit_index_to_barrier_record(non_unitary.qubit.index)
         elif isinstance(non_unitary, Wait):
             self._operation_record.wait_record[non_unitary.qubit.index] = non_unitary.time.value
         else:
