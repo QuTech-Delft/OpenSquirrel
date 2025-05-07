@@ -32,11 +32,12 @@ from opensquirrel.ir import (
 try:
     import quantify_scheduler
     import quantify_scheduler.operations.gate_library as quantify_scheduler_gates
-    from quantify_scheduler.schedules import Schedulable
 except ModuleNotFoundError:
     pass
 
 if TYPE_CHECKING:
+    from quantify_scheduler.schedules import Schedulable
+
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir import Qubit
     from opensquirrel.register_manager import RegisterManager
@@ -47,9 +48,7 @@ CYCLE_TIME = 20e-9  # Operation cycle time (set at 20ns)
 
 
 class OperationRecord:
-    def __init__(
-        self, qubit_register_size: int, schedulables: list[Schedulable]
-    ) -> None:
+    def __init__(self, qubit_register_size: int, schedulables: list[Schedulable]) -> None:
         self._schedulables = schedulables
         self._schedulable_counters: list[int] = [0] * qubit_register_size
         self._ref_indices: list[int] = list(range(qubit_register_size))
@@ -72,11 +71,7 @@ class OperationRecord:
 
     def add_qubit_index_to_barrier_record(self, qubit_index: int) -> None:
         br = self._barrier_record
-        (
-            self._barrier_record.append(qubit_index)
-            if qubit_index not in br
-            else self._barrier_record
-        )
+        (self._barrier_record.append(qubit_index) if qubit_index not in br else self._barrier_record)
 
     @property
     def wait_record(self) -> dict[int, int]:
@@ -90,13 +85,8 @@ class OperationRecord:
         self._process_barriers()
 
         # The reference schedulable
-        schedulable_counts = [
-            self._schedulable_counters[qubit_index] for qubit_index in qubit_indices
-        ]
-        relevant_qubit_index = qubit_indices[
-            self._get_index_of_max_value(schedulable_counts)
-        ]
-        ref_qubit_index = self._ref_indices[relevant_qubit_index]
+        schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in qubit_indices]
+        relevant_qubit_index = qubit_indices[self._get_index_of_max_value(schedulable_counts)]
         ref_schedulable = self._ref_schedulables[relevant_qubit_index]
 
         # This operation/schedulable
@@ -104,7 +94,8 @@ class OperationRecord:
         waiting_times: list[int] = []
         for qubit_index in qubit_indices:
             self._schedulable_counters[qubit_index] = (
-                self._schedulable_counters[ref_qubit_index] + 1
+                self._schedulable_counters[qubit_index]
+                + 1  # Tim 20250507 change incrementation to self to better reflect circuit depth
             )
             self._ref_indices[qubit_index] = qubit_index
             self._ref_schedulables[qubit_index] = schedulable
@@ -113,7 +104,7 @@ class OperationRecord:
                 del self.wait_record[qubit_index]
 
         # Timing constraints for this schedulable (based on reference schedulable)
-        timing_constraints: dict[str, str | float] = {}
+        timing_constraints: dict[str, str | float | None] = {}
         if not ref_schedulable:
             timing_constraints["ref_schedulable"] = None
             timing_constraints["ref_pt"] = "end"
@@ -131,20 +122,24 @@ class OperationRecord:
 
     def _process_barriers(self) -> None:
         if self.barrier_record:
-            schedulable_counts = [
-                self._schedulable_counters[qubit_index]
-                for qubit_index in self.barrier_record
-            ]
-            ref_qubit_index = self.barrier_record[
-                self._get_index_of_max_value(schedulable_counts)
-            ]
+            schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in self.barrier_record]
+            ref_qubit_index = self.barrier_record[self._get_index_of_max_value(schedulable_counts)]
             ref_schedulable = self._ref_schedulables[ref_qubit_index]
             for qubit_index in self.barrier_record:
                 if qubit_index == ref_qubit_index:
                     continue
+                self._schedulable_counters[qubit_index] = self._schedulable_counters[
+                    ref_qubit_index
+                ]  # Tim 20250507 set all circuit depths to the same as the ref_qubit_index
                 self._ref_indices[qubit_index] = ref_qubit_index
                 self._ref_schedulables[qubit_index] = ref_schedulable
             self.barrier_record = []
+
+    # Tim 20250507 Two-qubit gate scheduling logic implementation
+    def equalize_schedulable_counts_after_two_qubit_gate(self, qubit_indices: list[int]) -> None:
+        max_schedulable_counts: int = max(self._schedulable_counters[qubit_index] for qubit_index in qubit_indices)
+        for qubit_index in qubit_indices:
+            self._schedulable_counters[qubit_index] = max_schedulable_counts
 
     @staticmethod
     def _get_index_of_max_value(input_list: list[int]) -> int:
@@ -152,13 +147,9 @@ class OperationRecord:
 
 
 class _Scheduler(IRVisitor):
-    def __init__(
-        self, register_manager: RegisterManager, schedulables: list[Schedulable]
-    ) -> None:
+    def __init__(self, register_manager: RegisterManager, schedulables: list[Schedulable]) -> None:
         self._qubit_register_size = register_manager.get_qubit_register_size()
-        self._operation_record = OperationRecord(
-            self._qubit_register_size, schedulables
-        )
+        self._operation_record = OperationRecord(self._qubit_register_size, schedulables)
 
     @property
     def operation_record(self) -> OperationRecord:
@@ -168,15 +159,20 @@ class _Scheduler(IRVisitor):
         qubit_indices = [qubit.index for qubit in gate.get_qubit_operands()]
         self._operation_record.set_schedulable_timing_constraints(qubit_indices)
 
+    # Tim 20250507 Methods to handle two-qubit gate scheduling logic
+    def visit_cz(self, cz: CZ) -> None:
+        qubit_indices = [qubit.index for qubit in cz.get_qubit_operands()]
+        self._operation_record.equalize_schedulable_counts_after_two_qubit_gate(qubit_indices)
+
+    def visit_cnot(self, cnot: CNOT) -> None:
+        qubit_indices = [qubit.index for qubit in cnot.get_qubit_operands()]
+        self._operation_record.equalize_schedulable_counts_after_two_qubit_gate(qubit_indices)
+
     def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
         if isinstance(non_unitary, Barrier):
-            self._operation_record.add_qubit_index_to_barrier_record(
-                non_unitary.qubit.index
-            )
+            self._operation_record.add_qubit_index_to_barrier_record(non_unitary.qubit.index)
         elif isinstance(non_unitary, Wait):
-            self._operation_record.wait_record[non_unitary.qubit.index] = (
-                non_unitary.time.value
-            )
+            self._operation_record.wait_record[non_unitary.qubit.index] = non_unitary.time.value
         else:
             qubit_indices = [qubit.index for qubit in non_unitary.get_qubit_operands()]
             self._operation_record.set_schedulable_timing_constraints(qubit_indices)
@@ -192,9 +188,7 @@ class _ScheduleCreator(IRVisitor):
         self.qubit_register_name = register_manager.get_qubit_register_name()
         self.bit_register_size = register_manager.get_bit_register_size()
         self.acq_index_record = [0] * self.qubit_register_size
-        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [
-            (None, None)
-        ] * self.bit_register_size
+        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
@@ -202,6 +196,19 @@ class _ScheduleCreator(IRVisitor):
         # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
         # Depending on the system the angle may be stored as either 180 or -180 degrees.
         # This ambiguity has no physical consequences, but may cause the exporter test fail.
+
+        # Tim 20250507 Hotfix to support H gate:
+        if (
+            abs(gate.axis[0] - 1 / math.sqrt(2)) < ATOL
+            and abs(gate.axis[1]) < ATOL
+            and abs(gate.axis[2] - 1 / math.sqrt(2)) < ATOL
+        ):
+            self.schedule.add(
+                quantify_scheduler_gates.H(self._get_qubit_string(gate.qubit)),
+                label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+            )
+            return
+
         if abs(gate.axis[2]) < ATOL:
             # Rxy rotation.
             theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
@@ -211,9 +218,7 @@ class _ScheduleCreator(IRVisitor):
             )
 
             self.schedule.add(
-                quantify_scheduler_gates.Rxy(
-                    theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit)
-                ),
+                quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit)),
                 label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
             )
             return
@@ -221,9 +226,7 @@ class _ScheduleCreator(IRVisitor):
             # Rz rotation.
             theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(
-                quantify_scheduler_gates.Rz(
-                    theta=theta, qubit=self._get_qubit_string(gate.qubit)
-                ),
+                quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)),
                 label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
             )
             return
@@ -318,7 +321,9 @@ def export(
 
     try:
         circuit.ir.reverse().accept(schedule_creator)
-        circuit.ir.accept(schedule_creator_for_bit_string_mapping)
+        circuit.ir.reverse().accept(
+            schedule_creator_for_bit_string_mapping
+        )  # Tim 20250507 Reverse IR to be consistent with QI bit definition.
     except UnsupportedGateError as e:
         msg = (
             f"cannot export circuit: {e}. "
@@ -331,9 +336,7 @@ def export(
     circuit.ir.reverse().accept(scheduler)
 
     for name, schedulable in schedule_creator.schedule.schedulables.items():
-        schedulable["timing_constraints"] = [
-            scheduler.operation_record.schedulable_timing_constraints[name]
-        ]
+        schedulable["timing_constraints"] = [scheduler.operation_record.schedulable_timing_constraints[name]]
 
     return (
         schedule_creator.schedule,
