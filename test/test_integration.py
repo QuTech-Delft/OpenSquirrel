@@ -4,14 +4,12 @@ from __future__ import annotations
 import importlib.util
 
 import pytest
-from quantify_scheduler.compilation import _determine_absolute_timing_schedule
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Measure
 from opensquirrel.passes.decomposer import (
     CNOT2CZDecomposer,
     CNOTDecomposer,
-    CZDecomposer,
     McKayDecomposer,
     SWAP2CNOTDecomposer,
     XYXDecomposer,
