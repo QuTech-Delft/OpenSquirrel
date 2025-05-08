@@ -1,6 +1,4 @@
-# Building a quantum circuit from a _cQASM_ string
-
-The following example shows how to build a quantum circuit from a `cQASM` string. 
+The following example shows how to build a quantum circuit from a `cQASM` string.
 
 ```python
 from opensquirrel import Circuit

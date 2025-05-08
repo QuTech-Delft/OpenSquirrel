@@ -1,5 +1,3 @@
-# Inferred Decomposition
-
 OpenSquirrel has a variety inferred decomposition strategies.
 More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
 

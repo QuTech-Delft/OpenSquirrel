@@ -1,5 +1,3 @@
-# Merging Single Qubit Gates
-
 All single-qubit gates appearing in a circuit can be merged by applying `merge(merger=SingleQubitGatesMerger())` to the circuit.
 Note that multi-qubit gates remain untouched and single-qubit gates are not merged across any multi-qubit gates.
 The gate that results from the merger of single-qubit gates will, in general,

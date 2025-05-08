@@ -1,5 +1,3 @@
-# Strong typing requirements 
-
 As you can see, gates require _strong types_. For instance, you cannot do:
 
 ```python

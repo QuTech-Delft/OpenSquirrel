@@ -1,5 +1,3 @@
-# Building a quantum circuit with the _CircuitBuilder_
-
 Quantum circuits can also be defined using Python functionalities, via the `CircuitBuilder`, as shown below.
 
 ```python
