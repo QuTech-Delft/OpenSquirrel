@@ -58,9 +58,6 @@ class _CQASMv1Creator(IRVisitor):
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
-    def visit_gate(self, gate: Gate) -> None:
-        raise UnsupportedGateError(gate)
-
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         raise UnsupportedGateError(gate)
 

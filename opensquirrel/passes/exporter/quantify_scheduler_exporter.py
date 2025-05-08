@@ -32,7 +32,7 @@ from opensquirrel.ir import (
 try:
     import quantify_scheduler
     import quantify_scheduler.operations.gate_library as quantify_scheduler_gates
-    from quantify_scheduler.schedules import Schedulable
+    from quantify_scheduler.schedules import Schedulable  # noqa: TC002
 except ModuleNotFoundError:
     pass
 
@@ -83,25 +83,17 @@ class OperationRecord:
     def set_schedulable_timing_constraints(self, qubit_indices: list[int]) -> None:
         self._process_barriers()
 
-        # The reference schedulable
-        schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in qubit_indices]
-        relevant_qubit_index = qubit_indices[self._get_index_of_max_value(schedulable_counts)]
-        ref_qubit_index = self._ref_indices[relevant_qubit_index]
-        ref_schedulable = self._ref_schedulables[relevant_qubit_index]
-
-        # This operation/schedulable
+        _, ref_schedulable = self._get_references(qubit_indices)
         schedulable: Schedulable = self._schedulables.pop(0)
+
         waiting_times: list[int] = []
         for qubit_index in qubit_indices:
-            self._schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
-            self._ref_indices[qubit_index] = qubit_index
-            self._ref_schedulables[qubit_index] = schedulable
+            self._set_references(qubit_index, qubit_index, schedulable)
             if qubit_index in self.wait_record:
                 waiting_times.append(self.wait_record[qubit_index])
                 del self.wait_record[qubit_index]
 
-        # Timing constraints for this schedulable (based on reference schedulable)
-        timing_constraints: dict[str, str | float] = {}
+        timing_constraints: dict[str, str | float | None] = {}
         if not ref_schedulable:
             timing_constraints["ref_schedulable"] = None
             timing_constraints["ref_pt"] = "end"
@@ -117,15 +109,21 @@ class OperationRecord:
 
     def _process_barriers(self) -> None:
         if self.barrier_record:
-            schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in self.barrier_record]
-            ref_qubit_index = self.barrier_record[self._get_index_of_max_value(schedulable_counts)]
-            ref_schedulable = self._ref_schedulables[ref_qubit_index]
+            ref_qubit_index, ref_schedulable = self._get_references(self._barrier_record)
             for qubit_index in self.barrier_record:
-                if qubit_index == ref_qubit_index:
-                    continue
-                self._ref_indices[qubit_index] = ref_qubit_index
-                self._ref_schedulables[qubit_index] = ref_schedulable
+                self._set_references(qubit_index, ref_qubit_index, ref_schedulable)
             self.barrier_record = []
+
+    def _get_references(self, relevant_qubit_indices: list[int]) -> tuple[int, Schedulable]:
+        schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in relevant_qubit_indices]
+        relevant_qubit_index = relevant_qubit_indices[self._get_index_of_max_value(schedulable_counts)]
+        ref_schedulable = self._ref_schedulables[relevant_qubit_index]
+        return relevant_qubit_index, ref_schedulable
+
+    def _set_references(self, qubit_index: int, ref_qubit_index: int, ref_schedulable: Schedulable) -> None:
+        self._schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
+        self._ref_indices[qubit_index] = ref_qubit_index
+        self._ref_schedulables[qubit_index] = ref_schedulable
 
     @staticmethod
     def _get_index_of_max_value(input_list: list[int]) -> int:
@@ -159,12 +157,17 @@ class _ScheduleCreator(IRVisitor):
     def _get_qubit_string(self, qubit: Qubit) -> str:
         return f"{self.qubit_register_name}[{qubit.index}]"
 
-    def __init__(self, register_manager: RegisterManager) -> None:
+    def __init__(self,
+                 register_manager: RegisterManager,
+                 measure_data: list[tuple[int, int]] = None
+                 ) -> None:
         self.register_manager = register_manager
         self.qubit_register_size = register_manager.get_qubit_register_size()
         self.qubit_register_name = register_manager.get_qubit_register_name()
         self.bit_register_size = register_manager.get_bit_register_size()
         self.acq_index_record = [0] * self.qubit_register_size
+        self.measure_data = measure_data if measure_data is not None else []
+        self._measure_data_recording = False if measure_data is not None else True
         self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
@@ -238,9 +241,13 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_measure(self, gate: Measure) -> None:
         qubit_index = gate.qubit.index
-        bit_index = gate.bit.index
-        acq_index = self.acq_index_record[qubit_index]
-        self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
+        if not self._measure_data_recording:
+            acq_index, bit_index = self.measure_data.pop()
+        else:
+            bit_index = gate.bit.index
+            acq_index = self.acq_index_record[qubit_index]
+            self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
+            self.measure_data.append((acq_index, qubit_index))
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(gate.qubit),
@@ -257,7 +264,8 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_reset(self, gate: Reset) -> None:
         self.schedule.add(
-            quantify_scheduler_gates.Reset(self._get_qubit_string(gate.qubit)), label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4())
+            quantify_scheduler_gates.Reset(self._get_qubit_string(gate.qubit)),
+            label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
         )
 
 
@@ -274,24 +282,30 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
         global quantify_scheduler_gates
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
-    schedule_creator = _ScheduleCreator(circuit.register_manager)
-    schedule_creator_for_bit_string_mapping = _ScheduleCreator(circuit.register_manager)
-
     try:
-        circuit.ir.reverse().accept(schedule_creator)
+        # Obtain measure data and create bit string mapping
+        schedule_creator_for_bit_string_mapping = _ScheduleCreator(circuit.register_manager)
         circuit.ir.accept(schedule_creator_for_bit_string_mapping)
+        measure_data = schedule_creator_for_bit_string_mapping.measure_data
+
+        # Create circuit (in reversed order), with measure data
+        schedule_creator = _ScheduleCreator(circuit.register_manager, measure_data)
+        circuit.ir.reverse().accept(schedule_creator)
+
+        # Obtain reference timing for schedulables
+        schedulables = list(schedule_creator.schedule.schedulables.values())
+        scheduler = _Scheduler(circuit.register_manager, schedulables)
+        circuit.ir.reverse().accept(scheduler)
+
+        # Update timing constraints of schedulables
+        for name, schedulable in schedule_creator.schedule.schedulables.items():
+            schedulable["timing_constraints"] = [scheduler.operation_record.schedulable_timing_constraints[name]]
+
     except UnsupportedGateError as e:
         msg = (
             f"cannot export circuit: {e}. "
             "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
         )
         raise ExporterError(msg) from e
-
-    schedulables = list(schedule_creator.schedule.schedulables.values())
-    scheduler = _Scheduler(circuit.register_manager, schedulables)
-    circuit.ir.reverse().accept(scheduler)
-
-    for name, schedulable in schedule_creator.schedule.schedulables.items():
-        schedulable["timing_constraints"] = [scheduler.operation_record.schedulable_timing_constraints[name]]
 
     return schedule_creator.schedule, schedule_creator_for_bit_string_mapping.bit_string_mapping
