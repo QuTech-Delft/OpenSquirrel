@@ -94,6 +94,7 @@ class OperationRecord:
                 del self.wait_record[qubit_index]
 
         timing_constraints: dict[str, str | float | None] = {}
+
         if not ref_schedulable:
             timing_constraints["ref_schedulable"] = None
             timing_constraints["ref_pt"] = "end"
@@ -102,8 +103,11 @@ class OperationRecord:
             timing_constraints["ref_schedulable"] = ref_schedulable["name"]
             timing_constraints["ref_pt"] = "start"
             timing_constraints["ref_pt_new"] = "end"
+
         if waiting_times:
-            timing_constraints["rel_time"] = max(waiting_times) * CYCLE_TIME
+            timing_constraints["rel_time"] = -1 * max(waiting_times) * CYCLE_TIME
+        else:
+            timing_constraints["rel_time"] = 0.0
 
         self._schedulable_timing_constraints[schedulable["name"]] = timing_constraints
 
@@ -176,6 +180,17 @@ class _ScheduleCreator(IRVisitor):
         # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
         # Depending on the system the angle may be stored as either 180 or -180 degrees.
         # This ambiguity has no physical consequences, but may cause the exporter test fail.
+        if (
+            abs(gate.axis[0] - 1 / math.sqrt(2)) < ATOL
+            and abs(gate.axis[1]) < ATOL
+            and abs(gate.axis[2] - 1 / math.sqrt(2)) < ATOL
+        ):
+            # Hadamard gate.
+            self.schedule.add(
+                quantify_scheduler_gates.H(self._get_qubit_string(gate.qubit)),
+                label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+            )
+            return
         if abs(gate.axis[2]) < ATOL:
             # Rxy rotation.
             theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
