@@ -4,7 +4,6 @@ from __future__ import annotations
 import importlib.util
 
 import pytest
-from quantify_scheduler.compilation import _determine_absolute_timing_schedule
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import Measure
@@ -83,29 +82,33 @@ def test_spin2plus_backend() -> None:
         0 <--> 1
     """
     connectivity = {"0": [1], "1": [0]}
-
     primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ", "measure", "wait", "init", "barrier"]
 
+    data = {
+        "connectivity": connectivity,
+        "primitive_gate_set": primitive_gate_set,
+    }
+
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(connectivity))
+    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
-    qc.decompose(decomposer=SWAP2CNOTDecomposer())
-
-    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer())
-
-    # Replace CNOT gates with CZ gates
-    qc.decompose(decomposer=CNOT2CZDecomposer())
-
-    # Merge single-qubit gates
-    qc.merge(merger=SingleQubitGatesMerger())
-
-    # Decompose single-qubit gates to primitive gates with McKay decomposer
-    qc.decompose(decomposer=McKayDecomposer())
+    qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
+    #
+    # # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    qc.decompose(decomposer=CNOTDecomposer(**data))
+    #
+    # # Replace CNOT gates with CZ gates
+    qc.decompose(decomposer=CNOT2CZDecomposer(**data))
+    #
+    # # Merge single-qubit gates
+    qc.merge(merger=SingleQubitGatesMerger(**data))
+    #
+    # # Decompose single-qubit gates to primitive gates with McKay decomposer
+    qc.decompose(decomposer=McKayDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
+    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     assert (
         str(qc)
@@ -271,6 +274,7 @@ def test_hectoqubit_backend() -> None:
         "Sdag",
         "T",
         "Tdag",
+        "H",
         "CZ",
         "measure",
         "reset",
@@ -279,26 +283,31 @@ def test_hectoqubit_backend() -> None:
         "barrier",
     ]
 
+    data = {
+        "connectivity": connectivity,
+        "primitive_gate_set": primitive_gate_set,
+    }
+
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(connectivity))
+    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
-    qc.decompose(decomposer=SWAP2CNOTDecomposer())
+    qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer())
+    qc.decompose(decomposer=CNOTDecomposer(**data))
 
     # Replace CNOT gates with CZ gates
-    qc.decompose(decomposer=CNOT2CZDecomposer())
+    qc.decompose(decomposer=CNOT2CZDecomposer(**data))
 
     # Merge single-qubit gates
-    qc.merge(merger=SingleQubitGatesMerger())
+    qc.merge(merger=SingleQubitGatesMerger(**data))
 
     # Decompose single-qubit gates to primitive gates with the XYX decomposer
-    qc.decompose(decomposer=ZXZDecomposer())
+    qc.decompose(decomposer=ZYZDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
+    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
@@ -873,7 +882,6 @@ def test_starmon7_backend() -> None:
         "5": [2, 3],
         "6": [3, 4],
     }
-
     primitive_gate_set = [
         "I",
         "H",
@@ -902,11 +910,16 @@ def test_starmon7_backend() -> None:
         "barrier",
     ]
 
+    data = {
+        "connectivity": connectivity,
+        "primitive_gate_set": primitive_gate_set,
+    }
+
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(connectivity))
+    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(primitive_gate_set))
+    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     exported_circuit = qc.export(fmt=ExportFormat.CQASM_V1)
 
@@ -967,5 +980,79 @@ measure_z q[3]
 measure_z q[4]
 measure_z q[5]
 measure_z q[6]
+"""
+    )
+
+
+def test_rydberg_backend() -> None:
+    qc = Circuit.from_string(
+        """version 3.0
+
+qubit[9] q
+
+asm(Rydberg) '''
+INIT(p(0,1)) q[0]
+INIT(p(1,1)) q[1]
+INIT(p(1,2)) q[2]
+INIT(p(2,0)) q[3]
+INIT(p(2,1)) q[4]
+INIT(p(2,2)) q[5]
+INIT(p(3,3)) q[6]
+INIT(p(3,1)) q[7]
+INIT(p(4,0)) q[8]
+'''
+
+X q
+
+asm(Rydberg) '''
+RG(r(0.00046748015548948326, -0.9711667423688995, 0.15759622123497696)) q[0]
+RG(r(0.001868075691355584, -0.9423334847377992, 0.15759622123497696)) q[0]
+RG(r(0.004196259096889474, -0.9135002271066988, 0.15759622123497696)) q[0]
+'''
+
+X q
+""",
+    )
+    # Compiler configuration is yet to be defined for the Rydberg backend.
+    assert (
+        str(qc)
+        == """version 3.0
+
+qubit[9] q
+
+asm(Rydberg) '''
+INIT(p(0,1)) q[0]
+INIT(p(1,1)) q[1]
+INIT(p(1,2)) q[2]
+INIT(p(2,0)) q[3]
+INIT(p(2,1)) q[4]
+INIT(p(2,2)) q[5]
+INIT(p(3,3)) q[6]
+INIT(p(3,1)) q[7]
+INIT(p(4,0)) q[8]
+'''
+X q[0]
+X q[1]
+X q[2]
+X q[3]
+X q[4]
+X q[5]
+X q[6]
+X q[7]
+X q[8]
+asm(Rydberg) '''
+RG(r(0.00046748015548948326, -0.9711667423688995, 0.15759622123497696)) q[0]
+RG(r(0.001868075691355584, -0.9423334847377992, 0.15759622123497696)) q[0]
+RG(r(0.004196259096889474, -0.9135002271066988, 0.15759622123497696)) q[0]
+'''
+X q[0]
+X q[1]
+X q[2]
+X q[3]
+X q[4]
+X q[5]
+X q[6]
+X q[7]
+X q[8]
 """
     )

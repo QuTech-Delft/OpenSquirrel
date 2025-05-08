@@ -9,6 +9,7 @@ from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGate
 from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
 from opensquirrel.ir import (
     IR,
+    AsmDeclaration,
     Bit,
     BlochSphereRotation,
     Float,
@@ -69,6 +70,10 @@ class Parser:
     @staticmethod
     def _is_non_unitary_instruction(ast_node: Any) -> bool:
         return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
+
+    @staticmethod
+    def _is_asm_declaration(ast_node: Any) -> bool:
+        return isinstance(ast_node, cqasm.semantic.AsmDeclaration)
 
     def _get_qubits(self, ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef) -> list[Qubit]:
         ret = []
@@ -198,6 +203,7 @@ class Parser:
         self.register_manager = RegisterManager.from_ast(ast)
 
         # Parse statements
+        expanded_args: list[tuple[Any, ...]] = []
         for statement in ast.block.statements:
             instruction_generator: Callable[..., Statement]
             if Parser._is_gate_instruction(statement):
@@ -210,6 +216,9 @@ class Parser:
                     if statement.name == "measure"
                     else self._get_expanded_instruction_args(statement)
                 )
+            elif Parser._is_asm_declaration(statement):
+                asm_declaration = AsmDeclaration(statement.backend_name, statement.backend_code)
+                self.ir.add_statement(asm_declaration)
             else:
                 msg = "parsing error: unknown statement"
                 raise OSError(msg)
@@ -217,7 +226,9 @@ class Parser:
             # For an SGMQ instruction:
             # expanded_args will contain a list with the list of qubits for each individual instruction,
             # while args will contain the list of qubits of an individual instruction
-            for args in expanded_args:
-                self.ir.add_statement(instruction_generator(*args))
+            if expanded_args:
+                for args in expanded_args:
+                    self.ir.add_statement(instruction_generator(*args))
+                expanded_args = []
 
         return Circuit(self.register_manager, self.ir)

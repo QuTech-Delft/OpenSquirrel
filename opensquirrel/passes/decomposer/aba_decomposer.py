@@ -26,7 +26,8 @@ class ABADecomposer(Decomposer, ABC):
 
     _gate_list: ClassVar[list[Callable[..., BlochSphereRotation]]] = [Rx, Ry, Rz]
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.index_a = self._gate_list.index(self.ra)
         self.index_b = self._gate_list.index(self.rb)
 

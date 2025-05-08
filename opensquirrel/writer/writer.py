@@ -6,6 +6,7 @@ from opensquirrel.ir import (
     CR,
     CZ,
     SWAP,
+    AsmDeclaration,
     Barrier,
     Bit,
     BlochSphereRotation,
@@ -23,6 +24,8 @@ from opensquirrel.ir import (
     Measure,
     Qubit,
     Reset,
+    String,
+    SupportsStr,
     Wait,
 )
 from opensquirrel.register_manager import RegisterManager
@@ -46,6 +49,10 @@ class _WriterImpl(IRVisitor):
             (f"bit[{bit_register_size}] {bit_register_name}" if bit_register_size > 0 else ""),
         )
 
+    def visit_str(self, s: SupportsStr) -> str:
+        s = String(s)
+        return f"{s.value}"
+
     def visit_float(self, f: SupportsFloat) -> str:
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
@@ -61,6 +68,11 @@ class _WriterImpl(IRVisitor):
     def visit_qubit(self, qubit: Qubit) -> str:
         qubit_register_name = self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
+
+    def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
+        backend_name = asm_declaration.backend_name.accept(self)
+        backend_code = asm_declaration.backend_code.accept(self)
+        self.output += f"asm({backend_name}) '''{backend_code}'''\n"
 
     def visit_gate(self, gate: Gate) -> None:
         if gate.name == "Gate":

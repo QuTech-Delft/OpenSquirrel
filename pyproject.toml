@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "opensquirrel"
-version = "0.3.1"
+version = "0.4.0"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
     "Quantum Inspire <support@quantum-inspire.com>"
@@ -155,6 +155,7 @@ select = [
 ignore = [
     "A005", # module shadowing a Python builtin module
     "ANN401", # typing.Any can be useful (for example in __eq__)
+    "B027", # Ignore the rule for empty methods in abstract base classes
     "COM812", # Conflicts with ruff format
     "ISC001", # Possible conflicts with ruff format
     "W605", # deprecated in Python 3.6
