@@ -1,7 +1,5 @@
 !!! note "Coming soon"
 
-(interim page)
-
 # Non-Unitary Instructions
 
 | Name       | Operator       | Description                                      | Example                                                                 |

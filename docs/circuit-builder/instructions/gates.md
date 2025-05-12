@@ -1,7 +1,5 @@
 !!! note "Coming soon"
 
-(interim page)
-
 # [Unitary Instructions](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/unitary_instructions.html)
 
 | Name       | Operator       | Description                                      | Example                                                                 |

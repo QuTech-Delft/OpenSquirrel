@@ -1,7 +1,5 @@
 !!! note "Coming soon"
 
-(interim page)
-
 # Control Instructions
 
 | Name       | Operator       | Description                                      | Example                                                                 |
