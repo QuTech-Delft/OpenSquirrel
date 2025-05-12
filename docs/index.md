@@ -1,19 +1,26 @@
-This site contains the documentation for OpenSquirrel, _i.e._, a flexible quantum program compiler.
-OpenSquirrel chooses a _modular_, over a _configurable_, approach to prepare and optimize quantum circuits for heterogeneous target architectures.
+# OpenSquirrel
 
-It has a user-friendly interface and is straightforwardly extensible with custom-made readers, compiler passes, and exporters.
-As a quantum circuit compiler, it is fully aware of the semantics of each gate and arbitrary quantum gates can be constructed manually.
-It understands the quantum programming language cQASM 3 and will support additional quantum programming languages in the future.
+This site contains the documentation for OpenSquirrel, _i.e._, a flexible quantum program compiler.
+OpenSquirrel chooses a _modular_, over a _configurable_, approach to prepare and optimize quantum circuits for
+heterogeneous target architectures.
+
+It has a user-friendly interface and is straightforwardly extensible with custom-made readers,
+compiler passes, and exporters.
+As a quantum circuit compiler, it is fully aware of the semantics of each gate and arbitrary quantum gates can be
+constructed manually.
+It understands the quantum programming language cQASM 3 and will support additional quantum programming languages in the
+future.
 It is developed in modern Python and follows best practices.
 
-\[[GitHub repository](<https://github.com/QuTech-Delft/OpenSquirrel>)\]\[[PyPI](<https://pypi.org/project/opensquirrel/>)\]
+\[[GitHub repository](<https://github.com/QuTech-Delft/OpenSquirrel>)\]
+\[[PyPI](<https://pypi.org/project/opensquirrel/>)\]
 
 ## Table of Contents
 
-The following documentation structure is used: [Diátaxis documentation framework](https://diataxis.fr/).
-
-1. [Tutorial](tutorial.md)
-2. [Reference](reference/reference.md)
+- [Tutorial](tutorial/index.md)
+- [Circuit builder](circuit-builder/index.md)
+- [Compilation passes](compilation-passes/index.md)
+- [API documentation](reference/reference.md)
 
 ## Authors
 
