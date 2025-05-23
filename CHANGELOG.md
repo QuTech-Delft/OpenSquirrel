@@ -10,6 +10,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
+## [ 0.4.1 ] - [ xxxx-yy-zz ]
+
+### Fixed
+
+- `RoutingValidator` ignores assembly declarations
 
 ## [ 0.4.0 ] - [ 2025-04-28 ]
 

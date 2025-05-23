@@ -4,6 +4,7 @@ import pytest
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
+from opensquirrel.ir import AsmDeclaration
 from opensquirrel.passes.validator import RoutingValidator
 
 
@@ -52,3 +53,14 @@ def test_routing_checker_impossible_1to1_mapping(validator: RoutingValidator, ci
         ValueError, match=r"the following qubit interactions in the circuit prevent a 1-to-1 mapping:.*"
     ):
         validator.validate(circuit2.ir)
+
+
+def test_ignore_asm(validator: RoutingValidator) -> None:
+    builder = CircuitBuilder(2)
+    builder.H(0)
+    builder.asm("backend_name", r"backend_code")
+    builder.CNOT(0, 1)
+    qc = builder.to_circuit()
+    validator.validate(qc.ir)
+
+    assert len([statement for statement in qc.ir.statements if isinstance(statement, AsmDeclaration)]) == 1
