@@ -1,6 +1,6 @@
-from typing import Any, cast
+from typing import Any
 
-from opensquirrel.ir import IR, AsmDeclaration, Instruction, Qubit
+from opensquirrel.ir import IR, Instruction, Qubit
 from opensquirrel.passes.validator import Validator
 
 
@@ -21,10 +21,9 @@ class RoutingValidator(Validator):
         """
         non_executable_interactions = []
         for statement in ir.statements:
-            if isinstance(statement, AsmDeclaration):
+            if not isinstance(statement, Instruction):
                 continue
-            instruction: Instruction = cast("Instruction", statement)
-            args = instruction.arguments
+            args = statement.arguments
             if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
                 qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
                 qubit_index_pairs = [(q0.index, q1.index) for q0, q1 in zip(qubit_args[:-1], qubit_args[1:])]
