@@ -7,6 +7,8 @@ from typing import Any
 import cqasm.v3x as cqasm
 from typing_extensions import Self
 
+from opensquirrel.ir import Qubit, Bit
+
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
     return isinstance(variable.typ, (cqasm.types.Qubit, cqasm.types.QubitArray))
@@ -26,8 +28,6 @@ class Range:
 
 
 class Register(ABC):
-    """Register manages a (virtual) register."""
-
     @property
     @abstractmethod
     def name(self) -> str: ...
@@ -38,7 +38,7 @@ class Register(ABC):
 
     def __init__(
         self,
-        register_size: int,
+        register_size: int = 0,
         variable_name_to_range: dict[str, Range] | None = None,
         index_to_variable_name: dict[int, str] | None = None,
     ) -> None:
@@ -56,15 +56,12 @@ class Register(ABC):
         )
 
     def get_variable_name(self, index: int) -> str:
-        """Get the variable name at `index`."""
         return self.index_to_variable_name[index]
 
     def get_range(self, variable_name: str) -> Range:
-        """Get the Range for a `variable_name`."""
         return self.variable_name_to_range[variable_name]
 
     def get_index(self, variable_name: str, sub_index: int) -> int:
-        """Get the Index for a given `subIndex` of a `variable_name`."""
         return self.variable_name_to_range[variable_name].first + sub_index
 
     def __repr__(self) -> str:
@@ -95,61 +92,76 @@ class Register(ABC):
                 current_index += 1
         return cls(register_size, variable_name_to_range, index_to_variable_name)
 
+    def add_variable(self, name: str, size: int) -> None:
+        if name in self.variable_name_to_range:
+            raise ValueError(f"Variable '{name}' already exists in register")
+        start = self.register_size
+        self.variable_name_to_range[name] = Range(start, size)
+        for i in range(size):
+            self.index_to_variable_name[start + i] = name
+        self.register_size += size
+
 
 class QubitRegister(Register):
-    """QubitRegister manages a (virtual) qubit register."""
-
     _default_qubit_register_name: str = "q"
 
-    @property
-    def name(self) -> str:
-        return self._default_qubit_register_name
+    def __init__(self, name: str = None, size: int = 1):
+        super().__init__()
+        if name is not None:
+            self.add_variable(name, size)
 
     @staticmethod
     def is_of_type(variable: cqasm.semantic.MultiVariable) -> bool:
         return is_qubit_type(variable)
 
-
-class BitRegister(Register):
-    """BitRegister manages a (virtual) bit register."""
-
-    _default_bit_register_name: str = "b"
-
     @property
     def name(self) -> str:
-        return self._default_bit_register_name
+        return list(self.variable_name_to_range.keys())[0]
+
+    def __getitem__(self, index: int) -> Qubit:
+        if index >= self.register_size:
+            raise IndexError("Qubit register index out of bounds")
+        variable_name = self.index_to_variable_name[index]
+        return Qubit(index=index, name=variable_name)
+
+
+class BitRegister(Register):
+    _default_bit_register_name: str = "b"
+
+    def __init__(self, name: str = None, size: int = 1):
+        super().__init__()
+        if name is not None:
+            self.add_variable(name, size)
 
     @staticmethod
     def is_of_type(variable: cqasm.semantic.MultiVariable) -> bool:
         return is_bit_type(variable)
 
+    @property
+    def name(self) -> str:
+        return list(self.variable_name_to_range.keys())[0]
+
+    def __getitem__(self, index: int) -> Bit:
+        if index >= self.register_size:
+            raise IndexError("Bit register index out of bounds")
+        variable_name = self.index_to_variable_name[index]
+        return Bit(index=index, name=variable_name)
+
 
 class RegisterManager:
-    """RegisterManager keeps track of a (virtual) qubit register, i.e., an array of consecutive qubits,
-    and the mappings between the (logical) qubit variable names, as used in an input cQASM program,
-    and the (virtual) qubit register.
-
-    For example, given an input program that defines 'qubit[3] q':
-    - variable 'q' is mapped to qubits 0 to 2 in the qubit register, and
-    - positions 0 to 2 in the qubit register are mapped to variable 'q'.
-
-    The mapping of qubit variable names to positions in the qubit register is an implementation detail,
-    i.e., it is not guaranteed that qubit register indices are assigned to qubit variable names in the order
-    these variables are defined in the input program.
-    """
-
-    def __init__(self, qubit_register: QubitRegister, bit_register: BitRegister | None = None) -> None:
-        self.qubit_register: QubitRegister = qubit_register
-        self.bit_register: BitRegister = bit_register or BitRegister(0)
+    def __init__(self) -> None:
+        self.qubit_register = QubitRegister(name=None, size=0)
+        self.bit_register = BitRegister(name=None, size=0)
 
     def __repr__(self) -> str:
         return f"qubit_register:\n{self.qubit_register}\nbit_register:\n{self.bit_register}"
 
     @classmethod
     def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
-        qubit_register = QubitRegister.from_ast(ast)
-        bit_register = BitRegister.from_ast(ast)
-        return cls(qubit_register, bit_register)
+        instance = cls()
+        instance.qubit_register = QubitRegister.from_ast(ast)
+        instance.bit_register = BitRegister.from_ast(ast)
+        return instance
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, RegisterManager):
@@ -185,3 +197,13 @@ class RegisterManager:
 
     def get_bit_variable_name(self, index: int) -> str:
         return self.bit_register.get_variable_name(index)
+
+    def add_register(self, register: Register) -> None:
+        if isinstance(register, QubitRegister):
+            for name, r in register.variable_name_to_range.items():
+                self.qubit_register.add_variable(name, r.size)
+        elif isinstance(register, BitRegister):
+            for name, r in register.variable_name_to_range.items():
+                self.bit_register.add_variable(name, r.size)
+        else:
+            raise TypeError("Unsupported register type")

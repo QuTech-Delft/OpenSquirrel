@@ -151,8 +151,9 @@ class Int(Expression):
 @dataclass(init=False)
 class Bit(Expression):
     index: int
+    name: str = ""
 
-    def __init__(self, index: BitLike) -> None:
+    def __init__(self, index: BitLike, name: str = "") -> None:
         if isinstance(index, SupportsInt):
             self.index = int(index)
         elif isinstance(index, Bit):
@@ -160,6 +161,7 @@ class Bit(Expression):
         else:
             msg = "index must be a BitLike"
             raise TypeError(msg)
+        self.name = name
 
     def __hash__(self) -> int:
         return hash(str(self.__class__) + str(self.index))
@@ -180,8 +182,9 @@ class Qubit(Expression):
     """
 
     index: int
+    name: str = ""
 
-    def __init__(self, index: QubitLike) -> None:
+    def __init__(self, index: QubitLike, name: str = "") -> None:
         if isinstance(index, SupportsInt):
             self.index = int(index)
         elif isinstance(index, Qubit):
@@ -189,6 +192,7 @@ class Qubit(Expression):
         else:
             msg = "index must be a QubitLike"
             raise TypeError(msg)
+        self.name = name
 
     def __hash__(self) -> int:
         return hash(str(self.__class__) + str(self.index))
@@ -316,13 +320,19 @@ class Statement(IRNode, ABC):
 class Instruction(Statement, ABC):
     def __init__(
         self,
-        generator: Callable[..., Instruction] | None = None,
+        generator: Callable[..., 'Instruction'] | None = None,
         arguments: tuple[Expression, ...] | None = None,
         *args: Any,
         **kwargs: Any,
     ) -> None:
         self.generator = generator
-        self.arguments = arguments
+        self.arguments = arguments or tuple()
+
+    @property
+    def name(self) -> str:
+        if self.generator is not None:
+            return getattr(self.generator, "__name__", "")
+        return ""
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
@@ -752,6 +762,8 @@ def compare_gates(g1: Gate, g2: Gate) -> bool:
 class IR:
     def __init__(self) -> None:
         self.statements: list[Statement] = []
+        self.backend_name: str | None = None
+        self.backend_code: str | None = None
 
     def add_gate(self, gate: Gate) -> None:
         self.statements.append(gate)
@@ -761,6 +773,10 @@ class IR:
 
     def add_statement(self, statement: Statement) -> None:
         self.statements.append(statement)
+    
+    def add_asm(self, backend_name: str, backend_code: str) -> None:
+        self.backend_name = backend_name
+        self.backend_code = backend_code
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):
@@ -774,6 +790,19 @@ class IR:
     def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:
             statement.accept(visitor)
+    
+    def add_instruction(self, instruction: Instruction) -> None:
+        # Heuristic dispatch: use class inheritance or name to decide
+        from opensquirrel.ir import Gate, NonUnitary
+
+        if isinstance(instruction, Gate):
+            self.add_gate(instruction)
+        elif isinstance(instruction, NonUnitary):
+            self.add_non_unitary(instruction)
+        else:
+            # fallback, treat as a generic statement
+            self.add_statement(instruction)
+
 
 
 # Type Aliases
