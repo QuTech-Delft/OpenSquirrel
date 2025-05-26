@@ -1,5 +1,3 @@
-import math
-
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
