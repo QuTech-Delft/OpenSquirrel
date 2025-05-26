@@ -26,8 +26,8 @@ def test_identity(decomposer: ZYZDecomposer) -> None:
     [
         (CNOT(0, 1), [CNOT(0, 1)]),
         (CR(2, 3, 2.123), [CR(2, 3, 2.123)]),
-        (X(0), [S(0), Ry(0, math.pi), SDagger(0)]),
-        (Rx(0, 0.9), [S(0), Ry(0, 0.9), SDagger(0)]),
+        (X(0), [Rz(0, math.pi / 2), Ry(0, math.pi), Rz(0, -math.pi / 2)]),
+        (Rx(0, 0.9), [Rz(0, math.pi / 2), Ry(0, 0.9), Rz(0, -math.pi / 2)]),
         (Y(0), [Ry(0, math.pi)]),
         (Ry(0, 0.9), [Ry(0, 0.9)]),
         (Z(0), [Rz(0, math.pi)]),
