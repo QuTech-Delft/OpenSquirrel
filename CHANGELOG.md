@@ -11,6 +11,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Removed** for now removed features.
 
 
+## [ M.m.P ] - [ xxxx-yy-zz ]
+
+### Changed
+
+- Default gate identification check refactored (now including check for phase)
+
 ## [ 0.4.0 ] - [ 2025-04-28 ]
 
 ### Added
