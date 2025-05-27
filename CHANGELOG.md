@@ -10,7 +10,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
-## [ 0.4.1 ] - [ xxxx-yy-zz ]
+## [ M.m.P ] - [ xxxx-yy-zz ]
+
+### Added
+
+- `asm_filter` method to the `Circuit` class to filter out assembly declarations by backend name.
 
 ### Fixed
 
