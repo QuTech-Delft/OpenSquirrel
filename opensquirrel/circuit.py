@@ -3,10 +3,10 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
+from opensquirrel.ir import IR, AsmDeclaration, Gate
 from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IR, Gate
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.passes.merger import Merger
@@ -87,6 +87,14 @@ class Circuit:
     @property
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
+
+    def asm_filter(self, backend_name: str) -> None:
+        self.ir.statements = [
+            statement
+            for statement in self.ir.statements
+            if not isinstance(statement, AsmDeclaration)
+            or (isinstance(statement, AsmDeclaration) and backend_name in str(statement.backend_name))
+        ]
 
     def validate(self, validator: Validator) -> None:
         """Generic validator pass. It applies the given validator to the circuit."""
