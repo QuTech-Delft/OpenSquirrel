@@ -10,6 +10,7 @@ from numpy.typing import NDArray
 
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
+    X90,
     Axis,
     AxisLike,
     Bit,
@@ -17,11 +18,19 @@ from opensquirrel.ir import (
     ControlledGate,
     Expression,
     Float,
+    H,
     I,
     Int,
     MatrixGate,
     Measure,
+    MinusX90,
     Qubit,
+    Rn,
+    Rx,
+    Ry,
+    Rz,
+    TDagger,
+    X,
 )
 
 
@@ -303,6 +312,28 @@ class TestBlochSphereRotation:
     def test_is_identity(self, gate: BlochSphereRotation) -> None:
         assert I(42).is_identity()
         assert not gate.is_identity()
+
+    @pytest.mark.parametrize(
+        ("bsr", "default_gate"),
+        [
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2), H(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2), X(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi / 2, phase=math.pi / 4), X90(0)),
+            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=-math.pi / 2, phase=-math.pi / 4), X90(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=-math.pi / 2, phase=-math.pi / 4), MinusX90(0)),
+            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=math.pi / 2, phase=math.pi / 4), MinusX90(0)),
+            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=-math.pi / 4, phase=-math.pi / 8), TDagger(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi / 4, phase=0), Rx(0, math.pi / 4)),
+            (BlochSphereRotation(qubit=0, axis=(0, 1, 0), angle=math.pi / 3, phase=0), Ry(0, math.pi / 3)),
+            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=3 * math.pi / 4, phase=0), Rz(0, 3 * math.pi / 4)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=math.pi, phase=0), Rn(0, 1, 0, 1, math.pi, 0)),
+        ],
+        ids=["H", "X", "X90-1", "X90-2", "mX90-1", "mX90-2", "Tdag", "Rx", "Ry", "Rz", "Rn"],
+    )
+    def test_default_gate_matching(self, bsr: BlochSphereRotation, default_gate: BlochSphereRotation) -> None:
+        matched_bsr = BlochSphereRotation.try_match_replace_with_default(bsr)
+        assert matched_bsr == default_gate
+        assert matched_bsr.name == default_gate.name
 
 
 class TestMatrixGate:

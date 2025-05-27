@@ -1,5 +1,3 @@
-import math
-
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
@@ -147,10 +145,10 @@ CNOT q[0], q[1]
 def test_no_merging_across_asm() -> None:
     builder = CircuitBuilder(2)
     builder.H(0)
-    builder.Ry(1, math.pi / 2)
+    builder.Y90(1)
     builder.asm("TestBackend", """ a ' " {} () [] b """)
     builder.H(0)
-    builder.Rx(1, math.pi / 2)
+    builder.X90(1)
     qc = builder.to_circuit()
     qc.merge(merger=SingleQubitGatesMerger())
     assert (

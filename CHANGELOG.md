@@ -16,6 +16,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - `RoutingValidator` ignores assembly declarations
 
+## [ M.m.P ] - [ xxxx-yy-zz ]
+
+### Changed
+
+- Default gate identification check refactored (now including check for phase)
+- `McKayDecomposer` checks X90 on BSR semantic instead of name
+
 ## [ 0.4.0 ] - [ 2025-04-28 ]
 
 ### Added
@@ -56,7 +63,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed order of merging Bloch sphere rotations
-
 
 ## [ 0.2.0 ] - [ 2025-01-21 ]
 
