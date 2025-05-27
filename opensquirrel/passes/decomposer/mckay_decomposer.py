@@ -21,7 +21,7 @@ class McKayDecomposer(Decomposer):
 
         Relevant literature: https://arxiv.org/abs/1612.00858
         """
-        if not isinstance(g, BlochSphereRotation) or g.name == "Rz" or g.name == "X90":
+        if not isinstance(g, BlochSphereRotation) or g == X90(g.qubit):
             return [g]
 
         if abs(g.angle) < ATOL:
