@@ -455,3 +455,91 @@ As you have seen in the examples above, you can turn a circuit into a
 by simply using the `str` or `__repr__` methods.
 We are aiming to support the possibility to export to other languages as well,
 _e.g._, a OpenQASM 3.0 string, and frameworks, _e.g._, a Qiskit quantum circuit.
+
+## Validating Aspects of a Circuit
+
+The available `Validator` passes enable the user to validate various aspects of a circuit.
+
+### Routing Validator
+
+For instance, the `RoutingValidator` checks whether a circuit is directly executable given some hardware's coupling map. The example below shows how this `Validator` instance can be used. 
+
+```python
+from opensquirrel import CircuitBuilder
+from opensquirrel.circuit import Circuit
+from opensquirrel.passes.validator import RoutingValidator
+
+connectivity= {"0": [1, 2], "1": [0, 2, 3], "2": [0, 1, 4], "3": [1, 4], "4": [2, 3]}
+
+validator = RoutingValidator(connectivity = connectivity)
+
+builder = CircuitBuilder(5)
+builder.H(0)
+builder.CNOT(0, 1)
+builder.H(2)
+builder.CNOT(1, 2)
+builder.CNOT(2, 4)
+builder.CNOT(3, 4)
+
+circuit = builder.to_circuit()
+
+validator.validate(circuit.ir)
+```
+
+In this scenario, all 2-qubit gates are executable on the hardware and no output is produced. On the other hand, if there are indeed qubit connections that do not exist on the device, a `ValueError` will be raised.
+
+```python
+builder = CircuitBuilder(5)
+builder.H(0)
+builder.CNOT(0, 1)
+builder.CNOT(0, 3)
+builder.H(2)
+builder.CNOT(1, 2)
+builder.CNOT(1, 3)
+builder.CNOT(2, 3)
+builder.CNOT(3, 4)
+builder.CNOT(0, 4)
+
+circuit = builder.to_circuit()
+
+validator.validate(circuit.ir)
+```
+_Output_:
+
+    ValueError: the following qubit interactions in the circuit prevent a 1-to-1 mapping: ((0, 3), (1, 3), (2, 3))
+
+### Native Gate Validator
+
+The `NativeGateValidator` will raise a `ValueError` if there are gates on the circuit that are not present in the native gate set of the quantum device.
+
+```python
+from opensquirrel import CircuitBuilder
+from opensquirrel.circuit import Circuit
+from opensquirrel.passes.validator import NativeGateValidator
+
+native_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
+
+validator = RoutingValidator(native_gate_set = native_gate_set)
+
+builder = CircuitBuilder(5)
+builder.I(0)
+builder.X90(1)
+builder.mX90(2)
+builder.Y90(3)
+builder.mY90(4)
+builder.Rz(0, 2)
+builder.CZ(1, 2)
+builder.H(0)
+builder.CNOT(1, 2)
+
+circuit = builder.to_circuit()
+
+validator.validate(circuit.ir)
+```
+
+_Output_:
+
+    ValueError: the following gates are not in the native gate set: ['H', 'CNOT']
+
+
+
