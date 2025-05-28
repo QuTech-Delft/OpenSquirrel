@@ -60,17 +60,9 @@ class OperationRecord:
     def schedulable_timing_constraints(self) -> dict[str, dict[str, Any]]:
         return self._schedulable_timing_constraints
 
-    @property
-    def barrier_record(self) -> list[int]:
-        return self._barrier_record
-
-    @barrier_record.setter
-    def barrier_record(self, value: list[int]) -> None:
-        self._barrier_record = value
-
     def add_qubit_index_to_barrier_record(self, qubit_index: int) -> None:
-        br = self._barrier_record
-        self._barrier_record.append(qubit_index) if qubit_index not in br else self._barrier_record
+        if qubit_index not in self._barrier_record:
+            self._barrier_record.append(qubit_index)
 
     @property
     def wait_record(self) -> dict[int, int]:
@@ -84,14 +76,14 @@ class OperationRecord:
         self._process_barriers()
 
         _, ref_schedulable = self._get_references(qubit_indices)
-        schedulable: Schedulable = self._schedulables.pop(0)
+        schedulable: Schedulable = self._schedulables.pop()
 
         waiting_times: list[int] = []
         for qubit_index in qubit_indices:
             self._set_references(qubit_index, qubit_index, schedulable)
-            if qubit_index in self.wait_record:
-                waiting_times.append(self.wait_record[qubit_index])
-                del self.wait_record[qubit_index]
+            if qubit_index in self._wait_record:
+                waiting_times.append(self._wait_record[qubit_index])
+                del self._wait_record[qubit_index]
 
         timing_constraints: dict[str, str | float | None] = {}
 
@@ -112,11 +104,11 @@ class OperationRecord:
         self._schedulable_timing_constraints[schedulable["name"]] = timing_constraints
 
     def _process_barriers(self) -> None:
-        if self.barrier_record:
+        if self._barrier_record:
             ref_qubit_index, ref_schedulable = self._get_references(self._barrier_record)
-            for qubit_index in self.barrier_record:
+            for qubit_index in self._barrier_record:
                 self._set_references(qubit_index, ref_qubit_index, ref_schedulable)
-            self.barrier_record = []
+            self._barrier_record = []
 
     def _get_references(self, relevant_qubit_indices: list[int]) -> tuple[int, Schedulable]:
         schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in relevant_qubit_indices]
@@ -163,15 +155,12 @@ class _ScheduleCreator(IRVisitor):
 
     def __init__(self,
                  register_manager: RegisterManager,
-                 measure_data: list[tuple[int, int]] = None
                  ) -> None:
         self.register_manager = register_manager
         self.qubit_register_size = register_manager.get_qubit_register_size()
         self.qubit_register_name = register_manager.get_qubit_register_name()
         self.bit_register_size = register_manager.get_bit_register_size()
         self.acq_index_record = [0] * self.qubit_register_size
-        self.measure_data = measure_data if measure_data is not None else []
-        self._measure_data_recording = False if measure_data is not None else True
         self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
@@ -256,13 +245,9 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_measure(self, gate: Measure) -> None:
         qubit_index = gate.qubit.index
-        if not self._measure_data_recording:
-            acq_index, bit_index = self.measure_data.pop()
-        else:
-            bit_index = gate.bit.index
-            acq_index = self.acq_index_record[qubit_index]
-            self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
-            self.measure_data.append((acq_index, qubit_index))
+        bit_index = gate.bit.index
+        acq_index = self.acq_index_record[qubit_index]
+        self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
         self.schedule.add(
             quantify_scheduler_gates.Measure(
                 self._get_qubit_string(gate.qubit),
@@ -298,16 +283,11 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
         quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
     try:
-        # Obtain measure data and create bit string mapping
-        schedule_creator_for_bit_string_mapping = _ScheduleCreator(circuit.register_manager)
-        circuit.ir.accept(schedule_creator_for_bit_string_mapping)
-        measure_data = schedule_creator_for_bit_string_mapping.measure_data
+        # Create circuit, with measure data
+        schedule_creator = _ScheduleCreator(circuit.register_manager)
+        circuit.ir.accept(schedule_creator)
 
-        # Create circuit (in reversed order), with measure data
-        schedule_creator = _ScheduleCreator(circuit.register_manager, measure_data)
-        circuit.ir.reverse().accept(schedule_creator)
-
-        # Obtain reference timing for schedulables
+        # Obtain ALAP reference timing for schedulables
         schedulables = list(schedule_creator.schedule.schedulables.values())
         scheduler = _Scheduler(circuit.register_manager, schedulables)
         circuit.ir.reverse().accept(scheduler)
@@ -323,4 +303,4 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
         )
         raise ExporterError(msg) from e
 
-    return schedule_creator.schedule, schedule_creator_for_bit_string_mapping.bit_string_mapping
+    return schedule_creator.schedule, schedule_creator.bit_string_mapping

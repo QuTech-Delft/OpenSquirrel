@@ -706,6 +706,7 @@ def test_hectoqubit_wait() -> None:
         barrier q
         init q
         H q[0]
+        X q[1]
         wait(5) q
         CNOT q[0], q[1]
         barrier q
