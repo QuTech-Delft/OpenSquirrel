@@ -91,7 +91,7 @@ def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
 
 def test_merge_y90_x_to_h(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(1)
-    builder.Y90(0)
+    builder.Ry(0, math.pi / 2)
     builder.X(0)
     qc = builder.to_circuit()
 
