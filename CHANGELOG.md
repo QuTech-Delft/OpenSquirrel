@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `MIPMapper` mapper pass.
 - `asm_filter` method to the `Circuit` class to filter out assembly declarations by backend name.
 
 ### Fixed
