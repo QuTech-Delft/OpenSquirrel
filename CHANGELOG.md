@@ -10,22 +10,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
-## [ M.m.P ] - [ xxxx-yy-zz ]
+## [ 0.5.0 ] - [ 2025-05-28 ]
 
 ### Added
 
-- `asm_filter` method to the `Circuit` class to filter out assembly declarations by backend name.
-
-### Fixed
-
-- `RoutingValidator` ignores assembly declarations
-
-## [ M.m.P ] - [ xxxx-yy-zz ]
+- `asm_filter` method to the `Circuit` class to filter-out assembly declarations by backend name
 
 ### Changed
 
 - Default gate identification check refactored (now including check for phase)
 - `McKayDecomposer` checks X90 on BSR semantic instead of name
+
+### Fixed
+
+- `RoutingValidator` ignores assembly declarations
 
 ## [ 0.4.0 ] - [ 2025-04-28 ]
 
