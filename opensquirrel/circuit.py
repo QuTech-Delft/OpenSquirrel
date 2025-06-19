@@ -2,17 +2,19 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
+import numpy as np
 
 from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IR, Gate
+    from opensquirrel.ir import IR, Gate, QubitLike
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.passes.merger import Merger
     from opensquirrel.passes.router import Router
     from opensquirrel.passes.validator import Validator
     from opensquirrel.register_manager import RegisterManager
+    from numpy.typing import ArrayLike, NDArray
 
 
 class Circuit:
@@ -43,6 +45,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
+        self.phase_map = self.PhaseMap(np.zeros(self.qubit_register_size))
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
@@ -106,7 +109,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.decompose(self.ir, decomposer)
+        general_decomposer.decompose(self, decomposer)
 
     def map(self, mapper: Mapper) -> None:
         """Generic qubit mapper pass.
@@ -123,7 +126,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.replace(self.ir, gate, replacement_gates_function)
+        general_decomposer.replace(self, gate, replacement_gates_function)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
@@ -136,3 +139,23 @@ class Circuit:
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)
+
+    class PhaseMap:
+
+        def __init__(self, phase_map: ArrayLike[np.complex128]):
+            """Initialize a PhaseMap object."""
+            self.qubit_phase_map: ArrayLike[np.complex128] = phase_map
+
+        def __contains__(self, qubit: QubitLike) -> bool:
+            """Checks if qubit is in the phase map."""
+            return qubit in self.qubit_phase_map
+
+        def add_qubit_phase(self, qubit: QubitLike, phase: np.complex128) -> None:
+            from opensquirrel.ir import Qubit
+
+            self.qubit_phase_map[Qubit(qubit).index] += phase
+
+        def get_qubit_phase(self, qubit: QubitLike) -> np.complex128:
+            from opensquirrel.ir import Qubit
+
+            return np.complex128(self.qubit_phase_map[Qubit(qubit).index])

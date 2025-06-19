@@ -343,3 +343,60 @@ def test_hectoqubit_backend_allxy() -> None:
 
         assert len(bit_string_mapping) == qc.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
+
+def test_integration_global_phase() -> None:
+    qc = Circuit.from_string(
+        """
+        version 3.0
+        qubit[3] q
+        H q[0:2]
+        Ry(1.5789) q[0]
+        H q[0]
+        CNOT q[1], q[0]
+        Ry(3.09) q[0]
+        Ry(0.318) q[1]
+        Ry(0.18) q[2]
+        CNOT q[2], q[0]
+        """,
+    )
+
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    qc.decompose(decomposer=CNOTDecomposer())
+
+    # Replace CNOT gates with CZ gates
+    qc.decompose(decomposer=CNOT2CZDecomposer())
+    # Merge single-qubit gates and decompose with McKay decomposition.
+    qc.merge(merger=SingleQubitGatesMerger())
+    qc.decompose(decomposer=McKayDecomposer())
+    print(qc)
+    assert (
+        str(qc)
+        == """version 3.0
+
+qubit[3] q
+
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+Rz(3.1415927) q[0]
+X90 q[0]
+Rz(0.0081036221) q[0]
+X90 q[0]
+CZ q[1], q[0]
+X90 q[2]
+Rz(1.3907963) q[2]
+X90 q[2]
+Rz(3.1415927) q[0]
+X90 q[0]
+Rz(0.051592654) q[0]
+X90 q[0]
+CZ q[2], q[0]
+Rz(-1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
+Rz(3.1415927) q[1]
+X90 q[1]
+Rz(2.8235927) q[1]
+X90 q[1]
+"""
+    )

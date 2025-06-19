@@ -235,6 +235,12 @@ class Qubit(Expression):
     def __hash__(self) -> int:
         return hash(str(self.__class__) + str(self.index))
 
+    def __eq__(self, other: Any) -> bool:
+        """Compare two qubits."""
+        if not isinstance(other, Qubit):
+            return False
+        return self.__hash__() == other.__hash__()
+
     def __repr__(self) -> str:
         return f"Qubit[{self.index}]"
 
