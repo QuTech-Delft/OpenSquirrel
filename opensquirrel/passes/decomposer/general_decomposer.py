@@ -14,8 +14,8 @@ from opensquirrel.common import (
     get_phase_angle,
     is_identity_matrix_up_to_a_global_phase,
 )
-from opensquirrel.default_instructions import Rz, is_anonymous_gate
-from opensquirrel.ir import Float, Gate
+from opensquirrel.default_instructions import is_anonymous_gate
+from opensquirrel.ir import Float, Gate, Rz
 from opensquirrel.reindexer import get_reindexed_circuit
 
 if TYPE_CHECKING:
@@ -63,7 +63,9 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
     if circuit is not None:
         phase_difference = calculate_phase_difference(replaced_matrix, replacement_matrix)
         euler_phase = get_phase_angle(phase_difference)
-        [circuit.phase_map.add_qubit_phase(q, euler_phase) for q in gate.get_qubit_operands()]
+
+        for q in gate.get_qubit_operands():
+            circuit.phase_map.add_qubit_phase(q, euler_phase)
 
         if len(gate_qubit_indices) > 1:
             relative_phase = float(np.real(

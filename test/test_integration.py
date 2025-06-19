@@ -70,7 +70,6 @@ def test_spin2plus_backend() -> None:
 
     # Check whether the gates in the circuit match the native gate set of the backend
     qc.validate(validator=NativeGateValidator(native_gate_set))
-    print(qc)
     assert (
         str(qc)
         == """version 3.0
@@ -374,7 +373,7 @@ def test_integration_global_phase() -> None:
     # Merge single-qubit gates and decompose with McKay decomposition.
     qc.merge(merger=SingleQubitGatesMerger())
     qc.decompose(decomposer=McKayDecomposer())
-    print(qc)
+
     assert (
         str(qc)
         != """version 3.0

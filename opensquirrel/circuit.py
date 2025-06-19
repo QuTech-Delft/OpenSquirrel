@@ -8,7 +8,7 @@ import numpy as np
 from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
-    from numpy.typing import ArrayLike
+    from numpy.typing import NDArray
 
     from opensquirrel.ir import IR, Gate, QubitLike
     from opensquirrel.passes.decomposer import Decomposer
@@ -144,9 +144,9 @@ class Circuit:
 
     class PhaseMap:
 
-        def __init__(self, phase_map: ArrayLike[np.complex128]):
+        def __init__(self, phase_map: NDArray[np.complex128]) -> None:
             """Initialize a PhaseMap object."""
-            self.qubit_phase_map: ArrayLike[np.complex128] = phase_map
+            self.qubit_phase_map = phase_map
 
         def __contains__(self, qubit: QubitLike) -> bool:
             """Checks if qubit is in the phase map."""
