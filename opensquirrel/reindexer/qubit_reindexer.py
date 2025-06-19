@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from opensquirrel.ir import (
     CNOT,
@@ -14,6 +14,7 @@ from opensquirrel.ir import (
     BsrAngleParam,
     BsrNoParams,
     ControlledGate,
+    CanonicalGate,
     CRk,
     Gate,
     Init,
@@ -21,7 +22,7 @@ from opensquirrel.ir import (
     MatrixGate,
     Measure,
     Reset,
-    Wait,
+    Wait, Can,
 )
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
@@ -89,6 +90,11 @@ class _QubitReindexer(IRVisitor):
         target_gate = gate.target_gate.accept(self)
         return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
 
+    def visit_canonical_gate(self, gate: CanonicalGate) -> CanonicalGate:
+        control_qubit = self.qubit_indices.index(gate.control_qubit.index)
+        target_qubit = self.qubit_indices.index(gate.target_qubit.index)
+        return CanonicalGate(control_qubit=control_qubit, target_qubit=target_qubit, canonical_axis= gate.canonical_axis)
+
     def visit_cnot(self, gate: CNOT) -> ControlledGate:
         return self.visit_controlled_gate(gate)
 
@@ -101,6 +107,8 @@ class _QubitReindexer(IRVisitor):
     def visit_crk(self, gate: CRk) -> ControlledGate:
         return self.visit_controlled_gate(gate)
 
+    def visit_can(self, gate: Can) -> CanonicalGate:
+        return self.visit_canonical_gate(gate)
 
 def get_reindexed_circuit(
     replacement_gates: Iterable[Gate],

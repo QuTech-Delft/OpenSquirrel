@@ -14,6 +14,7 @@ from opensquirrel.ir import (
     BsrAngleParam,
     BsrNoParams,
     Can,
+    CanonicalGate,
     ControlledGate,
     CRk,
     Gate,
@@ -82,7 +83,7 @@ default_gate_alias_set = {
     "Identity": I,
 }
 
-default_canonical_gate_set: Mapping[str, type[Gate]]
+default_canonical_gate_set: Mapping[str, type[CanonicalGate]]
 default_canonical_gate_set = {"Can": Can}
 
 default_gate_set: Mapping[str, type[Gate]]

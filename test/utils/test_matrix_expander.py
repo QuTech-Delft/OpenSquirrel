@@ -2,9 +2,9 @@ import math
 
 import numpy as np
 
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate
-from opensquirrel.utils import get_matrix
-
+from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate, H
+from opensquirrel.utils import get_matrix, unitary_to_blochsphere
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 def test_bloch_sphere_rotation() -> None:
     gate = BlochSphereRotation(qubit=0, axis=(0.8, -0.3, 1.5), angle=0.9468, phase=2.533)
@@ -59,3 +59,12 @@ def test_matrix_gate() -> None:
             [0, 0, 0, 0, 0, 0, 0, 1],
         ],
     )
+
+
+def test_unitary_to_blochsphere() -> None:
+    gate = 1/np.sqrt(2)*np.asarray([[1, 1], [1, -1]])
+    bloch_gate = unitary_to_blochsphere(gate, 0)
+    hadamard = H(0)
+
+    check_gate_replacement(bloch_gate, [hadamard])
+

@@ -263,3 +263,39 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
 
     expander = MatrixExpander(qubit_register_size)
     return np.asarray(gate.accept(expander), dtype=np.complex128)
+
+
+def unitary_to_blochsphere(matrix: NDArray, qubit: QubitLike):
+    # Normalize global phase (remove determinant)
+    det = np.linalg.det(matrix)
+    matrix = matrix * np.exp(-1j * np.angle(det) / 2)
+
+    # Pauli matrices
+    sigma_x = np.array([[0, 1], [1, 0]])
+    sigma_y = np.array([[0, -1j], [1j, 0]])
+    sigma_z = np.array([[1, 0], [0, -1]])
+
+    # Calculate cos(theta/2) from trace
+    tr = np.trace(matrix)
+    cos_theta_over_2 = np.real(tr) / 2
+    cos_theta_over_2 = np.clip(cos_theta_over_2, -1.0, 1.0)  # For numerical stability
+    theta_bloch = 2 * np.arccos(cos_theta_over_2)
+
+    # If theta is very small, return default axis
+    if np.isclose(theta_bloch, 0):
+        return 0.0, np.array([0.0, 0.0, 1.0])
+
+    # Compute sin(theta/2)
+    sin_theta_over_2 = np.sin(theta_bloch / 2)
+
+    # Extract the vector part
+    n_x = np.imag(np.trace(matrix @ sigma_x)) / (2 * sin_theta_over_2)
+    n_y = np.imag(np.trace(matrix @ sigma_y)) / (2 * sin_theta_over_2)
+    n_z = np.imag(np.trace(matrix @ sigma_z)) / (2 * sin_theta_over_2)
+    axis = np.array([n_x, n_y, n_z])
+
+    # Normalize axis (in case of small numerical error)
+    axis = axis / np.linalg.norm(axis)
+
+    return BlochSphereRotation(qubit, axis=axis, angle=theta_bloch)
+

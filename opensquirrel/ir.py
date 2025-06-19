@@ -766,6 +766,10 @@ class CanonicalGate(Gate):
     def is_identity(self) -> bool:
         return np.allclose(self.get_matrix(), np.eye(2 ** len(self.operands)), atol=ATOL)
 
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return ()
+
 
 class Can(CanonicalGate):
     def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, canonical_axis: AxisLike) -> None:
