@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
+
 import numpy as np
 
 from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
+    from numpy.typing import ArrayLike
+
     from opensquirrel.ir import IR, Gate, QubitLike
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
@@ -14,7 +17,6 @@ if TYPE_CHECKING:
     from opensquirrel.passes.router import Router
     from opensquirrel.passes.validator import Validator
     from opensquirrel.register_manager import RegisterManager
-    from numpy.typing import ArrayLike, NDArray
 
 
 class Circuit:
@@ -45,7 +47,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
-        self.phase_map = self.PhaseMap(np.zeros(self.qubit_register_size))
+        self.phase_map = self.PhaseMap(np.zeros(self.qubit_register_size, dtype=np.complex128))
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""

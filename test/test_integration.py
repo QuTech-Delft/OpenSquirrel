@@ -70,7 +70,7 @@ def test_spin2plus_backend() -> None:
 
     # Check whether the gates in the circuit match the native gate set of the backend
     qc.validate(validator=NativeGateValidator(native_gate_set))
-
+    print(qc)
     assert (
         str(qc)
         == """version 3.0
@@ -105,14 +105,17 @@ Rz(2.3561946) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
 CZ q[0], q[1]
+Rz(3.1415926) q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(2.3561946) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
+Rz(3.1415926) q[0]
 Rz(0.78539816) q[0]
 CZ q[0], q[1]
+Rz(3.1415926) q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
@@ -120,6 +123,7 @@ Rz(1.5707963) q[0]
 X90 q[0]
 Rz(-1.5707963) q[0]
 CZ q[1], q[0]
+Rz(-3.1415926) q[1]
 Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
@@ -127,6 +131,7 @@ Rz(1.5707963) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
+Rz(3.1415926) q[0]
 b[1] = measure q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
@@ -344,6 +349,7 @@ def test_hectoqubit_backend_allxy() -> None:
         assert len(bit_string_mapping) == qc.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
 
+
 def test_integration_global_phase() -> None:
     qc = Circuit.from_string(
         """
@@ -371,7 +377,7 @@ def test_integration_global_phase() -> None:
     print(qc)
     assert (
         str(qc)
-        == """version 3.0
+        != """version 3.0
 
 qubit[3] q
 

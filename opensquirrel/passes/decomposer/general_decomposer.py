@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
-import numpy as np
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-from opensquirrel.default_instructions import is_anonymous_gate
 from opensquirrel.common import (
     ATOL,
     are_matrices_equivalent_up_to_global_phase,
@@ -14,13 +14,12 @@ from opensquirrel.common import (
     get_phase_angle,
     is_identity_matrix_up_to_a_global_phase,
 )
-from opensquirrel.default_instructions import Rz
-from opensquirrel.ir import Float, Gate, IR
+from opensquirrel.default_instructions import Rz, is_anonymous_gate
+from opensquirrel.ir import Float, Gate
 from opensquirrel.reindexer import get_reindexed_circuit
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
-
 
 
 class Decomposer(ABC):
@@ -35,7 +34,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
        Args:
            gate: original gate
            replacement_gates: gates replacing the gate
-           qc: circuit to verify
+           circuit: circuit to verify
        Returns:
            Returns verified list of replacement gates with possible correction.
        """
@@ -43,9 +42,10 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
     replacement_gates_qubit_indices = set()
     qubit_list = gate.get_qubit_operands()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
+    replacement_gates = list(replacement_gates)
 
     if is_identity_matrix_up_to_a_global_phase(replaced_matrix):
-        return
+        return []
 
     for g in replacement_gates:
         replacement_gates_qubit_indices.update([q.index for q in g.get_qubit_operands()])
@@ -70,9 +70,10 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
                 circuit.phase_map.get_qubit_phase(qubit_list[1]) - circuit.phase_map.get_qubit_phase(qubit_list[0])
             ))
             if abs(relative_phase) > ATOL:
-                list(replacement_gates).append(Rz(gate.get_qubit_operands()[0], Float(-1 * relative_phase)))
+                replacement_gates.append(Rz(gate.get_qubit_operands()[0], Float(-1 * relative_phase)))
 
-    return list(replacement_gates)
+    return replacement_gates
+
 
 def decompose(circuit: Circuit, decomposer: Decomposer) -> None:
     """Applies `decomposer` to every gate in the circuit, replacing each gate by the output of `decomposer`.
