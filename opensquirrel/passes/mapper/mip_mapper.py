@@ -1,7 +1,7 @@
 # OpenQL MIP-Like Mapper
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -13,19 +13,17 @@ from opensquirrel.passes.mapper.mapping import Mapping
 
 
 def compute_distance_matrix(connectivity: dict[str, list[int]], n: int) -> NDArray[np.int_]:
-    dist = np.full((n, n), np.inf)
-    np.fill_diagonal(dist, 0)
-    for i_str, neighbors in connectivity.items():
-        i = int(i_str)
-        for j in neighbors:
-            dist[i, j] = 1
+    distance = np.full((n, n), 999999, dtype=int)
+    np.fill_diagonal(distance, 0)
+    for start_qubit_index, end_qubit_indices in connectivity.items():
+        for end_qubit_index in end_qubit_indices:
+            distance[int(start_qubit_index), end_qubit_index] = 1
     for k in range(n):
         for i in range(n):
             for j in range(n):
-                if dist[i, j] > dist[i, k] + dist[k, j]:
-                    dist[i, j] = dist[i, k] + dist[k, j]
-    dist[dist == np.inf] = 999999
-    return dist.astype(int)
+                if distance[i, j] > distance[i, k] + distance[k, j]:
+                    distance[i, j] = distance[i, k] + distance[k, j]
+    return distance
 
 
 class MIPMapper(Mapper):
@@ -33,7 +31,7 @@ class MIPMapper(Mapper):
         self,
         qubit_register_size: int,
         connectivity: dict[str, list[int]],
-        timeout: Optional[float] = None,  # noqa: UP045
+        timeout: float | None = None,
         **kwargs: Any,
     ) -> None:
         self.qubit_register_size = qubit_register_size
@@ -42,7 +40,7 @@ class MIPMapper(Mapper):
         self.distance_matrix = compute_distance_matrix(connectivity, qubit_register_size)
         super().__init__(qubit_register_size, None, **kwargs)
 
-    def map(self, ir: IR) -> Mapping:  # noqa: C901
+    def map(self, ir: IR) -> Mapping:
         """
         Find an initial mapping of virtual qubits to physical qubits that minimizes
         the sum of distances between mapped operands of all two-qubit gates, using
@@ -50,13 +48,13 @@ class MIPMapper(Mapper):
 
         This method formulates the mapping as a linear assignment problem, where the
         objective is to minimize the total "distance cost" of executing all two-qubit
-        gates, given the hardware connectivity.
+        gates, given the connectivity.
 
         Args:
             ir (IR): The intermediate representation of the quantum circuit to be mapped.
 
         Returns:
-            Mapping: An object representing the mapping from virtual to physical qubits.
+            Mapping: Mapping from virtual to physical qubits.
 
         Raises:
             RuntimeError: If the MIP solver fails to find a feasible mapping or times out.
@@ -65,13 +63,21 @@ class MIPMapper(Mapper):
         n = self.qubit_register_size
         distance = self.distance_matrix
 
-        # Check if the number of virtual qubits exceeds the number of physical qubits
+        self._validate_logical_vs_physical_qubits(ir, n)
+        refcount = self.build_refcount(ir, n)
+        cost_matrix = self.build_cost_matrix(refcount, distance, n)
+        constraints, integrality, bounds = self.build_constraints(n)
+        milp_options = self.build_milp_options()
+        mapping = self.solve_and_extract_mapping(cost_matrix, constraints, integrality, bounds, milp_options, n)
+        return Mapping(mapping)
+
+    def _validate_logical_vs_physical_qubits(self, ir: IR, n: int) -> None:
         max_virtual_index = max(
             (
                 q.index
-                for stmt in getattr(ir, "statements", [])
-                if isinstance(stmt, Instruction)
-                for q in getattr(stmt, "arguments", [])
+                for statement in getattr(ir, "statements", [])
+                if isinstance(statement, Instruction)
+                for q in getattr(statement, "arguments", [])
                 if isinstance(q, Qubit)
             ),
             default=-1,
@@ -82,64 +88,68 @@ class MIPMapper(Mapper):
             )
             raise RuntimeError(error_message)
 
-        # Build refcount matrix
+    def build_refcount(self, ir: IR, n: int) -> NDArray[np.int_]:
         refcount = np.zeros((n, n), dtype=int)
         for statement in getattr(ir, "statements", []):
-            if not isinstance(statement, Instruction):
-                continue
-            args = statement.arguments
-            if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
-                qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
-                qubit_index_pairs = [(q0.index, q1.index) for q0, q1 in zip(qubit_args[:-1], qubit_args[1:])]
-                for i, j in qubit_index_pairs:
-                    refcount[i, j] += 1
-                    refcount[j, i] += 1
+            if isinstance(statement, Instruction):
+                args = statement.arguments
+                if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
+                    qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
+                    for q_0, q_1 in zip(qubit_args[:-1], qubit_args[1:]):
+                        refcount[q_0.index, q_1.index] += 1
+                        refcount[q_1.index, q_0.index] += 1
+        return refcount
 
-        num_vars = n * n
-
-        cost_matrix = np.zeros((n, n))
+    def build_cost_matrix(self, refcount: NDArray[np.int_], distance: NDArray[np.int_], n: int) -> NDArray[np.int_]:
+        cost_matrix = np.zeros((n, n), dtype=int)
         for i in range(n):
             for k in range(n):
                 cost_matrix[i, k] = sum(refcount[i, j] * distance[k, m] for j in range(n) for m in range(n))
+        return cost_matrix
 
-        c = cost_matrix.flatten()
+    def build_constraints(self, n: int) -> tuple[list[LinearConstraint], NDArray[np.bool_], Bounds]:
+        num_vars = n * n
+        eq_a = np.zeros((n, num_vars))
+        for q_i in range(n):
+            for q_k in range(n):
+                eq_a[q_i, q_i * n + q_k] = 1
+        eq_b = np.ones(n)
 
-        # Constraints:
-
-        # 1. Each virtual qubit assigned to exactly one real qubit
-        a_eq1 = np.zeros((n, num_vars))
-        for i in range(n):
-            for k in range(n):
-                a_eq1[i, i * n + k] = 1
-        b_eq1 = np.ones(n)
-
-        # 2. Each real qubit assigned at most one virtual qubit
-        a_ub = np.zeros((n, num_vars))
-        for k in range(n):
-            for i in range(n):
-                a_ub[k, i * n + k] = 1
-        b_ub = np.ones(n)
-
+        ub_a = np.zeros((n, num_vars))
+        for q_k in range(n):
+            for q_i in range(n):
+                ub_a[q_k, q_i * n + q_k] = 1
+        ub_b = np.ones(n)
         integrality = np.ones(num_vars, dtype=bool)
         bounds = Bounds(0, 1)
+        constraints = [LinearConstraint(eq_a, eq_b, eq_b), LinearConstraint(ub_a, -np.inf, ub_b)]
+        return constraints, integrality, bounds
 
-        constraints = [LinearConstraint(a_eq1, b_eq1, b_eq1), LinearConstraint(a_ub, -np.inf, b_ub)]
-
-        time_limit = self.timeout
+    def build_milp_options(self) -> dict[str, float]:
         milp_options = {}
-        if time_limit is not None:
-            milp_options["time_limit"] = time_limit
+        if self.timeout is not None:
+            milp_options["time_limit"] = self.timeout
+        return milp_options
 
-        res = milp(c=c, constraints=constraints, integrality=integrality, bounds=bounds, options=milp_options)
-
+    def solve_and_extract_mapping(
+        self,
+        cost_matrix: NDArray[np.int_],
+        constraints: list[LinearConstraint],
+        integrality: NDArray[np.bool_],
+        bounds: Bounds,
+        milp_options: dict[str, float],
+        n: int,
+    ) -> list[int]:
+        cost = cost_matrix.flatten()
+        res = milp(c=cost, constraints=constraints, integrality=integrality, bounds=bounds, options=milp_options)
         if not res.success:
-            error_message = f"MIP solver failed: {res.message}"
+            error_message = (
+                f"MIP solver failed to find a feasible mapping. Status: {res.status}, Message: {res.message}"
+            )
             raise RuntimeError(error_message)
-
         x_sol = res.x.reshape((n, n))
         mapping = []
-        for i in range(n):
-            k = int(np.argmax(x_sol[i]))
+        for q_i in range(n):
+            k = int(np.argmax(x_sol[q_i]))
             mapping.append(k)
-
-        return Mapping(mapping)
+        return mapping

@@ -33,7 +33,7 @@ numpy = ">=1.26"
 libqasm = "1.2.0"
 networkx = "^3.0.0"
 tox = "^4.24.1"
-scipy = "1.11.4"
+scipy = ">=1.11.4"
 
 [tool.poetry.group.dev.dependencies]
 coverage = {extras = ["toml"], version = "^7.3.2"}
