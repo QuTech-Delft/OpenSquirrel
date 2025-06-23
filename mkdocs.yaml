@@ -52,7 +52,6 @@ nav:
       - Routing: compilation-passes/types-of-passes/routing/index.md
       - Shortest-path router: compilation-passes/types-of-passes/routing/shortest-path-router.md
       - A-star router: compilation-passes/types-of-passes/routing/a-star-router.md
-      - QRoute router: compilation-passes/types-of-passes/routing/qroute-router.md
     - Validation:
       - Validation: compilation-passes/types-of-passes/validation/index.md
       - Routing validator: compilation-passes/types-of-passes/validation/routing-validator.md

@@ -8,3 +8,9 @@ The routing pass adjusts the initial mapping of virtual qubits to physical qubit
 such as _SWAP_ gates, to move qubits into positions where they can interact as required by the quantum circuit.
 This process is essential because it ensures that the quantum circuit can be executed on the hardware without violating
 its connectivity constraints.
+
+The following routing passes are available in _Opensquirrel_:
+
+- [Shortest Path Router](shortest-path-router.md)
+
+- [A* Router](a-star-router.md)
