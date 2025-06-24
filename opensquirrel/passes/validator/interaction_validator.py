@@ -4,7 +4,7 @@ from opensquirrel.ir import IR, Instruction, Qubit
 from opensquirrel.passes.validator import Validator
 
 
-class RoutingValidator(Validator):
+class InteractionValidator(Validator):
     def __init__(self, connectivity: dict[str, list[int]], **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.connectivity = connectivity
