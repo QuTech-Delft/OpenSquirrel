@@ -1,32 +1,20 @@
 When developing quantum algorithms, their compilation on a specific device depends on whether the hardware supports the
 operations implemented on the circuit.
-To this end, the native gate validator pass checks whether the quantum gates on the quantum circuit are present in the
+
+To this end, the [PrimitiveGateValidator](http://127.0.0.1:8000/reference/passes/validator/primitive_gate_validator.html) pass checks whether the quantum gates on the quantum circuit are present in the
 native gate set of the quantum hardware.
 If this is not the case, the validator will throw a `ValueError`, specifying which gates are present in the circuit's
 description, but not in the hardware's native gate set.
 
-## Class Object
-
-```python
-PrimitiveGateValidator(native_gate_set: list[str])
-```
-
-## Attribute(s)
-
-```python
-native_gate_set: A list containing the primitive gate set.
-```
-
-The `PrimitiveGateValidator` can be used as such.
+This validator pass can be used as suc.
 
 ```python
 from opensquirrel import CircuitBuilder
-from opensquirrel.circuit import Circuit
-from opensquirrel.passes.validator import NativeGateValidator
+from opensquirrel.passes.validator import PrimitiveGateValidator
 
 primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
 
-validator = PrimitiveGateValidator(primtive_gate_set = primitive_gate_set)
+gate_validator = PrimitiveGateValidator(primtive_gate_set = primitive_gate_set)
 
 builder = CircuitBuilder(5)
 builder.I(0)
@@ -40,7 +28,7 @@ builder.H(0)
 builder.CNOT(1, 2)
 circuit = builder.to_circuit()
 
-validator.validate(circuit.ir)
+circuit.validate(validator = gate_validator)
 ```
 _Output_:
 

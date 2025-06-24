@@ -2,29 +2,61 @@ Within this routing pass, SWAP gates are introduced along the shortest path betw
 the hardware, but do not share a connection.
 While simple and straight-forward, this may result in an overly increased circuit depth.
 
-## Class Object
+The [ShortestPathRouter](http://127.0.0.1:8000/reference/passes/router/shortest_path_router.html) pass is a compilation step that ensures all two-qubit gates in a circuit can be 
+executed on a given hardware topology. When a two-qubit gate involves qubits that are not directly connected on the device, 
+this pass finds the shortest path between them using the hardware’s connectivity graph. It then inserts the necessary SWAP gates along this path, 
+moving the qubits closer together so the intended operation can be performed. This approach aims to minimize the number of SWAPs required for each interaction 
+by using the shortest path method from the _networkx_ package.
+
+The following examples showcase the usage of the _ShortestPathRouter_ pass.
 
 ```python
-ShortestPathRouter(connectivity: dict[str, list[int]])
+from opensquirrel import CircuitBuilder
+from opensquirrel.passes.router import ShortestPathRouter
+
+ connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
+
+shortest_path_router = ShortestPathRouter(connectivity = connectivity)
+
+builder = CircuitBuilder(5)
+builder.CNOT(0, 1)
+builder.CNOT(1, 2)
+builder.CNOT(2, 3)
+builder.CNOT(3, 4)
+builder.CNOT(0, 4)
+
+circuit = builder.to_circuit()
+
+circuit.route(router = shortest_path_router)
 ```
 
-## Attribute(s)
+_Output_:
+
+    4
 
 ```python
-connectivity: dictionary where key-values pairs represent
-qubit connections on the backend.
+from opensquirrel import CircuitBuilder
+from opensquirrel.passes.router import ShortestPathRouter
+
+connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
+
+shortest_path_router = ShortestPathRouter(connectivity = connectivity)
+
+builder = CircuitBuilder(7)
+builder.CNOT(0, 6)
+builder.CNOT(1, 5)
+builder.CNOT(2, 4)
+builder.CNOT(3, 6)
+builder.CNOT(0, 2)
+builder.CNOT(1, 3)
+builder.CNOT(4, 5)
+builder.CNOT(5, 6)
+
+circuit = builder.to_circuit()
+
+circuit.route(router = shortest_path_router)
 ```
 
-## Method(s)
+_Output_:
 
-```python
-def route(self, ir: IR) -> IR:
-    """
-    Routes the circuit by inserting SWAP gates along the shortest path between qubits which can not  # noqa: W291
-    interact with each other, to make it executable given the hardware connectivity.
-    Args:
-        ir: The intermediate representation of the circuit.
-    Returns:
-        The intermediate representation of the routed circuit (including the additional SWAP gates).
-    """
-```
+    8
