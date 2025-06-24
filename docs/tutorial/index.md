@@ -6,6 +6,7 @@ In a nutshell, we will do so by
 3. [writing out and exporting](writing-out-and-exporting.md) the compiled program to various formats.
 
 The diagram below illustrates the basic components of OpenSquirrel.
+We refer to it in the following sections, where we quickly go through the 3 aforementioned steps.
 
 <p align="center"> <img width="700" src="../../_static/overview_diagram.png"> </p>
 
@@ -20,6 +21,13 @@ given by the [**circuit builder**](../circuit-builder/index.md).
 Both approaches result in an instance of a `Circuit`, which comprises OpenSquirrel's main entrypoint.
 The **circuit** object contains the attributes of the input quantum program
 and stores its statements in an _Intermediate Representation_ (**IR**).
+
+!!! note "Order matters"
+
+    Note that the order in which the various compilation passes are applied will have an impact on the final result.
+    Moreover, in general it will make more sense to validate after making any changes.
+    For instance, validating that the gates in the circuit are part of the specified primitive gate set
+    should be done after the decomposition of the gates.
 
 Check for more details: [Creating a circuit](creating-a-circuit.md)
 
@@ -61,7 +69,7 @@ one can decide to either write the compiled program to cQASM using the **writer*
 or export the result to a different format, by selecting one of the available **exporter**s.
 
 The string representation of the `circuit` object automatically invokes the writer,
-so the following line will return the (compiled) program in cQASM:
+so the following line will return the (compiled) program, _i.e._ **program'** , in cQASM:
 
 ```python
 str(circuit)

@@ -93,8 +93,28 @@ circuit = Circuit.from_string(
     ```
 
 The `Circuit.from_string` method invokes OpenSquirrel's reader which uses the
-libQASM parser](https://qutech-delft.github.io/libqasm/latest/) to parse the input program.
-The reader only accepts quantum programs written in [cQASM](https://qutech-delft.github.io/cQASM-spec/latest/).
+[libQASM parser](https://qutech-delft.github.io/libqasm/latest/) to parse the input program.
+
+Some important things to note about how OpenSquirrel reads the input cQASM string:
+the OpenSquirrel reader
+
+- unpacks any [SGMQ notation](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html)
+as separate statements,
+- combines all _logical_ (qu)bit registers into a single _virtual_ (qu)bit register
+with identifiers `q` and `b`, signifying the qubit and bit registers, respectively, and
+- ignores any [comments](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/tokens/whitespace_and_comments.html);
+they are simply not registered during the parsing phase.
+
+!!! warning "OpenSquirrel's native tongue is cQASM"
+
+    The OpenSquirrel reader only accepts quantum programs written in
+    [cQASM](https://qutech-delft.github.io/cQASM-spec/latest/).
+    The same applies to OpenSquirrel's writer, _i.e._,
+    the string representation of a `circuit` is in cQASM.
+    Nonetheless, using [exporter passes](../compilation-passes/types-of-passes/exporting/index.md) one can export to
+    circuit to a different language, _e.g._,
+    [quantify-scheduler Schedule](https://quantify-os.org/docs/quantify-scheduler/v0.20.1/autoapi/quantify_scheduler/index.html)
+    or [cQASM 1.0](https://libqasm.readthedocs.io/en/latest/index.html).
 
 One can now proceed to [apply compilation passes](applying-compilation-passes.md) to the `circuit` object.
 
@@ -102,6 +122,7 @@ One can now proceed to [apply compilation passes](applying-compilation-passes.md
 
 Circuits can also be defined using Python functionalities,
 via the [circuit builder](../circuit-builder/index.md), as shown below.
+For this, the user will first need to import the `CircuitBuilder` from `opensquirrel`.
 
 ```{ .py }
 from opensquirrel import CircuitBuilder
@@ -111,8 +132,10 @@ builder.init(0).init(1)
 builder.H(0)
 builder.CNOT(0, 1)
 builder.barrier(0).barrier(1)
+builder.measure(0, 0).measure(1, 1)
 circuit = builder.to_circuit()
 ```
+
 ??? example "`print(circuit)`"
 
     ```
@@ -131,7 +154,10 @@ circuit = builder.to_circuit()
     b[1] = measure q[1]
     ```
 
-You can naturally use the functionalities available in Python to create your circuit:
+Note that the representation of the printed circuit is the same as the one obtained from the cQASM string above.
+
+The real power of the circuit builder lies in that fact that it can be used in combination with the functionalities
+available in Python to create your circuit:
 
 ```python
 from opensquirrel import CircuitBuilder
@@ -157,8 +183,7 @@ circuit = builder.to_circuit()
     H q[8]
     ```
 
-For instance, you can generate a [quantum fourier transform](https://en.wikipedia.org/wiki/Quantum_Fourier_transform)
-(QFT) circuit as follows:
+For instance, you can straightforwardly generate a [quantum fourier transform](https://en.wikipedia.org/wiki/Quantum_Fourier_transform) (QFT) circuit as follows:
 
 ```python
 from opensquirrel import CircuitBuilder
@@ -173,6 +198,7 @@ for qubit_index in range(qreg_size):
             builder.CRk(control_index, target_index, k)
 circuit_qft = builder.to_circuit()
 ```
+
 ??? example "`print(circuit_qft)`"
 
     ```
@@ -196,33 +222,3 @@ circuit_qft = builder.to_circuit()
     CRk(2) q[4], q[3]
     H q[4]
     ```
-
-There are multiple types of gates that can be applied to the circuit, using the `CircuitBuilder`. These include:
-
-- [Unitary Gates](../../circuit-builder/instructions/gates.md)
-- [Non-Unitary Gates](../../circuit-builder/instructions/non-unitaries.md)
-- [Control Gates](../../circuit-builder/instructions/control-instructions.md)
-
-As you can see, gates require _strong types_. For instance, you cannot do:
-
-```python
-from opensquirrel.circuit import Circuit
-
-try:
-    Circuit.from_string(
-        """
-        version 3.0
-        qubit[2] q
-
-        CNOT q[0], 3 // The CNOT expects a qubit as second argument.
-        """
-    )
-except Exception as e:
-    print(e)
-```
-_Output_:
-
-    Parsing error: failed to resolve overload for cnot with argument pack (qubit, int)
-
-The issue is that the `CNOT` expects a qubit as second input argument where an integer has been provided.
-
