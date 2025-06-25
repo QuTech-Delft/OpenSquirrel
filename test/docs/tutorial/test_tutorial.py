@@ -118,7 +118,7 @@ b[1] = measure q[1]
     def test_circuit_builder_loop(self) -> None:
         qreg_size = 10
         builder = CircuitBuilder(qubit_register_size=qreg_size)
-        for qubit_index in range(0, 10, 2):
+        for qubit_index in range(0, qreg_size, 2):
             builder.H(qubit_index)
         circuit = builder.to_circuit()
 
@@ -170,7 +170,51 @@ H q[4]
 """
         )
 
+
 class TestApplyingCompilationPasses:
+
+    def test_creating_circuit(self) -> None:
+
+        circuit = Circuit.from_string(
+            """
+            version 3.0
+
+            qubit[3] q
+            bit[2] b
+
+            init q
+
+            Ry(pi / 2) q[0]
+            X q[0]
+            CNOT q[0], q[2]
+
+            barrier q
+
+            b[0, 1] = measure q[0, 2]
+            """
+        )
+
+        assert (
+            str(circuit)
+            == """version 3.0
+
+qubit[3] q
+bit[2] b
+
+init q[0]
+init q[1]
+init q[2]
+Ry(1.5707963) q[0]
+X q[0]
+CNOT q[0], q[2]
+barrier q[0]
+barrier q[1]
+barrier q[2]
+b[0] = measure q[0]
+b[1] = measure q[2]
+"""
+        )
+
 
     def test_predefined_decomposition(self) -> None:
         qc = Circuit.from_string(
@@ -248,3 +292,78 @@ class TestApplyingCompilationPasses:
         )
 
         assert ZYZDecomposer().decompose(H(0)) == [Rz(0, math.pi), Ry(0, math.pi / 2)]
+
+
+def test_merger() -> None:
+    circuit = Circuit.from_string(
+        """
+        version 3.0
+
+    qubit[3] q
+    bit[2] b
+
+    init q[0]
+    init q[1]
+    init q[2]
+    Ry(1.5707963) q[0]
+    X q[0]
+    Ry(-1.5707963) q[2]
+    CZ q[1], q[2]
+    Ry(1.5707963) q[2]
+    Ry(-1.5707963) q[1]
+    CZ q[2], q[1]
+    Ry(1.5707963) q[1]
+    Ry(-1.5707963) q[2]
+    CZ q[1], q[2]
+    Ry(1.5707963) q[2]
+    Ry(-1.5707963) q[1]
+    CZ q[0], q[1]
+    Ry(1.5707963) q[1]
+    barrier q[0]
+    barrier q[2]
+    barrier q[1]
+    b[0] = measure q[0]
+    b[1] = measure q[1]
+        """
+    )
+
+    circuit.merge(merger=SingleQubitGatesMerger())
+
+    print(circuit)
+
+
+def test_mckay() -> None:
+    circuit = Circuit.from_string(
+        """
+        version 3.0
+
+    qubit[3] q
+    bit[2] b
+
+    init q[0]
+    init q[1]
+    init q[2]
+    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[2]
+    CZ q[1], q[2]
+    Ry(1.5707963) q[2]
+    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[1]
+    CZ q[2], q[1]
+    Ry(1.5707963) q[1]
+    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[2]
+    CZ q[1], q[2]
+    H q[0]
+    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[1]
+    CZ q[0], q[1]
+    Ry(1.5707963) q[1]
+    Ry(1.5707963) q[2]
+    barrier q[0]
+    barrier q[2]
+    barrier q[1]
+    b[0] = measure q[0]
+    b[1] = measure q[1]
+        """
+    )
+
+    circuit.decompose(decomposer=McKayDecomposer())
+
+    print(circuit)

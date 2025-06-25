@@ -164,7 +164,7 @@ from opensquirrel import CircuitBuilder
 
 qreg_size = 10
 builder = CircuitBuilder(qubit_register_size=qreg_size)
-for qubit_index in range(0, 10, 2):
+for qubit_index in range(0, qreg_size, 2):
     builder.H(qubit_index)
 circuit = builder.to_circuit()
 ```
@@ -222,3 +222,5 @@ circuit_qft = builder.to_circuit()
     CRk(2) q[4], q[3]
     H q[4]
     ```
+
+One can now proceed to [apply compilation passes](applying-compilation-passes.md) to the `circuit` object.

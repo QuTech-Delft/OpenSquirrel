@@ -22,13 +22,6 @@ Both approaches result in an instance of a `Circuit`, which comprises OpenSquirr
 The **circuit** object contains the attributes of the input quantum program
 and stores its statements in an _Intermediate Representation_ (**IR**).
 
-!!! note "Order matters"
-
-    Note that the order in which the various compilation passes are applied will have an impact on the final result.
-    Moreover, in general it will make more sense to validate after making any changes.
-    For instance, validating that the gates in the circuit are part of the specified primitive gate set
-    should be done after the decomposition of the gates.
-
 Check for more details: [Creating a circuit](creating-a-circuit.md)
 
 **2. applying compilation passes**
@@ -59,6 +52,13 @@ _This particular pass does not take any input parameters._
 Each compilation pass will take the circuit or IR as input and perform the specified action on it.
 Ultimately, these actions either validate or make changes to certain properties/components of the circuit,
 whilst preserving the semantic content of the program.
+
+!!! note "Order matters"
+
+    Note that the order in which the various compilation passes are applied will have an impact on the final result.
+    In particular, it will make more sense to validate a result after making any changes.
+    For instance, validating wether the gates in the circuit are part of the (specified) primitive gate set,
+    should be done after decomposition.
 
 Check for more details: [Applying compilation passes](applying-compilation-passes.md)
 
