@@ -89,4 +89,5 @@ def test_more_logical_qubits_than_physical(mapper1: MIPMapper, circuit3: Circuit
 
 def test_timeout(mapper3: MIPMapper, circuit2: Circuit) -> None:
     with pytest.raises(RuntimeError, match="MIP solver failed"):
+        # timeout used: 0.000001
         mapper3.map(circuit2.ir)
