@@ -14,25 +14,26 @@ Consider the following example quantum program written in the
     version 3.0
 
     // Qubit register declaration
-    qubit[5] q
+    qubit[3] q
 
     // Bit register declaration
     bit[2] b
 
-    // Qubit register initialization
-    init q[0, 1]
+    // Qubit register initialization (with SGMQ notation)
+    init q
 
-    // Single-qubit gate
-    H q[0]
+    // Single-qubit gates
+    Ry(pi / 2) q[0]
+    X q[0]
 
     // Two-qubit gate
-    CNOT q[0], q[1]
+    CNOT q[0], q[2]
 
-    // Control instruction
-    barrier q[0, 1]
+    // Control instruction (with SGMQ notation)
+    barrier q
 
-    // Measure instruction
-    b[0, 1] = measure q[0, 1]
+    // Measure instruction (with SGMQ notation)
+    b[0, 1] = measure q[0, 2]
 
     ```
 
@@ -50,25 +51,26 @@ circuit = Circuit.from_string(
     version 3.0
 
     // Qubit register declaration
-    qubit[5] q
+    qubit[3] q
 
     // Bit register declaration
     bit[2] b
 
-    // Qubit register initialization
-    init q[0, 1]
+    // Qubit register initialization (with SGMQ notation)
+    init q
 
-    // Single-qubit gate
-    H q[0]
+    // Single-qubit gates
+    Ry(pi / 2) q[0]
+    X q[0]
 
     // Two-qubit gate
-    CNOT q[0], q[1]
+    CNOT q[0], q[2]
 
-    // Control instruction
-    barrier q[0, 1]
+    // Control instruction (with SGMQ notation)
+    barrier q
 
-    // Measure instruction
-    b[0, 1] = measure q[0, 1]
+    // Measure instruction (with SGMQ notation)
+    b[0, 1] = measure q[0, 2]
 
     """
 )
@@ -79,17 +81,20 @@ circuit = Circuit.from_string(
     ```
     version 3.0
 
-    qubit[5] q
+    qubit[3] q
     bit[2] b
 
     init q[0]
     init q[1]
-    H q[0]
-    CNOT q[0], q[1]
+    init q[2]
+    Ry(1.5707963) q[0]
+    X q[0]
+    CNOT q[0], q[2]
     barrier q[0]
     barrier q[1]
+    barrier q[2]
     b[0] = measure q[0]
-    b[1] = measure q[1]
+    b[1] = measure q[2]
     ```
 
 The `Circuit.from_string` method invokes OpenSquirrel's reader which uses the
@@ -99,9 +104,10 @@ Some important things to note about how OpenSquirrel reads the input cQASM strin
 the OpenSquirrel reader
 
 - unpacks any [SGMQ notation](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html)
-as separate statements,
+as separate consecutive statements,
 - combines all _logical_ (qu)bit registers into a single _virtual_ (qu)bit register
-with identifiers `q` and `b`, signifying the qubit and bit registers, respectively, and
+with identifiers `q` and `b`, signifying the qubit and bit registers, respectively,
+- evaluates complex expressions (_e.g._, `pi/2` becomes `1.5707963`), and
 - ignores any [comments](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/tokens/whitespace_and_comments.html);
 they are simply not registered during the parsing phase.
 
@@ -125,14 +131,16 @@ via the [circuit builder](../circuit-builder/index.md), as shown below.
 For this, the user will first need to import the `CircuitBuilder` from `opensquirrel`.
 
 ```{ .py }
+import math
 from opensquirrel import CircuitBuilder
 
-builder = CircuitBuilder(qubit_register_size=5, bit_register_size=2)
-builder.init(0).init(1)
-builder.H(0)
-builder.CNOT(0, 1)
-builder.barrier(0).barrier(1)
-builder.measure(0, 0).measure(1, 1)
+builder = CircuitBuilder(qubit_register_size=3, bit_register_size=2)
+builder.init(0).init(1).init(2)
+builder.Ry(0, math.pi / 2)
+builder.X(0)
+builder.CNOT(0, 2)
+builder.barrier(0).barrier(1).barrier(2)
+builder.measure(0, 0).measure(1, 2)
 circuit = builder.to_circuit()
 ```
 
@@ -141,17 +149,20 @@ circuit = builder.to_circuit()
     ```
     version 3.0
 
-    qubit[5] q
+    qubit[3] q
     bit[2] b
 
     init q[0]
     init q[1]
-    H q[0]
-    CNOT q[0], q[1]
+    init q[2]
+    Ry(1.5707963) q[0]
+    X q[0]
+    CNOT q[0], q[2]
     barrier q[0]
     barrier q[1]
+    barrier q[2]
     b[0] = measure q[0]
-    b[1] = measure q[1]
+    b[1] = measure q[2]
     ```
 
 Note that the representation of the printed circuit is the same as the one obtained from the cQASM string above.

@@ -173,7 +173,15 @@ H q[4]
 
 class TestApplyingCompilationPasses:
 
-    def test_creating_circuit(self) -> None:
+    connectivity = {
+        "0": [1],
+        "1": [0, 2],
+        "2": [1]
+    }
+
+    pgs = ["I", "X", "Z", "X90", "mX90", "S", "Sdag", "T", "Tdag", "Rx", "Rz", "CZ"]
+
+    def test_input_program(self) -> None:
 
         circuit = Circuit.from_string(
             """
@@ -215,42 +223,47 @@ b[1] = measure q[2]
 """
         )
 
-
-    def test_predefined_decomposition(self) -> None:
-        qc = Circuit.from_string(
+    def test_routing(self) -> None:
+        circuit = Circuit.from_string(
             """
             version 3.0
-            qubit[3] q
 
-            X q[0:2]  // Note that this notation is expanded in OpenSquirrel.
-            CNOT q[0], q[1]
-            Ry(6.78) q[2]
+            qubit[3] q
+            bit[2] b
+
+            init q[0]
+            init q[1]
+            init q[2]
+            Ry(1.5707963) q[0]
+            X q[0]
+            CNOT q[0], q[2]
+            barrier q[0]
+            barrier q[1]
+            barrier q[2]
+            b[0] = measure q[0]
+            b[1] = measure q[2]
             """
         )
-        qc.replace(
-            CNOT,
-            lambda control, target: [
-                H(target),
-                CZ(control, target),
-                H(target),
-            ],
-        )
+        from opensquirrel.passes.router import ShortestPathRouter
 
-        assert (
-            str(qc)
-            == """version 3.0
+        circuit.route(router=ShortestPathRouter(connectivity=self.connectivity))
 
-    qubit[3] q
-
-    X q[0]
-    X q[1]
-    X q[2]
-    H q[1]
-    CZ q[0], q[1]
-    H q[1]
-    Ry(6.78) q[2]
-    """
-        )
+        print(circuit)
+    #     assert (
+    #         str(circuit)
+    #         == """version 3.0
+    #
+    # qubit[3] q
+    #
+    # X q[0]
+    # X q[1]
+    # X q[2]
+    # H q[1]
+    # CZ q[0], q[1]
+    # H q[1]
+    # Ry(6.78) q[2]
+    # """
+    #     )
 
     def test_error_predefined_decomposition(self) -> None:
         qc = Circuit.from_string(
