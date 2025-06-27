@@ -48,7 +48,7 @@ nav:
       - Validation: compilation-passes/types-of-passes/validation/index.md
       - Routing validator: compilation-passes/types-of-passes/validation/routing-validator.md
       - Primitive gate validator: compilation-passes/types-of-passes/validation/primitive-gate-validator.md
-#  - API documentation: reference/
+  - API documentation: reference/
 
 theme:
   name: "material"
@@ -111,9 +111,9 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 plugins:
-#  - gen-files:
-#      scripts:
-#        - scripts/gen_reference_page.py
+  - gen-files:
+      scripts:
+        - scripts/gen_reference_page.py
   - literate-nav:
       nav_file: reference.md
   - mkdocstrings

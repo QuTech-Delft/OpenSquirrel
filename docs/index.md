@@ -20,8 +20,7 @@ It is developed in modern Python and follows best practices.
 - [Tutorial](tutorial/index.md)
 - [Circuit builder](circuit-builder/index.md)
 - [Compilation passes](compilation-passes/index.md)
-
-[//]: # (- [API documentation]&#40;reference/reference.md&#41;)
+- [API documentation](reference/reference.md)
 
 ## Authors
 
