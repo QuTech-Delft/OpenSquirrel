@@ -3,7 +3,6 @@ import math
 from typing import ClassVar
 
 import pytest
-import quantify_scheduler
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer, McKayDecomposer, SWAP2CZDecomposer
