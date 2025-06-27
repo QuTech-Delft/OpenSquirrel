@@ -78,7 +78,7 @@ circuit = Circuit.from_string(
 
 ??? example "`print(circuit)`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -146,7 +146,7 @@ circuit = builder.to_circuit()
 
 ??? example "`print(circuit)`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -182,7 +182,7 @@ circuit = builder.to_circuit()
 
 ??? example "`print(circuit)`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[10] q
@@ -212,7 +212,7 @@ circuit_qft = builder.to_circuit()
 
 ??? example "`print(circuit_qft)`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[5] q

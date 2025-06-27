@@ -44,7 +44,7 @@ We will use the following example program, from which we can create the `circuit
 
     `print(circuit)`
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -102,15 +102,15 @@ The primitive gate set describes the set of gates that are supported by the (low
 backend.
 The primitive gates are not to be confused with the native gates.
 The latter are the gates that can directly be performed on the QPU, _i.e._, they are _native_ to the QPU.
-In general, a translation step will still occur from the primitive gates to the native gates, on the side of the target
-backend.
+In general, a translation step will still occur from the primitive gates to the native gates, _on the side_ of the
+target backend.
 
 The primitive gate set, labeled as the `pgs`, is given by a list of gate names
 (as they are defined in the
 [cQASM standard gate library](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html)):
 
 ```python
-pgs = ["I", "X", "Z", "X90", "mX90", "S", "Sdag", "T", "Tdag", "Rx", "Rz", "CZ"]
+pgs = ["I", "X90", "Rx", "Rz", "CZ", "init", "barrier", "measure"]
 ```
 
 A target backend expects that the circuit of the compiled program consists solely of gates that appear in the primitive
@@ -124,7 +124,7 @@ We start the compilation process with an initial routing pass to ensure that the
 between neighbouring qubits.
 The example circuit contains a two-qubit gate, _i.e._ the CNOT gate, between qubits at indices `0` and `2`,
 respectively.
-Given the connectivity of the QPU as stated above, we see that these qubits are not connected and therefore cannot
+Given the _connectivity_ of the QPU as stated above, we see that these qubits are not connected and therefore cannot
 interact.
 By introducing SWAPs in the circuit, the routing pass will ensure that all interactions in the circuit occur
 between neighbouring qubits.
@@ -141,7 +141,7 @@ circuit.route(router=ShortestPathRouter(connectivity=connectivity))
 
 ??? example "`print(circuit)  # Circuit after routing`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -161,7 +161,7 @@ circuit.route(router=ShortestPathRouter(connectivity=connectivity))
     b[1] = measure q[2]
     ```
 
-Note that, in general, a routing pass will require the connectivity of the QPU as input.
+Note that, in general, a routing pass will require the _connectivity_ of the QPU as input.
 
 !!! warning ""
 
@@ -202,7 +202,7 @@ circuit.decompose(decomposer=SWAP2CZDecomposer())
 
 ??? example "`print(circuit)  # Circuit after SWAP-to-CZ decomposition`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -213,21 +213,21 @@ circuit.decompose(decomposer=SWAP2CZDecomposer())
     init q[2]
     Ry(1.5707963) q[0]
     X q[0]
-    Ry(-1.5707963) q[2]
-    CZ q[1], q[2]
-    Ry(1.5707963) q[2]
     Ry(-1.5707963) q[1]
-    CZ q[2], q[1]
+    CZ q[0], q[1]
     Ry(1.5707963) q[1]
-    Ry(-1.5707963) q[2]
-    CZ q[1], q[2]
-    Ry(1.5707963) q[2]
-    CNOT q[0], q[1]
+    Ry(-1.5707963) q[0]
+    CZ q[1], q[0]
+    Ry(1.5707963) q[0]
+    Ry(-1.5707963) q[1]
+    CZ q[0], q[1]
+    Ry(1.5707963) q[1]
+    CNOT q[1], q[2]
+    barrier q[1]
     barrier q[0]
     barrier q[2]
-    barrier q[1]
-    b[0] = measure q[0]
-    b[1] = measure q[1]
+    b[0] = measure q[1]
+    b[1] = measure q[2]
     ```
 
 Our example circuit also contains a CNOT gate.
@@ -243,7 +243,7 @@ circuit.decompose(decomposer=CNOT2CZDecomposer())
 
 ??? example "`print(circuit)  # Circuit after CNOT-to-CZ decomposition`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -254,23 +254,23 @@ circuit.decompose(decomposer=CNOT2CZDecomposer())
     init q[2]
     Ry(1.5707963) q[0]
     X q[0]
-    Ry(-1.5707963) q[2]
-    CZ q[1], q[2]
-    Ry(1.5707963) q[2]
-    Ry(-1.5707963) q[1]
-    CZ q[2], q[1]
-    Ry(1.5707963) q[1]
-    Ry(-1.5707963) q[2]
-    CZ q[1], q[2]
-    Ry(1.5707963) q[2]
     Ry(-1.5707963) q[1]
     CZ q[0], q[1]
     Ry(1.5707963) q[1]
+    Ry(-1.5707963) q[0]
+    CZ q[1], q[0]
+    Ry(1.5707963) q[0]
+    Ry(-1.5707963) q[1]
+    CZ q[0], q[1]
+    Ry(1.5707963) q[1]
+    Ry(-1.5707963) q[2]
+    CZ q[1], q[2]
+    Ry(1.5707963) q[2]
+    barrier q[1]
     barrier q[0]
     barrier q[2]
-    barrier q[1]
-    b[0] = measure q[0]
-    b[1] = measure q[1]
+    b[0] = measure q[1]
+    b[1] = measure q[2]
     ```
 
 Since the CNOT is a controlled-gate, we could also have used the
@@ -287,8 +287,8 @@ To do so, we use the `merge` method with the
 
 !!! note
 
-    The single-qubit gate, that is the result of merging multiple single-qubit gates, is generally not supported by the
-    target backend; a single-qubit gate decomposition pass will need to be applied afterwards.
+    The single-qubit gate that results from merging multiple single-qubit gates, is generally not supported by the
+    target backend; a single-qubit gate decomposition pass will need to be applied after merging.
     OpenSquirrel will check if the resultant gate is equal (up to a global phase) to the gates that it replaces.
 
 ```python
@@ -299,7 +299,7 @@ circuit.merge(merger=SingleQubitGatesMerger())
 
 ??? example "`print(circuit)  # Circuit after merging single-qubit gates`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -308,24 +308,24 @@ circuit.merge(merger=SingleQubitGatesMerger())
     init q[0]
     init q[1]
     init q[2]
-    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[2]
-    CZ q[1], q[2]
-    Ry(1.5707963) q[2]
-    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[1]
-    CZ q[2], q[1]
-    Ry(1.5707963) q[1]
-    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[2]
-    CZ q[1], q[2]
     H q[0]
     Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[1]
     CZ q[0], q[1]
     Ry(1.5707963) q[1]
+    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[0]
+    CZ q[1], q[0]
+    Ry(1.5707963) q[0]
+    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[1]
+    CZ q[0], q[1]
+    Ry(1.5707963) q[1]
+    Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[2]
+    CZ q[1], q[2]
     Ry(1.5707963) q[2]
+    barrier q[1]
     barrier q[0]
     barrier q[2]
-    barrier q[1]
-    b[0] = measure q[0]
-    b[1] = measure q[1]
+    b[0] = measure q[1]
+    b[1] = measure q[2]
     ```
 
 ## Decomposition - inferred
@@ -335,7 +335,13 @@ we need to decompose them according to available gates in the primitive gate set
 We can see from `pgs` that our target backend accepts all kinds of rotations about the _x_- and _z_- axis.
 
 The McKay decomposer decomposes arbitrary single-qubit gates into _at most_ 5 gates:
-$R_z(\gamma)\cdot X^{1/2}\cdot R_z(\beta)\cdot X^{1/2}\cdot R_z(\alpha)$
+$R_z(\gamma)\cdot X^{1/2}\cdot R_z(\beta)\cdot X^{1/2}\cdot R_z(\alpha)$,
+where $\alpha$, $\beta$, and $\gamma$, represent different rotation angles.
+The rotation angles need to be _inferred_ from the semantic of the single-qubit gate that is to be decomposed, _i.e._,
+they are not defined in advance.
+
+We invoke the McKay decomposition on the circuit by applying the `decompose` method with the
+[McKay decomposer](../compilation-passes/types-of-passes/decomposition/mckay-decomposer.md) pass (`McKayDecomposer`).
 
 ```python
 from opensquirrel.passes.decomposer import McKayDecomposer
@@ -345,7 +351,7 @@ circuit.decompose(decomposer=McKayDecomposer())
 
 ??? example "`print(circuit)  # Circuit after McKay decomposition`"
 
-    ```
+    ```linenums="1"
     version 3.0
 
     qubit[3] q
@@ -354,24 +360,6 @@ circuit.decompose(decomposer=McKayDecomposer())
     init q[0]
     init q[1]
     init q[2]
-    Rz(1.5707963) q[2]
-    X90 q[2]
-    Rz(-1.5707963) q[2]
-    CZ q[1], q[2]
-    Rz(-1.5707963) q[2]
-    X90 q[2]
-    Rz(1.5707963) q[2]
-    Rz(1.5707963) q[1]
-    X90 q[1]
-    Rz(-1.5707963) q[1]
-    CZ q[2], q[1]
-    Rz(-1.5707963) q[1]
-    X90 q[1]
-    Rz(1.5707963) q[1]
-    Rz(1.5707963) q[2]
-    X90 q[2]
-    Rz(-1.5707963) q[2]
-    CZ q[1], q[2]
     Rz(1.5707963) q[0]
     X90 q[0]
     Rz(1.5707963) q[0]
@@ -382,21 +370,49 @@ circuit.decompose(decomposer=McKayDecomposer())
     Rz(-1.5707963) q[1]
     X90 q[1]
     Rz(1.5707963) q[1]
+    Rz(1.5707963) q[0]
+    X90 q[0]
+    Rz(-1.5707963) q[0]
+    CZ q[1], q[0]
+    Rz(-1.5707963) q[0]
+    X90 q[0]
+    Rz(1.5707963) q[0]
+    Rz(1.5707963) q[1]
+    X90 q[1]
+    Rz(-1.5707963) q[1]
+    CZ q[0], q[1]
+    Rz(-1.5707963) q[1]
+    X90 q[1]
+    Rz(1.5707963) q[1]
+    Rz(1.5707963) q[2]
+    X90 q[2]
+    Rz(-1.5707963) q[2]
+    CZ q[1], q[2]
     Rz(-1.5707963) q[2]
     X90 q[2]
     Rz(1.5707963) q[2]
+    barrier q[1]
     barrier q[0]
     barrier q[2]
-    barrier q[1]
-    b[0] = measure q[0]
-    b[1] = measure q[1]
+    b[0] = measure q[1]
+    b[1] = measure q[2]
     ```
-
-More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
 
 ## Validation
 
-Interaction
+It is good practice to validate certain properties of the program before exporting it.
+Here we check whether the interactions in the final circuit are valid given the _connectivity_ and
+whether all gates appear in the _primitive gate set_.
+
+Even though, [validation](../compilation-passes/types-of-passes/validation/index.md) is not a compilation pass _per se_,
+it is called in the same way on the circuit.
+Accordingly, we treat it as a pass that is part of the compilation pass library.
+
+### Routing validation
+
+To check the validity of the interactions in the circuit, we use the `validate` method with the
+[routing validator](../compilation-passes/types-of-passes/validation/routing-validator.md) pass (`RoutingValidator`)
+and the _connectivity_ as an input argument for the validator.
 
 ```python
 from opensquirrel.passes.validator import RoutingValidator
@@ -404,19 +420,29 @@ from opensquirrel.passes.validator import RoutingValidator
 circuit.validate(validator=RoutingValidator(connectivity=connectivity))
 ```
 
-For instance, the `RoutingValidator` checks whether a circuit is directly executable given some hardware's coupling map.
+An exception will be thrown if any interaction in the circuit is invalid.
 
-Primitive gate set
+### Primitive gate set validation
+
+To check if all gates in the circuit are part of the primitive gate set, we use the `validate` method with the
+[primitive gate validator](../compilation-passes/types-of-passes/validation/primitive-gate-validator.md) pass
+(`PrimitiveGateValidator`) and the `pgs`, _i.e. primitive gate set_, as an input argument for the validator.
 
 ```python
 from opensquirrel.passes.validator import PrimitiveGateValidator
 
-circuit.validate(validator=PrimitiveGateValidator(pgs=pgs))
+circuit.validate(validator=PrimitiveGateValidator(primitive_gate_set=pgs))
 ```
+
+An exception will be thrown if any gate is not part of the _primitive gate set_.
 
 ## Exporting
 
-Exporter (or Write it out)
+Now that we have the performed the desired compilation passes and validated certain aspects of the circuit,
+we can either choose to write it out to cQASM or export it to a different format.
+
+Proceed to [Writing out and exporting](writing-out-and-exporting.md) to learn how.
+
 
 ## _Full example compilation_
 
@@ -468,10 +494,12 @@ program).
     circuit.decompose(decomposer=CNOT2CZDecomposer())
     circuit.merge(merger=SingleQubitGatesMerger())
     circuit.decompose(decomposer=McKayDecomposer())
+
+    # Validating circuit aspects
     circuit.validate(validator=RoutingValidator(connectivity=connectivity))
     circuit.validate(validator=PrimitiveGateValidator(pgs=pgs))
 
-    # Writing out the compiled program
+    # Writing out the compiled program to cQASM (one can also use the 'str()' method)
     print(circuit)
 
     ```
@@ -487,24 +515,6 @@ program).
     init q[0]
     init q[1]
     init q[2]
-    Rz(1.5707963) q[2]
-    X90 q[2]
-    Rz(-1.5707963) q[2]
-    CZ q[1], q[2]
-    Rz(-1.5707963) q[2]
-    X90 q[2]
-    Rz(1.5707963) q[2]
-    Rz(1.5707963) q[1]
-    X90 q[1]
-    Rz(-1.5707963) q[1]
-    CZ q[2], q[1]
-    Rz(-1.5707963) q[1]
-    X90 q[1]
-    Rz(1.5707963) q[1]
-    Rz(1.5707963) q[2]
-    X90 q[2]
-    Rz(-1.5707963) q[2]
-    CZ q[1], q[2]
     Rz(1.5707963) q[0]
     X90 q[0]
     Rz(1.5707963) q[0]
@@ -515,13 +525,30 @@ program).
     Rz(-1.5707963) q[1]
     X90 q[1]
     Rz(1.5707963) q[1]
+    Rz(1.5707963) q[0]
+    X90 q[0]
+    Rz(-1.5707963) q[0]
+    CZ q[1], q[0]
+    Rz(-1.5707963) q[0]
+    X90 q[0]
+    Rz(1.5707963) q[0]
+    Rz(1.5707963) q[1]
+    X90 q[1]
+    Rz(-1.5707963) q[1]
+    CZ q[0], q[1]
+    Rz(-1.5707963) q[1]
+    X90 q[1]
+    Rz(1.5707963) q[1]
+    Rz(1.5707963) q[2]
+    X90 q[2]
+    Rz(-1.5707963) q[2]
+    CZ q[1], q[2]
     Rz(-1.5707963) q[2]
     X90 q[2]
     Rz(1.5707963) q[2]
+    barrier q[1]
     barrier q[0]
     barrier q[2]
-    barrier q[1]
-    b[0] = measure q[0]
-    b[1] = measure q[1]
+    b[0] = measure q[1]
+    b[1] = measure q[2]
     ```
-

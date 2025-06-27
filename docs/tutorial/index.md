@@ -74,7 +74,7 @@ so the following line will return the (compiled) program, _i.e._ **program'** , 
 ```python
 str(circuit)
 ```
-_Python's_ `print()` _statement can also be used to obtain the program in cQASM._
+_Python's_ `print()` _statement can be used to print the program in cQASM._
 
 If one wishes to export the (compiled) program to, for example,
 a [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/v0.24.0/) `Schedule` one would do the following,
