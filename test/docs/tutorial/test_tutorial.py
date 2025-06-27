@@ -229,6 +229,8 @@ class TestTutorial:
                 circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
         else:
             exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            import quantify_scheduler
+
             assert isinstance(exported_schedule, quantify_scheduler.Schedule)
 
 
