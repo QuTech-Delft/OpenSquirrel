@@ -230,6 +230,7 @@ class TestTutorial:
         else:
             try:
                 from quantify_scheduler import Schedule
+
                 exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
                 assert isinstance(exported_schedule, Schedule)
             except ModuleNotFoundError:
