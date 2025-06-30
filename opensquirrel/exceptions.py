@@ -17,3 +17,15 @@ class UnsupportedGateError(Exception):
 
 class ExporterError(Exception):
     """Should be raised when a circuit cannot be exported to the desired output format."""
+
+
+class NoRoutingPathError(Exception):
+    """Should be raised when no routing path is available between qubits."""
+
+    def __init__(self, message: str, *args: Any) -> None:
+        """Init of the ``NoRoutingPathError``.
+
+        Args:
+            message: Error message.
+        """
+        super().__init__(message, *args)

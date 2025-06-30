@@ -4,21 +4,48 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Types of changes:
+
 * **Added** for new features.
 * **Changed** for changes in existing functionality.
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
+## [ 0.5.0 ] - [ 2025-05-28 ]
 
-## [0.3.2] - [ xxxx-yy-zz ]
+### Added
+
+- `asm_filter` method to the `Circuit` class to filter-out assembly declarations by backend name
 
 ### Changed
 
+- Default gate identification check refactored (now including check for phase)
+- `McKayDecomposer` checks X90 on BSR semantic instead of name
+
+### Fixed
+
+- `RoutingValidator` ignores assembly declarations
+
+## [ 0.4.0 ] - [ 2025-04-28 ]
+
+### Added
+
+- Assembly declaration
+- `Rn` unitary instruction
+- `SWAP2CZDecomposer` decomposer pass
+- `CZDecomposer` decomposer pass
+- `ShortestPathRouter` router pass
+- `RandomMapper` mapper pass
+- `AStarRouter` router pass
+
+### Changed
+
+- libQASM 1.1.0 integrated (updated from 0.6.9)
 - Refactor: removed generators
 - Changed the `RoutingChecker` pass to a `RoutingValidator` pass
+- Changed use of `native` to `primitive`, e.g. `NativeGateValidator` is now `PrimitiveGateValidator`
+- Compilation passes accept `kwargs` as input
 
-
-## [0.3.1] - [ 2025-01-31 ]
+## [ 0.3.1 ] - [ 2025-01-31 ]
 
 ### Fixed
 
@@ -38,7 +65,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed order of merging Bloch sphere rotations
-
 
 ## [ 0.2.0 ] - [ 2025-01-21 ]
 

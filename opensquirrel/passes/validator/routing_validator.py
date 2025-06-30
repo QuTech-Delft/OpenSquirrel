@@ -1,11 +1,12 @@
-from typing import cast
+from typing import Any
 
 from opensquirrel.ir import IR, Instruction, Qubit
 from opensquirrel.passes.validator import Validator
 
 
 class RoutingValidator(Validator):
-    def __init__(self, connectivity: dict[str, list[int]]) -> None:
+    def __init__(self, connectivity: dict[str, list[int]], **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.connectivity = connectivity
 
     def validate(self, ir: IR) -> None:
@@ -20,8 +21,9 @@ class RoutingValidator(Validator):
         """
         non_executable_interactions = []
         for statement in ir.statements:
-            instruction: Instruction = cast("Instruction", statement)
-            args = instruction.arguments
+            if not isinstance(statement, Instruction):
+                continue
+            args = statement.arguments
             if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
                 qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
                 qubit_index_pairs = [(q0.index, q1.index) for q0, q1 in zip(qubit_args[:-1], qubit_args[1:])]

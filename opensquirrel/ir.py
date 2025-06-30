@@ -4,7 +4,7 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Any, SupportsFloat, SupportsInt, Union, cast, overload
+from typing import Any, Protocol, SupportsFloat, SupportsInt, Union, cast, overload, runtime_checkable
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -28,6 +28,9 @@ def repr_round(value: float | Axis | NDArray[np.complex128], decimals: int = REP
 
 
 class IRVisitor:
+    def visit_str(self, s: String) -> Any:
+        pass
+
     def visit_int(self, i: Int) -> Any:
         pass
 
@@ -46,6 +49,9 @@ class IRVisitor:
     def visit_statement(self, statement: Statement) -> Any:
         pass
 
+    def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> Any:
+        pass
+
     def visit_instruction(self, instruction: Instruction) -> Any:
         pass
 
@@ -59,6 +65,9 @@ class IRVisitor:
         pass
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
+        pass
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
         pass
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
@@ -112,6 +121,46 @@ class IRNode(ABC):
 
 class Expression(IRNode, ABC):
     pass
+
+
+@runtime_checkable
+class SupportsStr(Protocol):
+    def __str__(self) -> str: ...
+
+
+@dataclass(init=False)
+class String(Expression):
+    """Strings used for intermediate representation of ``Statement`` arguments.
+
+    Attributes:
+        value: value of the ``String`` object.
+    """
+
+    value: str
+
+    def __init__(self, value: SupportsStr) -> None:
+        """Init of the ``String`` object.
+
+        Args:
+            value: value of the ``String`` object.
+        """
+        if isinstance(value, SupportsStr):
+            self.value = str(value)
+            return
+
+        msg = "value must be a str"
+        raise TypeError(msg)
+
+    def __str__(self) -> str:
+        """Cast the ``String`` object to a built-in Python ``str``.
+
+        Returns:
+            Built-in Python ``str`` representation of the ``String``.
+        """
+        return self.value
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_str(self)
 
 
 @dataclass(init=False)
@@ -355,6 +404,28 @@ class Statement(IRNode, ABC):
     pass
 
 
+class AsmDeclaration(Statement):
+    """``AsmDeclaration`` is used to define an assembly declaration statement in the IR.
+
+    Args:
+        backend_name: Name of the backend that is to process the provided backend code.
+        backend_code: (Assembly) code to be processed by the specified backend.
+    """
+
+    def __init__(
+        self,
+        backend_name: SupportsStr,
+        backend_code: SupportsStr,
+    ) -> None:
+        self.backend_name = String(backend_name)
+        self.backend_code = String(backend_code)
+        Statement.__init__(self)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        visitor.visit_statement(self)
+        return visitor.visit_asm_declaration(self)
+
+
 class Instruction(Statement, ABC):
     def __init__(self, name: str) -> None:
         self.name = name
@@ -437,13 +508,12 @@ class BlochSphereRotation(Gate):
         if self.qubit != other.qubit:
             return False
 
-        if abs(self.phase - other.phase) > ATOL:
-            return False
-
         if np.allclose(self.axis, other.axis, atol=ATOL):
-            return abs(self.angle - other.angle) < ATOL
+            return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
+
         if np.allclose(self.axis, -other.axis.value, atol=ATOL):
-            return abs(self.angle + other.angle) < ATOL
+            return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
+
         return False
 
     @property
@@ -473,22 +543,21 @@ class BlochSphereRotation(Gate):
              or the input BlochSphereRotation otherwise.
         """
         from opensquirrel.default_instructions import (
-            default_bloch_sphere_rotation_set,
             default_bsr_with_angle_param_set,
+            default_bsr_without_params_set,
         )
 
-        for gate_name in default_bloch_sphere_rotation_set:
+        default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
+        for gate_name in default_bsr_set_without_rn:
             arguments: tuple[Any, ...] = (bsr.qubit,)
             if gate_name in default_bsr_with_angle_param_set:
                 arguments += (Float(bsr.angle),)
-            gate = default_bloch_sphere_rotation_set[gate_name](*arguments)
-            if (
-                np.allclose(gate.axis, bsr.axis, atol=ATOL)
-                and np.allclose(gate.angle, bsr.angle, atol=ATOL)
-                and np.allclose(gate.phase, bsr.phase, atol=ATOL)
-            ):
+            gate = default_bsr_set_without_rn[gate_name](*arguments)
+            gate_bsr = BlochSphereRotation(gate.qubit, axis=gate.axis, angle=gate.angle, phase=gate.phase)
+            if bsr == gate_bsr:
                 return gate
-        return bsr
+        nx, ny, nz = (Float(component) for component in bsr.axis)
+        return Rn(bsr.qubit, nx, ny, nz, Float(bsr.angle), Float(bsr.phase))
 
 
 class BsrNoParams(BlochSphereRotation):
@@ -512,7 +581,7 @@ class BsrNoParams(BlochSphereRotation):
 
 class I(BsrNoParams):  # noqa: E742
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=0, phase=0, name="I")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=0, phase=0, name="I")
 
 
 class H(BsrNoParams):
@@ -527,12 +596,12 @@ class X(BsrNoParams):
 
 class X90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi / 2, phase=0, name="X90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=math.pi / 2, phase=math.pi / 4, name="X90")
 
 
 class MinusX90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=-math.pi / 2, phase=-0, name="mX90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=-math.pi / 2, phase=-math.pi / 4, name="mX90")
 
 
 class Y(BsrNoParams):
@@ -542,12 +611,12 @@ class Y(BsrNoParams):
 
 class Y90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi / 2, phase=0, name="Y90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=math.pi / 2, phase=math.pi / 4, name="Y90")
 
 
 class MinusY90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=-math.pi / 2, phase=0, name="mY90")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=-math.pi / 2, phase=-math.pi / 4, name="mY90")
 
 
 class Z(BsrNoParams):
@@ -557,22 +626,58 @@ class Z(BsrNoParams):
 
 class S(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 2, phase=0, name="S")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 2, phase=math.pi / 4, name="S")
 
 
 class SDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 2, phase=0, name="Sdag")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 2, phase=-math.pi / 4, name="Sdag")
 
 
 class T(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 4, phase=0, name="T")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=math.pi / 4, phase=math.pi / 8, name="T")
 
 
 class TDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
-        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=0, name="Tdag")
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-math.pi / 4, phase=-math.pi / 8, name="Tdag")
+
+
+class BsrFullParams(BlochSphereRotation):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        axis: AxisLike,
+        angle: SupportsFloat,
+        phase: SupportsFloat,
+        name: str = "BsrFullParams",
+    ) -> None:
+        BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
+        self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
+        self.theta = Float(angle)
+        self.phi = Float(phase)
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_bsr_full_params(self)
+
+
+class Rn(BsrFullParams):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        nx: SupportsFloat,
+        ny: SupportsFloat,
+        nz: SupportsFloat,
+        theta: SupportsFloat,
+        phi: SupportsFloat,
+    ) -> None:
+        axis: AxisLike = Axis(np.asarray([nx, ny, nz], dtype=np.float64))
+        BsrFullParams.__init__(self, qubit=qubit, axis=axis, angle=theta, phase=phi, name="Rn")
 
 
 class BsrAngleParam(BlochSphereRotation):
@@ -802,13 +907,13 @@ class NonUnitary(Instruction, ABC):
 
 class Measure(NonUnitary):
     def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Measure")
+        NonUnitary.__init__(self, qubit=qubit, name="measure")
         self.qubit = Qubit(qubit)
         self.bit = Bit(bit)
         self.axis = Axis(axis)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
+        return f"{self.__class__.__name__}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
     def __eq__(self, other: object) -> bool:
         return (
@@ -829,11 +934,11 @@ class Measure(NonUnitary):
 
 class Init(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Init")
+        NonUnitary.__init__(self, qubit=qubit, name="init")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Init) and self.qubit == other.qubit
@@ -849,11 +954,11 @@ class Init(NonUnitary):
 
 class Reset(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Reset")
+        NonUnitary.__init__(self, qubit=qubit, name="reset")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Reset) and self.qubit == other.qubit
@@ -869,11 +974,11 @@ class Reset(NonUnitary):
 
 class Barrier(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Barrier")
+        NonUnitary.__init__(self, qubit=qubit, name="barrier")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, Barrier) and self.qubit == other.qubit
@@ -889,7 +994,7 @@ class Barrier(NonUnitary):
 
 class Wait(NonUnitary):
     def __init__(self, qubit: QubitLike, time: SupportsInt) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="Wait")
+        NonUnitary.__init__(self, qubit=qubit, name="wait")
         self.qubit = Qubit(qubit)
         self.time = Int(time)
 
@@ -923,6 +1028,9 @@ def compare_gates(g1: Gate, g2: Gate) -> bool:
 class IR:
     def __init__(self) -> None:
         self.statements: list[Statement] = []
+
+    def add_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
+        self.statements.append(asm_declaration)
 
     def add_gate(self, gate: Gate) -> None:
         self.statements.append(gate)

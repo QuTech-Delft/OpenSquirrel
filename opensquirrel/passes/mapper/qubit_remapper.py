@@ -8,6 +8,7 @@ from opensquirrel.ir import (
     Barrier,
     BlochSphereRotation,
     BsrAngleParam,
+    BsrFullParams,
     BsrNoParams,
     ControlledGate,
     CRk,
@@ -70,6 +71,9 @@ class _QubitRemapper(IRVisitor):
         return bloch_sphere_rotation
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> BlochSphereRotation:
+        return self.visit_bloch_sphere_rotation(gate)
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> BlochSphereRotation:
         return self.visit_bloch_sphere_rotation(gate)
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> BlochSphereRotation:

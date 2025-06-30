@@ -3,7 +3,7 @@ import math
 import pytest
 
 from opensquirrel import CNOT, CR, CRk, H, I, Ry, X
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
+from opensquirrel.ir import ControlledGate, Gate, Rn
 from opensquirrel.parser.libqasm.parser import Parser
 
 
@@ -116,7 +116,7 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
     [
         (
             "version 3.0; qubit q; inv.X q",
-            [BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi * -1, phase=math.pi / 2 * -1)],
+            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=math.pi * -1, phi=math.pi / 2 * -1)],
         ),
         (
             "version 3.0; qubit q; inv.inv.X q",
@@ -124,17 +124,17 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
         ),
         (
             "version 3.0; qubit q; pow(2).Rx(pi) q",
-            [BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi * 2, phase=0)],
+            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=math.pi * 2, phi=0)],
         ),
         (
             "version 3.0; qubit q; pow(2).inv.X q",
-            [BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi * -2, phase=math.pi / 2 * -2)],
+            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=math.pi * -2, phi=math.pi / 2 * -2)],
         ),
         (
             "version 3.0; qubit[2] q; ctrl.pow(2).inv.X q[0], q[1]",
             [
                 ControlledGate(
-                    0, BlochSphereRotation(qubit=1, axis=(1, 0, 0), angle=math.pi * -2, phase=math.pi / 2 * -2)
+                    control_qubit=0, target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=math.pi * -2, phi=math.pi / 2 * -2)
                 )
             ],
         ),

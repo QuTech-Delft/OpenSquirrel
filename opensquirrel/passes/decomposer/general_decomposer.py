@@ -5,6 +5,7 @@ from collections.abc import Callable, Iterable
 from typing import TYPE_CHECKING
 
 import numpy as np
+from typing import Any
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.common import (
@@ -23,6 +24,8 @@ if TYPE_CHECKING:
 
 
 class Decomposer(ABC):
+    def __init__(self, **kwargs: Any) -> None: ...
+
     @abstractmethod
     def decompose(self, gate: Gate) -> list[Gate]:
         raise NotImplementedError()
