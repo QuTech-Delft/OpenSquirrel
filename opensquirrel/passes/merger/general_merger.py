@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from math import cos, floor, log10, sin
-from typing import Any, cast
+from typing import cast
 
 import numpy as np
 
@@ -20,14 +20,13 @@ def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSpher
         A q
         B q
 
-    As linear operations:
+    A linear operations:
         (B * A) q
 
     If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.
 
     Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
-
     if bsr_a.qubit != bsr_b.qubit:
         msg = "cannot merge two Bloch sphere rotations on different qubits"
         raise ValueError(msg)
@@ -130,8 +129,6 @@ def rearrange_barriers(ir: IR) -> None:
 
 
 class Merger(ABC):
-    def __init__(self, **kwargs: Any) -> None: ...
-
     @abstractmethod
     def merge(self, ir: IR, qubit_register_size: int) -> None:
         raise NotImplementedError

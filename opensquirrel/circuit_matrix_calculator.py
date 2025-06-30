@@ -12,7 +12,6 @@ from opensquirrel.ir import (
     SWAP,
     BlochSphereRotation,
     BsrAngleParam,
-    BsrFullParams,
     BsrNoParams,
     ControlledGate,
     CRk,
@@ -39,9 +38,6 @@ class _CircuitMatrixCalculator(IRVisitor):
         self.visit_gate(gate)
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        self.visit_gate(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
         self.visit_gate(gate)
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:

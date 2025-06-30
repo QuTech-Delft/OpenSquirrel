@@ -3,10 +3,14 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir import IR, AsmDeclaration, Gate
+import numpy as np
+
 from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
+    from numpy.typing import NDArray
+
+    from opensquirrel.ir import IR, Gate, QubitLike
     from opensquirrel.passes.decomposer import Decomposer
     from opensquirrel.passes.mapper import Mapper
     from opensquirrel.passes.merger import Merger
@@ -43,6 +47,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
+        self.phase_map = self.PhaseMap(np.zeros(self.qubit_register_size, dtype=np.complex128))
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
@@ -88,14 +93,6 @@ class Circuit:
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
 
-    def asm_filter(self, backend_name: str) -> None:
-        self.ir.statements = [
-            statement
-            for statement in self.ir.statements
-            if not isinstance(statement, AsmDeclaration)
-            or (isinstance(statement, AsmDeclaration) and backend_name in str(statement.backend_name))
-        ]
-
     def validate(self, validator: Validator) -> None:
         """Generic validator pass. It applies the given validator to the circuit."""
         validator.validate(self.ir)
@@ -114,7 +111,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.decompose(self.ir, decomposer)
+        general_decomposer.decompose(self, decomposer)
 
     def map(self, mapper: Mapper) -> None:
         """Generic qubit mapper pass.
@@ -131,7 +128,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.replace(self.ir, gate, replacement_gates_function)
+        general_decomposer.replace(self, gate, replacement_gates_function)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
@@ -144,3 +141,22 @@ class Circuit:
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)
+
+    class PhaseMap:
+        def __init__(self, phase_map: NDArray[np.complex128]) -> None:
+            """Initialize a PhaseMap object."""
+            self.qubit_phase_map = phase_map
+
+        def __contains__(self, qubit: QubitLike) -> bool:
+            """Checks if qubit is in the phase map."""
+            return qubit in self.qubit_phase_map
+
+        def add_qubit_phase(self, qubit: QubitLike, phase: np.complex128) -> None:
+            from opensquirrel.ir import Qubit
+
+            self.qubit_phase_map[Qubit(qubit).index] += phase
+
+        def get_qubit_phase(self, qubit: QubitLike) -> np.complex128:
+            from opensquirrel.ir import Qubit
+
+            return np.complex128(self.qubit_phase_map[Qubit(qubit).index])

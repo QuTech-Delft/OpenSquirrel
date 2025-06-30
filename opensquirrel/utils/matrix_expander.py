@@ -17,7 +17,6 @@ from opensquirrel.ir import (
     AxisLike,
     BlochSphereRotation,
     BsrAngleParam,
-    BsrFullParams,
     BsrNoParams,
     ControlledGate,
     CRk,
@@ -132,9 +131,6 @@ class MatrixExpander(IRVisitor):
         return np.asarray(result, dtype=np.complex128)
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> NDArray[np.complex128]:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> NDArray[np.complex128]:
         return self.visit_bloch_sphere_rotation(gate)
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> NDArray[np.complex128]:
@@ -261,5 +257,6 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 0, 1, 0, 0, 0, 0, 0],
                [0, 0, 0, 1, 0, 0, 0, 0]])
     """
+
     expander = MatrixExpander(qubit_register_size)
     return np.asarray(gate.accept(expander), dtype=np.complex128)

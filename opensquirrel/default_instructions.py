@@ -12,7 +12,6 @@ from opensquirrel.ir import (
     Barrier,
     BlochSphereRotation,
     BsrAngleParam,
-    BsrFullParams,
     BsrNoParams,
     ControlledGate,
     CRk,
@@ -27,7 +26,6 @@ from opensquirrel.ir import (
     MinusY90,
     NonUnitary,
     Reset,
-    Rn,
     Rx,
     Ry,
     Rz,
@@ -58,10 +56,6 @@ default_bsr_without_params_set = {
     "mX90": MinusX90,
     "mY90": MinusY90,
 }
-default_bsr_full_params_set: Mapping[str, type[BsrFullParams]]
-default_bsr_full_params_set = {
-    "Rn": Rn,
-}
 default_bsr_with_angle_param_set: Mapping[str, type[BsrAngleParam]]
 default_bsr_with_angle_param_set = {
     "Rx": Rx,
@@ -70,7 +64,6 @@ default_bsr_with_angle_param_set = {
 }
 default_bloch_sphere_rotation_set: Mapping[str, type[BlochSphereRotation]]
 default_bloch_sphere_rotation_set = {
-    **default_bsr_full_params_set,
     **default_bsr_without_params_set,
     **default_bsr_with_angle_param_set,
 }
@@ -82,9 +75,7 @@ default_controlled_gate_set = {
     "CZ": CZ,
 }
 default_matrix_gate_set: Mapping[str, type[MatrixGate]]
-default_matrix_gate_set = {
-    "SWAP": SWAP,
-}
+default_matrix_gate_set = {"SWAP": SWAP}
 default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
