@@ -1,9 +1,12 @@
+# SWAP insertion+propagation in helper function
+
+
 from typing import Any
 
 import networkx as nx
 
 from opensquirrel.exceptions import NoRoutingPathError
-from opensquirrel.ir import IR, SWAP, Gate
+from opensquirrel.ir import IR, SWAP, Gate, Instruction
 from opensquirrel.passes.router import Router
 
 
@@ -12,9 +15,23 @@ class ShortestPathRouter(Router):
         super().__init__(**kwargs)
         self.connectivity = connectivity
 
+    def _insert_and_propagate_swaps(self, ir: IR, statement_index: int, shortest_path: list[int]) -> int:
+        for start_qubit_index, end_qubit_index in zip(shortest_path[:-2], shortest_path[1:-1]):
+            ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
+            statement_index += 1
+            # Update subsequent statements to reflect the swap
+            for statement in ir.statements[statement_index:]:
+                if isinstance(statement, Instruction):
+                    for qubit in statement.get_qubit_operands():
+                        if qubit.index == start_qubit_index:
+                            qubit.index = end_qubit_index
+                        elif qubit.index == end_qubit_index:
+                            qubit.index = start_qubit_index
+        return statement_index
+
     def route(self, ir: IR) -> IR:
         """
-        Routes the circuit by inserting SWAP gates along the shortest path between qubits which can not  # noqa: W291
+        Routes the circuit by inserting SWAP gates along the shortest path between qubits which can not
         interact with each other, to make it executable given the hardware connectivity.
         Args:
             ir: The intermediate representation of the circuit.
@@ -31,9 +48,7 @@ class ShortestPathRouter(Router):
                 if not graph.has_edge(q0.index, q1.index):
                     try:
                         shortest_path = nx.shortest_path(graph, source=q0.index, target=q1.index)
-                        for start_qubit_index, end_qubit_index in zip(shortest_path[:-1], shortest_path[1:]):
-                            ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
-                            statement_index += 1
+                        statement_index = self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
                     except nx.NetworkXNoPath as e:
                         msg = f"No routing path available between qubit {q0.index} and qubit {q1.index}"
                         raise NoRoutingPathError(msg) from e

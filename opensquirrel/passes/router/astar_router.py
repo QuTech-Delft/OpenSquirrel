@@ -12,10 +12,26 @@ from opensquirrel.passes.router.heuristics import DistanceMetric, calculate_dist
 
 
 class AStarRouter(Router):
-    def __init__(self, connectivity: dict[str, list[int]], distance_metric: DistanceMetric, **kwargs: Any) -> None:
+    def __init__(
+        self, connectivity: dict[str, list[int]], distance_metric: DistanceMetric | None = None, **kwargs: Any
+    ) -> None:
         super().__init__(**kwargs)
         self.connectivity = connectivity
         self.distance_metric = distance_metric
+
+    def _insert_and_propagate_swaps(self, ir: IR, statement_index: int, shortest_path: list[int]) -> int:
+        for start_qubit_index, end_qubit_index in zip(shortest_path[:-2], shortest_path[1:-1]):
+            ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
+            statement_index += 1
+            # Update subsequent statements to reflect the swap
+            for statement in ir.statements[statement_index:]:
+                if hasattr(statement, "get_qubit_operands"):
+                    for qubit in statement.get_qubit_operands():
+                        if qubit.index == start_qubit_index:
+                            qubit.index = end_qubit_index
+                        elif qubit.index == end_qubit_index:
+                            qubit.index = start_qubit_index
+        return statement_index
 
     def route(self, ir: IR) -> IR:
         """
@@ -28,9 +44,6 @@ class AStarRouter(Router):
         graph_data = {int(start_node): end_nodes for start_node, end_nodes in self.connectivity.items()}
         graph = nx.Graph(graph_data)
         num_available_qubits = max(graph.nodes) + 1
-        # Calculate the number of columns in a grid layout of the qubits.
-        # This assumes the qubits are arranged in a square or rectangular grid.
-        # The number of columns is derived from the total number of qubits on the hardware.
         num_columns = math.ceil(math.sqrt(num_available_qubits))
         statement_index = 0
         while statement_index < len(ir.statements):
@@ -48,9 +61,7 @@ class AStarRouter(Router):
                                 target=q1.index,
                                 heuristic=lambda u, v: calculate_distance(u, v, num_columns, self.distance_metric),
                             )
-                        for start_qubit_index, end_qubit_index in zip(shortest_path[:-1], shortest_path[1:]):
-                            ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
-                            statement_index += 1
+                        statement_index = self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
                     except nx.NetworkXNoPath as e:
                         msg = f"No routing path available between qubit {q0.index} and qubit {q1.index}"
                         raise NoRoutingPathError(msg) from e
