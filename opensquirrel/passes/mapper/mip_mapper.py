@@ -52,8 +52,8 @@ class MIPMapper(Mapper):
 
         self._validate_logical_vs_physical_qubits(ir, n)
         cost = self._get_cost(ir, distance, n)
-        constraints, integrality, bounds = self._build_constraints(n)
-        milp_options = self._build_milp_options()
+        constraints, integrality, bounds = self._get_constraints(n)
+        milp_options = self._get_milp_options()
         mapping = self._solve_and_extract_mapping(cost, constraints, integrality, bounds, milp_options, n)
         return Mapping(mapping)
 
@@ -110,7 +110,7 @@ class MIPMapper(Mapper):
                 )
         return cost
 
-    def _build_constraints(self, qubit_register_size: int) -> tuple[list[LinearConstraint], list[bool], Bounds]:
+    def _get_constraints(self, qubit_register_size: int) -> tuple[list[LinearConstraint], list[bool], Bounds]:
         num_vars = qubit_register_size * qubit_register_size
         eq_a = np.zeros((qubit_register_size, num_vars))
         for q_i in range(qubit_register_size):
@@ -128,7 +128,7 @@ class MIPMapper(Mapper):
         constraints = [LinearConstraint(eq_a, eq_b, eq_b), LinearConstraint(ub_a, -np.inf, ub_b)]
         return constraints, list(integrality), bounds
 
-    def _build_milp_options(self) -> dict[str, float]:
+    def _get_milp_options(self) -> dict[str, float]:
         milp_options = {}
         if self.timeout is not None:
             milp_options["time_limit"] = self.timeout
