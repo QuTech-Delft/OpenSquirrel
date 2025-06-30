@@ -16,6 +16,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - `MIPMapper` mapper pass
 
+### Changed
+
+- `RoutingValidator` changed to `InteractionValidator`
+
 ## [ 0.5.0 ] - [ 2025-05-28 ]
 
 ### Added
@@ -30,10 +34,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Default gate identification check refactored (now including check for phase)
 - `McKayDecomposer` checks X90 on BSR semantic instead of name
-
-### Fixed
-
-- `RoutingValidator` ignores assembly declarations
 
 ## [ 0.4.0 ] - [ 2025-04-28 ]
 
