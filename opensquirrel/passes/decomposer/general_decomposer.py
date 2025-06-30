@@ -30,14 +30,14 @@ class Decomposer(ABC):
 
 def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circuit: Circuit | None = None) -> list[Gate]:
     """
-       Verifies the replacement gates against the given gate.
-       Args:
-           gate: original gate
-           replacement_gates: gates replacing the gate
-           circuit: circuit to verify
-       Returns:
-           Returns verified list of replacement gates with possible correction.
-       """
+    Verifies the replacement gates against the given gate.
+    Args:
+        gate: original gate
+        replacement_gates: gates replacing the gate
+        circuit: circuit to verify
+    Returns:
+        Returns verified list of replacement gates with possible correction.
+    """
     gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
     replacement_gates_qubit_indices = set()
     qubit_list = gate.get_qubit_operands()
@@ -68,9 +68,11 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
             circuit.phase_map.add_qubit_phase(q, euler_phase)
 
         if len(gate_qubit_indices) > 1:
-            relative_phase = float(np.real(
-                circuit.phase_map.get_qubit_phase(qubit_list[1]) - circuit.phase_map.get_qubit_phase(qubit_list[0])
-            ))
+            relative_phase = float(
+                np.real(
+                    circuit.phase_map.get_qubit_phase(qubit_list[1]) - circuit.phase_map.get_qubit_phase(qubit_list[0])
+                )
+            )
             if abs(relative_phase) > ATOL:
                 replacement_gates.append(Rz(gate.get_qubit_operands()[0], Float(-1 * relative_phase)))
 

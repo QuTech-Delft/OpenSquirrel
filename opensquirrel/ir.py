@@ -70,9 +70,6 @@ class IRVisitor:
     def visit_swap(self, gate: SWAP) -> Any:
         pass
 
-    def visit_can(self, gate: Can) -> Any:
-        pass
-
     def visit_controlled_gate(self, gate: ControlledGate) -> Any:
         pass
 
@@ -104,9 +101,6 @@ class IRVisitor:
         pass
 
     def visit_wait(self, wait: Wait) -> Any:
-        pass
-
-    def visit_canonical_gate(self, canonical_gate: CanonicalGate) -> Any:
         pass
 
 
@@ -688,103 +682,6 @@ class SWAP(MatrixGate):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_swap(self)
-
-
-class CanonicalGate(Gate):
-    def __init__(
-        self, control_qubit: QubitLike, target_qubit: QubitLike, canonical_axis: AxisLike, name: str = "CanonicalGate"
-    ) -> None:
-        Gate.__init__(self, name)
-        self.control_qubit = Qubit(control_qubit)
-        self.target_qubit = Qubit(target_qubit)
-        self.canonical_axis = canonical_axis
-        self.operands = self.get_qubit_operands()
-
-        if self.control_qubit == self.target_qubit:
-            msg = "control and target qubit cannot be the same"
-            raise ValueError(msg)
-
-        if not hasattr(self.canonical_axis, "__len__") or self.canonical_axis.__len__() != 3:
-            msg = "The canonical axis requires 3 values!"
-            raise ValueError(msg)
-
-    def __repr__(self) -> str:
-        return (
-            f"CanonicalGate(control_qubit={self.control_qubit!r},"
-            f"target_qubit= {self.target_qubit!r}, axis = {self.canonical_axis!r})"
-        )
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.control_qubit, self.target_qubit]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_gate(self)
-        return visitor.visit_canonical_gate(self)
-
-    def get_matrix(self) -> NDArray[np.complex128]:
-        canonical_axis = np.array(self.canonical_axis)
-        t_x = float(canonical_axis[0])
-        t_y = float(canonical_axis[1])
-        t_z = float(canonical_axis[2])
-
-        cost_x = math.cos(t_x * math.pi / 2)
-        sint_x = math.sin(t_x * math.pi / 2)
-        cost_y = math.cos(t_y * math.pi / 2)
-        sint_y = math.sin(t_y * math.pi / 2)
-
-        xx = np.array(
-            [
-                [cost_x, 0, 0, -1j * sint_x],
-                [0, cost_x, -1j * sint_x, 0],
-                [0, -1j * sint_x, cost_x, 0],
-                [-1j * sint_x, 0, 0, cost_x],
-            ]
-        )
-        yy = np.array(
-            [
-                [cost_y, 0, 0, 1j * sint_y],
-                [0, cost_y, -1j * sint_y, 0],
-                [0, -1j * sint_y, cost_y, 0],
-                [1j * sint_y, 0, 0, cost_y],
-            ]
-        )
-        zz = np.array(
-            [
-                [np.exp(-1j * math.pi / 2 * t_z), 0, 0, 0],
-                [0, np.exp(1j * math.pi / 2 * t_z), 0, 0],
-                [0, 0, np.exp(1j * math.pi / 2 * t_z), 0],
-                [0, 0, 0, np.exp(-1j * math.pi / 2 * t_z)],
-            ]
-        )
-
-        matrix = np.matmul(np.matmul(xx, yy), zz)
-
-        return np.array(matrix, dtype=np.complex128)
-
-    def to_matrix_gate(self) -> MatrixGate:
-        can_matrix = self.get_matrix()
-
-        return MatrixGate(can_matrix, operands=[self.control_qubit, self.target_qubit])
-
-    def is_identity(self) -> bool:
-        return np.allclose(self.get_matrix(), np.eye(2 ** len(self.operands)), atol=ATOL)
-
-
-class Can(CanonicalGate):
-    def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, canonical_axis: AxisLike) -> None:
-        CanonicalGate.__init__(
-            self, control_qubit=control_qubit, target_qubit=target_qubit, canonical_axis=canonical_axis
-        )
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.control_qubit, self.target_qubit
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_can(self)
 
 
 class ControlledGate(Gate):

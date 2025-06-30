@@ -78,7 +78,7 @@ def is_identity_matrix_up_to_a_global_phase(matrix: NDArray[np.complex128]) -> b
 
 
 def get_phase_angle(scalar: np.complex128) -> np.complex128:
-    """ Derives the Euler rotation angle from a scalar.
+    """Derives the Euler rotation angle from a scalar.
     Args:
         scalar: scalar to convert.
     Returns:

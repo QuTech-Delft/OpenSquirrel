@@ -143,7 +143,6 @@ class Circuit:
         raise ValueError(msg)
 
     class PhaseMap:
-
         def __init__(self, phase_map: NDArray[np.complex128]) -> None:
             """Initialize a PhaseMap object."""
             self.qubit_phase_map = phase_map

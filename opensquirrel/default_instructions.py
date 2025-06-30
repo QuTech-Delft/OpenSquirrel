@@ -13,7 +13,6 @@ from opensquirrel.ir import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrNoParams,
-    Can,
     ControlledGate,
     CRk,
     Gate,
@@ -82,15 +81,11 @@ default_gate_alias_set = {
     "Identity": I,
 }
 
-default_canonical_gate_set: Mapping[str, type[Gate]]
-default_canonical_gate_set = {"Can": Can}
-
 default_gate_set: Mapping[str, type[Gate]]
 default_gate_set = {
     **default_bloch_sphere_rotation_set,
     **default_controlled_gate_set,
     **default_matrix_gate_set,
-    **default_canonical_gate_set,
     **default_gate_alias_set,
 }
 
