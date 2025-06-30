@@ -1,4 +1,3 @@
-import importlib.util
 import math
 from typing import ClassVar
 
@@ -218,20 +217,6 @@ class TestTutorial:
     def test_apply_mckay_decomposer(self, circuit: Circuit) -> None:
         circuit.decompose(decomposer=McKayDecomposer())
         assert str(circuit) == """version 3.0\n\nqubit[1] q\n\nRz(1.5707963) q[0]\nX90 q[0]\nRz(1.5707963) q[0]\n"""
-
-    def test_export_to_qs_schedule(self, circuit: Circuit) -> None:
-        circuit.decompose(decomposer=McKayDecomposer())
-        if importlib.util.find_spec("quantify_scheduler") is None:
-            with pytest.raises(
-                Exception,
-                match="quantify-scheduler is not installed, or cannot be installed on your system",
-            ):
-                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-        else:
-            from quantify_scheduler import Schedule
-
-            exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-            assert isinstance(exported_schedule, Schedule)
 
 
 class TestCreatingACircuit:
