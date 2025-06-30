@@ -80,7 +80,7 @@ If one wishes to export the (compiled) program to, for example,
 a [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/v0.24.0/) `Schedule` one would do the following,
 using the [quantify-scheduler exporter](../compilation-passes/types-of-passes/exporting/quantify-scheduler-exporter.md):
 
-```
+```python
 exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 ```
 
