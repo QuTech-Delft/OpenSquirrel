@@ -10,34 +10,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
-## [ ?.?.? ] - [ yyyy-mm-dd ]
+## [ M.m.P ] - [ xxxx-yy-zz ]
 
 ### Added
 
-### Changed
-
-- Renamed `RoutingValidator` to `InteractionValidator`       
-
-### Fixed
-
-
-## [ 0.4.0 ] - [ 2025-04-28 ]
-
-### Added
-
-- Assembly declaration
-- `Rn` unitary instruction
-- `SWAP2CZDecomposer` decomposer pass
-- `CZDecomposer` decomposer pass
-- `ShortestPathRouter` router pass
-- `RandomMapper` mapper pass
-- `AStarRouter` router pass
+- `MIPMapper` mapper pass
 
 ## [ 0.5.0 ] - [ 2025-05-28 ]
 
 ### Added
 
-- `asm_filter` method to the `Circuit` class to filter-out assembly declarations by backend name
+- `asm_filter` method to the `Circuit` class to filter out assembly declarations by backend name
+
+### Fixed
+
+- `RoutingValidator` ignores assembly declarations
 
 ### Changed
 
