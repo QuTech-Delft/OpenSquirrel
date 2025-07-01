@@ -8,30 +8,30 @@ from opensquirrel.passes.mapper import MIPMapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 
-@pytest.fixture(name="mapper1")
-def mapper_fixture1() -> MIPMapper:
+@pytest.fixture
+def mapper1() -> MIPMapper:
     connectivity = {"0": [1, 2], "1": [0, 2, 3], "2": [0, 1, 4], "3": [1, 4], "4": [2, 3]}
     qubit_register_size = 5
     return MIPMapper(qubit_register_size=qubit_register_size, connectivity=connectivity)
 
 
-@pytest.fixture(name="mapper2")
-def mapper_fixture2() -> MIPMapper:
+@pytest.fixture
+def mapper2() -> MIPMapper:
     connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
     qubit_register_size = 7
     return MIPMapper(qubit_register_size=qubit_register_size, connectivity=connectivity)
 
 
-@pytest.fixture(name="mapper3")
-def mapper_fixture3() -> MIPMapper:
+@pytest.fixture
+def mapper3() -> MIPMapper:
     connectivity = {"0": [2], "1": [0, 3, 4], "2": [0, 5], "3": [1, 5, 2], "4": [2, 5], "5": [4, 6], "6": [3]}
     qubit_register_size = 7
     timeout = 0.000001
     return MIPMapper(qubit_register_size=qubit_register_size, timeout=timeout, connectivity=connectivity)
 
 
-@pytest.fixture(name="circuit1")
-def circuit_fixture1() -> Circuit:
+@pytest.fixture
+def circuit1() -> Circuit:
     builder = CircuitBuilder(5)
     builder.H(0)
     builder.CNOT(0, 1)
@@ -42,8 +42,8 @@ def circuit_fixture1() -> Circuit:
     return builder.to_circuit()
 
 
-@pytest.fixture(name="circuit2")
-def circuit_fixture2() -> Circuit:
+@pytest.fixture
+def circuit2() -> Circuit:
     builder = CircuitBuilder(7)
     builder.H(0)
     builder.CNOT(0, 1)
@@ -57,8 +57,8 @@ def circuit_fixture2() -> Circuit:
     return builder.to_circuit()
 
 
-@pytest.fixture(name="circuit3")
-def circuit_fixture3() -> Circuit:
+@pytest.fixture
+def circuit3() -> Circuit:
     builder = CircuitBuilder(7)
     builder.H(0)
     builder.CNOT(0, 1)

@@ -27,8 +27,8 @@ class TestMapper:
 
 
 class TestMapQubits:
-    @pytest.fixture(name="circuit")
-    def circuit_fixture(self) -> Circuit:
+    @pytest.fixture
+    def circuit(self) -> Circuit:
         builder = CircuitBuilder(3, 1)
         builder.H(0)
         builder.CNOT(0, 1)
@@ -36,8 +36,8 @@ class TestMapQubits:
         builder.measure(0, 0)
         return builder.to_circuit()
 
-    @pytest.fixture(name="remapped_circuit")
-    def remapped_circuit_fixture(self) -> Circuit:
+    @pytest.fixture
+    def remapped_circuit(self) -> Circuit:
         builder = CircuitBuilder(3, 1)
         builder.H(1)
         builder.CNOT(1, 0)

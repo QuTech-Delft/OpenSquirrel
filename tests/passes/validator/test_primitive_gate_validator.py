@@ -6,8 +6,8 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.passes.validator import PrimitiveGateValidator
 
 
-@pytest.fixture(name="validator")
-def validator_fixture() -> PrimitiveGateValidator:
+@pytest.fixture
+def validator() -> PrimitiveGateValidator:
     primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
     return PrimitiveGateValidator(primitive_gate_set)
 

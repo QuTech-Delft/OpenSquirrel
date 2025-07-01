@@ -9,8 +9,8 @@ from opensquirrel.passes.merger.general_merger import rearrange_barriers
 from tests.ir_equality_test_base import modify_circuit_and_check
 
 
-@pytest.fixture(name="merger")
-def merger_fixture() -> SingleQubitGatesMerger:
+@pytest.fixture
+def merger() -> SingleQubitGatesMerger:
     return SingleQubitGatesMerger()
 
 

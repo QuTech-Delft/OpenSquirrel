@@ -7,20 +7,20 @@ from opensquirrel.ir import SWAP
 from opensquirrel.passes.router import ShortestPathRouter
 
 
-@pytest.fixture(name="router1")
-def router_fixture1() -> ShortestPathRouter:
+@pytest.fixture
+def router1() -> ShortestPathRouter:
     connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
     return ShortestPathRouter(connectivity)
 
 
-@pytest.fixture(name="router2")
-def router_fixture2() -> ShortestPathRouter:
+@pytest.fixture
+def router2() -> ShortestPathRouter:
     connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
     return ShortestPathRouter(connectivity)
 
 
-@pytest.fixture(name="router3")
-def router_fixture3() -> ShortestPathRouter:
+@pytest.fixture
+def router3() -> ShortestPathRouter:
     connectivity = {
         "0": [1, 2, 5],
         "1": [0, 3, 6],
@@ -36,8 +36,8 @@ def router_fixture3() -> ShortestPathRouter:
     return ShortestPathRouter(connectivity)
 
 
-@pytest.fixture(name="circuit1")
-def circuit_fixture1() -> Circuit:
+@pytest.fixture
+def circuit1() -> Circuit:
     builder = CircuitBuilder(5)
     builder.CNOT(0, 1)
     builder.CNOT(1, 2)
@@ -47,8 +47,8 @@ def circuit_fixture1() -> Circuit:
     return builder.to_circuit()
 
 
-@pytest.fixture(name="circuit2")
-def circuit_fixture2() -> Circuit:
+@pytest.fixture
+def circuit2() -> Circuit:
     builder = CircuitBuilder(7)
     builder.CNOT(0, 6)
     builder.CNOT(1, 5)
@@ -61,8 +61,8 @@ def circuit_fixture2() -> Circuit:
     return builder.to_circuit()
 
 
-@pytest.fixture(name="circuit3")
-def circuit_fixture3() -> Circuit:
+@pytest.fixture
+def circuit3() -> Circuit:
     builder = CircuitBuilder(10)
     builder.CNOT(0, 9)
     builder.CNOT(1, 8)

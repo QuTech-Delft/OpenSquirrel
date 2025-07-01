@@ -13,8 +13,8 @@ if TYPE_CHECKING:
     from opensquirrel.ir import Gate
 
 
-@pytest.fixture(name="decomposer")
-def decomposer_fixture() -> SWAP2CNOTDecomposer:
+@pytest.fixture
+def decomposer() -> SWAP2CNOTDecomposer:
     return SWAP2CNOTDecomposer()
 
 

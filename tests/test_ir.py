@@ -35,8 +35,8 @@ from opensquirrel.ir import (
 
 
 class TestAxis:
-    @pytest.fixture(name="axis")
-    def axis_fixture(self) -> Axis:
+    @pytest.fixture
+    def axis(self) -> Axis:
         return Axis(1, 0, 0)
 
     @pytest.mark.parametrize("expected_class", [Sequence, Expression])
@@ -246,8 +246,8 @@ class TestIR:
 
 
 class TestMeasure:
-    @pytest.fixture(name="measure")
-    def measure_fixture(self) -> Measure:
+    @pytest.fixture
+    def measure(self) -> Measure:
         return Measure(42, 42, axis=(0, 0, 1))
 
     def test_repr(self, measure: Measure) -> None:
@@ -274,8 +274,8 @@ class TestMeasure:
 
 
 class TestBlochSphereRotation:
-    @pytest.fixture(name="gate")
-    def gate_fixture(self) -> BlochSphereRotation:
+    @pytest.fixture
+    def gate(self) -> BlochSphereRotation:
         return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau)
 
     @pytest.mark.parametrize(
@@ -337,8 +337,8 @@ class TestBlochSphereRotation:
 
 
 class TestMatrixGate:
-    @pytest.fixture(name="gate")
-    def gate_fixture(self) -> MatrixGate:
+    @pytest.fixture
+    def gate(self) -> MatrixGate:
         cnot_matrix = [
             [1, 0, 0, 0],
             [0, 1, 0, 0],

@@ -9,8 +9,8 @@ from opensquirrel.passes.decomposer import CNOT2CZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 
-@pytest.fixture(name="decomposer")
-def decomposer_fixture() -> CNOT2CZDecomposer:
+@pytest.fixture
+def decomposer() -> CNOT2CZDecomposer:
     return CNOT2CZDecomposer()
 
 

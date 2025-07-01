@@ -11,8 +11,8 @@ from opensquirrel.utils import check_mapper
 
 
 class TestIdentityMapper:
-    @pytest.fixture(name="mapper")
-    def mapper_fixture(self) -> IdentityMapper:
+    @pytest.fixture
+    def mapper(self) -> IdentityMapper:
         return IdentityMapper(qubit_register_size=3)
 
     def test_compliance(self, mapper: IdentityMapper) -> None:
@@ -23,8 +23,8 @@ class TestIdentityMapper:
 
 
 class TestHardcodedMapper:
-    @pytest.fixture(name="mapper")
-    def mapper_fixture(self) -> HardcodedMapper:
+    @pytest.fixture
+    def mapper(self) -> HardcodedMapper:
         qubit_register_size = 10
         mapping = Mapping([(i + 1) % qubit_register_size for i in range(qubit_register_size)])
         return HardcodedMapper(qubit_register_size, mapping)
@@ -37,8 +37,8 @@ class TestHardcodedMapper:
 
 
 class TestRandomMapper:
-    @pytest.fixture(name="mapper")
-    def mapper_fixture(self) -> RandomMapper:
+    @pytest.fixture
+    def mapper(self) -> RandomMapper:
         return RandomMapper(qubit_register_size=5)
 
     def test_compliance(self, mapper: RandomMapper) -> None:

@@ -11,8 +11,8 @@ from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 
-@pytest.fixture(name="decomposer")
-def decomposer_fixture() -> McKayDecomposer:
+@pytest.fixture
+def decomposer() -> McKayDecomposer:
     return McKayDecomposer()
 
 

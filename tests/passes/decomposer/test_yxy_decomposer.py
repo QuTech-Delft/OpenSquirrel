@@ -10,8 +10,8 @@ from opensquirrel.passes.decomposer import YXYDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 
-@pytest.fixture(name="decomposer")
-def decomposer_fixture() -> YXYDecomposer:
+@pytest.fixture
+def decomposer() -> YXYDecomposer:
     return YXYDecomposer()
 
 

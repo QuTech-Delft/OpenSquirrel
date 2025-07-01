@@ -8,20 +8,20 @@ from opensquirrel.passes.router import AStarRouter
 from opensquirrel.passes.router.heuristics import DistanceMetric
 
 
-@pytest.fixture(name="router1")
-def router_fixture1() -> AStarRouter:
+@pytest.fixture
+def router1() -> AStarRouter:
     connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
     return AStarRouter(connectivity, distance_metric=DistanceMetric.MANHATTAN)
 
 
-@pytest.fixture(name="router2")
-def router_fixture2() -> AStarRouter:
+@pytest.fixture
+def router2() -> AStarRouter:
     connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
     return AStarRouter(connectivity, distance_metric=DistanceMetric.EUCLIDEAN)
 
 
-@pytest.fixture(name="router3")
-def router_fixture3() -> AStarRouter:
+@pytest.fixture
+def router3() -> AStarRouter:
     connectivity = {
         "0": [1, 2, 5],
         "1": [0, 3, 6],
@@ -37,8 +37,8 @@ def router_fixture3() -> AStarRouter:
     return AStarRouter(connectivity, distance_metric=DistanceMetric.CHEBYSHEV)
 
 
-@pytest.fixture(name="circuit1")
-def circuit_fixture1() -> Circuit:
+@pytest.fixture
+def circuit1() -> Circuit:
     builder = CircuitBuilder(5)
     builder.CNOT(0, 1)
     builder.CNOT(1, 2)
@@ -48,8 +48,8 @@ def circuit_fixture1() -> Circuit:
     return builder.to_circuit()
 
 
-@pytest.fixture(name="circuit2")
-def circuit_fixture2() -> Circuit:
+@pytest.fixture
+def circuit2() -> Circuit:
     builder = CircuitBuilder(7)
     builder.CNOT(0, 6)
     builder.CNOT(1, 5)
@@ -62,8 +62,8 @@ def circuit_fixture2() -> Circuit:
     return builder.to_circuit()
 
 
-@pytest.fixture(name="circuit3")
-def circuit_fixture3() -> Circuit:
+@pytest.fixture
+def circuit3() -> Circuit:
     builder = CircuitBuilder(10)
     builder.CNOT(0, 9)
     builder.CNOT(1, 8)

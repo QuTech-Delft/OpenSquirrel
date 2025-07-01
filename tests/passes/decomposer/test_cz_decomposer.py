@@ -10,8 +10,8 @@ from opensquirrel.passes.decomposer import CZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 
-@pytest.fixture(name="decomposer")
-def decomposer_fixture() -> CZDecomposer:
+@pytest.fixture
+def decomposer() -> CZDecomposer:
     return CZDecomposer()
 
 
