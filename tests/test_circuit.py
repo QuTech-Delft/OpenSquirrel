@@ -14,17 +14,17 @@ def test_asm_filter() -> None:
     builder.H(0)
     builder.asm("_TestBackend_2", """backend code""")  # relevant name variant 2
     builder.to_circuit()
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
-    asm_statements = [statement for statement in qc.ir.statements if isinstance(statement, AsmDeclaration)]
-    assert len(qc.ir.statements) == 9
+    asm_statements = [statement for statement in circuit.ir.statements if isinstance(statement, AsmDeclaration)]
+    assert len(circuit.ir.statements) == 9
     assert len(asm_statements) == 5
 
     relevant_backend_name = "TestBackend"
-    qc.asm_filter(relevant_backend_name)
+    circuit.asm_filter(relevant_backend_name)
 
-    asm_statements = [statement for statement in qc.ir.statements if isinstance(statement, AsmDeclaration)]
-    assert len(qc.ir.statements) == 7
+    asm_statements = [statement for statement in circuit.ir.statements if isinstance(statement, AsmDeclaration)]
+    assert len(circuit.ir.statements) == 7
     assert len(asm_statements) == 3
 
     for statement in asm_statements:

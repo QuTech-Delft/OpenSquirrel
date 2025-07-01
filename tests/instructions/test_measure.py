@@ -4,7 +4,7 @@ from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGate
 
 
 def test_measure() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -15,7 +15,7 @@ def test_measure() -> None:
         """,
     )
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -28,7 +28,7 @@ b[1] = measure q[1]
 
 
 def test_consecutive_measures() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -44,7 +44,7 @@ def test_consecutive_measures() -> None:
         """,
     )
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[3] q
@@ -61,7 +61,7 @@ b[1] = measure q[1]
 
 
 def test_measures_unrolling() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -76,7 +76,7 @@ def test_measures_unrolling() -> None:
         """,
     )
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[6] q
@@ -101,7 +101,7 @@ b[5] = measure q[5]
 
 
 def test_measure_order() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -113,10 +113,10 @@ def test_measure_order() -> None:
         b[1, 0] = measure q[1, 0]
         """,
     )
-    qc.merge(merger=SingleQubitGatesMerger())
-    qc.decompose(decomposer=McKayDecomposer())
+    circuit.merge(merger=SingleQubitGatesMerger())
+    circuit.decompose(decomposer=McKayDecomposer())
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -131,7 +131,7 @@ b[0] = measure q[0]
 
 
 def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -148,10 +148,10 @@ def test_multiple_qubit_bit_definitions_and_mid_circuit_measure_instructions() -
         b0 = measure q0
         """,
     )
-    qc.merge(merger=SingleQubitGatesMerger())
-    qc.decompose(decomposer=McKayDecomposer())
+    circuit.merge(merger=SingleQubitGatesMerger())
+    circuit.decompose(decomposer=McKayDecomposer())
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q

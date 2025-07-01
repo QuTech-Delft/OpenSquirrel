@@ -10,7 +10,7 @@ from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGate
 
 
 def test_circuit_from_string() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -28,7 +28,7 @@ def test_circuit_from_string() -> None:
     )
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -45,10 +45,10 @@ b[1] = measure q[1]
 def test_circuit_builder() -> None:
     builder = CircuitBuilder(qubit_register_size=2)
     builder.Ry(0, 0.23).CNOT(0, 1)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -63,10 +63,10 @@ def test_circuit_builder_loop() -> None:
     builder = CircuitBuilder(qubit_register_size=10)
     for i in range(0, 10, 2):
         builder.H(i)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[10] q
@@ -87,9 +87,9 @@ def test_circuit_builder_qft() -> None:
         builder.H(i)
         for c in range(i + 1, qubit_register_size):
             builder.CRk(c, i, c - i + 1)
-    qft = builder.to_circuit()
+    circuit_qft = builder.to_circuit()
     assert (
-        str(qft)
+        str(circuit_qft)
         == """version 3.0
 
 qubit[5] q
@@ -131,12 +131,12 @@ def test_anonymous_gate() -> None:
     builder = CircuitBuilder(1)
     builder.Rx(0, math.pi / 4)
     builder.Rz(0, math.pi / 4)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
-    qc.merge(merger=SingleQubitGatesMerger())
+    circuit.merge(merger=SingleQubitGatesMerger())
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[1] q
@@ -188,7 +188,7 @@ def test_create_custom_gates() -> None:
 
 
 def test_predefined_decomposition() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
         qubit[3] q
@@ -198,7 +198,7 @@ def test_predefined_decomposition() -> None:
         Ry(6.78) q[2]
         """
     )
-    qc.replace(
+    circuit.replace(
         CNOT,
         lambda control, target: [
             H(target),
@@ -208,7 +208,7 @@ def test_predefined_decomposition() -> None:
     )
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[3] q
@@ -225,7 +225,7 @@ Ry(6.78) q[2]
 
 
 def test_error_predefined_decomposition() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
         qubit[3] q
@@ -236,7 +236,7 @@ def test_error_predefined_decomposition() -> None:
         """
     )
     with pytest.raises(ValueError, match=r"replacement for gate .*") as e_info:
-        qc.replace(CNOT, lambda control_qubit, target_qubit: [H(target_qubit), CZ(control_qubit, target_qubit)])
+        circuit.replace(CNOT, lambda control_qubit, target_qubit: [H(target_qubit), CZ(control_qubit, target_qubit)])
 
     assert str(e_info.value) == "replacement for gate CNOT does not preserve the quantum state"
 
@@ -244,12 +244,12 @@ def test_error_predefined_decomposition() -> None:
 def test_zyz_decomposer() -> None:
     builder = CircuitBuilder(qubit_register_size=1)
     builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
-    qc.decompose(decomposer=ZYZDecomposer())
+    circuit.decompose(decomposer=ZYZDecomposer())
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[1] q

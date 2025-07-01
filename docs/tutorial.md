@@ -27,7 +27,7 @@ You can create a circuit in two different ways:
 ```python
 from opensquirrel import Circuit
 
-qc = Circuit.from_string(
+circuit = Circuit.from_string(
     """
     version 3.0
 
@@ -44,7 +44,7 @@ qc = Circuit.from_string(
     """
 )
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -68,9 +68,9 @@ from opensquirrel.circuit_builder import CircuitBuilder
 
 builder = CircuitBuilder(qubit_register_size=2)
 builder.Ry(0, 0.23).CNOT(0, 1)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -89,9 +89,9 @@ from opensquirrel.circuit_builder import CircuitBuilder
 builder = CircuitBuilder(qubit_register_size=10)
 for i in range(0, 10, 2):
     builder.H(i)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -116,9 +116,9 @@ for i in range(qubit_register_size):
       builder.H(i)
       for c in range(i + 1, qubit_register_size):
             builder.CRk(c, i, c-i+1)
-qft = builder.to_circuit()
+circuit_qft = builder.to_circuit()
 
-print(qft)
+print(circuit_qft)
 ```
 _Output_:
 
@@ -195,11 +195,11 @@ import math
 builder = CircuitBuilder(1)
 for _ in range(4):
     builder.Rx(0, math.pi / 4)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-qc.merge(merger=SingleQubitGatesMerger())
+circuit.merge(merger=SingleQubitGatesMerger())
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -299,7 +299,7 @@ which requires the same parameters as the gate that is decomposed:
 from opensquirrel.circuit import Circuit
 from opensquirrel import CNOT, H, CZ
 
-qc = Circuit.from_string(
+circuit = Circuit.from_string(
     """
     version 3.0
     qubit[3] q
@@ -309,7 +309,7 @@ qc = Circuit.from_string(
     Ry q[2], 6.78
     """
 )
-qc.replace(
+circuit.replace(
     CNOT,
     lambda control, target:
     [
@@ -319,7 +319,7 @@ qc.replace(
     ]
 )
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -343,7 +343,7 @@ or H gate, in our custom-made decomposition:
 from opensquirrel.circuit import Circuit
 from opensquirrel import CNOT, CZ, H
 
-qc = Circuit.from_string(
+circuit = Circuit.from_string(
     """
     version 3.0
     qubit[3] q
@@ -354,7 +354,7 @@ qc = Circuit.from_string(
     """
 )
 try:
-    qc.replace(
+    circuit.replace(
         CNOT,
         lambda control, target:
         [
@@ -413,11 +413,11 @@ import math
 
 builder = CircuitBuilder(qubit_register_size=1)
 builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-qc.decompose(decomposer=ZYZDecomposer())
+circuit.decompose(decomposer=ZYZDecomposer())
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -462,7 +462,7 @@ The available `Validator` passes enable the user to validate various aspects of 
 
 ### Routing Validator
 
-For instance, the `RoutingValidator` checks whether a circuit is directly executable given some hardware's coupling map. The example below shows how this `Validator` instance can be used. 
+For instance, the `RoutingValidator` checks whether a circuit is directly executable given some hardware's coupling map. The example below shows how this `Validator` instance can be used.
 
 ```python
 from opensquirrel import CircuitBuilder

@@ -20,7 +20,7 @@ from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateVal
 
 
 def test_spin2plus_backend() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         // Version statement
         version 3.0
@@ -88,28 +88,28 @@ def test_spin2plus_backend() -> None:
     }
 
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
-    qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
+    circuit.decompose(decomposer=SWAP2CNOTDecomposer(**data))
     #
     # # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer(**data))
+    circuit.decompose(decomposer=CNOTDecomposer(**data))
     #
     # # Replace CNOT gates with CZ gates
-    qc.decompose(decomposer=CNOT2CZDecomposer(**data))
+    circuit.decompose(decomposer=CNOT2CZDecomposer(**data))
     #
     # # Merge single-qubit gates
-    qc.merge(merger=SingleQubitGatesMerger(**data))
+    circuit.merge(merger=SingleQubitGatesMerger(**data))
     #
     # # Decompose single-qubit gates to primitive gates with McKay decomposer
-    qc.decompose(decomposer=McKayDecomposer(**data))
+    circuit.decompose(decomposer=McKayDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -185,7 +185,7 @@ b[3] = measure q[1]
 
 
 def test_hectoqubit_backend() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         // Version statement
         version 3.0
@@ -279,34 +279,34 @@ def test_hectoqubit_backend() -> None:
     }
 
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
-    qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
+    circuit.decompose(decomposer=SWAP2CNOTDecomposer(**data))
 
     # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
-    qc.decompose(decomposer=CNOTDecomposer(**data))
+    circuit.decompose(decomposer=CNOTDecomposer(**data))
 
     # Replace CNOT gates with CZ gates
-    qc.decompose(decomposer=CNOT2CZDecomposer(**data))
+    circuit.decompose(decomposer=CNOT2CZDecomposer(**data))
 
     # Merge single-qubit gates
-    qc.merge(merger=SingleQubitGatesMerger(**data))
+    circuit.merge(merger=SingleQubitGatesMerger(**data))
 
     # Decompose single-qubit gates to primitive gates with the XYX decomposer
-    qc.decompose(decomposer=XYXDecomposer(**data))
+    circuit.decompose(decomposer=XYXDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
             Exception,
             match="quantify-scheduler is not installed, or cannot be installed on your system",
         ):
-            qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, bit_string_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
         assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
@@ -387,15 +387,15 @@ def test_hectoqubit_backend() -> None:
             "Measure q[4]",
         ]
 
-        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
+        ir_measures = [instruction for instruction in circuit.ir.statements if isinstance(instruction, Measure)]
         qs_measures = [
             operation.data["gate_info"]
             for operation in exported_schedule.operations.values()
             if operation.data["gate_info"]["operation_type"] == "measure"
         ]
 
-        ir_acq_index_record = [0] * qc.qubit_register_size
-        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size
+        ir_acq_index_record = [0] * circuit.qubit_register_size
+        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * circuit.bit_register_size
         for i, ir_measure in enumerate(ir_measures):
             qubit_index = ir_measure.qubit.index
             ir_acq_index = ir_acq_index_record[qubit_index]
@@ -405,12 +405,12 @@ def test_hectoqubit_backend() -> None:
             assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
             ir_acq_index_record[qubit_index] += 1
 
-        assert len(bit_string_mapping) == qc.bit_register_size
+        assert len(bit_string_mapping) == circuit.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
 
 
 def test_hectoqubit_backend_allxy() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -462,9 +462,9 @@ def test_hectoqubit_backend_allxy() -> None:
             Exception,
             match="quantify-scheduler is not installed, or cannot be installed on your system",
         ):
-            qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
     else:
-        exported_schedule, bit_string_mapping = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, bit_string_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
         assert exported_schedule.name == "Exported OpenSquirrel circuit"
 
@@ -511,10 +511,10 @@ def test_hectoqubit_backend_allxy() -> None:
             if operation.data["gate_info"]["operation_type"] == "measure"
         ]
 
-        ir_measures = [instruction for instruction in qc.ir.statements if isinstance(instruction, Measure)]
+        ir_measures = [instruction for instruction in circuit.ir.statements if isinstance(instruction, Measure)]
 
-        ir_acq_index_record = [0] * qc.qubit_register_size
-        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * qc.bit_register_size
+        ir_acq_index_record = [0] * circuit.qubit_register_size
+        ir_bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * circuit.bit_register_size
         for i, ir_measurement in enumerate(ir_measures):
             qubit_index = ir_measurement.qubit.index
             ir_acq_index = ir_acq_index_record[qubit_index]
@@ -527,12 +527,12 @@ def test_hectoqubit_backend_allxy() -> None:
             assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
             ir_acq_index_record[qubit_index] += 1
 
-        assert len(bit_string_mapping) == qc.bit_register_size
+        assert len(bit_string_mapping) == circuit.bit_register_size
         assert bit_string_mapping == ir_bit_string_mapping
 
 
 def test_starmon7_backend() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         // Version statement
         version 3.0
@@ -640,12 +640,12 @@ def test_starmon7_backend() -> None:
     }
 
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
 
-    exported_circuit = qc.export(fmt=ExportFormat.CQASM_V1)
+    exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
 
     assert (
         exported_circuit
@@ -709,7 +709,7 @@ measure_z q[6]
 
 
 def test_rydberg_backend() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """version 3.0
 
 qubit[9] q
@@ -739,7 +739,7 @@ X q
     )
     # Compiler configuration is yet to be defined for the Rydberg backend.
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[9] q

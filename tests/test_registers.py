@@ -4,7 +4,7 @@ from opensquirrel.passes.merger.single_qubit_gates_merger import SingleQubitGate
 
 
 def test_qubit_variable_b_and_bit_variable_q() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -19,10 +19,10 @@ def test_qubit_variable_b_and_bit_variable_q() -> None:
         q[0] = measure b[0]
         """,
     )
-    qc.merge(merger=SingleQubitGatesMerger())
-    qc.decompose(decomposer=McKayDecomposer())
+    circuit.merge(merger=SingleQubitGatesMerger())
+    circuit.decompose(decomposer=McKayDecomposer())
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q

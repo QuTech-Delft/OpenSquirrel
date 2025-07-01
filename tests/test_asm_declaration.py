@@ -6,7 +6,7 @@ from opensquirrel.passes.merger import SingleQubitGatesMerger
 
 
 def test_empty_raw_text_string() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
 version 3.0
 
@@ -17,7 +17,7 @@ asm(TestBackend) '''
 """,
     )
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[1] q
@@ -29,7 +29,7 @@ asm(TestBackend) '''
 
 
 def test_single_line() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
 version 3
 
@@ -43,7 +43,7 @@ CNOT q[0], q[1]
 """,
     )
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -56,7 +56,7 @@ CNOT q[0], q[1]
 
 
 def test_multi_line() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
 version 3
 
@@ -75,7 +75,7 @@ CNOT q[0], q[1]
         """,
     )
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -128,9 +128,9 @@ def test_asm_circuit_builder() -> None:
     builder.H(0)
     builder.asm("TestBackend", """ a ' " {} () [] b """)
     builder.CNOT(0, 1)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q
@@ -149,10 +149,10 @@ def test_no_merging_across_asm() -> None:
     builder.asm("TestBackend", """ a ' " {} () [] b """)
     builder.H(0)
     builder.X90(1)
-    qc = builder.to_circuit()
-    qc.merge(merger=SingleQubitGatesMerger())
+    circuit = builder.to_circuit()
+    circuit.merge(merger=SingleQubitGatesMerger())
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q

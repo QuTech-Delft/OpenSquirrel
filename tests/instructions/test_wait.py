@@ -19,26 +19,26 @@ from opensquirrel.ir import Barrier, Wait
     ids=["wait", "wait sgmq"],
 )
 def test_wait_as_cqasm_string(cqasm_string: str, expected_result: str) -> None:
-    qc = Circuit.from_string(cqasm_string)
-    assert str(qc) == expected_result
+    circuit = Circuit.from_string(cqasm_string)
+    assert str(circuit) == expected_result
 
 
 def test_wait_in_circuit_builder() -> None:
     builder = CircuitBuilder(2)
     builder.wait(0, 3).wait(1, 1)
-    qc = builder.to_circuit()
-    assert qc.qubit_register_size == 2
-    assert qc.qubit_register_name == "q"
-    assert qc.ir.statements == [Wait(0, 3), Wait(1, 1)]
+    circuit = builder.to_circuit()
+    assert circuit.qubit_register_size == 2
+    assert circuit.qubit_register_name == "q"
+    assert circuit.ir.statements == [Wait(0, 3), Wait(1, 1)]
 
 
 def test_wait_in_instruction_context() -> None:
     builder = CircuitBuilder(2)
     builder.H(0).H(1).wait(0, 1).barrier(1).wait(1, 3).barrier(0).CNOT(0, 1).wait(0, 3)
-    qc = builder.to_circuit()
-    assert qc.qubit_register_size == 2
-    assert qc.qubit_register_name == "q"
-    assert qc.ir.statements == [
+    circuit = builder.to_circuit()
+    assert circuit.qubit_register_size == 2
+    assert circuit.qubit_register_name == "q"
+    assert circuit.ir.statements == [
         H(0),
         H(1),
         Wait(0, 1),

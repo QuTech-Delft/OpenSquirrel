@@ -2,7 +2,7 @@ from opensquirrel import Circuit
 
 
 def test_parse_instructions() -> None:
-    qc = Circuit.from_string(
+    circuit = Circuit.from_string(
         """
         version 3.0
 
@@ -54,7 +54,7 @@ def test_parse_instructions() -> None:
     )
 
     assert (
-        str(qc)
+        str(circuit)
         == """version 3.0
 
 qubit[2] q

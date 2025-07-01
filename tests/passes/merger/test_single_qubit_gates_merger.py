@@ -6,7 +6,7 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.ir import BlochSphereRotation, Float, Rn
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
-from test.ir_equality_test_base import modify_circuit_and_check
+from tests.ir_equality_test_base import modify_circuit_and_check
 
 
 @pytest.fixture(name="merger")
@@ -93,13 +93,13 @@ def test_merge_y90_x_to_h(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(1)
     builder.Ry(0, math.pi / 2)
     builder.X(0)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
     builder2 = CircuitBuilder(1)
     builder2.H(0)
-    expected_qc = builder2.to_circuit()
+    expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(qc, merger.merge, expected_qc)
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
 def test_no_merge_across_measure(merger: SingleQubitGatesMerger) -> None:
@@ -110,16 +110,16 @@ def test_no_merge_across_measure(merger: SingleQubitGatesMerger) -> None:
     builder.H(1)
     builder.measure(0, 1)
     builder.H(1)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
     builder2 = CircuitBuilder(2, 2)
     builder2.H(0)
     builder2.measure(0, 0)
     builder2.H(0)
     builder2.measure(0, 1)
-    expected_qc = builder2.to_circuit()
+    expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(qc, merger.merge, expected_qc)
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
 def test_no_merge_across_reset(merger: SingleQubitGatesMerger) -> None:
@@ -130,16 +130,16 @@ def test_no_merge_across_reset(merger: SingleQubitGatesMerger) -> None:
     builder.H(1)
     builder.reset(0)
     builder.H(1)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
     builder2 = CircuitBuilder(2)
     builder2.H(0)
     builder2.reset(0)
     builder2.H(0)
     builder2.reset(0)
-    expected_qc = builder2.to_circuit()
+    expected_circuit = builder2.to_circuit()
 
-    modify_circuit_and_check(qc, merger.merge, expected_qc)
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
 def test_no_merge_across_wait(merger: SingleQubitGatesMerger) -> None:
@@ -150,15 +150,15 @@ def test_no_merge_across_wait(merger: SingleQubitGatesMerger) -> None:
     builder.H(1)
     builder.wait(0, 3)
     builder.H(1)
-    qc = builder.to_circuit()
+    circuit = builder.to_circuit()
 
     builder2 = CircuitBuilder(2)
     builder2.H(0)
     builder2.wait(0, 3)
     builder2.H(0)
     builder2.wait(0, 3)
-    expected_qc = builder2.to_circuit()
-    modify_circuit_and_check(qc, merger.merge, expected_qc)
+    expected_circuit = builder2.to_circuit()
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
 
 @pytest.mark.parametrize(

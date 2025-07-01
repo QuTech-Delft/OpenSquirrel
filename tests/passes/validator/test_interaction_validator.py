@@ -60,7 +60,7 @@ def test_ignore_asm(validator: InteractionValidator) -> None:
     builder.H(0)
     builder.asm("backend_name", r"backend_code")
     builder.CNOT(0, 1)
-    qc = builder.to_circuit()
-    validator.validate(qc.ir)
+    circuit = builder.to_circuit()
+    validator.validate(circuit.ir)
 
-    assert len([statement for statement in qc.ir.statements if isinstance(statement, AsmDeclaration)]) == 1
+    assert len([statement for statement in circuit.ir.statements if isinstance(statement, AsmDeclaration)]) == 1

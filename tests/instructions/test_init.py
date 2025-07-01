@@ -19,14 +19,14 @@ from opensquirrel.ir import Init
     ids=["init", "init sgmq"],
 )
 def test_init_as_cqasm_string(cqasm_string: str, expected_result: str) -> None:
-    qc = Circuit.from_string(cqasm_string)
-    assert str(qc) == expected_result
+    circuit = Circuit.from_string(cqasm_string)
+    assert str(circuit) == expected_result
 
 
 def test_init_in_circuit_builder() -> None:
     builder = CircuitBuilder(2)
     builder.init(0).init(1)
-    qc = builder.to_circuit()
-    assert qc.qubit_register_size == 2
-    assert qc.qubit_register_name == "q"
-    assert qc.ir.statements == [Init(0), Init(1)]
+    circuit = builder.to_circuit()
+    assert circuit.qubit_register_size == 2
+    assert circuit.qubit_register_name == "q"
+    assert circuit.ir.statements == [Init(0), Init(1)]

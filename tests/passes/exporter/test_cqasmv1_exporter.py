@@ -50,8 +50,8 @@ measure_z q[1]
 
 
 def test_version_statement() -> None:
-    qc = Circuit.from_string("""version 3.0""")
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = Circuit.from_string("""version 3.0""")
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -61,8 +61,8 @@ def test_version_statement() -> None:
 
 def test_qubit_statement() -> None:
     builder = CircuitBuilder(3)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -74,8 +74,8 @@ qubits 3
 
 def test_circuit_to_string_after_circuit_modification() -> None:
     builder = CircuitBuilder(3)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -86,8 +86,8 @@ qubits 3
 
     builder.H(0)
     builder.CNOT(0, 1)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -103,8 +103,8 @@ cnot q[0], q[1]
 def test_float_precision() -> None:
     builder = CircuitBuilder(3)
     builder.Rx(0, 1.6546514861321684321654)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -123,8 +123,8 @@ def test_measure() -> None:
     builder.measure(0, 1)
     builder.measure(1, 0)
     builder.measure(1, 1)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -144,8 +144,8 @@ def test_init() -> None:
     builder = CircuitBuilder(1, 1)
     builder.init(0)
     builder.H(0)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -162,8 +162,8 @@ def test_reset() -> None:
     builder = CircuitBuilder(1, 1)
     builder.H(0)
     builder.reset(0)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -186,8 +186,8 @@ def test_all_instructions() -> None:
     builder.S(0).Sdag(0).T(0).Tdag(0)
     builder.CZ(0, 1).CNOT(1, 0).SWAP(0, 1)
     builder.measure(0, 0).measure(1, 1)
-    qc = builder.to_circuit()
-    cqasm_v1_string = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert (
         cqasm_v1_string
         == """version 1.0
@@ -234,8 +234,8 @@ def test_anonymous_gates(gate: Gate) -> None:
     builder = CircuitBuilder(2)
     builder.ir.add_gate(gate)
     with pytest.raises(UnsupportedGateError, match="not supported"):  # noqa: PT012
-        qc = builder.to_circuit()
-        qc.export(fmt=ExportFormat.CQASM_V1)
+        circuit = builder.to_circuit()
+        circuit.export(fmt=ExportFormat.CQASM_V1)
 
 
 @pytest.mark.parametrize(
@@ -283,6 +283,6 @@ def test_anonymous_gates(gate: Gate) -> None:
     ],
 )
 def test_barrier_groups(program: str, expected_output: str) -> None:
-    qc = Circuit.from_string(program)
-    output = qc.export(fmt=ExportFormat.CQASM_V1)
+    circuit = Circuit.from_string(program)
+    output = circuit.export(fmt=ExportFormat.CQASM_V1)
     assert output == expected_output
