@@ -27,18 +27,17 @@ class _QubitRemapper(IRVisitor):
     """
     Remap a whole IR.
 
+    A new IR where the qubit indices are replaced by the values passed in mapping.
+    _E.g._, for mapping = [3, 1, 0, 2]:
+    - Qubit(index=0) becomes Qubit(index=3),
+    - Qubit(index=1) becomes Qubit(index=1),
+    - Qubit(index=2) becomes Qubit(index=0), and
+    - Qubit(index=3) becomes Qubit(index=2).
+
     Args:
-        mapping: a list of qubit indices, e.g. [3, 1, 0, 2]
+        mapping: a list of qubit indices, _e.g._, [3, 1, 0, 2]
 
-    Returns:
-         A new IR where the qubit indices are replaced by the values passed in mapping.
-         E.g., for mapping = [3, 1, 0, 2]:
-         - Qubit(index=0) becomes Qubit(index=3),
-         - Qubit(index=1) becomes Qubit(index=1),
-         - Qubit(index=2) becomes Qubit(index=0), and
-         - Qubit(index=3) becomes Qubit(index=2).
     """
-
     def __init__(self, mapping: Mapping) -> None:
         self.mapping = mapping
 
