@@ -7,7 +7,7 @@ authors = [
 ]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://github.com/QuTech-Delft/OpenSquirrel"
+homepage = "https://qutech-delft.github.io/OpenSquirrel/"
 repository = "https://github.com/QuTech-Delft/OpenSquirrel"
 keywords = [
     "quantum",
