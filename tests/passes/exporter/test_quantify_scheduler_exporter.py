@@ -29,10 +29,11 @@ def mock_qs() -> Generator[MagicMock, None, None]:
     sys.modules.pop("opensquirrel.passes.exporter.quantify_scheduler_exporter", None)
     yield mock_qs
     sys.modules.pop("quantify_scheduler", None)
+    sys.modules.pop("opensquirrel.passes.exporter.quantify_scheduler_exporter", None)
 
 
 def test_export(mock_qs: MagicMock) -> None:
-    from opensquirrel.passes.exporter import quantify_scheduler_exporter
+    quantify_scheduler_exporter = importlib.import_module("opensquirrel.passes.exporter.quantify_scheduler_exporter")
     from opensquirrel.passes.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
 
     builder = CircuitBuilder(3, 3)
@@ -48,7 +49,7 @@ def test_export(mock_qs: MagicMock) -> None:
 
     quantify_scheduler_exporter.export(circuit)
 
-    # mock_qs.Schedule.assert_called_with("Exported OpenSquirrel circuit")
+    mock_qs.Schedule.assert_called_with("Exported OpenSquirrel circuit")
 
     mock_qs.operations.gate_library.Rxy.assert_has_calls(
         [
@@ -74,10 +75,10 @@ def test_export(mock_qs: MagicMock) -> None:
     ids=["H", "BSR"],
 )
 def test_gates_not_supported(mock_qs: MagicMock, gate: Gate) -> None:
-    from opensquirrel.passes.exporter import quantify_scheduler_exporter
+    quantify_scheduler_exporter = importlib.import_module("opensquirrel.passes.exporter.quantify_scheduler_exporter")
 
     builder = CircuitBuilder(3)
-    builder.ir.add_gate(H(0))  # or parameterize as before
+    builder.ir.add_gate(gate)  # or parameterize as before
     circuit = builder.to_circuit()
 
     with pytest.raises(ExporterError, match="cannot export circuit: "):
