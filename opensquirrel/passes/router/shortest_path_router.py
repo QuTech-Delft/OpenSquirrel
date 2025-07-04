@@ -16,7 +16,7 @@ class ShortestPathRouter(Router):
         for start_qubit_index, end_qubit_index in zip(shortest_path[:-2], shortest_path[1:-1]):
             ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
             # Update subsequent statements to reflect the swap
-            for statement in ir.statements[statement_index + 1:]:
+            for statement in ir.statements[statement_index + 1 :]:
                 if isinstance(statement, Instruction):
                     for qubit in statement.get_qubit_operands():
                         if qubit.index == start_qubit_index:
@@ -45,11 +45,9 @@ class ShortestPathRouter(Router):
                         shortest_path = nx.shortest_path(graph, source=q0.index, target=q1.index)
                         num_swaps_inserted = len(shortest_path) - 2
                         self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
-                        statement_index += num_swaps_inserted  
+                        statement_index += num_swaps_inserted
                     except nx.NetworkXNoPath as e:
                         msg = f"No routing path available between qubit {q0.index} and qubit {q1.index}"
                         raise NoRoutingPathError(msg) from e
             statement_index += 1
         return ir
-
-

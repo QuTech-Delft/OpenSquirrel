@@ -10,6 +10,7 @@ from opensquirrel.ir import IR, SWAP, Gate, Instruction
 from opensquirrel.passes.router import Router
 from opensquirrel.passes.router.heuristics import DistanceMetric, calculate_distance
 
+
 class AStarRouter(Router):
     def __init__(
         self, connectivity: dict[str, list[int]], distance_metric: DistanceMetric | None = None, **kwargs: Any
@@ -22,7 +23,7 @@ class AStarRouter(Router):
         for start_qubit_index, end_qubit_index in zip(shortest_path[:-2], shortest_path[1:-1]):
             ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
             # Update subsequent statements to reflect the swap
-            for statement in ir.statements[statement_index + 1:]:
+            for statement in ir.statements[statement_index + 1 :]:
                 if isinstance(statement, Instruction):
                     for qubit in statement.get_qubit_operands():
                         if qubit.index == start_qubit_index:
@@ -39,12 +40,12 @@ class AStarRouter(Router):
             The intermediate representation of the routed circuit (including the additional SWAP gates).
         """
         graph_data = {int(start_node): end_nodes for start_node, end_nodes in self.connectivity.items()}
-        graph = nx.Graph(graph_data) 
+        graph = nx.Graph(graph_data)
         num_available_qubits = max(graph.nodes) + 1
         num_columns = math.ceil(math.sqrt(num_available_qubits))
         statement_index = 0
         while statement_index < len(ir.statements):
-            statement = ir.statements[statement_index]   
+            statement = ir.statements[statement_index]
             if isinstance(statement, Gate) and len(statement.get_qubit_operands()) == 2:
                 q0, q1 = statement.get_qubit_operands()
                 if not graph.has_edge(q0.index, q1.index):
@@ -60,12 +61,9 @@ class AStarRouter(Router):
                             )
                         num_swaps_inserted = len(shortest_path) - 2
                         self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
-                        statement_index += num_swaps_inserted  
-                    except nx.NetworkXNoPath as e:   
+                        statement_index += num_swaps_inserted
+                    except nx.NetworkXNoPath as e:
                         msg = f"No routing path available between qubit {q0.index} and qubit {q1.index}"
                         raise NoRoutingPathError(msg) from e
             statement_index += 1
         return ir
-
-
-
