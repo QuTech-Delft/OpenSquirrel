@@ -14,7 +14,6 @@ from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.ir import BlochSphereRotation, Gate
 from opensquirrel.passes.exporter import quantify_scheduler_exporter
-from opensquirrel.passes.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
 
 
 class FloatEq(float):
@@ -59,9 +58,11 @@ class TestQuantifySchedulerExporter:
         circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler() as (mock_quantify_scheduler, mock_quantify_scheduler_gates):
+            from opensquirrel.passes.exporter import quantify_scheduler_exporter
+            from opensquirrel.passes.exporter.quantify_scheduler_exporter import FIXED_POINT_DEG_PRECISION
+
             mock_schedule = unittest.mock.MagicMock()
             mock_quantify_scheduler.Schedule.return_value = mock_schedule
-
             quantify_scheduler_exporter.export(circuit)
 
             mock_quantify_scheduler.Schedule.assert_called_with("Exported OpenSquirrel circuit")
