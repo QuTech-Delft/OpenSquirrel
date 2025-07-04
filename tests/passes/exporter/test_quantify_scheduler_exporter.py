@@ -85,16 +85,18 @@ def test_gates_not_supported(mock_qs: MagicMock, gate: Gate) -> None:
         quantify_scheduler_exporter.export(circuit)
 
 
-@pytest.mark.skipif(
-    importlib.util.find_spec("quantify_scheduler") is not None,
-    reason="quantify_scheduler is installed",
-)
-def test_quantify_scheduler_not_installed() -> None:
+def test_quantify_scheduler_not_installed(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Simulate quantify_scheduler not being installed
+    monkeypatch.setitem(sys.modules, "quantify_scheduler", None)
+    sys.modules.pop("opensquirrel.passes.exporter.quantify_scheduler_exporter", None)
+
     empty_circuit = CircuitBuilder(1).to_circuit()
+
     with pytest.raises(
         ModuleNotFoundError,
         match="quantify-scheduler is not installed, or cannot be installed on your system",
     ):
-        from opensquirrel.passes.exporter import quantify_scheduler_exporter
-
+        quantify_scheduler_exporter = importlib.import_module(
+            "opensquirrel.passes.exporter.quantify_scheduler_exporter"
+        )
         quantify_scheduler_exporter.export(empty_circuit)
