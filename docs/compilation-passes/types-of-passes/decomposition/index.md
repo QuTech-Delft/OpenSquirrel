@@ -9,3 +9,5 @@ the quantum compiler ensures that the algorithm can be run on the available hard
 regardless of its specific constraints and capabilities.
 This process ensures that the quantum algorithm is broken down into a series of gates that match the native gate set of
 the hardware.
+
+More in depth decomposition tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
