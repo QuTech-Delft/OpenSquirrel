@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-from contextlib import suppress
 from typing import TYPE_CHECKING, Any
 
 from opensquirrel.circuit import Circuit
@@ -24,9 +23,10 @@ from opensquirrel.ir import (
     Reset,
 )
 
-with suppress(ModuleNotFoundError):
+try:
     import quantify_scheduler
-
+except ModuleNotFoundError:
+    pass
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
