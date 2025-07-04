@@ -23,7 +23,7 @@ from opensquirrel.ir import (
 from opensquirrel.utils import get_matrix
 
 if TYPE_CHECKING:
-    from opensquirrel.circuit import Circuit
+    from opensquirrel.circuit import Circuit     
 
 
 class _CircuitMatrixCalculator(IRVisitor):

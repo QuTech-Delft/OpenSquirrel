@@ -6,10 +6,9 @@ from typing import Any
 import networkx as nx
 
 from opensquirrel.exceptions import NoRoutingPathError
-from opensquirrel.ir import IR, SWAP, Gate
+from opensquirrel.ir import IR, SWAP, Gate, Instruction
 from opensquirrel.passes.router import Router
 from opensquirrel.passes.router.heuristics import DistanceMetric, calculate_distance
-
 
 class AStarRouter(Router):
     def __init__(
@@ -19,19 +18,17 @@ class AStarRouter(Router):
         self.connectivity = connectivity
         self.distance_metric = distance_metric
 
-    def _insert_and_propagate_swaps(self, ir: IR, statement_index: int, shortest_path: list[int]) -> int:
+    def _insert_and_propagate_swaps(self, ir: IR, statement_index: int, shortest_path: list[int]) -> None:
         for start_qubit_index, end_qubit_index in zip(shortest_path[:-2], shortest_path[1:-1]):
             ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
-            statement_index += 1
             # Update subsequent statements to reflect the swap
-            for statement in ir.statements[statement_index:]:
-                if hasattr(statement, "get_qubit_operands"):
+            for statement in ir.statements[statement_index + 1:]:
+                if isinstance(statement, Instruction):
                     for qubit in statement.get_qubit_operands():
                         if qubit.index == start_qubit_index:
                             qubit.index = end_qubit_index
                         elif qubit.index == end_qubit_index:
                             qubit.index = start_qubit_index
-        return statement_index
 
     def route(self, ir: IR) -> IR:
         """
@@ -42,12 +39,12 @@ class AStarRouter(Router):
             The intermediate representation of the routed circuit (including the additional SWAP gates).
         """
         graph_data = {int(start_node): end_nodes for start_node, end_nodes in self.connectivity.items()}
-        graph = nx.Graph(graph_data)
+        graph = nx.Graph(graph_data) 
         num_available_qubits = max(graph.nodes) + 1
         num_columns = math.ceil(math.sqrt(num_available_qubits))
         statement_index = 0
         while statement_index < len(ir.statements):
-            statement = ir.statements[statement_index]
+            statement = ir.statements[statement_index]   
             if isinstance(statement, Gate) and len(statement.get_qubit_operands()) == 2:
                 q0, q1 = statement.get_qubit_operands()
                 if not graph.has_edge(q0.index, q1.index):
@@ -61,9 +58,14 @@ class AStarRouter(Router):
                                 target=q1.index,
                                 heuristic=lambda u, v: calculate_distance(u, v, num_columns, self.distance_metric),
                             )
-                        statement_index = self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
-                    except nx.NetworkXNoPath as e:
+                        num_swaps_inserted = len(shortest_path) - 2
+                        self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
+                        statement_index += num_swaps_inserted  
+                    except nx.NetworkXNoPath as e:   
                         msg = f"No routing path available between qubit {q0.index} and qubit {q1.index}"
                         raise NoRoutingPathError(msg) from e
             statement_index += 1
         return ir
+
+
+
