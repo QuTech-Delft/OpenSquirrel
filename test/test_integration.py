@@ -16,7 +16,7 @@ from opensquirrel.passes.decomposer import (
 )
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger import SingleQubitGatesMerger
-from opensquirrel.passes.validator import PrimitiveGateValidator, RoutingValidator
+from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 
 
 def test_spin2plus_backend() -> None:
@@ -88,7 +88,7 @@ def test_spin2plus_backend() -> None:
     }
 
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
+    qc.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
     qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
@@ -279,7 +279,7 @@ def test_hectoqubit_backend() -> None:
     }
 
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
+    qc.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
 
     # Decompose SWAP gate into 3 CNOT gates
     qc.decompose(decomposer=SWAP2CNOTDecomposer(**data))
@@ -640,7 +640,7 @@ def test_starmon7_backend() -> None:
     }
 
     # Validate that the interactions in the circuit are possible given the chip topology
-    qc.validate(validator=RoutingValidator(**data))  # type: ignore[arg-type]
+    qc.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
     qc.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
