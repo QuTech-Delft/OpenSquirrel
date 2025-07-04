@@ -38,6 +38,7 @@ class _QubitRemapper(IRVisitor):
         mapping: a list of qubit indices, _e.g._, [3, 1, 0, 2]
 
     """
+
     def __init__(self, mapping: Mapping) -> None:
         self.mapping = mapping
 
