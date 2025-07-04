@@ -13,7 +13,6 @@ from opensquirrel import CircuitBuilder, H
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.ir import BlochSphereRotation, Gate
-from opensquirrel.passes.exporter import quantify_scheduler_exporter
 
 
 class FloatEq(float):
@@ -96,6 +95,8 @@ class TestQuantifySchedulerExporter:
         circuit = builder.to_circuit()
 
         with MockedQuantifyScheduler(), pytest.raises(ExporterError, match="cannot export circuit: "):
+            from opensquirrel.passes.exporter import quantify_scheduler_exporter
+
             quantify_scheduler_exporter.export(circuit)
 
 
@@ -109,4 +110,6 @@ def test_quantify_scheduler_not_installed() -> None:
         ModuleNotFoundError,
         match="quantify-scheduler is not installed, or cannot be installed on your system",
     ):
+        from opensquirrel.passes.exporter import quantify_scheduler_exporter
+
         quantify_scheduler_exporter.export(empty_circuit)

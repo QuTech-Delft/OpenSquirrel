@@ -233,7 +233,7 @@ measure_z q[1]
 def test_anonymous_gates(gate: Gate) -> None:
     builder = CircuitBuilder(2)
     builder.ir.add_gate(gate)
-    with pytest.raises(UnsupportedGateError, match="not supported"):  # noqa: PT012
+    with pytest.raises(UnsupportedGateError, match="not supported"):
         circuit = builder.to_circuit()
         circuit.export(fmt=ExportFormat.CQASM_V1)
 
