@@ -8,7 +8,7 @@ this pass finds the shortest path between them using the hardware’s connectivi
 moving the qubits closer together so the intended operation can be performed. This approach aims to minimize the number of SWAPs required for each interaction 
 by using the shortest path method from the _networkx_ package.
 
-The following examples showcase the usage of the _ShortestPathRouter_ pass.
+The following examples showcase the usage of the `ShortestPathRouter` pass.
 
 ```python
 from opensquirrel import CircuitBuilder
