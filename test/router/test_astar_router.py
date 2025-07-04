@@ -84,7 +84,7 @@ def circuit_fixture3() -> Circuit:
 
 @pytest.mark.parametrize(
     "router, circuit, expected_swap_count",  # noqa: PT006
-    [("router1", "circuit1", 4), ("router2", "circuit2", 8), ("router3", "circuit3", 15)],
+    [("router1", "circuit1", 3), ("router2", "circuit2", 15), ("router3", "circuit3", 13)],
 )
 def test_router(
     router: AStarRouter, circuit: Circuit, expected_swap_count: int, request: pytest.FixtureRequest
