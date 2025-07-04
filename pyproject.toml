@@ -7,7 +7,7 @@ authors = [
 ]
 license = "Apache-2.0"
 readme = "README.md"
-homepage = "https://github.com/QuTech-Delft/OpenSquirrel"
+homepage = "https://qutech-delft.github.io/OpenSquirrel/"
 repository = "https://github.com/QuTech-Delft/OpenSquirrel"
 keywords = [
     "quantum",
@@ -160,6 +160,8 @@ ignore = [
     "COM812", # Conflicts with ruff format
     "ISC001", # Possible conflicts with ruff format
     "W605", # deprecated in Python 3.6
+    "PT012", # pytest.raises() block should contain only a single simple statement
+    "SIM105", # Use `contextlib.suppress(ModuleNotFoundError)` instead of `try`-`except`-`pass`
 ]
 isort.combine-as-imports = true
 pydocstyle.convention = "google"
@@ -169,7 +171,7 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
 "*.py" = [
     "S101", # asserts allowed everywhere
 ]
-"test/**/*.py" = [
+"tests/**/*.py" = [
     "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
     "D", # No doc requirements in tests
     "SLF001", # Testing private functions is OK

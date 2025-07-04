@@ -5,9 +5,9 @@ from opensquirrel.circuit_builder import CircuitBuilder
 
 builder = CircuitBuilder(qubit_register_size=2)
 builder.Ry(0, 0.23).CNOT(0, 1)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -26,9 +26,9 @@ from opensquirrel.circuit_builder import CircuitBuilder
 builder = CircuitBuilder(qubit_register_size=10)
 for i in range(0, 10, 2):
     builder.H(i)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -53,9 +53,9 @@ for i in range(qubit_register_size):
       builder.H(i)
       for c in range(i + 1, qubit_register_size):
             builder.CRk(c, i, c-i+1)
-qft = builder.to_circuit()
+circuit_qft = builder.to_circuit()
 
-print(qft)
+print(circuit_qft)
 ```
 _Output_:
 

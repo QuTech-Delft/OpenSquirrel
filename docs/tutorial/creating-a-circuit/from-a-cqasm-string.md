@@ -3,7 +3,7 @@ The following example shows how to build a quantum circuit from a `cQASM` string
 ```python
 from opensquirrel import Circuit
 
-qc = Circuit.from_string(
+circuit = Circuit.from_string(
     """
     version 3.0
 
@@ -20,7 +20,7 @@ qc = Circuit.from_string(
     """
 )
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
