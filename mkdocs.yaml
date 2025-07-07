@@ -46,7 +46,7 @@ nav:
       - QRoute router: compilation-passes/types-of-passes/routing/qroute-router.md
     - Validation:
       - Validation: compilation-passes/types-of-passes/validation/index.md
-      - Routing validator: compilation-passes/types-of-passes/validation/routing-validator.md
+      - Interaction validator: compilation-passes/types-of-passes/validation/interaction-validator.md
       - Primitive gate validator: compilation-passes/types-of-passes/validation/primitive-gate-validator.md
   - API documentation: reference/
 

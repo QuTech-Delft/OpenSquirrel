@@ -411,13 +411,13 @@ Accordingly, we treat it as a pass that is part of the compilation pass library.
 ### Routing validation
 
 To check the validity of the interactions in the circuit, we use the `validate` method with the
-[routing validator](../compilation-passes/types-of-passes/validation/routing-validator.md) pass (`RoutingValidator`)
-and the _connectivity_ as an input argument for the validator.
+[interactions validator](../compilation-passes/types-of-passes/validation/interaction-validator.md) pass
+(`InteractionValidator`) and the _connectivity_ as an input argument for the validator.
 
 ```python
-from opensquirrel.passes.validator import RoutingValidator
+from opensquirrel.passes.validator import InteractionValidator
 
-circuit.validate(validator=RoutingValidator(connectivity=connectivity))
+circuit.validate(validator=InteractionValidator(connectivity=connectivity))
 ```
 
 An exception will be thrown if any interaction in the circuit is invalid.

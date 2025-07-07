@@ -7,7 +7,7 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer, McKayDecomposer, SWAP2CZDecomposer
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.merger import SingleQubitGatesMerger
-from opensquirrel.passes.validator import PrimitiveGateValidator, RoutingValidator
+from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 
 
 @pytest.fixture
@@ -352,7 +352,7 @@ class TestApplyingCompilationPasses:
         assert str(circuit) == str(circuit_6)
 
     def test_validation(self, circuit_6: Circuit) -> None:
-        circuit_6.validate(validator=RoutingValidator(connectivity=self.connectivity))
+        circuit_6.validate(validator=InteractionValidator(connectivity=self.connectivity))
         circuit_6.validate(validator=PrimitiveGateValidator(primitive_gate_set=self.pgs))
 
 
