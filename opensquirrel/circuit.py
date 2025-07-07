@@ -96,18 +96,6 @@ class Circuit:
             or (isinstance(statement, AsmDeclaration) and backend_name in str(statement.backend_name))
         ]
 
-    def validate(self, validator: Validator) -> None:
-        """Generic validator pass. It applies the given validator to the circuit."""
-        validator.validate(self.ir)
-
-    def route(self, router: Router) -> None:
-        """Generic router pass. It applies the given router to the circuit."""
-        router.route(self.ir)
-
-    def merge(self, merger: Merger) -> None:
-        """Generic merge pass. It applies the given merger to the circuit."""
-        merger.merge(self.ir, self.qubit_register_size)
-
     def decompose(self, decomposer: Decomposer) -> None:
         """Generic decomposition pass.
         It applies the given decomposer function to every gate in the circuit.
@@ -115,23 +103,6 @@ class Circuit:
         from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.decompose(self.ir, decomposer)
-
-    def map(self, mapper: Mapper) -> None:
-        """Generic qubit mapper pass.
-        Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
-        """
-        from opensquirrel.passes.mapper.qubit_remapper import remap_ir
-
-        remap_ir(self, mapper.get_mapping())
-
-    def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
-        """Manually replace occurrences of a given gate with a list of gates.
-        `replacement_gates_function` is a callable that takes the arguments of the gate that is to be replaced and
-        returns the decomposition as a list of gates.
-        """
-        from opensquirrel.passes.decomposer import general_decomposer
-
-        general_decomposer.replace(self.ir, gate, replacement_gates_function)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
@@ -144,3 +115,32 @@ class Circuit:
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)
+
+    def map(self, mapper: Mapper) -> None:
+        """Generic qubit mapper pass.
+        Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
+        """
+        from opensquirrel.passes.mapper.qubit_remapper import remap_ir
+
+        remap_ir(self, mapper.get_mapping())
+
+    def merge(self, merger: Merger) -> None:
+        """Generic merge pass. It applies the given merger to the circuit."""
+        merger.merge(self.ir, self.qubit_register_size)
+
+    def route(self, router: Router) -> None:
+        """Generic router pass. It applies the given router to the circuit."""
+        router.route(self.ir)
+
+    def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
+        """Manually replace occurrences of a given gate with a list of gates.
+        `replacement_gates_function` is a callable that takes the arguments of the gate that is to be replaced and
+        returns the decomposition as a list of gates.
+        """
+        from opensquirrel.passes.decomposer import general_decomposer
+
+        general_decomposer.replace(self.ir, gate, replacement_gates_function)
+
+    def validate(self, validator: Validator) -> None:
+        """Generic validator pass. It applies the given validator to the circuit."""
+        validator.validate(self.ir)

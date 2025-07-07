@@ -33,15 +33,16 @@ if TYPE_CHECKING:
 class _QubitReindexer(IRVisitor):
     """
     Reindex a whole IR.
+    A new IR where the qubit indices are replaced by their positions in qubit indices.
+    _E.g._, for mapping = [3, 1]:
+    - Qubit(index=1) becomes Qubit(index=1), and
+    - Qubit(index=3) becomes Qubit(index=0).
 
     Args:
         qubit_indices: a list of qubit indices, e.g. [3, 1]
 
     Returns:
-         A new IR where the qubit indices are replaced by their positions in qubit indices.
-         E.g., for mapping = [3, 1]:
-         - Qubit(index=1) becomes Qubit(index=1), and
-         - Qubit(index=3) becomes Qubit(index=0).
+
     """
 
     def __init__(self, qubit_indices: list[int]) -> None:
