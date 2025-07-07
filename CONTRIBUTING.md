@@ -33,7 +33,7 @@ Make sure the tests and the following linters pass.
 From a `poetry` shell (started from an OpenSquirrel checkout):
 
 ```
-$ poetry run mypy opensquirrel test --strict
+$ poetry run mypy opensquirrel tests --strict
 $ poetry run pytest . -vv
 $ poetry run ruff check --fix
 $ poetry run ruff format
@@ -52,8 +52,8 @@ You can choose the Python interpreter from the `poetry` environment.
 
 To run/debug all tests:
 
-- Right-click on the `test` folder of the Project tree.
-- Click `Run 'pytest' in test` or `Debug 'pytest' in test`.
+- Right-click on the `tests` folder of the Project tree.
+- Click `Run 'pytest' in tests` or `Debug 'pytest' in tests`.
 
 This will also create a `Run/Debug Configuration`.
 
