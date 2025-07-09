@@ -9,14 +9,13 @@ moving the qubits closer together so the intended operation can be performed. Th
 by using the shortest path method from the _networkx_ package.
 
 The following examples showcase the usage of the `ShortestPathRouter` pass.
+Check the [circuit builder](../../../circuit-builder/index.md) on how to generate the circuit.
 
 ```python
 from opensquirrel import CircuitBuilder
 from opensquirrel.passes.router import ShortestPathRouter
 
- connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
-
-shortest_path_router = ShortestPathRouter(connectivity = connectivity)
+connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
 
 builder = CircuitBuilder(5)
 builder.CNOT(0, 1)
@@ -24,10 +23,13 @@ builder.CNOT(1, 2)
 builder.CNOT(2, 3)
 builder.CNOT(3, 4)
 builder.CNOT(0, 4)
-
 circuit = builder.to_circuit()
 
-circuit.route(router = shortest_path_router)
+shortest_path_router = ShortestPathRouter(connectivity=connectivity)
+circuit.route(router=shortest_path_router)
+
+num_swaps_inserted = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
+print(num_swaps_inserted)
 ```
 
 _Output_:
@@ -40,8 +42,6 @@ from opensquirrel.passes.router import ShortestPathRouter
 
 connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
 
-shortest_path_router = ShortestPathRouter(connectivity = connectivity)
-
 builder = CircuitBuilder(7)
 builder.CNOT(0, 6)
 builder.CNOT(1, 5)
@@ -51,10 +51,13 @@ builder.CNOT(0, 2)
 builder.CNOT(1, 3)
 builder.CNOT(4, 5)
 builder.CNOT(5, 6)
-
 circuit = builder.to_circuit()
 
-circuit.route(router = shortest_path_router)
+shortest_path_router = ShortestPathRouter(connectivity=connectivity)
+circuit.route(router=shortest_path_router)
+
+num_swaps_inserted = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
+print(num_swaps_inserted)
 ```
 
 _Output_:

@@ -10,7 +10,14 @@ Often times, the design of quantum algorithms does not take into account the con
 target hardware, such as qubit coupling map or native gate set.
 
 These passes are therefore needed to ensure that an initial circuit is converted to a version that adheres to the
-requirements of the hardware. They can easily be used with various methods, via the `Circuit` object (e.g. _circuit.validate_, _circuit.decompose_, _circuit.map_).  
+requirements of the hardware. They can easily be applied using the following methods on the `circuit` object:
+
+- decomposer
+- export
+- map
+- merge
+- route
+- validate  
 
 ## Integrated passes
 
