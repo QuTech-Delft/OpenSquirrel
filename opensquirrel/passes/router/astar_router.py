@@ -59,6 +59,7 @@ class AStarRouter(Router):
                                 target=q1.index,
                                 heuristic=lambda u, v: calculate_distance(u, v, num_columns, self.distance_metric),
                             )
+                        # -2 because we skip inserting a swap for the last edge in the path (len(path) - 1 edges total
                         num_swaps_inserted = len(shortest_path) - 2
                         self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
                         statement_index += num_swaps_inserted

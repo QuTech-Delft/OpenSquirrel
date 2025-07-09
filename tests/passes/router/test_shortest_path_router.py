@@ -36,8 +36,8 @@ def router3() -> ShortestPathRouter:
     return ShortestPathRouter(connectivity)
 
 
-@pytest.fixture(name="router4")
-def router_fixture4() -> ShortestPathRouter:
+@pytest.fixture
+def router4() -> ShortestPathRouter:
     connectivity = {
         "0": [1],
         "1": [0, 2],
@@ -93,7 +93,7 @@ def circuit3() -> Circuit:
 
 
 @pytest.fixture(name="circuit4")
-def circuit_fixture4() -> Circuit:
+def circuit4() -> Circuit:
     builder = CircuitBuilder(4)
     builder.CNOT(0, 3)
     builder.CNOT(1, 2)
@@ -121,3 +121,25 @@ def test_route_on_circuit_object(router4: ShortestPathRouter, circuit4: Circuit)
     circuit4.route(router=router4)
     swap_count = sum(1 for statement in circuit4.ir.statements if isinstance(statement, SWAP))
     assert swap_count == 2
+
+
+def test_route_correct_indicex_propagation(router4: ShortestPathRouter, circuit4: Circuit) -> None:
+    circuit4.route(router=router4)
+
+    builder = CircuitBuilder(4)
+    builder.SWAP(1, 2)
+    builder.SWAP(0, 2)
+    builder.CNOT(2, 3)
+    builder.CNOT(0, 1)
+    expected_circuit = builder.to_circuit()
+
+    actual_statements = circuit4.ir.statements
+    expected_statements = expected_circuit.ir.statements
+
+    assert len(actual_statements) == len(expected_statements)
+
+    for actual, expected in zip(actual_statements, expected_statements):
+        assert type(actual) is type(expected)
+        actual_indices = [q.index for q in actual.get_qubit_operands()]  # type: ignore[attr-defined]  
+        expected_indices = [q.index for q in expected.get_qubit_operands()]  # type: ignore[attr-defined]
+        assert actual_indices == expected_indices

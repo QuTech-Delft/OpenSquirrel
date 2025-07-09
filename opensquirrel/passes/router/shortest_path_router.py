@@ -43,6 +43,7 @@ class ShortestPathRouter(Router):
                 if not graph.has_edge(q0.index, q1.index):
                     try:
                         shortest_path = nx.shortest_path(graph, source=q0.index, target=q1.index)
+                        # -2 because we skip inserting a swap for the last edge in the path (len(path) - 1 edges total
                         num_swaps_inserted = len(shortest_path) - 2
                         self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
                         statement_index += num_swaps_inserted
