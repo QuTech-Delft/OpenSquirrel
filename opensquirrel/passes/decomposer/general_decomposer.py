@@ -2,13 +2,24 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-from opensquirrel.common import are_matrices_equivalent_up_to_global_phase, is_identity_matrix_up_to_a_global_phase
+from opensquirrel.common import (
+    ATOL,
+    are_matrices_equivalent_up_to_global_phase,
+    calculate_phase_difference,
+    get_phase_angle,
+    is_identity_matrix_up_to_a_global_phase,
+)
 from opensquirrel.default_instructions import is_anonymous_gate
-from opensquirrel.ir import IR, Gate
+from opensquirrel.ir import Float, Gate, Rz
 from opensquirrel.reindexer import get_reindexed_circuit
+
+if TYPE_CHECKING:
+    from opensquirrel.circuit import Circuit
 
 
 class Decomposer(ABC):
@@ -19,13 +30,23 @@ class Decomposer(ABC):
         raise NotImplementedError()
 
 
-def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> None:
+def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circuit: Circuit | None = None) -> list[Gate]:
+    """
+    Verifies the replacement gates against the given gate.
+    Args:
+        gate: original gate
+        replacement_gates: gates replacing the gate
+        circuit: circuit to verify
+    Returns:
+        Returns verified list of replacement gates with possible correction.
+    """
     gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
+    qubit_list = gate.get_qubit_operands()
 
     if is_identity_matrix_up_to_a_global_phase(replaced_matrix):
-        return
+        return []
 
     for g in replacement_gates:
         replacement_gates_qubit_indices.update([q.index for q in g.get_qubit_operands()])
@@ -40,15 +61,32 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
         msg = f"replacement for gate {gate.name} does not preserve the quantum state"
         raise ValueError(msg)
 
+    if circuit is not None:
+        phase_difference = calculate_phase_difference(replaced_matrix, replacement_matrix)
+        euler_phase = get_phase_angle(phase_difference)
+        for q in gate.get_qubit_operands():
+            circuit.phase_map.add_qubit_phase(q, euler_phase)
 
-def decompose(ir: IR, decomposer: Decomposer) -> None:
+        if len(gate_qubit_indices) > 1:
+            relative_phase = float(
+                np.real(
+                    circuit.phase_map.get_qubit_phase(qubit_list[1]) - circuit.phase_map.get_qubit_phase(qubit_list[0])
+                )
+            )
+            if abs(relative_phase) > ATOL:
+                list(replacement_gates).append(Rz(gate.get_qubit_operands()[0], Float(-1 * relative_phase)))
+
+    return list(replacement_gates)
+
+
+def decompose(circuit: Circuit, decomposer: Decomposer) -> None:
     """Applies `decomposer` to every gate in the circuit, replacing each gate by the output of `decomposer`.
     When `decomposer` decides to not decomposer a gate, it needs to return a list with the intact gate as single
     element.
     """
     statement_index = 0
-    while statement_index < len(ir.statements):
-        statement = ir.statements[statement_index]
+    while statement_index < len(circuit.ir.statements):
+        statement = circuit.ir.statements[statement_index]
 
         if not isinstance(statement, Gate):
             statement_index += 1
@@ -56,9 +94,9 @@ def decompose(ir: IR, decomposer: Decomposer) -> None:
 
         gate = statement
         replacement_gates: list[Gate] = decomposer.decompose(statement)
-        check_gate_replacement(gate, replacement_gates)
+        replacement_gates = check_gate_replacement(gate, replacement_gates, circuit)
 
-        ir.statements[statement_index : statement_index + 1] = replacement_gates
+        circuit.ir.statements[statement_index : statement_index + 1] = replacement_gates
         statement_index += len(replacement_gates)
 
 
@@ -73,8 +111,8 @@ class _GenericReplacer(Decomposer):
         return self.replacement_gates_function(*gate.arguments)
 
 
-def replace(ir: IR, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
+def replace(circuit: Circuit, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
     """Does the same as decomposer, but only applies to a given gate."""
     generic_replacer = _GenericReplacer(gate, replacement_gates_function)
 
-    decompose(ir, generic_replacer)
+    decompose(circuit, generic_replacer)

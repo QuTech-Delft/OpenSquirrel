@@ -275,6 +275,12 @@ class Qubit(Expression):
             msg = "index must be a QubitLike"
             raise TypeError(msg)
 
+    def __eq__(self, other: Any) -> bool:
+        """Compare two qubits."""
+        if not isinstance(other, Qubit):
+            return False
+        return self.__hash__() == other.__hash__()
+
     def __hash__(self) -> int:
         return hash(str(self.__class__) + str(self.index))
 

@@ -123,9 +123,11 @@ Rz(0.78539813) q[0]
 X90 q[0]
 Rz(-1.5707964) q[0]
 b[0] = measure q[0]
-Rz(2.3561946) q[1]
+Rz(0.78539824) q[1]
 X90 q[1]
-Rz(-3.1415927) q[1]
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
 b[2] = measure q[1]
 Rz(1.5707963) q[1]
 X90 q[1]
@@ -778,5 +780,62 @@ X q[5]
 X q[6]
 X q[7]
 X q[8]
+"""
+    )
+
+
+def test_integration_global_phase() -> None:
+    circuit = Circuit.from_string(
+        """
+        version 3.0
+        qubit[3] q
+        H q[0:2]
+        Ry(1.5789) q[0]
+        H q[0]
+        CNOT q[1], q[0]
+        Ry(3.09) q[0]
+        Ry(0.318) q[1]
+        Ry(0.18) q[2]
+        CNOT q[2], q[0]
+        """,
+    )
+
+    # Decompose 2-qubit gates to a decomposition where the 2-qubit interactions are captured by CNOT gates
+    circuit.decompose(decomposer=CNOTDecomposer())
+
+    # Replace CNOT gates with CZ gates
+    circuit.decompose(decomposer=CNOT2CZDecomposer())
+    # Merge single-qubit gates and decompose with McKay decomposition.
+    circuit.merge(merger=SingleQubitGatesMerger())
+    circuit.decompose(decomposer=McKayDecomposer())
+    assert (
+        str(circuit)
+        == """version 3.0
+
+qubit[3] q
+
+Rz(1.5707963) q[1]
+X90 q[1]
+Rz(1.5707963) q[1]
+Rz(3.1415927) q[0]
+X90 q[0]
+Rz(0.0081036221) q[0]
+X90 q[0]
+CZ q[1], q[0]
+X90 q[2]
+Rz(1.3907963) q[2]
+X90 q[2]
+Rz(3.1415927) q[0]
+X90 q[0]
+Rz(0.051592654) q[0]
+X90 q[0]
+CZ q[2], q[0]
+Rz(-1.5707963) q[0]
+X90 q[0]
+Rz(1.5707963) q[0]
+Rz(3.1415927) q[1]
+X90 q[1]
+Rz(2.8235927) q[1]
+X90 q[1]
 """
     )

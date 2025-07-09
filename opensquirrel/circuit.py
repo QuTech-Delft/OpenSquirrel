@@ -3,8 +3,11 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
+import numpy as np
+
 from opensquirrel.ir import IR, AsmDeclaration, Gate
 from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.phasemap import PhaseMap
 
 if TYPE_CHECKING:
     from opensquirrel.passes.decomposer import Decomposer
@@ -43,6 +46,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
+        self.phase_map = PhaseMap(np.zeros(self.qubit_register_size, dtype=np.complex128))
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
@@ -102,7 +106,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.decompose(self.ir, decomposer)
+        general_decomposer.decompose(self, decomposer)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
@@ -139,7 +143,7 @@ class Circuit:
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
-        general_decomposer.replace(self.ir, gate, replacement_gates_function)
+        general_decomposer.replace(self, gate, replacement_gates_function)
 
     def validate(self, validator: Validator) -> None:
         """Generic validator pass. It applies the given validator to the circuit."""
