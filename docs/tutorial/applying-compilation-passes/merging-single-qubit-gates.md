@@ -22,11 +22,11 @@ import math
 builder = CircuitBuilder(1)
 for _ in range(4):
     builder.Rx(0, math.pi / 4)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-qc.merge(merger=SingleQubitGatesMerger())
+circuit.merge(merger=SingleQubitGatesMerger())
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 

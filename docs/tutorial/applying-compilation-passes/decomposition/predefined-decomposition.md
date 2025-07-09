@@ -8,7 +8,7 @@ which requires the same parameters as the gate that is decomposed:
 from opensquirrel.circuit import Circuit
 from opensquirrel import CNOT, H, CZ
 
-qc = Circuit.from_string(
+circuit = Circuit.from_string(
     """
     version 3.0
     qubit[3] q
@@ -18,7 +18,7 @@ qc = Circuit.from_string(
     Ry q[2], 6.78
     """
 )
-qc.replace(
+circuit.replace(
     CNOT,
     lambda control, target:
     [
@@ -28,7 +28,7 @@ qc.replace(
     ]
 )
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
@@ -52,7 +52,7 @@ or H gate, in our custom-made decomposition:
 from opensquirrel.circuit import Circuit
 from opensquirrel import CNOT, CZ, H
 
-qc = Circuit.from_string(
+circuit = Circuit.from_string(
     """
     version 3.0
     qubit[3] q
@@ -63,7 +63,7 @@ qc = Circuit.from_string(
     """
 )
 try:
-    qc.replace(
+    circuit.replace(
         CNOT,
         lambda control, target:
         [
