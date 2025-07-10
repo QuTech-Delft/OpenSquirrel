@@ -10,11 +10,11 @@ import math
 
 builder = CircuitBuilder(qubit_register_size=1)
 builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 
-qc.decompose(decomposer=ZYZDecomposer())
+circuit.decompose(decomposer=ZYZDecomposer())
 
-print(qc)
+print(circuit)
 ```
 _Output_:
 
