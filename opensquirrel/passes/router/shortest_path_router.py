@@ -24,6 +24,7 @@ class ShortestPathRouter(Router):
                         elif qubit.index == end_qubit_index:
                             qubit.index = start_qubit_index
             statement_index += 1
+
     def route(self, ir: IR) -> IR:
         """
         Routes the circuit by inserting SWAP gates along the shortest path between qubits which can not
@@ -43,7 +44,8 @@ class ShortestPathRouter(Router):
                 if not graph.has_edge(q0.index, q1.index):
                     try:
                         shortest_path = nx.shortest_path(graph, source=q0.index, target=q1.index)
-                        # -2 because we skip inserting a swap for the last edge in the path (len(path) - 1 edges total
+                        # -2 because we skip inserting a swap for the last edge in the path:
+                        # len(path) - 1 edges in total
                         num_swaps_inserted = len(shortest_path) - 2
                         self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
                         statement_index += num_swaps_inserted

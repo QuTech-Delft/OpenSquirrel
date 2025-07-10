@@ -92,7 +92,7 @@ def circuit3() -> Circuit:
     return builder.to_circuit()
 
 
-@pytest.fixture(name="circuit4")
+@pytest.fixture
 def circuit4() -> Circuit:
     builder = CircuitBuilder(4)
     builder.CNOT(0, 3)
@@ -114,21 +114,18 @@ def test_router(
     assert swap_count == expected_swap_count
 
 
-def test_route_on_circuit_object(router4: ShortestPathRouter, circuit4: Circuit) -> None:
-    """
-    Test the route method on the Circuit Object
-    """
+def test_route_on_circuit(router4: ShortestPathRouter, circuit4: Circuit) -> None:
     circuit4.route(router=router4)
     swap_count = sum(1 for statement in circuit4.ir.statements if isinstance(statement, SWAP))
     assert swap_count == 2
 
 
-def test_route_correct_indicex_propagation(router4: ShortestPathRouter, circuit4: Circuit) -> None:
+def test_route_indices_propagation(router4: ShortestPathRouter, circuit4: Circuit) -> None:
     circuit4.route(router=router4)
 
     builder = CircuitBuilder(4)
+    builder.SWAP(0, 1)
     builder.SWAP(1, 2)
-    builder.SWAP(0, 2)
     builder.CNOT(2, 3)
     builder.CNOT(0, 1)
     expected_circuit = builder.to_circuit()

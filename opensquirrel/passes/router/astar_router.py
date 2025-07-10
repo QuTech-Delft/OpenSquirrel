@@ -30,6 +30,7 @@ class AStarRouter(Router):
                             qubit.index = end_qubit_index
                         elif qubit.index == end_qubit_index:
                             qubit.index = start_qubit_index
+            statement_index += 1
 
     def route(self, ir: IR) -> IR:
         """
@@ -59,7 +60,8 @@ class AStarRouter(Router):
                                 target=q1.index,
                                 heuristic=lambda u, v: calculate_distance(u, v, num_columns, self.distance_metric),
                             )
-                        # -2 because we skip inserting a swap for the last edge in the path (len(path) - 1 edges total
+                        # -2 because we skip inserting a swap for the last edge in the path:
+                        # len(path) - 1 edges in total
                         num_swaps_inserted = len(shortest_path) - 2
                         self._insert_and_propagate_swaps(ir, statement_index, shortest_path)
                         statement_index += num_swaps_inserted
