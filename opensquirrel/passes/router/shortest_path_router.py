@@ -23,7 +23,7 @@ class ShortestPathRouter(Router):
                             qubit.index = end_qubit_index
                         elif qubit.index == end_qubit_index:
                             qubit.index = start_qubit_index
-
+            statement_index += 1
     def route(self, ir: IR) -> IR:
         """
         Routes the circuit by inserting SWAP gates along the shortest path between qubits which can not
