@@ -11,7 +11,9 @@ class SingleQubitGatesMerger(Merger):
         Gates obtained from merging other gates become anonymous gates.
 
         Args:
-            circuit: Circuit to perform the merge on.
+            ir: Intermediate representation of the circuit.
+            qubit_register_size: Size of the qubit register
+
         """
         accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
             Qubit(qubit_index): I(qubit_index) for qubit_index in range(qubit_register_size)
