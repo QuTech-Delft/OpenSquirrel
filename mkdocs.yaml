@@ -9,18 +9,9 @@ nav:
     - Installation: installation.md
   - Tutorial:
     - Tutorial: tutorial/index.md
-    - Creating a circuit:
-      - Creating a circuit: tutorial/creating-a-circuit/index.md
-      - From a cQASM string: tutorial/creating-a-circuit/from-a-cqasm-string.md
-      - Using the circuit builder: tutorial/creating-a-circuit/using-the-circuit-builder.md
-      - Strong types: tutorial/creating-a-circuit/strong-types.md
-    - Applying compilation passes:
-      - Applying compilation passes: tutorial/applying-compilation-passes/index.md
-      - Merging single qubit gates: tutorial/applying-compilation-passes/merging-single-qubit-gates.md
-      - Custom gates: tutorial/applying-compilation-passes/custom-gates.md
-      - Gate Decomposition:
-        - Predefined decomposition: tutorial/applying-compilation-passes/decomposition/predefined-decomposition.md
-        - Inferred decomposition: tutorial/applying-compilation-passes/decomposition/inferred-decomposition.md
+    - Creating a circuit: tutorial/creating-a-circuit.md
+    - Applying compilation passes: tutorial/applying-compilation-passes.md
+    - Writing out and exporting: tutorial/writing-out-and-exporting.md
   - Circuit builder:
     - Circuit builder: circuit-builder/index.md
     - Instructions:
@@ -54,7 +45,7 @@ nav:
       - A-star router: compilation-passes/types-of-passes/routing/a-star-router.md
     - Validation:
       - Validation: compilation-passes/types-of-passes/validation/index.md
-      - Routing validator: compilation-passes/types-of-passes/validation/routing-validator.md
+      - Interaction validator: compilation-passes/types-of-passes/validation/interaction-validator.md
       - Primitive gate validator: compilation-passes/types-of-passes/validation/primitive-gate-validator.md
   - API documentation: reference/
 
@@ -65,6 +56,7 @@ theme:
     - navigation.tabs
     - navigation.tracking
     - navigation.footer
+    - content.code.copy
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"

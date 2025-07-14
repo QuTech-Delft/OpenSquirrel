@@ -20,6 +20,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - `RoutingValidator` changed to `InteractionValidator`
 
+### Fixed
+
+- `ShortestPathRouter` and `AStarRouter` now correctly propagate SWAP gate insertion effects throughout the circuit
+
 ## [ 0.5.0 ] - [ 2025-05-28 ]
 
 ### Added
