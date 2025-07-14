@@ -37,6 +37,17 @@ def router3() -> ShortestPathRouter:
 
 
 @pytest.fixture
+def router4() -> ShortestPathRouter:
+    connectivity = {
+        "0": [1],
+        "1": [0, 2],
+        "2": [1, 3],
+        "3": [2],
+    }
+    return ShortestPathRouter(connectivity)
+
+
+@pytest.fixture
 def circuit1() -> Circuit:
     builder = CircuitBuilder(5)
     builder.CNOT(0, 1)
@@ -81,9 +92,17 @@ def circuit3() -> Circuit:
     return builder.to_circuit()
 
 
+@pytest.fixture
+def circuit4() -> Circuit:
+    builder = CircuitBuilder(4)
+    builder.CNOT(0, 3)
+    builder.CNOT(1, 2)
+    return builder.to_circuit()
+
+
 @pytest.mark.parametrize(
     "router, circuit, expected_swap_count",  # noqa: PT006
-    [("router1", "circuit1", 4), ("router2", "circuit2", 8), ("router3", "circuit3", 15)],
+    [("router1", "circuit1", 3), ("router2", "circuit2", 14), ("router3", "circuit3", 10)],
 )
 def test_router(
     router: ShortestPathRouter, circuit: Circuit, expected_swap_count: int, request: pytest.FixtureRequest
@@ -93,3 +112,31 @@ def test_router(
     circuit.route(router=router)
     swap_count = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
     assert swap_count == expected_swap_count
+
+
+def test_route_on_circuit(router4: ShortestPathRouter, circuit4: Circuit) -> None:
+    circuit4.route(router=router4)
+    swap_count = sum(1 for statement in circuit4.ir.statements if isinstance(statement, SWAP))
+    assert swap_count == 2
+
+
+def test_route_indices_propagation(router4: ShortestPathRouter, circuit4: Circuit) -> None:
+    circuit4.route(router=router4)
+
+    builder = CircuitBuilder(4)
+    builder.SWAP(0, 1)
+    builder.SWAP(1, 2)
+    builder.CNOT(2, 3)
+    builder.CNOT(0, 1)
+    expected_circuit = builder.to_circuit()
+
+    actual_statements = circuit4.ir.statements
+    expected_statements = expected_circuit.ir.statements
+
+    assert len(actual_statements) == len(expected_statements)
+
+    for actual, expected in zip(actual_statements, expected_statements):
+        assert type(actual) is type(expected)
+        actual_indices = [q.index for q in actual.get_qubit_operands()]  # type: ignore[attr-defined]
+        expected_indices = [q.index for q in expected.get_qubit_operands()]  # type: ignore[attr-defined]
+        assert actual_indices == expected_indices
