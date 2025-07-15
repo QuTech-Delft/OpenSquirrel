@@ -3,12 +3,12 @@ compilation passes.
 The actions that were listed in the general [tutorial](index.md) correspond to the following types of compilation
 (in alphabetic order):
 
-- [Decomposition](../compilation-passes/types-of-passes/decomposition/index.md)
-- [Exporting](../compilation-passes/types-of-passes/exporting/index.md)
-- [Mapping](../compilation-passes/types-of-passes/mapping/index.md)
-- [Merging](../compilation-passes/types-of-passes/merging/index.md)
-- [Routing](../compilation-passes/types-of-passes/routing/index.md)
-- [Validation](../compilation-passes/types-of-passes/validation/index.md)
+- [Decomposition](../compilation-passes/decomposition/index.md)
+- [Exporting](../compilation-passes/exporting/index.md)
+- [Mapping](../compilation-passes/mapping/index.md)
+- [Merging](../compilation-passes/merging/index.md)
+- [Routing](../compilation-passes/routing/index.md)
+- [Validation](../compilation-passes/validation/index.md)
 
 All available compilation passes, organized by type, can be found [here](../compilation-passes/index.md).
 
@@ -130,7 +130,7 @@ By introducing SWAPs in the circuit, the routing pass will ensure that all inter
 between neighbouring qubits.
 
 Here we use the `route` method with the
-[shortest path router](../compilation-passes/types-of-passes/routing/shortest-path-router.md) `ShortestPathRouter`
+[shortest path router](../compilation-passes/routing/shortest-path-router.md) `ShortestPathRouter`
 to route the circuit.
 
 ```python
@@ -181,17 +181,17 @@ _e.g._, a series of CZ gates and single-qubit gates.
 
     Currently, OpenSquirrel only has general decomposers for arbitrary two-qubit controlled-gates, _i.e_, the
 
-    - the [CNOT decomposer](../compilation-passes/types-of-passes/decomposition/cnot-decomposer.md) (`CNOTDecomposer`),
+    - the [CNOT decomposer](../compilation-passes/decomposition/cnot-decomposer.md) (`CNOTDecomposer`),
     and
-    - the [CZ decomposer](../compilation-passes/types-of-passes/decomposition/cz-decomposer.md) (`CZDecomposer`).
+    - the [CZ decomposer](../compilation-passes/decomposition/cz-decomposer.md) (`CZDecomposer`).
 
     Since the SWAP gate is not a controlled-gate, the predefined
-    [SWAP-to-CNOT or SWAP-to-CZ decomposers](../compilation-passes/types-of-passes/decomposition/predefined-decomposers.md)
+    [SWAP-to-CNOT or SWAP-to-CZ decomposers](../compilation-passes/decomposition/predefined-decomposers.md)
     are to be used to decompose a SWAP gate to a series of single-qubit gates and, either,
     CZs or CNOTs for two-qubit interactions.
 
 Since the CZ gate _is_ supported by the target backend, we use the `decompose` method with the
-[SWAP-to-CZ decomposer](../compilation-passes/types-of-passes/decomposition/predefined-decomposers.md)
+[SWAP-to-CZ decomposer](../compilation-passes/decomposition/predefined-decomposers.md)
 (`SWAP2CZDecomposer`) to decompose the SWAP gate.
 
 ```python
@@ -232,7 +232,7 @@ circuit.decompose(decomposer=SWAP2CZDecomposer())
 
 Our example circuit also contains a CNOT gate.
 Since it is not supported by the target backend, we use the `decompose` method with the
-[CNOT-to-CZ](../compilation-passes/types-of-passes/decomposition/predefined-decomposers.md) predefined decomposer
+[CNOT-to-CZ](../compilation-passes/decomposition/predefined-decomposers.md) predefined decomposer
 (`CNOT2CZDecomposer`) to decompose the CNOT into a series of single-qubit gates and a CZ gate.
 
 ```python
@@ -274,7 +274,7 @@ circuit.decompose(decomposer=CNOT2CZDecomposer())
     ```
 
 Since the CNOT is a controlled-gate, we could also have used the
-[CZ decomposer](../compilation-passes/types-of-passes/decomposition/cz-decomposer.md) to achieve the same result.
+[CZ decomposer](../compilation-passes/decomposition/cz-decomposer.md) to achieve the same result.
 Nevertheless, if available, a predefined decomposer will generally be more efficient as no inference is required.
 
 ## Merging
@@ -282,7 +282,7 @@ Nevertheless, if available, a predefined decomposer will generally be more effic
 To reduce the amount of single-qubit gates in the circuit,
 we can merge consecutive single-qubit gates on the same qubit into one.
 To do so, we use the `merge` method with the
-[single-qubit gates merger](../compilation-passes/types-of-passes/merging/single-qubit-gates-merger.md) pass
+[single-qubit gates merger](../compilation-passes/merging/single-qubit-gates-merger.md) pass
 (`SingleQubitGatesMerger`).
 
 !!! note
@@ -341,7 +341,7 @@ The rotation angles need to be _inferred_ from the semantic of the single-qubit 
 they are not defined in advance.
 
 We invoke the McKay decomposition on the circuit by applying the `decompose` method with the
-[McKay decomposer](../compilation-passes/types-of-passes/decomposition/mckay-decomposer.md) pass (`McKayDecomposer`).
+[McKay decomposer](../compilation-passes/decomposition/mckay-decomposer.md) pass (`McKayDecomposer`).
 
 ```python
 from opensquirrel.passes.decomposer import McKayDecomposer
@@ -404,14 +404,14 @@ It is good practice to validate certain properties of the program before exporti
 Here we check whether the interactions in the final circuit are valid given the _connectivity_ and
 whether all gates appear in the _primitive gate set_.
 
-Even though, [validation](../compilation-passes/types-of-passes/validation/index.md) is not a compilation pass _per se_,
+Even though, [validation](../compilation-passes/validation/index.md) is not a compilation pass _per se_,
 it is called in the same way on the circuit.
 Accordingly, we treat it as a pass that is part of the compilation pass library.
 
 ### Routing validation
 
 To check the validity of the interactions in the circuit, we use the `validate` method with the
-[interactions validator](../compilation-passes/types-of-passes/validation/interaction-validator.md) pass
+[interactions validator](../compilation-passes/validation/interaction-validator.md) pass
 (`InteractionValidator`) and the _connectivity_ as an input argument for the validator.
 
 ```python
@@ -425,7 +425,7 @@ An exception will be thrown if any interaction in the circuit is invalid.
 ### Primitive gate set validation
 
 To check if all gates in the circuit are part of the primitive gate set, we use the `validate` method with the
-[primitive gate validator](../compilation-passes/types-of-passes/validation/primitive-gate-validator.md) pass
+[primitive gate validator](../compilation-passes/validation/primitive-gate-validator.md) pass
 (`PrimitiveGateValidator`) and the `pgs`, _i.e. primitive gate set_, as an input argument for the validator.
 
 ```python

@@ -1,5 +1,5 @@
-Compilation passes are essential steps in the process of converting a high-level quantum algorithm (i.e. quantum
-circuits) into a hardware-specific executable format.
+Compilation passes are essential steps in the process of converting a high-level quantum algorithm,
+_i.e._ quantum circuits, into a hardware-specific executable format.
 This process, known as _quantum compilation_,
 involves several stages to ensure that the quantum circuit can be executed efficiently on a given quantum hardware.
 
@@ -10,27 +10,34 @@ Often times, the design of quantum algorithms does not take into account the con
 target hardware, such as qubit coupling map or native gate set.
 
 These passes are therefore needed to ensure that an initial circuit is converted to a version that adheres to the
-requirements of the hardware. They can easily be applied using the following methods on the `circuit` object:
+requirements of the hardware.
+They can easily be applied using the following methods on the `circuit` object:
 
-- decomposer
+- decompose
 - export
 - map
 - merge
 - route
-- validate  
-
-## Integrated passes
-
-- Reader (cQASM parser: using libQASM)
-- Writer (writes to cQASM)
+- validate
 
 ## Types of passes
 
-The following passes are available:
+Given the methods stated above, the following types of passes are available:
 
-- [Decomposer](types-of-passes/decomposition/index.md)
-- [Exporter](types-of-passes/exporting/index.md)
-- [Mapper](types-of-passes/mapping/index.md)
-- [Merger](types-of-passes/merging/index.md)
-- [Router](types-of-passes/routing/index.md)
-- [Validator](types-of-passes/validation/index.md)
+- [Decomposer](decomposition/index.md)
+- [Exporter](exporting/index.md)
+- [Mapper](mapping/index.md)
+- [Merger](merging/index.md)
+- [Router](routing/index.md)
+- [Validator](validation/index.md)
+
+!!! note "Integrated passes"
+
+    The [reader](../tutorial/creating-a-circuit.md) and [writer](../tutorial/writing-out-and-exporting.md) passes are
+    integrated in particular functionalities of the circuit.
+    They are not applied in the same way as the passes mentioned above, _i.e._,
+    by passing them as an argument when calling one of the aforementiond methods on the circuit.
+    Instead, the reader and writer are executed when one parses a [cQASM](https://qutech-delft.github.io/cQASM-spec)
+    string or writes out the circuit to a cQASM string, respectively.
+    The reader is invoked when using the `Circuit.from_string` method,
+    and the writer is invoked when converting the circuit to a string with `str` or printing it out with `print`.

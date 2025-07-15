@@ -4,7 +4,7 @@ As described in the [tutorial](index.md), a circuit can be created in two ways:
 2. [by using the circuit builder](creating-a-circuit.md#2-by-using-the-circuit-builder) in Python.
 
 Consider the following example quantum program written in the
-[cQASM language](https://qutech-delft.github.io/cQASM-spec/latest/):
+[cQASM language](https://qutech-delft.github.io/cQASM-spec):
 
 !!! example ""
 
@@ -98,7 +98,7 @@ circuit = Circuit.from_string(
     ```
 
 The `Circuit.from_string` method invokes OpenSquirrel's reader which uses the
-[libQASM parser](https://qutech-delft.github.io/libqasm/latest/) to parse the input program.
+[libQASM parser](https://qutech-delft.github.io/libqasm) to parse the input program.
 
 Some important things to note about how OpenSquirrel reads the input cQASM string:
 the OpenSquirrel reader
@@ -117,7 +117,7 @@ they are simply not registered during the parsing phase.
     [cQASM](https://qutech-delft.github.io/cQASM-spec/latest/).
     The same applies to OpenSquirrel's writer, _i.e._,
     the string representation of a `circuit` is in cQASM.
-    Nonetheless, using [exporter passes](../compilation-passes/types-of-passes/exporting/index.md) one can export to
+    Nonetheless, using [exporter passes](../compilation-passes/exporting/index.md) one can export to
     circuit to a different language, _e.g._,
     [quantify-scheduler Schedule](https://quantify-os.org/docs/quantify-scheduler/v0.20.1/autoapi/quantify_scheduler/index.html)
     or [cQASM 1.0](https://libqasm.readthedocs.io/en/latest/index.html).

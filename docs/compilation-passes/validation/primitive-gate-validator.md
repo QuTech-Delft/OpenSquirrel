@@ -1,20 +1,40 @@
 When developing quantum algorithms, their compilation on a specific device depends on whether the hardware supports the
 operations implemented on the circuit.
 
-To this end, the [PrimitiveGateValidator](http://127.0.0.1:8000/reference/passes/validator/primitive_gate_validator.html) pass checks whether the quantum gates on the quantum circuit are present in the
-native gate set of the quantum hardware.
-If this is not the case, the validator will throw a `ValueError`, specifying which gates are present in the circuit's
-description, but not in the hardware's native gate set.
+To this end, the primitive gate validator pass checks whether the quantum gates in the
+quantum circuit are present in the primitive gate set of the target backend.
+If this is not the case, the validator will throw a `ValueError`,
+specifying which gates in the circuit are not in the provided primitive gate set.
 
-This validator pass can be used as suc.
+Below are some examples of using the primitive gate validator (`PrimitiveGateValidator`).
+
+_Check the [circuit builder](../../circuit-builder/index.md) on how to generate a circuit._
 
 ```python
 from opensquirrel import CircuitBuilder
 from opensquirrel.passes.validator import PrimitiveGateValidator
+```
 
-primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
+```python
+from math import pi
+pgs = ["I", "Rx", "Ry", "Rz", "CZ"]
 
-gate_validator = PrimitiveGateValidator(primtive_gate_set = primitive_gate_set)
+builder = CircuitBuilder(5)
+builder.Rx(pi / 2)
+builder.Ry(1, -pi / 2)
+builder.CZ(0, 1)
+builder.Ry(1, pi / 2)
+circuit = builder.to_circuit()
+
+circuit.validate(validator=PrimitiveGateValidator(primitive_gate_set=pgs))
+```
+
+In the scenario above, there will be no output, as all gates in the circuit are in the primitive gate set.
+On the other hand, the circuit below will raise an error (`ValueError`) as certain gates are not supported,
+given the backend primitive gate set (`pgs`).
+
+```python
+pgs = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
 
 builder = CircuitBuilder(5)
 builder.I(0)
@@ -28,8 +48,15 @@ builder.H(0)
 builder.CNOT(1, 2)
 circuit = builder.to_circuit()
 
-circuit.validate(validator = gate_validator)
+circuit.validate(validator=PrimitiveGateValidator(primitive_gate_set=pgs))
 ```
-_Output_:
 
-    ValueError: the following gates are not in the primitive gate set: ['H', 'CNOT']
+!!! example ""
+
+    `ValueError: the following gates are not in the primitive gate set: ['H', 'CNOT']`
+
+!!! note "Resolving the error"
+
+    The upsupported gates can be replaced manually, or a [decomposition pass](../decomposition/index.md) can be used to
+    resolve the error.
+

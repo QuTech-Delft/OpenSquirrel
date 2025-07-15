@@ -1,10 +1,6 @@
-The _Validator_ passes in _OpenSquirrel_ are meant to provide some tools to check whether a quantum circuit is
-executable given the restraints imposed by the hardware. OpenSquirrel facilitates the following validation passes:
+Validator passes in OpenSquirrel are meant to provide some tools to check whether a quantum circuit is
+executable given the constraints imposed by the target backend.
+OpenSquirrel facilitates the following validation passes:
 
-- [Routing validator](routing-validator.md)
-
-- [Primitive gate validator](primitive-gate-validator.md)
-
-
-
-
+- [Interaction validator](interaction-validator.md) (`InteractionValidator`)
+- [Primitive gate validator](primitive-gate-validator.md) (`PrimitiveGateValidator`)
