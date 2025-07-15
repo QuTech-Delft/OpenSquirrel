@@ -40,7 +40,7 @@ class TestInteractionValidator:
         with pytest.raises(
             ValueError,
             match=r"the following qubit interactions in the circuit prevent a 1-to-1"
-                  r" mapping:\{\(2, 3\), \(0, 3\), \(0, 4\)\}"
+            r" mapping:\{\(2, 3\), \(0, 3\), \(0, 4\)\}",
         ):
             circuit.validate(validator=interaction_validator)
 
