@@ -1,18 +1,19 @@
-The [A* qubit routing pass](http://127.0.0.1:8000/reference/passes/router/astar_router.html) uses the A* search algorithm to find the optimal path between qubits that need to
-interact but are not directly connected on the hardware.
+The A\* (pronounced _A-star_) qubit routing pass uses the A\* search algorithm to find the optimal path between qubits
+that need to interact but are not directly connected, given the backend connectivity.
 By leveraging one of the following distance metrics as a heuristic:
 
 - Manhattan,
 - Euclidean, or
-- Chebyshev,
+- Chebyshev.
 
-it balances the trade-off between circuit depth and computational efficiency.
+It balances the trade-off between circuit depth and computational efficiency.
 This approach ensures that SWAP gates are inserted along the most efficient paths,
-minimizing the overall cost of routing while adhering to the connectivity constraints. 
+minimizing the overall cost of routing while adhering to the connectivity constraints.
 
 The examples below show how the A* qubit routing pass, along with specified distance metrics, can be used to route
-circuits in _OpenSquirrel_, given the connectivity of the backend.
-Check the [circuit builder](../../../circuit-builder/index.md) on how to generate the circuit.
+circuits in OpenSquirrel, given the connectivity of the backend.
+
+_Check the [circuit builder](../../../circuit-builder/index.md) on how to generate a circuit._
 
 ```python
 from opensquirrel import CircuitBuilder
@@ -31,14 +32,11 @@ circuit = builder.to_circuit()
 
 a_star_router = AStarRouter(connectivity=connectivity, distance_metric=DistanceMetric.MANHATTAN)
 circuit.route(router=a_star_router)
-
-num_swaps_inserted = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
-print(num_swaps_inserted)
 ```
 
-_Output_:
+??? example "`print(circuit)`"
 
-    4
+    ...
 
 ```python
 from opensquirrel import CircuitBuilder
@@ -57,7 +55,7 @@ connectivity = {
         "8": [3, 6, 9],
         "9": [4, 7, 8],
 }
-    
+
 builder = CircuitBuilder(10)
 builder.CNOT(0, 9)
 builder.CNOT(1, 8)
@@ -77,13 +75,34 @@ circuit = builder.to_circuit()
 
 a_star_router = AStarRouter(connectivity=connectivity, distance_metric=DistanceMetric.CHEBYSHEV)
 circuit.route(router=a_star_router)
-
-num_swaps_inserted = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
-print(num_swaps_inserted)
 ```
 
-_Output_:
+??? example "`print(circuit)`"
 
-    15
+    ...
 
 
+```python
+from opensquirrel import CircuitBuilder
+from opensquirrel.passes.router import AStarRouter
+from opensquirrel.passes.router.heuristics import DistanceMetric
+
+connectivity = {
+        "0": [1],
+        "1": [0],
+        "2": [3],
+        "3": [2],
+}
+
+builder = CircuitBuilder(2)
+builder.CNOT(0, 2)
+builder.CNOT(3, 1)
+circuit = builder.to_circuit()
+
+a_star_router = AStarRouter(connectivity=connectivity, distance_metric=DistanceMetric.EUCLIDEAN)
+circuit.route(router=a_star_router)
+```
+
+??? example "`print(circuit)`"
+
+    ...
