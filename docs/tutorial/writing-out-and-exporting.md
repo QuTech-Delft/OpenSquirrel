@@ -20,7 +20,7 @@ print(circuit)
 
 ## Exporting
 
-Alternatively, it is possible to [export](../compilation-passes/types-of-passes/exporting/index.md) the circuit to a
+Alternatively, it is possible to [export](../compilation-passes/exporting/index.md) the circuit to a
 different format.
 This can be done by using the `export` method with the desired format as an input argument.
 
@@ -33,7 +33,7 @@ from opensquirrel.passes.exporter import ExportFormat
 exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
 ```
 
-This uses the [cQASMv1 exporter](../compilation-passes/types-of-passes/exporting/cqasm-v1-exporter.md) to export the
+This uses the [cQASMv1 exporter](../compilation-passes/exporting/cqasm-v1-exporter.md) to export the
 circuit to a cQASM 1.0 string.
 
 ??? example "`print(exported_circuit)  # Compiled program in terms of cQASM 1.0`"
@@ -91,6 +91,6 @@ the original cQASM program.
 !!! warning "Translation is not always straightforward"
 
     Make sure to check the documentation on the specific
-    [exporters](../compilation-passes/types-of-passes/exporting/index.md) to understand how the translation is done,
+    [exporters](../compilation-passes/exporting/index.md) to understand how the translation is done,
     since not all language constructs can be straightforwardly translated from
     [cQASM](https://qutech-delft.github.io/cQASM-spec/) into any alternative format.

@@ -39,7 +39,7 @@ these are (at the moment of writing and in alphabetic order):
 For each of these actions the user will provide an appropriate [**compilation pass**](../compilation-passes/index.md)
 and potential input arguments.
 For instance, to obtain the
-[McKay decomposition](../compilation-passes/types-of-passes/decomposition/mckay-decomposer.md) of the circuit,
+[McKay decomposition](../compilation-passes/decomposition/mckay-decomposer.md) of the circuit,
 one would select the `McKayDecomposer` and perform the `decompose`
 action on the `circuit` object accordingly:
 
@@ -78,7 +78,7 @@ _Python's_ `print()` _statement can be used to print the program in cQASM._
 
 If one wishes to export the (compiled) program to, for example,
 a [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/v0.24.0/) `Schedule` one would do the following,
-using the [quantify-scheduler exporter](../compilation-passes/types-of-passes/exporting/quantify-scheduler-exporter.md):
+using the [quantify-scheduler exporter](../compilation-passes/exporting/quantify-scheduler-exporter.md):
 
 ```python
 exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
