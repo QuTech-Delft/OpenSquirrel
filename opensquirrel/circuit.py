@@ -3,11 +3,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-import numpy as np
-
 from opensquirrel.ir import IR, AsmDeclaration, Gate
 from opensquirrel.passes.exporter import ExportFormat
-from opensquirrel.phasemap import PhaseMap
+from opensquirrel.phase_map import PhaseMap
 
 if TYPE_CHECKING:
     from opensquirrel.passes.decomposer import Decomposer
@@ -46,7 +44,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
-        self.phase_map = PhaseMap(np.zeros(self.qubit_register_size, dtype=np.complex128))
+        self.phase_map = PhaseMap(self.register_manager.qubit_register.register_size)
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
