@@ -43,7 +43,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
     gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
-    qubit_list = gate.get_qubit_operands()
+    qubits = gate.get_qubit_operands()
 
     if is_identity_matrix_up_to_a_global_phase(replaced_matrix):
         return []
@@ -64,17 +64,17 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
     if circuit is not None:
         phase_difference = calculate_phase_difference(replaced_matrix, replacement_matrix)
         euler_phase = get_phase_angle(phase_difference)
-        for q in gate.get_qubit_operands():
-            circuit.phase_map.add_qubit_phase(q, euler_phase)
+        for qubit in qubits:
+            circuit.phase_map.add_qubit_phase(qubit, euler_phase)
 
-        if len(gate_qubit_indices) > 1:
+        if len(qubits) > 1:
             relative_phase = float(
                 np.real(
-                    circuit.phase_map.get_qubit_phase(qubit_list[1]) - circuit.phase_map.get_qubit_phase(qubit_list[0])
+                    circuit.phase_map.get_qubit_phase(qubits[0]) - circuit.phase_map.get_qubit_phase(qubits[1])
                 )
             )
             if abs(relative_phase) > ATOL:
-                list(replacement_gates).append(Rz(gate.get_qubit_operands()[0], Float(-1 * relative_phase)))
+                list(replacement_gates).append(Rz(qubits[0], Float(relative_phase)))
 
     return list(replacement_gates)
 
