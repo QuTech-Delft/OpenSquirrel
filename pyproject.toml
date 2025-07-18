@@ -32,7 +32,6 @@ python = "^3.9"
 numpy = ">=1.26"
 libqasm = "1.2.0"
 networkx = "^3.0.0"
-tox = "^4.24.1"
 scipy = ">=1.11.4"
 
 [tool.poetry.group.dev.dependencies]
@@ -41,7 +40,7 @@ pytest = {extras = ["toml"], version = ">=7.4.3,<9.0.0"}
 pytest-cov = ">=4.1,<7.0"
 mypy = "^1.7.0"
 ruff = ">=0.5,<0.13"
-tox = "^4.16.0"
+tox = "^4.24.1"
 sympy = "^1.13.1"
 IPython = ">=7.12,<9.0"
 
