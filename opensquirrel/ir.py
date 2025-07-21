@@ -649,8 +649,8 @@ class BsrFullParams(BlochSphereRotation):
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
         self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
-        self.theta = Float(angle)
-        self.phi = Float(phase)
+        self.theta = Float(normalize_angle(angle))
+        self.phi = Float(normalize_angle(phase))
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
@@ -684,7 +684,7 @@ class BsrAngleParam(BlochSphereRotation):
         name: str = "BsrNoParams",
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
-        self.theta = Float(angle)
+        self.theta = Float(normalize_angle(angle))
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
@@ -851,7 +851,7 @@ class CR(ControlledGate):
         )
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
-        self.theta = Float(theta)
+        self.theta = Float(normalize_angle(theta))
 
     @property
     def arguments(self) -> tuple[Expression, ...]:

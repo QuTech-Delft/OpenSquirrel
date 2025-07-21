@@ -42,7 +42,7 @@ prep_z q[1]
 cnot q[0], q[1]
 wait q[0], 3
 wait q[1], 3
-rx q[0], 5.123
+rx q[0], -1.1601853
 measure_z q[0]
 measure_z q[1]
 """
