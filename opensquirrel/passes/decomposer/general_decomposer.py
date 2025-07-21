@@ -69,9 +69,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
 
         if len(qubits) > 1:
             relative_phase = float(
-                np.real(
-                    circuit.phase_map.get_qubit_phase(qubits[0]) - circuit.phase_map.get_qubit_phase(qubits[1])
-                )
+                np.real(circuit.phase_map.get_qubit_phase(qubits[0]) - circuit.phase_map.get_qubit_phase(qubits[1]))
             )
             if abs(relative_phase) > ATOL:
                 list(replacement_gates).append(Rz(qubits[0], Float(relative_phase)))
