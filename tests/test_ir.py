@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from math import pi
 from collections.abc import Sequence
 from typing import Any, SupportsInt
 
@@ -380,7 +381,7 @@ class TestMatrixGate:
 class TestControlledGate:
     def test_control_gate_same_control_and_target_qubit(self) -> None:
         with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
-            ControlledGate(0, BlochSphereRotation(0, [0, 0, 1], angle=np.pi))
+            ControlledGate(0, BlochSphereRotation(0, [0, 0, 1], angle=pi, phase=pi / 2))
 
 
 class TestFloat:

@@ -475,57 +475,23 @@ class Gate(Unitary, ABC):
 
 
 class BlochSphereRotation(Gate):
+
+    normalize_angle_params: bool = True
+
     def __init__(
         self,
         qubit: QubitLike,
         axis: AxisLike,
         angle: SupportsFloat,
-        phase: SupportsFloat = 0,
+        phase: SupportsFloat,
         name: str = "BlochSphereRotation",
     ) -> None:
         Gate.__init__(self, name)
         self.qubit = Qubit(qubit)
         self.axis = Axis(axis)
-        self.angle = normalize_angle(angle)
-        self.phase = normalize_angle(phase)
-
-    def __repr__(self) -> str:
-        return (
-            f"{self.name}(qubit={self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)}, "
-            f"phase={repr_round(self.phase)})"
-        )
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, BlochSphereRotation):
-            return False
-
-        if self.qubit != other.qubit:
-            return False
-
-        if np.allclose(self.axis, other.axis, atol=ATOL):
-            return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
-
-        if np.allclose(self.axis, -other.axis.value, atol=ATOL):
-            return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
-
-        return False
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return ()
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bloch_sphere_rotation(self)
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
-
-    def is_identity(self) -> bool:
-        # Angle and phase are already normalized.
-        return abs(self.angle) < ATOL and abs(self.phase) < ATOL
+        self.angle = normalize_angle(angle) if self.normalize_angle_params else float(angle)
+        self.phase = normalize_angle(phase) if self.normalize_angle_params else float(phase)
+        self.normalize_angle_params = True
 
     @staticmethod
     def try_match_replace_with_default(bsr: BlochSphereRotation) -> BlochSphereRotation:
@@ -552,6 +518,52 @@ class BlochSphereRotation(Gate):
                 return gate
         nx, ny, nz = (Float(component) for component in bsr.axis)
         return Rn(bsr.qubit, nx, ny, nz, Float(bsr.angle), Float(bsr.phase))
+    #
+    # @property
+    # def normalize(self) -> bool:
+    #     return self.normalize
+    #
+    # @normalize.setter
+    # def normalize(self, value: bool) -> None:
+    #     self.normalize = value
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return (self.qubit, )
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_bloch_sphere_rotation(self)
+
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit]
+
+    def get_bit_operands(self) -> list[Bit]:
+        return []
+
+    def is_identity(self) -> bool:
+        # Angle and phase are already normalized.
+        return abs(self.angle) < ATOL and abs(self.phase) < ATOL
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.name}(qubit={self.qubit}, axis={repr_round(self.axis)}, angle={repr_round(self.angle)}, "
+            f"phase={repr_round(self.phase)})"
+        )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, BlochSphereRotation):
+            return False
+
+        if self.qubit != other.qubit:
+            return False
+
+        if np.allclose(self.axis, other.axis, atol=ATOL):
+            return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
+
+        if np.allclose(self.axis, -other.axis.value, atol=ATOL):
+            return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
+
+        return False
 
 
 class BsrNoParams(BlochSphereRotation):
@@ -560,7 +572,7 @@ class BsrNoParams(BlochSphereRotation):
         qubit: QubitLike,
         axis: AxisLike,
         angle: SupportsFloat,
-        phase: SupportsFloat = 0,
+        phase: SupportsFloat,
         name: str = "BsrNoParams",
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
@@ -645,15 +657,15 @@ class BsrFullParams(BlochSphereRotation):
         axis: AxisLike,
         angle: SupportsFloat,
         phase: SupportsFloat,
-        name: str = "BsrFullParams",
+        name: str = "BsrFullParams"
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
         self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
-        self.theta = Float(normalize_angle(angle))
-        self.phi = Float(normalize_angle(phase))
+        self.theta = Float(self.angle)
+        self.phi = Float(self.phase)
 
     @property
-    def arguments(self) -> tuple[Expression, ...]:
+    def arguments(self) -> tuple[Any, ...]:
         return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -680,14 +692,14 @@ class BsrAngleParam(BlochSphereRotation):
         qubit: QubitLike,
         axis: AxisLike,
         angle: SupportsFloat,
-        phase: SupportsFloat = 0,
+        phase: SupportsFloat,
         name: str = "BsrNoParams",
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
-        self.theta = Float(normalize_angle(angle))
+        self.theta = Float(self.angle)
 
     @property
-    def arguments(self) -> tuple[Expression, ...]:
+    def arguments(self) -> tuple[Any, ...]:
         return self.qubit, self.theta
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -696,17 +708,24 @@ class BsrAngleParam(BlochSphereRotation):
 
 class Rx(BsrAngleParam):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
-        BsrAngleParam.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=theta, phase=0, name="Rx")
+        BsrAngleParam.__init__(self, qubit=qubit, axis=(1, 0, 0), angle=theta, phase=0.0, name="Rx")
 
 
 class Ry(BsrAngleParam):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
-        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=theta, phase=0, name="Ry")
+        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 1, 0), angle=theta, phase=0.0, name="Ry")
 
 
 class Rz(BsrAngleParam):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
-        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=0, name="Rz")
+        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=0.0, name="Rz")
+
+
+# R(theta) is only defined for the purpose of CR(theta) and does not appear in the default instruction set.
+class R(BsrAngleParam):
+    def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
+        phase = float(theta) / 2
+        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=phase, name="R")
 
 
 class MatrixGate(Gate):
@@ -714,18 +733,18 @@ class MatrixGate(Gate):
         self, matrix: ArrayLike | list[list[int | DTypeLike]], operands: Iterable[QubitLike], name: str = "MatrixGate"
     ) -> None:
         Gate.__init__(self, name)
-        qubit_operands = [Qubit(operand) for operand in operands]
-        if len(qubit_operands) < 2:
+        self.operands = [Qubit(operand) for operand in operands]
+        if len(self.operands) < 2:
             msg = "for 1q gates, please use BlochSphereRotation"
             raise ValueError(msg)
 
-        if self._check_repeated_qubit_operands(qubit_operands):
+        if self._check_repeated_qubit_operands(self.operands):
             msg = "operands cannot be the same"
             raise ValueError(msg)
 
         matrix = np.asarray(matrix, dtype=np.complex128)
 
-        expected_number_of_rows = 1 << len(qubit_operands)
+        expected_number_of_rows = 1 << len(self.operands)
         expected_number_of_cols = expected_number_of_rows
         if matrix.shape != (expected_number_of_rows, expected_number_of_cols):
             msg = (
@@ -735,11 +754,10 @@ class MatrixGate(Gate):
             raise ValueError(msg)
 
         self.matrix = matrix
-        self.operands = qubit_operands
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return ()
+        return tuple(self.operands)
 
     def __repr__(self) -> str:
         return f"{self.name}(qubits={self.operands}, matrix={repr_round(self.matrix)})"
@@ -801,7 +819,7 @@ class ControlledGate(Gate):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return ()
+        return self.control_qubit, *self.target_gate.arguments
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.control_qubit, *self.target_gate.get_qubit_operands()]
@@ -819,10 +837,6 @@ class CNOT(ControlledGate):
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
 
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.control_qubit, self.target_qubit
-
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_cnot(self)
 
@@ -833,29 +847,16 @@ class CZ(ControlledGate):
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
 
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.control_qubit, self.target_qubit
-
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_cz(self)
 
 
 class CR(ControlledGate):
     def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, theta: SupportsFloat) -> None:
-        ControlledGate.__init__(
-            self,
-            control_qubit=control_qubit,
-            target_gate=BlochSphereRotation(qubit=target_qubit, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2),
-            name="CR",
-        )
+        ControlledGate.__init__(self, control_qubit=control_qubit, target_gate=R(target_qubit, theta), name="CR")
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
         self.theta = Float(normalize_angle(theta))
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.control_qubit, self.target_qubit, self.theta
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_cr(self)
@@ -863,20 +864,11 @@ class CR(ControlledGate):
 
 class CRk(ControlledGate):
     def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, k: SupportsInt) -> None:
-        theta = 2 * math.pi / (2 ** int(k))
-        ControlledGate.__init__(
-            self,
-            control_qubit=control_qubit,
-            target_gate=BlochSphereRotation(qubit=target_qubit, axis=(0, 0, 1), angle=theta, phase=float(theta) / 2),
-            name="CRk",
-        )
+        theta = normalize_angle(2 * math.pi / (2 ** int(k)))
+        ControlledGate.__init__(self, control_qubit=control_qubit, target_gate=R(target_qubit, theta), name="CRk")
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
         self.k = Int(k)
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.control_qubit, self.target_qubit, self.k
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_crk(self)
@@ -1023,6 +1015,15 @@ class IR:
     def __init__(self) -> None:
         self.statements: list[Statement] = []
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, IR):
+            return False
+
+        return self.statements == other.statements
+
+    def __repr__(self) -> str:
+        return f"IR: {self.statements}"
+
     def add_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
         self.statements.append(asm_declaration)
 
@@ -1035,19 +1036,9 @@ class IR:
     def add_statement(self, statement: Statement) -> None:
         self.statements.append(statement)
 
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, IR):
-            return False
-
-        return self.statements == other.statements
-
-    def __repr__(self) -> str:
-        return f"IR: {self.statements}"
-
     def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:
             statement.accept(visitor)
-
 
 # Type Aliases
 AxisLike = Union[ArrayLike, Axis]

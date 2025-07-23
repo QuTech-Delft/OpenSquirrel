@@ -23,7 +23,7 @@ def replacement_gates_1() -> list[Gate]:
 def replacement_gates_2() -> list[Gate | Measure]:
     return [
         Measure(1, 1),
-        BlochSphereRotation(3, axis=(0, 0, 1), angle=math.pi),
+        BlochSphereRotation(3, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2),
         MatrixGate([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], [0, 3]),
         ControlledGate(1, X(2)),
     ]
@@ -32,7 +32,7 @@ def replacement_gates_2() -> list[Gate | Measure]:
 def circuit_2_reindexed() -> Circuit:
     builder = CircuitBuilder(4, 4)
     builder.measure(0, 0)
-    builder.ir.add_gate(BlochSphereRotation(2, axis=(0, 0, 1), angle=math.pi))
+    builder.ir.add_gate(BlochSphereRotation(2, axis=(0, 0, 1), angle=math.pi, phase=math.pi / 2))
     builder.ir.add_gate(MatrixGate([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], [1, 2]))
     builder.ir.add_gate(ControlledGate(0, X(3)))
     return builder.to_circuit()

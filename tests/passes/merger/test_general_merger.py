@@ -8,19 +8,19 @@ from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotat
 
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
-    a = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.4)
-    b = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=-0.3)
+    a = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.4, phase=0.2)
+    b = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=-0.3, phase=-0.15)
     composed = compose_bloch_sphere_rotations(a, b)
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.1)
+    assert composed == BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.1, phase=0.05)
 
 
 def test_compose_bloch_sphere_rotations_different_axis() -> None:
     # Visualizing this in 3D is difficult...
-    a = BlochSphereRotation(qubit=123, axis=(1, 0, 0), angle=math.pi / 2)
-    b = BlochSphereRotation(qubit=123, axis=(0, 0, 1), angle=-math.pi / 2)
-    c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=math.pi / 2)
+    a = BlochSphereRotation(qubit=123, axis=(1, 0, 0), angle=math.pi / 2, phase=math.pi / 4)
+    b = BlochSphereRotation(qubit=123, axis=(0, 0, 1), angle=-math.pi / 2, phase=math.pi / 4)
+    c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=math.pi / 2, phase=math.pi / 4)
     composed = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(c, b), a)
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=math.pi)
+    assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=math.pi, phase=3 * math.pi / 4)
 
 
 @pytest.mark.parametrize(
