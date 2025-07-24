@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import math
-from math import pi
 from collections.abc import Sequence
+from math import pi
 from typing import Any, SupportsInt
 
 import numpy as np

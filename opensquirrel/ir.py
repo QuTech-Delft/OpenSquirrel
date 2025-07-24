@@ -475,7 +475,6 @@ class Gate(Unitary, ABC):
 
 
 class BlochSphereRotation(Gate):
-
     normalize_angle_params: bool = True
 
     def __init__(
@@ -491,7 +490,6 @@ class BlochSphereRotation(Gate):
         self.axis = Axis(axis)
         self.angle = normalize_angle(angle) if self.normalize_angle_params else float(angle)
         self.phase = normalize_angle(phase) if self.normalize_angle_params else float(phase)
-        self.normalize_angle_params = True
 
     @staticmethod
     def try_match_replace_with_default(bsr: BlochSphereRotation) -> BlochSphereRotation:
@@ -518,18 +516,10 @@ class BlochSphereRotation(Gate):
                 return gate
         nx, ny, nz = (Float(component) for component in bsr.axis)
         return Rn(bsr.qubit, nx, ny, nz, Float(bsr.angle), Float(bsr.phase))
-    #
-    # @property
-    # def normalize(self) -> bool:
-    #     return self.normalize
-    #
-    # @normalize.setter
-    # def normalize(self, value: bool) -> None:
-    #     self.normalize = value
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return (self.qubit, )
+        return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_bloch_sphere_rotation(self)
@@ -652,12 +642,7 @@ class TDagger(BsrNoParams):
 
 class BsrFullParams(BlochSphereRotation):
     def __init__(
-        self,
-        qubit: QubitLike,
-        axis: AxisLike,
-        angle: SupportsFloat,
-        phase: SupportsFloat,
-        name: str = "BsrFullParams"
+        self, qubit: QubitLike, axis: AxisLike, angle: SupportsFloat, phase: SupportsFloat, name: str = "BsrFullParams"
     ) -> None:
         BlochSphereRotation.__init__(self, qubit, axis, angle, phase, name)
         self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
@@ -1039,6 +1024,7 @@ class IR:
     def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:
             statement.accept(visitor)
+
 
 # Type Aliases
 AxisLike = Union[ArrayLike, Axis]
