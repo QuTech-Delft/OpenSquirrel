@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import math
 from collections.abc import Sequence
-from math import pi
+from math import pi, tau
 from typing import Any, SupportsInt
 
 import numpy as np
@@ -177,7 +176,7 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=pi, phase=pi / 2),
         )
 
         assert cnot_controlled_gate == cnot_matrix_gate
@@ -205,7 +204,7 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi, phase=pi / 2),
         )
 
         assert inverted_matrix_gate == inverted_cnot_gate
@@ -221,7 +220,7 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi, phase=pi / 2),
         )
 
         assert inverted_matrix_with_phase == inverted_cnot_gate
@@ -237,7 +236,7 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2),
+            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=pi, phase=pi / 2),
         )
 
         assert cnot_controlled_gate != swap_matrix_gate
@@ -277,16 +276,16 @@ class TestMeasure:
 class TestBlochSphereRotation:
     @pytest.fixture
     def gate(self) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau)
+        return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=tau)
 
     @pytest.mark.parametrize(
         "other_gate",
         [
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1 + ATOL / 2, 0, 0), angle=math.pi, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi + ATOL / 2, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=math.tau + ATOL / 2),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi + math.tau, phase=math.tau),
+            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=tau),
+            BlochSphereRotation(qubit=42, axis=(1 + ATOL / 2, 0, 0), angle=pi, phase=tau),
+            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi + ATOL / 2, phase=tau),
+            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=tau + ATOL / 2),
+            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi + tau, phase=tau),
         ],
         ids=["all_equal", "close_axis", "close_angle", "close_phase", "angle+tau"],
     )
@@ -296,10 +295,10 @@ class TestBlochSphereRotation:
     @pytest.mark.parametrize(
         "other_gate",
         [
-            BlochSphereRotation(qubit=43, axis=(1, 0, 0), angle=math.pi, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(0, 1, 0), angle=math.pi, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=math.tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=math.pi, phase=1),
+            BlochSphereRotation(qubit=43, axis=(1, 0, 0), angle=pi, phase=tau),
+            BlochSphereRotation(qubit=42, axis=(0, 1, 0), angle=pi, phase=tau),
+            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=tau),
+            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=1),
             "test",
         ],
         ids=["qubit", "axis", "angle", "phase", "type"],
@@ -317,17 +316,17 @@ class TestBlochSphereRotation:
     @pytest.mark.parametrize(
         ("bsr", "default_gate"),
         [
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=math.pi, phase=math.pi / 2), H(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2), X(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi / 2, phase=math.pi / 4), X90(0)),
-            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=-math.pi / 2, phase=-math.pi / 4), X90(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=-math.pi / 2, phase=-math.pi / 4), MinusX90(0)),
-            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=math.pi / 2, phase=math.pi / 4), MinusX90(0)),
-            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=-math.pi / 4, phase=-math.pi / 8), TDagger(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=math.pi / 4, phase=0), Rx(0, math.pi / 4)),
-            (BlochSphereRotation(qubit=0, axis=(0, 1, 0), angle=math.pi / 3, phase=0), Ry(0, math.pi / 3)),
-            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=3 * math.pi / 4, phase=0), Rz(0, 3 * math.pi / 4)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=math.pi, phase=0), Rn(0, 1, 0, 1, math.pi, 0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=pi, phase=pi / 2), H(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi, phase=pi / 2), X(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi / 2, phase=pi / 4), X90(0)),
+            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=-pi / 2, phase=-pi / 4), X90(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=-pi / 2, phase=-pi / 4), MinusX90(0)),
+            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=pi / 2, phase=pi / 4), MinusX90(0)),
+            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=-pi / 4, phase=-pi / 8), TDagger(0)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi / 4, phase=0), Rx(0, pi / 4)),
+            (BlochSphereRotation(qubit=0, axis=(0, 1, 0), angle=pi / 3, phase=0), Ry(0, pi / 3)),
+            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=3 * pi / 4, phase=0), Rz(0, 3 * pi / 4)),
+            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=pi, phase=0), Rn(0, 1, 0, 1, pi, 0)),
         ],
         ids=["H", "X", "X90-1", "X90-2", "mX90-1", "mX90-2", "Tdag", "Rx", "Ry", "Rz", "Rn"],
     )

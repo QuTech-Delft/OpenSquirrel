@@ -6,7 +6,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, X
 from opensquirrel.common import normalize_angle
-from opensquirrel.ir import Gate, Rn, Rx, ControlledGate, I, Rz, Ry
+from opensquirrel.ir import ControlledGate, Float, Gate, Instruction, Rn, Rx, Ry, Rz
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 
 AnglesType = Iterator[tuple[float, float]]
@@ -59,13 +59,13 @@ class TestParsing:
     @pytest.mark.parametrize(
         ("cq_string", "expected"),
         [
-            ("version 3; qubit q; inv.X q", [Rn(0, 1.0, 0.0, 0.0, 3.1415927, -1.5707963)]),
+            ("version 3; qubit q; inv.X q", [Rn(0, 1.0, 0.0, 0.0, pi, -1.5707963)]),
             ("version 3; qubit q; pow(1.0/2).Rn(1.0, 0.0, 0.0, 2 * pi, pi) q", [X(0)]),
             ("version 3; qubit q; pow(2).X q", [Rn(0, 1.0, 0.0, 0.0, 0.0, pi)]),
             ("version 3; qubit q; pow(4).X q", [Rx(0, 0.0)]),
             ("version 3; qubit[2] q; ctrl.Rx(-pi) q[0], q[1]", [ControlledGate(0, Rx(1, pi))]),
         ],
-        ids=["inv", "pow-1/2", "pow-2", "pow-4", "ctrl"]
+        ids=["inv", "pow-1/2", "pow-2", "pow-4", "ctrl"],
     )
     def test_gate_modifiers(self, cq_string: str, expected: list[Gate]) -> None:
         circuit = Circuit.from_string(cq_string)
@@ -74,7 +74,6 @@ class TestParsing:
 
 class TestMerging:
     def test_merge_rotation_gates(self) -> None:
-
         circuit = CircuitBuilder(1).Rx(0, -pi).Rn(0, 1, 0, 0, 0, pi / 2).to_circuit()
         circuit.merge(merger=SingleQubitGatesMerger())
         assert circuit.ir.statements[0] == X(0)

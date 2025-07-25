@@ -650,7 +650,7 @@ class BsrFullParams(BlochSphereRotation):
         self.phi = Float(self.phase)
 
     @property
-    def arguments(self) -> tuple[Any, ...]:
+    def arguments(self) -> tuple[Expression, ...]:
         return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -684,7 +684,7 @@ class BsrAngleParam(BlochSphereRotation):
         self.theta = Float(self.angle)
 
     @property
-    def arguments(self) -> tuple[Any, ...]:
+    def arguments(self) -> tuple[Expression, ...]:
         return self.qubit, self.theta
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -706,7 +706,8 @@ class Rz(BsrAngleParam):
         BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=0.0, name="Rz")
 
 
-# R(theta) is only defined for the purpose of CR(theta) and does not appear in the default instruction set.
+# The R gate is only defined for the purpose of defining the CR and CRk gates and does not appear as a separate gate in
+# the default instruction set.
 class R(BsrAngleParam):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
         phase = float(theta) / 2

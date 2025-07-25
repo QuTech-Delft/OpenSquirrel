@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - `ShortestPathRouter` and `AStarRouter` now correctly propagate SWAP gate insertion effects throughout the circuit
+- The values for parameters `theta` and `phi` stay within the domain `(-pi, pi]` throughout parse- and compile-time
 
 ## [ 0.5.0 ] - [ 2025-05-28 ]
 
