@@ -106,7 +106,7 @@ def test_spin2plus_backend() -> None:
     circuit.decompose(decomposer=McKayDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    circuit.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-typ
+    circuit.validate(validator=PrimitiveGateValidator(**data))
     assert (
         str(circuit)
         == """version 3.0
@@ -306,7 +306,7 @@ def test_hectoqubit_backend() -> None:
     circuit.decompose(decomposer=XYXDecomposer(**data))
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    circuit.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=PrimitiveGateValidator(**data))
 
     if importlib.util.find_spec("quantify_scheduler") is None:
         with pytest.raises(
@@ -652,7 +652,7 @@ def test_starmon7_backend() -> None:
     circuit.validate(validator=InteractionValidator(**data))  # type: ignore[arg-type]
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
-    circuit.validate(validator=PrimitiveGateValidator(**data))  # type: ignore[arg-type]
+    circuit.validate(validator=PrimitiveGateValidator(**data))
 
     exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
 
