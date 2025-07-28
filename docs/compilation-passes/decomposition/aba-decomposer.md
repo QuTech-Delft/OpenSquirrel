@@ -1,6 +1,3 @@
-OpenSquirrel has a variety inferred decomposition strategies.
-More in depth tutorials can be found in the [decomposition example Jupyter notebook](https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/example/decompositions.ipynb).
-
 One of the most common single qubit decomposition techniques is the ZYZ decomposition.
 This technique decomposes a quantum gate into an `Rz`, `Ry` and `Rz` gate in that order.
 The decompositions are found in `opensquirrel.passes.decomposer`,
@@ -41,8 +38,3 @@ from opensquirrel import H
 
 print(ZYZDecomposer().decompose(H(0)))
 ```
-_Output_:
-
-    [BlochSphereRotation(qubit=Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0),
-     BlochSphereRotation(qubit=Qubit[0], axis=Axis[0. 1. 0.], angle=1.5707963267948966, phase=0.0),
-     BlochSphereRotation(qubit=Qubit[0], axis=Axis[0. 0. 1.], angle=1.5707963267948966, phase=0.0)]

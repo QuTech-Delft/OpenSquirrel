@@ -9,18 +9,9 @@ nav:
     - Installation: installation.md
   - Tutorial:
     - Tutorial: tutorial/index.md
-    - Creating a circuit:
-      - Creating a circuit: tutorial/creating-a-circuit/index.md
-      - From a cQASM string: tutorial/creating-a-circuit/from-a-cqasm-string.md
-      - Using the circuit builder: tutorial/creating-a-circuit/using-the-circuit-builder.md
-      - Strong types: tutorial/creating-a-circuit/strong-types.md
-    - Applying compilation passes:
-      - Applying compilation passes: tutorial/applying-compilation-passes/index.md
-      - Merging single qubit gates: tutorial/applying-compilation-passes/merging-single-qubit-gates.md
-      - Custom gates: tutorial/applying-compilation-passes/custom-gates.md
-      - Gate Decomposition:
-        - Predefined decomposition: tutorial/applying-compilation-passes/decomposition/predefined-decomposition.md
-        - Inferred decomposition: tutorial/applying-compilation-passes/decomposition/inferred-decomposition.md
+    - Creating a circuit: tutorial/creating-a-circuit.md
+    - Applying compilation passes: tutorial/applying-compilation-passes.md
+    - Writing out and exporting: tutorial/writing-out-and-exporting.md
   - Circuit builder:
     - Circuit builder: circuit-builder/index.md
     - Instructions:
@@ -30,33 +21,32 @@ nav:
   - Compilation passes:
     - Compilation passes: compilation-passes/index.md
     - Decomposition:
-      - Decomposition: compilation-passes/types-of-passes/decomposition/index.md
-      - McKay decomposer: compilation-passes/types-of-passes/decomposition/mckay-decomposer.md
-      - ABA decomposer: compilation-passes/types-of-passes/decomposition/aba-decomposer.md
-      - CNOT decomposer: compilation-passes/types-of-passes/decomposition/cnot-decomposer.md
-      - CZ decomposer: compilation-passes/types-of-passes/decomposition/cz-decomposer.md
-      - Predefined decomposers: compilation-passes/types-of-passes/decomposition/predefined-decomposers.md
+      - Decomposition: compilation-passes/decomposition/index.md
+      - ABA decomposer: compilation-passes/decomposition/aba-decomposer.md
+      - CNOT decomposer: compilation-passes/decomposition/cnot-decomposer.md
+      - CZ decomposer: compilation-passes/decomposition/cz-decomposer.md
+      - McKay decomposer: compilation-passes/decomposition/mckay-decomposer.md
+      - Predefined decomposers: compilation-passes/decomposition/predefined-decomposers.md
     - Exporting:
-      - Exporting: compilation-passes/types-of-passes/exporting/index.md
-      - cQASMv1 exporter:  compilation-passes/types-of-passes/exporting/cqasm-v1-exporter.md
-      - quantify-scheduler exporter:  compilation-passes/types-of-passes/exporting/quantify-scheduler-exporter.md
+      - Exporting: compilation-passes/exporting/index.md
+      - cQASMv1 exporter:  compilation-passes/exporting/cqasm-v1-exporter.md
+      - quantify-scheduler exporter:  compilation-passes/exporting/quantify-scheduler-exporter.md
     - Mapping:
-      - Mapping: compilation-passes/types-of-passes/mapping/index.md
-      - Identity mapper: compilation-passes/types-of-passes/mapping/identity-mapper.md
-      - Hardcoded mapper: compilation-passes/types-of-passes/mapping/hardcoded-mapper.md
-      - Random mapper: compilation-passes/types-of-passes/mapping/random-mapper.md
+      - Mapping: compilation-passes/mapping/index.md
+      - Hardcoded mapper: compilation-passes/mapping/hardcoded-mapper.md
+      - Identity mapper: compilation-passes/mapping/identity-mapper.md
+      - Random mapper: compilation-passes/mapping/random-mapper.md
     - Merging:
-      - Merging: compilation-passes/types-of-passes/merging/index.md
-      - Single-qubit gates merger: compilation-passes/types-of-passes/merging/single-qubit-gates-merger.md
+      - Merging: compilation-passes/merging/index.md
+      - Single-qubit gates merger: compilation-passes/merging/single-qubit-gates-merger.md
     - Routing:
-      - Routing: compilation-passes/types-of-passes/routing/index.md
-      - Shortest-path router: compilation-passes/types-of-passes/routing/shortest-path-router.md
-      - A-star router: compilation-passes/types-of-passes/routing/a-star-router.md
-      - QRoute router: compilation-passes/types-of-passes/routing/qroute-router.md
+      - Routing: compilation-passes/routing/index.md
+      - A* router: compilation-passes/routing/a-star-router.md
+      - Shortest-path router: compilation-passes/routing/shortest-path-router.md
     - Validation:
-      - Validation: compilation-passes/types-of-passes/validation/index.md
-      - Routing validator: compilation-passes/types-of-passes/validation/routing-validator.md
-      - Primitive gate validator: compilation-passes/types-of-passes/validation/primitive-gate-validator.md
+      - Validation: compilation-passes/validation/index.md
+      - Interaction validator: compilation-passes/validation/interaction-validator.md
+      - Primitive gate validator: compilation-passes/validation/primitive-gate-validator.md
   - API documentation: reference/
 
 theme:
@@ -66,6 +56,7 @@ theme:
     - navigation.tabs
     - navigation.tracking
     - navigation.footer
+    - content.code.copy
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
