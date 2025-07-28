@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import Any
 
 from opensquirrel.ir import IR, Instruction
@@ -5,7 +6,7 @@ from opensquirrel.passes.validator import Validator
 
 
 class PrimitiveGateValidator(Validator):
-    def __init__(self, primitive_gate_set: list[str], **kwargs: Any) -> None:
+    def __init__(self, primitive_gate_set: Iterable[str], **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.primitive_gate_set = primitive_gate_set
 

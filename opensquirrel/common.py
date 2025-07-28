@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import SupportsFloat
+from typing import SupportsComplex, SupportsFloat
 
 import numpy as np
 from numpy.typing import NDArray
@@ -81,11 +81,12 @@ def is_identity_matrix_up_to_a_global_phase(matrix: NDArray[np.complex128]) -> b
     return are_matrices_equivalent_up_to_global_phase(matrix, np.eye(matrix.shape[0], dtype=np.complex128))
 
 
-def get_phase_angle(scalar: np.complex128) -> np.float64:
+def get_phase_angle(scalar: SupportsComplex) -> float:
     """Derives the Euler rotation angle from a scalar.
     Args:
         scalar: scalar to convert.
     Returns:
         Euler phase angle of scalar.
     """
-    return np.float64(-1j * np.log(scalar))
+    scalar = np.complex128(scalar)
+    return float(-1j * np.log(scalar))

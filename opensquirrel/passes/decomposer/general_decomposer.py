@@ -61,20 +61,24 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate], circui
         msg = f"replacement for gate {gate.name} does not preserve the quantum state"
         raise ValueError(msg)
 
+    replacement_gates = list(replacement_gates)
+
     if circuit is not None:
         phase_difference = calculate_phase_difference(replaced_matrix, replacement_matrix)
         euler_phase = get_phase_angle(phase_difference)
         for qubit in qubits:
-            circuit.phase_map.add_qubit_phase(qubit, euler_phase)
+            circuit.phase_record.add_qubit_phase(qubit, euler_phase)
 
         if len(qubits) > 1:
             relative_phase = float(
-                np.real(circuit.phase_map.get_qubit_phase(qubits[0]) - circuit.phase_map.get_qubit_phase(qubits[1]))
+                np.real(
+                    circuit.phase_record.get_qubit_phase(qubits[0]) - circuit.phase_record.get_qubit_phase(qubits[1])
+                )
             )
             if abs(relative_phase) > ATOL:
-                list(replacement_gates).append(Rz(qubits[0], Float(relative_phase)))
+                replacement_gates.append(Rz(qubits[0], Float(relative_phase)))
 
-    return list(replacement_gates)
+    return replacement_gates
 
 
 def decompose(circuit: Circuit, decomposer: Decomposer) -> None:

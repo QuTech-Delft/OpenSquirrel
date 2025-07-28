@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 
 from opensquirrel.ir import IR, AsmDeclaration, Gate
 from opensquirrel.passes.exporter import ExportFormat
-from opensquirrel.phase_map import PhaseMap
+from opensquirrel.phase_record import PhaseRecord
 
 if TYPE_CHECKING:
     from opensquirrel.passes.decomposer import Decomposer
@@ -44,7 +44,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
-        self.phase_map = PhaseMap(self.register_manager.qubit_register.register_size)
+        self.phase_record = PhaseRecord(self.register_manager.qubit_register.register_size)
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
