@@ -89,7 +89,7 @@ class CircuitBuilder:
         try:
             instruction = default_instruction_set[attr](*args)
         except TypeError as e:
-            msg = f"trying to build '{attr}' with the wrong number or type of arguments: '{args}': {e}"
+            msg = f"trying to build {attr!r} with the wrong number or type of arguments: {args!r}: {e}"
             raise TypeError(msg) from e
 
         self._check_out_of_bounds_access(instruction)
