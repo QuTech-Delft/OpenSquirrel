@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
@@ -850,6 +851,10 @@ class CR(ControlledGate):
 
 class CRk(ControlledGate):
     def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike, k: SupportsInt) -> None:
+        if not isinstance(k, (int, Int)):
+            warnings.warn(
+                f"value of parameter 'k' is not an integer: got {type(k)!r} instead.", UserWarning, stacklevel=2
+            )
         theta = normalize_angle(2 * math.pi / (2 ** int(k)))
         ControlledGate.__init__(self, control_qubit=control_qubit, target_gate=R(target_qubit, theta), name="CRk")
         self.control_qubit = Qubit(control_qubit)

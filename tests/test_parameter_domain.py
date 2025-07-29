@@ -56,6 +56,9 @@ class TestParsing:
             theta_expected = cast("Float", cast("Instruction", builder.ir.statements[i]).arguments[-1])
             assert theta_expected.value == normalize_angle(2 * pi / 2**k)
 
+        with pytest.warns(UserWarning, match=r"value of parameter 'k' is not an integer: got <class 'float'> instead."):
+            builder.CRk(0, 1, 1.5)
+
     @pytest.mark.parametrize(
         ("cq_string", "expected"),
         [
