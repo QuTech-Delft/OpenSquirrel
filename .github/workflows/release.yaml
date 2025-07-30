@@ -10,30 +10,21 @@ on:
       - created
 
 jobs:
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  publish:
+    name: Publish assets
+    runs-on: "ubuntu-latest"
     permissions:
       id-token: write
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@master
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Install poetry
         uses: abatilo/actions-poetry@v4
         with:
           poetry-version: "2.1.3"
-
-      - name: Install build
-        run: pip install build
 
       # Setting the proper version
       - name: Get previous Tag
@@ -42,43 +33,24 @@ jobs:
         uses: WyriHaximus/github-action-get-previous-tag@v1
         with:
           fallback: 0.1.0
-
       - name: Set Build version
         if: contains(github.ref, 'refs/heads/release-')
         run: poetry version "${{ steps.previous_tag.outputs.tag }}.dev${{ github.run_number }}"
-
       - name: Set Release version
         if: github.event_name == 'release' && github.event.action == 'created'
         run: poetry version ${{ github.ref_name }}
 
-      # Build wheels using cibuildwheel
-      - name: Build wheels
-        run: python -m build --wheel --outdir wheelhouse
+      # Build package
+      - name: Build poetry package
+        run: poetry build
 
-      - name: Upload wheels as artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: built-wheels
-          path: wheelhouse/
-
-  publish:
-    name: Publish distributions
-    needs: build_wheels
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: built-wheels
-          path: dist/
-
+      # Publishing the package
       - name: Publish distribution 📦 to Test PyPI
         if: contains(github.ref, 'refs/heads/release-')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
           verbose: true
-
       - name: Publish distribution 📦 to PyPI
         if: github.event_name == 'release' && github.event.action == 'created'
         uses: pypa/gh-action-pypi-publish@release/v1
