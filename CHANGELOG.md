@@ -14,10 +14,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Support for Python 3.13
 - `MIPMapper` mapper pass
 
 ### Changed
 
+- libQASM 1.2.1 integrated (updated from 1.2.0)
 - `RoutingValidator` changed to `InteractionValidator`
 
 ### Fixed
