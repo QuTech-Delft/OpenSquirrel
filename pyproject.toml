@@ -35,7 +35,8 @@ libqasm = "1.2.1"
 networkx = "^3.0.0"
 scipy = [
     {version = ">=1.11.4", python = "<3.10" },
-    {version = "^1.14", python = ">=3.10" }
+    {version = ">=1.12", python = ">=3.10" },
+    {version = "=1.14.1", python = ">=3.13" }
 ]
 
 [tool.poetry.group.dev.dependencies]
