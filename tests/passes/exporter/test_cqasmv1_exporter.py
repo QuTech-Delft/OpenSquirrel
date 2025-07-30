@@ -42,7 +42,7 @@ prep_z q[1]
 cnot q[0], q[1]
 wait q[0], 3
 wait q[1], 3
-rx q[0], 5.123
+rx q[0], -1.1601853
 measure_z q[0]
 measure_z q[1]
 """
@@ -225,8 +225,8 @@ measure_z q[1]
 @pytest.mark.parametrize(
     "gate",
     [
-        BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23),
-        ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23)),
+        BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23, phase=0.0),
+        ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23, phase=0.0)),
         MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]),
     ],
 )

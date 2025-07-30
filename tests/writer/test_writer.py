@@ -105,8 +105,8 @@ SWAP q[0], q[1]
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(2, 2)
     builder.H(0)
-    builder.ir.add_gate(BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23))
-    builder.ir.add_gate(ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23)))
+    builder.ir.add_gate(BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23, phase=0.0))
+    builder.ir.add_gate(ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23, phase=0.0)))
     builder.ir.add_gate(MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]))
     builder.CR(0, 1, 1.234)
     assert (
