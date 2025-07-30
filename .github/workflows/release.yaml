@@ -32,6 +32,9 @@ jobs:
         with:
           poetry-version: "2.1.3"
 
+      - name: Install build
+        run: pip install build
+
       # Setting the proper version
       - name: Get previous Tag
         if: contains(github.ref, 'refs/heads/release-')
