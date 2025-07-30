@@ -107,6 +107,7 @@ def test_spin2plus_backend() -> None:
 
     # Validate that the compiled circuit is composed of gates that are in the primitive gate set
     circuit.validate(validator=PrimitiveGateValidator(**data))
+
     assert (
         str(circuit)
         == """version 3.0
@@ -155,7 +156,7 @@ Rz(2.3561946) q[0]
 X90 q[0]
 Rz(-1.5707963) q[0]
 CZ q[1], q[0]
-Rz(3.1415928) q[1]
+Rz(-3.1415925) q[1]
 Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
@@ -163,7 +164,7 @@ Rz(2.3561944) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
-Rz(-3.1415928) q[0]
+Rz(3.1415925) q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
@@ -171,7 +172,7 @@ Rz(1.5707963) q[0]
 X90 q[0]
 Rz(-1.5707963) q[0]
 CZ q[1], q[0]
-Rz(3.1415928) q[1]
+Rz(-3.1415925) q[1]
 Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
@@ -179,7 +180,7 @@ Rz(1.5707963) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
-Rz(-3.1415928) q[0]
+Rz(3.1415925) q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
@@ -695,7 +696,7 @@ t q[4]
 tdag q[5]
 rx q[6], 1.5707963
 ry q[0], 1.5707963
-rz q[1], 6.2831853
+rz q[1], 0.0
 barrier q[0, 1, 2, 3, 4, 5, 6]
 measure_z q[0]
 measure_z q[1]

@@ -1,4 +1,4 @@
-import math
+from math import pi
 
 import pytest
 
@@ -8,41 +8,41 @@ from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotat
 
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
-    a = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.4)
-    b = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=-0.3)
+    a = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.4, phase=0.2)
+    b = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=-0.3, phase=-0.15)
     composed = compose_bloch_sphere_rotations(a, b)
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.1)
+    assert composed == BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.1, phase=0.05)
 
 
 def test_compose_bloch_sphere_rotations_different_axis() -> None:
     # Visualizing this in 3D is difficult...
-    a = BlochSphereRotation(qubit=123, axis=(1, 0, 0), angle=math.pi / 2)
-    b = BlochSphereRotation(qubit=123, axis=(0, 0, 1), angle=-math.pi / 2)
-    c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=math.pi / 2)
+    a = BlochSphereRotation(qubit=123, axis=(1, 0, 0), angle=pi / 2, phase=pi / 4)
+    b = BlochSphereRotation(qubit=123, axis=(0, 0, 1), angle=-pi / 2, phase=pi / 4)
+    c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=pi / 2, phase=pi / 4)
     composed = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(c, b), a)
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=math.pi)
+    assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=pi, phase=3 * pi / 4)
 
 
 @pytest.mark.parametrize(
     ("bsr_a", "bsr_b", "expected_result"),
     [
-        (Y(0), X(0), BlochSphereRotation(0, axis=(0, 0, 1), angle=math.pi, phase=math.pi)),
-        (X(0), Y(0), BlochSphereRotation(0, axis=(0, 0, -1), angle=math.pi, phase=math.pi)),
-        (Z(0), Y(0), BlochSphereRotation(0, axis=(1, 0, 0), angle=math.pi, phase=math.pi)),
-        (Y(0), Z(0), BlochSphereRotation(0, axis=(-1, 0, 0), angle=math.pi, phase=math.pi)),
-        (Z(0), X(0), BlochSphereRotation(0, axis=(0, -1, 0), angle=math.pi, phase=math.pi)),
-        (X(0), Z(0), BlochSphereRotation(0, axis=(0, 1, 0), angle=math.pi, phase=math.pi)),
+        (Y(0), X(0), BlochSphereRotation(0, axis=(0, 0, 1), angle=pi, phase=pi)),
+        (X(0), Y(0), BlochSphereRotation(0, axis=(0, 0, -1), angle=pi, phase=pi)),
+        (Z(0), Y(0), BlochSphereRotation(0, axis=(1, 0, 0), angle=pi, phase=pi)),
+        (Y(0), Z(0), BlochSphereRotation(0, axis=(-1, 0, 0), angle=pi, phase=pi)),
+        (Z(0), X(0), BlochSphereRotation(0, axis=(0, -1, 0), angle=pi, phase=pi)),
+        (X(0), Z(0), BlochSphereRotation(0, axis=(0, 1, 0), angle=pi, phase=pi)),
         (
-            Rx(0, theta=math.pi),
-            Ry(0, theta=-math.pi / 2),
-            BlochSphereRotation(0, axis=(0.70711, 0.0, 0.70711), angle=math.pi, phase=0.0),
+            Rx(0, theta=pi),
+            Ry(0, theta=-pi / 2),
+            BlochSphereRotation(0, axis=(0.70711, 0.0, 0.70711), angle=pi, phase=0.0),
         ),
-        (I(0), Rx(0, theta=math.pi), Rx(0, theta=math.pi)),
-        (Rx(0, theta=math.pi), I(0), Rx(0, theta=math.pi)),
+        (I(0), Rx(0, theta=pi), Rx(0, theta=pi)),
+        (Rx(0, theta=pi), I(0), Rx(0, theta=pi)),
         (X(0), X(0), I(0)),
         (H(0), H(0), I(0)),
-        (Rx(0, theta=math.pi), Rx(0, theta=math.pi), I(0)),
-        (Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi / 2), Rx(0, theta=math.pi)),
+        (Rx(0, theta=pi), Rx(0, theta=pi), I(0)),
+        (Rx(0, theta=pi / 2), Rx(0, theta=pi / 2), Rx(0, theta=pi)),
     ],
     ids=[
         "[bsr_a = Y, bsr_b = X] X * Y = iZ",
@@ -70,7 +70,7 @@ def test_compose_bloch_sphere_rotations(
     ("circuit", "expected_result"),
     [
         (
-            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(math.pi / 3)).barrier(0).to_circuit(),
+            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(pi / 3)).barrier(0).to_circuit(),
             """version 3.0
 
 qubit[2] q

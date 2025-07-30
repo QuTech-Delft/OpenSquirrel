@@ -53,6 +53,7 @@ circuit to a cQASM 1.0 string.
     x90 q[1]
     rz q[1], -1.5707963
     cz q[0], q[1]
+    rz q[0], 1.5707963
     rz q[1], -1.5707963
     x90 q[1]
     rz q[1], 1.5707963
@@ -60,6 +61,7 @@ circuit to a cQASM 1.0 string.
     x90 q[0]
     rz q[0], -1.5707963
     cz q[1], q[0]
+    rz q[1], -1.5707963
     rz q[0], -1.5707963
     x90 q[0]
     rz q[0], 1.5707963
@@ -67,6 +69,7 @@ circuit to a cQASM 1.0 string.
     x90 q[1]
     rz q[1], -1.5707963
     cz q[0], q[1]
+    rz q[0], 1.5707963
     rz q[1], -1.5707963
     x90 q[1]
     rz q[1], 1.5707963
@@ -74,6 +77,7 @@ circuit to a cQASM 1.0 string.
     x90 q[2]
     rz q[2], -1.5707963
     cz q[1], q[2]
+    rz q[1], -2.3561945
     rz q[2], -1.5707963
     x90 q[2]
     rz q[2], 1.5707963

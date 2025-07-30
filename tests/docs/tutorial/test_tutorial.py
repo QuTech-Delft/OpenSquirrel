@@ -174,6 +174,7 @@ Rz(1.5707963) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
+Rz(1.5707963) q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
@@ -181,6 +182,7 @@ Rz(1.5707963) q[0]
 X90 q[0]
 Rz(-1.5707963) q[0]
 CZ q[1], q[0]
+Rz(-1.5707963) q[1]
 Rz(-1.5707963) q[0]
 X90 q[0]
 Rz(1.5707963) q[0]
@@ -188,6 +190,7 @@ Rz(1.5707963) q[1]
 X90 q[1]
 Rz(-1.5707963) q[1]
 CZ q[0], q[1]
+Rz(1.5707963) q[0]
 Rz(-1.5707963) q[1]
 X90 q[1]
 Rz(1.5707963) q[1]
@@ -195,6 +198,7 @@ Rz(1.5707963) q[2]
 X90 q[2]
 Rz(-1.5707963) q[2]
 CZ q[1], q[2]
+Rz(-2.3561945) q[1]
 Rz(-1.5707963) q[2]
 X90 q[2]
 Rz(1.5707963) q[2]
@@ -349,6 +353,7 @@ class TestApplyingCompilationPasses:
     def test_decomposition_inferred(self, circuit_5: Circuit, circuit_6: Circuit) -> None:
         circuit = circuit_5
         circuit.decompose(decomposer=McKayDecomposer())
+
         assert str(circuit) == str(circuit_6)
 
     def test_validation(self, circuit_6: Circuit) -> None:
@@ -377,6 +382,7 @@ rz q[1], 1.5707963
 x90 q[1]
 rz q[1], -1.5707963
 cz q[0], q[1]
+rz q[0], 1.5707963
 rz q[1], -1.5707963
 x90 q[1]
 rz q[1], 1.5707963
@@ -384,6 +390,7 @@ rz q[0], 1.5707963
 x90 q[0]
 rz q[0], -1.5707963
 cz q[1], q[0]
+rz q[1], -1.5707963
 rz q[0], -1.5707963
 x90 q[0]
 rz q[0], 1.5707963
@@ -391,6 +398,7 @@ rz q[1], 1.5707963
 x90 q[1]
 rz q[1], -1.5707963
 cz q[0], q[1]
+rz q[0], 1.5707963
 rz q[1], -1.5707963
 x90 q[1]
 rz q[1], 1.5707963
@@ -398,6 +406,7 @@ rz q[2], 1.5707963
 x90 q[2]
 rz q[2], -1.5707963
 cz q[1], q[2]
+rz q[1], -2.3561945
 rz q[2], -1.5707963
 x90 q[2]
 rz q[2], 1.5707963

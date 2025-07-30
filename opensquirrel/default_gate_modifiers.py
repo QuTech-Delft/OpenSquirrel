@@ -4,6 +4,7 @@ from collections.abc import Callable
 from typing import Any, SupportsFloat
 
 from opensquirrel.ir import BlochSphereRotation, ControlledGate, QubitLike
+from opensquirrel.utils.context import temporary_class_attr
 
 
 class GateModifier:
@@ -15,9 +16,10 @@ class InverseGateModifier(GateModifier):
         self.gate_generator = gate_generator
 
     def __call__(self, *args: Any) -> BlochSphereRotation:
-        gate: BlochSphereRotation = self.gate_generator(*args)
-        modified_angle = gate.angle * -1
-        modified_phase = gate.phase * -1
+        with temporary_class_attr(BlochSphereRotation, attr="normalize_angle_params", value=False):
+            gate: BlochSphereRotation = self.gate_generator(*args)
+            modified_angle = gate.angle * -1
+            modified_phase = gate.phase * -1
         return BlochSphereRotation.try_match_replace_with_default(
             BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
         )
@@ -29,9 +31,10 @@ class PowerGateModifier(GateModifier):
         self.gate_generator = gate_generator
 
     def __call__(self, *args: Any) -> BlochSphereRotation:
-        gate: BlochSphereRotation = self.gate_generator(*args)
-        modified_angle = gate.angle * float(self.exponent)
-        modified_phase = gate.phase * float(self.exponent)
+        with temporary_class_attr(BlochSphereRotation, attr="normalize_angle_params", value=False):
+            gate: BlochSphereRotation = self.gate_generator(*args)
+            modified_angle = gate.angle * float(self.exponent)
+            modified_phase = gate.phase * float(self.exponent)
         return BlochSphereRotation.try_match_replace_with_default(
             BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
         )

@@ -31,6 +31,7 @@ def test_high_level_integration_global_phase() -> None:
     # Merge single-qubit gates and decompose with McKay decomposition.
     circuit.merge(merger=SingleQubitGatesMerger())
     circuit.decompose(decomposer=XYXDecomposer())
+
     assert (
         str(circuit)
         == """version 3.0
@@ -46,7 +47,7 @@ CZ q[1], q[0]
 Ry(0.318) q[1]
 Rx(3.1415927) q[0]
 Ry(-3.09) q[0]
-Rx(-3.1415927) q[0]
+Rx(3.1415927) q[0]
 CZ q[1], q[0]
 Rz(3.1415927) q[1]
 Ry(1.5707963) q[0]
