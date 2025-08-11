@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import importlib
-import math
+from math import degrees, pi
 import sys
 import unittest.mock
 from collections.abc import Generator
@@ -53,10 +53,10 @@ def test_export(mock_qs: MagicMock) -> None:
 
     mock_qs.operations.gate_library.Rxy.assert_has_calls(
         [
-            unittest.mock.call(theta=FloatEq(math.degrees(math.pi)), phi=FloatEq(0), qubit="q[0]"),
+            unittest.mock.call(theta=FloatEq(degrees(pi)), phi=FloatEq(0), qubit="q[0]"),
             unittest.mock.call(
-                theta=FloatEq(round(math.degrees(1.23), FIXED_POINT_DEG_PRECISION)),
-                phi=FloatEq(math.degrees(math.pi / 2)),
+                theta=FloatEq(round(degrees(1.23), FIXED_POINT_DEG_PRECISION)),
+                phi=FloatEq(degrees(pi / 2)),
                 qubit="q[2]",
             ),
         ]
@@ -64,7 +64,7 @@ def test_export(mock_qs: MagicMock) -> None:
     mock_qs.operations.gate_library.Reset.assert_called_once_with("q[0]")
     mock_qs.operations.gate_library.CZ.assert_called_once_with(qC="q[0]", qT="q[1]")
     mock_qs.operations.gate_library.Rz.assert_called_once_with(
-        theta=FloatEq(round(math.degrees(2.34), FIXED_POINT_DEG_PRECISION)),
+        theta=FloatEq(round(degrees(2.34), FIXED_POINT_DEG_PRECISION)),
         qubit="q[1]",
     )
 

@@ -1,4 +1,4 @@
-import math
+from math import pi
 
 import pytest
 
@@ -116,7 +116,7 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
     [
         (
             "version 3.0; qubit q; inv.X q",
-            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=math.pi * -1, phi=math.pi / 2 * -1)],
+            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=pi * -1, phi=pi / 2 * -1)],
         ),
         (
             "version 3.0; qubit q; inv.inv.X q",
@@ -124,17 +124,17 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
         ),
         (
             "version 3.0; qubit q; pow(2).Rx(pi) q",
-            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=math.pi * 2, phi=0)],
+            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=pi * 2, phi=0)],
         ),
         (
             "version 3.0; qubit q; pow(2).inv.X q",
-            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=math.pi * -2, phi=math.pi / 2 * -2)],
+            [Rn(qubit=0, nx=1, ny=0, nz=0, theta=pi * -2, phi=pi / 2 * -2)],
         ),
         (
             "version 3.0; qubit[2] q; ctrl.pow(2).inv.X q[0], q[1]",
             [
                 ControlledGate(
-                    control_qubit=0, target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=math.pi * -2, phi=math.pi / 2 * -2)
+                    control_qubit=0, target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=pi * -2, phi=pi / 2 * -2)
                 )
             ],
         ),

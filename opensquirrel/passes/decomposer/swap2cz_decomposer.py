@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import math
+from math import pi
 from typing import TYPE_CHECKING
 
 from opensquirrel.ir import CZ, Ry
@@ -24,13 +24,13 @@ class SWAP2CZDecomposer(Decomposer):
             return [gate]
         qubit0, qubit1 = gate.get_qubit_operands()
         return [
-            Ry(qubit1, -math.pi / 2),
+            Ry(qubit1, -pi / 2),
             CZ(qubit0, qubit1),
-            Ry(qubit1, math.pi / 2),
-            Ry(qubit0, -math.pi / 2),
+            Ry(qubit1, pi / 2),
+            Ry(qubit0, -pi / 2),
             CZ(qubit1, qubit0),
-            Ry(qubit0, math.pi / 2),
-            Ry(qubit1, -math.pi / 2),
+            Ry(qubit0, pi / 2),
+            Ry(qubit1, -pi / 2),
             CZ(qubit0, qubit1),
-            Ry(qubit1, math.pi / 2),
+            Ry(qubit1, pi / 2),
         ]
