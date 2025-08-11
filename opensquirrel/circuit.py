@@ -68,9 +68,9 @@ class Circuit:
         Args:
             cqasm3_string: a cQASM 3 string
         """
-        from opensquirrel.parser.libqasm.parser import Parser
+        from opensquirrel.reader import LibQasmParser
 
-        return Parser().circuit_from_string(cqasm3_string)
+        return LibQasmParser().circuit_from_string(cqasm3_string)
 
     @property
     def qubit_register_size(self) -> int:

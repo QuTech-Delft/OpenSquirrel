@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from math import pi
 import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+from math import pi
 from typing import Any, Protocol, SupportsFloat, SupportsInt, Union, cast, overload, runtime_checkable
 
 import numpy as np

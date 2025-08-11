@@ -4,11 +4,11 @@ import pytest
 
 from opensquirrel import CNOT, CR, CRk, H, I, Ry, X
 from opensquirrel.ir import ControlledGate, Gate, Rn
-from opensquirrel.parser.libqasm.parser import Parser
+from opensquirrel.reader import LibQasmParser
 
 
 def test_simple() -> None:
-    circuit = Parser().circuit_from_string(
+    circuit = LibQasmParser().circuit_from_string(
         """
 version 3.0
 
@@ -29,7 +29,7 @@ CRk(23) q[0], q[1]
 
 
 def test_sgmq() -> None:
-    circuit = Parser().circuit_from_string(
+    circuit = LibQasmParser().circuit_from_string(
         """
 version 3.0
 
@@ -61,7 +61,7 @@ def test_error() -> None:
         IOError,
         match=r"Error at <unknown file name>:1:30..31: failed to resolve variable 'q'",
     ):
-        Parser().circuit_from_string("version 3.0; qubit[20] qu; H q[5]")
+        LibQasmParser().circuit_from_string("version 3.0; qubit[20] qu; H q[5]")
 
 
 @pytest.mark.parametrize(
@@ -107,7 +107,7 @@ def test_error() -> None:
     ],
 )
 def test_simplest(circuit_string: str, expected_output: str) -> None:
-    circuit = Parser().circuit_from_string(circuit_string)
+    circuit = LibQasmParser().circuit_from_string(circuit_string)
     assert str(circuit) == expected_output
 
 
@@ -142,5 +142,5 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
     ids=["inv_X", "inv_inv_X", "pow_2_Rx", "pow_2_inv_X", "ctrl_pow_2_inv_X"],
 )
 def test_gate_modifiers(circuit_string: str, expected_result: list[Gate]) -> None:
-    circuit = Parser().circuit_from_string(circuit_string)
+    circuit = LibQasmParser().circuit_from_string(circuit_string)
     assert circuit.ir.statements == expected_result

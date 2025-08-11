@@ -92,9 +92,7 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
         (Y(0), [Rz(0, pi), X90(0), X90(0)]),
         (Z(0), [Rz(0, pi)]),
         (
-            BlochSphereRotation(
-                qubit=0, axis=[1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3)], angle=2 * pi / 3, phase=0
-            ),
+            BlochSphereRotation(qubit=0, axis=[1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3)], angle=2 * pi / 3, phase=0),
             [X90(0), Rz(0, pi / 2)],
         ),
         (
@@ -116,9 +114,7 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
         ),
         (BlochSphereRotation(qubit=0, axis=[1, 1, -1], angle=2 * pi / 3, phase=0), [Rz(0, -pi / 2), X90(0)]),
         (
-            BlochSphereRotation(
-                qubit=0, axis=[1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3)], angle=-2 * pi / 3, phase=0
-            ),
+            BlochSphereRotation(qubit=0, axis=[1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3)], angle=-2 * pi / 3, phase=0),
             [Rz(0, pi / 2), X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi)],
         ),
         (X90(0), [X90(0)]),

@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import importlib
-from math import degrees, pi
 import sys
 import unittest.mock
 from collections.abc import Generator
-from math import isclose
+from math import degrees, isclose, pi
 from typing import Any
 from unittest.mock import MagicMock
 
