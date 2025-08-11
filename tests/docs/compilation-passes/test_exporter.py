@@ -1,3 +1,7 @@
+import importlib
+
+import pytest
+
 from opensquirrel import Circuit
 from opensquirrel.passes.exporter import ExportFormat
 
@@ -191,20 +195,27 @@ class TestQuantifySchedulerExporter:
             b = measure q
             """,
         )
-        exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-        operations = [
-            exported_schedule.operations[schedulable["operation_id"]].name
-            for schedulable in exported_schedule.schedulables.values()
-        ]
+        if importlib.util.find_spec("quantify_scheduler") is None:
+            with pytest.raises(
+                Exception,
+                match="quantify-scheduler is not installed, or cannot be installed on your system",
+            ):
+                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        else:
+            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            operations = [
+                exported_schedule.operations[schedulable["operation_id"]].name
+                for schedulable in exported_schedule.schedulables.values()
+            ]
 
-        assert operations == [
-            "Rxy(90, 90, 'q[0]')",
-            "Rxy(180, 0, 'q[0]')",
-            "CNOT (q[0], q[1])",
-            "Measure q[0]",
-            "Measure q[1]",
-        ]
-        assert bitstring_mapping == [(0, 0), (0, 1)]
+            assert operations == [
+                "Rxy(90, 90, 'q[0]')",
+                "Rxy(180, 0, 'q[0]')",
+                "CNOT (q[0], q[1])",
+                "Measure q[0]",
+                "Measure q[1]",
+            ]
+            assert bitstring_mapping == [(0, 0), (0, 1)]
 
     def test_registers(self) -> None:
         circuit = Circuit.from_string(
@@ -231,25 +242,32 @@ class TestQuantifySchedulerExporter:
             bB[1] = measure qA[1]
             """,
         )
-        exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-        operations = [
-            exported_schedule.operations[schedulable["operation_id"]].name
-            for schedulable in exported_schedule.schedulables.values()
-        ]
+        if importlib.util.find_spec("quantify_scheduler") is None:
+            with pytest.raises(
+                Exception,
+                match="quantify-scheduler is not installed, or cannot be installed on your system",
+            ):
+                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        else:
+            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            operations = [
+                exported_schedule.operations[schedulable["operation_id"]].name
+                for schedulable in exported_schedule.schedulables.values()
+            ]
 
-        assert operations == [
-            "Rxy(90, 90, 'q[0]')",
-            "Rxy(180, 0, 'q[0]')",
-            "CNOT (q[0], q[1])",
-            "Measure q[0]",
-            "Measure q[1]",
-            "Rxy(90, 90, 'q[3]')",
-            "Rxy(180, 0, 'q[3]')",
-            "CNOT (q[3], q[1])",
-            "Measure q[3]",
-            "Measure q[1]",
-        ]
-        assert bitstring_mapping == [(None, None), (0, 0), (0, 1), (0, 3), (1, 1)]
+            assert operations == [
+                "Rxy(90, 90, 'q[0]')",
+                "Rxy(180, 0, 'q[0]')",
+                "CNOT (q[0], q[1])",
+                "Measure q[0]",
+                "Measure q[1]",
+                "Rxy(90, 90, 'q[3]')",
+                "Rxy(180, 0, 'q[3]')",
+                "CNOT (q[3], q[1])",
+                "Measure q[3]",
+                "Measure q[1]",
+            ]
+            assert bitstring_mapping == [(None, None), (0, 0), (0, 1), (0, 3), (1, 1)]
 
     def test_init_and_reset(self) -> None:
         circuit = Circuit.from_string(
@@ -275,25 +293,32 @@ class TestQuantifySchedulerExporter:
             b = measure q
             """,
         )
-        exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-        operations = [
-            exported_schedule.operations[schedulable["operation_id"]].name
-            for schedulable in exported_schedule.schedulables.values()
-        ]
+        if importlib.util.find_spec("quantify_scheduler") is None:
+            with pytest.raises(
+                Exception,
+                match="quantify-scheduler is not installed, or cannot be installed on your system",
+            ):
+                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        else:
+            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            operations = [
+                exported_schedule.operations[schedulable["operation_id"]].name
+                for schedulable in exported_schedule.schedulables.values()
+            ]
 
-        assert operations == [
-            "Rxy(90, 90, 'q[0]')",
-            "Rxy(180, 0, 'q[0]')",
-            "CNOT (q[0], q[1])",
-            "Measure q[0]",
-            "Measure q[1]",
-            "Reset q[0]",
-            "Reset q[1]",
-            "Rxy(90, 90, 'q[0]')",
-            "Rxy(180, 0, 'q[0]')",
-            "Rz(180, 'q[0]')",
-            "CNOT (q[0], q[1])",
-            "Measure q[0]",
-            "Measure q[1]",
-        ]
-        assert bitstring_mapping == [(1, 0), (1, 1)]
+            assert operations == [
+                "Rxy(90, 90, 'q[0]')",
+                "Rxy(180, 0, 'q[0]')",
+                "CNOT (q[0], q[1])",
+                "Measure q[0]",
+                "Measure q[1]",
+                "Reset q[0]",
+                "Reset q[1]",
+                "Rxy(90, 90, 'q[0]')",
+                "Rxy(180, 0, 'q[0]')",
+                "Rz(180, 'q[0]')",
+                "CNOT (q[0], q[1])",
+                "Measure q[0]",
+                "Measure q[1]",
+            ]
+            assert bitstring_mapping == [(1, 0), (1, 1)]
