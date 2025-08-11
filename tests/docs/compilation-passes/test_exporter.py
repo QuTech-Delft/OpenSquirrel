@@ -3,7 +3,6 @@ from opensquirrel.passes.exporter import ExportFormat
 
 
 class TestCqasmV1Exporter:
-
     def test_simple_circuit(self) -> None:
         circuit = Circuit.from_string(
             """
@@ -178,7 +177,6 @@ measure_z q[3]
 
 
 class TestQuantifySchedulerExporter:
-
     def test_simple_circuit(self) -> None:
         circuit = Circuit.from_string(
             """
@@ -194,15 +192,17 @@ class TestQuantifySchedulerExporter:
             """,
         )
         exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-        operations = [exported_schedule.operations[schedulable["operation_id"]].name for schedulable in
-                      exported_schedule.schedulables.values()]
+        operations = [
+            exported_schedule.operations[schedulable["operation_id"]].name
+            for schedulable in exported_schedule.schedulables.values()
+        ]
 
         assert operations == [
             "Rxy(90, 90, 'q[0]')",
             "Rxy(180, 0, 'q[0]')",
-            'CNOT (q[0], q[1])',
-            'Measure q[0]',
-            'Measure q[1]'
+            "CNOT (q[0], q[1])",
+            "Measure q[0]",
+            "Measure q[1]",
         ]
         assert bitstring_mapping == [(0, 0), (0, 1)]
 
@@ -232,20 +232,22 @@ class TestQuantifySchedulerExporter:
             """,
         )
         exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-        operations = [exported_schedule.operations[schedulable["operation_id"]].name for schedulable in
-                      exported_schedule.schedulables.values()]
+        operations = [
+            exported_schedule.operations[schedulable["operation_id"]].name
+            for schedulable in exported_schedule.schedulables.values()
+        ]
 
         assert operations == [
             "Rxy(90, 90, 'q[0]')",
             "Rxy(180, 0, 'q[0]')",
-            'CNOT (q[0], q[1])',
-            'Measure q[0]',
-            'Measure q[1]',
+            "CNOT (q[0], q[1])",
+            "Measure q[0]",
+            "Measure q[1]",
             "Rxy(90, 90, 'q[3]')",
             "Rxy(180, 0, 'q[3]')",
-            'CNOT (q[3], q[1])',
-            'Measure q[3]',
-            'Measure q[1]'
+            "CNOT (q[3], q[1])",
+            "Measure q[3]",
+            "Measure q[1]",
         ]
         assert bitstring_mapping == [(None, None), (0, 0), (0, 1), (0, 3), (1, 1)]
 
@@ -274,22 +276,24 @@ class TestQuantifySchedulerExporter:
             """,
         )
         exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
-        operations = [exported_schedule.operations[schedulable["operation_id"]].name for schedulable in
-                      exported_schedule.schedulables.values()]
+        operations = [
+            exported_schedule.operations[schedulable["operation_id"]].name
+            for schedulable in exported_schedule.schedulables.values()
+        ]
 
         assert operations == [
             "Rxy(90, 90, 'q[0]')",
             "Rxy(180, 0, 'q[0]')",
-            'CNOT (q[0], q[1])',
-            'Measure q[0]',
-            'Measure q[1]',
-            'Reset q[0]',
-            'Reset q[1]',
+            "CNOT (q[0], q[1])",
+            "Measure q[0]",
+            "Measure q[1]",
+            "Reset q[0]",
+            "Reset q[1]",
             "Rxy(90, 90, 'q[0]')",
             "Rxy(180, 0, 'q[0]')",
             "Rz(180, 'q[0]')",
-            'CNOT (q[0], q[1])',
-            'Measure q[0]',
-            'Measure q[1]'
+            "CNOT (q[0], q[1])",
+            "Measure q[0]",
+            "Measure q[1]",
         ]
         assert bitstring_mapping == [(1, 0), (1, 1)]
