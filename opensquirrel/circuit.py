@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
-from opensquirrel.passes.exporter import ExportFormat
+
 from opensquirrel.ir import IR, AsmDeclaration, Gate
+from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
     from opensquirrel.passes.decomposer.general_decomposer import Decomposer
