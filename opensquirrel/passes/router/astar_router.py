@@ -7,7 +7,7 @@ import networkx as nx
 
 from opensquirrel.exceptions import NoRoutingPathError
 from opensquirrel.ir import IR, SWAP, Gate, Instruction
-from opensquirrel.passes.router import Router
+from opensquirrel.passes.router.general_router import Router
 from opensquirrel.passes.router.heuristics import DistanceMetric, calculate_distance
 
 
