@@ -4,7 +4,8 @@ import math
 
 from opensquirrel import CNOT, Ry, Rz, X
 from opensquirrel.common import ATOL
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
+from opensquirrel.ir import Gate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.passes.decomposer import ZYZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.passes.merger import general_merger

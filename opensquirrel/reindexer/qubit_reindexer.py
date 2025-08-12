@@ -4,25 +4,29 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 from opensquirrel.ir import (
+    IR,
+    Barrier,
+    Gate,
+    Init,
+    IRVisitor,
+    Measure,
+    Reset,
+    Wait,
+)
+from opensquirrel.ir.default_gates import (
     CNOT,
     CR,
     CZ,
-    IR,
     SWAP,
-    Barrier,
+    CRk,
+)
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    Gate,
-    Init,
-    IRVisitor,
     MatrixGate,
-    Measure,
-    Reset,
-    Wait,
 )
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 

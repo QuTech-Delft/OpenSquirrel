@@ -5,7 +5,8 @@ import math
 import pytest
 
 from opensquirrel import CNOT, CR, CZ, CRk, H, Ry, Rz, X
-from opensquirrel.ir import ControlledGate, Gate
+from opensquirrel.ir import Gate
+from opensquirrel.ir.semantics import ControlledGate
 from opensquirrel.passes.decomposer import CNOTDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 

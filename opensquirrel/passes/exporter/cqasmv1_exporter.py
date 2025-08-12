@@ -5,27 +5,31 @@ from typing import TYPE_CHECKING, Any, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
     Barrier,
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
-    CRk,
     Float,
     Gate,
     Init,
     Int,
     IRVisitor,
-    MatrixGate,
     Measure,
     Qubit,
     Reset,
     Wait,
+)
+from opensquirrel.ir.default_gates import (
+    CNOT,
+    CR,
+    CZ,
+    SWAP,
+    CRk,
+)
+from opensquirrel.ir.semantics import (
+    BlochSphereRotation,
+    BsrAngleParam,
+    BsrFullParams,
+    BsrNoParams,
+    ControlledGate,
+    MatrixGate,
 )
 
 if TYPE_CHECKING:

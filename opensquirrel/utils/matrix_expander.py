@@ -9,23 +9,27 @@ import numpy as np
 from numpy.typing import NDArray
 
 from opensquirrel.ir import (
+    Axis,
+    AxisLike,
+    Gate,
+    IRVisitor,
+    Qubit,
+    QubitLike,
+)
+from opensquirrel.ir.default_gates import (
     CNOT,
     CR,
     CZ,
     SWAP,
-    Axis,
-    AxisLike,
+    CRk,
+)
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    Gate,
-    IRVisitor,
     MatrixGate,
-    Qubit,
-    QubitLike,
 )
 
 

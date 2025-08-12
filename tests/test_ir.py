@@ -10,27 +10,31 @@ from numpy.typing import NDArray
 
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
-    X90,
     Axis,
     AxisLike,
     Bit,
-    BlochSphereRotation,
-    ControlledGate,
-    Expression,
     Float,
+    Int,
+    Measure,
+    Qubit,
+)
+from opensquirrel.ir.default_gates import (
+    X90,
     H,
     I,
-    Int,
-    MatrixGate,
-    Measure,
     MinusX90,
-    Qubit,
-    Rn,
     Rx,
     Ry,
     Rz,
     TDagger,
     X,
+)
+from opensquirrel.ir.expression import Expression
+from opensquirrel.ir.semantics import (
+    BlochSphereRotation,
+    ControlledGate,
+    MatrixGate,
+    Rn,
 )
 
 

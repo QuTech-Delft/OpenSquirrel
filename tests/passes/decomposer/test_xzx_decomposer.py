@@ -5,7 +5,8 @@ import math
 import pytest
 
 from opensquirrel import CNOT, CR, H, I, Rx, Rz, S, X, Z
-from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.ir import Gate
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import XZXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 

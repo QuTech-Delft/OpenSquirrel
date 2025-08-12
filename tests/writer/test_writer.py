@@ -1,5 +1,5 @@
 from opensquirrel import CircuitBuilder, writer
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
 
 
 def test_circuit_without_bits() -> None:

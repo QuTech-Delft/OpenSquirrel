@@ -3,7 +3,8 @@ import math
 import pytest
 
 from opensquirrel import CNOT, CR, CRk, H, I, Ry, X
-from opensquirrel.ir import ControlledGate, Gate, Rn
+from opensquirrel.ir import Gate
+from opensquirrel.ir.semantics import ControlledGate, Rn
 from opensquirrel.parser.libqasm.parser import Parser
 
 

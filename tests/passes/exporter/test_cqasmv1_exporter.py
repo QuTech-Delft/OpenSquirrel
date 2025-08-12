@@ -2,7 +2,13 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate
+from opensquirrel.ir import Gate
+
+from opensquirrel.ir.semantics import (
+    ControlledGate, 
+    MatrixGate,
+    BlochSphereRotation
+)
 from opensquirrel.passes.exporter import ExportFormat
 
 

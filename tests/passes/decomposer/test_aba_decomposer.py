@@ -4,7 +4,7 @@ from typing import Callable
 import numpy as np
 import pytest
 
-from opensquirrel.ir import BlochSphereRotation
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import Decomposer, aba_decomposer as aba
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 

@@ -7,20 +7,24 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (
+    IRVisitor,
+    Measure,
+    Reset,
+)
+from opensquirrel.ir.default_gates import (
     CNOT,
     CR,
     CZ,
     SWAP,
+    CRk,
+)
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    IRVisitor,
     MatrixGate,
-    Measure,
-    Reset,
 )
 
 try:

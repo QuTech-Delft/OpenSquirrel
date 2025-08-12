@@ -5,19 +5,14 @@ from typing import TYPE_CHECKING
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
+from opensquirrel.ir import Gate, IRVisitor
+from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    Gate,
-    IRVisitor,
     MatrixGate,
 )
 from opensquirrel.utils import get_matrix

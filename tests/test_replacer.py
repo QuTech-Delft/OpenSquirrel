@@ -3,7 +3,8 @@ from __future__ import annotations
 import pytest
 
 from opensquirrel import CNOT, Y90, CircuitBuilder, H, I, X
-from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.ir import Gate
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import Decomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement, decompose, replace
 

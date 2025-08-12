@@ -14,7 +14,9 @@ import pytest
 from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
-from opensquirrel.ir import BlochSphereRotation, Gate, H
+from opensquirrel.ir import Gate
+from opensquirrel.ir.default_gates import H
+from opensquirrel.ir.semantics import BlochSphereRotation
 
 
 class FloatEq(float):

@@ -3,7 +3,8 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any, SupportsFloat
 
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, QubitLike
+from opensquirrel.ir import QubitLike
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.utils.context import temporary_class_attr
 
 

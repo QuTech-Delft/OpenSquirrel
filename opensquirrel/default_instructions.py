@@ -3,31 +3,28 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from opensquirrel.ir import (
+    Barrier,
+    Gate,
+    Init,
+    Instruction,
+    Measure,
+    NonUnitary,
+    Reset,
+    Unitary,
+    Wait,
+)
+from opensquirrel.ir.default_gates import (
     CNOT,
     CR,
     CZ,
     SWAP,
     X90,
     Y90,
-    Barrier,
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
     CRk,
-    Gate,
     H,
     I,
-    Init,
-    Instruction,
-    MatrixGate,
-    Measure,
     MinusX90,
     MinusY90,
-    NonUnitary,
-    Reset,
-    Rn,
     Rx,
     Ry,
     Rz,
@@ -35,11 +32,18 @@ from opensquirrel.ir import (
     SDagger,
     T,
     TDagger,
-    Unitary,
-    Wait,
     X,
     Y,
     Z,
+)
+from opensquirrel.ir.semantics import (
+    BlochSphereRotation,
+    BsrAngleParam,
+    BsrFullParams,
+    BsrNoParams,
+    ControlledGate,
+    MatrixGate,
+    Rn,
 )
 
 default_bsr_without_params_set: Mapping[str, type[BsrNoParams]]

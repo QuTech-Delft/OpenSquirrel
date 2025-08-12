@@ -11,7 +11,6 @@ from opensquirrel.ir import (
     IR,
     AsmDeclaration,
     Bit,
-    BlochSphereRotation,
     Float,
     Gate,
     Int,
@@ -19,6 +18,7 @@ from opensquirrel.ir import (
     Qubit,
     Statement,
 )
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.register_manager import RegisterManager
 
 

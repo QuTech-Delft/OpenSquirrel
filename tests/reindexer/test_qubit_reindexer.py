@@ -5,7 +5,8 @@ from math import pi
 import pytest
 
 from opensquirrel import Y90, Circuit, CircuitBuilder, X
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate, MatrixGate, Measure
+from opensquirrel.ir import  Gate,  Measure
+from opensquirrel.ir.semantics import MatrixGate,BlochSphereRotation, ControlledGate
 from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
 
 
