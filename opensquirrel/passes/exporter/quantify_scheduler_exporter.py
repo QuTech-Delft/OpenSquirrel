@@ -11,13 +11,6 @@ from opensquirrel.ir import (
     Measure,
     Reset,
 )
-from opensquirrel.ir.default_gates import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
@@ -35,6 +28,13 @@ except ModuleNotFoundError:
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir import Qubit
+    from opensquirrel.ir.default_gates import (
+        CNOT,
+        CR,
+        CZ,
+        SWAP,
+        CRk,
+    )
     from opensquirrel.register_manager import RegisterManager
 
 # Radian to degree conversion outcome precision

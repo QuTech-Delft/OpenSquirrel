@@ -1,11 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
+from opensquirrel.ir.expression import Bit, Expression, Qubit, String, SupportsStr
 from opensquirrel.ir.ir import IRNode, IRVisitor
-
-
-from opensquirrel.ir.expression import Bit, Qubit, String, Expression, SupportsStr
-
 
 
 class Statement(IRNode, ABC):

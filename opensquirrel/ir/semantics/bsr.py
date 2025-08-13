@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import numpy as np
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
-from opensquirrel.ir.expression import Axis, AxisLike, Bit, Expression, Float, Qubit, QubitLike, SupportsFloat
-from opensquirrel.ir.ir import IRVisitor
-from opensquirrel.ir.unitary import Gate
+from opensquirrel.ir import Axis, AxisLike, Bit, Float, Gate, Qubit, QubitLike
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import IRVisitor
+    from opensquirrel.ir.expression import Expression
 
 
 class BlochSphereRotation(Gate):

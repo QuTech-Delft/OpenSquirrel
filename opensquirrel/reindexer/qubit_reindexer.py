@@ -13,13 +13,6 @@ from opensquirrel.ir import (
     Reset,
     Wait,
 )
-from opensquirrel.ir.default_gates import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
@@ -32,6 +25,13 @@ from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterMa
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
+    from opensquirrel.ir.default_gates import (
+        CNOT,
+        CR,
+        CZ,
+        SWAP,
+        CRk,
+    )
 
 
 class _QubitReindexer(IRVisitor):

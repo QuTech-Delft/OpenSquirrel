@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 from collections.abc import Iterable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
 from opensquirrel.common import ATOL, repr_round
-from opensquirrel.ir.expression import Bit, Expression, Qubit, QubitLike
-from opensquirrel.ir.ir import IRVisitor
-from opensquirrel.ir.unitary import Gate
+from opensquirrel.ir import Bit, Gate, Qubit, QubitLike
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import IRVisitor
+    from opensquirrel.ir.expression import Expression
 
 
 class MatrixGate(Gate):

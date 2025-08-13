@@ -16,24 +16,24 @@ from opensquirrel.ir import (
     Reset,
     Wait,
 )
-from opensquirrel.ir.default_gates import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
-from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
-    MatrixGate,
-)
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
+    from opensquirrel.ir.default_gates import (
+        CNOT,
+        CR,
+        CZ,
+        SWAP,
+        CRk,
+    )
+    from opensquirrel.ir.semantics import (
+        BlochSphereRotation,
+        BsrAngleParam,
+        BsrFullParams,
+        BsrNoParams,
+        ControlledGate,
+        MatrixGate,
+    )
     from opensquirrel.register_manager import RegisterManager
 
 

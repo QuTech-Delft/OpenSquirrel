@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, SupportsInt
 
 import numpy as np
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir.expression import Axis, AxisLike, Bit, BitLike, Expression, Int, Qubit, QubitLike, SupportsInt
+from opensquirrel.ir.expression import Axis, AxisLike, Bit, BitLike, Expression, Int, Qubit, QubitLike
 from opensquirrel.ir.ir import IRVisitor
 from opensquirrel.ir.statement import Instruction
 

@@ -1,8 +1,7 @@
 from typing import Any
 
-from opensquirrel.ir.expression import Bit, Expression, Qubit, QubitLike
-from opensquirrel.ir.ir import IRVisitor
-from opensquirrel.ir.unitary import Gate
+from opensquirrel.ir import Bit, Gate, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir.expression import Expression
 
 
 class ControlledGate(Gate):

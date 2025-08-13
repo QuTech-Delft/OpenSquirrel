@@ -3,7 +3,7 @@ from __future__ import annotations
 import cmath
 import math
 from collections.abc import Iterable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -16,21 +16,23 @@ from opensquirrel.ir import (
     Qubit,
     QubitLike,
 )
-from opensquirrel.ir.default_gates import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
-from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
-    MatrixGate,
-)
+
+if TYPE_CHECKING:
+    from opensquirrel.ir.default_gates import (
+        CNOT,
+        CR,
+        CZ,
+        SWAP,
+        CRk,
+    )
+    from opensquirrel.ir.semantics import (
+        BlochSphereRotation,
+        BsrAngleParam,
+        BsrFullParams,
+        BsrNoParams,
+        ControlledGate,
+        MatrixGate,
+    )
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:

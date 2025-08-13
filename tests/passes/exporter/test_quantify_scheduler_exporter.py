@@ -6,7 +6,7 @@ import sys
 import unittest.mock
 from collections.abc import Generator
 from math import isclose
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -14,9 +14,11 @@ import pytest
 from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
-from opensquirrel.ir import Gate
 from opensquirrel.ir.default_gates import H
 from opensquirrel.ir.semantics import BlochSphereRotation
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 class FloatEq(float):

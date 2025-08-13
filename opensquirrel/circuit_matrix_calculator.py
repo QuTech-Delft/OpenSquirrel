@@ -6,19 +6,19 @@ import numpy as np
 from numpy.typing import NDArray
 
 from opensquirrel.ir import Gate, IRVisitor
-from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
-from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
-    MatrixGate,
-)
 from opensquirrel.utils import get_matrix
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
+    from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
+    from opensquirrel.ir.semantics import (
+        BlochSphereRotation,
+        BsrAngleParam,
+        BsrFullParams,
+        BsrNoParams,
+        ControlledGate,
+        MatrixGate,
+    )
 
 
 class _CircuitMatrixCalculator(IRVisitor):
