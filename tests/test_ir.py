@@ -8,6 +8,18 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+from opensquirrel import (
+    X90,
+    H,
+    I,
+    MinusX90,
+    Rn,
+    Rx,
+    Ry,
+    Rz,
+    TDagger,
+    X,
+)
 from opensquirrel.common import ATOL
 from opensquirrel.ir import (
     Axis,
@@ -18,23 +30,11 @@ from opensquirrel.ir import (
     Measure,
     Qubit,
 )
-from opensquirrel.ir.default_gates import (
-    X90,
-    H,
-    I,
-    MinusX90,
-    Rx,
-    Ry,
-    Rz,
-    TDagger,
-    X,
-)
 from opensquirrel.ir.expression import Expression
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     ControlledGate,
     MatrixGate,
-    Rn,
 )
 
 

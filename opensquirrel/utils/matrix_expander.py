@@ -18,7 +18,7 @@ from opensquirrel.ir import (
 )
 
 if TYPE_CHECKING:
-    from opensquirrel.ir.default_gates import (
+    from opensquirrel import (
         CNOT,
         CR,
         CZ,

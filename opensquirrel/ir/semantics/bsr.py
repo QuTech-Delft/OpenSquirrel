@@ -42,6 +42,7 @@ class BlochSphereRotation(Gate):
             default_bsr_with_angle_param_set,
             default_bsr_without_params_set,
         )
+        from opensquirrel.ir.default_gates import Rn
 
         default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
         for gate_name in default_bsr_set_without_rn:
@@ -128,20 +129,6 @@ class BsrFullParams(BlochSphereRotation):
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_bsr_full_params(self)
-
-
-class Rn(BsrFullParams):
-    def __init__(
-        self,
-        qubit: QubitLike,
-        nx: SupportsFloat,
-        ny: SupportsFloat,
-        nz: SupportsFloat,
-        theta: SupportsFloat,
-        phi: SupportsFloat,
-    ) -> None:
-        axis: AxisLike = Axis(np.asarray([nx, ny, nz], dtype=np.float64))
-        BsrFullParams.__init__(self, qubit=qubit, axis=axis, angle=theta, phase=phi, name="Rn")
 
 
 class BsrAngleParam(BlochSphereRotation):

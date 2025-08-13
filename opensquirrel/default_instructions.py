@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import TYPE_CHECKING
 
 from opensquirrel.ir import (
     Barrier,
-    Gate,
     Init,
-    Instruction,
     Measure,
-    NonUnitary,
     Reset,
-    Unitary,
     Wait,
 )
 from opensquirrel.ir.default_gates import (
@@ -25,6 +22,7 @@ from opensquirrel.ir.default_gates import (
     I,
     MinusX90,
     MinusY90,
+    Rn,
     Rx,
     Ry,
     Rz,
@@ -36,15 +34,22 @@ from opensquirrel.ir.default_gates import (
     Y,
     Z,
 )
-from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
-    MatrixGate,
-    Rn,
-)
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import (
+        Gate,
+        Instruction,
+        NonUnitary,
+        Unitary,
+    )
+    from opensquirrel.ir.semantics import (
+        BlochSphereRotation,
+        BsrAngleParam,
+        BsrFullParams,
+        BsrNoParams,
+        ControlledGate,
+        MatrixGate,
+    )
 
 default_bsr_without_params_set: Mapping[str, type[BsrNoParams]]
 default_bsr_without_params_set = {

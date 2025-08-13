@@ -19,6 +19,7 @@ from opensquirrel.ir.default_gates import (
     I,
     MinusX90,
     MinusY90,
+    Rn,
     Rx,
     Ry,
     Rz,
@@ -30,7 +31,6 @@ from opensquirrel.ir.default_gates import (
     Y,
     Z,
 )
-from opensquirrel.ir.semantics import Rn
 from opensquirrel.writer import writer
 
 __all__ = [

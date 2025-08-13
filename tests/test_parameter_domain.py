@@ -4,11 +4,10 @@ from typing import cast
 
 import pytest
 
-from opensquirrel import Circuit, CircuitBuilder, X
+from opensquirrel import Circuit, CircuitBuilder, Rn, Rx, Ry, Rz, X
 from opensquirrel.common import normalize_angle
 from opensquirrel.ir import Float, Gate, Instruction
-from opensquirrel.ir.default_gates import Rx, Ry, Rz
-from opensquirrel.ir.semantics import ControlledGate, Rn
+from opensquirrel.ir.semantics import ControlledGate
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 
 AnglesType = Iterator[tuple[float, float]]

@@ -1,9 +1,8 @@
 # Tests for the ShortestPathRouter class
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import SWAP, CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir.default_gates import SWAP
 from opensquirrel.passes.router import ShortestPathRouter
 
 

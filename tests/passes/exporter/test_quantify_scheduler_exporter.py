@@ -11,10 +11,9 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import CircuitBuilder, H
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
-from opensquirrel.ir.default_gates import H
 from opensquirrel.ir.semantics import BlochSphereRotation
 
 if TYPE_CHECKING:

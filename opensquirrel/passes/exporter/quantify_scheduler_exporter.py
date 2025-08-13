@@ -26,15 +26,15 @@ except ModuleNotFoundError:
     pass
 
 if TYPE_CHECKING:
-    from opensquirrel.circuit import Circuit
-    from opensquirrel.ir import Qubit
-    from opensquirrel.ir.default_gates import (
+    from opensquirrel import (
         CNOT,
         CR,
         CZ,
         SWAP,
         CRk,
     )
+    from opensquirrel.circuit import Circuit
+    from opensquirrel.ir import Qubit
     from opensquirrel.register_manager import RegisterManager
 
 # Radian to degree conversion outcome precision

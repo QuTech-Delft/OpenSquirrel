@@ -1,8 +1,24 @@
 from math import pi
 from typing import SupportsFloat
 
-from opensquirrel.ir.expression import QubitLike
-from opensquirrel.ir.semantics.bsr import BsrAngleParam, BsrNoParams
+import numpy as np
+
+from opensquirrel.ir import Axis, AxisLike, QubitLike
+from opensquirrel.ir.semantics import BsrAngleParam, BsrFullParams, BsrNoParams
+
+
+class Rn(BsrFullParams):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        nx: SupportsFloat,
+        ny: SupportsFloat,
+        nz: SupportsFloat,
+        theta: SupportsFloat,
+        phi: SupportsFloat,
+    ) -> None:
+        axis: AxisLike = Axis(np.asarray([nx, ny, nz], dtype=np.float64))
+        BsrFullParams.__init__(self, qubit=qubit, axis=axis, angle=theta, phase=phi, name="Rn")
 
 
 class Rx(BsrAngleParam):

@@ -24,14 +24,14 @@ from opensquirrel.ir.semantics import (
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
-    from opensquirrel.circuit import Circuit
-    from opensquirrel.ir.default_gates import (
+    from opensquirrel import (
         CNOT,
         CR,
         CZ,
         SWAP,
         CRk,
     )
+    from opensquirrel.circuit import Circuit
 
 
 class _QubitReindexer(IRVisitor):

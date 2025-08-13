@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from opensquirrel.ir.default_gates import CZ, Ry
+from opensquirrel import CZ, Ry
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 if TYPE_CHECKING:

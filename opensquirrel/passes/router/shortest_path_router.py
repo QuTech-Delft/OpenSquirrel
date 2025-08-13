@@ -2,9 +2,9 @@ from typing import Any
 
 import networkx as nx
 
+from opensquirrel import SWAP
 from opensquirrel.exceptions import NoRoutingPathError
 from opensquirrel.ir import IR, Gate, Instruction
-from opensquirrel.ir.default_gates import SWAP
 from opensquirrel.passes.router import Router
 
 

@@ -1,5 +1,12 @@
 from typing import Any, SupportsFloat, SupportsInt
 
+from opensquirrel import (
+    CNOT,
+    CR,
+    CZ,
+    SWAP,
+    CRk,
+)
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
     AsmDeclaration,
@@ -16,13 +23,6 @@ from opensquirrel.ir import (
     String,
     SupportsStr,
     Wait,
-)
-from opensquirrel.ir.default_gates import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,

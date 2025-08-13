@@ -18,14 +18,14 @@ from opensquirrel.ir import (
 )
 
 if TYPE_CHECKING:
-    from opensquirrel.circuit import Circuit
-    from opensquirrel.ir.default_gates import (
+    from opensquirrel import (
         CNOT,
         CR,
         CZ,
         SWAP,
         CRk,
     )
+    from opensquirrel.circuit import Circuit
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
         BsrAngleParam,
