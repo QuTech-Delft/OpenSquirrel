@@ -59,7 +59,7 @@ class TestAxis:
         ],
     )
     def test_axis_setter_no_error(self, axis: Axis, new_axis: AxisLike, expected_axis: list[float]) -> None:
-        axis.value = new_axis  # type: ignore [assignment]
+        axis.value = new_axis
         np.testing.assert_array_equal(axis, expected_axis)
 
     @pytest.mark.parametrize(
