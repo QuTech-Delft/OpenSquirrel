@@ -2,7 +2,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from opensquirrel.ir import IR, Instruction
-from opensquirrel.passes.validator import Validator
+from opensquirrel.passes.validator.general_validator import Validator
 
 
 class PrimitiveGateValidator(Validator):

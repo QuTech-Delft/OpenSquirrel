@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import math
+from math import pi, sqrt
 
 import numpy as np
 import pytest
@@ -44,28 +44,28 @@ def test_y(decomposer: McKayDecomposer) -> None:
     gate = Y(0)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [Rz(0, math.pi), X90(0), X90(0)]
+    assert decomposed_gate == [Rz(0, pi), X90(0), X90(0)]
 
 
 def test_z(decomposer: McKayDecomposer) -> None:
     gate = Z(0)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [Rz(0, math.pi)]
+    assert decomposed_gate == [Rz(0, pi)]
 
 
 def test_rz(decomposer: McKayDecomposer) -> None:
-    gate = Rz(0, math.pi / 2)
+    gate = Rz(0, pi / 2)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [Rz(0, math.pi / 2)]
+    assert decomposed_gate == [Rz(0, pi / 2)]
 
 
 def test_hadamard(decomposer: McKayDecomposer) -> None:
     gate = H(0)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]
+    assert decomposed_gate == [Rz(0, pi / 2), X90(0), Rz(0, pi / 2)]
 
 
 def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> None:
@@ -89,59 +89,55 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
     [
         (I(0), [I(0)]),
         (X(0), [X90(0), X90(0)]),
-        (Y(0), [Rz(0, math.pi), X90(0), X90(0)]),
-        (Z(0), [Rz(0, math.pi)]),
+        (Y(0), [Rz(0, pi), X90(0), X90(0)]),
+        (Z(0), [Rz(0, pi)]),
         (
-            BlochSphereRotation(
-                qubit=0, axis=[1 / math.sqrt(3), 1 / math.sqrt(3), 1 / math.sqrt(3)], angle=2 * math.pi / 3, phase=0
-            ),
-            [X90(0), Rz(0, math.pi / 2)],
+            BlochSphereRotation(qubit=0, axis=[1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3)], angle=2 * pi / 3, phase=0),
+            [X90(0), Rz(0, pi / 2)],
         ),
         (
-            BlochSphereRotation(qubit=0, axis=[1, 1, 1], angle=-2 * math.pi / 3, phase=0),
-            [X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)],
+            BlochSphereRotation(qubit=0, axis=[1, 1, 1], angle=-2 * pi / 3, phase=0),
+            [X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi / 2)],
         ),
         (
-            BlochSphereRotation(qubit=0, axis=[-1, 1, 1], angle=2 * math.pi / 3, phase=0),
-            [Rz(0, -math.pi / 2), X90(0), Rz(0, math.pi)],
+            BlochSphereRotation(qubit=0, axis=[-1, 1, 1], angle=2 * pi / 3, phase=0),
+            [Rz(0, -pi / 2), X90(0), Rz(0, pi)],
         ),
         (
-            BlochSphereRotation(qubit=0, axis=[-1, 1, 1], angle=-2 * math.pi / 3, phase=0),
-            [Rz(0, -math.pi / 2), X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi)],
+            BlochSphereRotation(qubit=0, axis=[-1, 1, 1], angle=-2 * pi / 3, phase=0),
+            [Rz(0, -pi / 2), X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi)],
         ),
-        (BlochSphereRotation(qubit=0, axis=[1, -1, 1], angle=2 * math.pi / 3, phase=0), [Rz(0, math.pi / 2), X90(0)]),
+        (BlochSphereRotation(qubit=0, axis=[1, -1, 1], angle=2 * pi / 3, phase=0), [Rz(0, pi / 2), X90(0)]),
         (
-            BlochSphereRotation(qubit=0, axis=[1, -1, 1], angle=-2 * math.pi / 3, phase=0),
-            [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2), X90(0)],
+            BlochSphereRotation(qubit=0, axis=[1, -1, 1], angle=-2 * pi / 3, phase=0),
+            [Rz(0, pi / 2), X90(0), Rz(0, pi / 2), X90(0)],
         ),
-        (BlochSphereRotation(qubit=0, axis=[1, 1, -1], angle=2 * math.pi / 3, phase=0), [Rz(0, -math.pi / 2), X90(0)]),
+        (BlochSphereRotation(qubit=0, axis=[1, 1, -1], angle=2 * pi / 3, phase=0), [Rz(0, -pi / 2), X90(0)]),
         (
-            BlochSphereRotation(
-                qubit=0, axis=[1 / math.sqrt(3), 1 / math.sqrt(3), -1 / math.sqrt(3)], angle=-2 * math.pi / 3, phase=0
-            ),
-            [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi)],
+            BlochSphereRotation(qubit=0, axis=[1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3)], angle=-2 * pi / 3, phase=0),
+            [Rz(0, pi / 2), X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi)],
         ),
         (X90(0), [X90(0)]),
-        (MinusX90(0), [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]),
-        (Y90(0), [Rz(0, -math.pi / 2), X90(0), Rz(0, math.pi / 2)]),
-        (MinusY90(0), [X90(0), Rz(0, math.pi / 2), X90(0), Rz(0, math.pi)]),
-        (S(0), [Rz(0, math.pi / 2)]),
-        (SDagger(0), [Rz(0, -math.pi / 2)]),
-        (H(0), [Rz(0, math.pi / 2), X90(0), Rz(0, math.pi / 2)]),
+        (MinusX90(0), [Rz(0, pi / 2), X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi / 2)]),
+        (Y90(0), [Rz(0, -pi / 2), X90(0), Rz(0, pi / 2)]),
+        (MinusY90(0), [X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi)]),
+        (S(0), [Rz(0, pi / 2)]),
+        (SDagger(0), [Rz(0, -pi / 2)]),
+        (H(0), [Rz(0, pi / 2), X90(0), Rz(0, pi / 2)]),
         (
-            BlochSphereRotation(qubit=0, axis=[1, 1, 0], angle=math.pi, phase=math.pi / 2),
-            [Rz(0, -3 * math.pi / 4), X90(0), X90(0), Rz(0, -math.pi / 4)],
+            BlochSphereRotation(qubit=0, axis=[1, 1, 0], angle=pi, phase=pi / 2),
+            [Rz(0, -3 * pi / 4), X90(0), X90(0), Rz(0, -pi / 4)],
         ),
-        (BlochSphereRotation(qubit=0, axis=[0, 1, 1], angle=math.pi, phase=math.pi / 2), [X90(0), Rz(0, math.pi)]),
+        (BlochSphereRotation(qubit=0, axis=[0, 1, 1], angle=pi, phase=pi / 2), [X90(0), Rz(0, pi)]),
         (
-            BlochSphereRotation(qubit=0, axis=[-1, 1, 0], angle=math.pi, phase=math.pi / 2),
-            [Rz(0, 3 * math.pi / 4), X90(0), X90(0), Rz(0, math.pi / 4)],
+            BlochSphereRotation(qubit=0, axis=[-1, 1, 0], angle=pi, phase=pi / 2),
+            [Rz(0, 3 * pi / 4), X90(0), X90(0), Rz(0, pi / 4)],
         ),
         (
-            BlochSphereRotation(qubit=0, axis=[1, 0, -1], angle=math.pi, phase=math.pi / 2),
-            [Rz(0, -math.pi / 2), X90(0), Rz(0, -math.pi / 2)],
+            BlochSphereRotation(qubit=0, axis=[1, 0, -1], angle=pi, phase=pi / 2),
+            [Rz(0, -pi / 2), X90(0), Rz(0, -pi / 2)],
         ),
-        (BlochSphereRotation(qubit=0, axis=[0, -1, 1], angle=math.pi, phase=math.pi / 2), [Rz(0, math.pi), X90(0)]),
+        (BlochSphereRotation(qubit=0, axis=[0, -1, 1], angle=pi, phase=pi / 2), [Rz(0, pi), X90(0)]),
     ],
     ids=[
         "I",

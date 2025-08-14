@@ -333,8 +333,7 @@ class TestApplyingCompilationPasses:
 
         circuit.route(router=ShortestPathRouter(connectivity=self.connectivity))
 
-        # After a bug-fix CQT-388, the assert can be uncommented.
-        # assert str(circuit) == str(circuit_2)                     # noqa
+        assert str(circuit) == str(circuit_2)
 
     def test_decomposition_predefined(self, circuit_2: Circuit, circuit_3: Circuit, circuit_4: Circuit) -> None:
         circuit = circuit_2
