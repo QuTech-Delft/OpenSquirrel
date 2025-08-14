@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.passes.mapper import HardcodedMapper, Mapper
+from opensquirrel.passes.mapper import HardcodedMapper
+from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 if TYPE_CHECKING:

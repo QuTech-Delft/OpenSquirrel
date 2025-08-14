@@ -4,9 +4,9 @@ from typing import Callable
 import numpy as np
 import pytest
 
-from opensquirrel.ir import BlochSphereRotation
-from opensquirrel.passes.decomposer import Decomposer, aba_decomposer as aba
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.passes.decomposer import aba_decomposer as aba
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement
 
 ABA_DECOMPOSER_LIST = [
     aba.XYXDecomposer,
