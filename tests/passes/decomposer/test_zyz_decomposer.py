@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import math
+from math import pi
 from typing import TYPE_CHECKING
 
 import pytest
@@ -30,13 +30,13 @@ def test_identity(decomposer: ZYZDecomposer) -> None:
     [
         (CNOT(0, 1), [CNOT(0, 1)]),
         (CR(2, 3, 2.123), [CR(2, 3, 2.123)]),
-        (X(0), [Rz(0, math.pi / 2), Ry(0, math.pi), Rz(0, -math.pi / 2)]),
-        (Rx(0, 0.9), [Rz(0, math.pi / 2), Ry(0, 0.9), Rz(0, -math.pi / 2)]),
-        (Y(0), [Ry(0, math.pi)]),
+        (X(0), [Rz(0, pi / 2), Ry(0, pi), Rz(0, -pi / 2)]),
+        (Rx(0, 0.9), [Rz(0, pi / 2), Ry(0, 0.9), Rz(0, -pi / 2)]),
+        (Y(0), [Ry(0, pi)]),
         (Ry(0, 0.9), [Ry(0, 0.9)]),
-        (Z(0), [Rz(0, math.pi)]),
+        (Z(0), [Rz(0, pi)]),
         (Rz(0, 0.123), [Rz(0, 0.123)]),
-        (H(0), [Rz(0, math.pi), Ry(0, math.pi / 2)]),
+        (H(0), [Rz(0, pi), Ry(0, pi / 2)]),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
             [Rz(0, 0.018644578210710527), Ry(0, -0.6209410696845807), Rz(0, -0.9086506397909061)],

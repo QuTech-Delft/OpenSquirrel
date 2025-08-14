@@ -3,7 +3,6 @@ from math import pi
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Y, Z
-from opensquirrel.ir import Float
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 
@@ -71,7 +70,7 @@ def test_compose_bloch_sphere_rotations(
     ("circuit", "expected_result"),
     [
         (
-            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(pi / 3)).barrier(0).to_circuit(),
+            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, pi / 3).barrier(0).to_circuit(),
             """version 3.0
 
 qubit[2] q
