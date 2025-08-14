@@ -39,9 +39,8 @@ class BlochSphereRotation(Gate):
              or the input BlochSphereRotation otherwise.
         """
         from opensquirrel.default_instructions import (
-            default_bsr_with_angle_param_set,
-            default_bsr_without_params_set,
             default_bsr_set_without_rn,
+            default_bsr_with_angle_param_set,
         )
         from opensquirrel.ir.default_gates import Rn
 
