@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import math
 from typing import TYPE_CHECKING
+from math import pi, sqrt
 
 import pytest
 
@@ -43,15 +43,15 @@ def test_CZ(decomposer: CNOTDecomposer) -> None:  # noqa: N802
     gate = CZ(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [Rz(1, math.pi), Ry(1, math.pi / 2), CNOT(0, 1), Ry(1, -math.pi / 2), Rz(1, math.pi)]
+    assert decomposed_gate == [Rz(1, pi), Ry(1, pi / 2), CNOT(0, 1), Ry(1, -pi / 2), Rz(1, pi)]
 
 
 @pytest.mark.parametrize(
     "controlled_gate",
     [
-        CR(0, 1, math.pi / 2),
-        CR(0, 1, math.pi / 4),
-        CR(0, 1, 1 / math.sqrt(2)),
+        CR(0, 1, pi / 2),
+        CR(0, 1, pi / 4),
+        CR(0, 1, 1 / sqrt(2)),
         CRk(0, 1, 1),
         CRk(0, 1, 2),
         CRk(0, 1, 16),

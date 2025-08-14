@@ -61,13 +61,13 @@ each traversing and modifying it (_e.g._, decomposition of the gates).
 Here is an example of building a circuit using the `CircuitBuilder`:
 
 ```python
-import math
+from math import pi
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.ir import Qubit
 
 # Initialize the builder and build your circuit
 builder = CircuitBuilder(qubit_register_size=1)
-builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), math.pi / 3)
+builder.H(0).Z(0).Y(0).Rx(0, pi / 3)
 
 # Get the circuit from the circuit builder
 circuit = builder.to_circuit()

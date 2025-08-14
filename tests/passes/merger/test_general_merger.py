@@ -71,7 +71,7 @@ def test_compose_bloch_sphere_rotations(
     ("circuit", "expected_result"),
     [
         (
-            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, Float(pi / 3)).barrier(0).to_circuit(),
+            CircuitBuilder(2).H(0).barrier(0).H(1).barrier(1).H(0).Rx(0, pi / 3).barrier(0).to_circuit(),
             """version 3.0
 
 qubit[2] q

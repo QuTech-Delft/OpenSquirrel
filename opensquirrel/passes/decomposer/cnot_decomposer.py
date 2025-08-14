@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import math
 from typing import TYPE_CHECKING
+from math import pi
 
 from opensquirrel import CNOT, Ry, Rz, X
 from opensquirrel.common import ATOL
@@ -47,7 +47,7 @@ class CNOTDecomposer(Decomposer):
             controlled_rotation_times_x.axis,
             controlled_rotation_times_x.angle,
         )
-        if abs((theta0_with_x - theta2_with_x) % (2 * math.pi)) < ATOL:
+        if abs((theta0_with_x - theta2_with_x) % (2 * pi)) < ATOL:
             # The decomposition can use a single CNOT according to the lemma.
             A = [Ry(target_qubit, -theta1_with_x / 2), Rz(target_qubit, -theta2_with_x)]  # noqa: N806
             B = [Rz(target_qubit, theta2_with_x), Ry(target_qubit, theta1_with_x / 2)]  # noqa: N806
@@ -56,7 +56,7 @@ class CNOTDecomposer(Decomposer):
                     *B,
                     CNOT(g.control_qubit, target_qubit),
                     *A,
-                    Rz(g.control_qubit, g.target_gate.phase - math.pi / 2),
+                    Rz(g.control_qubit, g.target_gate.phase - pi / 2),
                 ],
             )
 

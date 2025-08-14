@@ -5,8 +5,8 @@ import numpy as np
 import pytest
 
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.passes.decomposer import Decomposer, aba_decomposer as aba
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement, Decomposer
+from opensquirrel.passes.decomposer import aba_decomposer as aba
 
 ABA_DECOMPOSER_LIST = [
     aba.XYXDecomposer,

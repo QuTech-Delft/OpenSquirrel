@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import math
+from math import pi
 from typing import TYPE_CHECKING
 
 import pytest
@@ -35,7 +35,7 @@ def test_ignores_1q_gates(decomposer: SWAP2CZDecomposer, gate: Gate, expected_re
     ("gate", "expected_result"),
     [
         (CNOT(0, 1), [CNOT(0, 1)]),
-        (CR(0, 1, math.pi), [CR(0, 1, math.pi)]),
+        (CR(0, 1, pi), [CR(0, 1, pi)]),
         (CRk(0, 1, 2), [CRk(0, 1, 2)]),
         (CZ(0, 1), [CZ(0, 1)]),
     ],
@@ -52,29 +52,29 @@ def test_ignores_2q_gates(decomposer: SWAP2CZDecomposer, gate: Gate, expected_re
         (
             SWAP(0, 1),
             [
-                Ry(1, -math.pi / 2),
+                Ry(1, -pi / 2),
                 CZ(0, 1),
-                Ry(1, math.pi / 2),
-                Ry(0, -math.pi / 2),
+                Ry(1, pi / 2),
+                Ry(0, -pi / 2),
                 CZ(1, 0),
-                Ry(0, math.pi / 2),
-                Ry(1, -math.pi / 2),
+                Ry(0, pi / 2),
+                Ry(1, -pi / 2),
                 CZ(0, 1),
-                Ry(1, math.pi / 2),
+                Ry(1, pi / 2),
             ],
         ),
         (
             SWAP(1, 0),
             [
-                Ry(0, -math.pi / 2),
+                Ry(0, -pi / 2),
                 CZ(1, 0),
-                Ry(0, math.pi / 2),
-                Ry(1, -math.pi / 2),
+                Ry(0, pi / 2),
+                Ry(1, -pi / 2),
                 CZ(0, 1),
-                Ry(1, math.pi / 2),
-                Ry(0, -math.pi / 2),
+                Ry(1, pi / 2),
+                Ry(0, -pi / 2),
                 CZ(1, 0),
-                Ry(0, math.pi / 2),
+                Ry(0, pi / 2),
             ],
         ),
     ],
