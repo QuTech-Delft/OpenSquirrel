@@ -122,7 +122,8 @@ class Circuit:
         """
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
-        remap_ir(self, mapper.get_mapping())
+        mapping = mapper.get_mapping(self.ir, self.qubit_register_size)
+        remap_ir(self, mapping)
 
     def merge(self, merger: Merger) -> None:
         """Generic merge pass. It applies the given merger to the circuit."""

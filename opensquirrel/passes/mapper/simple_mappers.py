@@ -5,40 +5,63 @@
 * RandomMapper
 """
 
+from __future__ import annotations
+
 import random
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
+if TYPE_CHECKING:
+    from opensquirrel.ir import IR
+
 
 class IdentityMapper(Mapper):
-    def __init__(self, qubit_register_size: int, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """An ``IdentityMapper`` maps each virtual qubit to exactly the same physical qubit."""
-        super().__init__(qubit_register_size, **kwargs)
+        super().__init__(**kwargs)
+
+    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+        """Create identity mapping."""
+        return Mapping(list(range(qubit_register_size)))
 
 
 class HardcodedMapper(Mapper):
-    def __init__(self, qubit_register_size: int, mapping: Mapping, **kwargs: Any) -> None:
+    def __init__(self, mapping: Mapping, **kwargs: Any) -> None:
         """
         A ``HardcodedMapper`` maps each virtual qubit to a hardcoded physical qubit
 
         Args:
-            qubit_register_size: The number of qubits in the physical qubit register
             mapping: The mapping from virtual to physical qubits
         """
-        super().__init__(qubit_register_size, mapping, **kwargs)
+        super().__init__(**kwargs)
+        self._hardcoded_mapping = mapping
+
+    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+        """Return the hardcoded mapping."""
+        if qubit_register_size != self._hardcoded_mapping.size():
+            msg = f"qubit register size ({qubit_register_size}) and mapping size ({self._hardcoded_mapping.size()}) differ"  # noqa: E501
+            raise ValueError(msg)
+        return self._hardcoded_mapping
 
 
 class RandomMapper(Mapper):
-    def __init__(self, qubit_register_size: int, **kwargs: Any) -> None:
+    def __init__(self, seed: int | None = None, **kwargs: Any) -> None:
         """
         A ``RandomMapper`` maps each virtual qubit to a random physical qubit.
 
         Args:
-            qubit_register_size: The number of qubits in the physical qubit register
+            seed: Random seed for reproducible results
         """
+        super().__init__(**kwargs)
+        self.seed = seed
+
+    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+        """Create a random mapping."""
+        if self.seed is not None:
+            random.seed(self.seed)
+
         physical_qubit_register = list(range(qubit_register_size))
         random.shuffle(physical_qubit_register)
-        random_mapping = Mapping(physical_qubit_register)
-        super().__init__(qubit_register_size, random_mapping, **kwargs)
+        return Mapping(physical_qubit_register)
