@@ -268,10 +268,12 @@ class Qubit(Expression):
     index: int
 
     def __init__(self, index: QubitLike) -> None:
-        if isinstance(index, SupportsInt):
-            self.index = int(index)
+        if isinstance(index, int):
+            self.index = index
         elif isinstance(index, Qubit):
             self.index = index.index
+        elif isinstance(index, SupportsInt):
+            self.index = int(index)
         else:
             msg = "index must be a QubitLike"
             raise TypeError(msg)
@@ -377,7 +379,7 @@ class Axis(Sequence[np.float64], Expression):
         """String representation of the ``Axis``."""
         return f"Axis{self.value}"
 
-    def __array__(self, dtype: DTypeLike = None, *, copy: bool = True) -> NDArray[Any]:
+    def __array__(self, dtype: DTypeLike = None, *, copy: bool = None) -> NDArray[Any]:
         """Convert the ``Axis`` data to an array."""
         return np.array(self.value, dtype=dtype, copy=copy)
 
@@ -504,9 +506,9 @@ class BlochSphereRotation(Gate):
         from opensquirrel.default_instructions import (
             default_bsr_with_angle_param_set,
             default_bsr_without_params_set,
+            default_bsr_set_without_rn
         )
 
-        default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
         for gate_name in default_bsr_set_without_rn:
             arguments: tuple[Any, ...] = (bsr.qubit,)
             if gate_name in default_bsr_with_angle_param_set:
@@ -548,10 +550,10 @@ class BlochSphereRotation(Gate):
         if self.qubit != other.qubit:
             return False
 
-        if np.allclose(self.axis, other.axis, atol=ATOL):
+        if np.allclose(self.axis.value, other.axis.value, atol=ATOL):
             return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
 
-        if np.allclose(self.axis, -other.axis.value, atol=ATOL):
+        if np.allclose(self.axis.value, -other.axis.value, atol=ATOL):
             return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
 
         return False
