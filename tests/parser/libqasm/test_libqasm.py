@@ -2,8 +2,9 @@ from math import pi
 
 import pytest
 
-from opensquirrel import CNOT, CR, CRk, H, I, Ry, X
-from opensquirrel.ir import ControlledGate, Gate, Rn
+from opensquirrel import CNOT, CR, CRk, H, I, Rn, Ry, X
+from opensquirrel.ir import Gate
+from opensquirrel.ir.semantics import ControlledGate
 from opensquirrel.reader import LibQasmParser
 
 

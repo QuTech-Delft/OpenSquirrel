@@ -1,24 +1,28 @@
-from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (
+from opensquirrel import (
     CNOT,
     CR,
     CZ,
-    IR,
     SWAP,
+    CRk,
+)
+from opensquirrel.circuit import Circuit
+from opensquirrel.ir import (
+    IR,
     Barrier,
+    Init,
+    IRVisitor,
+    Measure,
+    Qubit,
+    Reset,
+    Wait,
+)
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    Init,
-    IRVisitor,
     MatrixGate,
-    Measure,
-    Qubit,
-    Reset,
-    Wait,
 )
 from opensquirrel.passes.mapper.mapping import Mapping
 

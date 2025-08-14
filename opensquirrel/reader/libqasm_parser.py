@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 import cqasm.v3x as cqasm
 
@@ -11,7 +11,6 @@ from opensquirrel.ir import (
     IR,
     AsmDeclaration,
     Bit,
-    BlochSphereRotation,
     Float,
     Gate,
     Int,
@@ -20,6 +19,9 @@ from opensquirrel.ir import (
     Statement,
 )
 from opensquirrel.register_manager import RegisterManager
+
+if TYPE_CHECKING:
+    from opensquirrel.ir.semantics import BlochSphereRotation
 
 
 class LibQasmParser:

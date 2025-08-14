@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 from math import pi, sqrt
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
 
 from opensquirrel import CNOT, CR, X90, Y90, H, I, MinusX90, MinusY90, Rz, S, SDagger, X, Y, Z
-from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 @pytest.fixture

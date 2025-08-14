@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 from math import pi
+from typing import TYPE_CHECKING
 
-from opensquirrel.ir import CZ, BlochSphereRotation, ControlledGate, Gate, Ry
+from opensquirrel import CZ, Ry
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 class CNOT2CZDecomposer(Decomposer):

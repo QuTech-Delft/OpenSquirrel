@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
 from opensquirrel import CNOT, Y90, CircuitBuilder, H, I, X
-from opensquirrel.ir import BlochSphereRotation, Gate
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 class TestCheckGateReplacement:

@@ -1,5 +1,5 @@
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
 from opensquirrel.writer import writer
 
 

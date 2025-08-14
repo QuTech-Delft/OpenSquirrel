@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 from math import pi
+from typing import TYPE_CHECKING
 
 from opensquirrel import CNOT, Ry, Rz, X
 from opensquirrel.common import ATOL
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.passes.decomposer import ZYZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.passes.merger import general_merger
 from opensquirrel.utils import filter_out_identities
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 class CNOTDecomposer(Decomposer):

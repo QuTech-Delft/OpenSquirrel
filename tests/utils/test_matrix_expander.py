@@ -2,7 +2,7 @@ from math import pi
 
 import numpy as np
 
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
 from opensquirrel.utils import get_matrix
 
 

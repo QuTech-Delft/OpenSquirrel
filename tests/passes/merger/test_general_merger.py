@@ -3,7 +3,7 @@ from math import pi
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Y, Z
-from opensquirrel.ir import BlochSphereRotation
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 
 

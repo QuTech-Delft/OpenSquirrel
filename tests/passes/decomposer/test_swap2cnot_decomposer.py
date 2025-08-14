@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from opensquirrel.ir import CNOT, CR, CZ, SWAP, CRk, H, Ry
+from opensquirrel import CNOT, CR, CZ, SWAP, CRk, H, Ry
 from opensquirrel.passes.decomposer import SWAP2CNOTDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 

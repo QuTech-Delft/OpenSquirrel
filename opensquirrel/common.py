@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 from math import tau
-from typing import SupportsFloat
+from typing import TYPE_CHECKING, SupportsFloat
 
 import numpy as np
 from numpy.typing import NDArray
 
+if TYPE_CHECKING:
+    from opensquirrel.ir.expression import Axis
+
+
 ATOL = 0.000_000_1
+REPR_DECIMALS = 5
 
 
 def normalize_angle(x: SupportsFloat) -> float:
@@ -60,3 +65,16 @@ def is_identity_matrix_up_to_a_global_phase(matrix: NDArray[np.complex128]) -> b
         Whether matrix is an identity matrix up to a global phase.
     """
     return are_matrices_equivalent_up_to_global_phase(matrix, np.eye(matrix.shape[0], dtype=np.complex128))
+
+
+def repr_round(value: float | Axis | NDArray[np.complex128], decimals: int = REPR_DECIMALS) -> str:
+    """
+    Given a numerical value (of type `float`, `Axis`, or `NDArray[np.complex128]`):
+    - rounds it to `REPR_DECIMALS`,
+    - converts it to string, and
+    - removes the newlines.
+
+    Returns:
+        A single-line string representation of a numerical value.
+    """
+    return f"{np.round(value, decimals)}".replace("\n", "")

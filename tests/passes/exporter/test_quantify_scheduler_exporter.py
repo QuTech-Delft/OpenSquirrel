@@ -5,15 +5,18 @@ import sys
 import unittest.mock
 from collections.abc import Generator
 from math import degrees, isclose, pi
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import MagicMock
 
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import CircuitBuilder, H
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
-from opensquirrel.ir import BlochSphereRotation, Gate, H
+from opensquirrel.ir.semantics import BlochSphereRotation
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 class FloatEq(float):
