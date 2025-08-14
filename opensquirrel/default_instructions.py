@@ -125,8 +125,9 @@ default_instruction_set = {
     **default_non_unitary_set,
 }
 
-default_bsr_set_without_rn : Mapping[str, type[BsrNoParams] | type[BsrAngleParam]]
+default_bsr_set_without_rn: Mapping[str, type[BsrNoParams] | type[BsrAngleParam]]
 default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
+
 
 def is_anonymous_gate(name: str) -> bool:
     return name not in default_gate_set
