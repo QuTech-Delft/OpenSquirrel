@@ -29,7 +29,6 @@ from opensquirrel.ir import (
     Y,
     Z,
 )
-from opensquirrel.writer import writer
 
 __all__ = [
     "CNOT",
@@ -61,5 +60,4 @@ __all__ = [
     "X",
     "Y",
     "Z",
-    "writer",
 ]

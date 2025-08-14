@@ -1,7 +1,7 @@
 from typing import Any
 
 from opensquirrel.ir import IR, Instruction, Qubit
-from opensquirrel.passes.validator import Validator
+from opensquirrel.passes.validator.general_validator import Validator
 
 
 class InteractionValidator(Validator):

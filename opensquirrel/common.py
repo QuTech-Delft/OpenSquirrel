@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import math
+from math import tau
 from typing import SupportsFloat
 
 import numpy as np
@@ -19,11 +19,11 @@ def normalize_angle(x: SupportsFloat) -> float:
         The normalized angle.
     """
     x = float(x)
-    t = x - 2 * math.pi * (x // (2 * math.pi) + 1)
-    if t < -math.pi + ATOL:
-        t += 2 * math.pi
-    elif t > math.pi:
-        t -= 2 * math.pi
+    t = x - tau * (x // tau + 1)
+    if t < -tau / 2 + ATOL:
+        t += tau
+    elif t > tau / 2:
+        t -= tau
     return t
 
 

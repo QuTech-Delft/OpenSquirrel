@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import math
+from math import pi
 
 import pytest
 
@@ -26,12 +26,12 @@ def test_identity(decomposer: XZXDecomposer) -> None:
     [
         (CNOT(0, 1), [CNOT(0, 1)]),
         (CR(2, 3, 2.123), [CR(2, 3, 2.123)]),
-        (S(0), [Rz(0, math.pi / 2)]),
-        (Z(0), [Rz(0, math.pi)]),
+        (S(0), [Rz(0, pi / 2)]),
+        (Z(0), [Rz(0, pi)]),
         (Rz(0, 0.9), [Rz(0, 0.9)]),
-        (X(0), [Rx(0, math.pi)]),
+        (X(0), [Rx(0, pi)]),
         (Rx(0, 0.123), [Rx(0, 0.123)]),
-        (H(0), [Rx(0, math.pi / 2), Rz(0, math.pi / 2), Rx(0, math.pi / 2)]),
+        (H(0), [Rx(0, pi / 2), Rz(0, pi / 2), Rx(0, pi / 2)]),
         (
             BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
             [Rx(0, 0.43035280630630446), Rz(0, -1.030183660156084), Rx(0, -0.7456524007888308)],
