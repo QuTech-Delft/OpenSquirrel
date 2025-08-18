@@ -1,0 +1,56 @@
+name: Docs
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "develop"
+  release:
+    types:
+      - created
+
+
+jobs:
+  build:
+    name: Publish documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v4
+        with:
+          poetry-version: "2.1.3"
+
+      - name: Install package with doc dependencies
+        run: |
+            poetry install --with docs
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git fetch origin gh-pages:gh-pages
+
+      - name: Dry run
+        if: github.event_name == 'pull_request'
+        run: |
+            mkdocs build
+
+      - name: Upload and tag as latest
+        if: github.ref == 'refs/heads/develop'
+        run: |
+            mike deploy --push latest
+            mike set-default --push latest
+
+      - name: Upload and tag as git tag
+        if: github.event_name == 'release' && github.event.action == 'created'
+        run: |
+          mike deploy --push ${{ github.ref_name }}
+          mike set-default --push latest
