@@ -63,3 +63,7 @@ __all__ = [
     "Y",
     "Z",
 ]
+
+from importlib.metadata import version
+
+__version__ = version("opensquirrel")
