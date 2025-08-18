@@ -12,16 +12,18 @@ if TYPE_CHECKING:
         Float,
         Gate,
         Init,
+        Instruction,
         Int,
         Measure,
         Qubit,
         Reset,
+        Statement,
         String,
         Unitary,
         Wait,
     )
     from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
-    from opensquirrel.ir import NonUnitary,Instruction, Statement
+    from opensquirrel.ir.non_unitary import NonUnitary
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
         BsrAngleParam,
