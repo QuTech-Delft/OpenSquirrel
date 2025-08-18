@@ -21,7 +21,7 @@ if TYPE_CHECKING:
         Wait,
     )
     from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
-    from opensquirrel.ir.non_unitary import NonUnitary
+    from opensquirrel.ir import NonUnitary,Instruction, Statement
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
         BsrAngleParam,
@@ -30,7 +30,6 @@ if TYPE_CHECKING:
         ControlledGate,
         MatrixGate,
     )
-    from opensquirrel.ir.statement import Instruction, Statement
 
 
 class IRVisitor:
