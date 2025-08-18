@@ -12,12 +12,10 @@ if TYPE_CHECKING:
         Float,
         Gate,
         Init,
-        Instruction,
         Int,
         Measure,
         Qubit,
         Reset,
-        Statement,
         String,
         Unitary,
         Wait,
@@ -32,6 +30,7 @@ if TYPE_CHECKING:
         ControlledGate,
         MatrixGate,
     )
+    from opensquirrel.ir.statement import Instruction, Statement
 
 
 class IRVisitor:
