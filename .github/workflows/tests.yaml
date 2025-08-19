@@ -19,7 +19,7 @@ jobs:
       - name: Install uv
         uses: yezz123/setup-uv@v4
         with:
-          uv-version: "0.1.12"
+          uv-version: "0.7.13"
       - name: Install tox
         run: pip install tox
       - name: run tox lint and type
@@ -49,7 +49,7 @@ jobs:
       - name: Install uv
         uses: yezz123/setup-uv@v4
         with:
-          uv-version: "0.1.12"
+          uv-version: "0.7.13"
       - name: Install tox
         run: pip install tox
       - name: run tox test

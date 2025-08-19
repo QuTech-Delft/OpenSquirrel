@@ -23,8 +23,6 @@ jobs:
           python-version: "3.11"
       - name: Install uv
         uses: yezz123/setup-uv@v4
-        with:
-          uv-version: "0.1.12"
 
       # Setting the proper version
       - name: Get previous Tag
