@@ -67,7 +67,9 @@ default-groups = [
     "examples",
     "export",
 ]
-required-environments = ["macosx_14_0_arm64"]
+required-environments = [
+  "sys_platform == 'darwin' and platform_machine == 'arm64'"
+]
 
 [tool.hatch.build.targets.sdist]
 include = ["opensquirrel"]
