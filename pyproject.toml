@@ -67,6 +67,9 @@ default-groups = [
     "examples",
     "export",
 ]
+required-environments = [
+    "sys_platform == 'darwin' and platform_machine == 'arm'"
+]
 
 [tool.hatch.build.targets.sdist]
 include = ["opensquirrel"]
