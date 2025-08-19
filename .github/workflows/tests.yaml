@@ -16,10 +16,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v4
+      - name: Install uv
+        uses: yezz123/setup-uv@v4
         with:
-          poetry-version: "2.1.3"
+          uv-version: "0.1.12"
       - name: Install tox
         run: pip install tox
       - name: run tox lint and type
@@ -46,10 +46,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v4
+      - name: Install uv
+        uses: yezz123/setup-uv@v4
         with:
-          poetry-version: "2.1.3"
+          uv-version: "0.1.12"
       - name: Install tox
         run: pip install tox
       - name: run tox test
