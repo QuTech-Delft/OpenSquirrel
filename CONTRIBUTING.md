@@ -12,7 +12,7 @@ Make sure your environment contains all the updated versions of the dependencies
 From an OpenSquirrel checkout:
 
 ```
-$ uv sync 
+$ uv sync
 ```
 
 And that you base your feature branch off an updated `develop`.
@@ -30,8 +30,7 @@ Make sure the tests and the following linters pass.
 Using `tox` (started from an OpenSquirrel checkout):
 
 ```
-$ tox -e fix
-$ tox
+$ tox -e fix,type,test
 ```
 
 ## Setting the Python interpreter (PyCharm)
