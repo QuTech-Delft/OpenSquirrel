@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `MIPMapper` mapper pass
+- OpenSquirrel's `__version__` attribute exposed
 
 ### Changed
 
