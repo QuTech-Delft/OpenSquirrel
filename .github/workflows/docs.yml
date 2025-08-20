@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install uv
+      - name: Install poetry
         uses: yezz123/setup-uv@v4
         with:
           uv-version: "0.8.12"
