@@ -86,7 +86,7 @@ The decomposition of the `CNOT` gate into a `CZ` gate (with additional single-qu
 To this end a `CNOT2CZDecomposer` has been implemented that decomposes any `CNOT`s in a circuit to a
 `Ry(-π/2)`-`CZ`-`Ry(π/2)`. The decomposition is illustrated in the image below.
 
-<p align="center"> <img width="600" src="../../_static/cnot2cz.png"> </p>
+![image](../../_static/cnot2cz.png)
 
 `Ry` gates are used instead of, _e.g._, `H` gates, as they are, generally,
 more likely to be supported already by target backends.
@@ -96,7 +96,7 @@ more likely to be supported already by target backends.
 The `SWAP2CNOTDecomposer` implements the predefined decomposition of the `SWAP` gate into 3 `CNOT` gates.
 The decomposition is illustrated in the image below.
 
-<p align="center"> <img width="600" src="../../_static/swap2cnot.png"> </p>
+![image](../../_static/swap2cnot.png)
 
 ##### _`SWAP` to `CZ` decomposer_
 
@@ -104,4 +104,4 @@ The `SWAP2CZDecomposer` implements the predefined decomposition of the `SWAP` ga
 gates.
 The decomposition is illustrated in the image below.
 
-<p align="center"> <img width="600" src="../../_static/swap2cz.png"> </p>
+![image](../../_static/swap2cz.png)
