@@ -4067,14 +4067,19 @@ using the <code>Circuit.from_string</code> method with the above example program
 <p>Some important things to note about how OpenSquirrel reads the input cQASM string:
 the OpenSquirrel reader</p>
 <ul>
-<li>unpacks any <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html">SGMQ notation</a>
-as separate consecutive statements,</li>
-<li>combines all <em>logical</em> (qu)bit registers into a single <em>virtual</em> (qu)bit register
-with identifiers <code>q</code> and <code>b</code>, signifying the qubit and bit registers, respectively,</li>
-<li>evaluates complex expressions (<em>e.g.</em>, <code>pi/2</code> becomes <code>1.5707963</code>), and</li>
 <li>ignores any <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/tokens/whitespace_and_comments.html">comments</a>;
-they are simply not registered during the parsing phase.</li>
+  they are simply not registered during the parsing phase,</li>
+<li>combines all <em>logical</em> (qu)bit registers into a single <em>virtual</em> (qu)bit register
+  with identifiers <code>q</code> and <code>b</code>, signifying the qubit and bit registers, respectively,</li>
+<li>unpacks any <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html">SGMQ notation</a>
+  as separate consecutive statements,</li>
+<li>evaluates complex expressions (<em>e.g.</em>, <code>pi/2</code> becomes <code>1.5707963</code>), and</li>
+<li>normalizes the values of the parameters for the rotation angle <span class="arithmatex">\(\theta\)</span> and phase <span class="arithmatex">\(\phi\)</span> to within the range
+  <span class="arithmatex">\(\left(-\pi, \pi \right]\)</span>.</li>
 </ul>
+<p>Regarding the latter point, when using the <em>inverse</em> or <em>power</em> <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/unitary_instructions.html#gate-modifiers">gate modifiers</a>,
+the modifier is applied first and only then are the values of the parameters normalized, <em>e.g.</em>,
+<code>pow(1/2).Rx(3 * pi)</code> becomes <code>Rx(-pi / 2)</code>, instead of <code>Rx(pi / 2)</code>.</p>
 <div class="admonition warning">
 <p class="admonition-title">OpenSquirrel's native tongue is cQASM</p>
 <p>The OpenSquirrel reader only accepts quantum programs written in
