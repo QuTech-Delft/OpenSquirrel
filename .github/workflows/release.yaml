@@ -9,6 +9,9 @@ on:
     types:
       - created
 
+env:
+  UV_USE_ACTIVE_ENV: 1
+
 jobs:
   publish:
     name: Publish assets
