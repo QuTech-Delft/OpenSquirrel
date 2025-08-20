@@ -25,14 +25,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install poetry
+      - name: Install uv
         uses: yezz123/setup-uv@v4
         with:
           uv-version: "0.8.12"
 
       - name: Install package with doc dependencies
         run: |
-            uv sync --group docs
+          uv sync --group docs
 
       - name: Configure Git
         run: |
@@ -43,7 +43,7 @@ jobs:
       - name: Dry run
         if: github.event_name == 'pull_request'
         run: |
-            uv run mkdocs build
+          uv run mkdocs build
 
       - name: Upload and tag as latest
         if: github.ref == 'refs/heads/develop'
