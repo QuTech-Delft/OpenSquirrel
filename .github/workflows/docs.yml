@@ -49,10 +49,12 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: |
             uv run mike deploy --push latest
-            uv run mike set-default --push latest
 
       - name: Upload and tag as git tag
         if: github.event_name == 'release' && github.event.action == 'created'
         run: |
           uv run mike deploy --push ${{ github.ref_name }}
+
+      - name: Set default page to latest
+        run: |
           uv run mike set-default --push latest
