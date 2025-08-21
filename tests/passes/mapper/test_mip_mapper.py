@@ -89,3 +89,26 @@ def test_timeout(mapper3: MIPMapper, circuit2: Circuit) -> None:
     with pytest.raises(RuntimeError, match="MIP solver failed"):
         # timeout used: 0.000001
         mapper3.map(circuit2.ir, circuit2.qubit_register_size)
+
+def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
+    """Test mapping a circuit with fewer virtual qubits than physical qubits available."""
+    # mapper1 has connectivity with 5 physical qubits (0,1,2,3,4)
+    # Create a circuit with only 3 virtual qubits
+    builder = CircuitBuilder(3)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    builder.CNOT(1, 2)
+    circuit = builder.to_circuit()
+    
+    # Should successfully map 3 virtual qubits to 5 physical qubits
+    mapping = mapper1.map(circuit.ir, circuit.qubit_register_size)
+    
+    # Verify mapping properties
+    assert len(mapping) == 3  # Should have exactly 3 mappings (one per virtual qubit)
+    
+    # Check that all physical qubits in the mapping are valid
+    physical_qubits = [mapping[i] for i in range(3)]  # Get mapping for virtual qubits 0, 1, 2
+    assert all(0 <= physical_qubit <= 4 for physical_qubit in physical_qubits)
+    
+    # All virtual qubits should map to different physical qubits
+    assert len(set(physical_qubits)) == 3

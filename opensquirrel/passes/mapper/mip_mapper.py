@@ -47,9 +47,15 @@ class MIPMapper(Mapper):
         """
         num_physical_qubits = len(self.connectivity)
 
-        self._validate_logical_vs_physical_qubits(qubit_register_size)
-        distance_matrix = self._get_distance(self.connectivity)
-        cost = self._get_cost(ir, distance_matrix, qubit_register_size, num_physical_qubits)
+        if qubit_register_size > num_physical_qubits:
+            error_message = (
+                f"Number of virtual qubits ({qubit_register_size}) exceeds "
+                f"number of physical qubits ({num_physical_qubits})"
+            )
+            raise RuntimeError(error_message)
+
+        distance = self._get_distance(self.connectivity)
+        cost = self._get_cost(ir, distance, qubit_register_size, num_physical_qubits)
         constraints, integrality, bounds = self._get_constraints(qubit_register_size, num_physical_qubits)
         milp_options = self._get_milp_options()
         mapping = self._solve_and_extract_mapping(
@@ -74,16 +80,6 @@ class MIPMapper(Mapper):
                         distance[i][j] = distance[i][k] + distance[k][j]
 
         return list(distance)
-
-    def _validate_logical_vs_physical_qubits(self, qubit_register_size: int) -> None:
-        # Fail fast: if the number of virtual qubits exceeds the number of physical qubits
-        num_physical_qubits = len(self.connectivity)
-        if qubit_register_size > num_physical_qubits:
-            error_message = (
-                f"Number of virtual qubits ({qubit_register_size}) exceeds "
-                f"number of physical qubits ({num_physical_qubits})"
-            )
-            raise RuntimeError(error_message)
 
     def _get_cost(
         self, ir: IR, distance: list[list[int]], num_virtual_qubits: int, num_physical_qubits: int
@@ -112,15 +108,14 @@ class MIPMapper(Mapper):
     ) -> tuple[list[LinearConstraint], list[bool], Bounds]:
         num_vars = num_virtual_qubits * num_physical_qubits
         eq_a = np.zeros((num_virtual_qubits, num_vars))
-        for i in range(num_virtual_qubits):
-            for k in range(num_physical_qubits):
-                eq_a[i, i * num_physical_qubits + k] = 1
+        for q_i in range(num_virtual_qubits):
+            for q_k in range(num_physical_qubits):
+                eq_a[q_i, q_i * num_physical_qubits + q_k] = 1
         eq_b = np.ones(num_virtual_qubits)
-
         ub_a = np.zeros((num_physical_qubits, num_vars))
-        for k in range(num_physical_qubits):
-            for i in range(num_virtual_qubits):
-                ub_a[k, i * num_physical_qubits + k] = 1
+        for q_k in range(num_physical_qubits):
+            for q_i in range(num_virtual_qubits):
+                ub_a[q_k, q_i * num_physical_qubits + q_k] = 1
         ub_b = np.ones(num_physical_qubits)
         integrality = np.ones(num_vars, dtype=bool)
         bounds = Bounds(0, 1)
@@ -155,8 +150,11 @@ class MIPMapper(Mapper):
 
         x_sol = res.x.reshape((num_virtual_qubits, num_physical_qubits))
         mapping = []
-        for i in range(num_virtual_qubits):
-            k = int(np.argmax(x_sol[i]))
-            mapping.append(k)
+        for q_i in range(num_virtual_qubits):
+            q_k = int(np.argmax(x_sol[q_i]))
+            mapping.append(q_k)
 
         return mapping
+
+
+

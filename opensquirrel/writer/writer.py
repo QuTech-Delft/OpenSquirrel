@@ -115,24 +115,28 @@ class _WriterImpl(IRVisitor):
 
     def visit_cnot(self, gate: CNOT) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
+        target_qubit_operand = gate.target_qubit.accept(self)
+        # target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
         self.output += f"CNOT {control_qubit_operand}, {target_qubit_operand}\n"
 
     def visit_cz(self, gate: CZ) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
+        target_qubit_operand = gate.target_qubit.accept(self)
+        # target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
         self.output += f"CZ {control_qubit_operand}, {target_qubit_operand}\n"
 
     def visit_cr(self, gate: CR) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
         theta_argument = gate.theta.accept(self)
-        target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
+        target_qubit_operand = gate.target_qubit.accept(self)
+        # target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
         self.output += f"CR({theta_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
 
     def visit_crk(self, gate: CRk) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
         k_argument = gate.k.accept(self)
-        target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
+        # target_qubit_operand = gate.target_gate.qubit.accept(self)  # type: ignore [attr-defined]
+        target_qubit_operand = gate.target_qubit.accept(self)
         self.output += f"CRk({k_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
 
     def visit_measure(self, measure: Measure) -> None:
@@ -164,3 +168,5 @@ def circuit_to_string(circuit: Circuit) -> str:
 
     # Remove all trailing lines and leave only one
     return writer_impl.output.rstrip() + "\n"
+
+

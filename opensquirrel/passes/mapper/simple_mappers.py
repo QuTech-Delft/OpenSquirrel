@@ -36,14 +36,17 @@ class HardcodedMapper(Mapper):
             mapping: The mapping from virtual to physical qubits
         """
         super().__init__(**kwargs)
-        self._hardcoded_mapping = mapping
+        self._mapping = mapping
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
         """Return the hardcoded mapping."""
-        if qubit_register_size != self._hardcoded_mapping.size():
-            msg = f"qubit register size ({qubit_register_size}) and mapping size ({self._hardcoded_mapping.size()}) differ"  # noqa: E501
+        if qubit_register_size != self._mapping.size():
+            msg = (
+                f"qubit register size ({qubit_register_size}) and "
+                f"mapping size ({self._mapping.size()}) differ"
+            )
             raise ValueError(msg)
-        return self._hardcoded_mapping
+        return self._mapping
 
 
 class RandomMapper(Mapper):
@@ -59,7 +62,7 @@ class RandomMapper(Mapper):
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
         """Create a random mapping."""
-        if self.seed is not None:
+        if self.seed:
             random.seed(self.seed)
 
         physical_qubit_register = list(range(qubit_register_size))
