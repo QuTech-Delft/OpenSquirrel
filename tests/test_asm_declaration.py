@@ -1,8 +1,8 @@
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.parser.libqasm.parser import Parser
 from opensquirrel.passes.merger import SingleQubitGatesMerger
+from opensquirrel.reader import LibQasmParser
 
 
 def test_empty_raw_text_string() -> None:
@@ -97,7 +97,7 @@ def test_invalid_backend_name() -> None:
         OSError,
         match=r"Error at <unknown file name>:5:13..16: mismatched input '100' expecting IDENTIFIER",
     ):
-        Parser().circuit_from_string(
+        LibQasmParser().circuit_from_string(
             """version 3.0
 
         qubit q
@@ -113,7 +113,7 @@ def test_invalid_raw_text_string() -> None:
         OSError,
         match=r"Error at <unknown file name>:5:26..29: mismatched input ''''' expecting RAW_TEXT_STRING",
     ):
-        Parser().circuit_from_string(
+        LibQasmParser().circuit_from_string(
             """version 3
 
         qubit q

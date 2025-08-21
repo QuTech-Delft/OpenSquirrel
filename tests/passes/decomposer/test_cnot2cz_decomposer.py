@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
 import pytest
 
-from opensquirrel.ir import CNOT, CR, CZ, SWAP, ControlledGate, CRk, Gate, H, Ry, X
+from opensquirrel import CNOT, CR, CZ, SWAP, CRk, H, Ry, X
+from opensquirrel.ir.semantics import ControlledGate
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 @pytest.fixture
