@@ -24,6 +24,13 @@ class ShortestPathRouter(Router):
                             qubit.index = end_qubit_index
                         elif qubit.index == end_qubit_index:
                             qubit.index = start_qubit_index
+
+                    if hasattr(statement, "target_qubit"):
+                        if statement.target_qubit.index == start_qubit_index:
+                            statement.target_qubit.index = end_qubit_index
+                        elif statement.target_qubit.index == end_qubit_index:
+                            statement.target_qubit.index = start_qubit_index
+
             statement_index += 1
 
     def route(self, ir: IR) -> IR:

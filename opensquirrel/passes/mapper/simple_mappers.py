@@ -41,10 +41,7 @@ class HardcodedMapper(Mapper):
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
         """Return the hardcoded mapping."""
         if qubit_register_size != self._mapping.size():
-            msg = (
-                f"qubit register size ({qubit_register_size}) and "
-                f"mapping size ({self._mapping.size()}) differ"
-            )
+            msg = f"qubit register size ({qubit_register_size}) and mapping size ({self._mapping.size()}) differ"
             raise ValueError(msg)
         return self._mapping
 

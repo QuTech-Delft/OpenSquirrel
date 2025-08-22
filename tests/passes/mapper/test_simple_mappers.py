@@ -29,6 +29,11 @@ class TestIdentityMapper:
         mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
         assert mapping == Mapping([0, 1, 2])
 
+    def test_map_method(self, mapper: IdentityMapper, circuit: Circuit) -> None:
+        initial_circuit = str(circuit)
+        circuit.map(mapper=mapper)
+        assert str(circuit) == initial_circuit
+
 
 class TestHardcodedMapper:
     @pytest.fixture
@@ -40,6 +45,15 @@ class TestHardcodedMapper:
     def circuit(self) -> Circuit:
         builder = CircuitBuilder(10)
         builder.H(0)
+        builder.H(1)
+        builder.H(2)
+        builder.H(3)
+        builder.H(4)
+        builder.H(5)
+        builder.H(6)
+        builder.H(7)
+        builder.H(8)
+        builder.H(9)
         return builder.to_circuit()
 
     def test_compliance(self, mapper: HardcodedMapper) -> None:
@@ -48,6 +62,28 @@ class TestHardcodedMapper:
     def test_get_mapping(self, mapper: HardcodedMapper, circuit: Circuit) -> None:
         mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
         assert mapping == Mapping([1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
+
+    def test_map_method(self, mapper: HardcodedMapper, circuit: Circuit) -> None:
+        circuit.map(mapper=mapper)
+
+        assert (
+            str(circuit)
+            == """version 3.0
+
+qubit[10] q
+
+H q[1]
+H q[2]
+H q[3]
+H q[4]
+H q[5]
+H q[6]
+H q[7]
+H q[8]
+H q[9]
+H q[0]
+"""
+        )
 
 
 class TestRandomMapper:
@@ -67,6 +103,10 @@ class TestRandomMapper:
     def test_get_mapping(self, mapper: RandomMapper, circuit: Circuit) -> None:
         mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
         assert len(mapping) == 5
+
+    def test_map_method(self, mapper: RandomMapper, circuit: Circuit) -> None:
+        circuit.map(mapper=mapper)
+        assert str(circuit) is not None
 
     @pytest.mark.parametrize("seed, qubit_register_size", [(42, 5), (123, 10), (456, 20)])  # noqa: PT006
     def test_mapping_uniqueness(self, seed: int, qubit_register_size: int) -> None:

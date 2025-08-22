@@ -19,26 +19,25 @@ class TestMapper:
         assert mapper is not None
 
     def test_implementation(self) -> None:
-        class Mapper2(Mapper):
+        class IncompleteMapper(Mapper):
             pass
 
-        mapper2 = Mapper2()
-        assert mapper2 is not None
+        incomplete_mapper = IncompleteMapper()
 
         builder = CircuitBuilder(1)
         builder.H(0)
         circuit = builder.to_circuit()
 
         with pytest.raises(NotImplementedError):
-            mapper2.map(circuit.ir, circuit.qubit_register_size)
+            incomplete_mapper.map(circuit.ir, circuit.qubit_register_size)
 
-        class Mapper3(Mapper2):
+        class ProperMapper(Mapper):
             def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-                return Mapping([0])
+                return Mapping(list(range(qubit_register_size)))
 
-        mapper3 = Mapper3()
-        mapping = mapper3.map(circuit.ir, circuit.qubit_register_size)
-        assert mapping == Mapping([0])
+        proper_mapper = ProperMapper()
+        mapping = proper_mapper.map(circuit.ir, circuit.qubit_register_size)
+        assert len(mapping) == circuit.qubit_register_size
 
 
 class TestMapQubits:

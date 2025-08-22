@@ -155,6 +155,3 @@ class MIPMapper(Mapper):
             mapping.append(q_k)
 
         return mapping
-
-
-

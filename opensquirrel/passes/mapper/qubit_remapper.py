@@ -97,15 +97,19 @@ class _QubitRemapper(IRVisitor):
         return controlled_gate
 
     def visit_cnot(self, gate: CNOT) -> ControlledGate:
+        gate.target_qubit.accept(self)
         return self.visit_controlled_gate(gate)
 
     def visit_cz(self, gate: CZ) -> ControlledGate:
+        gate.target_qubit.accept(self)
         return self.visit_controlled_gate(gate)
 
     def visit_cr(self, gate: CR) -> ControlledGate:
+        gate.target_qubit.accept(self)
         return self.visit_controlled_gate(gate)
 
     def visit_crk(self, gate: CRk) -> ControlledGate:
+        gate.target_qubit.accept(self)
         return self.visit_controlled_gate(gate)
 
 
