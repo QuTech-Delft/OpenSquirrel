@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-import math
+from math import pi, sqrt
+from typing import TYPE_CHECKING
 
 import pytest
 
 from opensquirrel import CNOT, CR, CZ, CRk, H, Ry, Rz, X
-from opensquirrel.ir import ControlledGate, Gate
+from opensquirrel.ir.semantics import ControlledGate
 from opensquirrel.passes.decomposer import CNOTDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 @pytest.fixture
@@ -39,15 +43,15 @@ def test_CZ(decomposer: CNOTDecomposer) -> None:  # noqa: N802
     gate = CZ(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [Rz(1, math.pi), Ry(1, math.pi / 2), CNOT(0, 1), Ry(1, -math.pi / 2), Rz(1, math.pi)]
+    assert decomposed_gate == [Rz(1, pi), Ry(1, pi / 2), CNOT(0, 1), Ry(1, -pi / 2), Rz(1, pi)]
 
 
 @pytest.mark.parametrize(
     "controlled_gate",
     [
-        CR(0, 1, math.pi / 2),
-        CR(0, 1, math.pi / 4),
-        CR(0, 1, 1 / math.sqrt(2)),
+        CR(0, 1, pi / 2),
+        CR(0, 1, pi / 4),
+        CR(0, 1, 1 / sqrt(2)),
         CRk(0, 1, 1),
         CRk(0, 1, 2),
         CRk(0, 1, 16),

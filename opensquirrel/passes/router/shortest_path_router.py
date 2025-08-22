@@ -2,9 +2,10 @@ from typing import Any
 
 import networkx as nx
 
+from opensquirrel import SWAP
 from opensquirrel.exceptions import NoRoutingPathError
-from opensquirrel.ir import IR, SWAP, Gate, Instruction
-from opensquirrel.passes.router import Router
+from opensquirrel.ir import IR, Gate, Instruction
+from opensquirrel.passes.router.general_router import Router
 
 
 class ShortestPathRouter(Router):

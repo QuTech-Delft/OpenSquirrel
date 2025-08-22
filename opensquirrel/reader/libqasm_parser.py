@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, cast
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 import cqasm.v3x as cqasm
 
@@ -11,7 +11,6 @@ from opensquirrel.ir import (
     IR,
     AsmDeclaration,
     Bit,
-    BlochSphereRotation,
     Float,
     Gate,
     Int,
@@ -21,8 +20,11 @@ from opensquirrel.ir import (
 )
 from opensquirrel.register_manager import RegisterManager
 
+if TYPE_CHECKING:
+    from opensquirrel.ir.semantics import BlochSphereRotation
 
-class Parser:
+
+class LibQasmParser:
     def __init__(self) -> None:
         self.ir = IR()
 
@@ -55,12 +57,12 @@ class Parser:
 
     @staticmethod
     def _is_qubit_type(ast_expression: Any) -> bool:
-        ast_type = Parser._type_of(ast_expression)
+        ast_type = LibQasmParser._type_of(ast_expression)
         return bool(ast_type == cqasm.types.Qubit or ast_type == cqasm.types.QubitArray)
 
     @staticmethod
     def _is_bit_type(ast_expression: Any) -> bool:
-        ast_type = Parser._type_of(ast_expression)
+        ast_type = LibQasmParser._type_of(ast_expression)
         return bool(ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray)
 
     @staticmethod
@@ -194,9 +196,9 @@ class Parser:
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
-        analyzer = Parser._create_analyzer()
+        analyzer = LibQasmParser._create_analyzer()
         analysis_result = analyzer.analyze_string(s)
-        Parser._check_analysis_result(analysis_result)
+        LibQasmParser._check_analysis_result(analysis_result)
         ast = analysis_result
 
         # Create RegisterManager
@@ -206,17 +208,17 @@ class Parser:
         expanded_args: list[tuple[Any, ...]] = []
         for statement in ast.block.statements:
             instruction_generator: Callable[..., Statement]
-            if Parser._is_gate_instruction(statement):
+            if LibQasmParser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_generator(statement)
                 expanded_args = self._get_expanded_instruction_args(statement)
-            elif Parser._is_non_unitary_instruction(statement):
+            elif LibQasmParser._is_non_unitary_instruction(statement):
                 instruction_generator = self._get_non_unitary_generator(statement)
                 expanded_args = (
                     self._get_expanded_measure_args(statement.operands)
                     if statement.name == "measure"
                     else self._get_expanded_instruction_args(statement)
                 )
-            elif Parser._is_asm_declaration(statement):
+            elif LibQasmParser._is_asm_declaration(statement):
                 asm_declaration = AsmDeclaration(statement.backend_name, statement.backend_code)
                 self.ir.add_statement(asm_declaration)
             else:
