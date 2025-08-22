@@ -7,11 +7,11 @@ from opensquirrel.ir import IR, AsmDeclaration, Gate
 from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.passes.decomposer import Decomposer
-    from opensquirrel.passes.mapper import Mapper
-    from opensquirrel.passes.merger import Merger
-    from opensquirrel.passes.router import Router
-    from opensquirrel.passes.validator import Validator
+    from opensquirrel.passes.decomposer.general_decomposer import Decomposer
+    from opensquirrel.passes.mapper.general_mapper import Mapper
+    from opensquirrel.passes.merger.general_merger import Merger
+    from opensquirrel.passes.router.general_router import Router
+    from opensquirrel.passes.validator.general_validator import Validator
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -46,7 +46,7 @@ class Circuit:
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
-        from opensquirrel import writer
+        from opensquirrel.writer import writer
 
         return writer.circuit_to_string(self)
 
@@ -68,9 +68,9 @@ class Circuit:
         Args:
             cqasm3_string: a cQASM 3 string
         """
-        from opensquirrel.parser.libqasm.parser import Parser
+        from opensquirrel.reader import LibQasmParser
 
-        return Parser().circuit_from_string(cqasm3_string)
+        return LibQasmParser().circuit_from_string(cqasm3_string)
 
     @property
     def qubit_register_size(self) -> int:

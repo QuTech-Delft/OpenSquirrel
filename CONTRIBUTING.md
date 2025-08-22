@@ -2,7 +2,7 @@ We recommend working on a feature branch and pull request from there.
 
 ## Requirements
 
-- `poetry`,
+- `uv`,
 - `PyCharm` (recommended).
 
 ## Creating a feature branch
@@ -12,13 +12,10 @@ Make sure your environment contains all the updated versions of the dependencies
 From an OpenSquirrel checkout:
 
 ```
-$ poetry shell
-$ poetry install
+$ uv sync
 ```
 
 And that you base your feature branch off an updated `develop`.
-
-From a `poetry` shell (started from an OpenSquirrel checkout):
 
 ```
 $ git checkout develop
@@ -30,22 +27,19 @@ $ git branch <feature branch name>
 ## Before creating the pull request
 
 Make sure the tests and the following linters pass.
-From a `poetry` shell (started from an OpenSquirrel checkout):
+Using `tox` (started from an OpenSquirrel checkout):
 
 ```
-$ poetry run mypy opensquirrel tests --strict
-$ poetry run pytest . -vv
-$ poetry run ruff check --fix
-$ poetry run ruff format
+$ tox -e fix,type,test
 ```
 
 ## Setting the Python interpreter (PyCharm)
 
-You can choose the Python interpreter from the `poetry` environment.
+You can choose the Python interpreter from the `uv` environment.
 
 - Go to `Settings` > `Project: OpenSquirrel` > `Python Interpreter`.
 - Click on `Add Interpeter`, and then select `Add Local Interpreter`.
-- Select `Poetry Environment`, and then `Existing environment`.
+- Select `uv Environment`, and then `Existing environment`.
 - Click on `...` to navigate to the `Interpreter` binary.
 
 ## Running/Debugging tests (PyCharm)

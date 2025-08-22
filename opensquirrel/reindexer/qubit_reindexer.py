@@ -4,29 +4,33 @@ from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 from opensquirrel.ir import (
-    CNOT,
-    CR,
-    CZ,
     IR,
-    SWAP,
     Barrier,
+    Gate,
+    Init,
+    IRVisitor,
+    Measure,
+    Reset,
+    Wait,
+)
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    Gate,
-    Init,
-    IRVisitor,
     MatrixGate,
-    Measure,
-    Reset,
-    Wait,
 )
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
+    from opensquirrel import (
+        CNOT,
+        CR,
+        CZ,
+        SWAP,
+        CRk,
+    )
     from opensquirrel.circuit import Circuit
 
 
