@@ -61,7 +61,9 @@ non-unitary instructions, and control instructions.
 
 ```python
 builder = CircuitBuilder(2, 2)
-builder.Ry(0, pi / 2).X(0).CNOT(0, 1).H(0).X(1).barrier(1).H(0).X(1).measure(0, 0).H(0).X(1)
+builder.Ry(0, pi / 2).X(0).CNOT(0, 1).H(0).X(1)
+builder.barrier(1)
+builder.H(0).X(1).measure(0, 0).H(0).X(1)
 circuit = builder.to_circuit()
 
 circuit.merge(merger=SingleQubitGatesMerger())
