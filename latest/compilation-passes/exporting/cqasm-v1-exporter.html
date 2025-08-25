@@ -3858,8 +3858,270 @@
 
   <h1>cQASMv1 exporter</h1>
 
-<div class="admonition note">
-<p class="admonition-title">Coming soon</p>
+<p>The cQASM v1 exporter (<code>ExportFormat.CQASM_V1</code>) exports the circuit to a string that adheres to the
+<a href="https://libqasm.readthedocs.io/">cQASM version 1.0 language specification</a>.</p>
+<p>Here are some important differences to take note of:</p>
+<ol>
+<li>The <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/version_statement.html">version statement</a>
+changes from <code>version 3.&lt;m&gt;</code> (where <code>&lt;m&gt;</code> refers to the <em>minor</em> version number) to <code>version 1.0</code>.</li>
+<li>All <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/variable_declarations/qubit_register_declaration.html">qubit register declarations</a>
+are combined into a single (virtual) qubit register (<code>q</code>) statement.</li>
+<li><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/variable_declarations/bit_register_declaration.html">Bit registers declarations</a>
+and <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/measure_instruction.html">assignments of measurement outcomes to bit register variables</a>
+are discarded; cQASM version 1.0 does not support bit registers or variables.
+Note that the measurement statement is not discarded; the <code>measure</code> instruction is translated to
+<a href="https://libqasm.readthedocs.io/en/latest/cq1-instructions.html#measure-z-qubit"><code>measure_z</code></a>.
+The outcome of a measurement on qubit at (virtual) index <em>i</em> will be stored at index <em>i</em> in the measurement register.</li>
+<li>The non-unitary <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/init_instruction.html"><code>init</code></a>
+and <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/reset_instruction.html"><code>reset</code></a>
+instructions are both translated to <a href="https://libqasm.readthedocs.io/en/latest/cq1-instructions.html#prep-z-qubit"><code>prep_z</code></a>.</li>
+<li><a href="https://libqasm.readthedocs.io/en/latest/cq1-instructions.html#prep-z-qubit">Instructions are translated to lowercase</a>;
+even though, cQASM version 1.0 is not case-sensitive.</li>
+<li><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html">Single gate multi qubit (SGMQ)</a>
+notation is unpacked; the gate is applied to each qubit on a separate line.</li>
+<li>Consecutive <a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/control_instructions/barrier_instruction.html"><code>barrier</code></a>
+instructions are grouped in SGMQ notation to form a <em>uniform</em> barrier, across which no instructions on the specified
+qubits can be scheduled.</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Unsupported gates</p>
+<p>cQASM version 1.0 does not support the <a href="https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/single_qubit/sq_Rn.html">Rn gate</a>
+and will raise an error (<code>UnSupportedGateError</code>) if this gate is part of the circuit that is to be exported.
+A single-qubit <a href="../decomposition/index.html">decomposition pass</a> can be used to decompose the circuit to gates that
+the cQASM v1 exporter supports.</p>
+</div>
+<p>The four examples below show how circuits written in <a href="https://qutech-delft.github.io/cQASM-spec/">cQASM</a> are exported to
+cQASM v1.</p>
+<div class="admonition example">
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Simple circuit</label><label for="__tabbed_1_2">Registers</label><label for="__tabbed_1_3"><code>init</code> and <code>reset</code></label><label for="__tabbed_1_4">SGMQ notation and <em>uniform</em> barriers</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="sd">    qubit[2] q</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="sd">    bit[2] b</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="sd">    H q[0]</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="sd">    CNOT q[0], q[1]</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="sd">    b = measure q</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">)</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">CQASM_V1</span><span class="p">)</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">exported_circuit</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>version 1.0
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>qubits 2
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>h q[0]
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>cnot q[0], q[1]
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>measure_z q[0]
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>measure_z q[1]
+</code></pre></div>
+<p>Note that the version statement is changed (1.), the qubit register declaration is made into a statement (2.),
+the bit register declaration and assignment to bit variables have been discarded (3.),
+the instructions are in lowercase (5.), and the SGMQ notation has been unpacked (6.).
+<em>The numbers refer to the differences listed above.</em></p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="sd">    qubit[2] qA</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="sd">    bit[3] bA</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="sd">    H qA[0]</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="sd">    CNOT qA[0], qA[1]</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="sd">    bA[1,2] = measure qA</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="sd">    qubit[3] qB</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="sd">    bit[2] bB</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="sd">    H qB[1]</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="sd">    CNOT qB[1], qA[1]</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="sd">    bB[0] = measure qB[1]</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="sd">    bB[1] = measure qA[1]</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="p">)</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">CQASM_V1</span><span class="p">)</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="nb">print</span><span class="p">(</span><span class="n">exported_circuit</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>version 1.0
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>qubits 5
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>h q[0]
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>cnot q[0], q[1]
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>measure_z q[0]
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>measure_z q[1]
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>h q[3]
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>cnot q[3], q[1]
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>measure_z q[3]
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>measure_z q[1]
+</code></pre></div>
+<p>Note that the version statement is changed (1.), the qubit register declaration is made into a statement (2.),
+the bit register declaration and assignment to bit variables have been discarded (3.),
+the instructions are in lowercase (5.), and the SGMQ notation has been unpacked (6.).
+<em>The numbers refer to the differences listed above.</em></p>
+<p>In particular, this example illustrates that all qubit registers have been combined into a single (virtual)
+qubit register <code>q</code>, <em>i.e.</em>, the registers <code>qA</code> and <code>qB</code> have been concatenated into <code>q</code>,
+such that <code>qA[0], qA[1] = q[0], q[1]</code> and <code>qB[0], qB[1], qB[2] = q[2], q[3], q[4]</code>.
+The qubit registers are concatenated in the order they are declared.</p>
+<p>Moreover, the bit registers have been discarded and the measurement instructions <code>measure_z</code> <em>implicitly</em> assign
+the measurement outcomes to the bit/measurement register index corresponding to the index of the (virtual) qubit
+that is measured. For instance, <code>bB[0] = measure qB[1]</code> is translated to <code>measure_z q[3]</code>,
+and the outcome will bestored at index 3 in the bit/measurement register.
+This also implies that different measurements on the same qubit, at (virtual) index <em>i</em> will always be stored in
+the same place, <em>i.e.</em> at index <em>i</em>, on the bit/measurement register.
+Which further implies that outcomes of subsequent measurements on the same qubit always overwrite the outcome of
+the previous measurement.</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="sd">    qubit[2] q</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="sd">    bit[2] b</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="sd">    init q</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="sd">    H q[0]</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="sd">    CNOT q[0], q[1]</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="sd">    b = measure q</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="sd">    reset q</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="sd">    H q[0]</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="sd">    Z q[0]</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="sd">    CNOT q[0], q[1]</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="sd">    b = measure q</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="p">)</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">CQASM_V1</span><span class="p">)</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="nb">print</span><span class="p">(</span><span class="n">exported_circuit</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>version 1.0
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>qubits 2
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>prep_z q[0]
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>prep_z q[1]
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>h q[0]
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>cnot q[0], q[1]
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>measure_z q[0]
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>measure_z q[1]
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>prep_z q[0]
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>prep_z q[1]
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>h q[0]
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>z q[0]
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>cnot q[0], q[1]
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>measure_z q[0]
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>measure_z q[1]
+</code></pre></div>
+<p>Note that the version statement is changed (1.), the qubit register declaration is made into a statement (2.),
+the bit register declaration and assignment to bit variables have been discarded (3.),
+the <code>init</code> and <code>reset</code> instructions are both translated to <code>prep_z</code> (4.),
+the instructions are in lowercase (5.), and the SGMQ notation has been unpacked (6.).
+<em>The numbers refer to the differences listed above.</em></p>
+<p>In cQASM version 1.0, one cannot distinguish between an <code>init</code> and a <code>reset</code> instruction.
+The definition of the <code>prep_z</code> instruction is close to that of the <code>reset</code> instruction, <em>i.e.</em>,
+the state of the qubit is set to <span class="arithmatex">\(|0\rangle\)</span> by first measuring it and then,
+conditioned on the outcome being 1, applying a Pauli-X gate.</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="sd">    qubit[4] q</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="sd">    bit[4] b</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="sd">    init q[0,1]</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="sd">    barrier q[0]</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="sd">    H q[0]</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="sd">    CNOT q[0], q[1]</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="sd">    init q[2]</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>
+<a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="sd">    barrier q[0]</span>
+<a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="sd">    barrier q[1]</span>
+<a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="sd">    barrier q[2]</span>
+<a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>
+<a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="sd">    H q[2]</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="sd">    b[0,1] = measure q[0,1]</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>
+<a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="sd">    init q[3]</span>
+<a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>
+<a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="sd">    barrier q[2, 3]</span>
+<a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="sd">    Z q[2]</span>
+<a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="sd">    CNOT q[2], q[3]</span>
+<a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>
+<a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="sd">    b[2,3] = measure q[2,3]</span>
+<a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a><span class="p">)</span>
+<a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a>
+<a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">CQASM_V1</span><span class="p">)</span>
+<a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a><span class="nb">print</span><span class="p">(</span><span class="n">exported_circuit</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>version 1.0
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>qubits 4
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>prep_z q[0]
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>prep_z q[1]
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>barrier q[0]
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>h q[0]
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>cnot q[0], q[1]
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>prep_z q[2]
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>barrier q[0, 1, 2]
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>h q[2]
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>measure_z q[0]
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>measure_z q[1]
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>prep_z q[3]
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>barrier q[2, 3]
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>z q[2]
+<a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>cnot q[2], q[3]
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>measure_z q[2]
+<a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>measure_z q[3]
+</code></pre></div>
+<p>Note that the version statement is changed (1.), the qubit register declaration is made into a statement (2.),
+the bit register declaration and assignment to bit variables have been discarded (3.),
+the <code>init</code> instruction is translated to <code>prep_z</code> (4.),
+the instructions are in lowercase (5.), the SGMQ notation has been unpacked (6.) and consecutive <code>barrier</code>
+have been grouped in SGMQ notation to form a <em>uniform</em> barrier (7.).
+<em>The numbers refer to the differences listed above.</em></p>
+<p>The three consecutive barrier instructions, following the <code>init q[2]</code> statement, have been grouped using SGMQ
+notation.
+They form a uniform barrier across all the specified qubits, instead of a single barrier on each of the
+respective qubits.
+Also, in contrast to other instructions where the SGMQ notation has been unpacked, the SGMQ notation for the
+statement <code>barrier q[2, 3]</code> has been preserved.</p>
+</div>
+</div>
+</div>
 </div>
 
 
