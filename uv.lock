@@ -1844,7 +1844,7 @@ requires-dist = [
     { name = "networkx", specifier = ">=3.0.0,<4" },
     { name = "numpy", specifier = ">=1.26" },
     { name = "scipy", marker = "python_full_version < '3.10'", specifier = ">=1.11.4" },
-    { name = "scipy", marker = "python_full_version >= '3.10'", specifier = "~=1.14" },
+    { name = "scipy", marker = "python_full_version >= '3.10'", specifier = ">=1.14,<2.0" },
 ]
 
 [package.metadata.requires-dev]

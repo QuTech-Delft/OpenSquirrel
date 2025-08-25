@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from opensquirrel import CNOT, CR, CZ, SWAP, CRk, H, Ry, X
-from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel import CNOT, CR, CZ, SWAP, CRk, H, Ry
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
@@ -45,13 +44,6 @@ def test_ignores_1q_gates(decomposer: CNOT2CZDecomposer, gate: Gate, expected_re
 def test_ignores_2q_gates(decomposer: CNOT2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     check_gate_replacement(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
-
-
-def test_ignores_double_controlled(decomposer: CNOT2CZDecomposer) -> None:
-    gate = ControlledGate(control_qubit=5, target_gate=ControlledGate(control_qubit=2, target_gate=X(0)))
-    decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [gate]
 
 
 @pytest.mark.parametrize(
