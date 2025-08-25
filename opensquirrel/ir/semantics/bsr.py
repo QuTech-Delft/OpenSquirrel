@@ -39,12 +39,11 @@ class BlochSphereRotation(Gate):
              or the input BlochSphereRotation otherwise.
         """
         from opensquirrel.default_instructions import (
+            default_bsr_set_without_rn,
             default_bsr_with_angle_param_set,
-            default_bsr_without_params_set,
         )
         from opensquirrel.ir.default_gates import Rn
 
-        default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
         for gate_name in default_bsr_set_without_rn:
             arguments: tuple[Any, ...] = (bsr.qubit,)
             if gate_name in default_bsr_with_angle_param_set:
@@ -86,10 +85,10 @@ class BlochSphereRotation(Gate):
         if self.qubit != other.qubit:
             return False
 
-        if np.allclose(self.axis, other.axis, atol=ATOL):
+        if np.allclose(self.axis.value, other.axis.value, atol=ATOL):
             return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
 
-        if np.allclose(self.axis, -other.axis.value, atol=ATOL):
+        if np.allclose(self.axis.value, -other.axis.value, atol=ATOL):
             return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
 
         return False
