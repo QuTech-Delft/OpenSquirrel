@@ -55,7 +55,16 @@
     
     
     
-  </head>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -4064,20 +4073,18 @@ or H gate, in our custom-made decomposition:</p>
 <p>The decomposition of the <code>CNOT</code> gate into a <code>CZ</code> gate (with additional single-qubit gates) is used frequently.
 To this end a <code>CNOT2CZDecomposer</code> has been implemented that decomposes any <code>CNOT</code>s in a circuit to a
 <code>Ry(-π/2)</code>-<code>CZ</code>-<code>Ry(π/2)</code>. The decomposition is illustrated in the image below.</p>
-<p align="center"> <img width="600" src="../../_static/cnot2cz.png"> </p>
-
+<p><a class="glightbox" href="../../_static/cnot2cz.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="image" src="../../_static/cnot2cz.png" /></a></p>
 <p><code>Ry</code> gates are used instead of, <em>e.g.</em>, <code>H</code> gates, as they are, generally,
 more likely to be supported already by target backends.</p>
 <h5 id="swap-to-cnot-decomposer"><em><code>SWAP</code> to <code>CNOT</code> decomposer</em></h5>
 <p>The <code>SWAP2CNOTDecomposer</code> implements the predefined decomposition of the <code>SWAP</code> gate into 3 <code>CNOT</code> gates.
 The decomposition is illustrated in the image below.</p>
-<p align="center"> <img width="600" src="../../_static/swap2cnot.png"> </p>
-
+<p><a class="glightbox" href="../../_static/swap2cnot.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="image" src="../../_static/swap2cnot.png" /></a></p>
 <h5 id="swap-to-cz-decomposer"><em><code>SWAP</code> to <code>CZ</code> decomposer</em></h5>
 <p>The <code>SWAP2CZDecomposer</code> implements the predefined decomposition of the <code>SWAP</code> gate into <code>Ry</code> rotations and 3 <code>CZ</code>
 gates.
 The decomposition is illustrated in the image below.</p>
-<p align="center"> <img width="600" src="../../_static/swap2cz.png"> </p>
+<p><a class="glightbox" href="../../_static/swap2cz.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="image" src="../../_static/swap2cz.png" /></a></p>
 
 
 
@@ -4178,5 +4185,7 @@ The decomposition is illustrated in the image below.</p>
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>

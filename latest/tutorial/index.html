@@ -55,7 +55,16 @@
     
     
     
-  </head>
+   <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../assets/javascripts/glightbox.min.js"></script></head>
   
   
     
@@ -3857,8 +3866,7 @@ In a nutshell, we will do so by</p>
 </ol>
 <p>The diagram below illustrates the basic components of OpenSquirrel.
 We refer to it in the following sections, where we quickly go through the 3 aforementioned steps.</p>
-<p align="center"> <img width="700" src="../../_static/overview_diagram.png"> </p>
-
+<p><a class="glightbox" href="../_static/overview_diagram.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="image" src="../_static/overview_diagram.png" /></a></p>
 <p><strong>1. creating a circuit</strong></p>
 <p>Note that on the left side of the diagram a quantum <strong>program</strong> written in the
 <a href="https://qutech-delft.github.io/cQASM-spec/latest/"><strong>cQASM</strong> language</a> can be read-in by the <strong>reader</strong>,
@@ -4015,5 +4023,7 @@ using the <a href="../compilation-passes/exporting/quantify-scheduler-exporter.h
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
-  </body>
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
 </html>
