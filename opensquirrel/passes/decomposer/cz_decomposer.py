@@ -1,14 +1,18 @@
 from __future__ import annotations
 
-import math
+from math import pi
+from typing import TYPE_CHECKING
 
 from opensquirrel import CZ, Rx, Ry, Rz, Z
 from opensquirrel.common import ATOL
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, Gate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.passes.decomposer import XYXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.passes.merger import general_merger
 from opensquirrel.utils import filter_out_identities
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 class CZDecomposer(Decomposer):
@@ -44,7 +48,7 @@ class CZDecomposer(Decomposer):
             controlled_rotation_times_z.axis,
             controlled_rotation_times_z.angle,
         )
-        if abs((theta0_with_z - theta2_with_z) % (2 * math.pi)) < ATOL:
+        if abs((theta0_with_z - theta2_with_z) % (2 * pi)) < ATOL:
             # The decomposition can use a single CZ according to the lemma.
             A = [Ry(target_qubit, theta1_with_z / 2), Rx(target_qubit, theta2_with_z)]  # noqa: N806
             B = [Rx(target_qubit, -theta2_with_z), Ry(target_qubit, -theta1_with_z / 2)]  # noqa: N806
@@ -53,7 +57,7 @@ class CZDecomposer(Decomposer):
                     *B,
                     CZ(g.control_qubit, target_qubit),
                     *A,
-                    Rz(g.control_qubit, g.target_gate.phase - math.pi / 2),
+                    Rz(g.control_qubit, g.target_gate.phase - pi / 2),
                 ],
             )
 

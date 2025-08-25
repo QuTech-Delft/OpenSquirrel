@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, SupportsFloat
+from typing import TYPE_CHECKING, Any, SupportsFloat
 
-from opensquirrel.ir import BlochSphereRotation, ControlledGate, QubitLike
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.utils.context import temporary_class_attr
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import QubitLike
 
 
 class GateModifier:

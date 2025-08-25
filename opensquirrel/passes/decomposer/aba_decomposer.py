@@ -10,7 +10,8 @@ from typing import Any, ClassVar
 
 from opensquirrel import Rx, Ry, Rz
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Axis, AxisLike, BlochSphereRotation, Gate
+from opensquirrel.ir import Axis, AxisLike, Gate
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.utils import acos, are_axes_consecutive, filter_out_identities
 
