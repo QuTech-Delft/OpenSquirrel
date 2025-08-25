@@ -63,8 +63,8 @@ version of OpenSquirrel._
     [Decomposition passes](../decomposition/index.md) can be used to decompose the circuit to gates that the
     quantify-scheduler exporter supports.
 
-The four examples below show how circuits written in [cQASM](https://qutech-delft.github.io/cQASM-spec/) are exported to
-cQASM v1.
+The four examples below show how circuits written in [cQASM](https://qutech-delft.github.io/cQASM-spec/) are exported to a quantify-scheduler
+[`Schedule`](https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/index.html#quantify_scheduler.Schedule).
 
 !!! example ""
 
