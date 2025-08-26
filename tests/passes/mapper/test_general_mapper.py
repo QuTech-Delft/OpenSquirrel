@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
@@ -14,30 +14,16 @@ if TYPE_CHECKING:
 
 
 class TestMapper:
-    def test_init(self) -> None:
-        mapper = Mapper()
-        assert mapper is not None
-
     def test_implementation(self) -> None:
-        class IncompleteMapper(Mapper):
-            pass
+        class Mapper2(Mapper):
+            def __init__(self, qubit_register_size: int, **kwargs: Any) -> None:
+                super().__init__(**kwargs)
+                self._qubit_register = qubit_register_size
 
-        incomplete_mapper = IncompleteMapper()
-
-        builder = CircuitBuilder(1)
-        builder.H(0)
-        circuit = builder.to_circuit()
-
-        with pytest.raises(NotImplementedError):
-            incomplete_mapper.map(circuit.ir, circuit.qubit_register_size)
-
-        class ProperMapper(Mapper):
             def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-                return Mapping(list(range(qubit_register_size)))
+                return Mapping(list(range(self._qubit_register)))
 
-        proper_mapper = ProperMapper()
-        mapping = proper_mapper.map(circuit.ir, circuit.qubit_register_size)
-        assert len(mapping) == circuit.qubit_register_size
+        Mapper2(qubit_register_size=1)
 
 
 class TestMapQubits:

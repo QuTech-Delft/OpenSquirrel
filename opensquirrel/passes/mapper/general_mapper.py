@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -9,15 +10,11 @@ if TYPE_CHECKING:
     from opensquirrel.passes.mapper.mapping import Mapping
 
 
-class Mapper:
+class Mapper(ABC):
     """Base class for the Mapper pass."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        """Initialize the mapper."""
+    def __init__(self, **kwargs: Any) -> None: ...
 
-    def get_mapping(self, ir: IR, qubit_register_size: int) -> Mapping:
-        """Get mapping."""
-        return self.map(ir, qubit_register_size)
-
+    @abstractmethod
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-        raise NotImplementedError()
+        raise NotImplementedError

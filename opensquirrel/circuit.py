@@ -122,7 +122,7 @@ class Circuit:
         """
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
-        mapping = mapper.get_mapping(self.ir, self.qubit_register_size)
+        mapping = mapper.map(self.ir, self.qubit_register_size)
         remap_ir(self, mapping)
 
     def merge(self, merger: Merger) -> None:
