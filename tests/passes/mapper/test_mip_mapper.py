@@ -11,23 +11,21 @@ from opensquirrel.passes.mapper.mapping import Mapping
 @pytest.fixture
 def mapper1() -> MIPMapper:
     connectivity = {"0": [1, 2], "1": [0, 2, 3], "2": [0, 1, 4], "3": [1, 4], "4": [2, 3]}
-    qubit_register_size = 5
-    return MIPMapper(qubit_register_size=qubit_register_size, connectivity=connectivity)
+
+    return MIPMapper(connectivity=connectivity)
 
 
 @pytest.fixture
 def mapper2() -> MIPMapper:
     connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
-    qubit_register_size = 7
-    return MIPMapper(qubit_register_size=qubit_register_size, connectivity=connectivity)
+    return MIPMapper(connectivity=connectivity)
 
 
 @pytest.fixture
 def mapper3() -> MIPMapper:
     connectivity = {"0": [2], "1": [0, 3, 4], "2": [0, 5], "3": [1, 5, 2], "4": [2, 5], "5": [4, 6], "6": [3]}
-    qubit_register_size = 7
     timeout = 0.000001
-    return MIPMapper(qubit_register_size=qubit_register_size, timeout=timeout, connectivity=connectivity)
+    return MIPMapper(timeout=timeout, connectivity=connectivity)
 
 
 @pytest.fixture
@@ -72,22 +70,45 @@ def circuit3() -> Circuit:
 
 def test_mip_mapper_simple_connectivity(mapper1: MIPMapper, circuit1: Circuit) -> None:
     expected_mapping = Mapping([4, 3, 2, 0, 1])
-    mapping = mapper1.map(circuit1.ir)
+    mapping = mapper1.map(circuit1.ir, circuit1.qubit_register_size)
     assert mapping == expected_mapping
 
 
 def test_mip_mapper_complex_connectivity(mapper2: MIPMapper, circuit2: Circuit) -> None:
     expected_mapping = Mapping([3, 4, 2, 5, 1, 0, 6])
-    mapping = mapper2.map(circuit2.ir)
+    mapping = mapper2.map(circuit2.ir, circuit2.qubit_register_size)
     assert mapping == expected_mapping
 
 
 def test_more_logical_qubits_than_physical(mapper1: MIPMapper, circuit3: Circuit) -> None:
     with pytest.raises(RuntimeError, match=r"Number of virtual qubits (.*) exceeds number of physical qubits (.*)"):
-        mapper1.map(circuit3.ir)
+        mapper1.map(circuit3.ir, circuit3.qubit_register_size)
 
 
 def test_timeout(mapper3: MIPMapper, circuit2: Circuit) -> None:
     with pytest.raises(RuntimeError, match="MIP solver failed"):
         # timeout used: 0.000001
-        mapper3.map(circuit2.ir)
+        mapper3.map(circuit2.ir, circuit2.qubit_register_size)
+
+
+def test_map_method(mapper1: MIPMapper, circuit1: Circuit) -> None:
+    initial_circuit = str(circuit1)
+    circuit1.map(mapper=mapper1)
+    assert str(circuit1) != initial_circuit
+
+
+def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
+    builder = CircuitBuilder(3)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    builder.CNOT(1, 2)
+    circuit = builder.to_circuit()
+
+    mapping = mapper1.map(circuit.ir, circuit.qubit_register_size)
+
+    assert len(mapping) == 3
+
+    physical_qubits = [mapping[i] for i in range(3)]
+    assert all(0 <= physical_qubit <= 4 for physical_qubit in physical_qubits)
+
+    assert len(set(physical_qubits)) == 3

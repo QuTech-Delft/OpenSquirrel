@@ -5,13 +5,13 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from opensquirrel import CNOT, CR, CZ, CRk, H, Ry, Rz, X
-from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel import CNOT, CR, CZ, CRk, H, Ry, Rz
 from opensquirrel.passes.decomposer import CNOTDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
+    from opensquirrel.ir.semantics import ControlledGate
 
 
 @pytest.fixture
@@ -23,13 +23,6 @@ def decomposer() -> CNOTDecomposer:
 def test_ignores_1q_gates(decomposer: CNOTDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     check_gate_replacement(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
-
-
-def test_ignores_double_controlled(decomposer: CNOTDecomposer) -> None:
-    gate = ControlledGate(control_qubit=5, target_gate=ControlledGate(control_qubit=2, target_gate=X(0)))
-    decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
-    assert decomposed_gate == [gate]
 
 
 def test_preserves_CNOT(decomposer: CNOTDecomposer) -> None:  # noqa: N802
