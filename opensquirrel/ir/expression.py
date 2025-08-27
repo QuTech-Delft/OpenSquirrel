@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol, SupportsFloat, SupportsInt, Union, cast, overload, runtime_checkable
@@ -28,7 +28,7 @@ class String(Expression):
         value: value of the ``String`` object.
     """
 
-    value: str
+    value: str                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
 
     def __init__(self, value: SupportsStr) -> None:
         """Init of the ``String`` object.
@@ -177,25 +177,25 @@ class Qubit(Expression):
         return visitor.visit_qubit(self)
 
 
-class Axis(Sequence[np.float64], Expression):
-    """The ``Axis`` object parses and stores a vector containing 3 elements.
-
-    The input vector is always normalized before it is stored.
-    """
+class BaseAxis(Sequence[np.float64], Expression, ABC):
 
     _len = 3
 
     def __init__(self, *axis: AxisLike) -> None:
-        """Init of the ``Axis`` object.
+        """Init of the ``BaseAxis`` object.
 
         axis: An ``AxisLike`` to create the axis from.
         """
-        axis_to_parse = axis[0] if len(axis) == 1 else cast("AxisLike", axis)
-        self._value = self.normalize(self.parse(axis_to_parse))
-
+        self.value = axis[0] if len(axis) == 1 else cast("AxisLike", axis)
+    
+    @staticmethod
+    @abstractmethod
+    def parse(axis: AxisLike) -> NDArray[np.float64]:
+        ...
+    
     @property
     def value(self) -> NDArray[np.float64]:
-        """The ``Axis`` data saved as a 1D-Array with 3 elements."""
+        """The ``BaseAxis`` data saved as a 1D-Array with 3 elements."""
         return self._value
 
     @value.setter
@@ -206,50 +206,7 @@ class Axis(Sequence[np.float64], Expression):
             axis: An ``AxisLike`` to create the axis from.
         """
         self._value = self.parse(axis)
-        self._value = self.normalize(self._value)
-
-    @staticmethod
-    def parse(axis: AxisLike) -> NDArray[np.float64]:
-        """Parse and validate an ``AxisLike``.
-
-        Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
-        After casting to an array, the axis is normalized.
-
-        Args:
-            axis: ``AxisLike`` to validate and parse.
-
-        Returns:
-            Parsed axis represented as a 1DArray of length 3.
-        """
-        if isinstance(axis, Axis):
-            return axis.value
-
-        try:
-            axis = np.asarray(axis, dtype=float)
-        except (ValueError, TypeError) as e:
-            msg = "axis requires an ArrayLike"
-            raise TypeError(msg) from e
-        axis = axis.flatten()
-        if len(axis) != 3:
-            msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
-            raise ValueError(msg)
-        if np.all(axis == 0):
-            msg = "axis requires at least one element to be non-zero"
-            raise ValueError(msg)
-        return axis
-
-    @staticmethod
-    def normalize(axis: NDArray[np.float64]) -> NDArray[np.float64]:
-        """Normalize a NDArray.
-
-        Args:
-            axis: NDArray to normalize.
-
-        Returns:
-            Normalized NDArray.
-        """
-        return axis / np.linalg.norm(axis)
-
+    
     @overload
     def __getitem__(self, i: int, /) -> np.float64: ...
 
@@ -265,23 +222,20 @@ class Axis(Sequence[np.float64], Expression):
         return self._len
 
     def __repr__(self) -> str:
-        """String representation of the ``Axis``."""
-        return f"Axis{self.value}"
+        """String representation of the ``BaseAxis``."""
+        return f"{self.__class__.__name__}{self.value}"
 
     def __array__(self, dtype: DTypeLike = None, *, copy: bool | None = None) -> NDArray[Any]:
-        """Convert the ``Axis`` data to an array."""
+        """Convert the ``BaseAxis`` data to an array."""
         return np.array(self.value, dtype=dtype, copy=copy)
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        """Accept the ``Axis``."""
-        return visitor.visit_axis(self)
 
     def __eq__(self, other: Any) -> bool:
         """Check if `self` is equal to `other`.
 
-        Two ``Axis`` objects are considered equal if their axes are equal.
+        Two ``BaseAxis`` objects are considered equal if their axes are equal.
         """
-        if not isinstance(other, Axis):
+        if not isinstance(other, self.__class__):
             return False
         return np.array_equal(self, other)
 
@@ -289,4 +243,4 @@ class Axis(Sequence[np.float64], Expression):
 # Type Aliases
 BitLike = Union[SupportsInt, Bit]
 QubitLike = Union[SupportsInt, Qubit]
-AxisLike = Union[ArrayLike, Axis]
+AxisLike = Union[ArrayLike, BaseAxis]

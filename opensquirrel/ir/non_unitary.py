@@ -4,7 +4,8 @@ from typing import Any, SupportsInt
 import numpy as np
 
 from opensquirrel.common import ATOL
-from opensquirrel.ir.expression import Axis, AxisLike, Bit, BitLike, Expression, Int, Qubit, QubitLike
+from opensquirrel.ir.expression import Bit, BitLike, Expression, Int, Qubit, QubitLike, AxisLike
+from opensquirrel.ir.semantics import Axis
 from opensquirrel.ir.ir import IRVisitor
 from opensquirrel.ir.statement import Instruction
 

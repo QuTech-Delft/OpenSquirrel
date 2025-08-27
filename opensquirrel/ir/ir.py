@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from opensquirrel.ir import (
         AsmDeclaration,
-        Axis,
         Barrier,
         Bit,
         Float,
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
     from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
     from opensquirrel.ir.non_unitary import NonUnitary
     from opensquirrel.ir.semantics import (
+        Axis,
         BlochSphereRotation,
         BsrAngleParam,
         BsrFullParams,
@@ -31,6 +31,8 @@ if TYPE_CHECKING:
         MatrixGate,
     )
     from opensquirrel.ir.statement import Instruction, Statement
+
+    from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
 
 
 class IRVisitor:
@@ -116,6 +118,12 @@ class IRVisitor:
         pass
 
     def visit_wait(self, wait: Wait) -> Any:
+        pass
+
+    def visit_canonical_axis(self, axis: CanonicalAxis) -> Any:
+        pass
+
+    def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
         pass
 
 
