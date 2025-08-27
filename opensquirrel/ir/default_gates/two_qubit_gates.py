@@ -43,6 +43,9 @@ class SWAP(MatrixGate):
     def arguments(self) -> tuple[Expression, ...]:
         return self.qubit_0, self.qubit_1
 
+    def get_qubit_operands(self) -> list[Qubit]:
+        return [self.qubit_0, self.qubit_1]
+
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_swap(self)
 
