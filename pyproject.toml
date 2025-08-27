@@ -5,7 +5,7 @@ description = "A quantum circuit transformation and manipulation tool"
 authors = [
     { name = "Quantum Inspire", email = "support@quantum-inspire.com" },
 ]
-requires-python = "~=3.9.0"
+requires-python = ">=3.9.0"
 readme = "README.md"
 license = "Apache-2.0"
 keywords = [
