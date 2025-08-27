@@ -6,7 +6,7 @@ from opensquirrel import Circuit, CircuitBuilder, Rn
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
-from tests.ir_equality_test_base import modify_circuit_and_check
+from tests.ir.ir_equality_test_base import modify_circuit_and_check
 
 
 @pytest.fixture
