@@ -3859,9 +3859,17 @@
 
   <h1>Merging</h1>
 
-<div class="admonition note">
-<p class="admonition-title">Coming soon</p>
-</div>
+<p>Merger passes in OpenSquirrel are used to merge gates into single operations.
+Their main purpose is to reduce the circuit depth.</p>
+<p>Note that the gate that results from merging two gates will in general be an arbitrary operation, <em>i.e.</em>,
+not be a <em>known</em> gate.
+In most cases, subsequent <a href="../decomposition/index.html">decomposition</a> of the gates will be required in order to execute
+the circuit on a target backend.
+The kind of decomposition pass required will depend on the primitive gate set that the intended backend supports.</p>
+<p>OpenSquirrel currently facilitates the following merge pass:</p>
+<ul>
+<li><a href="single-qubit-gates-merger.html">Single-qubit gates merger</a> (<code>SingleQubitGatesMerger</code>)</li>
+</ul>
 
 
 

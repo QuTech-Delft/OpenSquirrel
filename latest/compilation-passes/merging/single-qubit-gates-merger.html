@@ -3867,33 +3867,110 @@
 
   <h1>Single-qubit gates merger</h1>
 
-<p>All single-qubit gates appearing in a circuit can be merged by applying <code>merge(merger=SingleQubitGatesMerger())</code> to the circuit.
+<p>All single-qubit gates appearing in a circuit can be merged by using the single-qubit gates merging pass
+(<code>SingleQubitGatesMerger</code>).
 Note that multi-qubit gates remain untouched and single-qubit gates are not merged across any multi-qubit gates.
-The gate that results from the merger of single-qubit gates will, in general,
-comprise an arbitrary rotation and, therefore, not be a known gate.
-In OpenSquirrel an unrecognized gate is deemed <em>anonymous</em>.
-When a circuit contains anonymous gates and is written to a cQASM string,
-the semantic representation of the anonymous gate is exported.</p>
+Single-qubit gates are also not merged across <em>non-unitary</em> instructions, <em>e.g.</em> <code>init</code>, <code>reset</code>, and <code>measure</code>,
+and <em>control</em> instructions, <em>e.g.</em>, <code>wait</code>, and <code>barrier</code>.
+Merging single-qubit gates may lead to a significant reduction in circuit depth, <em>i.e.</em>,
+the number of operations required to execute the circuit.</p>
+<p>OpenSquirrel will try to recognize whether the resulting gate is a <em>known</em> gate, <em>e.g.</em>,
+if two consecutive X90 gates are merged, OpenSquirrel will recognize it as a single X gate.
+Nevertheless, the gate that results from the merger of multiple single-qubit gates will,
+in general, be an arbitrary rotation.
+Accordingly, to be able to run the circuit on a particular backend that supports a given primitive gate set,
+it is often required to perform a <a href="../decomposition/index.html">decomposition</a> pass after merging the single-qubit
+gates.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on the circuit and chosen decomposition, the circuit depth might actually increase,
+even though a merging pass has been applied.
+For instance, if the merging of two single-qubit gates leads to an arbitrary single-qubit rotation gate
+and the <a href="../decomposition/mckay-decomposer.html"><code>McKayDecomposer</code></a> is used, then the two initial gates may
+ultimately result in five single-qubit rotation gates.
+This is demonstrated in the final example below.</p>
+</div>
+<p>The example below shows how the single-qubit gates merging pass can be used to merge the single-qubit gates in the
+circuit.
+Note that the <code>SingleQubitGatesMerger</code> pass does not require any input arguments.</p>
+<p><em>Check the <a href="../../circuit-builder/index.html">circuit builder</a> on how to generate a circuit.</em></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleQubitGatesMerger</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">builder</span><span class="o">.</span><span class="n">Rx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">circuit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">merger</span><span class="o">=</span><span class="n">SingleQubitGatesMerger</span><span class="p">())</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">pi</span>  <span class="c1"># not necessary for using the SingleQubitGatesMerger</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">builder</span><span class="o">.</span><span class="n">Rx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">circuit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">merger</span><span class="o">=</span><span class="n">SingleQubitGatesMerger</span><span class="p">())</span>
 </code></pre></div>
 <details class="example">
 <summary><code>print(circuit)</code></summary>
-<p>version 3.0</p>
-<p>qubit[1] q</p>
-<p>Rx(pi) q[0]</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>version 3.0
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>qubit[1] q
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Rx(3.1415927) q[0]
+</code></pre></div>
 </details>
-<p>In the above example, OpenSquirrel has merged all the Rx gates together.</p>
+<p>The above example shows how four consecutive Rx rotations over <span class="arithmatex">\(\pi/4\)</span>, are merged into a single Rx rotation over <span class="arithmatex">\(\pi\)</span>.</p>
+<p>The following example shows that the merging of single-qubit gates does not occur across multi-qubit gates,
+non-unitary instructions, and control instructions.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">Ry</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">builder</span><span class="o">.</span><span class="n">barrier</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">X</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">circuit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">merger</span><span class="o">=</span><span class="n">SingleQubitGatesMerger</span><span class="p">())</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>version 3.0
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>qubit[2] q
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>bit[2] b
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>H q[0]
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>CNOT q[0], q[1]
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>H q[0]
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>X q[1]
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>barrier q[1]
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>H q[0]
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>b[0] = measure q[0]
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>H q[0]
+</code></pre></div>
+</details>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the above example, note that even though the <code>barrier</code> is placed on qubit at index 1,
+that the Hadamards (<code>H</code>) on qubit at index 0 on either side of that barrier are not merged.
+Barriers are unique in this regard; no merging of single-qubit gates occurs across barriers
+regardless of the qubit on which the barrier acts.</p>
+</div>
+<p>The final example below shows how the circuit depth ultimately increases,
+even though the single-qubit gates where merged using the single-qubit gates merging pass.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">Rx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">Ry</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">circuit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">merger</span><span class="o">=</span><span class="n">SingleQubitGatesMerger</span><span class="p">())</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">McKayDecomposer</span><span class="p">())</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>version 3.0
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>qubit[1] q
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>Rz(-2.2688338) q[0]
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>X90 q[0]
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Rz(1.9872376) q[0]
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>X90 q[0]
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>Rz(-1.2436334) q[0]
+</code></pre></div>
+</details>
 
 
 
