@@ -63,7 +63,6 @@ Here is an example of building a circuit using the `CircuitBuilder`:
 ```python
 from math import pi
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.ir import Qubit
 
 # Initialize the builder and build your circuit
 builder = CircuitBuilder(qubit_register_size=1)

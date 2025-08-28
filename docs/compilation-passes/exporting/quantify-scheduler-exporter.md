@@ -259,3 +259,8 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
         [Reset](https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/operations/gate_library/index.html#quantify_scheduler.operations.gate_library.Reset).
         Note that one can us the `reset` instruction to set the state of the qubit to the $|0\rangle$ state,
         which is similar to the effect of the `init` instruction.
+
+!!! warning "macOS ARM not supported"
+
+    The quantify-scheduler exporter cannot run on macOS ARM, due to the fact that the required dependency
+    `pyqt5-qt5==5.15.2` does provide binaries for that architecture.
