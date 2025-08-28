@@ -1,24 +1,28 @@
-from opensquirrel.circuit import Circuit
-from opensquirrel.ir import (
+from opensquirrel import (
     CNOT,
     CR,
     CZ,
-    IR,
     SWAP,
+    CRk,
+)
+from opensquirrel.circuit import Circuit
+from opensquirrel.ir import (
+    IR,
     Barrier,
+    Init,
+    IRVisitor,
+    Measure,
+    Qubit,
+    Reset,
+    Wait,
+)
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    Init,
-    IRVisitor,
     MatrixGate,
-    Measure,
-    Qubit,
-    Reset,
-    Wait,
 )
 from opensquirrel.passes.mapper.mapping import Mapping
 
@@ -27,16 +31,16 @@ class _QubitRemapper(IRVisitor):
     """
     Remap a whole IR.
 
-    Args:
-        mapping: a list of qubit indices, e.g. [3, 1, 0, 2]
+    A new IR where the qubit indices are replaced by the values passed in mapping.
+    _E.g._, for mapping = [3, 1, 0, 2]:
+    - Qubit(index=0) becomes Qubit(index=3),
+    - Qubit(index=1) becomes Qubit(index=1),
+    - Qubit(index=2) becomes Qubit(index=0), and
+    - Qubit(index=3) becomes Qubit(index=2).
 
-    Returns:
-         A new IR where the qubit indices are replaced by the values passed in mapping.
-         E.g., for mapping = [3, 1, 0, 2]:
-         - Qubit(index=0) becomes Qubit(index=3),
-         - Qubit(index=1) becomes Qubit(index=1),
-         - Qubit(index=2) becomes Qubit(index=0), and
-         - Qubit(index=3) becomes Qubit(index=2).
+    Args:
+        mapping: a list of qubit indices, _e.g._, [3, 1, 0, 2]
+
     """
 
     def __init__(self, mapping: Mapping) -> None:
@@ -80,8 +84,8 @@ class _QubitRemapper(IRVisitor):
         return self.visit_bloch_sphere_rotation(gate)
 
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> MatrixGate:
-        for op in matrix_gate.operands:
-            op.accept(self)
+        for operand in matrix_gate.operands:
+            operand.accept(self)
         return matrix_gate
 
     def visit_swap(self, gate: SWAP) -> MatrixGate:
@@ -89,7 +93,7 @@ class _QubitRemapper(IRVisitor):
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
         controlled_gate.control_qubit.accept(self)
-        controlled_gate.target_gate.accept(self)
+        self.visit_bloch_sphere_rotation(controlled_gate.target_gate)
         return controlled_gate
 
     def visit_cnot(self, gate: CNOT) -> ControlledGate:

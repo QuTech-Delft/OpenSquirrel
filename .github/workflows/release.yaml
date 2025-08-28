@@ -9,6 +9,9 @@ on:
     types:
       - created
 
+env:
+  UV_USE_ACTIVE_ENV: 1
+
 jobs:
   publish:
     name: Publish assets
@@ -21,10 +24,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v4
+      - name: Install uv
+        uses: yezz123/setup-uv@v4
         with:
-          poetry-version: "1.8.3"
+          uv-version: "0.8.12"
 
       # Setting the proper version
       - name: Get previous Tag
@@ -35,14 +38,14 @@ jobs:
           fallback: 0.1.0
       - name: Set Build version
         if: contains(github.ref, 'refs/heads/release-')
-        run: poetry version "${{ steps.previous_tag.outputs.tag }}.dev${{ github.run_number }}"
+        run: uv version "${{ steps.previous_tag.outputs.tag }}.dev${{ github.run_number }}"
       - name: Set Release version
         if: github.event_name == 'release' && github.event.action == 'created'
-        run: poetry version ${{ github.ref_name }}
+        run: uv version ${{ github.ref_name }}
 
       # Build package
-      - name: Build poetry package
-        run: poetry build
+      - name: Build uv package
+        run: uv build
 
       # Publishing the package
       - name: Publish distribution 📦 to Test PyPI

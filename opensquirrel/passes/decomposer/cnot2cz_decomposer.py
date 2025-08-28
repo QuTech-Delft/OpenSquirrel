@@ -1,9 +1,14 @@
 from __future__ import annotations
 
-import math
+from math import pi
+from typing import TYPE_CHECKING
 
-from opensquirrel.ir import CZ, BlochSphereRotation, ControlledGate, Gate, Ry
+from opensquirrel import CZ, Ry
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
 
 
 class CNOT2CZDecomposer(Decomposer):
@@ -30,7 +35,7 @@ class CNOT2CZDecomposer(Decomposer):
             # If CNOT is not implemented as a ControlledGate but, e.g., as a MatrixGate.
             control_qubit, target_qubit = gate.get_qubit_operands()
         return [
-            Ry(target_qubit, -math.pi / 2),
+            Ry(target_qubit, -pi / 2),
             CZ(control_qubit, target_qubit),
-            Ry(target_qubit, math.pi / 2),
+            Ry(target_qubit, pi / 2),
         ]

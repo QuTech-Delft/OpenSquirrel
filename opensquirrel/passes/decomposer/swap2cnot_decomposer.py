@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from opensquirrel.ir import CNOT
+from opensquirrel import CNOT
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 if TYPE_CHECKING:

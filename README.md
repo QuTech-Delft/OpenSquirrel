@@ -61,16 +61,15 @@ each traversing and modifying it (_e.g._, decomposition of the gates).
 Here is an example of building a circuit using the `CircuitBuilder`:
 
 ```python
-import math
+from math import pi
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.ir import Qubit
 
 # Initialize the builder and build your circuit
 builder = CircuitBuilder(qubit_register_size=1)
-builder.H(Qubit(0)).Z(Qubit(0)).Y(Qubit(0)).Rx(Qubit(0), math.pi / 3)
+builder.H(0).Z(0).Y(0).Rx(0, pi / 3)
 
 # Get the circuit from the circuit builder
-qc = builder.to_circuit()
+circuit = builder.to_circuit()
 ```
 
 Alternatively, one can define the same circuit as a cQASM string:
@@ -88,7 +87,7 @@ cqasm_string = ("""
 """)
 
 from opensquirrel.circuit import Circuit
-qc = Circuit.from_string(cqasm_string)
+circuit = Circuit.from_string(cqasm_string)
 ```
 
 The circuit can then be decomposed using a decomposition strategy.
@@ -99,7 +98,7 @@ In the example below, the circuit is decomposed using the Z-Y-Z decomposer.
 ```python
 from opensquirrel.passes.decomposer.aba_decomposer import ZYZDecomposer
 
-qc.decompose(decomposer=ZYZDecomposer())
+circuit.decompose(decomposer=ZYZDecomposer())
 ```
 
 Once the circuit is decomposed, it can be written back to cQASM.
@@ -108,7 +107,7 @@ This is done by invoking the `writer` class, as can be seen below.
 ```python
 from opensquirrel.writer import writer
 
-writer.circuit_to_string(qc)
+writer.circuit_to_string(circuit)
 ```
 
 The output is then given by the following cQASM string:

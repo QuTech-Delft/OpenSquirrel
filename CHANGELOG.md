@@ -10,20 +10,38 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
+## [ 0.6.0 ] - [ 2025-08-28 ]
+
+### Added
+
+- `MIPMapper` mapper pass
+- OpenSquirrel's `__version__` attribute exposed
+
+### Changed
+
+- `RoutingValidator` changed to `InteractionValidator`
+
+### Fixed
+
+- `ShortestPathRouter` and `AStarRouter` now correctly propagate SWAP gate insertion effects throughout the circuit
+- The values for parameters `theta` and `phi` stay within the domain `(-pi, pi]` throughout parse- and compile-time
+(_note_: gate modifiers have precedence over normalization)
+- Mapping of the target qubits of controlled gates
+
 ## [ 0.5.0 ] - [ 2025-05-28 ]
 
 ### Added
 
-- `asm_filter` method to the `Circuit` class to filter-out assembly declarations by backend name
+- `asm_filter` method to the `Circuit` class to filter out assembly declarations by backend name
+
+### Fixed
+
+- `RoutingValidator` ignores assembly declarations
 
 ### Changed
 
 - Default gate identification check refactored (now including check for phase)
 - `McKayDecomposer` checks X90 on BSR semantic instead of name
-
-### Fixed
-
-- `RoutingValidator` ignores assembly declarations
 
 ## [ 0.4.0 ] - [ 2025-04-28 ]
 
