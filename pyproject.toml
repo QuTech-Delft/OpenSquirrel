@@ -1,6 +1,6 @@
 [project]
 name = "opensquirrel"
-version = "0.5.0"
+version = "0.6.0"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
     { name = "Quantum Inspire", email = "support@quantum-inspire.com" },
