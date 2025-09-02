@@ -28,7 +28,7 @@ class String(Expression):
         value: value of the ``String`` object.
     """
 
-    value: str                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+    value: str
 
     def __init__(self, value: SupportsStr) -> None:
         """Init of the ``String`` object.
@@ -178,7 +178,6 @@ class Qubit(Expression):
 
 
 class BaseAxis(Sequence[np.float64], Expression, ABC):
-
     _len = 3
 
     def __init__(self, *axis: AxisLike) -> None:
@@ -187,12 +186,11 @@ class BaseAxis(Sequence[np.float64], Expression, ABC):
         axis: An ``AxisLike`` to create the axis from.
         """
         self.value = axis[0] if len(axis) == 1 else cast("AxisLike", axis)
-    
+
     @staticmethod
     @abstractmethod
-    def parse(axis: AxisLike) -> NDArray[np.float64]:
-        ...
-    
+    def parse(axis: AxisLike) -> NDArray[np.float64]: ...
+
     @property
     def value(self) -> NDArray[np.float64]:
         """The ``BaseAxis`` data saved as a 1D-Array with 3 elements."""
@@ -206,7 +204,7 @@ class BaseAxis(Sequence[np.float64], Expression, ABC):
             axis: An ``AxisLike`` to create the axis from.
         """
         self._value = self.parse(axis)
-    
+
     @overload
     def __getitem__(self, i: int, /) -> np.float64: ...
 
@@ -228,7 +226,6 @@ class BaseAxis(Sequence[np.float64], Expression, ABC):
     def __array__(self, dtype: DTypeLike = None, *, copy: bool | None = None) -> NDArray[Any]:
         """Convert the ``BaseAxis`` data to an array."""
         return np.array(self.value, dtype=dtype, copy=copy)
-
 
     def __eq__(self, other: Any) -> bool:
         """Check if `self` is equal to `other`.

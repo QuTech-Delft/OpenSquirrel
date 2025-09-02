@@ -30,9 +30,8 @@ if TYPE_CHECKING:
         ControlledGate,
         MatrixGate,
     )
-    from opensquirrel.ir.statement import Instruction, Statement
-
     from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
+    from opensquirrel.ir.statement import Instruction, Statement
 
 
 class IRVisitor:

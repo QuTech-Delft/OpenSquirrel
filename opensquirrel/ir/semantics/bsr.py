@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, SupportsFloat
+from typing import TYPE_CHECKING, Any, SupportsFloat, cast
 
 import numpy as np
-
-from opensquirrel.common import ATOL, normalize_angle, repr_round
-from opensquirrel.ir import AxisLike, Bit, Float, Gate, Qubit, QubitLike
-from opensquirrel.ir.expression import BaseAxis
-
 from numpy.typing import NDArray
 
-from opensquirrel.ir import IRVisitor
+from opensquirrel.common import ATOL, normalize_angle, repr_round
+from opensquirrel.ir.expression import AxisLike, BaseAxis, Bit, Float, Qubit, QubitLike
+from opensquirrel.ir.unitary import Gate
 
 if TYPE_CHECKING:
+    from opensquirrel.ir import IRVisitor
     from opensquirrel.ir.expression import Expression
+
 
 class Axis(BaseAxis):
     """The ``Axis`` object parses and stores a vector containing 3 elements.
@@ -38,7 +37,7 @@ class Axis(BaseAxis):
             return axis.value
 
         try:
-            axis = np.asarray(axis, dtype=float)
+            axis = np.asarray(axis, dtype=np.float64)
         except (ValueError, TypeError) as e:
             msg = "axis requires an ArrayLike"
             raise TypeError(msg) from e
@@ -49,9 +48,9 @@ class Axis(BaseAxis):
         if np.all(axis == 0):
             msg = "axis requires at least one element to be non-zero"
             raise ValueError(msg)
-        axis = axis / np.linalg.norm(axis)
-        return axis 
-    
+        axis = cast("NDArray[np.float64]", axis)
+        return axis / np.linalg.norm(axis)
+
     def accept(self, visitor: IRVisitor) -> Any:
         """Accept the ``Axis``."""
         return visitor.visit_axis(self)

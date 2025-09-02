@@ -1,12 +1,13 @@
-from opensquirrel.ir import Gate, Qubit, QubitLike, AxisLike, IRVisitor
-from opensquirrel.ir.expression import Bit, Expression, BaseAxis
 from typing import Any
+
 import numpy as np
 from numpy.typing import NDArray
 
+from opensquirrel.ir import AxisLike, Gate, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir.expression import BaseAxis, Bit, Expression
+
 
 class CanonicalAxis(BaseAxis):
-
     @staticmethod
     def parse(axis: AxisLike) -> NDArray[np.float64]:
         """Parse and validate an ``AxisLike``.
@@ -32,22 +33,19 @@ class CanonicalAxis(BaseAxis):
         if len(axis) != 3:
             msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
             raise ValueError(msg)
-        
-        axis = CanonicalAxis.restrict_to_weyl_chamber(axis)
-        return axis
-    
+
+        return CanonicalAxis.restrict_to_weyl_chamber(axis)
+
     @staticmethod
     def restrict_to_weyl_chamber(axis: NDArray[np.float64]) -> NDArray[np.float64]:
-        # TODO
         return axis
-    
+
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_canonical_axis(self)
- 
+
 
 class CanonicalGate(Gate):
-    
-    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike, axis: AxisLike, name: str="CanonicalGate") -> None:
+    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike, axis: AxisLike, name: str = "CanonicalGate") -> None:
         Gate.__init__(self, name)
         self.qubit_0 = Qubit(qubit_0)
         self.qubit_1 = Qubit(qubit_1)
@@ -56,21 +54,19 @@ class CanonicalGate(Gate):
 
     def __repr__(self) -> str:
         return f"{self.name}(q0={self.qubit_0}, q1={self.qubit_1})"
-    
+
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_canonical_gate(self)
-    
+
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return (self.qubit_0, self.qubit_1,)
-    
+        return (self.qubit_0, self.qubit_1)
+
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit_0, self.qubit_1]
-    
+
     def get_bit_operands(self) -> list[Bit]:
         return []
 
     def is_identity(self) -> bool:
         return self.axis == CanonicalAxis(0, 0, 0)
-    
-

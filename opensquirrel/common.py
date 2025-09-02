@@ -7,7 +7,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 if TYPE_CHECKING:
-    from opensquirrel.ir.expression import Axis
+    from opensquirrel.ir import Axis
 
 
 ATOL = 0.000_000_1
