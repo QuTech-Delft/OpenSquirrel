@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import cmath
 import math
+from math import pi
 from collections.abc import Iterable
 from typing import TYPE_CHECKING, Any
 
@@ -16,6 +17,7 @@ from opensquirrel.ir import (
     Qubit,
     QubitLike,
 )
+from opensquirrel.ir.semantics.canonical_gate import CanonicalGate, CanonicalAxis
 
 if TYPE_CHECKING:
     from opensquirrel import (
@@ -179,7 +181,7 @@ class MatrixExpander(IRVisitor):
         #   0, 0, 1, 0
         # which corresponds to control being q[1] and target being q[0],
         # since qubit #i corresponds to the i-th least significant bit.
-        qubit_operands = list(reversed(gate.operands))
+        qubit_operands = list(reversed(gate.get_qubit_operands()))
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
             msg = "index out of range"
@@ -210,6 +212,29 @@ class MatrixExpander(IRVisitor):
 
     def visit_swap(self, gate: SWAP) -> NDArray[np.complex128]:
         return self.visit_matrix_gate(gate)
+    
+    def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
+        qubit_operands = list(reversed(gate.get_qubit_operands()))
+
+        if any(q.index >= self.qubit_register_size for q in qubit_operands):
+            msg = "index out of range"
+            raise IndexError(msg)
+
+        m = can2(gate.axis)
+
+        expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
+
+        for expanded_matrix_column in range(expanded_matrix.shape[1]):
+            small_matrix_col = get_reduced_ket(expanded_matrix_column, qubit_operands)
+
+            for small_matrix_row, value in enumerate(m[:, small_matrix_col]):
+                expanded_matrix_row = expand_ket(expanded_matrix_column, small_matrix_row, qubit_operands)
+                expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
+
+        if expanded_matrix.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
+            msg = "expended matrix has incorrect shape"
+            raise ValueError(msg)
+        return expanded_matrix
 
 
 X = np.array([[0, 1], [1, 0]])
@@ -226,6 +251,19 @@ def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex12
 
     return np.asarray(result, dtype=np.complex128)
 
+def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
+    tx, ty, tz = CanonicalAxis(canonical_axis)
+
+    return np.array(
+        [
+            [cmath.exp(-1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx - ty)), 0, 0, -1j * cmath.exp(-1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx - ty))],
+            [0,cmath.exp(1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx + ty)), -1j * cmath.exp(1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx + ty)),0],
+            [0,-1j * cmath.exp(1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx + ty)),cmath.exp(1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx + ty)),0],
+            [-1j * cmath.exp(-1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx - ty)), 0, 0, cmath.exp(-1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx - ty))]
+        ],
+        dtype=np.complex128
+    )
+    
 
 def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
     """

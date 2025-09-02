@@ -3,7 +3,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import AxisLike, Gate, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir import AxisLike, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir.unitary import Gate
 from opensquirrel.ir.expression import BaseAxis, Bit, Expression
 
 
@@ -52,6 +53,10 @@ class CanonicalGate(Gate):
 
         self.axis = CanonicalAxis(axis)
 
+        if self._check_repeated_qubit_operands([self.qubit_0, self.qubit_1]):
+            msg = "control and target qubit cannot be the same"
+            raise ValueError(msg)
+
     def __repr__(self) -> str:
         return f"{self.name}(q0={self.qubit_0}, q1={self.qubit_1})"
 
@@ -60,7 +65,7 @@ class CanonicalGate(Gate):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return (self.qubit_0, self.qubit_1)
+        return (self.qubit_0, self.qubit_1, self.axis)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit_0, self.qubit_1]
