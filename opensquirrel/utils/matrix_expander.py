@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import cmath
 import math
-from math import pi
 from collections.abc import Iterable
+from math import pi
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
@@ -17,7 +17,7 @@ from opensquirrel.ir import (
     Qubit,
     QubitLike,
 )
-from opensquirrel.ir.semantics.canonical_gate import CanonicalGate, CanonicalAxis
+from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
 
 if TYPE_CHECKING:
     from opensquirrel import (
@@ -212,7 +212,7 @@ class MatrixExpander(IRVisitor):
 
     def visit_swap(self, gate: SWAP) -> NDArray[np.complex128]:
         return self.visit_matrix_gate(gate)
-    
+
     def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
         qubit_operands = list(reversed(gate.get_qubit_operands()))
 
@@ -251,19 +251,40 @@ def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex12
 
     return np.asarray(result, dtype=np.complex128)
 
+
 def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
     tx, ty, tz = CanonicalAxis(canonical_axis)
 
     return np.array(
         [
-            [cmath.exp(-1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx - ty)), 0, 0, -1j * cmath.exp(-1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx - ty))],
-            [0,cmath.exp(1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx + ty)), -1j * cmath.exp(1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx + ty)),0],
-            [0,-1j * cmath.exp(1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx + ty)),cmath.exp(1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx + ty)),0],
-            [-1j * cmath.exp(-1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx - ty)), 0, 0, cmath.exp(-1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx - ty))]
+            [
+                cmath.exp(-1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx - ty)),
+                0,
+                0,
+                -1j * cmath.exp(-1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx - ty)),
+            ],
+            [
+                0,
+                cmath.exp(1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx + ty)),
+                -1j * cmath.exp(1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx + ty)),
+                0,
+            ],
+            [
+                0,
+                -1j * cmath.exp(1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx + ty)),
+                cmath.exp(1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx + ty)),
+                0,
+            ],
+            [
+                -1j * cmath.exp(-1j * (pi / 2) * tz) * math.sin((pi / 2) * (tx - ty)),
+                0,
+                0,
+                cmath.exp(-1j * (pi / 2) * tz) * math.cos((pi / 2) * (tx - ty)),
+            ],
         ],
-        dtype=np.complex128
+        dtype=np.complex128,
     )
-    
+
 
 def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
     """

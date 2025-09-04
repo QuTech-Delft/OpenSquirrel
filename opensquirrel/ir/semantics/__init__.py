@@ -1,7 +1,7 @@
 from opensquirrel.ir.semantics.bsr import Axis, BlochSphereRotation, BsrAngleParam, BsrFullParams, BsrNoParams
+from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
 from opensquirrel.ir.semantics.controlled_gate import ControlledGate
 from opensquirrel.ir.semantics.matrix_gate import MatrixGate
-from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
 
 __all__ = [
     "Axis",
@@ -9,7 +9,8 @@ __all__ = [
     "BsrAngleParam",
     "BsrFullParams",
     "BsrNoParams",
+    "CanonicalAxis",
+    "CanonicalGate",
     "ControlledGate",
     "MatrixGate",
-    "CanonicalGate"
 ]

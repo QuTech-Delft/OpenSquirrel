@@ -1,12 +1,13 @@
-from math import pi
-import pytest
-import numpy as np
-from numpy.typing import NDArray
+from math import pi, sqrt
 from typing import Any
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate, CanonicalGate
-from opensquirrel.utils import get_matrix
-from math import sqrt
+
+import numpy as np
+import pytest
+from numpy.typing import NDArray
+
 from opensquirrel.ir import AxisLike
+from opensquirrel.ir.semantics import BlochSphereRotation, CanonicalGate, ControlledGate, MatrixGate
+from opensquirrel.utils import get_matrix
 
 
 def test_bloch_sphere_rotation() -> None:
@@ -68,11 +69,24 @@ def test_matrix_gate() -> None:
     ("axis", "expected_matrix"),
     [
         ((0, 0, 0), np.eye(4)),
-        ((1/2, 0, 0), np.array([[1/sqrt(2), 0, 0, -1j/sqrt(2)], [0, 1/sqrt(2), -1j/sqrt(2), 0], [0, -1j/sqrt(2), 1/sqrt(2), 0], [-1j/sqrt(2), 0, 0, 1/sqrt(2)]])),        
-        ((1/2, 1/2, 0), np.array([[1, 0, 0, 0], [0,0,-1j, 0], [0, -1j, 0, 0], [0, 0, 0, 1]])),
-        ((1/2, 1/2, 1/2), np.exp(-1j * np.pi / 4) * np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]))
-    ],    
-)     
+        (
+            (1 / 2, 0, 0),
+            np.array(
+                [
+                    [1 / sqrt(2), 0, 0, -1j / sqrt(2)],
+                    [0, 1 / sqrt(2), -1j / sqrt(2), 0],
+                    [0, -1j / sqrt(2), 1 / sqrt(2), 0],
+                    [-1j / sqrt(2), 0, 0, 1 / sqrt(2)],
+                ]
+            ),
+        ),
+        ((1 / 2, 1 / 2, 0), np.array([[1, 0, 0, 0], [0, 0, -1j, 0], [0, -1j, 0, 0], [0, 0, 0, 1]])),
+        (
+            (1 / 2, 1 / 2, 1 / 2),
+            np.exp(-1j * np.pi / 4) * np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]),
+        ),
+    ],
+)
 def test_canonical_gate(axis: AxisLike, expected_matrix: NDArray[Any]) -> None:
     gate = CanonicalGate(0, 1, axis)
 

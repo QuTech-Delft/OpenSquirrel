@@ -4,8 +4,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from opensquirrel.ir import AxisLike, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.unitary import Gate
 from opensquirrel.ir.expression import BaseAxis, Bit, Expression
+from opensquirrel.ir.unitary import Gate
 
 
 class CanonicalAxis(BaseAxis):
