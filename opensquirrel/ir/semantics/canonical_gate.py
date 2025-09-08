@@ -39,7 +39,22 @@ class CanonicalAxis(BaseAxis):
 
     @staticmethod
     def restrict_to_weyl_chamber(axis: NDArray[np.float64]) -> NDArray[np.float64]:
-        return axis
+        axis = (axis + 1) % 2 - 1
+
+        while (axis < 0).any():
+            axis = np.where(axis < 0, axis - 1, axis)
+            axis = (axis + 1) % 2 - 1
+
+        axis = np.sort(axis)[::-1]
+        n = sum(t > 1 / 2 for t in axis)
+        if n == 1:
+            axis[0] = 1 - axis[0]
+        if n == 2:
+            axis[0], axis[2] = axis[2], axis[0]
+            axis[1:] = 1 - axis[1:]
+        if n == 3:
+            axis = 1 - axis
+        return np.sort(axis)[::-1]
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_canonical_axis(self)
