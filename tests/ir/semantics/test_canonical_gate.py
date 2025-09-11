@@ -37,5 +37,5 @@ class TestCanonicalGate:
         assert isinstance(gate, Gate)
         assert hasattr(gate, "axis")
         assert isinstance(gate.axis, CanonicalAxis)
-        with pytest.raises(ValueError, match="control and target qubit cannot be the same"):
+        with pytest.raises(ValueError, match="the two qubits cannot be the same"):
             CanonicalGate(0, 0, (0, 0, 0))

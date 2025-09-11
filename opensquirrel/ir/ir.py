@@ -53,6 +53,9 @@ class IRVisitor:
     def visit_axis(self, axis: Axis) -> Any:
         pass
 
+    def visit_canonical_axis(self, axis: CanonicalAxis) -> Any:
+        pass
+
     def visit_statement(self, statement: Statement) -> Any:
         pass
 
@@ -81,6 +84,9 @@ class IRVisitor:
         pass
 
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
+        pass
+
+    def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
         pass
 
     def visit_swap(self, gate: SWAP) -> Any:
@@ -117,12 +123,6 @@ class IRVisitor:
         pass
 
     def visit_wait(self, wait: Wait) -> Any:
-        pass
-
-    def visit_canonical_axis(self, axis: CanonicalAxis) -> Any:
-        pass
-
-    def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
         pass
 
 
