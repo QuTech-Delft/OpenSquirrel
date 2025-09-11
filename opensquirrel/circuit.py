@@ -3,15 +3,15 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
+from opensquirrel.ir import IR, AsmDeclaration, Gate
 from opensquirrel.passes.exporter import ExportFormat
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IR, Gate
-    from opensquirrel.passes.decomposer import Decomposer
-    from opensquirrel.passes.mapper import Mapper
-    from opensquirrel.passes.merger import Merger
-    from opensquirrel.passes.router import Router
-    from opensquirrel.passes.validator import Validator
+    from opensquirrel.passes.decomposer.general_decomposer import Decomposer
+    from opensquirrel.passes.mapper.general_mapper import Mapper
+    from opensquirrel.passes.merger.general_merger import Merger
+    from opensquirrel.passes.router.general_router import Router
+    from opensquirrel.passes.validator.general_validator import Validator
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -46,7 +46,7 @@ class Circuit:
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
-        from opensquirrel import writer
+        from opensquirrel.writer import writer
 
         return writer.circuit_to_string(self)
 
@@ -68,9 +68,9 @@ class Circuit:
         Args:
             cqasm3_string: a cQASM 3 string
         """
-        from opensquirrel.parser.libqasm.parser import Parser
+        from opensquirrel.reader import LibQasmParser
 
-        return Parser().circuit_from_string(cqasm3_string)
+        return LibQasmParser().circuit_from_string(cqasm3_string)
 
     @property
     def qubit_register_size(self) -> int:
@@ -88,17 +88,13 @@ class Circuit:
     def bit_register_name(self) -> str:
         return self.register_manager.get_bit_register_name()
 
-    def validate(self, validator: Validator) -> None:
-        """Generic validator pass. It applies the given validator to the circuit."""
-        validator.validate(self.ir)
-
-    def route(self, router: Router) -> None:
-        """Generic router pass. It applies the given router to the circuit."""
-        router.route(self.ir)
-
-    def merge(self, merger: Merger) -> None:
-        """Generic merge pass. It applies the given merger to the circuit."""
-        merger.merge(self.ir, self.qubit_register_size)
+    def asm_filter(self, backend_name: str) -> None:
+        self.ir.statements = [
+            statement
+            for statement in self.ir.statements
+            if not isinstance(statement, AsmDeclaration)
+            or (isinstance(statement, AsmDeclaration) and backend_name in str(statement.backend_name))
+        ]
 
     def decompose(self, decomposer: Decomposer) -> None:
         """Generic decomposition pass.
@@ -107,23 +103,6 @@ class Circuit:
         from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.decompose(self.ir, decomposer)
-
-    def map(self, mapper: Mapper) -> None:
-        """Generic qubit mapper pass.
-        Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
-        """
-        from opensquirrel.passes.mapper.qubit_remapper import remap_ir
-
-        remap_ir(self, mapper.get_mapping())
-
-    def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
-        """Manually replace occurrences of a given gate with a list of gates.
-        `replacement_gates_function` is a callable that takes the arguments of the gate that is to be replaced and
-        returns the decomposition as a list of gates.
-        """
-        from opensquirrel.passes.decomposer import general_decomposer
-
-        general_decomposer.replace(self.ir, gate, replacement_gates_function)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
         if fmt == ExportFormat.QUANTIFY_SCHEDULER:
@@ -136,3 +115,33 @@ class Circuit:
             return cqasmv1_exporter.export(self)
         msg = "unknown exporter format"
         raise ValueError(msg)
+
+    def map(self, mapper: Mapper) -> None:
+        """Generic qubit mapper pass.
+        Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
+        """
+        from opensquirrel.passes.mapper.qubit_remapper import remap_ir
+
+        mapping = mapper.map(self.ir, self.qubit_register_size)
+        remap_ir(self, mapping)
+
+    def merge(self, merger: Merger) -> None:
+        """Generic merge pass. It applies the given merger to the circuit."""
+        merger.merge(self.ir, self.qubit_register_size)
+
+    def route(self, router: Router) -> None:
+        """Generic router pass. It applies the given router to the circuit."""
+        router.route(self.ir)
+
+    def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
+        """Manually replace occurrences of a given gate with a list of gates.
+        `replacement_gates_function` is a callable that takes the arguments of the gate that is to be replaced and
+        returns the decomposition as a list of gates.
+        """
+        from opensquirrel.passes.decomposer import general_decomposer
+
+        general_decomposer.replace(self.ir, gate, replacement_gates_function)
+
+    def validate(self, validator: Validator) -> None:
+        """Generic validator pass. It applies the given validator to the circuit."""
+        validator.validate(self.ir)

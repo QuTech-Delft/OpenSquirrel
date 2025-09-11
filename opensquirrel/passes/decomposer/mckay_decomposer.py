@@ -4,7 +4,8 @@ from math import atan2, cos, pi, sin, sqrt
 
 from opensquirrel import X90, I, Rz
 from opensquirrel.common import ATOL, normalize_angle
-from opensquirrel.ir import Axis, BlochSphereRotation, Gate
+from opensquirrel.ir import Axis, Gate
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import ZXZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
@@ -21,7 +22,7 @@ class McKayDecomposer(Decomposer):
 
         Relevant literature: https://arxiv.org/abs/1612.00858
         """
-        if not isinstance(g, BlochSphereRotation) or g.name == "Rz" or g.name == "X90":
+        if not isinstance(g, BlochSphereRotation) or g == X90(g.qubit):
             return [g]
 
         if abs(g.angle) < ATOL:

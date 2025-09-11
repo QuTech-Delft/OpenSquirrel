@@ -8,7 +8,8 @@ import numpy as np
 
 from opensquirrel import I
 from opensquirrel.common import ATOL
-from opensquirrel.ir import IR, Barrier, BlochSphereRotation, Instruction, Statement
+from opensquirrel.ir import IR, Barrier, Instruction, Statement
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.utils import acos, flatten_list
 
 

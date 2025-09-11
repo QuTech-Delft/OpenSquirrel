@@ -7,12 +7,12 @@ from uuid import uuid4
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
+from opensquirrel import Init, Wait, Barrier
 from opensquirrel.ir import (
     CNOT,
     CR,
     CZ,
     SWAP,
-    Barrier,
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
@@ -20,13 +20,11 @@ from opensquirrel.ir import (
     ControlledGate,
     CRk,
     Gate,
-    Init,
     IRVisitor,
     MatrixGate,
     Measure,
     NonUnitary,
     Reset,
-    Wait,
 )
 
 try:
@@ -37,6 +35,13 @@ except ModuleNotFoundError:
     pass
 
 if TYPE_CHECKING:
+    from opensquirrel import (
+        CNOT,
+        CR,
+        CZ,
+        SWAP,
+        CRk,
+    )
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir import Qubit
     from opensquirrel.register_manager import RegisterManager
