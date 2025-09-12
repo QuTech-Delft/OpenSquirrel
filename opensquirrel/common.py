@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from math import tau
 from typing import TYPE_CHECKING, SupportsFloat
 

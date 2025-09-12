@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pytest
 
 from opensquirrel.ir import Bit, Measure, Qubit
