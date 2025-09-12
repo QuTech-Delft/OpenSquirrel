@@ -78,7 +78,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
-addopts = "-v --cov --cov-report term-missing:skip-covered --cov-report xml"
+addopts = "-v"
 
 [tool.coverage.run]
 branch = true
