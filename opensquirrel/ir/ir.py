@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from opensquirrel.ir import (
         AsmDeclaration,
+        Axis,
         Barrier,
         Bit,
         Float,
@@ -22,7 +23,6 @@ if TYPE_CHECKING:
     from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
     from opensquirrel.ir.non_unitary import NonUnitary
     from opensquirrel.ir.semantics import (
-        Axis,
         BlochSphereRotation,
         BsrAngleParam,
         BsrFullParams,

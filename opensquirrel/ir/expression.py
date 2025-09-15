@@ -237,6 +237,48 @@ class BaseAxis(Sequence[np.float64], Expression, ABC):
         return np.array_equal(self, other)
 
 
+class Axis(BaseAxis):
+    """The ``Axis`` object parses and stores a vector containing 3 elements.
+
+    The input vector is always normalized before it is stored.
+    """
+
+    @staticmethod
+    def parse(axis: AxisLike) -> NDArray[np.float64]:
+        """Parse and validate an ``AxisLike``.
+
+        Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
+        After casting to an array, the axis is normalized.
+
+        Args:
+            axis: ``AxisLike`` to validate and parse.
+
+        Returns:
+            Parsed axis represented as a 1DArray of length 3.
+        """
+        if isinstance(axis, Axis):
+            return axis.value
+
+        try:
+            axis = np.asarray(axis, dtype=np.float64)
+        except (ValueError, TypeError) as e:
+            msg = "axis requires an ArrayLike"
+            raise TypeError(msg) from e
+        axis = axis.flatten()
+        if len(axis) != 3:
+            msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
+            raise ValueError(msg)
+        if np.all(axis == 0):
+            msg = "axis requires at least one element to be non-zero"
+            raise ValueError(msg)
+        axis = cast("NDArray[np.float64]", axis)
+        return axis / np.linalg.norm(axis)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accept the ``Axis``."""
+        return visitor.visit_axis(self)
+
+
 # Type Aliases
 BitLike = Union[SupportsInt, Bit]
 QubitLike = Union[SupportsInt, Qubit]

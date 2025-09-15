@@ -1,59 +1,16 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, SupportsFloat, cast
+from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import numpy as np
-from numpy.typing import NDArray
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
-from opensquirrel.ir.expression import AxisLike, BaseAxis, Bit, Float, Qubit, QubitLike
+from opensquirrel.ir.expression import Axis, AxisLike, Bit, Float, Qubit, QubitLike
 from opensquirrel.ir.unitary import Gate
 
 if TYPE_CHECKING:
     from opensquirrel.ir import IRVisitor
     from opensquirrel.ir.expression import Expression
-
-
-class Axis(BaseAxis):
-    """The ``Axis`` object parses and stores a vector containing 3 elements.
-
-    The input vector is always normalized before it is stored.
-    """
-
-    @staticmethod
-    def parse(axis: AxisLike) -> NDArray[np.float64]:
-        """Parse and validate an ``AxisLike``.
-
-        Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
-        After casting to an array, the axis is normalized.
-
-        Args:
-            axis: ``AxisLike`` to validate and parse.
-
-        Returns:
-            Parsed axis represented as a 1DArray of length 3.
-        """
-        if isinstance(axis, Axis):
-            return axis.value
-
-        try:
-            axis = np.asarray(axis, dtype=np.float64)
-        except (ValueError, TypeError) as e:
-            msg = "axis requires an ArrayLike"
-            raise TypeError(msg) from e
-        axis = axis.flatten()
-        if len(axis) != 3:
-            msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
-            raise ValueError(msg)
-        if np.all(axis == 0):
-            msg = "axis requires at least one element to be non-zero"
-            raise ValueError(msg)
-        axis = cast("NDArray[np.float64]", axis)
-        return axis / np.linalg.norm(axis)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        """Accept the ``Axis``."""
-        return visitor.visit_axis(self)
 
 
 class BlochSphereRotation(Gate):
