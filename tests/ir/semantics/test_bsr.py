@@ -17,9 +17,7 @@ from opensquirrel import (
     X,
 )
 from opensquirrel.common import ATOL
-from opensquirrel.ir import (
-    Qubit,
-)
+from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation
 
 
