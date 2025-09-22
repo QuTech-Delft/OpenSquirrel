@@ -1,4 +1,6 @@
 # Tests for the simple mapper passes
+from __future__ import annotations
+
 import random
 
 import pytest

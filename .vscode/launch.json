@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: Debug Pytest (No Coverage)",
+      "type": "python",
+      "request": "launch",
+      "module": "pytest",
+      "args": [
+        "-p", "no:cov",
+        "tests",
+        "-v",
+        "-s"
+      ],
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}

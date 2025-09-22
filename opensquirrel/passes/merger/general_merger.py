@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from math import cos, floor, log10, sin
 from typing import Any, cast

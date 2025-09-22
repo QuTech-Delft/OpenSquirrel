@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import cmath
 import math
 from collections.abc import Iterable

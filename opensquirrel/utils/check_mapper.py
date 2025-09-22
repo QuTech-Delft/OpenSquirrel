@@ -1,5 +1,7 @@
 """This module contains checks for the ``Mapper`` pass."""
 
+from __future__ import annotations
+
 from copy import deepcopy
 
 from opensquirrel import I

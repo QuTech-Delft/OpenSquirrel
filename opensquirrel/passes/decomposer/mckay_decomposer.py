@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from math import atan2, cos, pi, sin, sqrt
 
 from opensquirrel import X90, I, Rz
