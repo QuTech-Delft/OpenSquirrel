@@ -1,3 +1,4 @@
+import itertools
 from typing import Any
 
 import networkx as nx
@@ -14,7 +15,7 @@ class ShortestPathRouter(Router):
         self.connectivity = connectivity
 
     def _insert_and_propagate_swaps(self, ir: IR, statement_index: int, shortest_path: list[int]) -> None:
-        for start_qubit_index, end_qubit_index in zip(shortest_path[:-2], shortest_path[1:-1]):
+        for start_qubit_index, end_qubit_index in itertools.pairwise(shortest_path[:-1]):
             ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
             # Update subsequent statements to reflect the swap
             for statement in ir.statements[statement_index + 1 :]:
