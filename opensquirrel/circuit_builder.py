@@ -12,7 +12,8 @@ from opensquirrel.default_instructions import default_instruction_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
-_builder_dynamic_attributes = tuple(default_instruction_set + ['asm'])
+_builder_dynamic_attributes = (*default_instruction_set, "asm")
+
 
 class CircuitBuilder:
     """
@@ -43,7 +44,7 @@ class CircuitBuilder:
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
-    def __dir__(self):
+    def __dir__(self) -> list[str]:
         return super().__dir__() + list(_builder_dynamic_attributes)
 
     def __getattr__(self, attr: Any) -> Callable[..., Self]:
