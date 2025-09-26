@@ -46,10 +46,11 @@ class CircuitBuilder:
     def __dir__(self) -> list[str]:
         return super().__dir__() + list(_builder_dynamic_attributes)  # type: ignore
 
-    def __getattr__(self, attr: Any) -> Any:
+    def __getattr__(self, attr: str) -> Any:
         if attr in _builder_dynamic_attributes:
             return partial(self._add_statement, attr)
-        return super.__getattr__(attr)
+        # Default behaviour
+        return self.__getattribute__(attr)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.
