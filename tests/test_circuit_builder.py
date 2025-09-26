@@ -65,7 +65,7 @@ class TestCircuitBuilder:
 
     def test_unknown_instruction(self) -> None:
         builder = CircuitBuilder(3)
-        with pytest.raises(ValueError, match="unknown instruction 'unknown'"):
+        with pytest.raises(AttributeError, match="has no attribute 'unknown'"):
             builder.unknown(0)
 
     def test_wrong_number_of_arguments(self) -> None:
