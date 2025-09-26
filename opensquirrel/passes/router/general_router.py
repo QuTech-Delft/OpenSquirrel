@@ -6,7 +6,7 @@ from opensquirrel.ir import IR
 
 class Router(ABC):
     def __init__(self, **kwargs: Any) -> None:
-        """ Generic router class """
+        """Generic router class"""
 
     @abstractmethod
     def route(self, ir: IR) -> IR:
