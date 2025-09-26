@@ -45,9 +45,9 @@ class CircuitBuilder:
         self.ir = IR()
 
     def __dir__(self) -> list[str]:
-        return super().__dir__() + list(_builder_dynamic_attributes)
+        return super().__dir__() + list(_builder_dynamic_attributes)  # type: ignore
 
-    def __getattr__(self, attr: Any) -> Callable[..., Self]:
+    def __getattr__(self, attr: Any) -> Any:
         if attr in _builder_dynamic_attributes:
             return partial(self._add_statement, attr)
         return super.__getattr__(attr)
