@@ -6,7 +6,7 @@ from opensquirrel.ir import IR
 
 class Router(ABC):
     def __init__(self, **kwargs: Any) -> None:
-        """ Router class to map a quantum algorithm on the specific topology """
+        """ Generic router class """
         ...
 
     @abstractmethod
