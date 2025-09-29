@@ -152,6 +152,8 @@ class Circuit:
         """Count the operations in the circuit by name"""
         counter: Counter[str] = Counter()
         counter.update(
-            statement.name for statement in self.ir.statements if not isinstance(statement, AsmDeclaration)
+            getattr(statement, "name", "unknown")
+            for statement in self.ir.statements
+            if not isinstance(statement, AsmDeclaration)
         )
         return dict(counter)
