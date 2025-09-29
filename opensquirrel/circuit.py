@@ -148,7 +148,7 @@ class Circuit:
         validator.validate(self.ir)
 
     def count_ops(self) -> dict[str, int]:
-        """ Count the operations in the circuit by name """
-        c=Counter()
+        """Count the operations in the circuit by name"""
+        c = Counter()
         c.update(s.name for s in self.ir.statements)
         return dict(c)
