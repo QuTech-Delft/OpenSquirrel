@@ -149,6 +149,6 @@ class Circuit:
 
     def count_ops(self) -> dict[str, int]:
         """Count the operations in the circuit by name"""
-        c: Counter[str] = Counter()
-        c.update(getattr(s, "name", "other") for s in self.ir.statements)
+        counter: Counter[str] = Counter()
+        counter.update(getattr(statement, "name", "other") for statement in self.ir.statements)
         return dict(c)
