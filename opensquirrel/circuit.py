@@ -151,5 +151,7 @@ class Circuit:
     def instruction_count(self) -> dict[str, int]:
         """Count the operations in the circuit by name"""
         counter: Counter[str] = Counter()
-        counter.update(getattr(statement, "name") for statement in self.ir.statements if not isinstance(statement, AsmDeclaration))
+        counter.update(
+            statement.name for statement in self.ir.statements if not isinstance(statement, AsmDeclaration)
+        )
         return dict(counter)

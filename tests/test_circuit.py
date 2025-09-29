@@ -40,19 +40,19 @@ def test_instruction_count() -> None:
     assert counts == {"H": 1, "CNOT": 1}
 
     # non-unitaries
-    builder = CircuitBuilder(2, bit_register_size = 2)
+    builder = CircuitBuilder(2, bit_register_size=2)
     builder.barrier(1)
     builder.init(0)
     builder.measure(0, 0)
     circuit = builder.to_circuit()
     counts = circuit.instruction_count
-    assert counts == {'barrier': 1, 'init': 1, 'measure': 1}
+    assert counts == {"barrier": 1, "init": 1, "measure": 1}
 
     # asm statements
     builder = CircuitBuilder(2)
     builder.barrier(0)
-    builder.asm('asm_name', 'asm_code')
+    builder.asm("asm_name", "asm_code")
     builder.barrier(1)
     circuit = builder.to_circuit()
     counts = circuit.instruction_count
-    assert counts == {'barrier': 2}
+    assert counts == {"barrier": 2}
