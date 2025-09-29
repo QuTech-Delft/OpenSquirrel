@@ -53,7 +53,7 @@ class CircuitBuilder:
         """
         index = Qubit(qubit).index
         if index >= self.register_manager.get_qubit_register_size():
-            msg = "qubit index is out of bounds"
+            msg = f"qubit index {index} is out of bounds"
             raise IndexError(msg)
 
     def _check_bit_out_of_bounds_access(self, bit: BitLike) -> None:
@@ -64,7 +64,7 @@ class CircuitBuilder:
         """
         index = Bit(bit).index
         if index >= self.register_manager.get_bit_register_size():
-            msg = "bit index is out of bounds"
+            msg = "bit index {idx} is out of bounds"
             raise IndexError(msg)
 
     def _check_out_of_bounds_access(self, instruction: Instruction) -> None:

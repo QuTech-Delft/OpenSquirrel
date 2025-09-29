@@ -29,3 +29,15 @@ def test_asm_filter() -> None:
 
     for statement in asm_statements:
         assert relevant_backend_name in str(statement.backend_name)
+
+def test_count_ops() -> None:
+    builder = CircuitBuilder(2)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    circuit = builder.to_circuit()
+    counts = circuit.count_ops()
+    assert counts == {'H': 1, 'CNOT': 1}
+    
+    builder.barrier(1)
+    circuit = builder.to_circuit()
+    assert circuit.count_ops() == {'H': 1, 'CNOT': 1, 'barrier': 1}

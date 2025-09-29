@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
@@ -145,3 +146,9 @@ class Circuit:
     def validate(self, validator: Validator) -> None:
         """Generic validator pass. It applies the given validator to the circuit."""
         validator.validate(self.ir)
+
+    def count_ops(self) -> dict[str, int]:
+        """ Count the operations in the circuit by name """
+        c=Counter()
+        c.update(s.name for s in self.ir.statements)
+        return dict(c)

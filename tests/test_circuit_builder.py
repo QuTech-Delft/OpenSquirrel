@@ -55,12 +55,12 @@ class TestCircuitBuilder:
     def test_gate_index_error(self) -> None:
         builder = CircuitBuilder(2)
 
-        with pytest.raises(IndexError, match="qubit index is out of bounds"):
+        with pytest.raises(IndexError, match="qubit index 12 is out of bounds"):
             builder.H(0).CNOT(0, 12).to_circuit()
 
     def test_measure_index_error(self) -> None:
         builder = CircuitBuilder(2, 1)
-        with pytest.raises(IndexError, match="bit index is out of bounds"):
+        with pytest.raises(IndexError, match="bit index 10 is out of bounds"):
             builder.H(0).measure(0, 10).to_circuit()
 
     def test_unknown_instruction(self) -> None:
