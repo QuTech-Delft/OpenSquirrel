@@ -147,8 +147,9 @@ class Circuit:
         """Generic validator pass. It applies the given validator to the circuit."""
         validator.validate(self.ir)
 
-    def count_ops(self) -> dict[str, int]:
+    @property
+    def instruction_count(self) -> dict[str, int]:
         """Count the operations in the circuit by name"""
         counter: Counter[str] = Counter()
-        counter.update(getattr(statement, "name", "other") for statement in self.ir.statements)
-        return dict(c)
+        counter.update(getattr(statement, "name") for statement in self.ir.statements if not isinstance(statement, AsmDeclaration))
+        return dict(counter)
