@@ -139,7 +139,6 @@ class IR:
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):
             return False
-
         return self.statements == other.statements
 
     def __repr__(self) -> str:
@@ -156,6 +155,12 @@ class IR:
 
     def add_statement(self, statement: Statement) -> None:
         self.statements.append(statement)
+
+    def reverse(self) -> IR:
+        ir = IR()
+        for statement in self.statements[::-1]:
+            ir.add_statement(statement)
+        return ir
 
     def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:

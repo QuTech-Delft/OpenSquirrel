@@ -1,16 +1,15 @@
-import pytest
 import importlib
+
+import pytest
 
 from opensquirrel import Circuit
 from opensquirrel.passes.exporter import ExportFormat
 
 
 class TestALAPScheduling:
-
     @pytest.fixture
     def qs_is_installed(self) -> bool:
         return importlib.util.find_spec("quantify_scheduler") is not None
-
 
     def test_hectoqubit_alap1(self, qs_is_installed: bool) -> None:
         qc = Circuit.from_string(
@@ -40,7 +39,6 @@ class TestALAPScheduling:
             # fig.show()
 
     def test_hectoqubit_alap2(self, qs_is_installed: bool) -> None:
-
         qc = Circuit.from_string(
             """version 3.0
 
@@ -67,7 +65,6 @@ class TestALAPScheduling:
             # fig.show()
 
     def test_hectoqubit_alap3(self, qs_is_installed: bool) -> None:
-
         qc = Circuit.from_string(
             """version 3.0
 

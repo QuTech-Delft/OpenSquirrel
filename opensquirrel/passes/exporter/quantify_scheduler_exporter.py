@@ -4,45 +4,31 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
-from opensquirrel.circuit import Circuit
+from opensquirrel import CNOT, CR, CZ, SWAP, Barrier, CRk, Init, Measure, Reset, Wait
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
-from opensquirrel import Init, Wait, Barrier
 from opensquirrel.ir import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
+    Gate,
+    IRVisitor,
+    NonUnitary,
+)
+from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
     ControlledGate,
-    CRk,
-    Gate,
-    IRVisitor,
     MatrixGate,
-    Measure,
-    NonUnitary,
-    Reset,
 )
 
 try:
     import quantify_scheduler
-    import quantify_scheduler.operations.gate_library as quantify_scheduler_gates
     from quantify_scheduler.schedules import Schedulable  # noqa: TC002
 except ModuleNotFoundError:
     pass
 
 if TYPE_CHECKING:
-    from opensquirrel import (
-        CNOT,
-        CR,
-        CZ,
-        SWAP,
-        CRk,
-    )
-    from opensquirrel.circuit import Circuit
+    from opensquirrel import Circuit
     from opensquirrel.ir import Qubit
     from opensquirrel.register_manager import RegisterManager
 
@@ -140,6 +126,39 @@ class _Scheduler(IRVisitor):
     def operation_record(self) -> OperationRecord:
         return self._operation_record
 
+    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
+        self.visit_gate(gate)
+
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
+        self.visit_bloch_sphere_rotation(gate)
+
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
+        self.visit_bloch_sphere_rotation(gate)
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
+        self.visit_bloch_sphere_rotation(gate)
+
+    def visit_controlled_gate(self, gate: ControlledGate) -> None:
+        self.visit_gate(gate)
+
+    def visit_cnot(self, gate: ControlledGate) -> None:
+        self.visit_controlled_gate(gate)
+
+    def visit_cr(self, gate: ControlledGate) -> None:
+        self.visit_controlled_gate(gate)
+
+    def visit_crk(self, gate: ControlledGate) -> None:
+        self.visit_controlled_gate(gate)
+
+    def visit_cz(self, gate: ControlledGate) -> None:
+        self.visit_controlled_gate(gate)
+
+    def visit_matrix_gate(self, gate: MatrixGate) -> None:
+        self.visit_gate(gate)
+
+    def visit_swap(self, gate: MatrixGate) -> None:
+        self.visit_matrix_gate(gate)
+
     def visit_gate(self, gate: Gate) -> None:
         qubit_indices = [qubit.index for qubit in gate.get_qubit_operands()]
         self._operation_record.set_schedulable_timing_constraints(qubit_indices)
@@ -158,9 +177,10 @@ class _ScheduleCreator(IRVisitor):
     def _get_qubit_string(self, qubit: Qubit) -> str:
         return f"{self.qubit_register_name}[{qubit.index}]"
 
-    def __init__(self,
-                 register_manager: RegisterManager,
-                 ) -> None:
+    def __init__(
+        self,
+        register_manager: RegisterManager,
+    ) -> None:
         self.register_manager = register_manager
         self.qubit_register_size = register_manager.get_qubit_register_size()
         self.qubit_register_name = register_manager.get_qubit_register_name()
@@ -181,7 +201,7 @@ class _ScheduleCreator(IRVisitor):
         ):
             # Hadamard gate.
             self.schedule.add(
-                quantify_scheduler_gates.H(self._get_qubit_string(gate.qubit)),
+                quantify_scheduler.operations.gate_library.H(self._get_qubit_string(gate.qubit)),
                 label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
             )
             return
@@ -191,7 +211,9 @@ class _ScheduleCreator(IRVisitor):
             phi: float = round(math.degrees(math.atan2(gate.axis[1], gate.axis[0])), FIXED_POINT_DEG_PRECISION)
 
             self.schedule.add(
-                quantify_scheduler_gates.Rxy(theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit)),
+                quantify_scheduler.operations.gate_library.Rxy(
+                    theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit)
+                ),
                 label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
             )
             return
@@ -199,7 +221,7 @@ class _ScheduleCreator(IRVisitor):
             # Rz rotation.
             theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(
-                quantify_scheduler_gates.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)),
+                quantify_scheduler.operations.gate_library.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)),
                 label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
             )
             return
@@ -226,7 +248,7 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_cnot(self, gate: CNOT) -> None:
         self.schedule.add(
-            quantify_scheduler_gates.CNOT(
+            quantify_scheduler.operations.gate_library.CNOT(
                 qC=self._get_qubit_string(gate.control_qubit),
                 qT=self._get_qubit_string(gate.target_qubit),
             ),
@@ -235,7 +257,7 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_cz(self, gate: CZ) -> None:
         self.schedule.add(
-            quantify_scheduler_gates.CZ(
+            quantify_scheduler.operations.gate_library.CZ(
                 qC=self._get_qubit_string(gate.control_qubit),
                 qT=self._get_qubit_string(gate.target_qubit),
             ),
@@ -254,7 +276,7 @@ class _ScheduleCreator(IRVisitor):
         acq_index = self.acq_index_record[qubit_index]
         self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
         self.schedule.add(
-            quantify_scheduler_gates.Measure(
+            quantify_scheduler.operations.gate_library.Measure(
                 self._get_qubit_string(gate.qubit),
                 acq_channel=qubit_index,
                 acq_index=acq_index,
@@ -269,7 +291,7 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_reset(self, gate: Reset) -> None:
         self.schedule.add(
-            quantify_scheduler_gates.Reset(self._get_qubit_string(gate.qubit)),
+            quantify_scheduler.operations.gate_library.Reset(self._get_qubit_string(gate.qubit)),
             label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
         )
 
@@ -284,8 +306,6 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
 
         global quantify_scheduler
         quantify_scheduler = QuantifySchedulerNotInstalled()
-        global quantify_scheduler_gates
-        quantify_scheduler_gates = QuantifySchedulerNotInstalled()
 
     try:
         # Create circuit, with measure data
@@ -294,12 +314,13 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
 
         # Obtain ALAP reference timing for schedulables
         schedulables = list(schedule_creator.schedule.schedulables.values())
-        scheduler = _Scheduler(circuit.register_manager, schedulables)
-        circuit.ir.reverse().accept(scheduler)
+        if schedulables:
+            scheduler = _Scheduler(circuit.register_manager, schedulables)
+            circuit.ir.reverse().accept(scheduler)
 
-        # Update timing constraints of schedulables
-        for name, schedulable in schedule_creator.schedule.schedulables.items():
-            schedulable["timing_constraints"] = [scheduler.operation_record.schedulable_timing_constraints[name]]
+            # Update timing constraints of schedulables
+            for name, schedulable in schedule_creator.schedule.schedulables.items():
+                schedulable["timing_constraints"] = [scheduler.operation_record.schedulable_timing_constraints[name]]
 
     except UnsupportedGateError as e:
         msg = (

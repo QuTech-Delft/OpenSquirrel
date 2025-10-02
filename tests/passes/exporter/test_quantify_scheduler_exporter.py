@@ -10,7 +10,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opensquirrel import CircuitBuilder, H
+from opensquirrel import CircuitBuilder
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.ir.semantics import BlochSphereRotation
@@ -73,8 +73,8 @@ def test_export(mock_qs: MagicMock) -> None:
 
 @pytest.mark.parametrize(
     "gate",
-    [H(0), BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34)],
-    ids=["H", "BSR"],
+    [BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34)],
+    ids=["BSR"],
 )
 def test_gates_not_supported(mock_qs: MagicMock, gate: Gate) -> None:
     quantify_scheduler_exporter = importlib.import_module("opensquirrel.passes.exporter.quantify_scheduler_exporter")
