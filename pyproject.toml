@@ -44,8 +44,8 @@ dev = [
     "IPython>=7.12,<9.0",
 ]
 export = [
-    "pyqt5-qt5==5.15.2",
-    "quantify-scheduler==0.23.1",
+    "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
+    "quantify-scheduler==0.23.1; sys_platform != 'darwin'",
 ]
 docs = [
     "mike>=2.1.3",
