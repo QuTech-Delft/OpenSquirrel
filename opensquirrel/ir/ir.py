@@ -30,6 +30,7 @@ if TYPE_CHECKING:
         ControlledGate,
         MatrixGate,
     )
+    from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
     from opensquirrel.ir.statement import Instruction, Statement
 
 
@@ -50,6 +51,9 @@ class IRVisitor:
         pass
 
     def visit_axis(self, axis: Axis) -> Any:
+        pass
+
+    def visit_canonical_axis(self, axis: CanonicalAxis) -> Any:
         pass
 
     def visit_statement(self, statement: Statement) -> Any:
@@ -80,6 +84,9 @@ class IRVisitor:
         pass
 
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
+        pass
+
+    def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
         pass
 
     def visit_swap(self, gate: SWAP) -> Any:

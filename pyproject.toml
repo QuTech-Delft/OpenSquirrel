@@ -38,9 +38,9 @@ Repository = "https://github.com/QuTech-Delft/OpenSquirrel"
 dev = [
     "coverage>=7.3.2,<8",
     "pytest>=7.4.3,<9.0.0",
-    "pytest-cov>=4.1,<7.0",
+    "pytest-cov>=4.1,<8.0",
     "mypy>=1.7.0,<2",
-    "ruff>=0.5,<0.13",
+    "ruff>=0.5,<0.14",
     "tox>=4.24.1,<5",
     "sympy>=1.13.1,<2",
     "IPython>=7.12,<9.0",
@@ -78,7 +78,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
-addopts = "-v --cov --cov-report term-missing:skip-covered --cov-report xml"
+addopts = "-v"
 
 [tool.coverage.run]
 branch = true

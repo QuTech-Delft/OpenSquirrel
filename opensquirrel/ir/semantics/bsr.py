@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, Any, SupportsFloat
 import numpy as np
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
-from opensquirrel.ir import Axis, AxisLike, Bit, Float, Gate, Qubit, QubitLike
+from opensquirrel.ir.expression import Axis, AxisLike, Bit, Float, Qubit, QubitLike
+from opensquirrel.ir.unitary import Gate
 
 if TYPE_CHECKING:
     from opensquirrel.ir import IRVisitor
