@@ -1,8 +1,9 @@
 from typing import Any
 
-from opensquirrel.ir import Bit, Gate, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir import Bit, IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.expression import Expression
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.unitary import Gate
 
 
 class ControlledGate(Gate):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
@@ -145,3 +146,14 @@ class Circuit:
     def validate(self, validator: Validator) -> None:
         """Generic validator pass. It applies the given validator to the circuit."""
         validator.validate(self.ir)
+
+    @property
+    def instruction_count(self) -> dict[str, int]:
+        """Count the operations in the circuit by name"""
+        counter: Counter[str] = Counter()
+        counter.update(
+            getattr(statement, "name", "unknown")
+            for statement in self.ir.statements
+            if not isinstance(statement, AsmDeclaration)
+        )
+        return dict(counter)

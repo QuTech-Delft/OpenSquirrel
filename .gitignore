@@ -161,3 +161,6 @@ cython_debug/
 #.idea/
 
 %LOCALAPPDATA%
+
+# VSCode
+.vscode/*

@@ -93,6 +93,7 @@ class _QubitRemapper(IRVisitor):
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
         controlled_gate.control_qubit.accept(self)
+        controlled_gate.target_qubit.accept(self)
         self.visit_bloch_sphere_rotation(controlled_gate.target_gate)
         return controlled_gate
 
