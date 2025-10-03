@@ -66,12 +66,12 @@ class OperationRecord:
     def set_schedulable_timing_constraints(self, qubit_indices: list[int]) -> None:
         self._process_barriers()
 
-        _, ref_schedulable = self._get_references(qubit_indices)
+        ref_qubit_index, ref_schedulable = self._get_references(qubit_indices)
         schedulable: Schedulable = self._schedulables.pop()
 
         waiting_times: list[int] = []
+        self._set_references(qubit_indices, [ref_qubit_index] * len(qubit_indices), schedulable)
         for qubit_index in qubit_indices:
-            self._set_references(qubit_index, qubit_index, schedulable)
             if qubit_index in self._wait_record:
                 waiting_times.append(self._wait_record[qubit_index])
                 del self._wait_record[qubit_index]
@@ -97,8 +97,8 @@ class OperationRecord:
     def _process_barriers(self) -> None:
         if self._barrier_record:
             ref_qubit_index, ref_schedulable = self._get_references(self._barrier_record)
-            for qubit_index in self._barrier_record:
-                self._set_references(qubit_index, ref_qubit_index, ref_schedulable)
+            ref_qubit_indices = [ref_qubit_index] * len(self._barrier_record)
+            self._set_references(self._barrier_record, ref_qubit_indices, ref_schedulable)
             self._barrier_record = []
 
     def _get_references(self, relevant_qubit_indices: list[int]) -> tuple[int, Schedulable]:
@@ -107,10 +107,15 @@ class OperationRecord:
         ref_schedulable = self._ref_schedulables[relevant_qubit_index]
         return relevant_qubit_index, ref_schedulable
 
-    def _set_references(self, qubit_index: int, ref_qubit_index: int, ref_schedulable: Schedulable) -> None:
-        self._schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
-        self._ref_indices[qubit_index] = ref_qubit_index
-        self._ref_schedulables[qubit_index] = ref_schedulable
+    def _set_references(
+        self, qubit_indices: list[int], ref_qubit_indices: list[int], ref_schedulable: Schedulable
+    ) -> None:
+        temp_schedulable_counters = self._schedulable_counters.copy()
+        for qubit_index, ref_qubit_index in zip(qubit_indices, ref_qubit_indices):
+            temp_schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
+            self._ref_indices[qubit_index] = ref_qubit_index
+            self._ref_schedulables[qubit_index] = ref_schedulable
+        self._schedulable_counters = temp_schedulable_counters
 
     @staticmethod
     def _get_index_of_max_value(input_list: list[int]) -> int:

@@ -33,10 +33,8 @@ class TestALAPScheduling:
         if qs_is_installed:
             exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
-            # fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
-            # fig.set_dpi(300)
-            # fig.savefig("example.png")
-            # fig.show()
+            for name, data in exported_schedule.schedulables.items():
+                print(f"{name}: {data['timing_constraints'][0]['ref_schedulable']}")  # noqa: T201
 
     def test_hectoqubit_alap2(self, qs_is_installed: bool) -> None:
         qc = Circuit.from_string(
@@ -59,10 +57,8 @@ class TestALAPScheduling:
         if qs_is_installed:
             exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
-            # fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
-            # fig.set_dpi(300)
-            # fig.savefig("example.png")
-            # fig.show()
+            for name, data in exported_schedule.schedulables.items():
+                print(f"{name}: {data['timing_constraints'][0]['ref_schedulable']}")  # noqa: T201
 
     def test_hectoqubit_alap3(self, qs_is_installed: bool) -> None:
         qc = Circuit.from_string(
@@ -86,10 +82,8 @@ class TestALAPScheduling:
         if qs_is_installed:
             exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
-            # fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
-            # fig.set_dpi(300)
-            # fig.savefig("example.png")
-            # fig.show()
+            for name, data in exported_schedule.schedulables.items():
+                print(f"{name}: {data['timing_constraints'][0]['ref_schedulable']}")  # noqa: T201
 
     def test_hectoqubit_alap4(self, qs_is_installed: bool) -> None:
         qc = Circuit.from_string(
@@ -101,6 +95,7 @@ class TestALAPScheduling:
             init q[2]
             barrier q[3]
             barrier q[2]
+            Ry(2.5707963) q[3]
             Ry(-1.5707963) q[3]
             Ry(-1.5707963) q[2]
             CZ q[3], q[2]
@@ -115,7 +110,31 @@ class TestALAPScheduling:
         if qs_is_installed:
             exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
 
-            # fig, _ = exported_schedule.plot_circuit_diagram(figsize=(20, 6))
-            # fig.set_dpi(300)
-            # fig.savefig("example.png")
-            # fig.show()
+            for name, data in exported_schedule.schedulables.items():
+                print(f"{name}: {data['timing_constraints'][0]['ref_schedulable']}")  # noqa: T201
+
+    def test_hectoqubit_alap5(self, qs_is_installed: bool) -> None:
+        qc = Circuit.from_string(
+            """version 3.0
+
+            qubit[6] q
+            bit[6] b
+            init q
+            barrier q
+            X q[1]
+            CNOT q[4], q[5]
+            CNOT q[1], q[0]
+            CNOT q[3], q[4]
+            CNOT q[2], q[1]
+            CNOT q[3], q[2]
+            barrier q
+            X q[4]
+            b = measure q
+            """
+        )
+
+        if qs_is_installed:
+            exported_schedule, _ = qc.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+
+            for name, data in exported_schedule.schedulables.items():
+                print(f"{name}: {data['timing_constraints'][0]['ref_schedulable']}")  # noqa: T201
