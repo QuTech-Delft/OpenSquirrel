@@ -7,7 +7,8 @@ import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
 from opensquirrel.common import ATOL, repr_round
-from opensquirrel.ir import Bit, Gate, Qubit, QubitLike
+from opensquirrel.ir import Bit, Qubit, QubitLike
+from opensquirrel.ir.unitary import Gate
 
 if TYPE_CHECKING:
     from opensquirrel.ir import IRVisitor

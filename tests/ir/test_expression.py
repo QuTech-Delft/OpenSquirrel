@@ -170,6 +170,6 @@ class TestAxis:
         ],
     )
     def test_normalize(self, axis: AxisLike, expected: NDArray[np.float64]) -> None:
-        obj = Axis.normalize(np.array(axis, dtype=np.float64))
+        obj = Axis(np.array(axis, dtype=np.float64))
         assert isinstance(expected, np.ndarray)
-        np.testing.assert_array_almost_equal(obj, expected)
+        np.testing.assert_array_almost_equal(np.array(obj), expected)
