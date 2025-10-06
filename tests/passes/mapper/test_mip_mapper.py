@@ -29,6 +29,18 @@ def mapper3() -> MIPMapper:
 
 
 @pytest.fixture
+def mapper4() -> MIPMapper:
+    connectivity = {"0": [1], "1": [0, 2], "2": [1, 3], "3": [2, 4], "4": [3]}
+    return MIPMapper(connectivity=connectivity)
+
+
+@pytest.fixture
+def mapper5() -> MIPMapper:
+    connectivity = {"0": [1], "1": [2, 0], "2": [1]}
+    return MIPMapper(connectivity=connectivity)
+
+
+@pytest.fixture
 def circuit1() -> Circuit:
     builder = CircuitBuilder(5)
     builder.H(0)
@@ -112,3 +124,45 @@ def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
     assert all(0 <= physical_qubit <= 4 for physical_qubit in physical_qubits)
 
     assert len(set(physical_qubits)) == 3
+
+
+def test_remap_controlled_gates(mapper4: MIPMapper, mapper5: MIPMapper) -> None:
+    circuit = Circuit.from_string("""version 3.0; qubit[5] q; bit[2] b; H q[0]; CNOT q[0], q[1]; b = measure q[0, 1]""")
+
+    circuit.map(mapper=mapper4)
+
+    # This first assert needs to be updated, because in this case the MIP mapper should NOT
+    # remap this circuit at all!
+    # Issue: https://qutech-sd.atlassian.net/browse/CQT-414
+
+    assert (
+        str(circuit)
+        == """version 3.0
+
+qubit[5] q
+bit[2] b
+
+H q[2]
+CNOT q[2], q[3]
+b[0] = measure q[2]
+b[1] = measure q[3]
+"""
+    )
+
+    builder = CircuitBuilder(3)
+    builder.CNOT(0, 1)
+    builder.CNOT(0, 2)
+    circuit = builder.to_circuit()
+
+    circuit.map(mapper=mapper5)
+
+    assert (
+        str(circuit)
+        == """version 3.0
+
+qubit[3] q
+
+CNOT q[1], q[0]
+CNOT q[1], q[2]
+"""
+    )
