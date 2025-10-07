@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, cast
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, cast
 
 import cqasm.v3x as cqasm
 
@@ -141,9 +142,11 @@ class LibQasmParser:
             extended_gate_parameters = [gate_parameters] * number_of_operands
             return [
                 (*operands, *parameters)
-                for operands, parameters in zip(zip(*extended_operands), extended_gate_parameters)
+                for operands, parameters in zip(
+                    zip(*extended_operands, strict=False), extended_gate_parameters, strict=False
+                )
             ]
-        return list(zip(*extended_operands))
+        return list(zip(*extended_operands, strict=False))
 
     def _get_expanded_measure_args(self, ast_args: Any) -> list[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
@@ -160,7 +163,7 @@ class LibQasmParser:
             else:
                 msg = "argument is neither of qubit nor bit type"
                 raise TypeError(msg)
-        return list(zip(*expanded_args))
+        return list(zip(*expanded_args, strict=False))
 
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
