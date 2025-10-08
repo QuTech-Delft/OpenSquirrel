@@ -116,4 +116,5 @@ plugins:
   - literate-nav:
       nav_file: reference.md
   - mkdocstrings
+  - glightbox
   - search

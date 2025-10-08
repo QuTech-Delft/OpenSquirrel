@@ -103,13 +103,19 @@ The `Circuit.from_string` method invokes OpenSquirrel's reader which uses the
 Some important things to note about how OpenSquirrel reads the input cQASM string:
 the OpenSquirrel reader
 
-- unpacks any [SGMQ notation](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html)
-as separate consecutive statements,
-- combines all _logical_ (qu)bit registers into a single _virtual_ (qu)bit register
-with identifiers `q` and `b`, signifying the qubit and bit registers, respectively,
-- evaluates complex expressions (_e.g._, `pi/2` becomes `1.5707963`), and
 - ignores any [comments](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/tokens/whitespace_and_comments.html);
-they are simply not registered during the parsing phase.
+  they are simply not registered during the parsing phase,
+- combines all _logical_ (qu)bit registers into a single _virtual_ (qu)bit register
+  with identifiers `q` and `b`, signifying the qubit and bit registers, respectively,
+- unpacks any [SGMQ notation](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html)
+  as separate consecutive statements,
+- evaluates complex expressions (_e.g._, `pi/2` becomes `1.5707963`), and
+- normalizes the values of the parameters for the rotation angle $\theta$ and phase $\phi$ to within the range
+  $\left(-\pi, \pi \right]$.
+
+Regarding the latter point, when using the _inverse_ or _power_ [gate modifiers](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/unitary_instructions.html#gate-modifiers),
+the modifier is applied first and only then are the values of the parameters normalized, _e.g._,
+`pow(1/2).Rx(3 * pi)` becomes `Rx(-pi / 2)`, instead of `Rx(pi / 2)`.
 
 !!! warning "OpenSquirrel's native tongue is cQASM"
 

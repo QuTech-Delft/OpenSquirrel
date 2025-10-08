@@ -23,7 +23,7 @@ USER ${USER}
 # Install additional python packages
 RUN pip install --upgrade pip wheel setuptools tox pipx
 
-# Install poetry
-RUN pipx install poetry
+# Install uv
+RUN pipx install uv
 
 USER root

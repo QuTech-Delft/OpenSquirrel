@@ -1,32 +1,27 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from typing import TYPE_CHECKING
 
 from opensquirrel.ir import (
+    Barrier,
+    Init,
+    Measure,
+    Reset,
+    Wait,
+)
+from opensquirrel.ir.default_gates import (
     CNOT,
     CR,
     CZ,
     SWAP,
     X90,
     Y90,
-    Barrier,
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
     CRk,
-    Gate,
     H,
     I,
-    Init,
-    Instruction,
-    MatrixGate,
-    Measure,
     MinusX90,
     MinusY90,
-    NonUnitary,
-    Reset,
     Rn,
     Rx,
     Ry,
@@ -35,12 +30,26 @@ from opensquirrel.ir import (
     SDagger,
     T,
     TDagger,
-    Unitary,
-    Wait,
     X,
     Y,
     Z,
 )
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import (
+        Gate,
+        Instruction,
+        NonUnitary,
+        Unitary,
+    )
+    from opensquirrel.ir.semantics import (
+        BlochSphereRotation,
+        BsrAngleParam,
+        BsrFullParams,
+        BsrNoParams,
+        ControlledGate,
+        MatrixGate,
+    )
 
 default_bsr_without_params_set: Mapping[str, type[BsrNoParams]]
 default_bsr_without_params_set = {
@@ -115,6 +124,9 @@ default_instruction_set = {
     **default_unitary_set,
     **default_non_unitary_set,
 }
+
+default_bsr_set_without_rn: Mapping[str, type[BsrNoParams] | type[BsrAngleParam]]
+default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
 
 
 def is_anonymous_gate(name: str) -> bool:
