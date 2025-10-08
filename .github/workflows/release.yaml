@@ -1,4 +1,4 @@
-name: Releases
+name: Build and Publish wheels
 
 on:
   pull_request:
