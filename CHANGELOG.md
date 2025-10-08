@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [ M.m.P ] - [ yyyy-mm-dd ]
 
+### Added
+
+- Support for Pythin 3.13 added.
+
 ### Removed
 
 - Support for Python 3.9 dropped.
