@@ -1,6 +1,7 @@
 # OpenQL MIP-Like Mapper
 from __future__ import annotations
 
+import itertools
 from typing import Any
 
 import numpy as np
@@ -90,7 +91,7 @@ class MIPMapper(Mapper):
                 args = statement.arguments
                 if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
                     qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
-                    for q_0, q_1 in zip(qubit_args[:-1], qubit_args[1:]):
+                    for q_0, q_1 in itertools.pairwise(qubit_args):
                         reference_counter[q_0.index][q_1.index] += 1
                         reference_counter[q_1.index][q_0.index] += 1
         cost = [[0 for _ in range(num_physical_qubits)] for _ in range(num_virtual_qubits)]

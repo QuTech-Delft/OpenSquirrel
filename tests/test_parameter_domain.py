@@ -19,7 +19,7 @@ DELTA = 0.001
 def angles() -> AnglesType:
     input_angles = [pi, -pi, -pi - DELTA, -pi + DELTA, 3 * pi / 2, -3 * pi / 2, 2 * pi]
     expected_outputs = [pi, pi, pi - DELTA, -pi + DELTA, -pi / 2, pi / 2, 0.0]
-    return zip(input_angles, expected_outputs)
+    return zip(input_angles, expected_outputs, strict=False)
 
 
 class TestParsing:

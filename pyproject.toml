@@ -1,6 +1,6 @@
 [project]
 name = "opensquirrel"
-version = "0.6.0"
+version = "0.6.1"
 description = "A quantum circuit transformation and manipulation tool"
 authors = [
     { name = "Quantum Inspire", email = "support@quantum-inspire.com" },
@@ -92,7 +92,7 @@ exclude_also = ["if TYPE_CHECKING:"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 preview = true
