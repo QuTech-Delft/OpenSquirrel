@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from copy import deepcopy
 from functools import partial
 from typing import Any
@@ -11,6 +10,8 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+
+_builder_dynamic_attributes = (*default_instruction_set, "asm")
 
 
 class CircuitBuilder:
@@ -42,8 +43,14 @@ class CircuitBuilder:
         self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
         self.ir = IR()
 
-    def __getattr__(self, attr: Any) -> Callable[..., Self]:
-        return partial(self._add_statement, attr)
+    def __dir__(self) -> list[str]:
+        return super().__dir__() + list(_builder_dynamic_attributes)  # type: ignore
+
+    def __getattr__(self, attr: str) -> Any:
+        if attr in _builder_dynamic_attributes:
+            return partial(self._add_statement, attr)
+        # Default behaviour
+        return self.__getattribute__(attr)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.
@@ -53,7 +60,7 @@ class CircuitBuilder:
         """
         index = Qubit(qubit).index
         if index >= self.register_manager.get_qubit_register_size():
-            msg = "qubit index is out of bounds"
+            msg = f"qubit index {index} is out of bounds"
             raise IndexError(msg)
 
     def _check_bit_out_of_bounds_access(self, bit: BitLike) -> None:
@@ -64,7 +71,7 @@ class CircuitBuilder:
         """
         index = Bit(bit).index
         if index >= self.register_manager.get_bit_register_size():
-            msg = "bit index is out of bounds"
+            msg = f"bit index {index} is out of bounds"
             raise IndexError(msg)
 
     def _check_out_of_bounds_access(self, instruction: Instruction) -> None:
@@ -88,9 +95,9 @@ class CircuitBuilder:
             raise ValueError(msg)
         try:
             instruction = default_instruction_set[attr](*args)
-        except TypeError:
-            msg = f"trying to build '{attr}' with the wrong number or type of arguments: '{args}'"
-            raise TypeError(msg) from None
+        except TypeError as e:
+            msg = f"trying to build {attr!r} with the wrong number or type of arguments: {args!r}: {e}"
+            raise TypeError(msg) from e
 
         self._check_out_of_bounds_access(instruction)
 

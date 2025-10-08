@@ -10,12 +10,30 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
-## [ M.m.P ] - [ xxxx-yy-zz ]
+## [ M.m.P ] - [ yyyy-mm-dd ]
+
+### Removed
+
+- Support for Python 3.9 dropped.
+
+## [ 0.6.1 ] - [ 2025-10-06 ]
+
+### Added
+
+- `instruction_count` property to `Circuit`
+
+### Fixed
+
+- Autocompletion for `Circuitbuilder` gates
+- Re-mapper properly handles remapping of target qubits
+
+## [ 0.6.0 ] - [ 2025-08-28 ]
 
 ### Added
 
 - Support for Python 3.13
 - `MIPMapper` mapper pass
+- OpenSquirrel's `__version__` attribute exposed
 
 ### Changed
 
@@ -25,6 +43,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - `ShortestPathRouter` and `AStarRouter` now correctly propagate SWAP gate insertion effects throughout the circuit
+- The values for parameters `theta` and `phi` stay within the domain `(-pi, pi]` throughout parse- and compile-time
+(_note_: gate modifiers have precedence over normalization)
+- Mapping of the target qubits of controlled gates
 
 ## [ 0.5.0 ] - [ 2025-05-28 ]
 

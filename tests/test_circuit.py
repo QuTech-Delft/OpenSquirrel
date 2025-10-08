@@ -29,3 +29,30 @@ def test_asm_filter() -> None:
 
     for statement in asm_statements:
         assert relevant_backend_name in str(statement.backend_name)
+
+
+def test_instruction_count() -> None:
+    builder = CircuitBuilder(2)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    circuit = builder.to_circuit()
+    counts = circuit.instruction_count
+    assert counts == {"H": 1, "CNOT": 1}
+
+    # non-unitaries
+    builder = CircuitBuilder(2, bit_register_size=2)
+    builder.barrier(1)
+    builder.init(0)
+    builder.measure(0, 0)
+    circuit = builder.to_circuit()
+    counts = circuit.instruction_count
+    assert counts == {"barrier": 1, "init": 1, "measure": 1}
+
+    # asm statements
+    builder = CircuitBuilder(2)
+    builder.barrier(0)
+    builder.asm("asm_name", "asm_code")
+    builder.barrier(1)
+    circuit = builder.to_circuit()
+    counts = circuit.instruction_count
+    assert counts == {"barrier": 2}

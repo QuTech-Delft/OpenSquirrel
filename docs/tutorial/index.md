@@ -8,7 +8,7 @@ In a nutshell, we will do so by
 The diagram below illustrates the basic components of OpenSquirrel.
 We refer to it in the following sections, where we quickly go through the 3 aforementioned steps.
 
-<p align="center"> <img width="700" src="../../_static/overview_diagram.png"> </p>
+![image](../_static/overview_diagram.png)
 
 **1. creating a circuit**
 

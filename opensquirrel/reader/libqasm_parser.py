@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable, cast
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, cast
 
 import cqasm.v3x as cqasm
 
@@ -11,7 +12,6 @@ from opensquirrel.ir import (
     IR,
     AsmDeclaration,
     Bit,
-    BlochSphereRotation,
     Float,
     Gate,
     Int,
@@ -21,8 +21,11 @@ from opensquirrel.ir import (
 )
 from opensquirrel.register_manager import RegisterManager
 
+if TYPE_CHECKING:
+    from opensquirrel.ir.semantics import BlochSphereRotation
 
-class Parser:
+
+class LibQasmParser:
     def __init__(self) -> None:
         self.ir = IR()
 
@@ -55,12 +58,12 @@ class Parser:
 
     @staticmethod
     def _is_qubit_type(ast_expression: Any) -> bool:
-        ast_type = Parser._type_of(ast_expression)
+        ast_type = LibQasmParser._type_of(ast_expression)
         return bool(ast_type == cqasm.types.Qubit or ast_type == cqasm.types.QubitArray)
 
     @staticmethod
     def _is_bit_type(ast_expression: Any) -> bool:
-        ast_type = Parser._type_of(ast_expression)
+        ast_type = LibQasmParser._type_of(ast_expression)
         return bool(ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray)
 
     @staticmethod
@@ -139,9 +142,11 @@ class Parser:
             extended_gate_parameters = [gate_parameters] * number_of_operands
             return [
                 (*operands, *parameters)
-                for operands, parameters in zip(zip(*extended_operands), extended_gate_parameters)
+                for operands, parameters in zip(
+                    zip(*extended_operands, strict=False), extended_gate_parameters, strict=False
+                )
             ]
-        return list(zip(*extended_operands))
+        return list(zip(*extended_operands, strict=False))
 
     def _get_expanded_measure_args(self, ast_args: Any) -> list[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
@@ -158,7 +163,7 @@ class Parser:
             else:
                 msg = "argument is neither of qubit nor bit type"
                 raise TypeError(msg)
-        return list(zip(*expanded_args))
+        return list(zip(*expanded_args, strict=False))
 
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
@@ -194,9 +199,9 @@ class Parser:
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
-        analyzer = Parser._create_analyzer()
+        analyzer = LibQasmParser._create_analyzer()
         analysis_result = analyzer.analyze_string(s)
-        Parser._check_analysis_result(analysis_result)
+        LibQasmParser._check_analysis_result(analysis_result)
         ast = analysis_result
 
         # Create RegisterManager
@@ -206,17 +211,17 @@ class Parser:
         expanded_args: list[tuple[Any, ...]] = []
         for statement in ast.block.statements:
             instruction_generator: Callable[..., Statement]
-            if Parser._is_gate_instruction(statement):
+            if LibQasmParser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_generator(statement)
                 expanded_args = self._get_expanded_instruction_args(statement)
-            elif Parser._is_non_unitary_instruction(statement):
+            elif LibQasmParser._is_non_unitary_instruction(statement):
                 instruction_generator = self._get_non_unitary_generator(statement)
                 expanded_args = (
                     self._get_expanded_measure_args(statement.operands)
                     if statement.name == "measure"
                     else self._get_expanded_instruction_args(statement)
                 )
-            elif Parser._is_asm_declaration(statement):
+            elif LibQasmParser._is_asm_declaration(statement):
                 asm_declaration = AsmDeclaration(statement.backend_name, statement.backend_code)
                 self.ir.add_statement(asm_declaration)
             else:

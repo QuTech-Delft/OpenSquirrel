@@ -1,29 +1,29 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
-from opensquirrel.passes.mapper import HardcodedMapper, Mapper
+from opensquirrel.passes.mapper import HardcodedMapper
+from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import IR
 
 
 class TestMapper:
-    def test_init(self) -> None:
-        with pytest.raises(TypeError):
-            Mapper()  # type: ignore[call-arg]
-
     def test_implementation(self) -> None:
         class Mapper2(Mapper):
-            pass
+            def __init__(self, qubit_register_size: int, **kwargs: Any) -> None:
+                super().__init__(**kwargs)
+                self._qubit_register = qubit_register_size
 
-        with pytest.raises(TypeError):
-            Mapper2()  # type: ignore[call-arg]
+            def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+                return Mapping(list(range(self._qubit_register)))
 
-        class Mapper3(Mapper2):
-            def __init__(self, qubit_register_size: int) -> None:
-                super().__init__(qubit_register_size, Mapping([0]))
-
-        Mapper3(qubit_register_size=1)
+        Mapper2(qubit_register_size=1)
 
 
 class TestMapQubits:
@@ -46,6 +46,6 @@ class TestMapQubits:
         return builder.to_circuit()
 
     def test_circuit_map(self, circuit: Circuit, remapped_circuit: Circuit) -> None:
-        mapper = HardcodedMapper(circuit.qubit_register_size, Mapping([1, 0, 2]))
-        circuit.map(mapper)
+        mapper = HardcodedMapper(mapping=Mapping([1, 0, 2]))
+        circuit.map(mapper=mapper)
         assert circuit == remapped_circuit

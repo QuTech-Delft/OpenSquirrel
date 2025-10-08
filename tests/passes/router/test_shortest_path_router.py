@@ -1,9 +1,8 @@
 # Tests for the ShortestPathRouter class
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import SWAP, CircuitBuilder
 from opensquirrel.circuit import Circuit
-from opensquirrel.ir import SWAP
 from opensquirrel.passes.router import ShortestPathRouter
 
 
@@ -135,7 +134,7 @@ def test_route_indices_propagation(router4: ShortestPathRouter, circuit4: Circui
 
     assert len(actual_statements) == len(expected_statements)
 
-    for actual, expected in zip(actual_statements, expected_statements):
+    for actual, expected in zip(actual_statements, expected_statements, strict=False):
         assert type(actual) is type(expected)
         actual_indices = [q.index for q in actual.get_qubit_operands()]  # type: ignore[attr-defined]
         expected_indices = [q.index for q in expected.get_qubit_operands()]  # type: ignore[attr-defined]
