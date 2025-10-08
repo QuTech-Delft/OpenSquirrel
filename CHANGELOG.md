@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Support for Pythin 3.13 added.
+- Support for Python 3.13 added.
 
 ### Removed
 
