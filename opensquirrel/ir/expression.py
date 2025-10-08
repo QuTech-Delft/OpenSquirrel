@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Protocol, SupportsFloat, SupportsInt, Union, cast, overload, runtime_checkable
+from typing import Any, Protocol, SupportsFloat, SupportsInt, cast, overload, runtime_checkable
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -280,6 +280,6 @@ class Axis(BaseAxis):
 
 
 # Type Aliases
-BitLike = Union[SupportsInt, Bit]
-QubitLike = Union[SupportsInt, Qubit]
-AxisLike = Union[ArrayLike, BaseAxis]
+BitLike = SupportsInt | Bit
+QubitLike = SupportsInt | Qubit
+AxisLike = ArrayLike | Axis

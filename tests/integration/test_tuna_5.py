@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import importlib
-from typing import Any, Union
+from typing import Any
 
 import pytest
 
@@ -12,7 +12,7 @@ from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 
 DataType = dict[str, Any]
-BitStringMappingType = list[Union[tuple[None, None], tuple[int, int]]]
+BitStringMappingType = list[tuple[None, None] | tuple[int, int]]
 
 
 def _get_operations(exported_schedule) -> list[str]:  # type: ignore  # noqa: ANN001
