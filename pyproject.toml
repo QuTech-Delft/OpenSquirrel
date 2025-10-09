@@ -40,13 +40,13 @@ dev = [
     "mypy>=1.18.2,<2",
     "pytest>=8.4.2,<9",
     "pytest-cov>=4.1,<8.0",
-    "ruff>=0.13.2,<0.14",
+    "ruff>=0.13.2,<0.15",
     "sympy>=1.14.0,<2",
     "tox>=4.30.2,<5",
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
-    "quantify-scheduler==0.23.1; sys_platform != 'darwin'",
+    "quantify-scheduler==0.25.1; sys_platform != 'darwin'",
 ]
 docs = [
     "mike>=2.1.3",
