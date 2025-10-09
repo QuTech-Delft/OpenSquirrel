@@ -111,7 +111,7 @@ class OperationRecord:
         self, qubit_indices: list[int], ref_qubit_indices: list[int], ref_schedulable: Schedulable
     ) -> None:
         temp_schedulable_counters = self._schedulable_counters.copy()
-        for qubit_index, ref_qubit_index in zip(qubit_indices, ref_qubit_indices):
+        for qubit_index, ref_qubit_index in zip(qubit_indices, ref_qubit_indices, strict=False):
             temp_schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
             self._ref_indices[qubit_index] = ref_qubit_index
             self._ref_schedulables[qubit_index] = ref_schedulable
