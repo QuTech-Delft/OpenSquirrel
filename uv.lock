@@ -2841,7 +2841,7 @@ dev = [
     { name = "mypy", specifier = ">=1.18.2,<2" },
     { name = "pytest", specifier = ">=8.4.2,<9" },
     { name = "pytest-cov", specifier = ">=4.1,<8.0" },
-    { name = "ruff", specifier = ">=0.13.2,<0.14" },
+    { name = "ruff", specifier = ">=0.13.2,<0.15" },
     { name = "sympy", specifier = ">=1.14.0,<2" },
     { name = "tox", specifier = ">=4.30.2,<5" },
 ]
@@ -2862,7 +2862,7 @@ docs = [
 examples = [{ name = "jupyter", specifier = ">=1.0.0,<2" }]
 export = [
     { name = "pyqt5-qt5", marker = "sys_platform != 'darwin'", specifier = "==5.15.2" },
-    { name = "quantify-scheduler", marker = "sys_platform != 'darwin'", specifier = "==0.23.1" },
+    { name = "quantify-scheduler", marker = "sys_platform != 'darwin'", specifier = "==0.25.1" },
 ]
 
 [[package]]
@@ -3754,7 +3754,7 @@ wheels = [
 
 [[package]]
 name = "qblox-instruments"
-version = "0.16.0"
+version = "0.17.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fastjsonschema" },
@@ -3765,7 +3765,7 @@ dependencies = [
     { name = "qcodes", version = "0.54.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "spirack" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3f/48/7974ef40f055866a48091477d691b8f85ea5312a60a8f3ced5af6a1edede/qblox_instruments-0.16.0.tar.gz", hash = "sha256:8a9785d916af27a35c0c51a6a870de5ed879cadb56fff1ee47f4a79a2cf0ad62", size = 2289124, upload-time = "2025-03-31T17:30:05.213Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e8/cc/173afc8210d100c14786664f9dbc3bfdd44eac626d0fbc00f8b1316124df/qblox_instruments-0.17.1.tar.gz", hash = "sha256:8db6fb2606e49bdf03e808205747117543c4815559114977d37cd634431d7f1f", size = 2291457, upload-time = "2025-08-11T10:02:03.62Z" }
 
 [[package]]
 name = "qcodes"
@@ -3913,7 +3913,7 @@ wheels = [
 
 [[package]]
 name = "quantify-scheduler"
-version = "0.23.1"
+version = "0.25.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "columnar" },
@@ -3934,13 +3934,14 @@ dependencies = [
     { name = "qcodes", version = "0.54.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "quantify-core" },
     { name = "rich", extra = ["jupyter"] },
+    { name = "ruamel-yaml" },
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scipy", version = "1.16.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/22/c6123c882db914e3c489a3318cce7d8d5aa871a3c8ab9d559eb2c2f3a043/quantify_scheduler-0.23.1.tar.gz", hash = "sha256:d6ad4360fcaf8f15a03f02250e8289f9b235e2bb8c282e2a17888c4c84f5ddaa", size = 1877505, upload-time = "2025-04-28T11:38:11.903Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bc/9a/1456696a96a1b7103e3dbf6dd6d146ead2b64435b9f7ea367dd30cfb83c5/quantify_scheduler-0.25.1.tar.gz", hash = "sha256:307bd007130cf3cb8f1b6f300b3bc43dbf659b57937164b542e0950d8a7abb49", size = 1895133, upload-time = "2025-09-26T11:55:20.634Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cc/de/2ce91f7a3c6372f41f627aa4cf9dc79fa2efdf941dd3841b29bf6dd413ed/quantify_scheduler-0.23.1-py3-none-any.whl", hash = "sha256:545eadeea61781a235c6ea3f3c710f2572e1fe9eb9d4f18a26a6918f2939f06e", size = 431422, upload-time = "2025-04-28T11:38:09.729Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/2d/942abd0e61271d78e0af7ae3cce478e303a2626d577aaa542ea1392d5a07/quantify_scheduler-0.25.1-py3-none-any.whl", hash = "sha256:96c10c0e645207f1b43562d2cf64d874ccececef5ade3f7bff82ab3a7a3a5e5c", size = 443912, upload-time = "2025-09-26T11:55:16.858Z" },
 ]
 
 [[package]]
