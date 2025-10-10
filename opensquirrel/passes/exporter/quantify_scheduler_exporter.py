@@ -70,11 +70,12 @@ class OperationRecord:
         schedulable: Schedulable = self._schedulables.pop()
 
         waiting_times: list[int] = []
-        self._set_references(qubit_indices, [ref_qubit_index] * len(qubit_indices), schedulable)
         for qubit_index in qubit_indices:
             if qubit_index in self._wait_record:
                 waiting_times.append(self._wait_record[qubit_index])
                 del self._wait_record[qubit_index]
+        increments = max(waiting_times) if waiting_times else 1
+        self._set_references(qubit_indices, [ref_qubit_index] * len(qubit_indices), schedulable, increments)
 
         timing_constraints: dict[str, str | float | None] = {}
 
@@ -98,7 +99,7 @@ class OperationRecord:
         if self._barrier_record:
             ref_qubit_index, ref_schedulable = self._get_references(self._barrier_record)
             ref_qubit_indices = [ref_qubit_index] * len(self._barrier_record)
-            self._set_references(self._barrier_record, ref_qubit_indices, ref_schedulable)
+            self._set_references(self._barrier_record, ref_qubit_indices, ref_schedulable, 1)
             self._barrier_record = []
 
     def _get_references(self, relevant_qubit_indices: list[int]) -> tuple[int, Schedulable]:
@@ -108,11 +109,11 @@ class OperationRecord:
         return relevant_qubit_index, ref_schedulable
 
     def _set_references(
-        self, qubit_indices: list[int], ref_qubit_indices: list[int], ref_schedulable: Schedulable
+        self, qubit_indices: list[int], ref_qubit_indices: list[int], ref_schedulable: Schedulable, increments: int
     ) -> None:
         temp_schedulable_counters = self._schedulable_counters.copy()
         for qubit_index, ref_qubit_index in zip(qubit_indices, ref_qubit_indices, strict=False):
-            temp_schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + 1
+            temp_schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + increments
             self._ref_indices[qubit_index] = ref_qubit_index
             self._ref_schedulables[qubit_index] = ref_schedulable
         self._schedulable_counters = temp_schedulable_counters
