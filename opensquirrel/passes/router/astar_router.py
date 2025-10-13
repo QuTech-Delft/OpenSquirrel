@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import math
 from typing import Any
 
@@ -21,7 +22,7 @@ class AStarRouter(Router):
         self.distance_metric = distance_metric
 
     def _insert_and_propagate_swaps(self, ir: IR, statement_index: int, shortest_path: list[int]) -> None:
-        for start_qubit_index, end_qubit_index in zip(shortest_path[:-2], shortest_path[1:-1]):
+        for start_qubit_index, end_qubit_index in itertools.pairwise(shortest_path[:-1]):
             ir.statements.insert(statement_index, SWAP(start_qubit_index, end_qubit_index))
             # Update subsequent statements to reflect the swap
             for statement in ir.statements[statement_index + 1 :]:
