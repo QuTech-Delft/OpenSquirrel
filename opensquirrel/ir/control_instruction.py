@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, SupportsInt
 
-from opensquirrel.ir.expression import Bit, Expression, Int, Qubit, QubitLike
+from opensquirrel.ir.expression import Expression, Int, Qubit, QubitLike
 from opensquirrel.ir.ir import IRVisitor
 from opensquirrel.ir.statement import Instruction
 
@@ -18,9 +18,6 @@ class ControlInstruction(Instruction, ABC):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
 
 
 class Barrier(ControlInstruction):

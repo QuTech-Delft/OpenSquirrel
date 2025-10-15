@@ -1,6 +1,6 @@
 from typing import Any
 
-from opensquirrel.ir import Bit, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir import IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.expression import Expression
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.unitary import Gate
@@ -31,9 +31,6 @@ class ControlledGate(Gate):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.control_qubit, self.target_qubit]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()

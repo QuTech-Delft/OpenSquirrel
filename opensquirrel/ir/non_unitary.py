@@ -22,9 +22,6 @@ class NonUnitary(Instruction, ABC):
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
-    def get_bit_operands(self) -> list[Bit]:
-        return []
-
 
 class Measure(NonUnitary):
     def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
@@ -43,7 +40,7 @@ class Measure(NonUnitary):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return self.qubit, self.bit
+        return self.qubit, self.bit, self.axis
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_non_unitary(self)

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, SupportsFloat
 import numpy as np
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
-from opensquirrel.ir.expression import Axis, AxisLike, Bit, Float, Qubit, QubitLike
+from opensquirrel.ir.expression import Axis, AxisLike, Float, Qubit, QubitLike
 from opensquirrel.ir.unitary import Gate
 
 if TYPE_CHECKING:
@@ -65,9 +65,6 @@ class BlochSphereRotation(Gate):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
 
     def is_identity(self) -> bool:
         # Angle and phase are already normalized.

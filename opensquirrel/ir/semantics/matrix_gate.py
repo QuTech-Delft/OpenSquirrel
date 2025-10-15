@@ -7,7 +7,7 @@ import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
 from opensquirrel.common import ATOL, repr_round
-from opensquirrel.ir import Bit, Qubit, QubitLike
+from opensquirrel.ir import Qubit, QubitLike
 from opensquirrel.ir.unitary import Gate
 
 if TYPE_CHECKING:
@@ -54,9 +54,6 @@ class MatrixGate(Gate):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return self.operands
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
 
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(2 ** len(self.operands)), atol=ATOL)
