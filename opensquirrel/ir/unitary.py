@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Sequence
 
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
-from opensquirrel.ir.expression import Bit, Expression, Qubit
+from opensquirrel.ir.expression import Expression, Qubit
 from opensquirrel.ir.statement import Instruction
 
 
@@ -31,10 +31,6 @@ class Gate(Unitary, ABC):
 
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
-        pass
-
-    @abstractmethod
-    def get_bit_operands(self) -> list[Bit]:
         pass
 
     @abstractmethod
