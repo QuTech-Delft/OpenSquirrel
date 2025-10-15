@@ -2013,6 +2013,8 @@
       
         
       
+        
+      
     
     
     
@@ -2053,6 +2055,29 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="ir/control_instruction.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    control_instruction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
       
@@ -2071,10 +2096,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_8_1">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_8_2">
         
           
-          <label class="md-nav__link" for="__nav_5_1_8_1" id="__nav_5_1_8_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_1_8_2" id="__nav_5_1_8_2_label" tabindex="0">
             
   
   
@@ -2087,8 +2112,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_8_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_1_8_1">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_8_2">
             <span class="md-nav__icon md-icon"></span>
             default_gates
           </label>
@@ -2245,10 +2270,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_8_5">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_8_6">
         
           
-          <label class="md-nav__link" for="__nav_5_1_8_5" id="__nav_5_1_8_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_1_8_6" id="__nav_5_1_8_6_label" tabindex="0">
             
   
   
@@ -2261,8 +2286,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_8_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_1_8_5">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_8_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_8_6">
             <span class="md-nav__icon md-icon"></span>
             semantics
           </label>
@@ -4182,7 +4207,9 @@ cnot q[0], q[2]
 <span class="normal"><a href="#__codelineno-0-105">105</a></span>
 <span class="normal"><a href="#__codelineno-0-106">106</a></span>
 <span class="normal"><a href="#__codelineno-0-107">107</a></span>
-<span class="normal"><a href="#__codelineno-0-108">108</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="k">class</span><span class="w"> </span><span class="nc">CircuitBuilder</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="k">class</span><span class="w"> </span><span class="nc">CircuitBuilder</span><span class="p">:</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="w">    </span><span class="sd">"""</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">    A class using the builder pattern to make construction of circuits easy from Python.</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    Adds corresponding instruction when a method is called. Checks that instructions are known and called with the right</span>
@@ -4245,35 +4272,37 @@ cnot q[0], q[2]
 <a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_check_out_of_bounds_access</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Instruction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">instruction</span><span class="o">.</span><span class="n">get_qubit_operands</span><span class="p">():</span>
 <a id="__codelineno-0-79" name="__codelineno-0-79"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_check_qubit_out_of_bounds_access</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>        <span class="k">for</span> <span class="n">bit</span> <span class="ow">in</span> <span class="n">instruction</span><span class="o">.</span><span class="n">get_bit_operands</span><span class="p">():</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_check_bit_out_of_bounds_access</span><span class="p">(</span><span class="n">bit</span><span class="p">)</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_add_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">"asm"</span><span class="p">:</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>            <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>                <span class="n">asm_declaration</span> <span class="o">=</span> <span class="n">AsmDeclaration</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">add_asm_declaration</span><span class="p">(</span><span class="n">asm_declaration</span><span class="p">)</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"trying to build '</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">' with the wrong number or type of arguments: '</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">'"</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>            <span class="k">return</span> <span class="bp">self</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_instruction_set</span><span class="p">:</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"unknown instruction '</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">'"</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>        <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>            <span class="n">instruction</span> <span class="o">=</span> <span class="n">default_instruction_set</span><span class="p">[</span><span class="n">attr</span><span class="p">](</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"trying to build </span><span class="si">{</span><span class="n">attr</span><span class="si">!r}</span><span class="s2"> with the wrong number or type of arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">!r}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_check_out_of_bounds_access</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">Measure</span><span class="p">):</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>            <span class="k">for</span> <span class="n">bit</span> <span class="ow">in</span> <span class="n">instruction</span><span class="o">.</span><span class="n">get_bit_operands</span><span class="p">():</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">_check_bit_out_of_bounds_access</span><span class="p">(</span><span class="n">bit</span><span class="p">)</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_add_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s2">"asm"</span><span class="p">:</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>            <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>                <span class="n">asm_declaration</span> <span class="o">=</span> <span class="n">AsmDeclaration</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">add_asm_declaration</span><span class="p">(</span><span class="n">asm_declaration</span><span class="p">)</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"trying to build '</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">' with the wrong number or type of arguments: '</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2">'"</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>            <span class="k">return</span> <span class="bp">self</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_instruction_set</span><span class="p">:</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"unknown instruction '</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">'"</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>            <span class="n">instruction</span> <span class="o">=</span> <span class="n">default_instruction_set</span><span class="p">[</span><span class="n">attr</span><span class="p">](</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"trying to build </span><span class="si">{</span><span class="n">attr</span><span class="si">!r}</span><span class="s2"> with the wrong number or type of arguments: </span><span class="si">{</span><span class="n">args</span><span class="si">!r}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 <a id="__codelineno-0-103" name="__codelineno-0-103"></a>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="k">return</span> <span class="bp">self</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Circuit</span><span class="p">:</span>
-<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">))</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_check_out_of_bounds_access</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">instruction</span><span class="p">)</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="k">return</span> <span class="bp">self</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Circuit</span><span class="p">:</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>        <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">))</span>
 </code></pre></div></td></tr></tbody></table></div>
               </details>
 
