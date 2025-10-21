@@ -12,7 +12,7 @@ class UnsupportedGateError(Exception):
         Args:
             gate: Gate that is not supported.
         """
-        super().__init__(f"{gate} not supported", *args)
+        super().__init__(f"{gate} is not supported", *args)
 
 
 class ExporterError(Exception):

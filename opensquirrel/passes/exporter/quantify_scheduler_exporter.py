@@ -33,18 +33,20 @@ if TYPE_CHECKING:
     from opensquirrel.register_manager import RegisterManager
 
 
-FIXED_POINT_DEG_PRECISION = 5  # Radian to degree conversion outcome precision
-CYCLE_TIME = 20e-9  # Operation cycle time (set at 20ns)
+FIXED_POINT_DEG_PRECISION = 5  # Radian to degree conversion outcome precision.
+CYCLE_TIME = 20e-9  # Operation cycle time (set at 20ns).
+OPERATION_CYCLES = 1  # Amount of cycles an operation takes.
 
 
 class OperationRecord:
     def __init__(self, qubit_register_size: int, schedulables: list[Schedulable]) -> None:
         self._schedulables = schedulables
-        self._schedulable_counters: list[int] = [0] * qubit_register_size
-        self._ref_indices: list[int] = list(range(qubit_register_size))
-        self._ref_schedulables: list[Schedulable | None] = [None] * qubit_register_size
+        self._cycles: list[int] = [0] * qubit_register_size
+        self._ref_index: list[int] = list(range(qubit_register_size))
+        self._ref_schedulables: list[tuple[Schedulable | None, int]] = list(
+            zip([None] * qubit_register_size, [0] * qubit_register_size, strict=False)
+        )
         self._barrier_record: list[int] = []
-        self._wait_record: dict[int, int] = {}
         self._schedulable_timing_constraints: dict[str, dict[str, Any]] = {}
 
     @property
@@ -55,30 +57,42 @@ class OperationRecord:
         if qubit_index not in self._barrier_record:
             self._barrier_record.append(qubit_index)
 
-    @property
-    def wait_record(self) -> dict[int, int]:
-        return self._wait_record
-
-    @wait_record.setter
-    def wait_record(self, value: dict[int, int]) -> None:
-        self._wait_record = value
+    def process_wait(self, qubit_index: int, cycles: int) -> None:
+        self._process_barriers()
+        self._cycles[qubit_index] += cycles
 
     def set_schedulable_timing_constraints(self, qubit_indices: list[int]) -> None:
         self._process_barriers()
-
-        ref_qubit_index, ref_schedulable = self._get_references(qubit_indices)
         schedulable: Schedulable = self._schedulables.pop()
+        pertinent_qubit_index, ref_schedulable, ref_cycle = self._get_reference(qubit_indices=qubit_indices)
 
-        waiting_times: list[int] = []
-        for qubit_index in qubit_indices:
-            if qubit_index in self._wait_record:
-                waiting_times.append(self._wait_record[qubit_index])
-                del self._wait_record[qubit_index]
-        increments = max(waiting_times) if waiting_times else 1
-        self._set_references(qubit_indices, [ref_qubit_index] * len(qubit_indices), schedulable, increments)
+        operation_cycles = OPERATION_CYCLES if ref_schedulable else 0
+        cycle = self._cycles[pertinent_qubit_index] + operation_cycles
+        waiting_time = -1.0 * ((cycle - operation_cycles) - ref_cycle) * CYCLE_TIME
+        self._set_timing_constraints(schedulable, ref_schedulable, waiting_time)
 
+        self._set_reference(qubit_indices, schedulable, cycle)
+
+    def _process_barriers(self) -> None:
+        if self._barrier_record:
+            pertinent_qubit_index, ref_schedulable, ref_cycle = self._get_reference(qubit_indices=self._barrier_record)
+            temp_cycles = self._cycles.copy()
+            for qubit_index in self._barrier_record:
+                temp_cycles[qubit_index] = self._cycles[pertinent_qubit_index]
+                self._ref_schedulables[qubit_index] = (ref_schedulable, ref_cycle)
+            self._cycles = temp_cycles
+            self._barrier_record = []
+
+    def _get_reference(self, qubit_indices: list[int]) -> tuple[int, Schedulable, int]:
+        schedulable_counts = [self._cycles[qubit_index] for qubit_index in qubit_indices]
+        pertinent_qubit_index = qubit_indices[self._get_index_of_max_value(schedulable_counts)]
+        ref_schedulable, ref_counter_value = self._ref_schedulables[pertinent_qubit_index]
+        return pertinent_qubit_index, ref_schedulable, ref_counter_value
+
+    def _set_timing_constraints(
+        self, schedulable: Schedulable, ref_schedulable: Schedulable, waiting_time: float
+    ) -> None:
         timing_constraints: dict[str, str | float | None] = {}
-
         if not ref_schedulable:
             timing_constraints["ref_schedulable"] = None
             timing_constraints["ref_pt"] = "end"
@@ -87,36 +101,15 @@ class OperationRecord:
             timing_constraints["ref_schedulable"] = ref_schedulable["name"]
             timing_constraints["ref_pt"] = "start"
             timing_constraints["ref_pt_new"] = "end"
-
-        if waiting_times:
-            timing_constraints["rel_time"] = -1 * max(waiting_times) * CYCLE_TIME
-        else:
-            timing_constraints["rel_time"] = 0.0
-
+        timing_constraints["rel_time"] = waiting_time
         self._schedulable_timing_constraints[schedulable["name"]] = timing_constraints
 
-    def _process_barriers(self) -> None:
-        if self._barrier_record:
-            ref_qubit_index, ref_schedulable = self._get_references(self._barrier_record)
-            ref_qubit_indices = [ref_qubit_index] * len(self._barrier_record)
-            self._set_references(self._barrier_record, ref_qubit_indices, ref_schedulable, 1)
-            self._barrier_record = []
-
-    def _get_references(self, relevant_qubit_indices: list[int]) -> tuple[int, Schedulable]:
-        schedulable_counts = [self._schedulable_counters[qubit_index] for qubit_index in relevant_qubit_indices]
-        relevant_qubit_index = relevant_qubit_indices[self._get_index_of_max_value(schedulable_counts)]
-        ref_schedulable = self._ref_schedulables[relevant_qubit_index]
-        return relevant_qubit_index, ref_schedulable
-
-    def _set_references(
-        self, qubit_indices: list[int], ref_qubit_indices: list[int], ref_schedulable: Schedulable, increments: int
-    ) -> None:
-        temp_schedulable_counters = self._schedulable_counters.copy()
-        for qubit_index, ref_qubit_index in zip(qubit_indices, ref_qubit_indices, strict=False):
-            temp_schedulable_counters[qubit_index] = self._schedulable_counters[ref_qubit_index] + increments
-            self._ref_indices[qubit_index] = ref_qubit_index
-            self._ref_schedulables[qubit_index] = ref_schedulable
-        self._schedulable_counters = temp_schedulable_counters
+    def _set_reference(self, qubit_indices: list[int], new_ref_schedulable: Schedulable, new_ref_cycle: int) -> None:
+        temp_cycles = self._cycles.copy()
+        for qubit_index in qubit_indices:
+            temp_cycles[qubit_index] = new_ref_cycle
+            self._ref_schedulables[qubit_index] = (new_ref_schedulable, new_ref_cycle)
+        self._cycles = temp_cycles
 
     @staticmethod
     def _get_index_of_max_value(input_list: list[int]) -> int:
@@ -173,16 +166,13 @@ class _Scheduler(IRVisitor):
         if isinstance(non_unitary, Barrier):
             self._operation_record.add_qubit_index_to_barrier_record(non_unitary.qubit.index)
         elif isinstance(non_unitary, Wait):
-            self._operation_record.wait_record[non_unitary.qubit.index] = non_unitary.time.value
+            self._operation_record.process_wait(non_unitary.qubit.index, non_unitary.time.value)
         else:
             qubit_indices = [qubit.index for qubit in non_unitary.get_qubit_operands()]
             self._operation_record.set_schedulable_timing_constraints(qubit_indices)
 
 
 class _ScheduleCreator(IRVisitor):
-    def _get_qubit_string(self, qubit: Qubit) -> str:
-        return f"{self.qubit_register_name}[{qubit.index}]"
-
     def __init__(
         self,
         register_manager: RegisterManager,
@@ -208,7 +198,7 @@ class _ScheduleCreator(IRVisitor):
             # Hadamard gate.
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.H(self._get_qubit_string(gate.qubit)),
-                label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+                label=self._get_operation_label(gate.name, gate.get_qubit_operands()),
             )
             return
         if abs(gate.axis[2]) < ATOL:
@@ -220,7 +210,7 @@ class _ScheduleCreator(IRVisitor):
                 quantify_scheduler.operations.gate_library.Rxy(
                     theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit)
                 ),
-                label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+                label=self._get_operation_label(gate.name, gate.get_qubit_operands()),
             )
             return
         if abs(gate.axis[0]) < ATOL and abs(gate.axis[1]) < ATOL:
@@ -228,7 +218,7 @@ class _ScheduleCreator(IRVisitor):
             theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)),
-                label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+                label=self._get_operation_label(gate.name, gate.get_qubit_operands()),
             )
             return
         raise UnsupportedGateError(gate)
@@ -258,7 +248,7 @@ class _ScheduleCreator(IRVisitor):
                 qC=self._get_qubit_string(gate.control_qubit),
                 qT=self._get_qubit_string(gate.target_qubit),
             ),
-            label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+            label=self._get_operation_label(gate.name, gate.get_qubit_operands()),
         )
 
     def visit_cz(self, gate: CZ) -> None:
@@ -267,7 +257,7 @@ class _ScheduleCreator(IRVisitor):
                 qC=self._get_qubit_string(gate.control_qubit),
                 qT=self._get_qubit_string(gate.target_qubit),
             ),
-            label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+            label=self._get_operation_label(gate.name, gate.get_qubit_operands()),
         )
 
     def visit_cr(self, gate: CR) -> None:
@@ -288,7 +278,7 @@ class _ScheduleCreator(IRVisitor):
                 acq_index=acq_index,
                 acq_protocol="ThresholdedAcquisition",
             ),
-            label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+            label=self._get_operation_label(gate.name, gate.get_qubit_operands()),
         )
         self.acq_index_record[qubit_index] += 1
 
@@ -298,8 +288,15 @@ class _ScheduleCreator(IRVisitor):
     def visit_reset(self, gate: Reset) -> None:
         self.schedule.add(
             quantify_scheduler.operations.gate_library.Reset(self._get_qubit_string(gate.qubit)),
-            label=f"{gate.name} ({gate.get_qubit_operands()}): " + str(uuid4()),
+            label=self._get_operation_label(gate.name, gate.get_qubit_operands()),
         )
+
+    def _get_qubit_string(self, qubit: Qubit) -> str:
+        return f"{self.qubit_register_name}[{qubit.index}]"
+
+    def _get_operation_label(self, name: str, qubits: list[Qubit]) -> str:
+        qubit_operands = ", ".join([self._get_qubit_string(qubit) for qubit in qubits])
+        return f"{name} {qubit_operands} | " + str(uuid4())
 
 
 def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:
@@ -331,7 +328,8 @@ def export(circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[An
     except UnsupportedGateError as e:
         msg = (
             f"cannot export circuit: {e}. "
-            "Decompose all gates to the Quantify-scheduler gate set first (rxy, rz, cnot, cz)"
+            "Decompose all gates to the gate set supported by quantify-scheduler first, i.e., "
+            "(init, reset, H, Rx, Ry, Rz, CNOT, CZ, measure)"
         )
         raise ExporterError(msg) from e
 
