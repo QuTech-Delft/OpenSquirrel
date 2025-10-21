@@ -8,10 +8,10 @@ from opensquirrel import CNOT, CR, CZ, SWAP, Barrier, CRk, Init, Measure, Reset,
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (
+    ControlInstruction,
     Gate,
     IRVisitor,
     NonUnitary,
-    ControlInstruction,
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
@@ -177,7 +177,6 @@ class _Scheduler(IRVisitor):
             self._operation_record.process_wait(control_instruction.qubit.index, control_instruction.time.value)
         else:
             self._operation_record.add_qubit_index_to_barrier_record(control_instruction.qubit.index)
-
 
 
 class _ScheduleCreator(IRVisitor):
