@@ -11,6 +11,7 @@ from opensquirrel.ir import (
     Gate,
     IRVisitor,
     NonUnitary,
+    ControlInstruction,
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
@@ -170,6 +171,13 @@ class _Scheduler(IRVisitor):
         else:
             qubit_indices = [qubit.index for qubit in non_unitary.get_qubit_operands()]
             self._operation_record.set_schedulable_timing_constraints(qubit_indices)
+
+    def visit_control_instruction(self, control_instruction: ControlInstruction) -> None:
+        if isinstance(control_instruction, Wait):
+            self._operation_record.process_wait(control_instruction.qubit.index, control_instruction.time.value)
+        else:
+            self._operation_record.add_qubit_index_to_barrier_record(control_instruction.qubit.index)
+
 
 
 class _ScheduleCreator(IRVisitor):

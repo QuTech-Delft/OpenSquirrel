@@ -5,7 +5,7 @@ from numpy.typing import NDArray
 
 from opensquirrel.common import repr_round
 from opensquirrel.ir import AxisLike, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.expression import BaseAxis, Bit, Expression
+from opensquirrel.ir.expression import BaseAxis, Expression
 from opensquirrel.ir.unitary import Gate
 
 
@@ -97,9 +97,6 @@ class CanonicalGate(Gate):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit_0, self.qubit_1]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
 
     def is_identity(self) -> bool:
         return self.axis == CanonicalAxis(0, 0, 0)

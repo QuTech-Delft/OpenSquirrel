@@ -36,12 +36,7 @@ from opensquirrel.ir.default_gates import (
 )
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import (
-        Gate,
-        Instruction,
-        NonUnitary,
-        Unitary,
-    )
+    from opensquirrel.ir import ControlInstruction, Gate, Instruction, NonUnitary, Unitary
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
         BsrAngleParam,
@@ -112,10 +107,14 @@ default_unitary_set = {**default_gate_set}
 
 default_non_unitary_set: Mapping[str, type[NonUnitary]]
 default_non_unitary_set = {
-    "barrier": Barrier,
     "init": Init,
     "measure": Measure,
     "reset": Reset,
+}
+
+default_control_instruction_set: Mapping[str, type[ControlInstruction]]
+default_control_instruction_set = {
+    "barrier": Barrier,
     "wait": Wait,
 }
 
@@ -123,6 +122,7 @@ default_instruction_set: Mapping[str, type[Instruction]]
 default_instruction_set = {
     **default_unitary_set,
     **default_non_unitary_set,
+    **default_control_instruction_set,
 }
 
 default_bsr_set_without_rn: Mapping[str, type[BsrNoParams] | type[BsrAngleParam]]
