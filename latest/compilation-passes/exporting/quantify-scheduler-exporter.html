@@ -4117,21 +4117,23 @@ the ordered pair is at index <span class="arithmatex">\(4\)</span> in the bitreg
 <a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">exported_schedule</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">schedulable</span><span class="p">[</span><span class="s2">"operation_id"</span><span class="p">]]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 <a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="s2">"bitstring mapping: "</span><span class="p">,</span> <span class="n">bitstring_mapping</span><span class="p">)</span>
 </code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Rxy(90, 90, 'q[0]')
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Rxy(180, 0, 'q[0]')
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>CNOT (q[0], q[1])
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>Measure q[0]
-<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>Measure q[1]
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>Reset q[0]
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>Reset q[1]
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>Rxy(90, 90, 'q[0]')
-<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>Rxy(180, 0, 'q[0]')
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>Rz(180, 'q[0]')
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>CNOT (q[0], q[1])
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>Measure q[0]
-<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>Measure q[1]
-<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>
-<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>bitstring mapping:  [(1, 0), (1, 1)]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Reset q[0]
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>Reset q[1]
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>Rxy(90, 90, 'q[0]')
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>Rxy(180, 0, 'q[0]')
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>CNOT (q[0], q[1])
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>Measure q[0]
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>Measure q[1]
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>Reset q[0]
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>Reset q[1]
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>Rxy(90, 90, 'q[0]')
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>Rxy(180, 0, 'q[0]')
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>Rz(180, 'q[0]')
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>CNOT (q[0], q[1])
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>Measure q[0]
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>Measure q[1]
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>bitstring mapping:  [(1, 0), (1, 1)]
 </code></pre></div>
 <p>Note that the bit register declaration and assignment to bit variables have been discarded (2.),
 the <code>init</code> instructions have been ignored and the <code>reset</code> instructions have been translated to <a href="https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/operations/gate_library/index.html#quantify_scheduler.operations.gate_library.Reset">Reset</a>,
