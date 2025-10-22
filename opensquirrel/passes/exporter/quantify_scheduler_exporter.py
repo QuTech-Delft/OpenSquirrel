@@ -4,7 +4,7 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
-from opensquirrel import CNOT, CR, CZ, SWAP, Barrier, CRk, Init, Measure, Reset, Wait
+from opensquirrel import CNOT, CR, CZ, SWAP, CRk, Init, Measure, Reset, Wait
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (
@@ -164,13 +164,8 @@ class _Scheduler(IRVisitor):
         self._operation_record.set_schedulable_timing_constraints(qubit_indices)
 
     def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
-        if isinstance(non_unitary, Barrier):
-            self._operation_record.add_qubit_index_to_barrier_record(non_unitary.qubit.index)
-        elif isinstance(non_unitary, Wait):
-            self._operation_record.process_wait(non_unitary.qubit.index, non_unitary.time.value)
-        else:
-            qubit_indices = [qubit.index for qubit in non_unitary.get_qubit_operands()]
-            self._operation_record.set_schedulable_timing_constraints(qubit_indices)
+        qubit_indices = [qubit.index for qubit in non_unitary.get_qubit_operands()]
+        self._operation_record.set_schedulable_timing_constraints(qubit_indices)
 
     def visit_control_instruction(self, control_instruction: ControlInstruction) -> None:
         if isinstance(control_instruction, Wait):

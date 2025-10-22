@@ -10,15 +10,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
+## [ M.m.P ] - [ yyyy-mm-dd ]
+
+### Added
+
+- Processing of control instructions (Barrier, Wait) added to quantify-scheduler exporter
+
 ## [ 0.7.0 ] - [ 2025-10-13 ]
 
 ### Added
 
-- Support for Python 3.13 added.
+- Support for Python 3.13 added
 
 ### Removed
 
-- Support for Python 3.9 dropped.
+- Support for Python 3.9 dropped
 
 ## [ 0.6.1 ] - [ 2025-10-06 ]
 
