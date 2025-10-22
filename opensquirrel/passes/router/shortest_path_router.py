@@ -1,3 +1,4 @@
+import itertools
 from typing import Any
 
 import networkx as nx

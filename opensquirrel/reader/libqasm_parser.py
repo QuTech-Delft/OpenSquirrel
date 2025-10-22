@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, cast
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, cast
 
 import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
-from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
+from opensquirrel.default_instructions import default_control_instruction_set, default_gate_set, default_non_unitary_set
 from opensquirrel.ir import (
     IR,
     AsmDeclaration,
     Bit,
+    ControlInstruction,
     Float,
     Gate,
     Int,
@@ -70,7 +72,7 @@ class LibQasmParser:
         return isinstance(ast_node, cqasm.semantic.GateInstruction)
 
     @staticmethod
-    def _is_non_unitary_instruction(ast_node: Any) -> bool:
+    def _is_non_gate_instruction(ast_node: Any) -> bool:
         return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
 
     @staticmethod
@@ -141,9 +143,11 @@ class LibQasmParser:
             extended_gate_parameters = [gate_parameters] * number_of_operands
             return [
                 (*operands, *parameters)
-                for operands, parameters in zip(zip(*extended_operands), extended_gate_parameters)
+                for operands, parameters in zip(
+                    zip(*extended_operands, strict=False), extended_gate_parameters, strict=False
+                )
             ]
-        return list(zip(*extended_operands))
+        return list(zip(*extended_operands, strict=False))
 
     def _get_expanded_measure_args(self, ast_args: Any) -> list[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
@@ -160,7 +164,7 @@ class LibQasmParser:
             else:
                 msg = "argument is neither of qubit nor bit type"
                 raise TypeError(msg)
-        return list(zip(*expanded_args))
+        return list(zip(*expanded_args, strict=False))
 
     @staticmethod
     def _create_analyzer() -> cqasm.Analyzer:
@@ -191,7 +195,11 @@ class LibQasmParser:
             raise OSError(msg)
         return lambda *args: default_gate_set[gate_name](*args)
 
-    def _get_non_unitary_generator(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
+    def _get_non_gate_instruction_generator(
+        self, instruction: cqasm.semantic.NonGateInstruction
+    ) -> Callable[..., NonUnitary | ControlInstruction]:
+        if instruction.name in default_control_instruction_set:
+            return lambda *args: default_control_instruction_set[instruction.name](*args)
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
     def circuit_from_string(self, s: str) -> Circuit:
@@ -211,8 +219,8 @@ class LibQasmParser:
             if LibQasmParser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_generator(statement)
                 expanded_args = self._get_expanded_instruction_args(statement)
-            elif LibQasmParser._is_non_unitary_instruction(statement):
-                instruction_generator = self._get_non_unitary_generator(statement)
+            elif LibQasmParser._is_non_gate_instruction(statement):
+                instruction_generator = self._get_non_gate_instruction_generator(statement)
                 expanded_args = (
                     self._get_expanded_measure_args(statement.operands)
                     if statement.name == "measure"
