@@ -126,17 +126,17 @@ class _Scheduler(IRVisitor):
     def operation_record(self) -> OperationRecord:
         return self._operation_record
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        self.visit_gate(gate)
-
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
-        self.visit_bloch_sphere_rotation(gate)
+    # def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
+    #     self.visit_gate(gate)
+    #
+    # def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
+    #     self.visit_bloch_sphere_rotation(gate)
+    #
+    # def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
+    #     self.visit_bloch_sphere_rotation(gate)
+    #
+    # def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
+    #     self.visit_bloch_sphere_rotation(gate)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> None:
         self.visit_gate(gate)
@@ -225,24 +225,20 @@ class _ScheduleCreator(IRVisitor):
             return
         raise UnsupportedGateError(gate)
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
-        self.visit_bloch_sphere_rotation(gate)
+    # def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
+    #     self.visit_bloch_sphere_rotation(gate)
+    #
+    # def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
+    #     self.visit_bloch_sphere_rotation(gate)
+    #
+    # def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
+    #     self.visit_bloch_sphere_rotation(gate)
 
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
         raise UnsupportedGateError(gate)
 
     def visit_swap(self, gate: SWAP) -> None:
         raise UnsupportedGateError(gate)
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if not isinstance(gate.target_gate, BlochSphereRotation):
-            raise UnsupportedGateError(gate)
 
     def visit_cnot(self, gate: CNOT) -> None:
         self.schedule.add(

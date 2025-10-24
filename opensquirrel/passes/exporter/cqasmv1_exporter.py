@@ -16,6 +16,10 @@ from opensquirrel.ir import (
     Reset,
     Wait,
 )
+from opensquirrel.ir.semantics import (
+    BsrAngleParam,
+    BsrNoParams,
+)
 
 if TYPE_CHECKING:
     from opensquirrel import (
@@ -28,9 +32,6 @@ if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
-        BsrAngleParam,
-        BsrFullParams,
-        BsrNoParams,
         ControlledGate,
         MatrixGate,
     )
@@ -62,18 +63,15 @@ class _CQASMv1Creator(IRVisitor):
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
-    def visit_gate(self, gate: Gate) -> None:
-        raise UnsupportedGateError(gate)
-
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        raise UnsupportedGateError(gate)
+        if isinstance(gate, (BsrAngleParam, BsrNoParams)):
+            return
+        else:
+            raise UnsupportedGateError(gate)
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name.lower()} {qubit_operand}\n"
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
-        raise UnsupportedGateError(gate)
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
         theta_argument = gate.theta.accept(self)

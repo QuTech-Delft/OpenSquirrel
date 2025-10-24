@@ -77,15 +77,6 @@ class _QubitReindexer(IRVisitor):
             name=gate.name,
         )
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
     def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:
         reindexed_operands = [self.qubit_indices.index(op.index) for op in gate.operands]
         return MatrixGate(matrix=gate.matrix, operands=reindexed_operands)

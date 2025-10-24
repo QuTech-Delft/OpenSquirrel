@@ -60,7 +60,10 @@ class BlochSphereRotation(Gate):
     def arguments(self) -> tuple[Expression, ...]:
         return (self.qubit,)
 
-    def accept(self, visitor: IRVisitor) -> Any:
+    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+        visitor.visit_instruction(self)
+        visitor.visit_unitary(self)
+        visitor.visit_gate(self)
         return visitor.visit_bloch_sphere_rotation(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
@@ -107,8 +110,9 @@ class BsrNoParams(BlochSphereRotation):
     def arguments(self) -> tuple[Expression, ...]:
         return (self.qubit,)
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_no_params(self)
+    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+        parent_visit = _visit_parents(self, visitor)
+        return parent_visit if parent_visit is not None else visitor.visit_bsr_no_params(self)
 
 
 class BsrFullParams(BlochSphereRotation):
@@ -124,8 +128,9 @@ class BsrFullParams(BlochSphereRotation):
     def arguments(self) -> tuple[Expression, ...]:
         return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_full_params(self)
+    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+        parent_visit = _visit_parents(self, visitor)
+        return parent_visit if parent_visit is not None else visitor.visit_bsr_full_params(self)
 
 
 class BsrAngleParam(BlochSphereRotation):
@@ -144,5 +149,19 @@ class BsrAngleParam(BlochSphereRotation):
     def arguments(self) -> tuple[Expression, ...]:
         return self.qubit, self.theta
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_angle_param(self)
+    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+        parent_visit = _visit_parents(self, visitor)
+        return parent_visit if parent_visit is not None else visitor.visit_bsr_angle_param(self)
+
+
+def _visit_parents(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+    return next(
+        (visit for visit in [
+            visitor.visit_statement(self),
+            visitor.visit_instruction(self),
+            visitor.visit_unitary(self),
+            visitor.visit_gate(self),
+            visitor.visit_bloch_sphere_rotation(self),
+        ] if visit is not None),
+        None
+    )

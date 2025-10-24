@@ -12,8 +12,8 @@ class ControlledGate(Gate):
     ) -> None:
         Gate.__init__(self, name)
         self.control_qubit = Qubit(control_qubit)
-        self.target_qubit = Qubit(target_gate.qubit)
         self.target_gate = target_gate
+        self.target_qubit = Qubit(target_gate.qubit)
 
         if self._check_repeated_qubit_operands([self.control_qubit, self.target_qubit]):
             msg = "control and target qubit cannot be the same"

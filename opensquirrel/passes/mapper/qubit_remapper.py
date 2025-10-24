@@ -74,15 +74,6 @@ class _QubitRemapper(IRVisitor):
         bloch_sphere_rotation.qubit.accept(self)
         return bloch_sphere_rotation
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> MatrixGate:
         for operand in matrix_gate.operands:
             operand.accept(self)
@@ -93,8 +84,8 @@ class _QubitRemapper(IRVisitor):
 
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
         controlled_gate.control_qubit.accept(self)
+        controlled_gate.target_gate.accept(self)
         controlled_gate.target_qubit.accept(self)
-        self.visit_bloch_sphere_rotation(controlled_gate.target_gate)
         return controlled_gate
 
     def visit_cnot(self, gate: CNOT) -> ControlledGate:
