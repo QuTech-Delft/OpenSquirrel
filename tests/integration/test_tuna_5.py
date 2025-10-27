@@ -167,6 +167,11 @@ class TestTuna5:
 
             assert exported_schedule.name == "Exported OpenSquirrel circuit"
             assert operations == [
+                "Reset q[0]",
+                "Reset q[1]",
+                "Reset q[2]",
+                "Reset q[3]",
+                "Reset q[4]",
                 "Rxy(90, 0, 'q[0]')",
                 "Rxy(90, 90, 'q[0]')",
                 "Rxy(90, 0, 'q[0]')",

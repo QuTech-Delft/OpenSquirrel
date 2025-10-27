@@ -307,6 +307,8 @@ class TestQuantifySchedulerExporter:
             ]
 
             assert operations == [
+                "Reset q[0]",
+                "Reset q[1]",
                 "Rxy(90, 90, 'q[0]')",
                 "Rxy(180, 0, 'q[0]')",
                 "CNOT (q[0], q[1])",
