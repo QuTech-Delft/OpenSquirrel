@@ -6,7 +6,10 @@ import numpy as np
 from opensquirrel.common import ATOL
 from opensquirrel.ir.expression import Axis, AxisLike, Bit, BitLike, Expression, Qubit, QubitLike
 from opensquirrel.ir.ir import IRVisitor
+from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.statement import Instruction
+
+
 
 
 class NonUnitary(Instruction, ABC):
@@ -21,6 +24,10 @@ class NonUnitary(Instruction, ABC):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        instruction_visit = visitor.visit_instruction(self)
+        return instruction_visit if instruction_visit is not None else visitor.visit_non_unitary(self)
 
 
 class Measure(NonUnitary):
@@ -43,8 +50,8 @@ class Measure(NonUnitary):
         return self.qubit, self.bit, self.axis
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_measure(self)
+        non_unitary_visit = visitor.visit_non_unitary(self)
+        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_measure(self)
 
     def get_bit_operands(self) -> list[Bit]:
         return [self.bit]
@@ -66,8 +73,8 @@ class Init(NonUnitary):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_init(self)
+        non_unitary_visit = visitor.visit_non_unitary(self)
+        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_init(self)
 
 
 class Reset(NonUnitary):
@@ -86,5 +93,5 @@ class Reset(NonUnitary):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        visitor.visit_non_unitary(self)
-        return visitor.visit_reset(self)
+        non_unitary_visit = visitor.visit_non_unitary(self)
+        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_reset(self)

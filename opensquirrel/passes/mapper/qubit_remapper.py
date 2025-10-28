@@ -1,3 +1,5 @@
+from typing import Any
+
 from opensquirrel import (
     CNOT,
     CR,
@@ -14,7 +16,7 @@ from opensquirrel.ir import (
     Measure,
     Qubit,
     Reset,
-    Wait,
+    Wait, NonUnitary,
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
@@ -50,17 +52,9 @@ class _QubitRemapper(IRVisitor):
         qubit.index = self.mapping[qubit.index]
         return qubit
 
-    def visit_measure(self, measure: Measure) -> Measure:
-        measure.qubit.accept(self)
-        return measure
-
-    def visit_init(self, init: Init) -> Init:
-        init.qubit.accept(self)
-        return init
-
-    def visit_reset(self, reset: Reset) -> Reset:
-        reset.qubit.accept(self)
-        return reset
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> NonUnitary:
+        non_unitary.qubit.accept(self)
+        return non_unitary
 
     def visit_barrier(self, barrier: Barrier) -> Barrier:
         barrier.qubit.accept(self)

@@ -13,7 +13,6 @@ from opensquirrel.ir import (
     Barrier,
     Bit,
     Float,
-    Gate,
     Init,
     Int,
     IRVisitor,
@@ -78,13 +77,10 @@ class _WriterImpl(IRVisitor):
         backend_code = asm_declaration.backend_code.accept(self)
         self.output += f"asm({backend_name}) '''{backend_code}'''\n"
 
-    def visit_gate(self, gate: Gate) -> None:
-        if gate.name == "Gate":
-            self.output += f"{gate}\n"
-
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if gate.name == "BlochSphereRotation":
-            self.output += f"{gate}\n"
+        if isinstance(gate, (BsrFullParams, BsrAngleParam, BsrNoParams)):
+            return
+        self.output += f"{gate}\n"
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)

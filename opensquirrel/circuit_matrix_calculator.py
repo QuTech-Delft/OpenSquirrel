@@ -30,18 +30,6 @@ class _CircuitMatrixCalculator(IRVisitor):
         big_matrix = get_matrix(gate, qubit_register_size=self.qubit_register_size)
         self.matrix = np.asarray(big_matrix @ self.matrix, dtype=np.complex128)
 
-    # def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-    #     self.visit_gate(gate)
-    #
-    # def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-    #     self.visit_gate(gate)
-    #
-    # def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
-    #     self.visit_gate(gate)
-    #
-    # def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
-    #     self.visit_gate(gate)
-
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
         self.visit_gate(gate)
 

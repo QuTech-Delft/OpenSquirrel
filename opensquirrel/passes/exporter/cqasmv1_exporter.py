@@ -7,7 +7,6 @@ from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
     Barrier,
     Float,
-    Gate,
     Init,
     Int,
     IRVisitor,
