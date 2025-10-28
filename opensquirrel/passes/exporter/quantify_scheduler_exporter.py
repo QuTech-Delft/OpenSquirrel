@@ -126,12 +126,6 @@ class _Scheduler(IRVisitor):
     def operation_record(self) -> OperationRecord:
         return self._operation_record
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        self.visit_gate(gate)
-
-    def visit_swap(self, gate: MatrixGate) -> None:
-        self.visit_matrix_gate(gate)
-
     def visit_gate(self, gate: Gate) -> None:
         qubit_indices = [qubit.index for qubit in gate.get_qubit_operands()]
         self._operation_record.set_schedulable_timing_constraints(qubit_indices)
@@ -199,9 +193,6 @@ class _ScheduleCreator(IRVisitor):
         raise UnsupportedGateError(gate)
 
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        raise UnsupportedGateError(gate)
-
-    def visit_swap(self, gate: SWAP) -> None:
         raise UnsupportedGateError(gate)
 
     def visit_cnot(self, gate: CNOT) -> None:

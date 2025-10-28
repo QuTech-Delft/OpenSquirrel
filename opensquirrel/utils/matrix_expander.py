@@ -189,9 +189,6 @@ class MatrixExpander(IRVisitor):
             raise ValueError(msg)
         return expanded_matrix
 
-    def visit_swap(self, gate: SWAP) -> NDArray[np.complex128]:
-        return self.visit_matrix_gate(gate)
-
     def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
         qubit_operands = list(reversed(gate.get_qubit_operands()))
 

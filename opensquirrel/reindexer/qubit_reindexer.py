@@ -81,9 +81,6 @@ class _QubitReindexer(IRVisitor):
         reindexed_operands = [self.qubit_indices.index(op.index) for op in gate.operands]
         return MatrixGate(matrix=gate.matrix, operands=reindexed_operands)
 
-    def visit_swap(self, gate: SWAP) -> MatrixGate:
-        return self.visit_matrix_gate(gate)
-
     def visit_controlled_gate(self, gate: ControlledGate) -> ControlledGate:
         control_qubit = self.qubit_indices.index(gate.control_qubit.index)
         target_gate = gate.target_gate.accept(self)

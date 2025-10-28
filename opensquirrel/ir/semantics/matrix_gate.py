@@ -50,7 +50,8 @@ class MatrixGate(Gate):
         return f"{self.name}(qubits={self.operands}, matrix={repr_round(self.matrix)})"
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_matrix_gate(self)
+        parent_visit = super().accept(visitor)
+        return parent_visit if parent_visit is not None else visitor.visit_matrix_gate(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return self.operands

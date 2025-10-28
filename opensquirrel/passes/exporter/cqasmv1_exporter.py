@@ -18,6 +18,7 @@ from opensquirrel.ir import (
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     ControlledGate,
+    MatrixGate,
 )
 
 if TYPE_CHECKING:
@@ -32,7 +33,6 @@ if TYPE_CHECKING:
     from opensquirrel.ir.semantics import (
         BsrNoParams,
         BsrAngleParam,
-        MatrixGate,
     )
     from opensquirrel.register_manager import RegisterManager
 
@@ -68,6 +68,18 @@ class _CQASMv1Creator(IRVisitor):
         else:
             raise UnsupportedGateError(gate)
 
+    def visit_matrix_gate(self, gate: MatrixGate) -> None:
+        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
+            return
+        else:
+            raise UnsupportedGateError(gate)
+
+    def visit_controlled_gate(self, gate: ControlledGate) -> None:
+        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
+            return
+        else:
+            raise UnsupportedGateError(gate)
+
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name.lower()} {qubit_operand}\n"
@@ -77,19 +89,10 @@ class _CQASMv1Creator(IRVisitor):
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        raise UnsupportedGateError(gate)
-
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)
         qubit_operand_1 = gate.qubit_1.accept(self)
         self.output += f"swap {qubit_operand_0}, {qubit_operand_1}\n"
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
-            return
-        else:
-            raise UnsupportedGateError(gate)
 
     def visit_cnot(self, gate: CNOT) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)

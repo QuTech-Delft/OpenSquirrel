@@ -30,12 +30,6 @@ class _CircuitMatrixCalculator(IRVisitor):
         big_matrix = get_matrix(gate, qubit_register_size=self.qubit_register_size)
         self.matrix = np.asarray(big_matrix @ self.matrix, dtype=np.complex128)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        self.visit_gate(gate)
-
-    def visit_swap(self, gate: SWAP) -> None:
-        self.visit_gate(gate)
-
 
 def get_circuit_matrix(circuit: Circuit) -> NDArray[np.complex128]:
     """Compute the (large) unitary matrix corresponding to the circuit.

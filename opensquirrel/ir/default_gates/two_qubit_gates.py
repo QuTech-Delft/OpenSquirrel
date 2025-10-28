@@ -47,7 +47,8 @@ class SWAP(MatrixGate):
         return [self.qubit_0, self.qubit_1]
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_swap(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_swap(self)
 
 
 class CNOT(ControlledGate):
