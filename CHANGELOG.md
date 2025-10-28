@@ -16,6 +16,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Processing of control instructions (Barrier, Wait) added to quantify-scheduler exporter
 
+### Changed
+
+- Refactor of visitor functionality of IR components and implementations
+
 ## [ 0.7.0 ] - [ 2025-10-13 ]
 
 ### Added
