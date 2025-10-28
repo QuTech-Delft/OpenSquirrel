@@ -50,7 +50,7 @@ class Measure(NonUnitary):
         return self.qubit, self.bit, self.axis
 
     def accept(self, visitor: IRVisitor) -> Any:
-        non_unitary_visit = visitor.visit_non_unitary(self)
+        non_unitary_visit = super().accept(visitor)
         return non_unitary_visit if non_unitary_visit is not None else visitor.visit_measure(self)
 
     def get_bit_operands(self) -> list[Bit]:
@@ -73,7 +73,7 @@ class Init(NonUnitary):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        non_unitary_visit = visitor.visit_non_unitary(self)
+        non_unitary_visit = super().accept(visitor)
         return non_unitary_visit if non_unitary_visit is not None else visitor.visit_init(self)
 
 
@@ -93,5 +93,5 @@ class Reset(NonUnitary):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        non_unitary_visit = visitor.visit_non_unitary(self)
+        non_unitary_visit = super().accept(visitor)
         return non_unitary_visit if non_unitary_visit is not None else visitor.visit_reset(self)
