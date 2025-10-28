@@ -132,7 +132,7 @@ class Circuit:
 
     def route(self, router: Router) -> None:
         """Generic router pass. It applies the given router to the circuit."""
-        router.route(self.ir)
+        router.route(self.ir, self.qubit_register_size)
 
     def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.

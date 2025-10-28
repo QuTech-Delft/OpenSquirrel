@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import Any, Mapping
 
 import networkx as nx
 
@@ -27,17 +27,16 @@ class AStarRouter(Router):
 
     def _build_graph(self) -> nx.Graph:
         graph_data = {int(start_node): end_nodes for start_node, end_nodes in self.connectivity.items()}
-        return nx.Graph(graph_data)
+        return nx.Graph(graph_data)    
 
-    def _init_qubit_mapping(self, ir: IR) -> dict[int, int]:
-        # Start with an identity mapping
-        mapping: dict[int, int] = {}
-        for statement in ir.statements:
-            if isinstance(statement, Instruction):
-                for qubit in statement.get_qubit_operands():
-                    if qubit.index not in mapping:
-                        mapping[qubit.index] = qubit.index
-        return mapping
+    def _init_qubit_mapping(self, qubit_register_size: int) -> dict[int, int]:
+        # Start with an identity mapping.
+        return {
+            logical_index: virtual_index
+            for logical_index, virtual_index in zip(
+                list(range(qubit_register_size)), list(range(qubit_register_size))
+            )
+        }
 
     def _update_mapping_for_swap(self, mapping: dict[int, int], swap_pair: tuple[int, int]) -> None:
         # Given a physical swap (a <-> b), update which logical qubits currently occupy a and b.
@@ -69,20 +68,21 @@ class AStarRouter(Router):
             )
         )
 
-    def _plan_swaps(self, ir: IR, graph: nx.Graph, initial_mapping: dict[int, int]) -> list[tuple[int, SWAP]]:
+    def _plan_swaps(self, ir: IR, graph: nx.Graph, initial_mapping: Mapping[int, int]) -> list[tuple[int, SWAP]]:
         # Go through the IR and see where SWAPs need to be placed.
         swaps_to_insert: list[tuple[int, SWAP]] = []
-        temp_mapping = dict(initial_mapping)
+        # Copy so planning doesn’t mutate the baseline used by the construction phase.
+        temp_mapping: dict[int, int] = dict(initial_mapping)
 
         for statement_idx, statement in enumerate(ir.statements):
             if isinstance(statement, Gate) and len(statement.get_qubit_operands()) == 2:
                 q0, q1 = statement.get_qubit_operands()
-                physical_q0 = temp_mapping[q0.index]
-                physical_q1 = temp_mapping[q1.index]
+                physical_q0_index = temp_mapping[q0.index]
+                physical_q1_index = temp_mapping[q1.index]
 
-                if not graph.has_edge(physical_q0, physical_q1):
+                if not graph.has_edge(physical_q0_index, physical_q1_index):
                     try:
-                        path = self._astar_path(graph, physical_q0, physical_q1)
+                        path = self._astar_path(graph, physical_q0_index, physical_q1_index)
                     except nx.NetworkXNoPath as e:
                         msg = f"No routing path available between qubit {q0.index} and qubit {q1.index}"
                         raise NoRoutingPathError(msg) from e
@@ -128,12 +128,12 @@ class AStarRouter(Router):
 
         return new_statements
 
-    def route(self, ir: IR) -> IR:
+    def route(self, ir: IR, qubit_register_size: int) -> IR:
         """
         Routes the circuit by inserting SWAP gates (via A*) to satisfy hardware connectivity.
         """
         graph = self._build_graph()
-        initial_mapping = self._init_qubit_mapping(ir)
+        initial_mapping = self._init_qubit_mapping(qubit_register_size)
         swaps_to_insert = self._plan_swaps(ir, graph, initial_mapping)
         ir.statements = self._apply_swaps(ir, swaps_to_insert, initial_mapping)
         return ir
