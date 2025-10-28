@@ -1,28 +1,14 @@
-from typing import Any
-
-from opensquirrel import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
     IR,
     Barrier,
-    Init,
     IRVisitor,
-    Measure,
+    NonUnitary,
     Qubit,
-    Reset,
-    Wait, NonUnitary,
+    Wait,
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
     ControlledGate,
     MatrixGate,
 )

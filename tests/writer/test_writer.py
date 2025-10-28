@@ -150,7 +150,6 @@ b[1] = measure q[1]
     )
 
 
-
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(2, 2)
     builder.H(0)

@@ -80,20 +80,17 @@ class _WriterImpl(IRVisitor):
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
             return
-        else:
-            self.output += f"{gate}\n"
+        self.output += f"{gate}\n"
 
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
         if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
             return
-        else:
-            self.output += f"{gate}\n"
+        self.output += f"{gate}\n"
 
     def visit_controlled_gate(self, gate: ControlledGate) -> None:
         if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
             return
-        else:
-            self.output += f"{gate}\n"
+        self.output += f"{gate}\n"
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)

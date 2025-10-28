@@ -6,10 +6,7 @@ import numpy as np
 from opensquirrel.common import ATOL
 from opensquirrel.ir.expression import Axis, AxisLike, Bit, BitLike, Expression, Qubit, QubitLike
 from opensquirrel.ir.ir import IRVisitor
-from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.statement import Instruction
-
-
 
 
 class NonUnitary(Instruction, ABC):
@@ -26,8 +23,7 @@ class NonUnitary(Instruction, ABC):
         return [self.qubit]
 
     def accept(self, visitor: IRVisitor) -> Any:
-        instruction_visit = visitor.visit_instruction(self)
-        return instruction_visit if instruction_visit is not None else visitor.visit_non_unitary(self)
+        return visitor.visit_non_unitary(self)
 
 
 class Measure(NonUnitary):

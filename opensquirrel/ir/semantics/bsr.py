@@ -60,7 +60,7 @@ class BlochSphereRotation(Gate):
     def arguments(self) -> tuple[Expression, ...]:
         return (self.qubit,)
 
-    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+    def accept(self, visitor: IRVisitor) -> Any:
         visit_gate = visitor.visit_gate(self)
         return visit_gate if visit_gate is not None else visitor.visit_bloch_sphere_rotation(self)
 
@@ -108,7 +108,7 @@ class BsrNoParams(BlochSphereRotation):
     def arguments(self) -> tuple[Expression, ...]:
         return (self.qubit,)
 
-    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+    def accept(self, visitor: IRVisitor) -> Any:
         visit_bsr = super().accept(visitor)
         return visit_bsr if visit_bsr is not None else visitor.visit_bsr_no_params(self)
 
@@ -126,7 +126,7 @@ class BsrFullParams(BlochSphereRotation):
     def arguments(self) -> tuple[Expression, ...]:
         return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
 
-    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+    def accept(self, visitor: IRVisitor) -> Any:
         visit_bsr = super().accept(visitor)
         return visit_bsr if visit_bsr is not None else visitor.visit_bsr_full_params(self)
 
@@ -147,6 +147,6 @@ class BsrAngleParam(BlochSphereRotation):
     def arguments(self) -> tuple[Expression, ...]:
         return self.qubit, self.theta
 
-    def accept(self, visitor: IRVisitor) -> BlochSphereRotation | None:
+    def accept(self, visitor: IRVisitor) -> Any:
         visit_bsr = super().accept(visitor)
         return visit_bsr if visit_bsr is not None else visitor.visit_bsr_angle_param(self)

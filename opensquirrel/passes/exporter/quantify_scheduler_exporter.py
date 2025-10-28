@@ -4,7 +4,7 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
-from opensquirrel import CNOT, CR, CZ, SWAP, CRk, Init, Measure, Reset, Wait
+from opensquirrel import CNOT, CR, CZ, CRk, Init, Measure, Reset, Wait
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (
@@ -12,14 +12,6 @@ from opensquirrel.ir import (
     Gate,
     IRVisitor,
     NonUnitary,
-)
-from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
-    MatrixGate,
 )
 
 try:
@@ -31,6 +23,10 @@ except ModuleNotFoundError:
 if TYPE_CHECKING:
     from opensquirrel import Circuit
     from opensquirrel.ir import Qubit
+    from opensquirrel.ir.semantics import (
+        BlochSphereRotation,
+        MatrixGate,
+    )
     from opensquirrel.register_manager import RegisterManager
 
 

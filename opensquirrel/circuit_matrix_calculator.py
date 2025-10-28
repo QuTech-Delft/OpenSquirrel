@@ -9,16 +9,7 @@ from opensquirrel.ir import Gate, IRVisitor
 from opensquirrel.utils import get_matrix
 
 if TYPE_CHECKING:
-    from opensquirrel import CNOT, CR, CZ, SWAP, CRk
     from opensquirrel.circuit import Circuit
-    from opensquirrel.ir.semantics import (
-        BlochSphereRotation,
-        BsrAngleParam,
-        BsrFullParams,
-        BsrNoParams,
-        ControlledGate,
-        MatrixGate,
-    )
 
 
 class _CircuitMatrixCalculator(IRVisitor):

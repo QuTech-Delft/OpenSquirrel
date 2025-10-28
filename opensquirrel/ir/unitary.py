@@ -14,7 +14,6 @@ class Unitary(Instruction, ABC):
 
 
 class Gate(Unitary, ABC):
-
     def __init__(self, name: str) -> None:
         Unitary.__init__(self, name)
 
@@ -54,5 +53,3 @@ def compare_gates(g1: Gate, g2: Gate) -> bool:
     matrix_g2 = get_circuit_matrix(get_reindexed_circuit([g2], union_mapping))
 
     return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
-
-

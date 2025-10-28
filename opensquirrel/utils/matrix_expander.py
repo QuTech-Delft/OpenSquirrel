@@ -20,18 +20,8 @@ from opensquirrel.ir import (
 from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
 
 if TYPE_CHECKING:
-    from opensquirrel import (
-        CNOT,
-        CR,
-        CZ,
-        SWAP,
-        CRk,
-    )
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
-        BsrAngleParam,
-        BsrFullParams,
-        BsrNoParams,
         ControlledGate,
         MatrixGate,
     )
