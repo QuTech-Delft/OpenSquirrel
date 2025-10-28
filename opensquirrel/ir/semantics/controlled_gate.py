@@ -23,7 +23,8 @@ class ControlledGate(Gate):
         return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate})"
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_controlled_gate(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_controlled_gate(self)
 
     @property
     def arguments(self) -> tuple[Expression, ...]:

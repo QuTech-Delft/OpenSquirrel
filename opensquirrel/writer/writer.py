@@ -78,9 +78,10 @@ class _WriterImpl(IRVisitor):
         self.output += f"asm({backend_name}) '''{backend_code}'''\n"
 
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if isinstance(gate, (BsrFullParams, BsrAngleParam, BsrNoParams)):
+        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
             return
-        self.output += f"{gate}\n"
+        else:
+            self.output += f"{gate}\n"
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)

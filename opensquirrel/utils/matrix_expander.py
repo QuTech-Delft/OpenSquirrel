@@ -151,18 +151,6 @@ class MatrixExpander(IRVisitor):
                 col[col_index] = 1
         return np.asarray(expanded_matrix, dtype=np.complex128)
 
-    def visit_cnot(self, gate: CNOT) -> Any:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: CZ) -> Any:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: CR) -> Any:
-        return self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: CRk) -> Any:
-        return self.visit_controlled_gate(gate)
-
     def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex128]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as

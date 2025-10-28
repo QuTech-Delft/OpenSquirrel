@@ -126,21 +126,6 @@ class _Scheduler(IRVisitor):
     def operation_record(self) -> OperationRecord:
         return self._operation_record
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        self.visit_gate(gate)
-
-    def visit_cnot(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
         self.visit_gate(gate)
 

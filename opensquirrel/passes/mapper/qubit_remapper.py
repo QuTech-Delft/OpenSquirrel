@@ -82,18 +82,6 @@ class _QubitRemapper(IRVisitor):
         controlled_gate.target_qubit.accept(self)
         return controlled_gate
 
-    def visit_cnot(self, gate: CNOT) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: CZ) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: CR) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: CRk) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
     if len(mapping) > circuit.qubit_register_size:

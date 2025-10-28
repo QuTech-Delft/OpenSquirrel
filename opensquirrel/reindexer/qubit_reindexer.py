@@ -89,18 +89,6 @@ class _QubitReindexer(IRVisitor):
         target_gate = gate.target_gate.accept(self)
         return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
 
-    def visit_cnot(self, gate: CNOT) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: CZ) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: CR) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: CRk) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
 
 def get_reindexed_circuit(
     replacement_gates: Iterable[Gate],

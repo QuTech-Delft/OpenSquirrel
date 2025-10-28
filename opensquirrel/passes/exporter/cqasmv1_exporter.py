@@ -16,8 +16,8 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.semantics import (
-    BsrAngleParam,
-    BsrNoParams,
+    BlochSphereRotation,
+    ControlledGate,
 )
 
 if TYPE_CHECKING:
@@ -30,8 +30,8 @@ if TYPE_CHECKING:
     )
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir.semantics import (
-        BlochSphereRotation,
-        ControlledGate,
+        BsrNoParams,
+        BsrAngleParam,
         MatrixGate,
     )
     from opensquirrel.register_manager import RegisterManager
@@ -63,7 +63,7 @@ class _CQASMv1Creator(IRVisitor):
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if isinstance(gate, (BsrAngleParam, BsrNoParams)):
+        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
             return
         else:
             raise UnsupportedGateError(gate)
@@ -86,7 +86,10 @@ class _CQASMv1Creator(IRVisitor):
         self.output += f"swap {qubit_operand_0}, {qubit_operand_1}\n"
 
     def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        raise UnsupportedGateError(gate)
+        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
+            return
+        else:
+            raise UnsupportedGateError(gate)
 
     def visit_cnot(self, gate: CNOT) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
