@@ -182,17 +182,22 @@ class LibQasmParser:
             modified_gate_generator = cast(
                 "Callable[..., BlochSphereRotation]", self._get_gate_generator(instruction.gate)
             )
-            if gate_name == "inv":
-                return InverseGateModifier(modified_gate_generator)
-            if gate_name == "pow":
-                gate = instruction.gate
-                exponent = gate.parameters[0].value
-                return PowerGateModifier(exponent, modified_gate_generator)
-            if gate_name == "ctrl":
-                return ControlGateModifier(modified_gate_generator)
-            msg = "parsing error: unknown unitary instruction"
 
-            raise OSError(msg)
+            match gate_name:
+                case "inv":
+                    return InverseGateModifier(modified_gate_generator)
+
+                case "pow":
+                    gate = instruction.gate
+                    exponent = gate.parameters[0].value
+                    return PowerGateModifier(exponent, modified_gate_generator)
+
+                case "ctrl":
+                    return ControlGateModifier(modified_gate_generator)
+
+                case _:
+                    msg = "parsing error: unknown unitary instruction"
+                    raise OSError(msg)
         return lambda *args: default_gate_set[gate_name](*args)
 
     def _get_non_gate_instruction_generator(
