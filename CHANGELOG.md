@@ -16,6 +16,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Processing of control instructions (Barrier, Wait) added to quantify-scheduler exporter
 
+### Changed
+
+- Improved SWAP placement and refactor of common functionalities in existing router passes
+
 ## [ 0.7.0 ] - [ 2025-10-13 ]
 
 ### Added

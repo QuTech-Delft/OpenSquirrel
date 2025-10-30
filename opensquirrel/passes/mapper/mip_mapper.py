@@ -13,11 +13,13 @@ from opensquirrel.passes.mapper.mapping import Mapping
 
 DISTANCE_UL = 999999
 
+Connectivity = dict[str, list[int]]
+
 
 class MIPMapper(Mapper):
     def __init__(
         self,
-        connectivity: dict[str, list[int]],
+        connectivity: Connectivity,
         timeout: float | None = None,
         **kwargs: Any,
     ) -> None:
