@@ -106,16 +106,20 @@ class Circuit:
         general_decomposer.decompose(self.ir, decomposer)
 
     def export(self, fmt: ExportFormat | None = None) -> Any:
-        if fmt == ExportFormat.QUANTIFY_SCHEDULER:
-            from opensquirrel.passes.exporter import quantify_scheduler_exporter
+        match fmt:
+            case ExportFormat.QUANTIFY_SCHEDULER:
+                from opensquirrel.passes.exporter import quantify_scheduler_exporter
 
-            return quantify_scheduler_exporter.export(self)
-        if fmt == ExportFormat.CQASM_V1:
-            from opensquirrel.passes.exporter import cqasmv1_exporter
+                return quantify_scheduler_exporter.export(self)
 
-            return cqasmv1_exporter.export(self)
-        msg = "unknown exporter format"
-        raise ValueError(msg)
+            case ExportFormat.CQASM_V1:
+                from opensquirrel.passes.exporter import cqasmv1_exporter
+
+                return cqasmv1_exporter.export(self)
+
+            case _:
+                msg = "unknown exporter format"
+                raise ValueError(msg)
 
     def map(self, mapper: Mapper) -> None:
         """Generic qubit mapper pass.

@@ -23,10 +23,16 @@ def calculate_distance(q0_index: int, q1_index: int, num_columns: int, distance_
     x1, y1 = divmod(q0_index, num_columns)
     x2, y2 = divmod(q1_index, num_columns)
 
-    if distance_metric == DistanceMetric.MANHATTAN:
-        return abs(x1 - x2) + abs(y1 - y2)
-    if distance_metric == DistanceMetric.EUCLIDEAN:
-        return float(((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5)
-    if distance_metric == DistanceMetric.CHEBYSHEV:
-        return max(abs(x1 - x2), abs(y1 - y2))
-    return None
+    match distance_metric:
+        case DistanceMetric.MANHATTAN:
+            return abs(x1 - x2) + abs(y1 - y2)
+
+        case DistanceMetric.EUCLIDEAN:
+            return float(((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5)
+
+        case DistanceMetric.CHEBYSHEV:
+            return max(abs(x1 - x2), abs(y1 - y2))
+
+        case _:
+            msg = "Invalid distance metric. Choose Manhattan, Euclidean, or Chebyshev."
+            raise ValueError(msg)
