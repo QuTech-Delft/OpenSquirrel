@@ -15,10 +15,6 @@ if TYPE_CHECKING:
     from opensquirrel.ir.expression import Expression
 
 
-class GateSemantic:
-    def __init__(self, name: str = "GateSemantic") -> None: ...
-
-
 class MatrixGate(Gate):
     def __init__(
         self, matrix: ArrayLike | list[list[int | DTypeLike]], operands: Iterable[QubitLike], name: str = "MatrixGate"
