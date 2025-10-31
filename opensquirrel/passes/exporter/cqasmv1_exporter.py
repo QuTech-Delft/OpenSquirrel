@@ -16,6 +16,7 @@ from opensquirrel.ir import (
     Reset,
     Wait,
 )
+from opensquirrel.passes.exporter.general_exporter import Exporter
 
 if TYPE_CHECKING:
     from opensquirrel import (
@@ -35,6 +36,18 @@ if TYPE_CHECKING:
         MatrixGate,
     )
     from opensquirrel.register_manager import RegisterManager
+
+
+class CqasmV1Exporter(Exporter):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+
+    def export(self, circuit: Circuit) -> str:
+        cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
+
+        circuit.ir.accept(cqasmv1_creator)
+
+        return post_process(cqasmv1_creator.output).rstrip() + "\n"
 
 
 class CqasmV1ExporterParseError(Exception):
@@ -163,12 +176,3 @@ def _get_barrier_index(line: str) -> int:
         msg = "expecting a barrier index but found none"
         raise CqasmV1ExporterParseError(msg)
     return int(barrier_index_match.group(0))
-
-
-def export(circuit: Circuit) -> str:
-    cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
-
-    circuit.ir.accept(cqasmv1_creator)
-
-    # Remove all trailing lines and leave only one
-    return post_process(cqasmv1_creator.output).rstrip() + "\n"
