@@ -80,9 +80,11 @@ class Z(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=pi, phase=pi / 2, name="Z")
 
+
 class Z90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=pi / 2, phase=pi / 4, name="Z90")
+
 
 class S(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
@@ -112,20 +114,20 @@ class U(BsrFullParams):
         phi: SupportsFloat,
         lmbda: SupportsFloat,
     ) -> None:
-        from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations # noqa # lazy import 
-        a= Rn(qubit, 0, 0, 1, lmbda, phi=0)
-        b= Rn(qubit, 0, 1, 0, theta, phi=0)
-        c= Rn(qubit, 0, 0, 1, phi, phi=(phi+lmbda)/2)        
+        from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations  # noqa # lazy import
+
+        a = Rn(qubit, 0, 0, 1, lmbda, phi=0)
+        b = Rn(qubit, 0, 1, 0, theta, phi=0)
+        c = Rn(qubit, 0, 0, 1, phi, phi=(phi + lmbda) / 2)
         bsr = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(a, b), c)
-        
+
         BsrFullParams.__init__(self, qubit=qubit, axis=bsr.axis, angle=bsr.angle, phase=bsr.phase, name="U")
 
 
-if __name__=='__main__':
-    lmbda=.1
-    theta=.2
-    phi=.3
-    qubit=0
-    u=U(qubit, lmbda,theta, phi)
+if __name__ == "__main__":
+    lmbda = 0.1
+    theta = 0.2
+    phi = 0.3
+    qubit = 0
+    u = U(qubit, lmbda, theta, phi)
     print(u)
-        

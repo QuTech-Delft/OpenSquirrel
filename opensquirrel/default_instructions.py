@@ -80,7 +80,7 @@ default_bloch_sphere_rotation_set = {
     **default_bsr_full_params_set,
     **default_bsr_without_params_set,
     **default_bsr_with_angle_param_set,
-    'U': U
+    "U": U,
 }
 default_controlled_gate_set: Mapping[str, type[ControlledGate]]
 default_controlled_gate_set = {
