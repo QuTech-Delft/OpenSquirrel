@@ -118,7 +118,7 @@ class U(BsrFullParams):
 
         a = Rn(qubit, 0, 0, 1, lmbda, phi=0)
         b = Rn(qubit, 0, 1, 0, theta, phi=0)
-        c = Rn(qubit, 0, 0, 1, phi, phi=(phi + lmbda) / 2)
+        c = Rn(qubit, 0, 0, 1, phi, phi=(float(phi) + float(lmbda)) / 2)
         bsr = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(a, b), c)
 
         BsrFullParams.__init__(self, qubit=qubit, axis=bsr.axis, angle=bsr.angle, phase=bsr.phase, name="U")
