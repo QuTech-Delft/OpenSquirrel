@@ -122,12 +122,3 @@ class U(BsrFullParams):
         bsr = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(a, b), c)
 
         BsrFullParams.__init__(self, qubit=qubit, axis=bsr.axis, angle=bsr.angle, phase=bsr.phase, name="U")
-
-
-if __name__ == "__main__":
-    lmbda = 0.1
-    theta = 0.2
-    phi = 0.3
-    qubit = 0
-    u = U(qubit, lmbda, theta, phi)
-    print(u)
