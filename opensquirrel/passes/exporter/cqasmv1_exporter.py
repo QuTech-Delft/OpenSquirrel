@@ -15,12 +15,12 @@ from opensquirrel.ir import (
     Reset,
     Wait,
 )
-from opensquirrel.passes.exporter.general_exporter import Exporter
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     ControlledGate,
     MatrixGate,
 )
+from opensquirrel.passes.exporter.general_exporter import Exporter
 
 if TYPE_CHECKING:
     from opensquirrel import (
