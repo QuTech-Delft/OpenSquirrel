@@ -17,6 +17,7 @@ from opensquirrel.ir.default_gates import (
     SWAP,
     X90,
     Y90,
+    Z90,
     CRk,
     H,
     I,
@@ -33,6 +34,7 @@ from opensquirrel.ir.default_gates import (
     X,
     Y,
     Z,
+    U,
 )
 
 if TYPE_CHECKING:
@@ -64,6 +66,7 @@ default_bsr_without_params_set = {
     "Y": Y,
     "Y90": Y90,
     "Z": Z,
+    "Z90": Z90,
     "mX90": MinusX90,
     "mY90": MinusY90,
 }
@@ -82,6 +85,7 @@ default_bloch_sphere_rotation_set = {
     **default_bsr_full_params_set,
     **default_bsr_without_params_set,
     **default_bsr_with_angle_param_set,
+    'U': U
 }
 default_controlled_gate_set: Mapping[str, type[ControlledGate]]
 default_controlled_gate_set = {

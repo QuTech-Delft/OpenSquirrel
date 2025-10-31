@@ -1,6 +1,7 @@
 from opensquirrel.ir.default_gates.single_qubit_gates import (
     X90,
     Y90,
+    Z90,
     H,
     I,
     MinusX90,
@@ -16,6 +17,7 @@ from opensquirrel.ir.default_gates.single_qubit_gates import (
     X,
     Y,
     Z,
+    U,
 )
 from opensquirrel.ir.default_gates.two_qubit_gates import CNOT, CR, CZ, SWAP, CRk
 
@@ -26,6 +28,7 @@ __all__ = [
     "SWAP",
     "X90",
     "Y90",
+    "Z90",
     "CRk",
     "H",
     "I",
@@ -42,4 +45,5 @@ __all__ = [
     "X",
     "Y",
     "Z",
+    "U",
 ]

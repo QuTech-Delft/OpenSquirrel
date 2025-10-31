@@ -14,6 +14,7 @@ from opensquirrel.ir.default_gates import (
     SWAP,
     X90,
     Y90,
+    Z90,
     CRk,
     H,
     I,
@@ -30,6 +31,7 @@ from opensquirrel.ir.default_gates import (
     X,
     Y,
     Z,
+    U,
 )
 
 __all__ = [
@@ -39,6 +41,7 @@ __all__ = [
     "SWAP",
     "X90",
     "Y90",
+    "Z90",
     "Barrier",
     "CRk",
     "Circuit",
@@ -62,6 +65,7 @@ __all__ = [
     "X",
     "Y",
     "Z",
+    "U",
 ]
 
 from importlib.metadata import version
