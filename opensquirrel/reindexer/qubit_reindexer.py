@@ -15,22 +15,12 @@ from opensquirrel.ir import (
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
     ControlledGate,
     MatrixGate,
 )
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
-    from opensquirrel import (
-        CNOT,
-        CR,
-        CZ,
-        SWAP,
-        CRk,
-    )
     from opensquirrel.circuit import Circuit
 
 
@@ -77,38 +67,14 @@ class _QubitReindexer(IRVisitor):
             name=gate.name,
         )
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
     def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:
         reindexed_operands = [self.qubit_indices.index(op.index) for op in gate.operands]
         return MatrixGate(matrix=gate.matrix, operands=reindexed_operands)
-
-    def visit_swap(self, gate: SWAP) -> MatrixGate:
-        return self.visit_matrix_gate(gate)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> ControlledGate:
         control_qubit = self.qubit_indices.index(gate.control_qubit.index)
         target_gate = gate.target_gate.accept(self)
         return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
-
-    def visit_cnot(self, gate: CNOT) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: CZ) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: CR) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: CRk) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
 
 
 def get_reindexed_circuit(

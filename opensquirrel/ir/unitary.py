@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
+from typing import Any
 
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
+from opensquirrel.ir import IRVisitor
 from opensquirrel.ir.expression import Expression, Qubit
 from opensquirrel.ir.statement import Instruction
 
@@ -14,11 +16,6 @@ class Unitary(Instruction, ABC):
 class Gate(Unitary, ABC):
     def __init__(self, name: str) -> None:
         Unitary.__init__(self, name)
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Gate):
-            return False
-        return compare_gates(self, other)
 
     @property
     @abstractmethod
@@ -36,6 +33,14 @@ class Gate(Unitary, ABC):
     @abstractmethod
     def is_identity(self) -> bool:
         pass
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_gate(self)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Gate):
+            return False
+        return compare_gates(self, other)
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:

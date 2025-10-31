@@ -4,7 +4,7 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
-from opensquirrel import CNOT, CR, CZ, SWAP, CRk, Init, Measure, Reset, Wait
+from opensquirrel import CNOT, CR, CZ, CRk, Init, Measure, Reset, Wait
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (
@@ -12,14 +12,6 @@ from opensquirrel.ir import (
     Gate,
     IRVisitor,
     NonUnitary,
-)
-from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
-    ControlledGate,
-    MatrixGate,
 )
 
 try:
@@ -31,6 +23,10 @@ except ModuleNotFoundError:
 if TYPE_CHECKING:
     from opensquirrel import Circuit
     from opensquirrel.ir import Qubit
+    from opensquirrel.ir.semantics import (
+        BlochSphereRotation,
+        MatrixGate,
+    )
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -126,39 +122,6 @@ class _Scheduler(IRVisitor):
     def operation_record(self) -> OperationRecord:
         return self._operation_record
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        self.visit_gate(gate)
-
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        self.visit_gate(gate)
-
-    def visit_cnot(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: ControlledGate) -> None:
-        self.visit_controlled_gate(gate)
-
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        self.visit_gate(gate)
-
-    def visit_swap(self, gate: MatrixGate) -> None:
-        self.visit_matrix_gate(gate)
-
     def visit_gate(self, gate: Gate) -> None:
         qubit_indices = [qubit.index for qubit in gate.get_qubit_operands()]
         self._operation_record.set_schedulable_timing_constraints(qubit_indices)
@@ -225,24 +188,8 @@ class _ScheduleCreator(IRVisitor):
             return
         raise UnsupportedGateError(gate)
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
-        self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
-        self.visit_bloch_sphere_rotation(gate)
-
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
         raise UnsupportedGateError(gate)
-
-    def visit_swap(self, gate: SWAP) -> None:
-        raise UnsupportedGateError(gate)
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if not isinstance(gate.target_gate, BlochSphereRotation):
-            raise UnsupportedGateError(gate)
 
     def visit_cnot(self, gate: CNOT) -> None:
         self.schedule.add(

@@ -12,8 +12,8 @@ class ControlledGate(Gate):
     ) -> None:
         Gate.__init__(self, name)
         self.control_qubit = Qubit(control_qubit)
-        self.target_qubit = Qubit(target_gate.qubit)
         self.target_gate = target_gate
+        self.target_qubit = Qubit(target_gate.qubit)
 
         if self._check_repeated_qubit_operands([self.control_qubit, self.target_qubit]):
             msg = "control and target qubit cannot be the same"
@@ -23,7 +23,8 @@ class ControlledGate(Gate):
         return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate})"
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_controlled_gate(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_controlled_gate(self)
 
     @property
     def arguments(self) -> tuple[Expression, ...]:

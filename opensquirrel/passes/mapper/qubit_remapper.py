@@ -1,26 +1,14 @@
-from opensquirrel import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import (
     IR,
     Barrier,
-    Init,
     IRVisitor,
-    Measure,
+    NonUnitary,
     Qubit,
-    Reset,
     Wait,
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
-    BsrAngleParam,
-    BsrFullParams,
-    BsrNoParams,
     ControlledGate,
     MatrixGate,
 )
@@ -50,17 +38,9 @@ class _QubitRemapper(IRVisitor):
         qubit.index = self.mapping[qubit.index]
         return qubit
 
-    def visit_measure(self, measure: Measure) -> Measure:
-        measure.qubit.accept(self)
-        return measure
-
-    def visit_init(self, init: Init) -> Init:
-        init.qubit.accept(self)
-        return init
-
-    def visit_reset(self, reset: Reset) -> Reset:
-        reset.qubit.accept(self)
-        return reset
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> NonUnitary:
+        non_unitary.qubit.accept(self)
+        return non_unitary
 
     def visit_barrier(self, barrier: Barrier) -> Barrier:
         barrier.qubit.accept(self)
@@ -74,40 +54,16 @@ class _QubitRemapper(IRVisitor):
         bloch_sphere_rotation.qubit.accept(self)
         return bloch_sphere_rotation
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> BlochSphereRotation:
-        return self.visit_bloch_sphere_rotation(gate)
-
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> MatrixGate:
         for operand in matrix_gate.operands:
             operand.accept(self)
         return matrix_gate
 
-    def visit_swap(self, gate: SWAP) -> MatrixGate:
-        return self.visit_matrix_gate(gate)
-
     def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
         controlled_gate.control_qubit.accept(self)
+        controlled_gate.target_gate.accept(self)
         controlled_gate.target_qubit.accept(self)
-        self.visit_bloch_sphere_rotation(controlled_gate.target_gate)
         return controlled_gate
-
-    def visit_cnot(self, gate: CNOT) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: CZ) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: CR) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: CRk) -> ControlledGate:
-        return self.visit_controlled_gate(gate)
 
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:

@@ -20,18 +20,8 @@ from opensquirrel.ir import (
 from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
 
 if TYPE_CHECKING:
-    from opensquirrel import (
-        CNOT,
-        CR,
-        CZ,
-        SWAP,
-        CRk,
-    )
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
-        BsrAngleParam,
-        BsrFullParams,
-        BsrNoParams,
         ControlledGate,
         MatrixGate,
     )
@@ -139,15 +129,6 @@ class MatrixExpander(IRVisitor):
             ValueError(msg)
         return np.asarray(result, dtype=np.complex128)
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> NDArray[np.complex128]:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> NDArray[np.complex128]:
-        return self.visit_bloch_sphere_rotation(gate)
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> NDArray[np.complex128]:
-        return self.visit_bloch_sphere_rotation(gate)
-
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
         if gate.control_qubit.index >= self.qubit_register_size:
             msg = "index out of range"
@@ -159,18 +140,6 @@ class MatrixExpander(IRVisitor):
                 col[:] = 0
                 col[col_index] = 1
         return np.asarray(expanded_matrix, dtype=np.complex128)
-
-    def visit_cnot(self, gate: CNOT) -> Any:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cz(self, gate: CZ) -> Any:
-        return self.visit_controlled_gate(gate)
-
-    def visit_cr(self, gate: CR) -> Any:
-        return self.visit_controlled_gate(gate)
-
-    def visit_crk(self, gate: CRk) -> Any:
-        return self.visit_controlled_gate(gate)
 
     def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex128]:
         # The convention is to write gate matrices with operands reversed.
@@ -209,9 +178,6 @@ class MatrixExpander(IRVisitor):
             msg = "expended matrix has incorrect shape"
             raise ValueError(msg)
         return expanded_matrix
-
-    def visit_swap(self, gate: SWAP) -> NDArray[np.complex128]:
-        return self.visit_matrix_gate(gate)
 
     def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
         qubit_operands = list(reversed(gate.get_qubit_operands()))
