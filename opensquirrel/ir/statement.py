@@ -43,3 +43,6 @@ class Instruction(Statement, ABC):
     @abstractmethod
     def get_qubit_operands(self) -> list[Qubit]:
         pass
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_instruction(self)

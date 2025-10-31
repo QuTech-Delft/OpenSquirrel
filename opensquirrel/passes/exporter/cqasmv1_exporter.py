@@ -7,7 +7,6 @@ from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
     Barrier,
     Float,
-    Gate,
     Init,
     Int,
     IRVisitor,
@@ -17,6 +16,11 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.passes.exporter.general_exporter import Exporter
+from opensquirrel.ir.semantics import (
+    BlochSphereRotation,
+    ControlledGate,
+    MatrixGate,
+)
 
 if TYPE_CHECKING:
     from opensquirrel import (
@@ -28,12 +32,8 @@ if TYPE_CHECKING:
     )
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir.semantics import (
-        BlochSphereRotation,
         BsrAngleParam,
-        BsrFullParams,
         BsrNoParams,
-        ControlledGate,
-        MatrixGate,
     )
     from opensquirrel.register_manager import RegisterManager
 
@@ -75,34 +75,34 @@ class _CQASMv1Creator(IRVisitor):
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
-    def visit_gate(self, gate: Gate) -> None:
+    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
+        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
+            return
         raise UnsupportedGateError(gate)
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
+    def visit_matrix_gate(self, gate: MatrixGate) -> None:
+        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
+            return
+        raise UnsupportedGateError(gate)
+
+    def visit_controlled_gate(self, gate: ControlledGate) -> None:
+        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
+            return
         raise UnsupportedGateError(gate)
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name.lower()} {qubit_operand}\n"
 
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
-        raise UnsupportedGateError(gate)
-
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
         theta_argument = gate.theta.accept(self)
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        raise UnsupportedGateError(gate)
-
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)
         qubit_operand_1 = gate.qubit_1.accept(self)
         self.output += f"swap {qubit_operand_0}, {qubit_operand_1}\n"
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        raise UnsupportedGateError(gate)
 
     def visit_cnot(self, gate: CNOT) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
