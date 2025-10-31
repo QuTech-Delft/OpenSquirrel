@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Refactor of visitor functionality of IR components and implementations
+- Improved SWAP placement and refactor of common functionalities in existing router passes
 
 ## [ 0.7.0 ] - [ 2025-10-13 ]
 

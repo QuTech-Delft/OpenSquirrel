@@ -60,14 +60,15 @@ class CanonicalAxis(BaseAxis):
             axis = (axis + 1) % 2 - 1
 
         axis = np.sort(axis)[::-1]
-        n = sum(t > 1 / 2 for t in axis)
-        if n == 1:
-            axis[0] = 1 - axis[0]
-        if n == 2:
-            axis[0], axis[2] = axis[2], axis[0]
-            axis[1:] = 1 - axis[1:]
-        if n == 3:
-            axis = 1 - axis
+        match sum(t > 1 / 2 for t in axis):
+            case 1:
+                axis[0] = 1 - axis[0]
+            case 2:
+                axis[0], axis[2] = axis[2], axis[0]
+                axis[1:] = 1 - axis[1:]
+            case 3:
+                axis = 1 - axis
+
         return np.sort(axis)[::-1]
 
     def accept(self, visitor: IRVisitor) -> Any:
