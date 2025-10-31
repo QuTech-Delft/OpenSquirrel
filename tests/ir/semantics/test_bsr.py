@@ -6,6 +6,8 @@ import pytest
 
 from opensquirrel import (
     X90,
+    Y90,
+    Z90,
     H,
     I,
     MinusX90,
@@ -15,12 +17,18 @@ from opensquirrel import (
     Rz,
     TDagger,
     X,
+    U
 )
 from opensquirrel.common import ATOL
 from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation
 
 
+def assert_equal_upto_phase(gate1: BlochSphereRotation, gate2: BlochSphereRotation):
+    assert gate1.qubit == gate2.qubit
+    assert gate1.axis == gate2.axis
+    assert gate1.angle == gate2.angle
+    
 class TestBlochSphereRotation:
     @pytest.fixture
     def gate(self) -> BlochSphereRotation:
@@ -61,6 +69,13 @@ class TestBlochSphereRotation:
         assert I(42).is_identity()
         assert not gate.is_identity()
 
+    def test_U(self) -> None:
+        assert U(0, 0, 0, 0).is_identity()
+        u = U(0, pi/2, 0, 0)
+        assert_equal_upto_phase(u, Y90(0))
+        u = U(0, 0, pi/2, 0)
+        assert_equal_upto_phase(u, Z90(0))
+        
     @pytest.mark.parametrize(
         ("bsr", "default_gate"),
         [
