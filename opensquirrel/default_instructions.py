@@ -31,10 +31,10 @@ from opensquirrel.ir.default_gates import (
     SDagger,
     T,
     TDagger,
+    U,
     X,
     Y,
     Z,
-    U,
 )
 
 if TYPE_CHECKING:

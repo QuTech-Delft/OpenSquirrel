@@ -4,7 +4,7 @@ from math import pi, tau
 
 import pytest
 
-from opensquirrel import X90, Y90, Z90, H, I, MinusX90, Rn, Rx, Ry, Rz, TDagger, X, U
+from opensquirrel import X90, Y90, Z90, H, I, MinusX90, Rn, Rx, Ry, Rz, TDagger, U, X
 from opensquirrel.common import ATOL
 from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation
@@ -56,7 +56,7 @@ class TestBlochSphereRotation:
         assert I(42).is_identity()
         assert not gate.is_identity()
 
-    def test_U(self) -> None:
+    def test_u_gate(self) -> None:
         assert U(0, 0, 0, 0).is_identity()
         u = U(0, pi / 2, 0, 0)
         assert_equal_upto_phase(u, Y90(0))

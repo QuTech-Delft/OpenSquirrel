@@ -28,10 +28,10 @@ from opensquirrel.ir.default_gates import (
     SDagger,
     T,
     TDagger,
+    U,
     X,
     Y,
     Z,
-    U,
 )
 
 __all__ = [
@@ -61,11 +61,11 @@ __all__ = [
     "SDagger",
     "T",
     "TDagger",
+    "U",
     "Wait",
     "X",
     "Y",
     "Z",
-    "U",
 ]
 
 from importlib.metadata import version

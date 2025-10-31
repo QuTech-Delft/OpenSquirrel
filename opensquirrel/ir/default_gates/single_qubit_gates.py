@@ -114,7 +114,7 @@ class U(BsrFullParams):
         phi: SupportsFloat,
         lmbda: SupportsFloat,
     ) -> None:
-        from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations  # noqa # lazy import
+        from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations  # lazy import
 
         a = Rn(qubit, 0, 0, 1, lmbda, phi=0)
         b = Rn(qubit, 0, 1, 0, theta, phi=0)

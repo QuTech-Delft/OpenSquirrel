@@ -14,10 +14,10 @@ from opensquirrel.ir.default_gates.single_qubit_gates import (
     SDagger,
     T,
     TDagger,
+    U,
     X,
     Y,
     Z,
-    U,
 )
 from opensquirrel.ir.default_gates.two_qubit_gates import CNOT, CR, CZ, SWAP, CRk
 
@@ -42,8 +42,8 @@ __all__ = [
     "SDagger",
     "T",
     "TDagger",
+    "U",
     "X",
     "Y",
     "Z",
-    "U",
 ]
