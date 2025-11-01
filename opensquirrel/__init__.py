@@ -53,6 +53,7 @@ __all__ = [
     "Measure",
     "MinusX90",
     "MinusY90",
+    "MinusZ90",
     "Reset",
     "Rn",
     "Rx",

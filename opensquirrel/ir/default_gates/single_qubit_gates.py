@@ -85,9 +85,11 @@ class Z90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=pi / 2, phase=pi / 4, name="Z90")
 
+
 class MinusZ90(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-pi / 2, phase=-pi / 4, name="mZ90")
+
 
 class S(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:

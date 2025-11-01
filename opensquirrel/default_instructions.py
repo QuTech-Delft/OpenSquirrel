@@ -65,7 +65,7 @@ default_bsr_without_params_set = {
     "Z90": Z90,
     "mX90": MinusX90,
     "mY90": MinusY90,
-    "mY90": MinusZ90,
+    "mZ90": MinusZ90,
 }
 default_bsr_full_params_set: Mapping[str, type[BsrFullParams]]
 default_bsr_full_params_set = {
