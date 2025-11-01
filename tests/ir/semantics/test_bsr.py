@@ -4,7 +4,7 @@ from math import pi, tau
 
 import pytest
 
-from opensquirrel import X90, Y90, Z90, H, I, MinusX90, Rn, Rx, Ry, Rz, TDagger, U, X
+from opensquirrel import X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, Rn, Rx, Ry, Rz, TDagger, U, X, Z
 from opensquirrel.common import ATOL
 from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation
@@ -63,6 +63,11 @@ class TestBlochSphereRotation:
         u = U(0, 0, pi / 2, 0)
         assert_equal_upto_phase(u, Z90(0))
 
+    def test_z_rotations(self) -> None:
+        assert Z90(1) == BlochSphereRotation(qubit=1, axis=(0, 0, 1), angle=pi / 2, phase=pi/4)
+        assert Z(1) == BlochSphereRotation(qubit=1, axis=(0, 0, 1), angle=pi, phase=pi/2)
+        assert MinusZ90(1) == BlochSphereRotation(qubit=1, axis=(0, 0, 1), angle=-pi / 2, phase=-pi/4)
+        
     @pytest.mark.parametrize(
         ("bsr", "default_gate"),
         [

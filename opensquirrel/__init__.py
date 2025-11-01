@@ -20,6 +20,7 @@ from opensquirrel.ir.default_gates import (
     I,
     MinusX90,
     MinusY90,
+    MinusZ90,
     Rn,
     Rx,
     Ry,

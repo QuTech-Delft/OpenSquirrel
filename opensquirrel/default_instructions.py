@@ -23,6 +23,7 @@ from opensquirrel.ir.default_gates import (
     I,
     MinusX90,
     MinusY90,
+    MinusZ90,
     Rn,
     Rx,
     Ry,
@@ -64,10 +65,12 @@ default_bsr_without_params_set = {
     "Z90": Z90,
     "mX90": MinusX90,
     "mY90": MinusY90,
+    "mY90": MinusZ90,
 }
 default_bsr_full_params_set: Mapping[str, type[BsrFullParams]]
 default_bsr_full_params_set = {
     "Rn": Rn,
+    "U": U,
 }
 default_bsr_with_angle_param_set: Mapping[str, type[BsrAngleParam]]
 default_bsr_with_angle_param_set = {
@@ -80,7 +83,6 @@ default_bloch_sphere_rotation_set = {
     **default_bsr_full_params_set,
     **default_bsr_without_params_set,
     **default_bsr_with_angle_param_set,
-    "U": U,
 }
 default_controlled_gate_set: Mapping[str, type[ControlledGate]]
 default_controlled_gate_set = {
