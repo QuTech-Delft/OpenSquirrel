@@ -70,10 +70,8 @@ class _QiskitCreator(IRVisitor):
         )
 
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
-        # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
-        # Depending on the system the angle may be stored as either 180 or -180 degrees.
-        # This ambiguity has no physical consequences, but may cause the exporter test fail.
+        #print(f'_QiskitCreator: visit_bloch_sphere_rotation: {id(gate)}')
+
         _QiskitCreator.gate = gate
 
         if abs(gate.axis[0]) < ATOL and abs(gate.axis[1]) < ATOL:
@@ -84,39 +82,40 @@ class _QiskitCreator(IRVisitor):
             return
 
         u = bsr_to_unitary(gate)
-        self.qiskit_circuit.unitary(u, gate.qubit.index)
-        return
+        return self.qiskit_circuit.unitary(u, gate.qubit.index)
 
+    def visit_gate(self, gate: Gate) -> Any:
+        if gate.name=='H':
+            return self.visit_h(gate)
+        return None
+    
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        self.visit_bloch_sphere_rotation(gate)
+        return self.visit_bloch_sphere_rotation(gate)
 
     def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
-        self.visit_bloch_sphere_rotation(gate)
+        return self.visit_bloch_sphere_rotation(gate)
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
-        self.visit_bloch_sphere_rotation(gate)
+        return self.visit_bloch_sphere_rotation(gate)
 
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
         raise UnsupportedGateError(gate)
 
     def visit_swap(self, gate: SWAP) -> None:
-        self.qiskit_circuit.swap(gate.control_qubit.index, gate.target_qubit.index)
+        return self.qiskit_circuit.swap(gate.control_qubit.index, gate.target_qubit.index)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> None:
         if not isinstance(gate.target_gate, BlochSphereRotation):
             raise UnsupportedGateError(gate)
 
-    def visit_cz(self, gate: CNOT) -> None:
-        self.qiskit_circuit.cz(gate.control_qubit.index, gate.target_qubit.index)
-        return
+    def visit_cz(self, gate: CZ) -> None:
+        return self.qiskit_circuit.cz(gate.control_qubit.index, gate.target_qubit.index)
 
     def visit_cnot(self, gate: CNOT) -> None:
-        self.qiskit_circuit.cx(gate.control_qubit.index, gate.target_qubit.index)
-        return
+        return self.qiskit_circuit.cx(gate.control_qubit.index, gate.target_qubit.index)
 
-    def visit_h(self, gate: CNOT) -> None:
-        self.qiskit_circuit.h(gate.target_qubit.index)
-        return
+    def visit_h(self, gate: H) -> None:
+        return self.qiskit_circuit.h(gate.qubit.index)
 
     def visit_cr(self, gate: CR) -> None:
         raise UnsupportedGateError(gate)
@@ -161,12 +160,20 @@ def export(circuit: Circuit) -> tuple[qiskit.circuit.QuantumCircuit, list[tuple[
 
 if __name__ == "__main__":
     from rich import print as rprint
+    from importlib import reload
+    import  opensquirrel.ir
+    reload( opensquirrel.ir)
+    reload(opensquirrel.ir.semantics.bsr)
+    reload( opensquirrel.ir)
+    import  opensquirrel.circuit_builder
+    reload( opensquirrel.circuit_builder)
+    from opensquirrel.circuit_builder import *
 
     from opensquirrel import CircuitBuilder
 
     builder = CircuitBuilder(qubit_register_size=3, bit_register_size=2)
-    builder.CNOT(0, 1)
     builder.H(0)
+    builder.CNOT(0, 1)
     builder.Rz(0.2, 0)
     builder.CZ(2, 0)
     builder.CNOT(0, 2)
@@ -177,13 +184,14 @@ if __name__ == "__main__":
 
     circuit, _ = export(qc)
 
-    rprint()
-    rprint(circuit.decompose().draw())
-
-    w = circuit.decompose()
-    rprint()
-    rprint(w.draw())
-
-    w = qiskit.transpile(w, basis_gates=["cx", "cz", "rx", "rz"])
-    rprint()
-    rprint(w.draw())
+    if 1:
+        rprint()
+        rprint(circuit.decompose().draw())
+    
+        w = circuit.decompose()
+        rprint()
+        rprint(w.draw())
+    
+        w = qiskit.transpile(w, basis_gates=["cx", "cz", "rx", "rz"])
+        rprint()
+        rprint(w.draw())
