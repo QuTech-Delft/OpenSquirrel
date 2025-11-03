@@ -13,7 +13,6 @@ from opensquirrel.ir import (
     Barrier,
     Bit,
     Float,
-    Gate,
     Init,
     Int,
     IRVisitor,
@@ -78,13 +77,20 @@ class _WriterImpl(IRVisitor):
         backend_code = asm_declaration.backend_code.accept(self)
         self.output += f"asm({backend_name}) '''{backend_code}'''\n"
 
-    def visit_gate(self, gate: Gate) -> None:
-        if gate.name == "Gate":
-            self.output += f"{gate}\n"
-
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if gate.name == "BlochSphereRotation":
-            self.output += f"{gate}\n"
+        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
+            return
+        self.output += f"{gate}\n"
+
+    def visit_matrix_gate(self, gate: MatrixGate) -> None:
+        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
+            return
+        self.output += f"{gate}\n"
+
+    def visit_controlled_gate(self, gate: ControlledGate) -> None:
+        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
+            return
+        self.output += f"{gate}\n"
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         qubit_operand = gate.qubit.accept(self)
@@ -104,18 +110,10 @@ class _WriterImpl(IRVisitor):
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name}({theta_argument}) {qubit_operand}\n"
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        if gate.name == "MatrixGate":
-            self.output += f"{gate}\n"
-
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)
         qubit_operand_1 = gate.qubit_1.accept(self)
         self.output += f"SWAP {qubit_operand_0}, {qubit_operand_1}\n"
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if gate.name == "ControlledGate":
-            self.output += f"{gate}\n"
 
     def visit_cnot(self, gate: CNOT) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)

@@ -47,7 +47,8 @@ class SWAP(MatrixGate):
         return [self.qubit_0, self.qubit_1]
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_swap(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_swap(self)
 
 
 class CNOT(ControlledGate):
@@ -57,7 +58,8 @@ class CNOT(ControlledGate):
         self.target_qubit = Qubit(target_qubit)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_cnot(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_cnot(self)
 
 
 class CZ(ControlledGate):
@@ -67,7 +69,8 @@ class CZ(ControlledGate):
         self.target_qubit = Qubit(target_qubit)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_cz(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_cz(self)
 
 
 class CR(ControlledGate):
@@ -78,7 +81,8 @@ class CR(ControlledGate):
         self.theta = Float(normalize_angle(theta))
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_cr(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_cr(self)
 
 
 class CRk(ControlledGate):
@@ -94,4 +98,5 @@ class CRk(ControlledGate):
         self.k = Int(k)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_crk(self)
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_crk(self)

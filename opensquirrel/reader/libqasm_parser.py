@@ -7,11 +7,12 @@ import cqasm.v3x as cqasm
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
-from opensquirrel.default_instructions import default_gate_set, default_non_unitary_set
+from opensquirrel.default_instructions import default_control_instruction_set, default_gate_set, default_non_unitary_set
 from opensquirrel.ir import (
     IR,
     AsmDeclaration,
     Bit,
+    ControlInstruction,
     Float,
     Gate,
     Int,
@@ -71,7 +72,7 @@ class LibQasmParser:
         return isinstance(ast_node, cqasm.semantic.GateInstruction)
 
     @staticmethod
-    def _is_non_unitary_instruction(ast_node: Any) -> bool:
+    def _is_non_gate_instruction(ast_node: Any) -> bool:
         return isinstance(ast_node, cqasm.semantic.NonGateInstruction)
 
     @staticmethod
@@ -181,20 +182,29 @@ class LibQasmParser:
             modified_gate_generator = cast(
                 "Callable[..., BlochSphereRotation]", self._get_gate_generator(instruction.gate)
             )
-            if gate_name == "inv":
-                return InverseGateModifier(modified_gate_generator)
-            if gate_name == "pow":
-                gate = instruction.gate
-                exponent = gate.parameters[0].value
-                return PowerGateModifier(exponent, modified_gate_generator)
-            if gate_name == "ctrl":
-                return ControlGateModifier(modified_gate_generator)
-            msg = "parsing error: unknown unitary instruction"
 
-            raise OSError(msg)
+            match gate_name:
+                case "inv":
+                    return InverseGateModifier(modified_gate_generator)
+
+                case "pow":
+                    gate = instruction.gate
+                    exponent = gate.parameters[0].value
+                    return PowerGateModifier(exponent, modified_gate_generator)
+
+                case "ctrl":
+                    return ControlGateModifier(modified_gate_generator)
+
+                case _:
+                    msg = "parsing error: unknown unitary instruction"
+                    raise OSError(msg)
         return lambda *args: default_gate_set[gate_name](*args)
 
-    def _get_non_unitary_generator(self, instruction: cqasm.semantic.NonGateInstruction) -> Callable[..., NonUnitary]:
+    def _get_non_gate_instruction_generator(
+        self, instruction: cqasm.semantic.NonGateInstruction
+    ) -> Callable[..., NonUnitary | ControlInstruction]:
+        if instruction.name in default_control_instruction_set:
+            return lambda *args: default_control_instruction_set[instruction.name](*args)
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
     def circuit_from_string(self, s: str) -> Circuit:
@@ -214,8 +224,8 @@ class LibQasmParser:
             if LibQasmParser._is_gate_instruction(statement):
                 instruction_generator = self._get_gate_generator(statement)
                 expanded_args = self._get_expanded_instruction_args(statement)
-            elif LibQasmParser._is_non_unitary_instruction(statement):
-                instruction_generator = self._get_non_unitary_generator(statement)
+            elif LibQasmParser._is_non_gate_instruction(statement):
+                instruction_generator = self._get_non_gate_instruction_generator(statement)
                 expanded_args = (
                     self._get_expanded_measure_args(statement.operands)
                     if statement.name == "measure"

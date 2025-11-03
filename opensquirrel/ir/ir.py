@@ -20,6 +20,7 @@ if TYPE_CHECKING:
         Unitary,
         Wait,
     )
+    from opensquirrel.ir.control_instruction import ControlInstruction
     from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
     from opensquirrel.ir.non_unitary import NonUnitary
     from opensquirrel.ir.semantics import (
@@ -110,6 +111,9 @@ class IRVisitor:
     def visit_non_unitary(self, gate: NonUnitary) -> Any:
         pass
 
+    def visit_control_instruction(self, instruction: ControlInstruction) -> Any:
+        pass
+
     def visit_measure(self, measure: Measure) -> Any:
         pass
 
@@ -139,7 +143,6 @@ class IR:
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):
             return False
-
         return self.statements == other.statements
 
     def __repr__(self) -> str:
@@ -156,6 +159,12 @@ class IR:
 
     def add_statement(self, statement: Statement) -> None:
         self.statements.append(statement)
+
+    def reverse(self) -> IR:
+        ir = IR()
+        for statement in self.statements[::-1]:
+            ir.add_statement(statement)
+        return ir
 
     def accept(self, visitor: IRVisitor) -> None:
         for statement in self.statements:

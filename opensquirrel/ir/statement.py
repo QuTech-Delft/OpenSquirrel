@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from opensquirrel.ir.expression import Bit, Expression, Qubit, String, SupportsStr
+from opensquirrel.ir.expression import Expression, Qubit, String, SupportsStr
 from opensquirrel.ir.ir import IRNode, IRVisitor
 
 
@@ -44,6 +44,5 @@ class Instruction(Statement, ABC):
     def get_qubit_operands(self) -> list[Qubit]:
         pass
 
-    @abstractmethod
-    def get_bit_operands(self) -> list[Bit]:
-        pass
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_instruction(self)

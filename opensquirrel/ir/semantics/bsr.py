@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, SupportsFloat
 import numpy as np
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
-from opensquirrel.ir.expression import Axis, AxisLike, Bit, Float, Qubit, QubitLike
+from opensquirrel.ir.expression import Axis, AxisLike, Float, Qubit, QubitLike
 from opensquirrel.ir.unitary import Gate
 
 if TYPE_CHECKING:
@@ -61,13 +61,11 @@ class BlochSphereRotation(Gate):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bloch_sphere_rotation(self)
+        visit_gate = visitor.visit_gate(self)
+        return visit_gate if visit_gate is not None else visitor.visit_bloch_sphere_rotation(self)
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
 
     def is_identity(self) -> bool:
         # Angle and phase are already normalized.
@@ -111,7 +109,8 @@ class BsrNoParams(BlochSphereRotation):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_no_params(self)
+        visit_bsr = super().accept(visitor)
+        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_no_params(self)
 
 
 class BsrFullParams(BlochSphereRotation):
@@ -128,7 +127,8 @@ class BsrFullParams(BlochSphereRotation):
         return self.qubit, self.nx, self.ny, self.nz, self.theta, self.phi
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_full_params(self)
+        visit_bsr = super().accept(visitor)
+        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_full_params(self)
 
 
 class BsrAngleParam(BlochSphereRotation):
@@ -148,4 +148,5 @@ class BsrAngleParam(BlochSphereRotation):
         return self.qubit, self.theta
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bsr_angle_param(self)
+        visit_bsr = super().accept(visitor)
+        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_angle_param(self)

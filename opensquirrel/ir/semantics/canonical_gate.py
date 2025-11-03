@@ -5,7 +5,7 @@ from numpy.typing import NDArray
 
 from opensquirrel.common import repr_round
 from opensquirrel.ir import AxisLike, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.expression import BaseAxis, Bit, Expression
+from opensquirrel.ir.expression import BaseAxis, Expression
 from opensquirrel.ir.unitary import Gate
 
 
@@ -60,14 +60,15 @@ class CanonicalAxis(BaseAxis):
             axis = (axis + 1) % 2 - 1
 
         axis = np.sort(axis)[::-1]
-        n = sum(t > 1 / 2 for t in axis)
-        if n == 1:
-            axis[0] = 1 - axis[0]
-        if n == 2:
-            axis[0], axis[2] = axis[2], axis[0]
-            axis[1:] = 1 - axis[1:]
-        if n == 3:
-            axis = 1 - axis
+        match sum(t > 1 / 2 for t in axis):
+            case 1:
+                axis[0] = 1 - axis[0]
+            case 2:
+                axis[0], axis[2] = axis[2], axis[0]
+                axis[1:] = 1 - axis[1:]
+            case 3:
+                axis = 1 - axis
+
         return np.sort(axis)[::-1]
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -97,9 +98,6 @@ class CanonicalGate(Gate):
 
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit_0, self.qubit_1]
-
-    def get_bit_operands(self) -> list[Bit]:
-        return []
 
     def is_identity(self) -> bool:
         return self.axis == CanonicalAxis(0, 0, 0)
