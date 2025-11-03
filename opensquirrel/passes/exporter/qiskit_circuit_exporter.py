@@ -70,7 +70,7 @@ class _QiskitCreator(IRVisitor):
         )
 
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        #print(f'_QiskitCreator: visit_bloch_sphere_rotation: {id(gate)}')
+        # print(f'_QiskitCreator: visit_bloch_sphere_rotation: {id(gate)}')
 
         _QiskitCreator.gate = gate
 
@@ -85,10 +85,10 @@ class _QiskitCreator(IRVisitor):
         return self.qiskit_circuit.unitary(u, gate.qubit.index)
 
     def visit_gate(self, gate: Gate) -> Any:
-        if gate.name=='H':
+        if gate.name == "H":
             return self.visit_h(gate)
         return None
-    
+
     def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
         return self.visit_bloch_sphere_rotation(gate)
 
@@ -161,12 +161,14 @@ def export(circuit: Circuit) -> tuple[qiskit.circuit.QuantumCircuit, list[tuple[
 if __name__ == "__main__":
     from rich import print as rprint
     from importlib import reload
-    import  opensquirrel.ir
-    reload( opensquirrel.ir)
+    import opensquirrel.ir
+
+    reload(opensquirrel.ir)
     reload(opensquirrel.ir.semantics.bsr)
-    reload( opensquirrel.ir)
-    import  opensquirrel.circuit_builder
-    reload( opensquirrel.circuit_builder)
+    reload(opensquirrel.ir)
+    import opensquirrel.circuit_builder
+
+    reload(opensquirrel.circuit_builder)
     from opensquirrel.circuit_builder import *
 
     from opensquirrel import CircuitBuilder
@@ -187,11 +189,11 @@ if __name__ == "__main__":
     if 1:
         rprint()
         rprint(circuit.decompose().draw())
-    
+
         w = circuit.decompose()
         rprint()
         rprint(w.draw())
-    
+
         w = qiskit.transpile(w, basis_gates=["cx", "cz", "rx", "rz"])
         rprint()
         rprint(w.draw())
