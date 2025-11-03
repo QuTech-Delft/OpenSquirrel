@@ -1,0 +1,5021 @@
+<!DOCTYPE html><html lang="en" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="creating-a-circuit.html">
+      
+      
+        <link rel="next" href="writing-out-and-exporting.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.21">
+    
+    
+      
+        <title>Applying compilation passes - OpenSquirrel</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.2a3383ac.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#input-program" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            OpenSquirrel
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Applying compilation passes
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" aria-label="Switch to system preference" type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/QuTech-Delft/OpenSquirrel" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../index.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="index.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Tutorial
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../circuit-builder/index.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Circuit builder
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../compilation-passes/index.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Compilation passes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/circuit.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  API documentation
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    OpenSquirrel
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/QuTech-Delft/OpenSquirrel" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Tutorial
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="creating-a-circuit.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Creating a circuit
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Applying compilation passes
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="applying-compilation-passes.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Applying compilation passes
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#input-program" class="md-nav__link">
+    <span class="md-ellipsis">
+      Input program
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-qpu-specifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      Target QPU specifications
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target QPU specifications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connectivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connectivity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#primitive-gate-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      Primitive gate set
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Routing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decomposition-predefined" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decomposition - predefined
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#merging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merging
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decomposition-inferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decomposition - inferred
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#routing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Routing validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#primitive-gate-set-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Primitive gate set validation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exporting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-example-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full example compilation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="writing-out-and-exporting.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Writing out and exporting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../circuit-builder/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Circuit builder
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Circuit builder
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2">
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Instructions
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Instructions
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../circuit-builder/instructions/gates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Gates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../circuit-builder/instructions/non-unitaries.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Non-unitaries
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../circuit-builder/instructions/control-instructions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Control instructions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../compilation-passes/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Compilation passes
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Compilation passes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../compilation-passes/decomposition/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Decomposition
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            Decomposition
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/decomposition/aba-decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ABA decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/decomposition/cnot-decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CNOT decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/decomposition/cz-decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CZ decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/decomposition/mckay-decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    McKay decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/decomposition/predefined-decomposers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Predefined decomposers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../compilation-passes/exporting/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Exporting
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Exporting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/exporting/cqasm-v1-exporter.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cQASMv1 exporter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/exporting/quantify-scheduler-exporter.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    quantify-scheduler exporter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../compilation-passes/mapping/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Mapping
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            Mapping
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/mapping/hardcoded-mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hardcoded mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/mapping/identity-mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Identity mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/mapping/random-mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Random mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../compilation-passes/merging/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Merging
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            Merging
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/merging/single-qubit-gates-merger.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Single-qubit gates merger
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../compilation-passes/routing/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Routing
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            Routing
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/routing/a-star-router.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    A* router
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/routing/shortest-path-router.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Shortest-path router
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_7">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../compilation-passes/validation/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Validation
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_7" id="__nav_4_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_7">
+            <span class="md-nav__icon md-icon"></span>
+            Validation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/validation/interaction-validator.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Interaction validator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compilation-passes/validation/primitive-gate-validator.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primitive gate validator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    API documentation
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            API documentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    opensquirrel
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            opensquirrel
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/circuit.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    circuit
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/circuit_builder.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    circuit_builder
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/circuit_matrix_calculator.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    circuit_matrix_calculator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/common.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    common
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/default_gate_modifiers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    default_gate_modifiers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/default_instructions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    default_instructions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/exceptions.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    exceptions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_8">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_8" id="__nav_5_1_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    ir
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_8">
+            <span class="md-nav__icon md-icon"></span>
+            ir
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/control_instruction.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    control_instruction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_8_2">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_8_2" id="__nav_5_1_8_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    default_gates
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            default_gates
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/default_gates/single_qubit_gates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    single_qubit_gates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/default_gates/two_qubit_gates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    two_qubit_gates
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/expression.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    expression
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/ir.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ir
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/non_unitary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    non_unitary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_8_6">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_8_6" id="__nav_5_1_8_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    semantics
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_8_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_8_6">
+            <span class="md-nav__icon md-icon"></span>
+            semantics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/semantics/bsr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    bsr
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/semantics/canonical_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    canonical_gate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/semantics/controlled_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    controlled_gate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/semantics/matrix_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    matrix_gate
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/statement.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    statement
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/ir/unitary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    unitary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_9" id="__nav_5_1_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    passes
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_9">
+            <span class="md-nav__icon md-icon"></span>
+            passes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_1">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_9_1" id="__nav_5_1_9_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    decomposer
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_9_1">
+            <span class="md-nav__icon md-icon"></span>
+            decomposer
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/aba_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    aba_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/cnot2cz_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cnot2cz_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/cnot_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cnot_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/cz_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cz_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/general_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    general_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/mckay_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    mckay_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/swap2cnot_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    swap2cnot_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/decomposer/swap2cz_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    swap2cz_decomposer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_2">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_9_2" id="__nav_5_1_9_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    exporter
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_9_2">
+            <span class="md-nav__icon md-icon"></span>
+            exporter
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/exporter/cqasmv1_exporter.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    cqasmv1_exporter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/exporter/export_format.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    export_format
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/exporter/quantify_scheduler_exporter.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    quantify_scheduler_exporter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_3">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_9_3" id="__nav_5_1_9_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    mapper
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_9_3">
+            <span class="md-nav__icon md-icon"></span>
+            mapper
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/mapper/general_mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    general_mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/mapper/mapping.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    mapping
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/mapper/mip_mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    mip_mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/mapper/qubit_remapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    qubit_remapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/mapper/simple_mappers.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    simple_mappers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/mapper/utils.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    utils
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_4">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_9_4" id="__nav_5_1_9_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    merger
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_9_4">
+            <span class="md-nav__icon md-icon"></span>
+            merger
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/merger/general_merger.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    general_merger
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/merger/single_qubit_gates_merger.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    single_qubit_gates_merger
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_9_5" id="__nav_5_1_9_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    router
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_9_5">
+            <span class="md-nav__icon md-icon"></span>
+            router
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/router/astar_router.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    astar_router
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/router/common.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    common
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/router/general_router.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    general_router
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/router/heuristics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    heuristics
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/router/shortest_path_router.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    shortest_path_router
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_6">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_9_6" id="__nav_5_1_9_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    validator
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_9_6">
+            <span class="md-nav__icon md-icon"></span>
+            validator
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/validator/general_validator.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    general_validator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/validator/interaction_validator.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    interaction_validator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/passes/validator/primitive_gate_validator.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    primitive_gate_validator
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_10">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_10" id="__nav_5_1_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    reader
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_10">
+            <span class="md-nav__icon md-icon"></span>
+            reader
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/reader/libqasm_parser.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    libqasm_parser
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/register_manager.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    register_manager
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_12">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_12" id="__nav_5_1_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    reindexer
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_12">
+            <span class="md-nav__icon md-icon"></span>
+            reindexer
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/reindexer/qubit_reindexer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    qubit_reindexer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_13">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_13" id="__nav_5_1_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    utils
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_13">
+            <span class="md-nav__icon md-icon"></span>
+            utils
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/utils/check_mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    check_mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/utils/context.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    context
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/utils/identity_filter.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    identity_filter
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/utils/list.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    list
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/utils/math.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    math
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/utils/matrix_expander.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    matrix_expander
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_14">
+        
+          
+          <label class="md-nav__link" for="__nav_5_1_14" id="__nav_5_1_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    writer
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1_14">
+            <span class="md-nav__icon md-icon"></span>
+            writer
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/writer/writer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    writer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#input-program" class="md-nav__link">
+    <span class="md-ellipsis">
+      Input program
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#target-qpu-specifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      Target QPU specifications
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Target QPU specifications">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#connectivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      Connectivity
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#primitive-gate-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      Primitive gate set
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#routing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Routing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decomposition-predefined" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decomposition - predefined
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#merging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Merging
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decomposition-inferred" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decomposition - inferred
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#routing-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Routing validation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#primitive-gate-set-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Primitive gate set validation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exporting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#full-example-compilation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Full example compilation
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Applying compilation passes</h1>
+
+<p>Once we have <a href="creating-a-circuit.html">created a circuit</a>, we can now perform actions on it by applying various
+compilation passes.
+The actions that were listed in the general <a href="index.html">tutorial</a> correspond to the following types of compilation
+(in alphabetic order):</p>
+<ul>
+<li><a href="../compilation-passes/decomposition/index.html">Decomposition</a></li>
+<li><a href="../compilation-passes/exporting/index.html">Exporting</a></li>
+<li><a href="../compilation-passes/mapping/index.html">Mapping</a></li>
+<li><a href="../compilation-passes/merging/index.html">Merging</a></li>
+<li><a href="../compilation-passes/routing/index.html">Routing</a></li>
+<li><a href="../compilation-passes/validation/index.html">Validation</a></li>
+</ul>
+<p>All available compilation passes, organized by type, can be found <a href="../compilation-passes/index.html">here</a>.</p>
+<h3 id="input-program">Input program</h3>
+<p>In this section, we will go through a few compilation passes by applying them to an input program and evaluating the
+result after each pass.
+We will use the following example program, from which we can create the <code>circuit</code> object as described in
+<a href="creating-a-circuit.html">Creating a circuit</a>:</p>
+<div class="admonition example">
+<p class="admonition-title">Example input program</p>
+<p>Program as a cQASM string:</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>version 3.0
+<a id="__codelineno-0-2" name="__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a>qubit[3] q
+<a id="__codelineno-0-4" name="__codelineno-0-4"></a>bit[2] b
+<a id="__codelineno-0-5" name="__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6"></a>init q
+<a id="__codelineno-0-7" name="__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>Ry(pi/2) q[0]
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a>X q[0]
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>CNOT q[0], q[2]
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>barrier q
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>b[0, 1] = measure q[0, 2]
+</code></pre></div></td></tr></tbody></table></div>
+<p>Program as described by the <code>circuit</code> object in OpenSquirrel:</p>
+<p><code>print(circuit)</code></p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>version 3.0
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>qubit[3] q
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>bit[2] b
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>init q[0]
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a>init q[1]
+<a id="__codelineno-1-8" name="__codelineno-1-8"></a>init q[2]
+<a id="__codelineno-1-9" name="__codelineno-1-9"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-1-10" name="__codelineno-1-10"></a>X q[0]
+<a id="__codelineno-1-11" name="__codelineno-1-11"></a>CNOT q[0], q[2]
+<a id="__codelineno-1-12" name="__codelineno-1-12"></a>barrier q[0]
+<a id="__codelineno-1-13" name="__codelineno-1-13"></a>barrier q[1]
+<a id="__codelineno-1-14" name="__codelineno-1-14"></a>barrier q[2]
+<a id="__codelineno-1-15" name="__codelineno-1-15"></a>b[0] = measure q[0]
+<a id="__codelineno-1-16" name="__codelineno-1-16"></a>b[1] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</div>
+<h3 id="target-qpu-specifications">Target QPU specifications</h3>
+<p>The purpose of compilation is to be able to execute the user-described program on a particular target quantum processing
+unit (QPU), also refer to as the target backend.
+A target backend will have some specific properties that are required by certain compilation passes as input parameters.</p>
+<p>Here we define an example connectivity and primitive gate set, that will be needed for some of the following passes.</p>
+<h4 id="connectivity">Connectivity</h4>
+<p>The connectivity of a QPU describes which qubits are connected and can, therefore, interact with each other.
+This is essential information for two-qubit gates, as they can only occur between qubits that share a connection.</p>
+<p>The connectivity is given by a dictionary, where the keys are the qubit indices and the values are a list of qubit
+indices that the qubit has a (uni-directional) connection with.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">connectivity</span><span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="s2">"0"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="s2">"1"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="s2">"2"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">}</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Bi-directional connections</p>
+<p>Connections are bi-directional, only if defined explicitly so,
+<em>i.e.</em>, the connection between qubits <code>i</code> and <code>j</code> is bi-directional if qubit <code>i</code> is connected to qubit <code>j</code> and qubit
+<code>j</code> is connected to qubit <code>i</code>.</p>
+</div>
+<p>We will use the connectivity when routing the circuit and perform a final validation to check that the interactions
+occur between connected qubits.</p>
+<h4 id="primitive-gate-set">Primitive gate set</h4>
+<p>The primitive gate set describes the set of gates that are supported by the (lower-level software of the) target
+backend.
+The primitive gates are not to be confused with the native gates.
+The latter are the gates that can directly be performed on the QPU, <em>i.e.</em>, they are <em>native</em> to the QPU.
+In general, a translation step will still occur from the primitive gates to the native gates, <em>on the side</em> of the
+target backend.</p>
+<p>The primitive gate set, labeled as the <code>pgs</code>, is given by a list of gate names
+(as they are defined in the
+<a href="https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html">cQASM standard gate library</a>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">pgs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"I"</span><span class="p">,</span> <span class="s2">"X90"</span><span class="p">,</span> <span class="s2">"Rx"</span><span class="p">,</span> <span class="s2">"Rz"</span><span class="p">,</span> <span class="s2">"CZ"</span><span class="p">,</span> <span class="s2">"init"</span><span class="p">,</span> <span class="s2">"barrier"</span><span class="p">,</span> <span class="s2">"measure"</span><span class="p">]</span>
+</code></pre></div>
+<p>A target backend expects that the circuit of the compiled program consists solely of gates that appear in the primitive
+gate set.
+Accordingly, we will use <code>pgs</code> as an input argument to validate that the fully decomposed circuit is in terms of gates
+that are in the primitive gate set.</p>
+<h2 id="routing">Routing</h2>
+<p>We start the compilation process with an initial routing pass to ensure that the interactions in the circuit occur
+between neighbouring qubits.
+The example circuit contains a two-qubit gate, <em>i.e.</em> the CNOT gate, between qubits at indices <code>0</code> and <code>2</code>,
+respectively.
+Given the <em>connectivity</em> of the QPU as stated above, we see that these qubits are not connected and therefore cannot
+interact.
+By introducing SWAPs in the circuit, the routing pass will ensure that all interactions in the circuit occur
+between neighbouring qubits.</p>
+<p>Here we use the <code>route</code> method with the
+<a href="../compilation-passes/routing/shortest-path-router.html">shortest path router</a> <code>ShortestPathRouter</code>
+to route the circuit.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.router</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShortestPathRouter</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">circuit</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">router</span><span class="o">=</span><span class="n">ShortestPathRouter</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">))</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)  # Circuit after routing</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span>
+<span class="normal"><a href="#__codelineno-5-12">12</a></span>
+<span class="normal"><a href="#__codelineno-5-13">13</a></span>
+<span class="normal"><a href="#__codelineno-5-14">14</a></span>
+<span class="normal"><a href="#__codelineno-5-15">15</a></span>
+<span class="normal"><a href="#__codelineno-5-16">16</a></span>
+<span class="normal"><a href="#__codelineno-5-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>version 3.0
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a>qubit[3] q
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a>bit[2] b
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a>init q[0]
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a>init q[1]
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a>init q[2]
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-5-10" name="__codelineno-5-10"></a>X q[0]
+<a id="__codelineno-5-11" name="__codelineno-5-11"></a>SWAP q[0], q[1]
+<a id="__codelineno-5-12" name="__codelineno-5-12"></a>CNOT q[1], q[2]
+<a id="__codelineno-5-13" name="__codelineno-5-13"></a>barrier q[1]
+<a id="__codelineno-5-14" name="__codelineno-5-14"></a>barrier q[0]
+<a id="__codelineno-5-15" name="__codelineno-5-15"></a>barrier q[2]
+<a id="__codelineno-5-16" name="__codelineno-5-16"></a>b[0] = measure q[1]
+<a id="__codelineno-5-17" name="__codelineno-5-17"></a>b[1] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<p>Note that, in general, a routing pass will require the <em>connectivity</em> of the QPU as input.</p>
+<div class="admonition warning">
+<p>Since a routing pass will introduce SWAPs to the circuit,
+it will need to be applied before any decomposition passes,
+as SWAPs are generally not supported by the QPU.</p>
+</div>
+<h2 id="decomposition-predefined">Decomposition - predefined</h2>
+<p>We will continue with some <em>predefined</em> decompositions. They are <em>predefined</em> in the sense that the decomposition is
+defined for a particular gate, <em>e.g.</em> the SWAP gate, and the resultant decomposition is hard-coded.</p>
+<p>SWAP gates are generally not supported by the target backend (consider the <code>pgs</code>) and need to be decomposed into,
+<em>e.g.</em>, a series of CZ gates and single-qubit gates.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, OpenSquirrel only has general decomposers for arbitrary two-qubit controlled-gates, <em>i.e</em>, the</p>
+<ul>
+<li>the <a href="../compilation-passes/decomposition/cnot-decomposer.html">CNOT decomposer</a> (<code>CNOTDecomposer</code>),
+and</li>
+<li>the <a href="../compilation-passes/decomposition/cz-decomposer.html">CZ decomposer</a> (<code>CZDecomposer</code>).</li>
+</ul>
+<p>Since the SWAP gate is not a controlled-gate, the predefined
+<a href="../compilation-passes/decomposition/predefined-decomposers.html">SWAP-to-CNOT or SWAP-to-CZ decomposers</a>
+are to be used to decompose a SWAP gate to a series of single-qubit gates and, either,
+CZs or CNOTs for two-qubit interactions.</p>
+</div>
+<p>Since the CZ gate <em>is</em> supported by the target backend, we use the <code>decompose</code> method with the
+<a href="../compilation-passes/decomposition/predefined-decomposers.html">SWAP-to-CZ decomposer</a>
+(<code>SWAP2CZDecomposer</code>) to decompose the SWAP gate.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">SWAP2CZDecomposer</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">SWAP2CZDecomposer</span><span class="p">())</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)  # Circuit after SWAP-to-CZ decomposition</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-7-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-7-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-7-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-7-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-7-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-7-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-7-10">10</a></span>
+<span class="normal"><a href="#__codelineno-7-11">11</a></span>
+<span class="normal"><a href="#__codelineno-7-12">12</a></span>
+<span class="normal"><a href="#__codelineno-7-13">13</a></span>
+<span class="normal"><a href="#__codelineno-7-14">14</a></span>
+<span class="normal"><a href="#__codelineno-7-15">15</a></span>
+<span class="normal"><a href="#__codelineno-7-16">16</a></span>
+<span class="normal"><a href="#__codelineno-7-17">17</a></span>
+<span class="normal"><a href="#__codelineno-7-18">18</a></span>
+<span class="normal"><a href="#__codelineno-7-19">19</a></span>
+<span class="normal"><a href="#__codelineno-7-20">20</a></span>
+<span class="normal"><a href="#__codelineno-7-21">21</a></span>
+<span class="normal"><a href="#__codelineno-7-22">22</a></span>
+<span class="normal"><a href="#__codelineno-7-23">23</a></span>
+<span class="normal"><a href="#__codelineno-7-24">24</a></span>
+<span class="normal"><a href="#__codelineno-7-25">25</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>version 3.0
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3"></a>qubit[3] q
+<a id="__codelineno-7-4" name="__codelineno-7-4"></a>bit[2] b
+<a id="__codelineno-7-5" name="__codelineno-7-5"></a>
+<a id="__codelineno-7-6" name="__codelineno-7-6"></a>init q[0]
+<a id="__codelineno-7-7" name="__codelineno-7-7"></a>init q[1]
+<a id="__codelineno-7-8" name="__codelineno-7-8"></a>init q[2]
+<a id="__codelineno-7-9" name="__codelineno-7-9"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-7-10" name="__codelineno-7-10"></a>X q[0]
+<a id="__codelineno-7-11" name="__codelineno-7-11"></a>Ry(-1.5707963) q[1]
+<a id="__codelineno-7-12" name="__codelineno-7-12"></a>CZ q[0], q[1]
+<a id="__codelineno-7-13" name="__codelineno-7-13"></a>Ry(1.5707963) q[1]
+<a id="__codelineno-7-14" name="__codelineno-7-14"></a>Ry(-1.5707963) q[0]
+<a id="__codelineno-7-15" name="__codelineno-7-15"></a>CZ q[1], q[0]
+<a id="__codelineno-7-16" name="__codelineno-7-16"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-7-17" name="__codelineno-7-17"></a>Ry(-1.5707963) q[1]
+<a id="__codelineno-7-18" name="__codelineno-7-18"></a>CZ q[0], q[1]
+<a id="__codelineno-7-19" name="__codelineno-7-19"></a>Ry(1.5707963) q[1]
+<a id="__codelineno-7-20" name="__codelineno-7-20"></a>CNOT q[1], q[2]
+<a id="__codelineno-7-21" name="__codelineno-7-21"></a>barrier q[1]
+<a id="__codelineno-7-22" name="__codelineno-7-22"></a>barrier q[0]
+<a id="__codelineno-7-23" name="__codelineno-7-23"></a>barrier q[2]
+<a id="__codelineno-7-24" name="__codelineno-7-24"></a>b[0] = measure q[1]
+<a id="__codelineno-7-25" name="__codelineno-7-25"></a>b[1] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<p>Our example circuit also contains a CNOT gate.
+Since it is not supported by the target backend, we use the <code>decompose</code> method with the
+<a href="../compilation-passes/decomposition/predefined-decomposers.html">CNOT-to-CZ</a> predefined decomposer
+(<code>CNOT2CZDecomposer</code>) to decompose the CNOT into a series of single-qubit gates and a CZ gate.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">CNOT2CZDecomposer</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">CNOT2CZDecomposer</span><span class="p">())</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)  # Circuit after CNOT-to-CZ decomposition</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-9-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-9-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-9-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-9-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-9-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-9-10">10</a></span>
+<span class="normal"><a href="#__codelineno-9-11">11</a></span>
+<span class="normal"><a href="#__codelineno-9-12">12</a></span>
+<span class="normal"><a href="#__codelineno-9-13">13</a></span>
+<span class="normal"><a href="#__codelineno-9-14">14</a></span>
+<span class="normal"><a href="#__codelineno-9-15">15</a></span>
+<span class="normal"><a href="#__codelineno-9-16">16</a></span>
+<span class="normal"><a href="#__codelineno-9-17">17</a></span>
+<span class="normal"><a href="#__codelineno-9-18">18</a></span>
+<span class="normal"><a href="#__codelineno-9-19">19</a></span>
+<span class="normal"><a href="#__codelineno-9-20">20</a></span>
+<span class="normal"><a href="#__codelineno-9-21">21</a></span>
+<span class="normal"><a href="#__codelineno-9-22">22</a></span>
+<span class="normal"><a href="#__codelineno-9-23">23</a></span>
+<span class="normal"><a href="#__codelineno-9-24">24</a></span>
+<span class="normal"><a href="#__codelineno-9-25">25</a></span>
+<span class="normal"><a href="#__codelineno-9-26">26</a></span>
+<span class="normal"><a href="#__codelineno-9-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a>version 3.0
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a>
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a>qubit[3] q
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a>bit[2] b
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a>
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a>init q[0]
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a>init q[1]
+<a id="__codelineno-9-8" name="__codelineno-9-8"></a>init q[2]
+<a id="__codelineno-9-9" name="__codelineno-9-9"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-9-10" name="__codelineno-9-10"></a>X q[0]
+<a id="__codelineno-9-11" name="__codelineno-9-11"></a>Ry(-1.5707963) q[1]
+<a id="__codelineno-9-12" name="__codelineno-9-12"></a>CZ q[0], q[1]
+<a id="__codelineno-9-13" name="__codelineno-9-13"></a>Ry(1.5707963) q[1]
+<a id="__codelineno-9-14" name="__codelineno-9-14"></a>Ry(-1.5707963) q[0]
+<a id="__codelineno-9-15" name="__codelineno-9-15"></a>CZ q[1], q[0]
+<a id="__codelineno-9-16" name="__codelineno-9-16"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-9-17" name="__codelineno-9-17"></a>Ry(-1.5707963) q[1]
+<a id="__codelineno-9-18" name="__codelineno-9-18"></a>CZ q[0], q[1]
+<a id="__codelineno-9-19" name="__codelineno-9-19"></a>Ry(1.5707963) q[1]
+<a id="__codelineno-9-20" name="__codelineno-9-20"></a>Ry(-1.5707963) q[2]
+<a id="__codelineno-9-21" name="__codelineno-9-21"></a>CZ q[1], q[2]
+<a id="__codelineno-9-22" name="__codelineno-9-22"></a>Ry(1.5707963) q[2]
+<a id="__codelineno-9-23" name="__codelineno-9-23"></a>barrier q[1]
+<a id="__codelineno-9-24" name="__codelineno-9-24"></a>barrier q[0]
+<a id="__codelineno-9-25" name="__codelineno-9-25"></a>barrier q[2]
+<a id="__codelineno-9-26" name="__codelineno-9-26"></a>b[0] = measure q[1]
+<a id="__codelineno-9-27" name="__codelineno-9-27"></a>b[1] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<p>Since the CNOT is a controlled-gate, we could also have used the
+<a href="../compilation-passes/decomposition/cz-decomposer.html">CZ decomposer</a> to achieve the same result.
+Nevertheless, if available, a predefined decomposer will generally be more efficient as no inference is required.</p>
+<h2 id="merging">Merging</h2>
+<p>To reduce the amount of single-qubit gates in the circuit,
+we can merge consecutive single-qubit gates on the same qubit into one.
+To do so, we use the <code>merge</code> method with the
+<a href="../compilation-passes/merging/single-qubit-gates-merger.html">single-qubit gates merger</a> pass
+(<code>SingleQubitGatesMerger</code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The single-qubit gate that results from merging multiple single-qubit gates, is generally not supported by the
+target backend; a single-qubit gate decomposition pass will need to be applied after merging.
+OpenSquirrel will check if the resultant gate is equal (up to a global phase) to the gates that it replaces.</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleQubitGatesMerger</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">circuit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">merger</span><span class="o">=</span><span class="n">SingleQubitGatesMerger</span><span class="p">())</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)  # Circuit after merging single-qubit gates</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-11-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-11-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-11-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-11-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-11-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-11-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-11-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-11-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-11-10">10</a></span>
+<span class="normal"><a href="#__codelineno-11-11">11</a></span>
+<span class="normal"><a href="#__codelineno-11-12">12</a></span>
+<span class="normal"><a href="#__codelineno-11-13">13</a></span>
+<span class="normal"><a href="#__codelineno-11-14">14</a></span>
+<span class="normal"><a href="#__codelineno-11-15">15</a></span>
+<span class="normal"><a href="#__codelineno-11-16">16</a></span>
+<span class="normal"><a href="#__codelineno-11-17">17</a></span>
+<span class="normal"><a href="#__codelineno-11-18">18</a></span>
+<span class="normal"><a href="#__codelineno-11-19">19</a></span>
+<span class="normal"><a href="#__codelineno-11-20">20</a></span>
+<span class="normal"><a href="#__codelineno-11-21">21</a></span>
+<span class="normal"><a href="#__codelineno-11-22">22</a></span>
+<span class="normal"><a href="#__codelineno-11-23">23</a></span>
+<span class="normal"><a href="#__codelineno-11-24">24</a></span>
+<span class="normal"><a href="#__codelineno-11-25">25</a></span>
+<span class="normal"><a href="#__codelineno-11-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>version 3.0
+<a id="__codelineno-11-2" name="__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3"></a>qubit[3] q
+<a id="__codelineno-11-4" name="__codelineno-11-4"></a>bit[2] b
+<a id="__codelineno-11-5" name="__codelineno-11-5"></a>
+<a id="__codelineno-11-6" name="__codelineno-11-6"></a>init q[0]
+<a id="__codelineno-11-7" name="__codelineno-11-7"></a>init q[1]
+<a id="__codelineno-11-8" name="__codelineno-11-8"></a>init q[2]
+<a id="__codelineno-11-9" name="__codelineno-11-9"></a>H q[0]
+<a id="__codelineno-11-10" name="__codelineno-11-10"></a>Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[1]
+<a id="__codelineno-11-11" name="__codelineno-11-11"></a>CZ q[0], q[1]
+<a id="__codelineno-11-12" name="__codelineno-11-12"></a>Ry(1.5707963) q[1]
+<a id="__codelineno-11-13" name="__codelineno-11-13"></a>Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[0]
+<a id="__codelineno-11-14" name="__codelineno-11-14"></a>CZ q[1], q[0]
+<a id="__codelineno-11-15" name="__codelineno-11-15"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-11-16" name="__codelineno-11-16"></a>Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[1]
+<a id="__codelineno-11-17" name="__codelineno-11-17"></a>CZ q[0], q[1]
+<a id="__codelineno-11-18" name="__codelineno-11-18"></a>Ry(1.5707963) q[1]
+<a id="__codelineno-11-19" name="__codelineno-11-19"></a>Rn(0.0, -1.0, 0.0, 1.5707963, 0.0) q[2]
+<a id="__codelineno-11-20" name="__codelineno-11-20"></a>CZ q[1], q[2]
+<a id="__codelineno-11-21" name="__codelineno-11-21"></a>Ry(1.5707963) q[2]
+<a id="__codelineno-11-22" name="__codelineno-11-22"></a>barrier q[1]
+<a id="__codelineno-11-23" name="__codelineno-11-23"></a>barrier q[0]
+<a id="__codelineno-11-24" name="__codelineno-11-24"></a>barrier q[2]
+<a id="__codelineno-11-25" name="__codelineno-11-25"></a>b[0] = measure q[1]
+<a id="__codelineno-11-26" name="__codelineno-11-26"></a>b[1] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<h2 id="decomposition-inferred">Decomposition - inferred</h2>
+<p>To ensure that the single-qubit gates in the circuit can be executed on the target backend,
+we need to decompose them according to available gates in the primitive gate set, <em>i.e.</em>, the <code>pgs</code>.
+We can see from <code>pgs</code> that our target backend accepts all kinds of rotations about the <em>x</em>- and <em>z</em>- axis.</p>
+<p>The McKay decomposer decomposes arbitrary single-qubit gates into <em>at most</em> 5 gates:
+<span class="arithmatex">\(R_z(\gamma)\cdot X^{1/2}\cdot R_z(\beta)\cdot X^{1/2}\cdot R_z(\alpha)\)</span>,
+where <span class="arithmatex">\(\alpha\)</span>, <span class="arithmatex">\(\beta\)</span>, and <span class="arithmatex">\(\gamma\)</span>, represent different rotation angles.
+The rotation angles need to be <em>inferred</em> from the semantic of the single-qubit gate that is to be decomposed, <em>i.e.</em>,
+they are not defined in advance.</p>
+<p>We invoke the McKay decomposition on the circuit by applying the <code>decompose</code> method with the
+<a href="../compilation-passes/decomposition/mckay-decomposer.html">McKay decomposer</a> pass (<code>McKayDecomposer</code>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">McKayDecomposer</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">McKayDecomposer</span><span class="p">())</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)  # Circuit after McKay decomposition</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-13-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-13-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-13-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-13-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-13-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-13-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-13-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-13-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-13-10">10</a></span>
+<span class="normal"><a href="#__codelineno-13-11">11</a></span>
+<span class="normal"><a href="#__codelineno-13-12">12</a></span>
+<span class="normal"><a href="#__codelineno-13-13">13</a></span>
+<span class="normal"><a href="#__codelineno-13-14">14</a></span>
+<span class="normal"><a href="#__codelineno-13-15">15</a></span>
+<span class="normal"><a href="#__codelineno-13-16">16</a></span>
+<span class="normal"><a href="#__codelineno-13-17">17</a></span>
+<span class="normal"><a href="#__codelineno-13-18">18</a></span>
+<span class="normal"><a href="#__codelineno-13-19">19</a></span>
+<span class="normal"><a href="#__codelineno-13-20">20</a></span>
+<span class="normal"><a href="#__codelineno-13-21">21</a></span>
+<span class="normal"><a href="#__codelineno-13-22">22</a></span>
+<span class="normal"><a href="#__codelineno-13-23">23</a></span>
+<span class="normal"><a href="#__codelineno-13-24">24</a></span>
+<span class="normal"><a href="#__codelineno-13-25">25</a></span>
+<span class="normal"><a href="#__codelineno-13-26">26</a></span>
+<span class="normal"><a href="#__codelineno-13-27">27</a></span>
+<span class="normal"><a href="#__codelineno-13-28">28</a></span>
+<span class="normal"><a href="#__codelineno-13-29">29</a></span>
+<span class="normal"><a href="#__codelineno-13-30">30</a></span>
+<span class="normal"><a href="#__codelineno-13-31">31</a></span>
+<span class="normal"><a href="#__codelineno-13-32">32</a></span>
+<span class="normal"><a href="#__codelineno-13-33">33</a></span>
+<span class="normal"><a href="#__codelineno-13-34">34</a></span>
+<span class="normal"><a href="#__codelineno-13-35">35</a></span>
+<span class="normal"><a href="#__codelineno-13-36">36</a></span>
+<span class="normal"><a href="#__codelineno-13-37">37</a></span>
+<span class="normal"><a href="#__codelineno-13-38">38</a></span>
+<span class="normal"><a href="#__codelineno-13-39">39</a></span>
+<span class="normal"><a href="#__codelineno-13-40">40</a></span>
+<span class="normal"><a href="#__codelineno-13-41">41</a></span>
+<span class="normal"><a href="#__codelineno-13-42">42</a></span>
+<span class="normal"><a href="#__codelineno-13-43">43</a></span>
+<span class="normal"><a href="#__codelineno-13-44">44</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a>version 3.0
+<a id="__codelineno-13-2" name="__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3"></a>qubit[3] q
+<a id="__codelineno-13-4" name="__codelineno-13-4"></a>bit[2] b
+<a id="__codelineno-13-5" name="__codelineno-13-5"></a>
+<a id="__codelineno-13-6" name="__codelineno-13-6"></a>init q[0]
+<a id="__codelineno-13-7" name="__codelineno-13-7"></a>init q[1]
+<a id="__codelineno-13-8" name="__codelineno-13-8"></a>init q[2]
+<a id="__codelineno-13-9" name="__codelineno-13-9"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-13-10" name="__codelineno-13-10"></a>X90 q[0]
+<a id="__codelineno-13-11" name="__codelineno-13-11"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-13-12" name="__codelineno-13-12"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-13-13" name="__codelineno-13-13"></a>X90 q[1]
+<a id="__codelineno-13-14" name="__codelineno-13-14"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-13-15" name="__codelineno-13-15"></a>CZ q[0], q[1]
+<a id="__codelineno-13-16" name="__codelineno-13-16"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-13-17" name="__codelineno-13-17"></a>X90 q[1]
+<a id="__codelineno-13-18" name="__codelineno-13-18"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-13-19" name="__codelineno-13-19"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-13-20" name="__codelineno-13-20"></a>X90 q[0]
+<a id="__codelineno-13-21" name="__codelineno-13-21"></a>Rz(-1.5707963) q[0]
+<a id="__codelineno-13-22" name="__codelineno-13-22"></a>CZ q[1], q[0]
+<a id="__codelineno-13-23" name="__codelineno-13-23"></a>Rz(-1.5707963) q[0]
+<a id="__codelineno-13-24" name="__codelineno-13-24"></a>X90 q[0]
+<a id="__codelineno-13-25" name="__codelineno-13-25"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-13-26" name="__codelineno-13-26"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-13-27" name="__codelineno-13-27"></a>X90 q[1]
+<a id="__codelineno-13-28" name="__codelineno-13-28"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-13-29" name="__codelineno-13-29"></a>CZ q[0], q[1]
+<a id="__codelineno-13-30" name="__codelineno-13-30"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-13-31" name="__codelineno-13-31"></a>X90 q[1]
+<a id="__codelineno-13-32" name="__codelineno-13-32"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-13-33" name="__codelineno-13-33"></a>Rz(1.5707963) q[2]
+<a id="__codelineno-13-34" name="__codelineno-13-34"></a>X90 q[2]
+<a id="__codelineno-13-35" name="__codelineno-13-35"></a>Rz(-1.5707963) q[2]
+<a id="__codelineno-13-36" name="__codelineno-13-36"></a>CZ q[1], q[2]
+<a id="__codelineno-13-37" name="__codelineno-13-37"></a>Rz(-1.5707963) q[2]
+<a id="__codelineno-13-38" name="__codelineno-13-38"></a>X90 q[2]
+<a id="__codelineno-13-39" name="__codelineno-13-39"></a>Rz(1.5707963) q[2]
+<a id="__codelineno-13-40" name="__codelineno-13-40"></a>barrier q[1]
+<a id="__codelineno-13-41" name="__codelineno-13-41"></a>barrier q[0]
+<a id="__codelineno-13-42" name="__codelineno-13-42"></a>barrier q[2]
+<a id="__codelineno-13-43" name="__codelineno-13-43"></a>b[0] = measure q[1]
+<a id="__codelineno-13-44" name="__codelineno-13-44"></a>b[1] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<h2 id="validation">Validation</h2>
+<p>It is good practice to validate certain properties of the program before exporting it.
+Here we check whether the interactions in the final circuit are valid given the <em>connectivity</em> and
+whether all gates appear in the <em>primitive gate set</em>.</p>
+<p>Even though, <a href="../compilation-passes/validation/index.html">validation</a> is not a compilation pass <em>per se</em>,
+it is called in the same way on the circuit.
+Accordingly, we treat it as a pass that is part of the compilation pass library.</p>
+<h3 id="routing-validation">Routing validation</h3>
+<p>To check the validity of the interactions in the circuit, we use the <code>validate</code> method with the
+<a href="../compilation-passes/validation/interaction-validator.html">interactions validator</a> pass
+(<code>InteractionValidator</code>) and the <em>connectivity</em> as an input argument for the validator.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">InteractionValidator</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">circuit</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">InteractionValidator</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">))</span>
+</code></pre></div>
+<p>An exception will be thrown if any interaction in the circuit is invalid.</p>
+<h3 id="primitive-gate-set-validation">Primitive gate set validation</h3>
+<p>To check if all gates in the circuit are part of the primitive gate set, we use the <code>validate</code> method with the
+<a href="../compilation-passes/validation/primitive-gate-validator.html">primitive gate validator</a> pass
+(<code>PrimitiveGateValidator</code>) and the <code>pgs</code>, <em>i.e. primitive gate set</em>, as an input argument for the validator.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrimitiveGateValidator</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">circuit</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">PrimitiveGateValidator</span><span class="p">(</span><span class="n">primitive_gate_set</span><span class="o">=</span><span class="n">pgs</span><span class="p">))</span>
+</code></pre></div>
+<p>An exception will be thrown if any gate is not part of the <em>primitive gate set</em>.</p>
+<h2 id="exporting">Exporting</h2>
+<p>Now that we have the performed the desired compilation passes and validated certain aspects of the circuit,
+we can either choose to write it out to cQASM or export it to a different format.</p>
+<p>Proceed to <a href="writing-out-and-exporting.html">Writing out and exporting</a> to learn how.</p>
+<h2 id="full-example-compilation"><em>Full example compilation</em></h2>
+<p>Find below the full example compilation procedure in a single Python script (including reading and writing out of the
+program).</p>
+<details class="example">
+<summary>Full example compilation</summary>
+<p>The Python script, taking as input the example program:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.router</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShortestPathRouter</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">SWAP2CZDecomposer</span><span class="p">,</span> <span class="n">CNOT2CZDecomposer</span><span class="p">,</span> <span class="n">McKayDecomposer</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleQubitGatesMerger</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RoutingValidator</span><span class="p">,</span> <span class="n">PrimitiveGateValidator</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="c1"># Target QPU specifications</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="n">connectivity</span><span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>    <span class="s2">"0"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>    <span class="s2">"1"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>    <span class="s2">"2"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="p">}</span>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="n">pgs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"I"</span><span class="p">,</span> <span class="s2">"X"</span><span class="p">,</span> <span class="s2">"Z"</span><span class="p">,</span> <span class="s2">"X90"</span><span class="p">,</span> <span class="s2">"mX90"</span><span class="p">,</span> <span class="s2">"S"</span><span class="p">,</span> <span class="s2">"Sdag"</span><span class="p">,</span> <span class="s2">"T"</span><span class="p">,</span> <span class="s2">"Tdag"</span><span class="p">,</span> <span class="s2">"Rx"</span><span class="p">,</span> <span class="s2">"Rz"</span><span class="p">,</span> <span class="s2">"CZ"</span><span class="p">]</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="c1"># Reading the example program</span>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="sd">    version 3.0</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="sd">    qubit[3] q</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="sd">    bit[2] b</span>
+<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>
+<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a><span class="sd">    init q</span>
+<a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>
+<a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a><span class="sd">    Ry(pi/2) q[0]</span>
+<a id="__codelineno-16-26" name="__codelineno-16-26" href="#__codelineno-16-26"></a><span class="sd">    X q[0]</span>
+<a id="__codelineno-16-27" name="__codelineno-16-27" href="#__codelineno-16-27"></a><span class="sd">    CNOT q[0], q[2]</span>
+<a id="__codelineno-16-28" name="__codelineno-16-28" href="#__codelineno-16-28"></a>
+<a id="__codelineno-16-29" name="__codelineno-16-29" href="#__codelineno-16-29"></a><span class="sd">    barrier q</span>
+<a id="__codelineno-16-30" name="__codelineno-16-30" href="#__codelineno-16-30"></a><span class="sd">    b[0, 1] = measure q[0, 2]</span>
+<a id="__codelineno-16-31" name="__codelineno-16-31" href="#__codelineno-16-31"></a><span class="sd">    """</span>
+<a id="__codelineno-16-32" name="__codelineno-16-32" href="#__codelineno-16-32"></a><span class="p">)</span>
+<a id="__codelineno-16-33" name="__codelineno-16-33" href="#__codelineno-16-33"></a>
+<a id="__codelineno-16-34" name="__codelineno-16-34" href="#__codelineno-16-34"></a><span class="c1"># Applying compilation passes (to the circuit)</span>
+<a id="__codelineno-16-35" name="__codelineno-16-35" href="#__codelineno-16-35"></a><span class="n">circuit</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="n">router</span><span class="o">=</span><span class="n">ShortestPathRouter</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">))</span>
+<a id="__codelineno-16-36" name="__codelineno-16-36" href="#__codelineno-16-36"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">SWAP2CZDecomposer</span><span class="p">())</span>
+<a id="__codelineno-16-37" name="__codelineno-16-37" href="#__codelineno-16-37"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">CNOT2CZDecomposer</span><span class="p">())</span>
+<a id="__codelineno-16-38" name="__codelineno-16-38" href="#__codelineno-16-38"></a><span class="n">circuit</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">merger</span><span class="o">=</span><span class="n">SingleQubitGatesMerger</span><span class="p">())</span>
+<a id="__codelineno-16-39" name="__codelineno-16-39" href="#__codelineno-16-39"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">McKayDecomposer</span><span class="p">())</span>
+<a id="__codelineno-16-40" name="__codelineno-16-40" href="#__codelineno-16-40"></a>
+<a id="__codelineno-16-41" name="__codelineno-16-41" href="#__codelineno-16-41"></a><span class="c1"># Validating circuit aspects</span>
+<a id="__codelineno-16-42" name="__codelineno-16-42" href="#__codelineno-16-42"></a><span class="n">circuit</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">RoutingValidator</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">))</span>
+<a id="__codelineno-16-43" name="__codelineno-16-43" href="#__codelineno-16-43"></a><span class="n">circuit</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">PrimitiveGateValidator</span><span class="p">(</span><span class="n">pgs</span><span class="o">=</span><span class="n">pgs</span><span class="p">))</span>
+<a id="__codelineno-16-44" name="__codelineno-16-44" href="#__codelineno-16-44"></a>
+<a id="__codelineno-16-45" name="__codelineno-16-45" href="#__codelineno-16-45"></a><span class="c1"># Writing out the compiled program to cQASM (one can also use the 'str()' method)</span>
+<a id="__codelineno-16-46" name="__codelineno-16-46" href="#__codelineno-16-46"></a><span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+</code></pre></div>
+<p>The compiled program (in cQASM):</p>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-17-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-17-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-17-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-17-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-17-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-17-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-17-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-17-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-17-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-17-10">10</a></span>
+<span class="normal"><a href="#__codelineno-17-11">11</a></span>
+<span class="normal"><a href="#__codelineno-17-12">12</a></span>
+<span class="normal"><a href="#__codelineno-17-13">13</a></span>
+<span class="normal"><a href="#__codelineno-17-14">14</a></span>
+<span class="normal"><a href="#__codelineno-17-15">15</a></span>
+<span class="normal"><a href="#__codelineno-17-16">16</a></span>
+<span class="normal"><a href="#__codelineno-17-17">17</a></span>
+<span class="normal"><a href="#__codelineno-17-18">18</a></span>
+<span class="normal"><a href="#__codelineno-17-19">19</a></span>
+<span class="normal"><a href="#__codelineno-17-20">20</a></span>
+<span class="normal"><a href="#__codelineno-17-21">21</a></span>
+<span class="normal"><a href="#__codelineno-17-22">22</a></span>
+<span class="normal"><a href="#__codelineno-17-23">23</a></span>
+<span class="normal"><a href="#__codelineno-17-24">24</a></span>
+<span class="normal"><a href="#__codelineno-17-25">25</a></span>
+<span class="normal"><a href="#__codelineno-17-26">26</a></span>
+<span class="normal"><a href="#__codelineno-17-27">27</a></span>
+<span class="normal"><a href="#__codelineno-17-28">28</a></span>
+<span class="normal"><a href="#__codelineno-17-29">29</a></span>
+<span class="normal"><a href="#__codelineno-17-30">30</a></span>
+<span class="normal"><a href="#__codelineno-17-31">31</a></span>
+<span class="normal"><a href="#__codelineno-17-32">32</a></span>
+<span class="normal"><a href="#__codelineno-17-33">33</a></span>
+<span class="normal"><a href="#__codelineno-17-34">34</a></span>
+<span class="normal"><a href="#__codelineno-17-35">35</a></span>
+<span class="normal"><a href="#__codelineno-17-36">36</a></span>
+<span class="normal"><a href="#__codelineno-17-37">37</a></span>
+<span class="normal"><a href="#__codelineno-17-38">38</a></span>
+<span class="normal"><a href="#__codelineno-17-39">39</a></span>
+<span class="normal"><a href="#__codelineno-17-40">40</a></span>
+<span class="normal"><a href="#__codelineno-17-41">41</a></span>
+<span class="normal"><a href="#__codelineno-17-42">42</a></span>
+<span class="normal"><a href="#__codelineno-17-43">43</a></span>
+<span class="normal"><a href="#__codelineno-17-44">44</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1"></a>version 3.0
+<a id="__codelineno-17-2" name="__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3"></a>qubit[3] q
+<a id="__codelineno-17-4" name="__codelineno-17-4"></a>bit[2] b
+<a id="__codelineno-17-5" name="__codelineno-17-5"></a>
+<a id="__codelineno-17-6" name="__codelineno-17-6"></a>init q[0]
+<a id="__codelineno-17-7" name="__codelineno-17-7"></a>init q[1]
+<a id="__codelineno-17-8" name="__codelineno-17-8"></a>init q[2]
+<a id="__codelineno-17-9" name="__codelineno-17-9"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-17-10" name="__codelineno-17-10"></a>X90 q[0]
+<a id="__codelineno-17-11" name="__codelineno-17-11"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-17-12" name="__codelineno-17-12"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-17-13" name="__codelineno-17-13"></a>X90 q[1]
+<a id="__codelineno-17-14" name="__codelineno-17-14"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-17-15" name="__codelineno-17-15"></a>CZ q[0], q[1]
+<a id="__codelineno-17-16" name="__codelineno-17-16"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-17-17" name="__codelineno-17-17"></a>X90 q[1]
+<a id="__codelineno-17-18" name="__codelineno-17-18"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-17-19" name="__codelineno-17-19"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-17-20" name="__codelineno-17-20"></a>X90 q[0]
+<a id="__codelineno-17-21" name="__codelineno-17-21"></a>Rz(-1.5707963) q[0]
+<a id="__codelineno-17-22" name="__codelineno-17-22"></a>CZ q[1], q[0]
+<a id="__codelineno-17-23" name="__codelineno-17-23"></a>Rz(-1.5707963) q[0]
+<a id="__codelineno-17-24" name="__codelineno-17-24"></a>X90 q[0]
+<a id="__codelineno-17-25" name="__codelineno-17-25"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-17-26" name="__codelineno-17-26"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-17-27" name="__codelineno-17-27"></a>X90 q[1]
+<a id="__codelineno-17-28" name="__codelineno-17-28"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-17-29" name="__codelineno-17-29"></a>CZ q[0], q[1]
+<a id="__codelineno-17-30" name="__codelineno-17-30"></a>Rz(-1.5707963) q[1]
+<a id="__codelineno-17-31" name="__codelineno-17-31"></a>X90 q[1]
+<a id="__codelineno-17-32" name="__codelineno-17-32"></a>Rz(1.5707963) q[1]
+<a id="__codelineno-17-33" name="__codelineno-17-33"></a>Rz(1.5707963) q[2]
+<a id="__codelineno-17-34" name="__codelineno-17-34"></a>X90 q[2]
+<a id="__codelineno-17-35" name="__codelineno-17-35"></a>Rz(-1.5707963) q[2]
+<a id="__codelineno-17-36" name="__codelineno-17-36"></a>CZ q[1], q[2]
+<a id="__codelineno-17-37" name="__codelineno-17-37"></a>Rz(-1.5707963) q[2]
+<a id="__codelineno-17-38" name="__codelineno-17-38"></a>X90 q[2]
+<a id="__codelineno-17-39" name="__codelineno-17-39"></a>Rz(1.5707963) q[2]
+<a id="__codelineno-17-40" name="__codelineno-17-40"></a>barrier q[1]
+<a id="__codelineno-17-41" name="__codelineno-17-41"></a>barrier q[0]
+<a id="__codelineno-17-42" name="__codelineno-17-42"></a>barrier q[2]
+<a id="__codelineno-17-43" name="__codelineno-17-43"></a>b[0] = measure q[1]
+<a id="__codelineno-17-44" name="__codelineno-17-44"></a>b[1] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer">
+        
+          
+          <a href="creating-a-circuit.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Creating a circuit">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Creating a circuit
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="writing-out-and-exporting.html" class="md-footer__link md-footer__link--next" aria-label="Next: Writing out and exporting">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Writing out and exporting
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"></path></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.indexes", "navigation.tabs", "navigation.tracking", "navigation.footer", "content.code.copy"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
