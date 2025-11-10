@@ -8,7 +8,7 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.passes.mapper import HardcodedMapper, IdentityMapper, RandomMapper
 from opensquirrel.passes.mapper.mapping import Mapping
-from opensquirrel.utils import check_mapper
+from opensquirrel.utils.check_mapper import check_mapper
 
 
 class TestIdentityMapper:

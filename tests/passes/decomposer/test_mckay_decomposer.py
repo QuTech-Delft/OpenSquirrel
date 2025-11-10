@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-from opensquirrel import CNOT, CR, X90, Y90, H, I, MinusX90, MinusY90, Rz, S, SDagger, X, Y, Z
+from opensquirrel import CNOT, CR, X90, Y90, H, I, MinusX90, MinusY90, Rz, S, SDagger, U, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
@@ -67,6 +67,13 @@ def test_rz(decomposer: McKayDecomposer) -> None:
 
 def test_hadamard(decomposer: McKayDecomposer) -> None:
     gate = H(0)
+    decomposed_gate = decomposer.decompose(gate)
+    check_gate_replacement(gate, decomposed_gate)
+    assert decomposed_gate == [Rz(0, pi / 2), X90(0), Rz(0, pi / 2)]
+
+
+def test_u(decomposer: McKayDecomposer) -> None:
+    gate = U(0, pi / 2, 0, pi)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposed_gate == [Rz(0, pi / 2), X90(0), Rz(0, pi / 2)]

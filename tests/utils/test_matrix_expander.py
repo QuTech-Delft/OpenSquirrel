@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 
 from opensquirrel.ir import AxisLike
 from opensquirrel.ir.semantics import BlochSphereRotation, CanonicalGate, ControlledGate, MatrixGate
-from opensquirrel.utils import get_matrix
+from opensquirrel.utils.matrix_expander import get_matrix
 
 
 def test_bloch_sphere_rotation() -> None:

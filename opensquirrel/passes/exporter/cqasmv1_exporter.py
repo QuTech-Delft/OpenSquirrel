@@ -3,6 +3,9 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any, SupportsFloat, SupportsInt
 
+import numpy as np
+
+from opensquirrel.common import ATOL, repr_round
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
     Barrier,
@@ -17,9 +20,11 @@ from opensquirrel.ir import (
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
+    BsrUnitaryParams,
     ControlledGate,
     MatrixGate,
 )
+from opensquirrel.utils.general_math import matrix_from_u_gate_params
 
 if TYPE_CHECKING:
     from opensquirrel import (
@@ -86,6 +91,13 @@ class _CQASMv1Creator(IRVisitor):
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
 
+    def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> Any:
+        qubit_operand = gate.qubit.accept(self)
+        matrix = matrix_from_u_gate_params(gate.theta.value, gate.phi.value, gate.lmbda.value)
+        elements: list[str] = [_convert_complex_number(matrix[i, j]) for i in range(2) for j in range(2)]
+        matrix_repr = f"[{elements[0]}, {elements[1]}; {elements[2]}, {elements[3]}]"
+        self.output += f"{gate.name.lower()} {qubit_operand}, {matrix_repr}\n"
+
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)
         qubit_operand_1 = gate.qubit_1.accept(self)
@@ -135,7 +147,18 @@ class _CQASMv1Creator(IRVisitor):
         self.output += f"wait {qubit_argument}, {parameter}\n"
 
 
-def post_process(output: str) -> str:
+def _convert_complex_number(number: np.complex128) -> str:
+    real_part = repr_round(number.real) if abs(number.real) > ATOL else ""
+    imag_part = repr_round(abs(number.imag)) if abs(number.imag) > ATOL else ""
+    if imag_part:
+        sign = "+" if number.imag >= 0 else "-"
+        sign = "" if not real_part and sign == "+" else sign
+        imag_part = f"{sign}{imag_part} * im"
+    result = f"{real_part}{imag_part}"
+    return result or "0.0"
+
+
+def _post_process(output: str) -> str:
     return _merge_barrier_groups(output)
 
 
@@ -171,4 +194,4 @@ def export(circuit: Circuit) -> str:
     circuit.ir.accept(cqasmv1_creator)
 
     # Remove all trailing lines and leave only one
-    return post_process(cqasmv1_creator.output).rstrip() + "\n"
+    return _post_process(cqasmv1_creator.output).rstrip() + "\n"
