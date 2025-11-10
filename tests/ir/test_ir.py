@@ -12,6 +12,7 @@ from opensquirrel.ir.semantics import (
     MatrixGate,
 )
 
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 class TestIR:
     def test_cnot_equality(self) -> None:
@@ -27,7 +28,7 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=pi, phase=pi / 2),
+            SingleQubitGate.from_bsr(qubit=100, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert cnot_controlled_gate == cnot_matrix_gate
@@ -40,7 +41,7 @@ class TestIR:
             [0, 0, 0, 1],
         ]
         large_identity_matrix_gate = MatrixGate(matrix, operands=[0, 2])
-        small_identity_control_gate = ControlledGate(4, BlochSphereRotation(qubit=2, axis=(1, 0, 0), angle=0, phase=0))
+        small_identity_control_gate = ControlledGate(4, SingleQubitGate.from_bsr(qubit=2, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=0)))
 
         assert large_identity_matrix_gate == small_identity_control_gate
 
@@ -55,7 +56,7 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi, phase=pi / 2),
+            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert inverted_matrix_gate == inverted_cnot_gate
@@ -71,7 +72,7 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi, phase=pi / 2),
+            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert inverted_matrix_with_phase == inverted_cnot_gate
@@ -87,7 +88,7 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            BlochSphereRotation(qubit=100, axis=(1, 0, 0), angle=pi, phase=pi / 2),
+            SingleQubitGate.from_bsr(qubit=100, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert cnot_controlled_gate != swap_matrix_gate

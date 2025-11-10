@@ -7,9 +7,12 @@ from opensquirrel.ir.statement import Instruction
 
 
 class ControlInstruction(Instruction, ABC):
-    def __init__(self, qubit: QubitLike, name: str) -> None:
-        Instruction.__init__(self, name)
+    def __init__(self, qubit: QubitLike) -> None:
         self.qubit = Qubit(qubit)
+
+    @property
+    def name(self) -> str:
+        return self.__class__.__name__.lower()
 
     @property
     @abstractmethod
@@ -22,7 +25,7 @@ class ControlInstruction(Instruction, ABC):
 
 class Barrier(ControlInstruction):
     def __init__(self, qubit: QubitLike) -> None:
-        ControlInstruction.__init__(self, qubit=qubit, name="barrier")
+        ControlInstruction.__init__(self, qubit=qubit)
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
@@ -42,7 +45,7 @@ class Barrier(ControlInstruction):
 
 class Wait(ControlInstruction):
     def __init__(self, qubit: QubitLike, time: SupportsInt) -> None:
-        ControlInstruction.__init__(self, qubit=qubit, name="wait")
+        ControlInstruction.__init__(self, qubit=qubit)
         self.qubit = Qubit(qubit)
         self.time = Int(time)
 

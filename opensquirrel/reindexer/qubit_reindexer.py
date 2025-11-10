@@ -64,7 +64,6 @@ class _QubitReindexer(IRVisitor):
             axis=gate.axis,
             angle=gate.angle,
             phase=gate.phase,
-            name=gate.name,
         )
 
     def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:

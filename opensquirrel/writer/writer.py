@@ -31,6 +31,7 @@ from opensquirrel.ir.semantics import (
     ControlledGate,
     MatrixGate,
 )
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -76,6 +77,11 @@ class _WriterImpl(IRVisitor):
         backend_name = asm_declaration.backend_name.accept(self)
         backend_code = asm_declaration.backend_code.accept(self)
         self.output += f"asm({backend_name}) '''{backend_code}'''\n"
+
+    # def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
+    #     if isinstance(gate, SingleQubitGate) and type(gate) is not SingleQubitGate:
+    #         return
+    #     self.output += f"{gate}\n"
 
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:

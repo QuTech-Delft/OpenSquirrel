@@ -44,8 +44,8 @@ class CNOTDecomposer(Decomposer):
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
         controlled_rotation_times_x = general_merger.compose_bloch_sphere_rotations(g.target_gate, X(target_qubit))
         theta0_with_x, theta1_with_x, theta2_with_x = ZYZDecomposer().get_decomposition_angles(
-            controlled_rotation_times_x.axis,
-            controlled_rotation_times_x.angle,
+            controlled_rotation_times_x.bsr.axis,
+            controlled_rotation_times_x.bsr.angle,
         )
         if abs((theta0_with_x - theta2_with_x) % (2 * pi)) < ATOL:
             # The decomposition can use a single CNOT according to the lemma.

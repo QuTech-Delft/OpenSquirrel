@@ -19,7 +19,6 @@ class MatrixGate(Gate):
     def __init__(
         self, matrix: ArrayLike | list[list[int | DTypeLike]], operands: Iterable[QubitLike], name: str = "MatrixGate"
     ) -> None:
-        Gate.__init__(self, name)
         self.operands = [Qubit(operand) for operand in operands]
         if len(self.operands) < 2:
             msg = "for 1q gates, please use BlochSphereRotation"

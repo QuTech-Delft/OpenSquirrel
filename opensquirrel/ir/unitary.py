@@ -9,13 +9,13 @@ from opensquirrel.ir.statement import Instruction
 
 
 class Unitary(Instruction, ABC):
-    def __init__(self, name: str) -> None:
-        Instruction.__init__(self, name)
+    pass
 
 
 class Gate(Unitary, ABC):
-    def __init__(self, name: str) -> None:
-        Unitary.__init__(self, name)
+    @property
+    def __name__(self) -> str:
+        return self.__class__.__name__
 
     @property
     @abstractmethod

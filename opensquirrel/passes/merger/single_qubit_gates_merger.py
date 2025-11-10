@@ -2,7 +2,7 @@ from typing import cast
 
 from opensquirrel import I
 from opensquirrel.ir import IR, AsmDeclaration, Barrier, Instruction, Qubit
-from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
 from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations
 
 
@@ -16,7 +16,7 @@ class SingleQubitGatesMerger(Merger):
             qubit_register_size: Size of the qubit register
 
         """
-        accumulators_per_qubit: dict[Qubit, BlochSphereRotation] = {
+        accumulators_per_qubit: dict[Qubit, SingleQubitGate] = {
             Qubit(qubit_index): I(qubit_index) for qubit_index in range(qubit_register_size)
         }
 
@@ -26,7 +26,7 @@ class SingleQubitGatesMerger(Merger):
 
             # Accumulate consecutive Bloch sphere rotations
             instruction: Instruction = cast("Instruction", statement)
-            if isinstance(instruction, BlochSphereRotation):
+            if isinstance(instruction, SingleQubitGate):
                 already_accumulated = accumulators_per_qubit[instruction.qubit]
                 composed = compose_bloch_sphere_rotations(already_accumulated, instruction)
                 accumulators_per_qubit[instruction.qubit] = composed

@@ -10,9 +10,12 @@ from opensquirrel.ir.statement import Instruction
 
 
 class NonUnitary(Instruction, ABC):
-    def __init__(self, qubit: QubitLike, name: str) -> None:
-        Instruction.__init__(self, name)
+    def __init__(self, qubit: QubitLike) -> None:
         self.qubit = Qubit(qubit)
+
+    @property
+    def name(self) -> str:
+        return self.__class__.__name__.lower()
 
     @property
     @abstractmethod
@@ -28,7 +31,7 @@ class NonUnitary(Instruction, ABC):
 
 class Measure(NonUnitary):
     def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="measure")
+        NonUnitary.__init__(self, qubit=qubit)
         self.qubit = Qubit(qubit)
         self.bit = Bit(bit)
         self.axis = Axis(axis)
@@ -55,7 +58,7 @@ class Measure(NonUnitary):
 
 class Init(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="init")
+        NonUnitary.__init__(self, qubit=qubit)
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
@@ -75,7 +78,7 @@ class Init(NonUnitary):
 
 class Reset(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit, name="reset")
+        NonUnitary.__init__(self, qubit=qubit)
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:

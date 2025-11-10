@@ -76,8 +76,7 @@ class CanonicalAxis(BaseAxis):
 
 
 class CanonicalGate(Gate):
-    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike, axis: AxisLike, name: str = "CanonicalGate") -> None:
-        Gate.__init__(self, name)
+    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike, axis: AxisLike) -> None:
         self.qubit_0 = Qubit(qubit_0)
         self.qubit_1 = Qubit(qubit_1)
         self.axis = CanonicalAxis(axis)

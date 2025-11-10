@@ -3,8 +3,11 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, SupportsFloat
 
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel.ir.semantics.bsr import BlochSphereRotation
 from opensquirrel.utils.context import temporary_class_attr
+from opensquirrel.ir.default_gates.single_qubit_gates import try_match_replace_with_default_gate
 
 if TYPE_CHECKING:
     from opensquirrel.ir import QubitLike
@@ -15,38 +18,36 @@ class GateModifier:
 
 
 class InverseGateModifier(GateModifier):
-    def __init__(self, gate_generator: Callable[..., BlochSphereRotation]) -> None:
+    def __init__(self, gate_generator: Callable[..., SingleQubitGate]) -> None:
         self.gate_generator = gate_generator
 
-    def __call__(self, *args: Any) -> BlochSphereRotation:
+    def __call__(self, *args: Any) -> SingleQubitGate:
         with temporary_class_attr(BlochSphereRotation, attr="normalize_angle_params", value=False):
-            gate: BlochSphereRotation = self.gate_generator(*args)
-            modified_angle = gate.angle * -1
-            modified_phase = gate.phase * -1
-        return BlochSphereRotation.try_match_replace_with_default(
-            BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
-        )
+            gate: SingleQubitGate = self.gate_generator(*args)
+            modified_angle = gate.bsr.angle * -1
+            modified_phase = gate.bsr.phase * -1
+        gate = SingleQubitGate.from_bsr(gate.qubit, BlochSphereRotation(axis=gate.bsr.axis, angle=modified_angle, phase=modified_phase))                                        
+        return try_match_replace_with_default_gate(gate)
 
 
 class PowerGateModifier(GateModifier):
-    def __init__(self, exponent: SupportsFloat, gate_generator: Callable[..., BlochSphereRotation]) -> None:
+    def __init__(self, exponent: SupportsFloat, gate_generator: Callable[..., SingleQubitGate]) -> None:
         self.exponent = exponent
         self.gate_generator = gate_generator
 
-    def __call__(self, *args: Any) -> BlochSphereRotation:
+    def __call__(self, *args: Any) -> SingleQubitGate:
         with temporary_class_attr(BlochSphereRotation, attr="normalize_angle_params", value=False):
-            gate: BlochSphereRotation = self.gate_generator(*args)
-            modified_angle = gate.angle * float(self.exponent)
-            modified_phase = gate.phase * float(self.exponent)
-        return BlochSphereRotation.try_match_replace_with_default(
-            BlochSphereRotation(qubit=gate.qubit, axis=gate.axis, angle=modified_angle, phase=modified_phase)
-        )
+            gate: SingleQubitGate = self.gate_generator(*args)
+            modified_angle = gate.bsr.angle * float(self.exponent)
+            modified_phase = gate.bsr.phase * float(self.exponent)
+        gate = SingleQubitGate.from_bsr(gate.qubit, BlochSphereRotation(axis=gate.bsr.axis, angle=modified_angle, phase=modified_phase))
+        return try_match_replace_with_default_gate(gate)
 
 
 class ControlGateModifier(GateModifier):
-    def __init__(self, gate_generator: Callable[..., BlochSphereRotation]) -> None:
+    def __init__(self, gate_generator: Callable[..., SingleQubitGate]) -> None:
         self.gate_generator = gate_generator
 
     def __call__(self, control: QubitLike, *args: Any) -> ControlledGate:
-        gate: BlochSphereRotation = self.gate_generator(*args)
+        gate: SingleQubitGate = self.gate_generator(*args)
         return ControlledGate(control, gate)

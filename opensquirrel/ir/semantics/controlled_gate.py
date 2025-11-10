@@ -1,16 +1,13 @@
 from typing import Any
 
 from opensquirrel.ir import IRVisitor, Qubit, QubitLike
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.expression import Expression
-from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.unitary import Gate
 
 
 class ControlledGate(Gate):
-    def __init__(
-        self, control_qubit: QubitLike, target_gate: BlochSphereRotation, name: str = "ControlledGate"
-    ) -> None:
-        Gate.__init__(self, name)
+    def __init__(self, control_qubit: QubitLike, target_gate: SingleQubitGate) -> None:
         self.control_qubit = Qubit(control_qubit)
         self.target_gate = target_gate
         self.target_qubit = Qubit(target_gate.qubit)
