@@ -2326,6 +2326,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.bsr.compose_bloch_sphere_rotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      compose_bloch_sphere_rotations
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2919,6 +2928,8 @@
       
         
       
+        
+      
     
     
     
@@ -2952,6 +2963,29 @@
             mapper
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../passes/mapper/check_mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    check_mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3704,8 +3738,6 @@
       
         
       
-        
-      
     
     
     
@@ -3747,12 +3779,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/check_mapper.html" class="md-nav__link">
+      <a href="../../utils/context.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    check_mapper
+    context
     
   </span>
   
@@ -3770,12 +3802,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/context.html" class="md-nav__link">
+      <a href="../../utils/general_math.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    context
+    general_math
     
   </span>
   
@@ -3822,29 +3854,6 @@
   
   <span class="md-ellipsis">
     list
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../utils/math.html" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    math
     
   </span>
   
@@ -4034,6 +4043,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.bsr.compose_bloch_sphere_rotations" class="md-nav__link">
+    <span class="md-ellipsis">
+      compose_bloch_sphere_rotations
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4106,8 +4124,7 @@
 
               <details class="quote">
                 <summary>Source code in <code>opensquirrel/ir/semantics/bsr.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-17">17</a></span>
 <span class="normal"><a href="#__codelineno-0-18">18</a></span>
 <span class="normal"><a href="#__codelineno-0-19">19</a></span>
 <span class="normal"><a href="#__codelineno-0-20">20</a></span>
@@ -4183,84 +4200,85 @@
 <span class="normal"><a href="#__codelineno-0-90">90</a></span>
 <span class="normal"><a href="#__codelineno-0-91">91</a></span>
 <span class="normal"><a href="#__codelineno-0-92">92</a></span>
-<span class="normal"><a href="#__codelineno-0-93">93</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="k">class</span><span class="w"> </span><span class="nc">BlochSphereRotation</span><span class="p">(</span><span class="n">Gate</span><span class="p">):</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="n">normalize_angle_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>        <span class="bp">self</span><span class="p">,</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="n">qubit</span><span class="p">:</span> <span class="n">QubitLike</span><span class="p">,</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="n">axis</span><span class="p">:</span> <span class="n">AxisLike</span><span class="p">,</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>        <span class="n">angle</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">,</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="n">phase</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">,</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"BlochSphereRotation"</span><span class="p">,</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>        <span class="n">Gate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">Axis</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_angle_params</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_angle_params</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="nd">@staticmethod</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">try_match_replace_with_default</span><span class="p">(</span><span class="n">bsr</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="w">        </span><span class="sd">"""Try replacing a given BlochSphereRotation with a default BlochSphereRotation.</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">         It does that by matching the input BlochSphereRotation to a default BlochSphereRotation.</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">        Returns:</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">             A default BlockSphereRotation if this BlochSphereRotation is close to it,</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">             or the input BlochSphereRotation otherwise.</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">        """</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.default_instructions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>            <span class="n">default_bsr_set_without_rn</span><span class="p">,</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>            <span class="n">default_bsr_with_angle_param_set</span><span class="p">,</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="p">)</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.ir.default_gates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rn</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>        <span class="k">for</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_set_without_rn</span><span class="p">:</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>            <span class="n">arguments</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>            <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_with_angle_param_set</span><span class="p">:</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>                <span class="n">arguments</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),)</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="n">gate</span> <span class="o">=</span> <span class="n">default_bsr_set_without_rn</span><span class="p">[</span><span class="n">gate_name</span><span class="p">](</span><span class="o">*</span><span class="n">arguments</span><span class="p">)</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="n">gate_bsr</span> <span class="o">=</span> <span class="n">BlochSphereRotation</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="k">if</span> <span class="n">bsr</span> <span class="o">==</span> <span class="n">gate_bsr</span><span class="p">:</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>                <span class="k">return</span> <span class="n">gate</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="k">return</span> <span class="n">Rn</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">))</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="nd">@property</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Expression</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="n">visit_gate</span> <span class="o">=</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="k">return</span> <span class="n">visit_gate</span> <span class="k">if</span> <span class="n">visit_gate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_bloch_sphere_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_qubit_operands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Qubit</span><span class="p">]:</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="p">]</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="c1"># Angle and phase are already normalized.</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>        <span class="k">return</span> <span class="p">(</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">(qubit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="si">}</span><span class="s2">, axis=</span><span class="si">{</span><span class="n">repr_round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">, angle=</span><span class="si">{</span><span class="n">repr_round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>            <span class="sa">f</span><span class="s2">"phase=</span><span class="si">{</span><span class="n">repr_round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>        <span class="p">)</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BlochSphereRotation</span><span class="p">):</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>            <span class="k">return</span> <span class="kc">False</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubit</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">qubit</span><span class="p">:</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>            <span class="k">return</span> <span class="kc">False</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">ATOL</span><span class="p">):</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="o">-</span><span class="n">other</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">ATOL</span><span class="p">):</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="k">return</span> <span class="kc">False</span>
+<span class="normal"><a href="#__codelineno-0-93">93</a></span>
+<span class="normal"><a href="#__codelineno-0-94">94</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="k">class</span><span class="w"> </span><span class="nc">BlochSphereRotation</span><span class="p">(</span><span class="n">Gate</span><span class="p">):</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="n">normalize_angle_params</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="n">qubit</span><span class="p">:</span> <span class="n">QubitLike</span><span class="p">,</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>        <span class="n">axis</span><span class="p">:</span> <span class="n">AxisLike</span><span class="p">,</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="n">angle</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">,</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>        <span class="n">phase</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">,</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"BlochSphereRotation"</span><span class="p">,</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="n">Gate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">Axis</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_angle_params</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">=</span> <span class="n">normalize_angle</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_angle_params</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">phase</span><span class="p">)</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="nd">@staticmethod</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">try_match_replace_with_default</span><span class="p">(</span><span class="n">bsr</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">        </span><span class="sd">"""Try replacing a given BlochSphereRotation with a default BlochSphereRotation.</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">         It does that by matching the input BlochSphereRotation to a default BlochSphereRotation.</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        Returns:</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">             A default BlockSphereRotation if this BlochSphereRotation is close to it,</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">             or the input BlochSphereRotation otherwise.</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        """</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.default_instructions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>            <span class="n">default_bsr_set_without_rn</span><span class="p">,</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>            <span class="n">default_bsr_with_angle_param_set</span><span class="p">,</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="p">)</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.ir.default_gates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rn</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="k">for</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_set_without_rn</span><span class="p">:</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>            <span class="n">arguments</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>            <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_with_angle_param_set</span><span class="p">:</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>                <span class="n">arguments</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),)</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="n">gate</span> <span class="o">=</span> <span class="n">default_bsr_set_without_rn</span><span class="p">[</span><span class="n">gate_name</span><span class="p">](</span><span class="o">*</span><span class="n">arguments</span><span class="p">)</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="n">gate_bsr</span> <span class="o">=</span> <span class="n">BlochSphereRotation</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>            <span class="k">if</span> <span class="n">bsr</span> <span class="o">==</span> <span class="n">gate_bsr</span><span class="p">:</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>                <span class="k">return</span> <span class="n">gate</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>        <span class="k">return</span> <span class="n">Rn</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">))</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="nd">@property</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Qubit</span> <span class="o">|</span> <span class="n">Float</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="n">visit_gate</span> <span class="o">=</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="k">return</span> <span class="n">visit_gate</span> <span class="k">if</span> <span class="n">visit_gate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_bloch_sphere_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_qubit_operands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Qubit</span><span class="p">]:</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="p">]</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="c1"># Angle and phase are already normalized.</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>        <span class="k">return</span> <span class="p">(</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">(qubit=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="si">}</span><span class="s2">, axis=</span><span class="si">{</span><span class="n">repr_round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span><span class="si">}</span><span class="s2">, angle=</span><span class="si">{</span><span class="n">repr_round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span><span class="si">}</span><span class="s2">, "</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>            <span class="sa">f</span><span class="s2">"phase=</span><span class="si">{</span><span class="n">repr_round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>        <span class="p">)</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BlochSphereRotation</span><span class="p">):</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubit</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">qubit</span><span class="p">:</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">ATOL</span><span class="p">):</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="o">-</span><span class="n">other</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">ATOL</span><span class="p">):</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ATOL</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="k">return</span> <span class="kc">False</span>
 </code></pre></div></td></tr></tbody></table></div>
               </details>
 
@@ -4331,8 +4349,7 @@
 
             <details class="quote">
               <summary>Source code in <code>opensquirrel/ir/semantics/bsr.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-34">34</a></span>
 <span class="normal"><a href="#__codelineno-0-35">35</a></span>
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
@@ -4355,31 +4372,32 @@
 <span class="normal"><a href="#__codelineno-0-54">54</a></span>
 <span class="normal"><a href="#__codelineno-0-55">55</a></span>
 <span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="nd">@staticmethod</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="k">def</span><span class="w"> </span><span class="nf">try_match_replace_with_default</span><span class="p">(</span><span class="n">bsr</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="w">    </span><span class="sd">"""Try replacing a given BlochSphereRotation with a default BlochSphereRotation.</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">     It does that by matching the input BlochSphereRotation to a default BlochSphereRotation.</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">         A default BlockSphereRotation if this BlochSphereRotation is close to it,</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">         or the input BlochSphereRotation otherwise.</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    """</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.default_instructions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="n">default_bsr_set_without_rn</span><span class="p">,</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="n">default_bsr_with_angle_param_set</span><span class="p">,</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="p">)</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.ir.default_gates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rn</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="k">for</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_set_without_rn</span><span class="p">:</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="n">arguments</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_with_angle_param_set</span><span class="p">:</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>            <span class="n">arguments</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),)</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="n">gate</span> <span class="o">=</span> <span class="n">default_bsr_set_without_rn</span><span class="p">[</span><span class="n">gate_name</span><span class="p">](</span><span class="o">*</span><span class="n">arguments</span><span class="p">)</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="n">gate_bsr</span> <span class="o">=</span> <span class="n">BlochSphereRotation</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="k">if</span> <span class="n">bsr</span> <span class="o">==</span> <span class="n">gate_bsr</span><span class="p">:</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>            <span class="k">return</span> <span class="n">gate</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">return</span> <span class="n">Rn</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">))</span>
+<span class="normal"><a href="#__codelineno-0-57">57</a></span>
+<span class="normal"><a href="#__codelineno-0-58">58</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="nd">@staticmethod</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="k">def</span><span class="w"> </span><span class="nf">try_match_replace_with_default</span><span class="p">(</span><span class="n">bsr</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">    </span><span class="sd">"""Try replacing a given BlochSphereRotation with a default BlochSphereRotation.</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">     It does that by matching the input BlochSphereRotation to a default BlochSphereRotation.</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">         A default BlockSphereRotation if this BlochSphereRotation is close to it,</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">         or the input BlochSphereRotation otherwise.</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    """</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.default_instructions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="n">default_bsr_set_without_rn</span><span class="p">,</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">default_bsr_with_angle_param_set</span><span class="p">,</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="p">)</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.ir.default_gates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rn</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">for</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_set_without_rn</span><span class="p">:</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="n">arguments</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_with_angle_param_set</span><span class="p">:</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="n">arguments</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),)</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="n">gate</span> <span class="o">=</span> <span class="n">default_bsr_set_without_rn</span><span class="p">[</span><span class="n">gate_name</span><span class="p">](</span><span class="o">*</span><span class="n">arguments</span><span class="p">)</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="n">gate_bsr</span> <span class="o">=</span> <span class="n">BlochSphereRotation</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="k">if</span> <span class="n">bsr</span> <span class="o">==</span> <span class="n">gate_bsr</span><span class="p">:</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="k">return</span> <span class="n">gate</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">component</span><span class="p">)</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="k">return</span> <span class="n">Rn</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),</span> <span class="n">Float</span><span class="p">(</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">))</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -4394,6 +4412,155 @@
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="opensquirrel.ir.semantics.bsr.compose_bloch_sphere_rotations" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">bsr_a</span><span class="p">,</span> <span class="n">bsr_b</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
+The first rotation (A) is applied and then the second (B):</p>
+
+
+<details class="as-separate-gates" open>
+  <summary>As separate gates</summary>
+  <p>A q
+B q</p>
+</details>
+
+<details class="as-linear-operations" open>
+  <summary>As linear operations</summary>
+  <p>(B * A) q</p>
+</details>        <p>If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.</p>
+<p>Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>opensquirrel/ir/semantics/bsr.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-194">194</a></span>
+<span class="normal"><a href="#__codelineno-0-195">195</a></span>
+<span class="normal"><a href="#__codelineno-0-196">196</a></span>
+<span class="normal"><a href="#__codelineno-0-197">197</a></span>
+<span class="normal"><a href="#__codelineno-0-198">198</a></span>
+<span class="normal"><a href="#__codelineno-0-199">199</a></span>
+<span class="normal"><a href="#__codelineno-0-200">200</a></span>
+<span class="normal"><a href="#__codelineno-0-201">201</a></span>
+<span class="normal"><a href="#__codelineno-0-202">202</a></span>
+<span class="normal"><a href="#__codelineno-0-203">203</a></span>
+<span class="normal"><a href="#__codelineno-0-204">204</a></span>
+<span class="normal"><a href="#__codelineno-0-205">205</a></span>
+<span class="normal"><a href="#__codelineno-0-206">206</a></span>
+<span class="normal"><a href="#__codelineno-0-207">207</a></span>
+<span class="normal"><a href="#__codelineno-0-208">208</a></span>
+<span class="normal"><a href="#__codelineno-0-209">209</a></span>
+<span class="normal"><a href="#__codelineno-0-210">210</a></span>
+<span class="normal"><a href="#__codelineno-0-211">211</a></span>
+<span class="normal"><a href="#__codelineno-0-212">212</a></span>
+<span class="normal"><a href="#__codelineno-0-213">213</a></span>
+<span class="normal"><a href="#__codelineno-0-214">214</a></span>
+<span class="normal"><a href="#__codelineno-0-215">215</a></span>
+<span class="normal"><a href="#__codelineno-0-216">216</a></span>
+<span class="normal"><a href="#__codelineno-0-217">217</a></span>
+<span class="normal"><a href="#__codelineno-0-218">218</a></span>
+<span class="normal"><a href="#__codelineno-0-219">219</a></span>
+<span class="normal"><a href="#__codelineno-0-220">220</a></span>
+<span class="normal"><a href="#__codelineno-0-221">221</a></span>
+<span class="normal"><a href="#__codelineno-0-222">222</a></span>
+<span class="normal"><a href="#__codelineno-0-223">223</a></span>
+<span class="normal"><a href="#__codelineno-0-224">224</a></span>
+<span class="normal"><a href="#__codelineno-0-225">225</a></span>
+<span class="normal"><a href="#__codelineno-0-226">226</a></span>
+<span class="normal"><a href="#__codelineno-0-227">227</a></span>
+<span class="normal"><a href="#__codelineno-0-228">228</a></span>
+<span class="normal"><a href="#__codelineno-0-229">229</a></span>
+<span class="normal"><a href="#__codelineno-0-230">230</a></span>
+<span class="normal"><a href="#__codelineno-0-231">231</a></span>
+<span class="normal"><a href="#__codelineno-0-232">232</a></span>
+<span class="normal"><a href="#__codelineno-0-233">233</a></span>
+<span class="normal"><a href="#__codelineno-0-234">234</a></span>
+<span class="normal"><a href="#__codelineno-0-235">235</a></span>
+<span class="normal"><a href="#__codelineno-0-236">236</a></span>
+<span class="normal"><a href="#__codelineno-0-237">237</a></span>
+<span class="normal"><a href="#__codelineno-0-238">238</a></span>
+<span class="normal"><a href="#__codelineno-0-239">239</a></span>
+<span class="normal"><a href="#__codelineno-0-240">240</a></span>
+<span class="normal"><a href="#__codelineno-0-241">241</a></span>
+<span class="normal"><a href="#__codelineno-0-242">242</a></span>
+<span class="normal"><a href="#__codelineno-0-243">243</a></span>
+<span class="normal"><a href="#__codelineno-0-244">244</a></span>
+<span class="normal"><a href="#__codelineno-0-245">245</a></span>
+<span class="normal"><a href="#__codelineno-0-246">246</a></span>
+<span class="normal"><a href="#__codelineno-0-247">247</a></span>
+<span class="normal"><a href="#__codelineno-0-248">248</a></span>
+<span class="normal"><a href="#__codelineno-0-249">249</a></span>
+<span class="normal"><a href="#__codelineno-0-250">250</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-194" name="__codelineno-0-194"></a><span class="k">def</span><span class="w"> </span><span class="nf">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">bsr_a</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">,</span> <span class="n">bsr_b</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
+<a id="__codelineno-0-195" name="__codelineno-0-195"></a><span class="w">    </span><span class="sd">"""Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.</span>
+<a id="__codelineno-0-196" name="__codelineno-0-196"></a><span class="sd">    The first rotation (A) is applied and then the second (B):</span>
+<a id="__codelineno-0-197" name="__codelineno-0-197"></a>
+<a id="__codelineno-0-198" name="__codelineno-0-198"></a><span class="sd">    As separate gates:</span>
+<a id="__codelineno-0-199" name="__codelineno-0-199"></a><span class="sd">        A q</span>
+<a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="sd">        B q</span>
+<a id="__codelineno-0-201" name="__codelineno-0-201"></a>
+<a id="__codelineno-0-202" name="__codelineno-0-202"></a><span class="sd">    As linear operations:</span>
+<a id="__codelineno-0-203" name="__codelineno-0-203"></a><span class="sd">        (B * A) q</span>
+<a id="__codelineno-0-204" name="__codelineno-0-204"></a>
+<a id="__codelineno-0-205" name="__codelineno-0-205"></a><span class="sd">    If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.</span>
+<a id="__codelineno-0-206" name="__codelineno-0-206"></a>
+<a id="__codelineno-0-207" name="__codelineno-0-207"></a><span class="sd">    Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).</span>
+<a id="__codelineno-0-208" name="__codelineno-0-208"></a>
+<a id="__codelineno-0-209" name="__codelineno-0-209"></a><span class="sd">    """</span>
+<a id="__codelineno-0-210" name="__codelineno-0-210"></a>    <span class="k">if</span> <span class="n">bsr_a</span><span class="o">.</span><span class="n">qubit</span> <span class="o">!=</span> <span class="n">bsr_b</span><span class="o">.</span><span class="n">qubit</span><span class="p">:</span>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a>        <span class="n">msg</span> <span class="o">=</span> <span class="s2">"cannot merge two Bloch sphere rotations on different qubits"</span>
+<a id="__codelineno-0-212" name="__codelineno-0-212"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<a id="__codelineno-0-213" name="__codelineno-0-213"></a>
+<a id="__codelineno-0-214" name="__codelineno-0-214"></a>    <span class="n">acos_argument</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">bsr_b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">sin</span><span class="p">(</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">bsr_b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+<a id="__codelineno-0-215" name="__codelineno-0-215"></a>        <span class="n">bsr_a</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">bsr_b</span><span class="o">.</span><span class="n">axis</span>
+<a id="__codelineno-0-216" name="__codelineno-0-216"></a>    <span class="p">)</span>
+<a id="__codelineno-0-217" name="__codelineno-0-217"></a>    <span class="n">combined_angle</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">acos</span><span class="p">(</span><span class="n">acos_argument</span><span class="p">)</span>
+<a id="__codelineno-0-218" name="__codelineno-0-218"></a>
+<a id="__codelineno-0-219" name="__codelineno-0-219"></a>    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sin</span><span class="p">(</span><span class="n">combined_angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">ATOL</span><span class="p">:</span>
+<a id="__codelineno-0-220" name="__codelineno-0-220"></a>        <span class="k">return</span> <span class="n">BlochSphereRotation</span><span class="p">(</span>
+<a id="__codelineno-0-221" name="__codelineno-0-221"></a>            <span class="n">qubit</span><span class="o">=</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span>
+<a id="__codelineno-0-222" name="__codelineno-0-222"></a>            <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<a id="__codelineno-0-223" name="__codelineno-0-223"></a>            <span class="n">angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-224" name="__codelineno-0-224"></a>            <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-225" name="__codelineno-0-225"></a>        <span class="p">)</span>
+<a id="__codelineno-0-226" name="__codelineno-0-226"></a>
+<a id="__codelineno-0-227" name="__codelineno-0-227"></a>    <span class="n">order_of_magnitude</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">ATOL</span><span class="p">)))</span>
+<a id="__codelineno-0-228" name="__codelineno-0-228"></a>    <span class="n">combined_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+<a id="__codelineno-0-229" name="__codelineno-0-229"></a>        <span class="p">(</span>
+<a id="__codelineno-0-230" name="__codelineno-0-230"></a>            <span class="mi">1</span>
+<a id="__codelineno-0-231" name="__codelineno-0-231"></a>            <span class="o">/</span> <span class="n">sin</span><span class="p">(</span><span class="n">combined_angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-232" name="__codelineno-0-232"></a>            <span class="o">*</span> <span class="p">(</span>
+<a id="__codelineno-0-233" name="__codelineno-0-233"></a>                <span class="n">sin</span><span class="p">(</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">bsr_b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">bsr_a</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span>
+<a id="__codelineno-0-234" name="__codelineno-0-234"></a>                <span class="o">+</span> <span class="n">cos</span><span class="p">(</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">bsr_b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">bsr_b</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span>
+<a id="__codelineno-0-235" name="__codelineno-0-235"></a>                <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">bsr_b</span><span class="o">.</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">bsr_b</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">bsr_a</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+<a id="__codelineno-0-236" name="__codelineno-0-236"></a>            <span class="p">)</span>
+<a id="__codelineno-0-237" name="__codelineno-0-237"></a>        <span class="p">),</span>
+<a id="__codelineno-0-238" name="__codelineno-0-238"></a>        <span class="n">order_of_magnitude</span><span class="p">,</span>
+<a id="__codelineno-0-239" name="__codelineno-0-239"></a>    <span class="p">)</span>
+<a id="__codelineno-0-240" name="__codelineno-0-240"></a>
+<a id="__codelineno-0-241" name="__codelineno-0-241"></a>    <span class="n">combined_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">phase</span> <span class="o">+</span> <span class="n">bsr_b</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="n">order_of_magnitude</span><span class="p">)</span>
+<a id="__codelineno-0-242" name="__codelineno-0-242"></a>
+<a id="__codelineno-0-243" name="__codelineno-0-243"></a>    <span class="k">return</span> <span class="n">BlochSphereRotation</span><span class="o">.</span><span class="n">try_match_replace_with_default</span><span class="p">(</span>
+<a id="__codelineno-0-244" name="__codelineno-0-244"></a>        <span class="n">BlochSphereRotation</span><span class="p">(</span>
+<a id="__codelineno-0-245" name="__codelineno-0-245"></a>            <span class="n">qubit</span><span class="o">=</span><span class="n">bsr_a</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span>
+<a id="__codelineno-0-246" name="__codelineno-0-246"></a>            <span class="n">axis</span><span class="o">=</span><span class="n">combined_axis</span><span class="p">,</span>
+<a id="__codelineno-0-247" name="__codelineno-0-247"></a>            <span class="n">angle</span><span class="o">=</span><span class="n">combined_angle</span><span class="p">,</span>
+<a id="__codelineno-0-248" name="__codelineno-0-248"></a>            <span class="n">phase</span><span class="o">=</span><span class="n">combined_phase</span><span class="p">,</span>
+<a id="__codelineno-0-249" name="__codelineno-0-249"></a>        <span class="p">)</span>
+<a id="__codelineno-0-250" name="__codelineno-0-250"></a>    <span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 

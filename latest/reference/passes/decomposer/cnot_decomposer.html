@@ -2904,6 +2904,8 @@
       
         
       
+        
+      
     
     
     
@@ -2937,6 +2939,29 @@
             mapper
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mapper/check_mapper.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    check_mapper
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3689,8 +3714,6 @@
       
         
       
-        
-      
     
     
     
@@ -3732,12 +3755,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/check_mapper.html" class="md-nav__link">
+      <a href="../../utils/context.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    check_mapper
+    context
     
   </span>
   
@@ -3755,12 +3778,12 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/context.html" class="md-nav__link">
+      <a href="../../utils/general_math.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    context
+    general_math
     
   </span>
   
@@ -3807,29 +3830,6 @@
   
   <span class="md-ellipsis">
     list
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../utils/math.html" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    math
     
   </span>
   
@@ -4167,7 +4167,7 @@ Applying single-qubit gate fusion after this pass might be beneficial.</p>
 <a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="c1"># See https://threeplusone.com/pubs/on_gates.pdf</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="c1"># Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">controlled_rotation_times_x</span> <span class="o">=</span> <span class="n">general_merger</span><span class="o">.</span><span class="n">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="p">,</span> <span class="n">X</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">))</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">controlled_rotation_times_x</span> <span class="o">=</span> <span class="n">compose_bloch_sphere_rotations</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">target_gate</span><span class="p">,</span> <span class="n">X</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">))</span>
 <a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="n">theta0_with_x</span><span class="p">,</span> <span class="n">theta1_with_x</span><span class="p">,</span> <span class="n">theta2_with_x</span> <span class="o">=</span> <span class="n">ZYZDecomposer</span><span class="p">()</span><span class="o">.</span><span class="n">get_decomposition_angles</span><span class="p">(</span>
 <a id="__codelineno-0-47" name="__codelineno-0-47"></a>            <span class="n">controlled_rotation_times_x</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span>
 <a id="__codelineno-0-48" name="__codelineno-0-48"></a>            <span class="n">controlled_rotation_times_x</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span>
