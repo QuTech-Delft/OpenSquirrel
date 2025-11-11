@@ -6,16 +6,14 @@ from __future__ import annotations
 import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, ClassVar, cast
+from typing import Any, ClassVar
 
 from opensquirrel import Rx, Ry, Rz
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Axis, AxisLike
+from opensquirrel.ir import Axis, AxisLike, Gate
+from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.utils import acos, are_axes_consecutive, filter_out_identities
-
-if TYPE_CHECKING:
-    from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
 
 
 class ABADecomposer(Decomposer, ABC):
@@ -128,7 +126,7 @@ class ABADecomposer(Decomposer, ABC):
 
         return theta_1, theta_2, theta_3
 
-    def decompose(self, g: SingleQubitGate) -> list[SingleQubitGate]:
+    def decompose(self, g: Gate) -> list[Gate]:
         """General A-B-A decomposition function for a single gate.
 
         Args:
@@ -137,7 +135,7 @@ class ABADecomposer(Decomposer, ABC):
         Returns:
             Three gates, following the A-B-A convention, corresponding to the decomposition of the input gate.
         """
-        if not g.bsr:
+        if not isinstance(g, SingleQubitGate):
             return [g]
 
         theta1, theta2, theta3 = self.get_decomposition_angles(g.bsr.axis, g.bsr.angle)
@@ -145,7 +143,7 @@ class ABADecomposer(Decomposer, ABC):
         b = self.rb(g.qubit, theta2)
         a2 = self.ra(g.qubit, theta3)
 
-        return cast("list[SingleQubitGate]", filter_out_identities([a1, b, a2]))
+        return filter_out_identities([a1, b, a2])
 
 
 class XYXDecomposer(ABADecomposer):

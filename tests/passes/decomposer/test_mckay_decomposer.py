@@ -8,10 +8,9 @@ import pytest
 
 from opensquirrel import CNOT, CR, X90, Y90, H, I, MinusX90, MinusY90, Rz, S, SDagger, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -85,7 +84,9 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
     for angle in angles:
         for axis in axes:
             for phase in phases:
-                arbitrary_operation = SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=axis, angle=angle, phase=phase))
+                arbitrary_operation = SingleQubitGate.from_bsr(
+                    qubit=0, bsr=BlochSphereRotation(axis=axis, angle=angle, phase=phase)
+                )
                 decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
                 check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
 
@@ -98,7 +99,10 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
         (Y(0), [Rz(0, pi), X90(0), X90(0)]),
         (Z(0), [Rz(0, pi)]),
         (
-            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3)], angle=2 * pi / 3, phase=0)),
+            SingleQubitGate.from_bsr(
+                qubit=0,
+                bsr=BlochSphereRotation(axis=[1 / sqrt(3), 1 / sqrt(3), 1 / sqrt(3)], angle=2 * pi / 3, phase=0),
+            ),
             [X90(0), Rz(0, pi / 2)],
         ),
         (
@@ -113,14 +117,23 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
             SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[-1, 1, 1], angle=-2 * pi / 3, phase=0)),
             [Rz(0, -pi / 2), X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi)],
         ),
-        (SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1, -1, 1], angle=2 * pi / 3, phase=0)), [Rz(0, pi / 2), X90(0)]),
+        (
+            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1, -1, 1], angle=2 * pi / 3, phase=0)),
+            [Rz(0, pi / 2), X90(0)],
+        ),
         (
             SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1, -1, 1], angle=-2 * pi / 3, phase=0)),
             [Rz(0, pi / 2), X90(0), Rz(0, pi / 2), X90(0)],
         ),
-        (SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1, 1, -1], angle=2 * pi / 3, phase=0)), [Rz(0, -pi / 2), X90(0)]),
         (
-            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3)], angle=-2 * pi / 3, phase=0)),
+            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1, 1, -1], angle=2 * pi / 3, phase=0)),
+            [Rz(0, -pi / 2), X90(0)],
+        ),
+        (
+            SingleQubitGate.from_bsr(
+                qubit=0,
+                bsr=BlochSphereRotation(axis=[1 / sqrt(3), 1 / sqrt(3), -1 / sqrt(3)], angle=-2 * pi / 3, phase=0),
+            ),
             [Rz(0, pi / 2), X90(0), Rz(0, pi / 2), X90(0), Rz(0, pi)],
         ),
         (X90(0), [X90(0)]),
@@ -134,7 +147,10 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
             SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1, 1, 0], angle=pi, phase=pi / 2)),
             [Rz(0, -3 * pi / 4), X90(0), X90(0), Rz(0, -pi / 4)],
         ),
-        (SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[0, 1, 1], angle=pi, phase=pi / 2)), [X90(0), Rz(0, pi)]),
+        (
+            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[0, 1, 1], angle=pi, phase=pi / 2)),
+            [X90(0), Rz(0, pi)],
+        ),
         (
             SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[-1, 1, 0], angle=pi, phase=pi / 2)),
             [Rz(0, 3 * pi / 4), X90(0), X90(0), Rz(0, pi / 4)],
@@ -143,7 +159,10 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
             SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[1, 0, -1], angle=pi, phase=pi / 2)),
             [Rz(0, -pi / 2), X90(0), Rz(0, -pi / 2)],
         ),
-        (SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[0, -1, 1], angle=pi, phase=pi / 2)), [Rz(0, pi), X90(0)]),
+        (
+            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[0, -1, 1], angle=pi, phase=pi / 2)),
+            [Rz(0, pi), X90(0)],
+        ),
     ],
     ids=[
         "I",

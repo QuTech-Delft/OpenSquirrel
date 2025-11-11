@@ -10,12 +10,16 @@ from opensquirrel.utils import get_matrix
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
 class _CircuitMatrixCalculator(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
         self.matrix = np.eye(1 << self.qubit_register_size, dtype=np.complex128)
+
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
+        self.visit_gate(gate)
 
     def visit_gate(self, gate: Gate) -> None:
         big_matrix = get_matrix(gate, qubit_register_size=self.qubit_register_size)

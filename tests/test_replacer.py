@@ -6,8 +6,8 @@ import pytest
 
 from opensquirrel import CNOT, Y90, CircuitBuilder, H, I, X
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -23,7 +23,10 @@ class TestCheckGateReplacement:
             (H(0), [H(0), H(0), H(0)]),
             (CNOT(0, 1), [CNOT(0, 1), I(0)]),
             # Arbitrary global phase change is not considered an issue.
-            (CNOT(0, 1), [CNOT(0, 1), SingleQubitGate.from_bsr(0, BlochSphereRotation(angle=0, axis=(1, 0, 0), phase=621.6546))]),
+            (
+                CNOT(0, 1),
+                [CNOT(0, 1), SingleQubitGate.from_bsr(0, BlochSphereRotation(angle=0, axis=(1, 0, 0), phase=621.6546))],
+            ),
         ],
     )
     def test_valid_replacement(self, gate: Gate, replacement_gates: list[Gate]) -> None:

@@ -6,7 +6,6 @@ from opensquirrel import X90, I, Rz
 from opensquirrel.common import ATOL, normalize_angle
 from opensquirrel.ir import Axis, Gate
 from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
-from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import ZXZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
@@ -39,12 +38,12 @@ class McKayDecomposer(Decomposer):
             zxz_angle = next(
                 gate.bsr.angle
                 for gate in zxz_decomposition
-                if isinstance(gate, BlochSphereRotation) and gate.axis == Axis(1, 0, 0)
+                if isinstance(gate, SingleQubitGate) and gate.bsr.axis == Axis(1, 0, 0)
             )
 
         if abs(zxz_angle - pi / 2) < ATOL:
             return [
-                X90(g.qubit) if isinstance(gate, BlochSphereRotation) and gate.axis == Axis(1, 0, 0) else gate
+                X90(g.qubit) if isinstance(gate, SingleQubitGate) and gate.bsr.axis == Axis(1, 0, 0) else gate
                 for gate in zxz_decomposition
             ]
 

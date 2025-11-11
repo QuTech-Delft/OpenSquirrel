@@ -4,23 +4,18 @@ from typing import Any
 
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.ir import IRVisitor
-from opensquirrel.ir.expression import Expression, Qubit
+from opensquirrel.ir.expression import Qubit
 from opensquirrel.ir.statement import Instruction
 
 
 class Unitary(Instruction, ABC):
-    pass
+    def __init__(self, name: str) -> None:
+        Instruction.__init__(self, name)
 
 
 class Gate(Unitary, ABC):
-    @property
-    def __name__(self) -> str:
-        return self.__class__.__name__
-
-    @property
-    @abstractmethod
-    def arguments(self) -> tuple[Expression, ...]:
-        pass
+    def __init__(self, name: str) -> None:
+        Unitary.__init__(self, name)
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:

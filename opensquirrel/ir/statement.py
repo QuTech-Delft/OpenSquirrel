@@ -32,9 +32,8 @@ class AsmDeclaration(Statement):
 
 
 class Instruction(Statement, ABC):
-    @property
-    def name(self) -> str:
-        return self.__class__.__name__
+    def __init__(self, name: str) -> None:
+        self.name = name
 
     @property
     @abstractmethod

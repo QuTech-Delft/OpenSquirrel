@@ -4,14 +4,17 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
+
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
     a = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(1, 2, 3), angle=0.4, phase=0.2))
     b = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(1, 2, 3), angle=-0.3, phase=-0.15))
     composed = compose_bloch_sphere_rotations(a, b)
-    assert composed == SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(1, 2, 3), angle=0.1, phase=0.05))
+    assert composed == SingleQubitGate.from_bsr(
+        qubit=123, bsr=BlochSphereRotation(axis=(1, 2, 3), angle=0.1, phase=0.05)
+    )
 
 
 def test_compose_bloch_sphere_rotations_different_axis() -> None:
@@ -20,7 +23,9 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
     b = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 2, phase=pi / 4))
     c = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4))
     composed = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(c, b), a)
-    assert composed == SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(1, 1, 0), angle=pi, phase=3 * pi / 4))
+    assert composed == SingleQubitGate.from_bsr(
+        qubit=123, bsr=BlochSphereRotation(axis=(1, 1, 0), angle=pi, phase=3 * pi / 4)
+    )
 
 
 @pytest.mark.parametrize(
@@ -35,7 +40,9 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
         (
             Rx(0, theta=pi),
             Ry(0, theta=-pi / 2),
-            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(0.70711, 0.0, 0.70711), angle=pi, phase=0.0)),
+            SingleQubitGate.from_bsr(
+                qubit=0, bsr=BlochSphereRotation(axis=(0.70711, 0.0, 0.70711), angle=pi, phase=0.0)
+            ),
         ),
         (I(0), Rx(0, theta=pi), Rx(0, theta=pi)),
         (Rx(0, theta=pi), I(0), Rx(0, theta=pi)),

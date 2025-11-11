@@ -17,6 +17,8 @@ from opensquirrel.ir import (
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
+    BsrAngleParam,
+    BsrNoParams,
     ControlledGate,
     MatrixGate,
 )
@@ -30,10 +32,8 @@ if TYPE_CHECKING:
         CRk,
     )
     from opensquirrel.circuit import Circuit
-    from opensquirrel.ir.semantics import (
-        BsrAngleParam,
-        BsrNoParams,
-    )
+    from opensquirrel.ir.semantics.bsr import BsrFullParams
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -62,6 +62,19 @@ class _CQASMv1Creator(IRVisitor):
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
+        qubit_operand = gate.qubit.accept(self)
+        if isinstance(gate.bsr, BsrNoParams):
+            self.output += f"{gate.name.lower()} {qubit_operand}\n"
+        elif isinstance(gate.bsr, BsrAngleParam):
+            theta_argument = gate.bsr.theta.accept(self)
+            self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
+        else:
+            gate.bsr.accept(self)
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
+        raise UnsupportedGateError(gate)
+
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
             return
@@ -77,14 +90,8 @@ class _CQASMv1Creator(IRVisitor):
             return
         raise UnsupportedGateError(gate)
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name.lower()} {qubit_operand}\n"
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
-        theta_argument = gate.theta.accept(self)
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
+    def visit_bsr_angle_param(self, bsr: BsrAngleParam) -> float:
+        return bsr.theta.accept(self)
 
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)

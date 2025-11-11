@@ -37,11 +37,11 @@ from opensquirrel.ir.default_gates import (
 
 if TYPE_CHECKING:
     from opensquirrel.ir import ControlInstruction, Gate, Instruction, NonUnitary, Unitary
-    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.semantics import (
         ControlledGate,
         MatrixGate,
     )
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 default_bsr_without_params_set: Mapping[str, type[SingleQubitGate]]
 default_bsr_without_params_set = {

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from opensquirrel import CZ, Rx, Ry, Rz, Z
 from opensquirrel.common import ATOL
 from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import XYXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.passes.merger import general_merger
@@ -30,7 +31,7 @@ class CZDecomposer(Decomposer):
             # - decomposing MatrixGate is currently not supported.
             return [g]
 
-        if not g.target_gate.bsr:
+        if not isinstance(g.target_gate, SingleQubitGate):
             # Do nothing.
             # ControlledGate's with 2+ control qubits are ignored.
             return [g]

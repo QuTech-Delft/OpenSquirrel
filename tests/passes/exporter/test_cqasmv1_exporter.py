@@ -4,8 +4,9 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import Gate
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
-from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.passes.exporter import ExportFormat
+
 
 def test_cqasm_v3_to_cqasm_v1() -> None:
     cqasm_v3_string = Circuit.from_string(
@@ -227,7 +228,9 @@ measure_z q[1]
     "gate",
     [
         SingleQubitGate.from_bsr(0, bsr=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
-        ControlledGate(0, SingleQubitGate.from_bsr(qubit=1, bsr=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))),
+        ControlledGate(
+            0, SingleQubitGate.from_bsr(qubit=1, bsr=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
+        ),
         MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]),
     ],
 )

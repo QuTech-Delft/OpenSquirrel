@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, SupportsFloat
-from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 
 import numpy as np
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
-from opensquirrel.ir.expression import Axis, AxisLike, Float, Qubit, QubitLike
+from opensquirrel.ir.expression import Axis, AxisLike, Float
 from opensquirrel.ir.ir import IRNode
+from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 
 if TYPE_CHECKING:
     from opensquirrel.ir import IRVisitor
@@ -21,11 +21,11 @@ class BlochSphereRotation(GateSemantic, IRNode):
         self,
         axis: AxisLike,
         angle: SupportsFloat,
-        phase: SupportsFloat,        
+        phase: SupportsFloat,
     ) -> None:
         self.axis = Axis(axis)
         self.angle = normalize_angle(angle) if self.normalize_angle_params else float(angle)
-        self.phase = normalize_angle(phase) if self.normalize_angle_params else float(phase) 
+        self.phase = normalize_angle(phase) if self.normalize_angle_params else float(phase)
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_bloch_sphere_rotation(self)
@@ -51,12 +51,11 @@ class BlochSphereRotation(GateSemantic, IRNode):
             return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
 
         return False
-    
+
 
 class BsrNoParams(BlochSphereRotation):
     def __init__(
         self,
-        qubit: QubitLike,
         axis: AxisLike,
         angle: SupportsFloat,
         phase: SupportsFloat,
@@ -69,9 +68,7 @@ class BsrNoParams(BlochSphereRotation):
 
 
 class BsrFullParams(BlochSphereRotation):
-    def __init__(
-        self, qubit: QubitLike, axis: AxisLike, angle: SupportsFloat, phase: SupportsFloat
-    ) -> None:
+    def __init__(self, axis: AxisLike, angle: SupportsFloat, phase: SupportsFloat) -> None:
         BlochSphereRotation.__init__(self, axis, angle, phase)
         self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
         self.theta = Float(self.angle)
@@ -89,7 +86,6 @@ class BsrFullParams(BlochSphereRotation):
 class BsrAngleParam(BlochSphereRotation):
     def __init__(
         self,
-        qubit: QubitLike,
         axis: AxisLike,
         angle: SupportsFloat,
         phase: SupportsFloat,
@@ -99,7 +95,7 @@ class BsrAngleParam(BlochSphereRotation):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return self.theta,
+        return (self.theta,)
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_bsr = super().accept(visitor)

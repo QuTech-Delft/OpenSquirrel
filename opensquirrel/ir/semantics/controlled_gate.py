@@ -1,13 +1,14 @@
 from typing import Any
 
 from opensquirrel.ir import IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.expression import Expression
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.unitary import Gate
 
 
 class ControlledGate(Gate):
-    def __init__(self, control_qubit: QubitLike, target_gate: SingleQubitGate) -> None:
+    def __init__(self, control_qubit: QubitLike, target_gate: SingleQubitGate, name: str | None = None) -> None:
+        Gate.__init__(self, name=name or "ControlledGate")
         self.control_qubit = Qubit(control_qubit)
         self.target_gate = target_gate
         self.target_qubit = Qubit(target_gate.qubit)
@@ -17,7 +18,7 @@ class ControlledGate(Gate):
             raise ValueError(msg)
 
     def __repr__(self) -> str:
-        return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate})"
+        return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate.bsr})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_parent = super().accept(visitor)

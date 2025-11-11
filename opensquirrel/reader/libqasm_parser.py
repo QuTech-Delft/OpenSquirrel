@@ -23,7 +23,7 @@ from opensquirrel.ir import (
 from opensquirrel.register_manager import RegisterManager
 
 if TYPE_CHECKING:
-    from opensquirrel.ir.semantics import BlochSphereRotation
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
 class LibQasmParser:
@@ -179,9 +179,7 @@ class LibQasmParser:
     def _get_gate_generator(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
         gate_name = instruction.gate.name
         if gate_name in ["inv", "pow", "ctrl"]:
-            modified_gate_generator = cast(
-                "Callable[..., BlochSphereRotation]", self._get_gate_generator(instruction.gate)
-            )
+            modified_gate_generator = cast("Callable[..., SingleQubitGate]", self._get_gate_generator(instruction.gate))
 
             match gate_name:
                 case "inv":

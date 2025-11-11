@@ -7,10 +7,9 @@ import pytest
 
 from opensquirrel import CNOT, CR, H, I, Rx, Rz, S, X, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import XZXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate

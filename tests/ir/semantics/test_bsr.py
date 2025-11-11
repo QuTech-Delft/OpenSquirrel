@@ -16,11 +16,10 @@ from opensquirrel import (
     TDagger,
     X,
 )
-from opensquirrel.ir.default_gates.single_qubit_gates import try_match_replace_with_default_gate
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Qubit
+from opensquirrel.ir.default_gates.single_qubit_gates import try_match_replace_with_default_gate
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
 class TestBlochSphereRotation:
@@ -45,13 +44,12 @@ class TestBlochSphereRotation:
     @pytest.mark.parametrize(
         "other_gate",
         [
-            BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=tau),
             BlochSphereRotation(axis=(0, 1, 0), angle=pi, phase=tau),
             BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=tau),
             BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=1),
             "test",
         ],
-        ids=["qubit", "axis", "angle", "phase", "type"],
+        ids=["axis", "angle", "phase", "type"],
     )
     def test_inequality(self, gate: BlochSphereRotation, other_gate: BlochSphereRotation | str) -> None:
         assert gate != other_gate
@@ -67,13 +65,28 @@ class TestBlochSphereRotation:
             (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)), X(0)),
             (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 0), angle=pi / 2, phase=pi / 4)), X90(0)),
             (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(-1, 0, 0), angle=-pi / 2, phase=-pi / 4)), X90(0)),
-            (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 0), angle=-pi / 2, phase=-pi / 4)), MinusX90(0)),
-            (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(-1, 0, 0), angle=pi / 2, phase=pi / 4)), MinusX90(0)),
-            (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 4, phase=-pi / 8)), TDagger(0)),
+            (
+                SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 0), angle=-pi / 2, phase=-pi / 4)),
+                MinusX90(0),
+            ),
+            (
+                SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(-1, 0, 0), angle=pi / 2, phase=pi / 4)),
+                MinusX90(0),
+            ),
+            (
+                SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 4, phase=-pi / 8)),
+                TDagger(0),
+            ),
             (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 0), angle=pi / 4, phase=0)), Rx(0, pi / 4)),
             (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(0, 1, 0), angle=pi / 3, phase=0)), Ry(0, pi / 3)),
-            (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(0, 0, 1), angle=3 * pi / 4, phase=0)), Rz(0, 3 * pi / 4)),
-            (SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 1), angle=pi, phase=0)), Rn(0, 1, 0, 1, pi, 0)),
+            (
+                SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(0, 0, 1), angle=3 * pi / 4, phase=0)),
+                Rz(0, 3 * pi / 4),
+            ),
+            (
+                SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 1), angle=pi, phase=0)),
+                Rn(0, 1, 0, 1, pi, 0),
+            ),
         ],
         ids=["H", "X", "X90-1", "X90-2", "mX90-1", "mX90-2", "Tdag", "Rx", "Ry", "Rz", "Rn"],
     )

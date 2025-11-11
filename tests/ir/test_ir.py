@@ -11,8 +11,8 @@ from opensquirrel.ir.semantics import (
     ControlledGate,
     MatrixGate,
 )
-
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+
 
 class TestIR:
     def test_cnot_equality(self) -> None:
@@ -41,7 +41,9 @@ class TestIR:
             [0, 0, 0, 1],
         ]
         large_identity_matrix_gate = MatrixGate(matrix, operands=[0, 2])
-        small_identity_control_gate = ControlledGate(4, SingleQubitGate.from_bsr(qubit=2, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=0)))
+        small_identity_control_gate = ControlledGate(
+            4, SingleQubitGate.from_bsr(qubit=2, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=0))
+        )
 
         assert large_identity_matrix_gate == small_identity_control_gate
 

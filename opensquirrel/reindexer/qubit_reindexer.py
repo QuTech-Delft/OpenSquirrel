@@ -14,10 +14,10 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
     ControlledGate,
     MatrixGate,
 )
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 if TYPE_CHECKING:
@@ -58,13 +58,9 @@ class _QubitReindexer(IRVisitor):
     def visit_wait(self, wait: Wait) -> Wait:
         return Wait(qubit=self.qubit_indices.index(wait.qubit.index), time=wait.time)
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> BlochSphereRotation:
-        return BlochSphereRotation(
-            qubit=self.qubit_indices.index(gate.qubit.index),
-            axis=gate.axis,
-            angle=gate.angle,
-            phase=gate.phase,
-        )
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> SingleQubitGate:
+        gate.qubit.accept(self)
+        return SingleQubitGate.from_bsr(qubit=self.qubit_indices.index(gate.qubit.index), bsr=gate.bsr)
 
     def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:
         reindexed_operands = [self.qubit_indices.index(op.index) for op in gate.operands]

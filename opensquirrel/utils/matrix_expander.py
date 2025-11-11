@@ -25,6 +25,7 @@ if TYPE_CHECKING:
         ControlledGate,
         MatrixGate,
     )
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
@@ -112,15 +113,16 @@ class MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> NDArray[np.complex128]:
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
         if gate.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
 
+        bsr_matrix = gate.bsr.accept(self)
         result = np.kron(
             np.kron(
                 np.eye(1 << (self.qubit_register_size - gate.qubit.index - 1)),
-                can1(gate.axis, gate.angle, gate.phase),
+                bsr_matrix,
             ),
             np.eye(1 << gate.qubit.index),
         )
@@ -128,6 +130,9 @@ class MatrixExpander(IRVisitor):
             msg = "result has incorrect shape"
             ValueError(msg)
         return np.asarray(result, dtype=np.complex128)
+
+    def visit_bloch_sphere_rotation(self, bsr: BlochSphereRotation) -> NDArray[np.complex128]:
+        return can1(bsr.axis, bsr.angle, bsr.phase)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
         if gate.control_qubit.index >= self.qubit_register_size:

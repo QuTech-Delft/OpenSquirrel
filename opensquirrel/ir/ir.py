@@ -31,8 +31,8 @@ if TYPE_CHECKING:
         ControlledGate,
         MatrixGate,
     )
-    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.statement import Instruction, Statement
 
 

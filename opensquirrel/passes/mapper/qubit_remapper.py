@@ -8,10 +8,10 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
     ControlledGate,
     MatrixGate,
 )
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.mapper.mapping import Mapping
 
 
@@ -50,9 +50,9 @@ class _QubitRemapper(IRVisitor):
         wait.qubit.accept(self)
         return wait
 
-    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> BlochSphereRotation:
-        bloch_sphere_rotation.qubit.accept(self)
-        return bloch_sphere_rotation
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> SingleQubitGate:
+        gate.qubit.accept(self)
+        return gate
 
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> MatrixGate:
         for operand in matrix_gate.operands:

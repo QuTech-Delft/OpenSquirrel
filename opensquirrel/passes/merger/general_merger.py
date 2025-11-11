@@ -9,9 +9,9 @@ import numpy as np
 from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.ir import IR, Barrier, Instruction, Statement
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.default_gates.single_qubit_gates import try_match_replace_with_default_gate
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.utils import acos, flatten_list
 
 
@@ -31,7 +31,7 @@ def compose_bloch_sphere_rotations(gate_a: SingleQubitGate, gate_b: SingleQubitG
     Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
 
-    if gate_a.bsr.qubit != gate_b.bsr.qubit:
+    if gate_a.qubit != gate_b.qubit:
         msg = "cannot merge two Bloch sphere rotations on different qubits"
         raise ValueError(msg)
 
@@ -41,7 +41,7 @@ def compose_bloch_sphere_rotations(gate_a: SingleQubitGate, gate_b: SingleQubitG
     combined_angle = 2 * acos(acos_argument)
 
     if abs(sin(combined_angle / 2)) < ATOL:
-        return I(gate_a.bsr.qubit)
+        return I(gate_a.qubit)
 
     order_of_magnitude = abs(floor(log10(ATOL)))
     combined_axis = np.round(
@@ -59,7 +59,6 @@ def compose_bloch_sphere_rotations(gate_a: SingleQubitGate, gate_b: SingleQubitG
 
     combined_phase = np.round(gate_a.bsr.phase + gate_b.bsr.phase, order_of_magnitude)
     bsr = BlochSphereRotation(
-        qubit=gate_a.bsr.qubit,
         axis=combined_axis,
         angle=combined_angle,
         phase=combined_phase,

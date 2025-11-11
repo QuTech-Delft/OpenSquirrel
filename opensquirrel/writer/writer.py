@@ -24,7 +24,6 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
@@ -78,15 +77,12 @@ class _WriterImpl(IRVisitor):
         backend_code = asm_declaration.backend_code.accept(self)
         self.output += f"asm({backend_name}) '''{backend_code}'''\n"
 
-    # def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
-    #     if isinstance(gate, SingleQubitGate) and type(gate) is not SingleQubitGate:
-    #         return
-    #     self.output += f"{gate}\n"
-
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
-            return
-        self.output += f"{gate}\n"
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
+        # if type(gate.bsr) is BlochSphereRotation:
+        #     self.output += f"{}"
+        bsr_parameters = gate.bsr.accept(self)
+        qubit_operand = gate.qubit.accept(self)
+        self.output += f"{gate.name}{bsr_parameters} {qubit_operand}\n"
 
     def visit_matrix_gate(self, gate: MatrixGate) -> None:
         if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
@@ -98,23 +94,20 @@ class _WriterImpl(IRVisitor):
             return
         self.output += f"{gate}\n"
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name} {qubit_operand}\n"
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> str:
+        return ""
 
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> str:
         nx = gate.nx.accept(self)
         ny = gate.ny.accept(self)
         nz = gate.nz.accept(self)
         theta_argument = gate.theta.accept(self)
         phi_argument = gate.phi.accept(self)
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name}({nx}, {ny}, {nz}, {theta_argument}, {phi_argument}) {qubit_operand}\n"
+        return f"({nx}, {ny}, {nz}, {theta_argument}, {phi_argument})"
 
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> str:
         theta_argument = gate.theta.accept(self)
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name}({theta_argument}) {qubit_operand}\n"
+        return f"({theta_argument})"
 
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)

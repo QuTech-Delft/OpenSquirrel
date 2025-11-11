@@ -4,6 +4,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, Rn
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
 from tests.ir.ir_equality_test_base import modify_circuit_and_check
@@ -80,7 +81,7 @@ def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(BlochSphereRotation(0, axis=(1, 0, 1), angle=math.pi, phase=0.0))
+    builder2.ir.add_gate(SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 1), angle=math.pi, phase=0.0)))
     builder2.Rz(1, -1.0)
     builder2.CNOT(0, 1)
     builder2.Ry(0, 3.234)
