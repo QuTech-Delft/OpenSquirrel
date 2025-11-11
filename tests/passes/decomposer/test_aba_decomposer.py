@@ -4,6 +4,7 @@ from collections.abc import Callable
 import numpy as np
 import pytest
 
+from opensquirrel import U
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.passes.decomposer import aba_decomposer as aba
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement
@@ -27,6 +28,10 @@ def test_specific_bloch_rotation(aba_decomposer: Callable[..., Decomposer]) -> N
     arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0)
     decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
     check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
+
+    u_gate = U(0, 1, 2, 3)
+    decomposed_u_gate = decomposer.decompose(u_gate)
+    check_gate_replacement(u_gate, decomposed_u_gate)
 
 
 @pytest.mark.parametrize("aba_decomposer", ABA_DECOMPOSER_LIST)

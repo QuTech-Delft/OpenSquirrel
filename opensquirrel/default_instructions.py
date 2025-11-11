@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 from opensquirrel.ir import (
@@ -17,11 +16,13 @@ from opensquirrel.ir.default_gates import (
     SWAP,
     X90,
     Y90,
+    Z90,
     CRk,
     H,
     I,
     MinusX90,
     MinusY90,
+    MinusZ90,
     Rn,
     Rx,
     Ry,
@@ -30,6 +31,7 @@ from opensquirrel.ir.default_gates import (
     SDagger,
     T,
     TDagger,
+    U,
     X,
     Y,
     Z,
@@ -42,12 +44,12 @@ if TYPE_CHECKING:
         BsrAngleParam,
         BsrFullParams,
         BsrNoParams,
+        BsrUnitaryParams,
         ControlledGate,
         MatrixGate,
     )
 
-default_bsr_without_params_set: Mapping[str, type[BsrNoParams]]
-default_bsr_without_params_set = {
+default_bsr_without_params_set: dict[str, type[BsrNoParams]] = {
     "H": H,
     "I": I,
     "S": S,
@@ -59,74 +61,66 @@ default_bsr_without_params_set = {
     "Y": Y,
     "Y90": Y90,
     "Z": Z,
+    "Z90": Z90,
     "mX90": MinusX90,
     "mY90": MinusY90,
+    "mZ90": MinusZ90,
 }
-default_bsr_full_params_set: Mapping[str, type[BsrFullParams]]
-default_bsr_full_params_set = {
+default_bsr_full_params_set: dict[str, type[BsrFullParams]] = {
     "Rn": Rn,
 }
-default_bsr_with_angle_param_set: Mapping[str, type[BsrAngleParam]]
-default_bsr_with_angle_param_set = {
+default_bsr_with_angle_param_set: dict[str, type[BsrAngleParam]] = {
     "Rx": Rx,
     "Ry": Ry,
     "Rz": Rz,
 }
-default_bloch_sphere_rotation_set: Mapping[str, type[BlochSphereRotation]]
-default_bloch_sphere_rotation_set = {
+default_bsr_unitary_param_set: dict[str, type[BsrUnitaryParams]] = {
+    "U": U,
+}
+default_bloch_sphere_rotation_set: dict[str, type[BlochSphereRotation]] = {
     **default_bsr_full_params_set,
     **default_bsr_without_params_set,
     **default_bsr_with_angle_param_set,
+    **default_bsr_unitary_param_set,
 }
-default_controlled_gate_set: Mapping[str, type[ControlledGate]]
-default_controlled_gate_set = {
+default_controlled_gate_set: dict[str, type[ControlledGate]] = {
     "CNOT": CNOT,
     "CR": CR,
     "CRk": CRk,
     "CZ": CZ,
 }
-default_matrix_gate_set: Mapping[str, type[MatrixGate]]
-default_matrix_gate_set = {
+default_matrix_gate_set: dict[str, type[MatrixGate]] = {
     "SWAP": SWAP,
 }
 default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
 }
-
-default_gate_set: Mapping[str, type[Gate]]
-default_gate_set = {
+default_gate_set: dict[str, type[Gate]] = {
     **default_bloch_sphere_rotation_set,
     **default_controlled_gate_set,
     **default_matrix_gate_set,
     **default_gate_alias_set,
 }
-
-default_unitary_set: Mapping[str, type[Unitary]]
-default_unitary_set = {**default_gate_set}
-
-default_non_unitary_set: Mapping[str, type[NonUnitary]]
-default_non_unitary_set = {
+default_unitary_set: dict[str, type[Unitary]] = {**default_gate_set}
+default_non_unitary_set: dict[str, type[NonUnitary]] = {
     "init": Init,
     "measure": Measure,
     "reset": Reset,
 }
-
-default_control_instruction_set: Mapping[str, type[ControlInstruction]]
-default_control_instruction_set = {
+default_control_instruction_set: dict[str, type[ControlInstruction]] = {
     "barrier": Barrier,
     "wait": Wait,
 }
-
-default_instruction_set: Mapping[str, type[Instruction]]
-default_instruction_set = {
+default_instruction_set: dict[str, type[Instruction]] = {
     **default_unitary_set,
     **default_non_unitary_set,
     **default_control_instruction_set,
 }
-
-default_bsr_set_without_rn: Mapping[str, type[BsrNoParams] | type[BsrAngleParam]]
-default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
+default_bsr_set_without_rn: dict[str, type[BsrNoParams] | type[BsrAngleParam]] = {
+    **default_bsr_without_params_set,
+    **default_bsr_with_angle_param_set,
+}
 
 
 def is_anonymous_gate(name: str) -> bool:

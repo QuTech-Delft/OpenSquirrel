@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from opensquirrel.ir import Gate, IRVisitor
-from opensquirrel.utils import get_matrix
+from opensquirrel.utils.matrix_expander import get_matrix
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit

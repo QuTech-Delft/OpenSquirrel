@@ -6,10 +6,10 @@ from typing import TYPE_CHECKING
 from opensquirrel import CZ, Rx, Ry, Rz, Z
 from opensquirrel.common import ATOL
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
+from opensquirrel.ir.semantics.bsr import compose_bloch_sphere_rotations
 from opensquirrel.passes.decomposer import XYXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
-from opensquirrel.passes.merger import general_merger
-from opensquirrel.utils import filter_out_identities
+from opensquirrel.utils.identity_filter import filter_out_identities
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -43,7 +43,7 @@ class CZDecomposer(Decomposer):
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
         # Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I
-        controlled_rotation_times_z = general_merger.compose_bloch_sphere_rotations(g.target_gate, Z(target_qubit))
+        controlled_rotation_times_z = compose_bloch_sphere_rotations(g.target_gate, Z(target_qubit))
         theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer().get_decomposition_angles(
             controlled_rotation_times_z.axis,
             controlled_rotation_times_z.angle,
