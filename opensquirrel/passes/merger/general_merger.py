@@ -1,70 +1,18 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import cos, floor, log10, sin
 from typing import Any, cast
 
-import numpy as np
-
-from opensquirrel import I
-from opensquirrel.common import ATOL
 from opensquirrel.ir import IR, Barrier, Instruction, Statement
-from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.utils import acos, flatten_list
+from opensquirrel.utils.list import flatten_list
 
 
-def compose_bloch_sphere_rotations(bsr_a: BlochSphereRotation, bsr_b: BlochSphereRotation) -> BlochSphereRotation:
-    """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
-    The first rotation (A) is applied and then the second (B):
+class Merger(ABC):
+    def __init__(self, **kwargs: Any) -> None: ...
 
-    As separate gates:
-        A q
-        B q
-
-    As linear operations:
-        (B * A) q
-
-    If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.
-
-    Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
-    """
-
-    if bsr_a.qubit != bsr_b.qubit:
-        msg = "cannot merge two Bloch sphere rotations on different qubits"
-        raise ValueError(msg)
-
-    acos_argument = cos(bsr_a.angle / 2) * cos(bsr_b.angle / 2) - sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.dot(
-        bsr_a.axis, bsr_b.axis
-    )
-    combined_angle = 2 * acos(acos_argument)
-
-    if abs(sin(combined_angle / 2)) < ATOL:
-        return I(bsr_a.qubit)
-
-    order_of_magnitude = abs(floor(log10(ATOL)))
-    combined_axis = np.round(
-        (
-            1
-            / sin(combined_angle / 2)
-            * (
-                sin(bsr_a.angle / 2) * cos(bsr_b.angle / 2) * bsr_a.axis.value
-                + cos(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * bsr_b.axis.value
-                + sin(bsr_a.angle / 2) * sin(bsr_b.angle / 2) * np.cross(bsr_b.axis, bsr_a.axis)
-            )
-        ),
-        order_of_magnitude,
-    )
-
-    combined_phase = np.round(bsr_a.phase + bsr_b.phase, order_of_magnitude)
-
-    return BlochSphereRotation.try_match_replace_with_default(
-        BlochSphereRotation(
-            qubit=bsr_a.qubit,
-            axis=combined_axis,
-            angle=combined_angle,
-            phase=combined_phase,
-        )
-    )
+    @abstractmethod
+    def merge(self, ir: IR, qubit_register_size: int) -> None:
+        raise NotImplementedError
 
 
 def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:
@@ -128,11 +76,3 @@ def rearrange_barriers(ir: IR) -> None:
                     del statements_groups[i + 1]
                     break
     ir.statements = flatten_list(statements_groups)
-
-
-class Merger(ABC):
-    def __init__(self, **kwargs: Any) -> None: ...
-
-    @abstractmethod
-    def merge(self, ir: IR, qubit_register_size: int) -> None:
-        raise NotImplementedError

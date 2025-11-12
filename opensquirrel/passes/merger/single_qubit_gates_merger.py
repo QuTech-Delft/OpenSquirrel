@@ -3,7 +3,8 @@ from typing import cast
 from opensquirrel import I
 from opensquirrel.ir import IR, AsmDeclaration, Barrier, Instruction, Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations
+from opensquirrel.ir.semantics.bsr import compose_bloch_sphere_rotations
+from opensquirrel.passes.merger.general_merger import Merger
 
 
 class SingleQubitGatesMerger(Merger):
