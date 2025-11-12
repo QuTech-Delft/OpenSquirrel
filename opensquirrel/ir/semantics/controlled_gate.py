@@ -18,7 +18,8 @@ class ControlledGate(Gate):
             raise ValueError(msg)
 
     def __repr__(self) -> str:
-        return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate.bsr})"
+        return (f"{self.name}(control_qubit={self.control_qubit}, target_qubit={self.target_qubit}, "
+                f"target_gate={self.target_gate.bsr})")
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_parent = super().accept(visitor)

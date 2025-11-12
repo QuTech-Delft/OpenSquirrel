@@ -122,6 +122,9 @@ class _Scheduler(IRVisitor):
     def operation_record(self) -> OperationRecord:
         return self._operation_record
 
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
+        self.visit_gate(gate)
+
     def visit_gate(self, gate: Gate) -> None:
         qubit_indices = [qubit.index for qubit in gate.get_qubit_operands()]
         self._operation_record.set_schedulable_timing_constraints(qubit_indices)
