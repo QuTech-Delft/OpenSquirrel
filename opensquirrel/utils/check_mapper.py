@@ -7,8 +7,8 @@ from copy import deepcopy
 from opensquirrel import I
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import IR, Measure
-from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 

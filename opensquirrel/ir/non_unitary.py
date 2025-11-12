@@ -10,12 +10,9 @@ from opensquirrel.ir.statement import Instruction
 
 
 class NonUnitary(Instruction, ABC):
-    def __init__(self, qubit: QubitLike) -> None:
+    def __init__(self, qubit: QubitLike, name: str) -> None:
+        Instruction.__init__(self, name)
         self.qubit = Qubit(qubit)
-
-    @property
-    def name(self) -> str:
-        return self.__class__.__name__.lower()
 
     @property
     @abstractmethod
@@ -25,13 +22,10 @@ class NonUnitary(Instruction, ABC):
     def get_qubit_operands(self) -> list[Qubit]:
         return [self.qubit]
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_non_unitary(self)
-
 
 class Measure(NonUnitary):
     def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
-        NonUnitary.__init__(self, qubit=qubit)
+        NonUnitary.__init__(self, qubit=qubit, name="measure")
         self.qubit = Qubit(qubit)
         self.bit = Bit(bit)
         self.axis = Axis(axis)
@@ -49,8 +43,8 @@ class Measure(NonUnitary):
         return self.qubit, self.bit, self.axis
 
     def accept(self, visitor: IRVisitor) -> Any:
-        non_unitary_visit = super().accept(visitor)
-        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_measure(self)
+        visitor.visit_non_unitary(self)
+        return visitor.visit_measure(self)
 
     def get_bit_operands(self) -> list[Bit]:
         return [self.bit]
@@ -58,7 +52,7 @@ class Measure(NonUnitary):
 
 class Init(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit)
+        NonUnitary.__init__(self, qubit=qubit, name="init")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
@@ -72,13 +66,13 @@ class Init(NonUnitary):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        non_unitary_visit = super().accept(visitor)
-        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_init(self)
+        visitor.visit_non_unitary(self)
+        return visitor.visit_init(self)
 
 
 class Reset(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
-        NonUnitary.__init__(self, qubit=qubit)
+        NonUnitary.__init__(self, qubit=qubit, name="reset")
         self.qubit = Qubit(qubit)
 
     def __repr__(self) -> str:
@@ -92,5 +86,5 @@ class Reset(NonUnitary):
         return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        non_unitary_visit = super().accept(visitor)
-        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_reset(self)
+        visitor.visit_non_unitary(self)
+        return visitor.visit_reset(self)

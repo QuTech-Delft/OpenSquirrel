@@ -7,12 +7,12 @@ import numpy as np
 from opensquirrel.common import normalize_angle
 from opensquirrel.ir import Gate
 from opensquirrel.ir.default_gates import X, Z
-from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
 from opensquirrel.ir.expression import Expression, Float, Int, Qubit, QubitLike
 from opensquirrel.ir.ir import IRVisitor
 from opensquirrel.ir.semantics.bsr import BsrAngleParam
 from opensquirrel.ir.semantics.controlled_gate import ControlledGate
 from opensquirrel.ir.semantics.matrix_gate import MatrixGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
 # The R gate is only defined for the purpose of defining the CR and CRk gates and does not appear as a separate gate in

@@ -5,7 +5,7 @@ from math import atan2, cos, pi, sin, sqrt
 from opensquirrel import X90, I, Rz
 from opensquirrel.common import ATOL, normalize_angle
 from opensquirrel.ir import Axis, Gate
-from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import ZXZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 

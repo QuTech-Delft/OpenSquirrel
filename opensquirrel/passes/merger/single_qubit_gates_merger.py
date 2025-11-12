@@ -2,7 +2,7 @@ from typing import cast
 
 from opensquirrel import I
 from opensquirrel.ir import IR, AsmDeclaration, Barrier, Instruction, Qubit
-from opensquirrel.ir.default_gates.single_qubit_gates import SingleQubitGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.merger.general_merger import Merger, compose_bloch_sphere_rotations
 
 
