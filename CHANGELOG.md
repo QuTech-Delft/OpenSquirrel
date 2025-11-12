@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `QGymMapper` mapper pass
 - Processing of control instructions (Barrier, Wait) added to quantify-scheduler exporter
 
 ### Changed
