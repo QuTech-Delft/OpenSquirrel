@@ -29,7 +29,8 @@ class SingleQubitGate(Gate):
         return try_match_replace_with_default_gate(gate)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_single_qubit_gate(self)
+        visit_gate = super().accept(visitor)
+        return visit_gate if visit_gate is not None else visitor.visit_single_qubit_gate(self)
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
