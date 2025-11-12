@@ -40,7 +40,7 @@ class QGymMapper(Mapper):
         """Load a trained Stable-Baselines3 agent from a file."""
         sb3 = importlib.import_module("stable_baselines3")
         agent_cls = getattr(sb3, agent_class)
-        return agent_cls.load(agent_path)  # type: ignore[no-any-return]
+        return agent_cls.load(agent_path)  
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
         """
