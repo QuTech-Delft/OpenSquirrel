@@ -23,9 +23,8 @@ class TwoQubitGate(Gate):
 
 class R(SingleQubitGate):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
-        super().__init__(qubit=qubit, name="R")
         phase = float(theta) / 2
-        self.bsr = BsrAngleParam(axis=(0, 0, 1), angle=theta, phase=phase)
+        super().__init__(qubit=qubit, gate_semantic=BsrAngleParam(axis=(0, 0, 1), angle=theta, phase=phase), name="R")
 
 
 class SWAP(MatrixGate):

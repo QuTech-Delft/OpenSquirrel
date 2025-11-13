@@ -41,7 +41,7 @@ def check_mapper(mapper: Mapper) -> None:
     _check_scenario(circuit, mapper)
 
     ir = IR()
-    ir.add_gate(SingleQubitGate.from_bsr(qubit=42, bsr=BlochSphereRotation((1, 0, 0), 1, 2)))
+    ir.add_gate(SingleQubitGate(qubit=42, gate_semantic=BlochSphereRotation((1, 0, 0), 1, 2)))
     ir.add_gate(ControlledGate(42, I(100)))
     ir.add_non_unitary(Measure(42, 42, (0, 0, 1)))
     Circuit(register_manager, ir)

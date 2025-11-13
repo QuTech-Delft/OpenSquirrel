@@ -81,7 +81,7 @@ def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 0, 1), angle=math.pi, phase=0.0)))
+    builder2.ir.add_gate(SingleQubitGate(0, BlochSphereRotation(axis=(1, 0, 1), angle=math.pi, phase=0.0)))
     builder2.Rz(1, -1.0)
     builder2.CNOT(0, 1)
     builder2.Ry(0, 3.234)

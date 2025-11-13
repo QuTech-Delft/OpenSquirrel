@@ -25,7 +25,7 @@ class TestCheckGateReplacement:
             # Arbitrary global phase change is not considered an issue.
             (
                 CNOT(0, 1),
-                [CNOT(0, 1), SingleQubitGate.from_bsr(0, BlochSphereRotation(angle=0, axis=(1, 0, 0), phase=621.6546))],
+                [CNOT(0, 1), SingleQubitGate(0, BlochSphereRotation(angle=0, axis=(1, 0, 0), phase=621.6546))],
             ),
         ],
     )

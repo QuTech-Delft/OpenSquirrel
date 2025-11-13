@@ -227,9 +227,9 @@ measure_z q[1]
 @pytest.mark.parametrize(
     "gate",
     [
-        SingleQubitGate.from_bsr(0, bsr=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
+        SingleQubitGate(0, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
         ControlledGate(
-            0, SingleQubitGate.from_bsr(qubit=1, bsr=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
+            0, SingleQubitGate(qubit=1, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
         ),
         MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]),
     ],

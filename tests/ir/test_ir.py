@@ -28,7 +28,7 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            SingleQubitGate.from_bsr(qubit=100, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
+            SingleQubitGate(qubit=100, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert cnot_controlled_gate == cnot_matrix_gate
@@ -42,7 +42,7 @@ class TestIR:
         ]
         large_identity_matrix_gate = MatrixGate(matrix, operands=[0, 2])
         small_identity_control_gate = ControlledGate(
-            4, SingleQubitGate.from_bsr(qubit=2, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=0))
+            4, SingleQubitGate(qubit=2, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=0))
         )
 
         assert large_identity_matrix_gate == small_identity_control_gate
@@ -58,7 +58,7 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
+            SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert inverted_matrix_gate == inverted_cnot_gate
@@ -74,7 +74,7 @@ class TestIR:
 
         inverted_cnot_gate = ControlledGate(
             1,
-            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
+            SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert inverted_matrix_with_phase == inverted_cnot_gate
@@ -90,7 +90,7 @@ class TestIR:
 
         cnot_controlled_gate = ControlledGate(
             4,
-            SingleQubitGate.from_bsr(qubit=100, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
+            SingleQubitGate(qubit=100, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert cnot_controlled_gate != swap_matrix_gate

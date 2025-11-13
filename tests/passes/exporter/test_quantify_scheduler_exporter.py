@@ -404,7 +404,7 @@ def test_export(mock_qs: MagicMock) -> None:
 
 @pytest.mark.parametrize(
     "gate",
-    [SingleQubitGate.from_bsr(0, BlochSphereRotation(axis=(1, 2, 3), angle=0.9876, phase=2.34))],
+    [SingleQubitGate(0, BlochSphereRotation(axis=(1, 2, 3), angle=0.9876, phase=2.34))],
     ids=["BSR"],
 )
 def test_gates_not_supported(mock_qs: MagicMock, gate: Gate) -> None:

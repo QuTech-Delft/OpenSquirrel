@@ -36,7 +36,7 @@ class BlochSphereRotation(GateSemantic, IRNode):
 
     def __repr__(self) -> str:
         return (
-            f"{self.__class__.__name__}(axis={repr_round(self.axis)}, angle={repr_round(self.angle)}, "
+            f"BlochSphereRotation(axis={repr_round(self.axis)}, angle={repr_round(self.angle)}, "
             f"phase={repr_round(self.phase)})"
         )
 

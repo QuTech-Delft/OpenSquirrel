@@ -39,7 +39,7 @@ def test_identity(decomposer: ZXZDecomposer) -> None:
         (Rz(0, 0.123), [Rz(0, 0.123)]),
         (H(0), [Rz(0, pi / 2), Rx(0, pi / 2), Rz(0, pi / 2)]),
         (
-            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(angle=5.21, axis=(1, 2, 3), phase=0.324)),
+            SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(angle=5.21, axis=(1, 2, 3), phase=0.324)),
             [Rz(0, -1.5521517485841891), Rx(0, -0.6209410696845807), Rz(0, 0.662145687003993)],
         ),
     ],
@@ -55,8 +55,8 @@ def test_zxz_decomposer(decomposer: ZXZDecomposer, gate: SingleQubitGate, expect
     "gate",
     [
         Ry(0, -pi / 2),
-        SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[0.0, 1.0, 0.0], angle=-pi / 2, phase=0.0)),
-        SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=[0.0, -1.0, 0.0], angle=pi / 2, phase=0.0)),
+        SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=[0.0, 1.0, 0.0], angle=-pi / 2, phase=0.0)),
+        SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=[0.0, -1.0, 0.0], angle=pi / 2, phase=0.0)),
     ],
     ids=["Ry(-pi/2)", "BSR_1 of Ry(-pi/2)", "BSR_2 of Ry(-pi/2)"],
 )

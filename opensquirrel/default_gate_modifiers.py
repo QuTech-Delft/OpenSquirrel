@@ -3,10 +3,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, SupportsFloat
 
-from opensquirrel.ir.default_gates.single_qubit_gates import try_match_replace_with_default_gate
 from opensquirrel.ir.semantics import ControlledGate
 from opensquirrel.ir.semantics.bsr import BlochSphereRotation
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
 from opensquirrel.utils.context import temporary_class_attr
 
 if TYPE_CHECKING:
@@ -26,7 +25,7 @@ class InverseGateModifier(GateModifier):
             gate: SingleQubitGate = self.gate_generator(*args)
             modified_angle = gate.bsr.angle * -1
             modified_phase = gate.bsr.phase * -1
-        gate = SingleQubitGate.from_bsr(
+        gate = SingleQubitGate(
             gate.qubit, BlochSphereRotation(axis=gate.bsr.axis, angle=modified_angle, phase=modified_phase)
         )
         return try_match_replace_with_default_gate(gate)
@@ -42,7 +41,7 @@ class PowerGateModifier(GateModifier):
             gate: SingleQubitGate = self.gate_generator(*args)
             modified_angle = gate.bsr.angle * float(self.exponent)
             modified_phase = gate.bsr.phase * float(self.exponent)
-        gate = SingleQubitGate.from_bsr(
+        gate = SingleQubitGate(
             gate.qubit, BlochSphereRotation(axis=gate.bsr.axis, angle=modified_angle, phase=modified_phase)
         )
         return try_match_replace_with_default_gate(gate)

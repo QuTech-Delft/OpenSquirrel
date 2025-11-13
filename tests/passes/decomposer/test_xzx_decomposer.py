@@ -38,7 +38,7 @@ def test_identity(decomposer: XZXDecomposer) -> None:
         (Rx(0, 0.123), [Rx(0, 0.123)]),
         (H(0), [Rx(0, pi / 2), Rz(0, pi / 2), Rx(0, pi / 2)]),
         (
-            SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(angle=5.21, axis=(1, 2, 3), phase=0.324)),
+            SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(angle=5.21, axis=(1, 2, 3), phase=0.324)),
             [Rx(0, 0.43035280630630446), Rz(0, -1.030183660156084), Rx(0, -0.7456524007888308)],
         ),
     ],

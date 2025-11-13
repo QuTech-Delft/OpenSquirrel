@@ -9,9 +9,8 @@ import numpy as np
 from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.ir import IR, Barrier, Instruction, Statement
-from opensquirrel.ir.default_gates.single_qubit_gates import try_match_replace_with_default_gate
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
 from opensquirrel.utils import acos, flatten_list
 
 
@@ -63,7 +62,7 @@ def compose_bloch_sphere_rotations(gate_a: SingleQubitGate, gate_b: SingleQubitG
         angle=combined_angle,
         phase=combined_phase,
     )
-    gate = SingleQubitGate.from_bsr(gate_a.qubit, bsr)
+    gate = SingleQubitGate(gate_a.qubit, bsr)
     return try_match_replace_with_default_gate(gate)
 
 

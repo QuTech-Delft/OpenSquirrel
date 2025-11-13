@@ -60,7 +60,7 @@ class _QubitReindexer(IRVisitor):
 
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> SingleQubitGate:
         gate.qubit.accept(self)
-        return SingleQubitGate.from_bsr(qubit=self.qubit_indices.index(gate.qubit.index), bsr=gate.bsr)
+        return SingleQubitGate(qubit=self.qubit_indices.index(gate.qubit.index), gate_semantic=gate.bsr)
 
     def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:
         reindexed_operands = [self.qubit_indices.index(op.index) for op in gate.operands]

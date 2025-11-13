@@ -9,39 +9,39 @@ from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotat
 
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
-    a = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(1, 2, 3), angle=0.4, phase=0.2))
-    b = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(1, 2, 3), angle=-0.3, phase=-0.15))
+    a = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=0.4, phase=0.2))
+    b = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=-0.3, phase=-0.15))
     composed = compose_bloch_sphere_rotations(a, b)
-    assert composed == SingleQubitGate.from_bsr(
-        qubit=123, bsr=BlochSphereRotation(axis=(1, 2, 3), angle=0.1, phase=0.05)
+    assert composed == SingleQubitGate(
+        qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=0.1, phase=0.05)
     )
 
 
 def test_compose_bloch_sphere_rotations_different_axis() -> None:
     # Visualizing this in 3D is difficult...
-    a = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi / 2, phase=pi / 4))
-    b = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 2, phase=pi / 4))
-    c = SingleQubitGate.from_bsr(qubit=123, bsr=BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4))
+    a = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi / 2, phase=pi / 4))
+    b = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 2, phase=pi / 4))
+    c = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4))
     composed = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(c, b), a)
-    assert composed == SingleQubitGate.from_bsr(
-        qubit=123, bsr=BlochSphereRotation(axis=(1, 1, 0), angle=pi, phase=3 * pi / 4)
+    assert composed == SingleQubitGate(
+        qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 1, 0), angle=pi, phase=3 * pi / 4)
     )
 
 
 @pytest.mark.parametrize(
     ("bsr_a", "bsr_b", "expected_result"),
     [
-        (Y(0), X(0), SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi))),
-        (X(0), Y(0), SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(0, 0, -1), angle=pi, phase=pi))),
-        (Z(0), Y(0), SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi))),
-        (Y(0), Z(0), SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(-1, 0, 0), angle=pi, phase=pi))),
-        (Z(0), X(0), SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(0, -1, 0), angle=pi, phase=pi))),
-        (X(0), Z(0), SingleQubitGate.from_bsr(qubit=0, bsr=BlochSphereRotation(axis=(0, 1, 0), angle=pi, phase=pi))),
+        (Y(0), X(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi))),
+        (X(0), Y(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 0, -1), angle=pi, phase=pi))),
+        (Z(0), Y(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi))),
+        (Y(0), Z(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(-1, 0, 0), angle=pi, phase=pi))),
+        (Z(0), X(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, -1, 0), angle=pi, phase=pi))),
+        (X(0), Z(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 1, 0), angle=pi, phase=pi))),
         (
             Rx(0, theta=pi),
             Ry(0, theta=-pi / 2),
-            SingleQubitGate.from_bsr(
-                qubit=0, bsr=BlochSphereRotation(axis=(0.70711, 0.0, 0.70711), angle=pi, phase=0.0)
+            SingleQubitGate(
+                qubit=0, gate_semantic=BlochSphereRotation(axis=(0.70711, 0.0, 0.70711), angle=pi, phase=0.0)
             ),
         ),
         (I(0), Rx(0, theta=pi), Rx(0, theta=pi)),
