@@ -208,6 +208,7 @@ u q[0], [0.87758, 0.47463-0.06766 * im; -0.19951+0.43594 * im, 0.24894-0.84154 *
 """
     )
 
+
 def test_all_instructions(exporter: CqasmV1Exporter) -> None:
     builder = CircuitBuilder(2, 2)
     builder.init(0).reset(1).barrier(0).wait(1, 3)

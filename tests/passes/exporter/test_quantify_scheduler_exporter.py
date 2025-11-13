@@ -70,7 +70,7 @@ def test_empty_circuit_export(exporter: QuantifySchedulerExporter, qs_is_install
         assert len(exported_schedule.schedulables) == 0
 
 
-def test_supported_gate_set(qs_is_installed: bool) -> None:
+def test_supported_gate_set(qs_is_installed: bool, exporter: QuantifySchedulerExporter) -> None:
     if qs_is_installed:
         builder = CircuitBuilder(2, 2)
         builder.I(0).H(0).X(0).X90(0).mX90(0).Y(0).Y90(0).mY90(0).Z(0).Z90(0).mZ90(0).S(0).Sdag(0).T(0).Tdag(0)
@@ -95,7 +95,7 @@ def test_supported_gate_set(qs_is_installed: bool) -> None:
             "Measure q[0]",
             "Reset q[0]",
         ]
-        exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, _ = circuit.export(exporter=exporter)
         for operation_data in exported_schedule.operations.values():
             assert operation_data.name in expected_operations
 
