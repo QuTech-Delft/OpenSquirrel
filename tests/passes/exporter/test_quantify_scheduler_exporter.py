@@ -395,17 +395,36 @@ def test_control_instruction_stress_test(
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
 
 
-def test_timing(qs_is_installed: bool) -> None:
+@pytest.mark.parametrize(
+    ("circuit", "expected_ref_schedulable_indices", "expected_waiting_cycles"),
+    [
+        (
+            Circuit.from_string("""version 3; qubit[2] q; bit b; init q; barrier q; b = measure q[0];
+            wait(2) q[1]; X q[1]; Y q[1]; barrier q; X q[0]; CZ q[0], q[1]"""),
+            [2, 2, 5, 4, 5, 6, None],
+            [0, 0, 0, 0, 0, 0, 0],
+        ),
+        (
+            Circuit.from_string("""version 3; qubit[2] q; bit b; init q; barrier q; b = measure q[0];
+            wait(4) q[1]; X q[1]; Y q[1]; barrier q; X q[0]; CZ q[0], q[1]"""),
+            [3, 3, 5, 4, 5, 6, None],
+            [4, 4, 0, 0, 0, 0, 0],
+        ),
+    ],
+    ids=["on_measure", "on_waited_instruction"],
+)
+def test_timing(
+    qs_is_installed: bool,
+    circuit: Circuit,
+    expected_ref_schedulable_indices: list[int | None],
+    expected_waiting_cycles: list[int],
+) -> None:
     if qs_is_installed:
         operation_cycles = {
             "CZ": 2,
             "CNOT": 2,
             "Measure": 5,
         }
-        circuit = Circuit.from_string("""version 3; qubit[2] q; bit b; init q; barrier q; b = measure q[0];
-            wait(2) q[1]; X q[1]; Y q[1]; barrier q; X q[0]; CZ q[0], q[1]""")
-        expected_ref_schedulable_indices = [2, 2, 5, 4, 5, 6, None]
-        expected_waiting_cycles = [0, 0, 0, 0, 0, 0, 0]
         exported_schedule, _ = circuit.export(exporter=QuantifySchedulerExporter(operation_cycles=operation_cycles))
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
