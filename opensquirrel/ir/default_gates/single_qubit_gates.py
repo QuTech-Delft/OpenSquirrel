@@ -4,7 +4,7 @@ from typing import SupportsFloat
 import numpy as np
 
 from opensquirrel.ir import Axis, AxisLike, QubitLike
-from opensquirrel.ir.semantics import BsrAngleParam, BsrFullParams, BsrNoParams
+from opensquirrel.ir.semantics import BsrAngleParam, BsrFullParams, BsrNoParams, BsrUnitaryParams
 
 
 class Rn(BsrFullParams):
@@ -81,6 +81,16 @@ class Z(BsrNoParams):
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=pi, phase=pi / 2, name="Z")
 
 
+class Z90(BsrNoParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=pi / 2, phase=pi / 4, name="Z90")
+
+
+class MinusZ90(BsrNoParams):
+    def __init__(self, qubit: QubitLike) -> None:
+        BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-pi / 2, phase=-pi / 4, name="mZ90")
+
+
 class S(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=pi / 2, phase=pi / 4, name="S")
@@ -99,3 +109,14 @@ class T(BsrNoParams):
 class TDagger(BsrNoParams):
     def __init__(self, qubit: QubitLike) -> None:
         BsrNoParams.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=-pi / 4, phase=-pi / 8, name="Tdag")
+
+
+class U(BsrUnitaryParams):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        theta: SupportsFloat,
+        phi: SupportsFloat,
+        lmbda: SupportsFloat,
+    ) -> None:
+        BsrUnitaryParams.__init__(self, qubit=qubit, theta=theta, phi=phi, lmbda=lmbda, name="U")

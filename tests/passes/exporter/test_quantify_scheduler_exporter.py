@@ -70,6 +70,36 @@ def test_empty_circuit_export(exporter: QuantifySchedulerExporter, qs_is_install
         assert len(exported_schedule.schedulables) == 0
 
 
+def test_supported_gate_set(qs_is_installed: bool) -> None:
+    if qs_is_installed:
+        builder = CircuitBuilder(2, 2)
+        builder.I(0).H(0).X(0).X90(0).mX90(0).Y(0).Y90(0).mY90(0).Z(0).Z90(0).mZ90(0).S(0).Sdag(0).T(0).Tdag(0)
+        builder.Rx(0, pi).Ry(0, pi).Rz(0, pi).CNOT(0, 1).CZ(0, 1).measure(0, 0).wait(0, 1).init(0).barrier(0)
+        circuit = builder.to_circuit()
+        expected_operations = [
+            "Rz(0, 'q[0]')",
+            "H, '('q[0]',)')",
+            "Rxy(180, 0, 'q[0]')",
+            "Rxy(90, 0, 'q[0]')",
+            "Rxy(-90, 0, 'q[0]')",
+            "Rxy(180, 90, 'q[0]')",
+            "Rxy(90, 90, 'q[0]')",
+            "Rxy(-90, 90, 'q[0]')",
+            "Rz(180, 'q[0]')",
+            "Rz(90, 'q[0]')",
+            "Rz(-90, 'q[0]')",
+            "Rz(45, 'q[0]')",
+            "Rz(-45, 'q[0]')",
+            "CNOT (q[0], q[1])",
+            "CZ (q[0], q[1])",
+            "Measure q[0]",
+            "Reset q[0]",
+        ]
+        exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        for operation_data in exported_schedule.operations.values():
+            assert operation_data.name in expected_operations
+
+
 @pytest.mark.parametrize(
     ("cqasm_string", "expected_ref_schedulable_indices"),
     [

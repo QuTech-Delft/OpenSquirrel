@@ -28,6 +28,7 @@ from opensquirrel.ir.semantics import (
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
+    BsrUnitaryParams,
     ControlledGate,
     MatrixGate,
 )
@@ -109,6 +110,13 @@ class _WriterImpl(IRVisitor):
         theta_argument = gate.theta.accept(self)
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name}({theta_argument}) {qubit_operand}\n"
+
+    def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> None:
+        qubit_operand = gate.qubit.accept(self)
+        theta_argument = gate.theta.accept(self)
+        phi_argument = gate.phi.accept(self)
+        lmbda_argument = gate.lmbda.accept(self)
+        self.output += f"{gate.name}({theta_argument}, {phi_argument}, {lmbda_argument}) {qubit_operand}\n"
 
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)

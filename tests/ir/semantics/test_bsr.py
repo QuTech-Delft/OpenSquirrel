@@ -4,21 +4,16 @@ from math import pi, tau
 
 import pytest
 
-from opensquirrel import (
-    X90,
-    H,
-    I,
-    MinusX90,
-    Rn,
-    Rx,
-    Ry,
-    Rz,
-    TDagger,
-    X,
-)
+from opensquirrel import X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, Rn, Rx, Ry, Rz, TDagger, U, X, Y, Z
 from opensquirrel.common import ATOL
 from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation
+
+
+def assert_equal_upto_phase(gate1: BlochSphereRotation, gate2: BlochSphereRotation) -> None:
+    assert gate1.qubit == gate2.qubit
+    assert gate1.axis == gate2.axis
+    assert gate1.angle == gate2.angle
 
 
 class TestBlochSphereRotation:
@@ -60,6 +55,23 @@ class TestBlochSphereRotation:
     def test_is_identity(self, gate: BlochSphereRotation) -> None:
         assert I(42).is_identity()
         assert not gate.is_identity()
+
+    def test_u_gate(self) -> None:
+        assert U(0, 0, 0, 0).is_identity()
+        u = U(0, pi / 2, 0, 0)
+        assert_equal_upto_phase(u, Y90(0))
+        u = U(0, 0, pi / 2, 0)
+        assert_equal_upto_phase(u, Z90(0))
+
+    def test_y_rotations(self) -> None:
+        assert Y90(1) == BlochSphereRotation(qubit=1, axis=(0, 1, 0), angle=pi / 2, phase=pi / 4)
+        assert Y(1) == BlochSphereRotation(qubit=1, axis=(0, 1, 0), angle=pi, phase=pi / 2)
+        assert MinusY90(1) == BlochSphereRotation(qubit=1, axis=(0, 1, 0), angle=-pi / 2, phase=-pi / 4)
+
+    def test_z_rotations(self) -> None:
+        assert Z90(1) == BlochSphereRotation(qubit=1, axis=(0, 0, 1), angle=pi / 2, phase=pi / 4)
+        assert Z(1) == BlochSphereRotation(qubit=1, axis=(0, 0, 1), angle=pi, phase=pi / 2)
+        assert MinusZ90(1) == BlochSphereRotation(qubit=1, axis=(0, 0, 1), angle=-pi / 2, phase=-pi / 4)
 
     @pytest.mark.parametrize(
         ("bsr", "default_gate"),

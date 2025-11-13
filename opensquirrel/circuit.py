@@ -4,12 +4,14 @@ from collections import Counter
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir import IR, AsmDeclaration, Gate
+from opensquirrel.ir.statement import AsmDeclaration
 
 if TYPE_CHECKING:
+    from opensquirrel.ir.ir import IR
+    from opensquirrel.ir.unitary import Gate
     from opensquirrel.passes.decomposer.general_decomposer import Decomposer
-    from opensquirrel.passes.exporter.general_exporter import Exporter
     from opensquirrel.passes.mapper.general_mapper import Mapper
+    from opensquirrel.passes.exporter.general_exporter import Exporter
     from opensquirrel.passes.merger.general_merger import Merger
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator

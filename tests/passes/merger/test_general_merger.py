@@ -4,7 +4,8 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.passes.merger.general_merger import compose_bloch_sphere_rotations, rearrange_barriers
+from opensquirrel.ir.semantics.bsr import compose_bloch_sphere_rotations
+from opensquirrel.passes.merger.general_merger import rearrange_barriers
 
 
 def test_compose_bloch_sphere_rotations_same_axis() -> None:
