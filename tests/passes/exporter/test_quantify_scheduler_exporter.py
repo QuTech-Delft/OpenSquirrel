@@ -32,7 +32,7 @@ class FloatEq(float):
 
 def _check_ref_schedulables(exported_schedule: Schedule, expected_ref_schedulable_indices: list[int | None]) -> None:
     ref_schedulables = [
-        schedulable_data["timing_constraints"][0]["ref_schedulable"]
+        schedulable_data["timing_constraints"][0].ref_schedulable
         for schedulable_data in list(exported_schedule.schedulables.values())
     ]
     schedulable_index_map = {
@@ -49,7 +49,7 @@ def _check_waiting_cycles(exported_schedule: Schedule, expected_waiting_cycles: 
     for schedulable_data, expected_waiting_cycle in zip(
         exported_schedule.schedulables.values(), expected_waiting_cycles, strict=False
     ):
-        waiting_time = schedulable_data.data["timing_constraints"][0]["rel_time"]
+        waiting_time = schedulable_data.data["timing_constraints"][0].rel_time
         assert waiting_time == -1.0 * expected_waiting_cycle * CYCLE_TIME
 
 
@@ -413,7 +413,7 @@ def test_control_instruction_stress_test(
     ],
     ids=["on_measure", "on_waited_instruction"],
 )
-def test_timing(
+def test_operation_timing(
     qs_is_installed: bool,
     circuit: Circuit,
     expected_ref_schedulable_indices: list[int | None],

@@ -18,6 +18,7 @@ from opensquirrel.passes.exporter.general_exporter import Exporter
 try:
     import quantify_scheduler
     from quantify_scheduler.schedules import Schedulable  # noqa: TC002
+    from quantify_scheduler.schedules.schedule import TimingConstraint
 except ModuleNotFoundError:
     pass
 
@@ -96,14 +97,14 @@ class OperationRecord:
             zip([None] * qubit_register_size, [0] * qubit_register_size, strict=False)
         )
         self._barrier_record: list[int] = []
-        self._schedulable_timing_constraints: dict[str, dict[str, Any]] = {}
+        self._schedulable_timing_constraints: dict[str, TimingConstraint] = {}
 
     @staticmethod
     def get_index_of_max_value(input_list: list[int]) -> int:
         return max(range(len(input_list)), key=input_list.__getitem__)
 
     @property
-    def schedulable_timing_constraints(self) -> dict[str, dict[str, Any]]:
+    def schedulable_timing_constraints(self) -> dict[str, TimingConstraint]:
         return self._schedulable_timing_constraints
 
     def set_schedulable_timing_constraints(self, qubit_indices: list[int]) -> None:
@@ -142,17 +143,22 @@ class OperationRecord:
     def _set_timing_constraints(
         self, schedulable: Schedulable, ref_schedulable: Schedulable, waiting_time: float
     ) -> None:
-        timing_constraints: dict[str, str | float | None] = {}
         if not ref_schedulable:
-            timing_constraints["ref_schedulable"] = None
-            timing_constraints["ref_pt"] = "end"
-            timing_constraints["ref_pt_new"] = "end"
+            timing_constraint = TimingConstraint(
+                ref_schedulable=None,
+                ref_pt="end",
+                ref_pt_new="end",
+                rel_time=0,
+            )
         else:
-            timing_constraints["ref_schedulable"] = ref_schedulable["name"]
-            timing_constraints["ref_pt"] = "start"
-            timing_constraints["ref_pt_new"] = "end"
-        timing_constraints["rel_time"] = waiting_time
-        self._schedulable_timing_constraints[schedulable["name"]] = timing_constraints
+            timing_constraint = TimingConstraint(
+                ref_schedulable=ref_schedulable["name"],
+                ref_pt="start",
+                ref_pt_new="end",
+                rel_time=0,
+            )
+        timing_constraint.rel_time = waiting_time
+        self._schedulable_timing_constraints[schedulable["name"]] = timing_constraint
 
     def _process_barriers(self) -> None:
         if self._barrier_record:
