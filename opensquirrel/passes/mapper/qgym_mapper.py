@@ -43,7 +43,7 @@ class QGymMapper(Mapper):
         else:
             sb3 = importlib.import_module("sb3_contrib")
         agent_cls = getattr(sb3, agent_class)
-        return agent_cls.load(agent_path)  # type: ignore[no-any-return]
+        return agent_cls.load(agent_path)  
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
         """
