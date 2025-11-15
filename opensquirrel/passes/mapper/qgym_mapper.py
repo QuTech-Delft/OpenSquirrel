@@ -38,9 +38,12 @@ class QGymMapper(Mapper):
 
     def _load_agent(self, agent_class: str, agent_path: str) -> BaseAlgorithm:
         """Load a trained Stable-Baselines3 agent from a file."""
-        sb3 = importlib.import_module("stable_baselines3")
+        if agent_class in ["PPO", "A2C"]:
+            sb3 = importlib.import_module("stable_baselines3")
+        else:
+            sb3 = importlib.import_module("sb3_contrib")
         agent_cls = getattr(sb3, agent_class)
-        return agent_cls.load(agent_path)
+        return agent_cls.load(agent_path)  # type: ignore[no-any-return]
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
         """
@@ -56,6 +59,7 @@ class QGymMapper(Mapper):
 
         Raises:
             ValueError: If the number of logical qubits differs from the number of physical qubits.
+            ValueError: If the agent produces an incomplete or invalid mapping.
             RuntimeError: If no 'mapping' key is found in the final observation.
         """
         num_physical = self.hardware_connectivity.number_of_nodes()
@@ -65,17 +69,15 @@ class QGymMapper(Mapper):
 
         circuit_graph = self._ir_to_interaction_graph(ir)
 
-        obs, _ = self.env.reset(options={"circuit_graph": circuit_graph})
+        obs, _ = self.env.reset(options={"interaction_graph": circuit_graph})
 
         done = False
         last_obs: Any = obs
-        step_count = 0
         while not done:
             action, _ = self.agent.predict(obs, deterministic=True)
             obs, _, terminated, truncated, _ = self.env.step(action)
             done = terminated or truncated
             last_obs = obs
-            step_count += 1
 
         mapping_data = self._extract_mapping_data(last_obs)
         return self._get_mapping(mapping_data, qubit_register_size)
@@ -98,14 +100,23 @@ class QGymMapper(Mapper):
         return interaction_graph
 
     def _get_mapping(self, mapping_data: Any, qubit_register_size: int) -> Mapping:
-        """Get Mapping from raw mapping data."""
-        seq = mapping_data.tolist()
+        """Convert QGym's physical-to-logical mapping to OpenSquirrel's logical-to-physical mapping."""
+        physical_to_logical = mapping_data.tolist()
 
-        if len(seq) != qubit_register_size:
-            error_msg = f"Mapping length {len(seq)} != qubit_register_size {qubit_register_size}."
+        if len(physical_to_logical) != qubit_register_size:
+            error_msg = f"Mapping length {len(physical_to_logical)} != qubit_register_size {qubit_register_size}."
             raise ValueError(error_msg)
 
-        return Mapping([int(x) for x in seq])
+        logical_to_physical = [-1] * qubit_register_size
+        for physical_qubit, logical_qubit in enumerate(physical_to_logical):
+            if logical_qubit < qubit_register_size:
+                logical_to_physical[logical_qubit] = physical_qubit
+
+        if -1 in logical_to_physical:
+            error_msg = f"Incomplete mapping. Physical-to-logical: {physical_to_logical}"
+            raise ValueError(error_msg)
+
+        return Mapping(logical_to_physical)
 
     def _extract_mapping_data(self, last_obs: Any) -> Any:
         """Extract mapping from the observation dict only."""

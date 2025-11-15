@@ -13,9 +13,9 @@ from opensquirrel.passes.mapper.mapping import Mapping
 CONNECTIVITY_SCHEMES = json.loads(
     (files("opensquirrel.passes.mapper") / "connectivities.json").read_text(encoding="utf-8")
 )
-AGENT1 = "opensquirrel/passes/mapper/PPO_tuna5_2e5.zip"
-AGENT2 = "opensquirrel/passes/mapper/PPO_starmon7_5e5.zip"
-AGENT_CLASS = "PPO"
+AGENT1 = "opensquirrel/passes/mapper/TRPO_tuna5_2e5.zip"
+AGENT2 = "opensquirrel/passes/mapper/TRPO_starmon7_5e5.zip"
+AGENT_CLASS = "TRPO"
 
 
 @pytest.fixture

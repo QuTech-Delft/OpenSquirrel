@@ -31,8 +31,12 @@ At the moment, the following DRL agents can be used to map circuits in Opensquir
 - Recurrent PPO
 - PPO with illegal action masking
 
-The following code snipper demonstrates the usage of the `QGymMapper`. Assume that you
-have a `connectivities.json` file containing some hardware connectivity schemes, as well as a `PPO.zip` file containing the weights of a trained agent in your working 
+The last three agents in the above list can be imported from the extension/experimental 
+package of StableBaselines3, namely [sb3-contrib](https://github.com/Stable-Baselines-Team/stable-baselines3-contrib). 
+
+The following code snippet demonstrates the usage of the `QGymMapper`. Assume that you
+have a `connectivities.json` file containing some hardware connectivity schemes, as 
+well as a `TRPO.zip` file containing the weights of a trained agent in your working 
 directory. 
 
 ```python
@@ -49,8 +53,8 @@ hardware_connectivitiy = connectivities["tuna-5"]
 connection_graph = nx.Graph()
 connection_graph.add_edges_from(hardware_connectivity)
 
-qgym_mapper = QGymMapper(agent_class = "PPO", agent_path = "PPO.zip", 
-                        connection_graph= connection_graph)
+qgym_mapper = QGymMapper(agent_class = "TRPO", agent_path = "TRPO.zip", 
+                        connection_graph=connection_graph)
 
 builder = CircuitBuilder(5)
 builder.H(0)
