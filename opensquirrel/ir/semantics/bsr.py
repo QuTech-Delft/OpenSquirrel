@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import cmath
+import math
 from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import numpy as np
+from numpy.typing import ArrayLike, DTypeLike
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
 from opensquirrel.ir.expression import Axis, AxisLike, Float
@@ -12,6 +15,32 @@ from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 if TYPE_CHECKING:
     from opensquirrel.ir import IRVisitor
     from opensquirrel.ir.expression import Expression
+
+
+def bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]]) -> BlochSphereRotation:
+    from opensquirrel.utils import acos
+
+    cmatrix = np.asarray(matrix, dtype=np.complex128)
+    assert cmatrix.shape == (2, 2)
+    d = np.linalg.det(cmatrix)
+    phase = 1 / 2 * cmath.phase(d)
+
+    cmatrix = cmatrix / np.exp(1j * phase)
+    angle = 2 * acos(1 / 2 * np.real(np.linalg.trace(cmatrix)))
+
+    nx = (cmatrix[0, 1] + cmatrix[1, 0]) / 1j
+    ny = cmatrix[1, 0] - cmatrix[0, 1]
+    nz = (cmatrix[0, 0] - cmatrix[1, 1]) / 1j
+
+    if math.sqrt(nx**2 + ny**2 + nz**2) < ATOL:
+        return BlochSphereRotation(axis=(0, 0, 1), angle=0.0, phase=phase)
+
+    if nx + ny + nz < 0:
+        nx = -nx
+        ny = -ny
+        nz = -nz
+    axis = Axis((nx, ny, nz))
+    return BlochSphereRotation(axis=axis, angle=angle, phase=phase)
 
 
 class BlochSphereRotation(GateSemantic, IRNode):

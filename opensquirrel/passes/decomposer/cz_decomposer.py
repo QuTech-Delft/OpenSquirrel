@@ -44,7 +44,7 @@ class CZDecomposer(Decomposer):
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
         # Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I
-        controlled_rotation_times_z = general_merger.compose_bloch_sphere_rotations(g.target_gate, Z(target_qubit))
+        controlled_rotation_times_z = general_merger.compose_single_qubit_gates(g.target_gate, Z(target_qubit))
         theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer().get_decomposition_angles(
             controlled_rotation_times_z.bsr.axis,
             controlled_rotation_times_z.bsr.angle,

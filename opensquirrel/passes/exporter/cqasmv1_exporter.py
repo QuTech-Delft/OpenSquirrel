@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any, SupportsFloat, SupportsInt, cast
+from typing import TYPE_CHECKING, Any, SupportsFloat, SupportsInt
 
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
@@ -89,9 +89,6 @@ class _CQASMv1Creator(IRVisitor):
         if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
             return
         raise UnsupportedGateError(gate)
-
-    def visit_bsr_angle_param(self, bsr: BsrAngleParam) -> str:
-        return cast("str", bsr.theta.accept(self))
 
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)

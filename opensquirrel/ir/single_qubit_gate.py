@@ -45,22 +45,22 @@ class SingleQubitGate(Gate):
         Gate.__init__(self, name)
         self.qubit = Qubit(qubit)
 
-        if isinstance(gate_semantic, BlochSphereRotation):
-            self._bsr = gate_semantic
-        if isinstance(gate_semantic, MatrixSemantic):
-            self._matrix = gate_semantic
+        self._bsr = gate_semantic if isinstance(gate_semantic, BlochSphereRotation) else None
+        self._matrix = gate_semantic if isinstance(gate_semantic, MatrixSemantic) else None
 
     def __getattr__(self, name: str) -> Any:
         match name:
             case "bsr":
                 if self._bsr is None:
-                    self._bsr = None  # Still need to implement creating bsr from matrix
+                    from opensquirrel.ir.semantics.bsr import bsr_from_matrix
+
+                    self._bsr = bsr_from_matrix(self.matrix)
                 return self._bsr
             case "matrix":
                 if self._matrix is None:
                     from opensquirrel.utils import can1
 
-                    self._matrix = can1(self.bsr.axis, self.bsr.angle, self.bsr.phase)
+                    self._matrix = MatrixSemantic(can1(self.bsr.axis, self.bsr.angle, self.bsr.phase))
                 return self._matrix
             case _:
                 return self.__getattribute__(name)
@@ -68,6 +68,15 @@ class SingleQubitGate(Gate):
     def accept(self, visitor: IRVisitor) -> Any:
         visit_gate = super().accept(visitor)
         return visit_gate if visit_gate is not None else visitor.visit_single_qubit_gate(self)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, SingleQubitGate):
+            return False
+
+        if self.qubit != other.qubit:
+            return False
+
+        return self.bsr == other.bsr
 
     @property
     def arguments(self) -> tuple[Qubit, ...]:

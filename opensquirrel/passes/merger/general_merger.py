@@ -14,8 +14,9 @@ from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace
 from opensquirrel.utils import acos, flatten_list
 
 
-def compose_bloch_sphere_rotations(gate_a: SingleQubitGate, gate_b: SingleQubitGate) -> SingleQubitGate:
-    """Computes the Bloch sphere rotation resulting from the composition of two Bloch sphere rotations.
+def compose_single_qubit_gates(gate_a: SingleQubitGate, gate_b: SingleQubitGate) -> SingleQubitGate:
+    """Computes the single qubit gate resulting from the composition of two single
+    qubit gates, by composing the Bloch sphere rotations of the two gates.
     The first rotation (A) is applied and then the second (B):
 
     As separate gates:
@@ -25,7 +26,7 @@ def compose_bloch_sphere_rotations(gate_a: SingleQubitGate, gate_b: SingleQubitG
     As linear operations:
         (B * A) q
 
-    If the final Bloch sphere rotation is anonymous, we try to match it to a default gate.
+    If the final single qubit gate is anonymous, we try to match it to a default gate.
 
     Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
     """
