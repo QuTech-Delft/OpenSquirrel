@@ -1,4 +1,4 @@
-import math
+from math import pi
 
 import pytest
 
@@ -23,6 +23,19 @@ def test_single_gate(merger: SingleQubitGatesMerger) -> None:
     builder2 = CircuitBuilder(1)
     builder2.Ry(0, 1.2345)
     expected_circuit = builder2.to_circuit()
+
+    modify_circuit_and_check(circuit, merger.merge, expected_circuit)
+
+
+def test_u_gate(merger: SingleQubitGatesMerger) -> None:
+    builder = CircuitBuilder(1)
+    builder.U(0, pi / 2, 0, pi)
+    builder.U(0, pi, 0, pi)
+    builder.U(0, pi, 0, pi)
+    builder.U(0, pi / 2, 0, pi)
+    circuit = builder.to_circuit()
+
+    expected_circuit = CircuitBuilder(1).to_circuit()
 
     modify_circuit_and_check(circuit, merger.merge, expected_circuit)
 
@@ -54,15 +67,15 @@ def test_two_hadamards_different_qubits(merger: SingleQubitGatesMerger) -> None:
 
 def test_merge_different_qubits(merger: SingleQubitGatesMerger) -> None:
     builder1 = CircuitBuilder(4)
-    builder1.Ry(0, math.pi / 2)
-    builder1.Rx(0, math.pi)
+    builder1.Ry(0, pi / 2)
+    builder1.Rx(0, pi)
     builder1.Rz(1, 1.2345)
     builder1.Ry(2, 1)
     builder1.Ry(2, 3.234)
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(Rn(0, 1, 0, 1, math.pi, 0))  # this is Hadamard with 0 phase
+    builder2.ir.add_gate(Rn(0, 1, 0, 1, pi, 0))  # this is Hadamard with 0 phase
     builder2.Rz(1, 1.2345)
     builder2.Ry(2, 4.234)
     expected_circuit = builder2.to_circuit()
@@ -72,16 +85,16 @@ def test_merge_different_qubits(merger: SingleQubitGatesMerger) -> None:
 
 def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
     builder1 = CircuitBuilder(4)
-    builder1.Ry(0, math.pi / 2)
+    builder1.Ry(0, pi / 2)
     builder1.Rz(1, 1.5)
-    builder1.Rx(0, math.pi)
+    builder1.Rx(0, pi)
     builder1.Rz(1, -2.5)
     builder1.CNOT(0, 1)
     builder1.Ry(0, 3.234)
     circuit = builder1.to_circuit()
 
     builder2 = CircuitBuilder(4)
-    builder2.ir.add_gate(SingleQubitGate(0, BlochSphereRotation(axis=(1, 0, 1), angle=math.pi, phase=0.0)))
+    builder2.ir.add_gate(SingleQubitGate(0, BlochSphereRotation(axis=(1, 0, 1), angle=pi, phase=0.0)))
     builder2.Rz(1, -1.0)
     builder2.CNOT(0, 1)
     builder2.Ry(0, 3.234)
@@ -92,7 +105,7 @@ def test_merge_and_flush(merger: SingleQubitGatesMerger) -> None:
 
 def test_merge_y90_x_to_h(merger: SingleQubitGatesMerger) -> None:
     builder = CircuitBuilder(1)
-    builder.Ry(0, math.pi / 2)
+    builder.Ry(0, pi / 2)
     builder.X(0)
     circuit = builder.to_circuit()
 

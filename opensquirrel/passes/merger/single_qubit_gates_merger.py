@@ -3,7 +3,7 @@ from typing import cast
 from opensquirrel import I
 from opensquirrel.ir import IR, AsmDeclaration, Barrier, Instruction, Qubit
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-from opensquirrel.passes.merger.general_merger import Merger, compose_single_qubit_gates
+from opensquirrel.passes.merger.general_merger import Merger
 
 
 class SingleQubitGatesMerger(Merger):
@@ -28,7 +28,7 @@ class SingleQubitGatesMerger(Merger):
             instruction: Instruction = cast("Instruction", statement)
             if isinstance(instruction, SingleQubitGate):
                 already_accumulated = accumulators_per_qubit[instruction.qubit]
-                composed = compose_single_qubit_gates(already_accumulated, instruction)
+                composed = already_accumulated * instruction
                 accumulators_per_qubit[instruction.qubit] = composed
                 del ir.statements[statement_index]
                 continue

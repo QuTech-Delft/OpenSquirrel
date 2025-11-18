@@ -5,13 +5,13 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-from opensquirrel.passes.merger.general_merger import compose_single_qubit_gates, rearrange_barriers
+from opensquirrel.passes.merger.general_merger import rearrange_barriers
 
 
 def test_compose_single_qubit_gates_same_axis() -> None:
     a = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=0.4, phase=0.2))
     b = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=-0.3, phase=-0.15))
-    composed = compose_single_qubit_gates(a, b)
+    composed = a * b
     assert composed == SingleQubitGate(
         qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=0.1, phase=0.05)
     )
@@ -22,14 +22,14 @@ def test_compose_single_qubit_gates_different_axis() -> None:
     a = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi / 2, phase=pi / 4))
     b = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 2, phase=pi / 4))
     c = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4))
-    composed = compose_single_qubit_gates(compose_single_qubit_gates(c, b), a)
+    composed = c * b * a
     assert composed == SingleQubitGate(
         qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 1, 0), angle=pi, phase=3 * pi / 4)
     )
 
 
 @pytest.mark.parametrize(
-    ("bsr_a", "bsr_b", "expected_result"),
+    ("gate_a", "gate_b", "expected_result"),
     [
         (Y(0), X(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi))),
         (X(0), Y(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 0, -1), angle=pi, phase=pi))),
@@ -68,9 +68,9 @@ def test_compose_single_qubit_gates_different_axis() -> None:
     ],
 )
 def test_compose_single_qubit_gates(
-    bsr_a: SingleQubitGate, bsr_b: SingleQubitGate, expected_result: SingleQubitGate
+    gate_a: SingleQubitGate, gate_b: SingleQubitGate, expected_result: SingleQubitGate
 ) -> None:
-    assert compose_single_qubit_gates(bsr_a, bsr_b) == expected_result
+    assert gate_a * gate_b == expected_result
 
 
 @pytest.mark.parametrize(

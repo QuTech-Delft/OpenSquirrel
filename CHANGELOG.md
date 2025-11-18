@@ -14,6 +14,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `U`(theta, phi, lambda) gate to default single-qubit gates
+- `Z90` and `mZ90` pi-half rotation gates (equivalent to `S` and `Sdag` gates)
+
+### Changed
+
+- Moved Bloch sphere rotation composition from the merger pass interface to Bloch sphere rotation semantic module.
+
+## [ 0.8.0 ] - [ 2025-11-03 ]
+
+### Added
+
 - Processing of control instructions (Barrier, Wait) added to quantify-scheduler exporter
 
 ### Changed

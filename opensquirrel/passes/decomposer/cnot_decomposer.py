@@ -9,8 +9,7 @@ from opensquirrel.ir.semantics import ControlledGate
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import ZYZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
-from opensquirrel.passes.merger import general_merger
-from opensquirrel.utils import filter_out_identities
+from opensquirrel.utils.identity_filter import filter_out_identities
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -43,7 +42,7 @@ class CNOTDecomposer(Decomposer):
         # See https://threeplusone.com/pubs/on_gates.pdf
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
-        controlled_rotation_times_x = general_merger.compose_single_qubit_gates(g.target_gate, X(target_qubit))
+        controlled_rotation_times_x = g.target_gate * X(target_qubit)
         theta0_with_x, theta1_with_x, theta2_with_x = ZYZDecomposer().get_decomposition_angles(
             controlled_rotation_times_x.bsr.axis,
             controlled_rotation_times_x.bsr.angle,

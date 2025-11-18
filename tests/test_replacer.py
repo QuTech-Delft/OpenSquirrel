@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from math import pi
 from typing import TYPE_CHECKING
 
 import pytest
 
-from opensquirrel import CNOT, Y90, CircuitBuilder, H, I, X
+from opensquirrel import CNOT, Y90, CircuitBuilder, H, I, U, X
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
@@ -90,6 +91,19 @@ class TestReplacer:
         builder2 = CircuitBuilder(3)
         builder2.Y90(0)
         builder2.X(0)
+        expected_circuit = builder2.to_circuit()
+
+        assert expected_circuit == circuit
+
+    def test_replace_h_by_u(self) -> None:
+        builder1 = CircuitBuilder(3)
+        builder1.H(0)
+        circuit = builder1.to_circuit()
+
+        replace(circuit.ir, H, lambda q: [U(q, pi / 2, 0, pi)])
+
+        builder2 = CircuitBuilder(3)
+        builder2.U(0, pi / 2, 0, pi)
         expected_circuit = builder2.to_circuit()
 
         assert expected_circuit == circuit

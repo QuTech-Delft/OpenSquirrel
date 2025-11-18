@@ -28,6 +28,7 @@ if TYPE_CHECKING:
         BsrAngleParam,
         BsrFullParams,
         BsrNoParams,
+        BsrUnitaryParams,
         ControlledGate,
         MatrixGate,
     )
@@ -86,6 +87,9 @@ class IRVisitor:
         pass
 
     def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
+        pass
+
+    def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> Any:
         pass
 
     def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:

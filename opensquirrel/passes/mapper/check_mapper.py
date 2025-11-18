@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from copy import deepcopy
 
-from opensquirrel import I
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import IR, Measure
+from opensquirrel.ir.default_gates import I
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.mapper.general_mapper import Mapper

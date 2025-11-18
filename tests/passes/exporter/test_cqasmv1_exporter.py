@@ -1,3 +1,5 @@
+from math import pi
+
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
@@ -174,6 +176,31 @@ qubits 1
 
 h q[0]
 prep_z q[0]
+"""
+    )
+
+
+def test_u_gate() -> None:
+    builder = CircuitBuilder(1)
+    builder.U(0, pi / 2, 0, pi)
+    builder.U(0, pi, 0, pi)
+    builder.U(0, pi, pi / 2, pi / 2)
+    builder.U(0, 0, pi, 0)
+    builder.U(0, 1, 2, 3)
+
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(fmt=ExportFormat.CQASM_V1)
+    assert (
+        cqasm_v1_string
+        == """version 1.0
+
+qubits 1
+
+u q[0], [0.70711, 0.70711; 0.70711, -0.70711]
+u q[0], [0.0, 1.0; 1.0, 0.0]
+u q[0], [0.0, -1.0 * im; 1.0 * im, 0.0]
+u q[0], [1.0, 0.0; 0.0, -1.0]
+u q[0], [0.87758, 0.47463-0.06766 * im; -0.19951+0.43594 * im, 0.24894-0.84154 * im]
 """
     )
 

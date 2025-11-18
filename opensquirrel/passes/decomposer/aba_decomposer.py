@@ -13,7 +13,8 @@ from opensquirrel.common import ATOL
 from opensquirrel.ir import Axis, AxisLike, Gate
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
-from opensquirrel.utils import acos, are_axes_consecutive, filter_out_identities
+from opensquirrel.utils.general_math import acos, are_axes_consecutive
+from opensquirrel.utils.identity_filter import filter_out_identities
 
 
 class ABADecomposer(Decomposer, ABC):

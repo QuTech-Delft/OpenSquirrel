@@ -1,69 +1,18 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from math import cos, floor, log10, sin
 from typing import Any, cast
 
-import numpy as np
-
-from opensquirrel import I
-from opensquirrel.common import ATOL
 from opensquirrel.ir import IR, Barrier, Instruction, Statement
-from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-from opensquirrel.utils import acos, flatten_list
+from opensquirrel.utils import flatten_list
 
 
-def compose_single_qubit_gates(gate_a: SingleQubitGate, gate_b: SingleQubitGate) -> SingleQubitGate:
-    """Computes the single qubit gate resulting from the composition of two single
-    qubit gates, by composing the Bloch sphere rotations of the two gates.
-    The first rotation (A) is applied and then the second (B):
+class Merger(ABC):
+    def __init__(self, **kwargs: Any) -> None: ...
 
-    As separate gates:
-        A q
-        B q
-
-    As linear operations:
-        (B * A) q
-
-    If the final single qubit gate is anonymous, we try to match it to a default gate.
-
-    Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
-    """
-
-    if gate_a.qubit != gate_b.qubit:
-        msg = "cannot merge two Bloch sphere rotations on different qubits"
-        raise ValueError(msg)
-
-    acos_argument = cos(gate_a.bsr.angle / 2) * cos(gate_b.bsr.angle / 2) - sin(gate_a.bsr.angle / 2) * sin(
-        gate_b.bsr.angle / 2
-    ) * np.dot(gate_a.bsr.axis, gate_b.bsr.axis)
-    combined_angle = 2 * acos(acos_argument)
-
-    if abs(sin(combined_angle / 2)) < ATOL:
-        return I(gate_a.qubit)
-
-    order_of_magnitude = abs(floor(log10(ATOL)))
-    combined_axis = np.round(
-        (
-            1
-            / sin(combined_angle / 2)
-            * (
-                sin(gate_a.bsr.angle / 2) * cos(gate_b.bsr.angle / 2) * gate_a.bsr.axis.value
-                + cos(gate_a.bsr.angle / 2) * sin(gate_b.bsr.angle / 2) * gate_b.bsr.axis.value
-                + sin(gate_a.bsr.angle / 2) * sin(gate_b.bsr.angle / 2) * np.cross(gate_b.bsr.axis, gate_a.bsr.axis)
-            )
-        ),
-        order_of_magnitude,
-    )
-
-    combined_phase = np.round(gate_a.bsr.phase + gate_b.bsr.phase, order_of_magnitude)
-    bsr = BlochSphereRotation(
-        axis=combined_axis,
-        angle=combined_angle,
-        phase=combined_phase,
-    )
-    return SingleQubitGate(gate_a.qubit, bsr)
+    @abstractmethod
+    def merge(self, ir: IR, qubit_register_size: int) -> None:
+        raise NotImplementedError
 
 
 def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:
@@ -127,11 +76,3 @@ def rearrange_barriers(ir: IR) -> None:
                     del statements_groups[i + 1]
                     break
     ir.statements = flatten_list(statements_groups)
-
-
-class Merger(ABC):
-    def __init__(self, **kwargs: Any) -> None: ...
-
-    @abstractmethod
-    def merge(self, ir: IR, qubit_register_size: int) -> None:
-        raise NotImplementedError

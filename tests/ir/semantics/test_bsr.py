@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from numpy.typing import ArrayLike, DTypeLike
 
-from opensquirrel import X90, Y90, H, I, MinusX90, MinusY90, S, SDagger, T, TDagger, X, Y, Z
+from opensquirrel import X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, S, SDagger, T, TDagger, U, X, Y, Z
 from opensquirrel.common import ATOL
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.semantics.bsr import bsr_from_matrix
@@ -33,6 +33,11 @@ from opensquirrel.ir.semantics.bsr import bsr_from_matrix
 )
 def test_bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]], bsr: BlochSphereRotation) -> None:
     assert bsr_from_matrix(matrix) == bsr
+
+
+def assert_equal_upto_phase(bsr1: BlochSphereRotation, bsr2: BlochSphereRotation) -> None:
+    assert bsr1.axis == bsr2.axis
+    assert bsr1.angle == bsr2.angle
 
 
 class TestBlochSphereRotation:
@@ -70,3 +75,20 @@ class TestBlochSphereRotation:
     def test_is_identity(self, bsr: BlochSphereRotation) -> None:
         assert I(42).is_identity()
         assert not bsr.is_identity()
+
+    def test_u_gate(self) -> None:
+        assert U(0, 0, 0, 0).is_identity()
+        u = U(0, pi / 2, 0, 0)
+        assert_equal_upto_phase(u.bsr, Y90(0).bsr)
+        u = U(0, 0, pi / 2, 0)
+        assert_equal_upto_phase(u.bsr, Z90(0).bsr)
+
+    def test_y_rotations(self) -> None:
+        assert Y90(0).bsr == BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4)
+        assert Y(0).bsr == BlochSphereRotation(axis=(0, 1, 0), angle=pi, phase=pi / 2)
+        assert MinusY90(0).bsr == BlochSphereRotation(axis=(0, 1, 0), angle=-pi / 2, phase=-pi / 4)
+
+    def test_z_rotations(self) -> None:
+        assert Z90(0).bsr == BlochSphereRotation(axis=(0, 0, 1), angle=pi / 2, phase=pi / 4)
+        assert Z(0).bsr == BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi / 2)
+        assert MinusZ90(0).bsr == BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 2, phase=-pi / 4)

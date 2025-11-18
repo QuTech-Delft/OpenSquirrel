@@ -6,7 +6,7 @@ from typing import SupportsFloat
 import numpy as np
 
 from opensquirrel.ir import Axis, AxisLike, QubitLike
-from opensquirrel.ir.semantics import BsrAngleParam, BsrFullParams, BsrNoParams
+from opensquirrel.ir.semantics import BsrAngleParam, BsrFullParams, BsrNoParams, BsrUnitaryParams
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
@@ -88,6 +88,18 @@ class Z(SingleQubitGate):
         super().__init__(qubit=qubit, gate_semantic=BsrNoParams(axis=(0, 0, 1), angle=pi, phase=pi / 2), name="Z")
 
 
+class Z90(SingleQubitGate):
+    def __init__(self, qubit: QubitLike) -> None:
+        super().__init__(qubit=qubit, gate_semantic=BsrNoParams(axis=(0, 0, 1), angle=pi / 2, phase=pi / 4), name="Z90")
+
+
+class MinusZ90(SingleQubitGate):
+    def __init__(self, qubit: QubitLike) -> None:
+        super().__init__(
+            qubit=qubit, gate_semantic=BsrNoParams(axis=(0, 0, 1), angle=-pi / 2, phase=-pi / 4), name="mZ90"
+        )
+
+
 class S(SingleQubitGate):
     def __init__(self, qubit: QubitLike) -> None:
         super().__init__(qubit=qubit, gate_semantic=BsrNoParams(axis=(0, 0, 1), angle=pi / 2, phase=pi / 4), name="S")
@@ -110,3 +122,14 @@ class TDagger(SingleQubitGate):
         super().__init__(
             qubit=qubit, gate_semantic=BsrNoParams(axis=(0, 0, 1), angle=-pi / 4, phase=-pi / 8), name="Tdag"
         )
+
+
+class U(SingleQubitGate):
+    def __init__(
+        self,
+        qubit: QubitLike,
+        theta: SupportsFloat,
+        phi: SupportsFloat,
+        lmbda: SupportsFloat,
+    ) -> None:
+        super().__init__(qubit=qubit, gate_semantic=BsrUnitaryParams(theta=theta, phi=phi, lmbda=lmbda), name="U")
