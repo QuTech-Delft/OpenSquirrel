@@ -10,7 +10,7 @@ from opensquirrel import I
 from opensquirrel.common import ATOL
 from opensquirrel.ir import IR, Barrier, Instruction, Statement
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.utils import acos, flatten_list
 
 
@@ -64,7 +64,7 @@ def compose_single_qubit_gates(gate_a: SingleQubitGate, gate_b: SingleQubitGate)
         phase=combined_phase,
     )
     gate = SingleQubitGate(gate_a.qubit, bsr)
-    return try_match_replace_with_default_gate(gate)
+    return gate
 
 
 def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:
