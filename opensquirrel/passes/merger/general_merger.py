@@ -63,8 +63,7 @@ def compose_single_qubit_gates(gate_a: SingleQubitGate, gate_b: SingleQubitGate)
         angle=combined_angle,
         phase=combined_phase,
     )
-    gate = SingleQubitGate(gate_a.qubit, bsr)
-    return gate
+    return SingleQubitGate(gate_a.qubit, bsr)
 
 
 def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:

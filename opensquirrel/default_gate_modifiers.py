@@ -25,10 +25,9 @@ class InverseGateModifier(GateModifier):
             gate: SingleQubitGate = self.gate_generator(*args)
             modified_angle = gate.bsr.angle * -1
             modified_phase = gate.bsr.phase * -1
-        gate = SingleQubitGate(
+        return SingleQubitGate(
             gate.qubit, BlochSphereRotation(axis=gate.bsr.axis, angle=modified_angle, phase=modified_phase)
         )
-        return gate
 
 
 class PowerGateModifier(GateModifier):
@@ -41,10 +40,9 @@ class PowerGateModifier(GateModifier):
             gate: SingleQubitGate = self.gate_generator(*args)
             modified_angle = gate.bsr.angle * float(self.exponent)
             modified_phase = gate.bsr.phase * float(self.exponent)
-        gate = SingleQubitGate(
+        return SingleQubitGate(
             gate.qubit, BlochSphereRotation(axis=gate.bsr.axis, angle=modified_angle, phase=modified_phase)
         )
-        return gate
 
 
 class ControlGateModifier(GateModifier):
