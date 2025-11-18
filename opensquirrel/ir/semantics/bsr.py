@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import cmath
 import math
+from math import pi
 from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import numpy as np
@@ -22,23 +23,32 @@ def bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]]) -> BlochSph
 
     cmatrix = np.asarray(matrix, dtype=np.complex128)
     assert cmatrix.shape == (2, 2)
-    d = np.linalg.det(cmatrix)
-    phase = 1 / 2 * cmath.phase(d)
+    a, b, c, d = map(complex, cmatrix.flatten())
+    phase = cmath.phase(a * d - c * b) / 2
 
-    cmatrix = cmatrix / np.exp(1j * phase)
-    angle = 2 * acos(1 / 2 * np.real(np.linalg.trace(cmatrix)))
+    a /= cmath.exp(1j * phase)
+    b /= cmath.exp(1j * phase)
+    c /= cmath.exp(1j * phase)
+    d /= cmath.exp(1j * phase)
 
-    nx = (cmatrix[0, 1] + cmatrix[1, 0]) / 1j
-    ny = cmatrix[1, 0] - cmatrix[0, 1]
-    nz = (cmatrix[0, 0] - cmatrix[1, 1]) / 1j
+    angle = -2 * acos((1 / 2) * (a + d).real)
+    nx = (b + c) / 1j
+    ny = b - c
+    nz = (a - d) / 1j
+
+    nx, ny, nz = (x.real for x in (nx, ny, nz))
 
     if math.sqrt(nx**2 + ny**2 + nz**2) < ATOL:
         return BlochSphereRotation(axis=(0, 0, 1), angle=0.0, phase=phase)
+
+    if angle <= -pi:
+        angle += 2 * pi
 
     if nx + ny + nz < 0:
         nx = -nx
         ny = -ny
         nz = -nz
+        angle = -angle
     axis = Axis((nx, ny, nz))
     return BlochSphereRotation(axis=axis, angle=angle, phase=phase)
 

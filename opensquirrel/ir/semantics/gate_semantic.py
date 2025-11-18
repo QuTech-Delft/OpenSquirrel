@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -26,5 +27,5 @@ class MatrixSemantic(GateSemantic):
     def is_identity(self) -> bool:
         return np.allclose(self.matrix, np.eye(self.matrix.shape[0]), atol=ATOL)
 
-    def __array__(self) -> NDArray[np.complex128]:
-        return self.matrix
+    def __array__(self, *args: Any, **kwargs: Any) -> NDArray[np.complex128]:
+        return np.asarray(self.matrix, *args, **kwargs)
