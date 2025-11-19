@@ -43,7 +43,7 @@ class _WriterImpl(IRVisitor):
         qubit_register_size = self.register_manager.num_qubits
         qubit_register_name = self.register_manager.get_qubit_register_name()
 
-        bit_register_size = self.register_manager.get_bit_register_size()
+        bit_register_size = self.register_manager.num_bits
         bit_register_name = self.register_manager.get_bit_register_name()
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
