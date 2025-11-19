@@ -147,6 +147,7 @@ class QubitRegister(Register):
         variable_name_to_range: dict[str, Range] | None = None,
         index_to_variable_name: dict[int, str] | None = None,
     ) -> None:
+        self.register_size = register_size
         super().__init__(register_size, name, variable_name_to_range, index_to_variable_name)
 
     @property
@@ -168,6 +169,7 @@ class BitRegister(Register):
         variable_name_to_range: dict[str, Range] | None = None,
         index_to_variable_name: dict[int, str] | None = None,
     ) -> None:
+        self.register_size = register_size
         super().__init__(register_size, name, variable_name_to_range, index_to_variable_name)
 
     @property
@@ -286,9 +288,9 @@ class RegisterManager:
     def get_qubit_register_name(self, qubit_register: QubitRegister | None = None) -> str:
         for register in self.qubit_registers:
             if qubit_register is None:
-                return next(iter(register.variable_name_to_range))
+                return self.qubit_registers[0].name
             if qubit_register == register:
-                return next(iter(register.variable_name_to_range))
+                return qubit_register.name
         
         raise ValueError(f"Register {qubit_register} not found")
 
@@ -296,9 +298,9 @@ class RegisterManager:
 
         for register in self.bit_registers:
             if bit_register is None:
-                return next(iter(register.variable_name_to_range))
+                return self.bit_registers[0].name
             if bit_register == register:
-                return next(iter(register.variable_name_to_range))
+                return bit_register.name
         
         raise ValueError(f"Register {bit_register} not found")
 
