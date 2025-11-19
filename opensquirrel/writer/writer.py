@@ -40,7 +40,7 @@ class _WriterImpl(IRVisitor):
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
-        qubit_register_size = self.register_manager.get_qubit_register_size()
+        qubit_register_size = self.register_manager.num_qubits
         qubit_register_name = self.register_manager.get_qubit_register_name()
 
         bit_register_size = self.register_manager.get_bit_register_size()

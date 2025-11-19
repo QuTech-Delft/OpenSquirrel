@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, List
 
 import cqasm.v3x as cqasm
-from typing_extensions import Self
-
+from opensquirrel.ir import Qubit, Bit
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
     return isinstance(variable.typ, (cqasm.types.Qubit, cqasm.types.QubitArray))
@@ -14,6 +13,35 @@ def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
 
 def is_bit_type(variable: cqasm.semantic.MultiVariable) -> bool:
     return isinstance(variable.typ, (cqasm.types.Bit, cqasm.types.BitArray))
+
+
+def split_registers(registers: Register | List[Register]) -> tuple[List[QubitRegister], List[BitRegister]]:
+    """
+    Splits a generic Register or list of Register objects into two lists:
+    one containing QubitRegisters and the other containing BitRegisters.
+
+    Args:
+        register: register objects
+    
+    Returns:
+        List of QubitRegiters and BitRegisters
+    """
+    # Normalize input to a list
+    if not isinstance(registers, list):
+        registers = [registers]
+
+    qubit_registers = []
+    bit_registers = []
+
+    for reg in registers:
+        if isinstance(reg, QubitRegister):
+            qubit_registers.append(reg)
+        elif isinstance(reg, BitRegister):
+            bit_registers.append(reg)
+        else:
+            raise TypeError(f"Unsupported register type: {type(reg).__name__}")
+
+    return qubit_registers, bit_registers
 
 
 @dataclass
@@ -54,6 +82,18 @@ class Register(ABC):
             and self.variable_name_to_range == other.variable_name_to_range
             and self.index_to_variable_name == other.index_to_variable_name
         )
+    
+    
+    def __contains__(self, other: Any) -> bool:
+        # Ensure the object is either a Qubit or Bit
+        if not isinstance(other, (Qubit, Bit)):
+            return False
+
+        # Check if the index is mapped to a variable name
+        if other.index in self.index_to_variable_name:
+            return True
+
+        return False
 
     def get_variable_name(self, index: int) -> str:
         """Get the variable name at `index`."""
@@ -77,23 +117,34 @@ class Register(ABC):
 
     def size(self) -> int:
         return self.register_size
-
+    
     @classmethod
-    def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
-        variables = [v for v in ast.variables if cls.is_of_type(v)]
-        register_size = sum(v.typ.size for v in variables)
-        variable_name_to_range: dict[str, Range] = {}
-        index_to_variable_name: dict[int, str] = {}
+    def from_ast(cls, ast: cqasm.semantic.Program) -> list[Register]:
+        instances = []
+        current_qubit_index = 0
+        current_bit_index = 0
 
-        current_index: int = 0
-        for v in variables:
-            v_name = v.name
-            v_size = v.typ.size
-            variable_name_to_range[v_name] = Range(current_index, v_size)
-            for _ in range(v_size):
-                index_to_variable_name[current_index] = v_name
-                current_index += 1
-        return cls(register_size, variable_name_to_range, index_to_variable_name)
+        for v in ast.variables:
+            if is_bit_type(v) or is_qubit_type(v):
+                v_name = v.name
+                v_size = v.typ.size
+                if is_qubit_type(v):
+                    variable_name_to_range = {v_name: Range(current_qubit_index, v_size)}
+                    index_to_variable_name = {
+                        i: v_name for i in range(current_qubit_index, current_qubit_index + v_size)
+                    }
+                    instance = QubitRegister(v_size, variable_name_to_range, index_to_variable_name)
+                    current_qubit_index += v_size
+                else:
+                    variable_name_to_range = {v_name: Range(current_bit_index, v_size)}
+                    index_to_variable_name = {
+                        i: v_name for i in range(current_bit_index, current_bit_index + v_size)
+                    }
+                    instance = BitRegister(v_size, variable_name_to_range, index_to_variable_name)
+                    current_bit_index += v_size
+
+                instances.append(instance)
+        return instances
 
 
 class QubitRegister(Register):
@@ -138,50 +189,171 @@ class RegisterManager:
     these variables are defined in the input program.
     """
 
-    def __init__(self, qubit_register: QubitRegister, bit_register: BitRegister | None = None) -> None:
-        self.qubit_register: QubitRegister = qubit_register
-        self.bit_register: BitRegister = bit_register or BitRegister(0)
+    def __init__(self, 
+                 registers: Register | list[Register] | None = None,
+                 qubit_registers: QubitRegister | list[QubitRegister] | None = None, 
+                 bit_registers: BitRegister | list[BitRegister] | None = None) -> None:
+        
+        
+        if not any([registers, qubit_registers, bit_registers]):
+            raise ValueError("No register provided for register manager")
+
+        if registers:
+            qubit_registers, bit_registers = split_registers(registers)
+
+        if isinstance(qubit_registers, QubitRegister):
+            qubit_registers = [qubit_registers]
+
+        if isinstance(bit_registers,BitRegister):
+            bit_registers = [bit_registers]      
+        
+        if qubit_registers is None:
+            raise ValueError("No assigned qubit in register")
+
+        self.qubit_registers: list[QubitRegister] = qubit_registers
+        self.bit_registers: list[BitRegister] = bit_registers or [BitRegister(0)]
+        self.num_qubits = self._get_total_qubit_register_size()
+        self.num_bits = self._get_total_bit_register_size()
 
     def __repr__(self) -> str:
-        return f"qubit_register:\n{self.qubit_register}\nbit_register:\n{self.bit_register}"
-
-    @classmethod
-    def from_ast(cls, ast: cqasm.semantic.Program) -> Self:
-        qubit_register = QubitRegister.from_ast(ast)
-        bit_register = BitRegister.from_ast(ast)
-        return cls(qubit_register, bit_register)
+        return f"qubit_register:\n{self.qubit_registers}\nbit_register:\n{self.bit_registers}"
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, RegisterManager):
             return False
-        return self.qubit_register == other.qubit_register and self.bit_register == other.bit_register
+        return self.qubit_registers == other.qubit_registers and self.bit_registers == other.bit_registers
 
-    def get_qubit_register_size(self) -> int:
-        return self.qubit_register.size()
+    def __contains__(self, obj: Any) -> bool:
+        
+        if isinstance(obj, QubitRegister):
+            for qubit_register in self.qubit_registers:
+                if obj.name == qubit_register.name:
+                    return True
+        
+        if isinstance(obj, BitRegister):
+            for bit_register in self.bit_registers:
+                if obj.name == bit_register.name:
+                    return True                
 
-    def get_bit_register_size(self) -> int:
-        return self.bit_register.size()
+        if isinstance(obj, Qubit):
+            for qubit_register in self.qubit_registers:
+                if obj in qubit_register:
+                    return True
 
-    def get_qubit_register_name(self) -> str:
-        return self.qubit_register.name
+        if isinstance(obj, Bit):
+            for bit_register in self.bit_registers:
+                if obj in bit_register:
+                    return True
+        
+        return False
 
-    def get_bit_register_name(self) -> str:
-        return self.bit_register.name
+    def _get_total_qubit_register_size(self) -> int:
+        size = 0
+        for qubit_register in self.qubit_registers:
+            size += self.get_qubit_register_size(qubit_register)
+        
+        return size
 
-    def get_qubit_range(self, variable_name: str) -> Range:
-        return self.qubit_register.get_range(variable_name)
+    def _get_total_bit_register_size(self) -> int:
+        size = 0
+        for bit_register in self.bit_registers:
+            size += self.get_bit_register_size(bit_register)
+        
+        return size
 
-    def get_bit_range(self, variable_name: str) -> Range:
-        return self.bit_register.get_range(variable_name)
+    def get_qubit_register_size(self, qubit_register: QubitRegister | str) -> int:
+        for register in self.qubit_registers:
+            if isinstance(qubit_register, str) and register.name == qubit_register:
+                return register.size()
+            elif qubit_register == register:
+                return register.size()
+        
+        raise ValueError(f"Register {qubit_register} not found")
 
-    def get_qubit_index(self, variable_name: str, sub_index: int) -> int:
-        return self.qubit_register.get_index(variable_name, sub_index)
+    def get_bit_register_size(self, bit_register: BitRegister | str) -> int:
+        for register in self.bit_registers:
+            if isinstance(bit_register, str) and register.name == bit_register:
+                return register.size()
+            elif bit_register == register:
+                return register.size()
+        
+        raise ValueError(f"Register {bit_register} not found")
 
-    def get_bit_index(self, variable_name: str, sub_index: int) -> int:
-        return self.bit_register.get_index(variable_name, sub_index)
+    def get_qubit_register_name(self, qubit_register: QubitRegister | None = None) -> str:
+        for register in self.qubit_registers:
+            if qubit_register is None:
+                return next(iter(register.variable_name_to_range))
+            if qubit_register == register:
+                return next(iter(register.variable_name_to_range))
+        
+        raise ValueError(f"Register {qubit_register} not found")
 
-    def get_qubit_variable_name(self, index: int) -> str:
-        return self.qubit_register.get_variable_name(index)
+    def get_bit_register_name(self, bit_register: BitRegister | None = None) -> str:
 
-    def get_bit_variable_name(self, index: int) -> str:
-        return self.bit_register.get_variable_name(index)
+        for register in self.bit_registers:
+            if bit_register is None:
+                return next(iter(register.variable_name_to_range))
+            if bit_register == register:
+                return next(iter(register.variable_name_to_range))
+        
+        raise ValueError(f"Register {bit_register} not found")
+
+    def get_qubit_range(self, qubit_register: QubitRegister | str, variable_name: str) -> Range:
+        for register in self.qubit_registers:
+            if isinstance(qubit_register, str) and register.name == qubit_register:
+                return register.get_range(variable_name)
+            elif qubit_register == register:
+                return register.get_range(variable_name)
+        
+        raise ValueError(f"Register {qubit_register} not found")
+
+    def get_bit_range(self, bit_register: BitRegister | str, variable_name: str) -> Range:
+        
+        for register in self.bit_registers:
+            if isinstance(bit_register, str) and register.name == bit_register:
+                return register.get_range(variable_name)
+            elif bit_register == register:
+                return register.get_range(variable_name)
+        
+        raise ValueError(f"Register {bit_register} not found")
+
+    def get_qubit_index(self, qubit_register: QubitRegister | str, variable_name: str, sub_index: int) -> int:
+        
+        for register in self.qubit_registers:
+            if isinstance(qubit_register, str) and register.name == qubit_register:
+                return register.get_index(variable_name, sub_index)
+            elif qubit_register == register:
+                return register.get_index(variable_name, sub_index)
+        
+        raise ValueError(f"Register {qubit_register} not found")
+
+    def get_bit_index(self, bit_register: BitRegister | str, variable_name: str, sub_index: int) -> int:
+        
+        for register in self.bit_registers:
+            if isinstance(bit_register, str) and register.name == bit_register:
+                return register.get_index(variable_name, sub_index)
+            elif bit_register == register:
+                return register.get_index(variable_name, sub_index)
+        
+        raise ValueError(f"Register {bit_register} not found")
+
+    def get_qubit_variable_name(self, qubit_register: QubitRegister | str, index: int) -> str:
+        
+        for register in self.qubit_registers:
+            if isinstance(qubit_register, str) and register.name == qubit_register:
+                return register.get_variable_name(index)
+            elif qubit_register == register:
+                return register.get_variable_name(index)
+        
+        raise ValueError(f"Register {qubit_register} not found")
+
+    def get_bit_variable_name(self, bit_register: BitRegister | str, index: int) -> str:
+
+        for register in self.bit_registers:
+            if isinstance(bit_register, str) and register.name == bit_register:
+                return register.get_variable_name(index)
+            elif bit_register == register:
+                return register.get_variable_name(index)
+        
+        raise ValueError(f"Register {bit_register} not found")
+

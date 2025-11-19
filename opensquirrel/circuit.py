@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from opensquirrel.passes.merger.general_merger import Merger
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator
-    from opensquirrel.register_manager import RegisterManager
+    from opensquirrel.register_manager import RegisterManager, BitRegister, QubitRegister
 
 
 class Circuit:
@@ -75,19 +75,17 @@ class Circuit:
 
     @property
     def qubit_register_size(self) -> int:
-        return self.register_manager.get_qubit_register_size()
+        return self.register_manager.num_qubits
 
     @property
     def bit_register_size(self) -> int:
-        return self.register_manager.get_bit_register_size()
+        return self.register_manager.num_bits
 
-    @property
-    def qubit_register_name(self) -> str:
-        return self.register_manager.get_qubit_register_name()
+    def qubit_register_name(self, qubit_register: QubitRegister) -> str:
+        return self.register_manager.get_qubit_register_name(qubit_register)
 
-    @property
-    def bit_register_name(self) -> str:
-        return self.register_manager.get_bit_register_name()
+    def bit_register_name(self, bit_register: BitRegister) -> str:
+        return self.register_manager.get_bit_register_name(bit_register)
 
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [
