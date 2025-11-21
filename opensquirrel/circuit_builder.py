@@ -9,7 +9,7 @@ from typing_extensions import Self
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Measure, Qubit, QubitLike
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.register_manager import BitRegister, QubitRegister, Register, RegisterManager
 
 _builder_dynamic_attributes = (*default_instruction_set, "asm")
 
@@ -51,6 +51,37 @@ class CircuitBuilder:
             return partial(self._add_statement, attr)
         # Default behaviour
         return self.__getattribute__(attr)
+    
+    
+    def add_register(self, register: Register) -> None:
+        """Adds a new register to the CircuitBuilder's RegisterManager.
+
+        This method allows dynamic extension of the circuit by adding either a
+        QubitRegister or BitRegister after the CircuitBuilder has been initialized.
+        The register is appended to the appropriate list in the RegisterManager,
+        and the total number of qubits or bits is recalculated accordingly.
+
+        Args:
+            register (Register): The register to add. Must be an instance of
+            QubitRegister or BitRegister.
+
+        Raises:
+            TypeError: If the provided register is not a QubitRegister or BitRegister.
+
+        Example:
+            >>> builder = CircuitBuilder(qubit_register_size=2)
+            >>> builder.add_register(QubitRegister(3, name="q2"))
+            >>> builder.add_register(BitRegister(2, name="b1"))
+        """
+        if isinstance(register, QubitRegister):
+            self.register_manager.qubit_registers.append(register)
+            self.register_manager.num_qubits = self.register_manager._get_total_qubit_register_size()
+        elif isinstance(register, BitRegister):
+            self.register_manager.bit_registers.append(register)
+            self.register_manager.num_bits = self.register_manager._get_total_bit_register_size()
+        else:
+            raise TypeError(f"Unsupported register type: {type(register).__name__}")
+
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.

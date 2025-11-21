@@ -14,36 +14,6 @@ def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
 def is_bit_type(variable: cqasm.semantic.MultiVariable) -> bool:
     return isinstance(variable.typ, (cqasm.types.Bit, cqasm.types.BitArray))
 
-
-def split_registers(registers: Register | List[Register]) -> tuple[List[QubitRegister], List[BitRegister]]:
-    """
-    Splits a generic Register or list of Register objects into two lists:
-    one containing QubitRegisters and the other containing BitRegisters.
-
-    Args:
-        register: register objects
-    
-    Returns:
-        List of QubitRegiters and BitRegisters
-    """
-    # Normalize input to a list
-    if not isinstance(registers, list):
-        registers = [registers]
-
-    qubit_registers = []
-    bit_registers = []
-
-    for reg in registers:
-        if isinstance(reg, QubitRegister):
-            qubit_registers.append(reg)
-        elif isinstance(reg, BitRegister):
-            bit_registers.append(reg)
-        else:
-            raise TypeError(f"Unsupported register type: {type(reg).__name__}")
-
-    return qubit_registers, bit_registers
-
-
 @dataclass
 class Range:
     first: int = 0
@@ -196,16 +166,12 @@ class RegisterManager:
     """
 
     def __init__(self, 
-                 registers: Register | list[Register] | None = None,
                  qubit_registers: QubitRegister | list[QubitRegister] | None = None, 
                  bit_registers: BitRegister | list[BitRegister] | None = None) -> None:
         
         
-        if not any([registers, qubit_registers, bit_registers]):
+        if not any([ qubit_registers, bit_registers]):
             raise ValueError("No register provided for register manager")
-
-        if registers:
-            qubit_registers, bit_registers = split_registers(registers)
 
         if isinstance(qubit_registers, QubitRegister):
             qubit_registers = [qubit_registers]
