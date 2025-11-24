@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, Iterable, List, Tuple
 
 import cqasm.v3x as cqasm
 from opensquirrel.ir import Qubit, Bit
@@ -165,25 +165,41 @@ class RegisterManager:
     these variables are defined in the input program.
     """
 
-    def __init__(self, 
-                 qubit_registers: QubitRegister | list[QubitRegister] | None = None, 
-                 bit_registers: BitRegister | list[BitRegister] | None = None) -> None:
+    def __init__(self, *args: Register | Iterable[Register]) -> None:
+        
+        """
+        Initialize a QuantumCircuit with given registers.
+
+        Parameters
+        ----------
+        *args : Register
+            One or more Register objects (QubitRegister or BitRegister).
+
+        Raises
+        ------
+        TypeError
+            If any argument is not an instance of Register.
+        """
+
         
         
-        if not any([ qubit_registers, bit_registers]):
-            raise ValueError("No register provided for register manager")
+        registers: List[Register] = []
+        for arg in args:
+            if isinstance(arg, Register):
+                registers.append(arg)
+            elif isinstance(arg, Iterable):
+                if not all(isinstance(r, Register) for r in arg):
+                    raise TypeError("All elements in iterable must be of type Register.")
+                registers.extend(arg)
+            else:
+                raise TypeError("Arguments must be Register or Iterable[Register].")
 
-        if isinstance(qubit_registers, QubitRegister):
-            qubit_registers = [qubit_registers]
+        self.qubit_registers, self.bit_registers = self.split_registers(registers)
 
-        if isinstance(bit_registers,BitRegister):
-            bit_registers = [bit_registers]      
-        
-        if qubit_registers is None:
-            raise ValueError("No assigned qubit in register")
+        if not self.qubit_registers:
+            raise ValueError("A qubit register is needed")
 
-        self.qubit_registers: list[QubitRegister] = qubit_registers
-        self.bit_registers: list[BitRegister] = bit_registers or [BitRegister(0)]
+        self.bit_registers = self.bit_registers or [BitRegister(0)]
         self.num_qubits = self._get_total_qubit_register_size()
         self.num_bits = self._get_total_bit_register_size()
 
@@ -218,6 +234,38 @@ class RegisterManager:
                     return True
         
         return False
+
+    
+    
+    @staticmethod
+    def split_registers(registers: Iterable[Register]) -> Tuple[List[QubitRegister], List[BitRegister]]:
+        """
+        Split a collection of registers into qubit and bit registers.
+
+        Parameters
+        ----------
+        registers : Iterable[Register]
+            An iterable of Register objects.
+
+        Returns
+        -------
+        Tuple[List[QubitRegister], List[BitRegister]]
+            A tuple containing two lists: one for QubitRegister objects and one for BitRegister objects.
+        """
+        qubits: List[QubitRegister] = []
+        bits: List[BitRegister] = []
+
+        for reg in registers:
+            if isinstance(reg, QubitRegister):
+                qubits.append(reg)
+            elif isinstance(reg, BitRegister):
+                bits.append(reg)
+            else:
+                raise TypeError(f"Unsupported register type: {type(reg).__name__}")
+
+        return qubits, bits
+
+
 
     def _get_total_qubit_register_size(self) -> int:
         size = 0

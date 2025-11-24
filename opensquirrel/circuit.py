@@ -81,8 +81,15 @@ class Circuit:
     def bit_register_size(self) -> int:
         return self.register_manager.num_bits
 
-    def qubit_register_name(self, qubit_register: QubitRegister) -> str:
-        return self.register_manager.get_qubit_register_name(qubit_register)
+    def qubit_register_names(self, qubit_register: QubitRegister | None = None) -> list[str] | str:
+        if qubit_register is not None:
+            return self.register_manager.get_qubit_register_name(qubit_register)
+        
+        qubit_registers = []
+        for register in self.register_manager.qubit_registers:
+            qubit_registers.append(register.name)
+
+        return qubit_registers 
 
     def bit_register_name(self, bit_register: BitRegister) -> str:
         return self.register_manager.get_bit_register_name(bit_register)

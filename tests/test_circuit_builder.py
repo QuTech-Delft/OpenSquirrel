@@ -17,7 +17,7 @@ class TestCircuitBuilder:
         circuit = builder.to_circuit()
 
         assert circuit.qubit_register_size == 2
-        assert circuit.qubit_register_name == "q"
+        assert circuit.qubit_register_names()[0] == "q"
         assert circuit.ir.statements == [
             H(0),
             CNOT(0, 1),
