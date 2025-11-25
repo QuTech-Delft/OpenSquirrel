@@ -21,7 +21,6 @@ from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGat
 
 if TYPE_CHECKING:
     from opensquirrel.ir.semantics import (
-        BlochSphereRotation,
         ControlledGate,
         MatrixGate,
     )
@@ -118,11 +117,10 @@ class MatrixExpander(IRVisitor):
             msg = "index out of range"
             raise IndexError(msg)
 
-        bsr_matrix = gate.bsr.accept(self)
         result = np.kron(
             np.kron(
                 np.eye(1 << (self.qubit_register_size - gate.qubit.index - 1)),
-                bsr_matrix,
+                gate.matrix,
             ),
             np.eye(1 << gate.qubit.index),
         )
@@ -130,9 +128,6 @@ class MatrixExpander(IRVisitor):
             msg = "result has incorrect shape"
             ValueError(msg)
         return np.asarray(result, dtype=np.complex128)
-
-    def visit_bloch_sphere_rotation(self, bsr: BlochSphereRotation) -> NDArray[np.complex128]:
-        return can1(bsr.axis, bsr.angle, bsr.phase)
 
     def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
         if gate.control_qubit.index >= self.qubit_register_size:

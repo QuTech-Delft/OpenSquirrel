@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
 from typing import TYPE_CHECKING
 
 from opensquirrel.ir import (
@@ -46,8 +45,7 @@ if TYPE_CHECKING:
     )
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
-default_bsr_without_params_set: Mapping[str, type[SingleQubitGate]]
-default_bsr_without_params_set = {
+default_bsr_without_params_set: dict[str, type[SingleQubitGate]] = {
     "H": H,
     "I": I,
     "S": S,
@@ -64,12 +62,12 @@ default_bsr_without_params_set = {
     "mY90": MinusY90,
     "mZ90": MinusZ90,
 }
-default_bsr_full_params_set: Mapping[str, type[SingleQubitGate]]
-default_bsr_full_params_set = {
+
+default_bsr_full_params_set: dict[str, type[SingleQubitGate]] = {
     "Rn": Rn,
 }
-default_bsr_with_angle_param_set: Mapping[str, type[SingleQubitGate]]
-default_bsr_with_angle_param_set = {
+
+default_bsr_with_angle_param_set: dict[str, type[SingleQubitGate]] = {
     "Rx": Rx,
     "Ry": Ry,
     "Rz": Rz,
@@ -119,7 +117,7 @@ default_instruction_set: dict[str, type[Instruction]] = {
     **default_control_instruction_set,
 }
 
-default_bsr_set_without_rn: Mapping[str, type[SingleQubitGate]]
+default_bsr_set_without_rn: dict[str, type[SingleQubitGate]]
 default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
 
 

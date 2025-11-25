@@ -5,17 +5,7 @@ from math import pi
 import numpy as np
 import pytest
 
-from opensquirrel import (
-    X90,
-    H,
-    MinusX90,
-    Rn,
-    Rx,
-    Ry,
-    Rz,
-    TDagger,
-    X,
-)
+from opensquirrel import X90, H, MinusX90, Rn, Rx, Ry, Rz, TDagger, X, Y, Z
 from opensquirrel.common import ATOL
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.semantics.gate_semantic import MatrixSemantic
@@ -68,6 +58,11 @@ class TestSingleQubitGate:
 
     def test_equality(self, gate: SingleQubitGate) -> None:
         assert gate == gate
+
+    def test_order_of_composition(self) -> None:
+        assert X(0) * Y(0) != Y(0) * X(0)
+        assert X(0) * Z(0) != Z(0) * X(0)
+        assert Y(0) * Z(0) != Z(0) * Y(0)
 
     @pytest.mark.parametrize("other_gate", [H(1), X(0), "test"])
     def test_non_equality(self, gate: SingleQubitGate, other_gate: SingleQubitGate) -> None:

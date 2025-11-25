@@ -20,19 +20,23 @@ if TYPE_CHECKING:
 
 def bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]]) -> BlochSphereRotation:
     cmatrix = np.asarray(matrix, dtype=np.complex128)
-    assert cmatrix.shape == (2, 2)
+
+    if cmatrix.shape != (2, 2):
+        msg = f"Expected shape for generating BSR is (2, 2), got {cmatrix.shape}"
+        raise ValueError(msg)
+
     a, b, c, d = map(complex, cmatrix.flatten())
     phase = cmath.phase(a * d - c * b) / 2
 
-    a /= cmath.exp(1j * phase)
-    b /= cmath.exp(1j * phase)
-    c /= cmath.exp(1j * phase)
-    d /= cmath.exp(1j * phase)
+    a *= cmath.exp(-1j * phase)
+    b *= cmath.exp(-1j * phase)
+    c *= cmath.exp(-1j * phase)
+    d *= cmath.exp(-1j * phase)
 
     angle = -2 * acos((1 / 2) * (a + d).real)
-    nx = (b + c) / 1j
+    nx = -1j * (b + c)
     ny = b - c
-    nz = (a - d) / 1j
+    nz = -1j * (a - d)
 
     nx, ny, nz = (x.real for x in (nx, ny, nz))
 

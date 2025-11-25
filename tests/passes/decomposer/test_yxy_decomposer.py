@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from math import pi
-from typing import TYPE_CHECKING
 
 import pytest
 
@@ -10,9 +9,6 @@ from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import YXYDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
-
-if TYPE_CHECKING:
-    from opensquirrel.ir import Gate
 
 
 @pytest.fixture
@@ -44,7 +40,9 @@ def test_identity(decomposer: YXYDecomposer) -> None:
     ],
     ids=["CNOT", "CR", "S", "Y", "Ry", "X", "Rx", "H", "arbitrary"],
 )
-def test_yxy_decomposer(decomposer: YXYDecomposer, gate: SingleQubitGate, expected_result: list[Gate]) -> None:
+def test_yxy_decomposer(
+    decomposer: YXYDecomposer, gate: SingleQubitGate, expected_result: list[SingleQubitGate]
+) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
