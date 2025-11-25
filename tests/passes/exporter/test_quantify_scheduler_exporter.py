@@ -14,8 +14,8 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.passes.exporter.quantify_scheduler_exporter import CYCLE_TIME, QuantifySchedulerExporter
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.passes.exporter.quantify_scheduler_exporter import CYCLE_TIME, QuantifySchedulerExporter
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
