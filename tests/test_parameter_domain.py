@@ -1,13 +1,13 @@
 from collections.abc import Iterator
 from math import pi
-from typing import cast
 
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, Rn, Rx, Ry, Rz, X
 from opensquirrel.common import normalize_angle
-from opensquirrel.ir import Float, Gate, Instruction
+from opensquirrel.ir import Gate
 from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 
 AnglesType = Iterator[tuple[float, float]]
@@ -26,9 +26,10 @@ class TestParsing:
     @staticmethod
     def _check_expected(circuit: Circuit, expected: float) -> None:
         for statement in circuit.ir.statements:
-            assert getattr(statement, "theta").value == expected  # noqa
-            phi = getattr(statement, "phi", None)
-            assert phi.value == expected if phi else True
+            if isinstance(statement, SingleQubitGate):
+                assert getattr(statement.bsr, "theta").value == expected  # noqa
+                phi = getattr(statement, "phi", None)
+                assert phi.value == expected if phi else True
 
     def test_circuit_from_string(self, angles: AnglesType) -> None:
         for angle, expected in angles:
@@ -54,8 +55,10 @@ class TestParsing:
         builder = CircuitBuilder(2)
         for i, k in enumerate([0, 1, -1, 2, 4]):
             builder.CRk(0, 1, k)
-            theta_expected = cast("Float", cast("Instruction", builder.ir.statements[i]).arguments[-1])
-            assert theta_expected.value == normalize_angle(2 * pi / 2**k)
+            gate = builder.ir.statements[i]
+            assert isinstance(gate, ControlledGate)
+            theta_expected = gate.target_gate.bsr.angle
+            assert theta_expected == normalize_angle(2 * pi / 2**k)
 
         with pytest.warns(UserWarning, match=r"value of parameter 'k' is not an integer: got <class 'float'> instead."):
             builder.CRk(0, 1, 1.5)

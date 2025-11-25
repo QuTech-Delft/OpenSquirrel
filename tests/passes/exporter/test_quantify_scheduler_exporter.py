@@ -14,6 +14,7 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.exporter import ExportFormat
 from opensquirrel.passes.exporter.quantify_scheduler_exporter import CYCLE_TIME
 
@@ -433,7 +434,7 @@ def test_export(mock_qs: MagicMock) -> None:
 
 @pytest.mark.parametrize(
     "gate",
-    [BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34)],
+    [SingleQubitGate(0, BlochSphereRotation(axis=(1, 2, 3), angle=0.9876, phase=2.34))],
     ids=["BSR"],
 )
 def test_gates_not_supported(mock_qs: MagicMock, gate: Gate) -> None:

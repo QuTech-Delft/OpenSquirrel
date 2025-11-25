@@ -21,10 +21,10 @@ from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGat
 
 if TYPE_CHECKING:
     from opensquirrel.ir.semantics import (
-        BlochSphereRotation,
         ControlledGate,
         MatrixGate,
     )
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
@@ -112,7 +112,7 @@ class MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> NDArray[np.complex128]:
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
         if gate.qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
@@ -120,7 +120,7 @@ class MatrixExpander(IRVisitor):
         result = np.kron(
             np.kron(
                 np.eye(1 << (self.qubit_register_size - gate.qubit.index - 1)),
-                can1(gate.axis, gate.angle, gate.phase),
+                gate.matrix,
             ),
             np.eye(1 << gate.qubit.index),
         )

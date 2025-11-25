@@ -4,7 +4,8 @@ from math import pi
 from typing import TYPE_CHECKING
 
 from opensquirrel import CZ, Ry
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
+from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 if TYPE_CHECKING:
@@ -26,7 +27,7 @@ class CNOT2CZDecomposer(Decomposer):
         if gate.name != "CNOT":
             return [gate]
         if isinstance(gate, ControlledGate):
-            if not isinstance(gate.target_gate, BlochSphereRotation):
+            if not isinstance(gate.target_gate, SingleQubitGate):
                 # ControlledGate's with 2+ control qubits are ignored.
                 return [gate]
             control_qubit = gate.control_qubit

@@ -4,9 +4,8 @@ import numpy as np
 from numpy.typing import NDArray
 
 from opensquirrel.common import repr_round
-from opensquirrel.ir import AxisLike, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir import AxisLike, Gate, IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.expression import BaseAxis, Expression
-from opensquirrel.ir.unitary import Gate
 
 
 class CanonicalAxis(BaseAxis):
@@ -76,8 +75,8 @@ class CanonicalAxis(BaseAxis):
 
 
 class CanonicalGate(Gate):
-    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike, axis: AxisLike, name: str = "CanonicalGate") -> None:
-        Gate.__init__(self, name)
+    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike, axis: AxisLike) -> None:
+        Gate.__init__(self, name="CanonicalGate")
         self.qubit_0 = Qubit(qubit_0)
         self.qubit_1 = Qubit(qubit_1)
         self.axis = CanonicalAxis(axis)

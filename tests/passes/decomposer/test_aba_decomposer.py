@@ -6,6 +6,7 @@ import pytest
 
 from opensquirrel import U
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import aba_decomposer as aba
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement
 
@@ -25,7 +26,8 @@ def test_specific_bloch_rotation(aba_decomposer: Callable[..., Decomposer]) -> N
     axis = [-0.53825, -0.65289, -0.53294]
     angle = 1.97871
 
-    arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=0)
+    arbitrary_operation = SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=axis, angle=angle, phase=0))
+
     decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
     check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
 
@@ -47,6 +49,8 @@ def test_all_octants_of_bloch_sphere_rotation(aba_decomposer: Callable[..., Deco
     for axis in axes:
         for angle in angles:
             for phase in phases:
-                arbitrary_operation = BlochSphereRotation(qubit=0, axis=axis, angle=angle, phase=phase)
+                arbitrary_operation = SingleQubitGate(
+                    qubit=0, gate_semantic=BlochSphereRotation(axis=axis, angle=angle, phase=phase)
+                )
                 decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
                 check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
