@@ -40,16 +40,12 @@ from opensquirrel.ir.default_gates import (
 if TYPE_CHECKING:
     from opensquirrel.ir import ControlInstruction, Gate, Instruction, NonUnitary, Unitary
     from opensquirrel.ir.semantics import (
-        BlochSphereRotation,
-        BsrAngleParam,
-        BsrFullParams,
-        BsrNoParams,
-        BsrUnitaryParams,
         ControlledGate,
         MatrixGate,
     )
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
-default_bsr_without_params_set: dict[str, type[BsrNoParams]] = {
+default_bsr_without_params_set: dict[str, type[SingleQubitGate]] = {
     "H": H,
     "I": I,
     "S": S,
@@ -66,18 +62,21 @@ default_bsr_without_params_set: dict[str, type[BsrNoParams]] = {
     "mY90": MinusY90,
     "mZ90": MinusZ90,
 }
-default_bsr_full_params_set: dict[str, type[BsrFullParams]] = {
+
+default_bsr_full_params_set: dict[str, type[SingleQubitGate]] = {
     "Rn": Rn,
 }
-default_bsr_with_angle_param_set: dict[str, type[BsrAngleParam]] = {
+
+default_bsr_with_angle_param_set: dict[str, type[SingleQubitGate]] = {
     "Rx": Rx,
     "Ry": Ry,
     "Rz": Rz,
 }
-default_bsr_unitary_param_set: dict[str, type[BsrUnitaryParams]] = {
+
+default_bsr_unitary_param_set: dict[str, type[SingleQubitGate]] = {
     "U": U,
 }
-default_bloch_sphere_rotation_set: dict[str, type[BlochSphereRotation]] = {
+default_bloch_sphere_rotation_set: dict[str, type[SingleQubitGate]] = {
     **default_bsr_full_params_set,
     **default_bsr_without_params_set,
     **default_bsr_with_angle_param_set,
@@ -117,10 +116,9 @@ default_instruction_set: dict[str, type[Instruction]] = {
     **default_non_unitary_set,
     **default_control_instruction_set,
 }
-default_bsr_set_without_rn: dict[str, type[BsrNoParams] | type[BsrAngleParam]] = {
-    **default_bsr_without_params_set,
-    **default_bsr_with_angle_param_set,
-}
+
+default_bsr_set_without_rn: dict[str, type[SingleQubitGate]]
+default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
 
 
 def is_anonymous_gate(name: str) -> bool:

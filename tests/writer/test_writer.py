@@ -1,5 +1,6 @@
 from opensquirrel import CircuitBuilder
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.writer import writer
 
 
@@ -157,8 +158,10 @@ b[1] = measure q[1]
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(2, 2)
     builder.H(0)
-    builder.ir.add_gate(BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23, phase=0.0))
-    builder.ir.add_gate(ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23, phase=0.0)))
+    builder.ir.add_gate(SingleQubitGate(0, BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)))
+    builder.ir.add_gate(
+        ControlledGate(0, SingleQubitGate(1, BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)))
+    )
     builder.ir.add_gate(MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]))
     builder.CR(0, 1, 1.234)
     assert (
@@ -169,8 +172,8 @@ qubit[2] q
 bit[2] b
 
 H q[0]
-BlochSphereRotation(qubit=Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)
-ControlledGate(control_qubit=Qubit[0], target_gate=BlochSphereRotation(qubit=Qubit[1], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
+Rn(0.57735027, 0.57735027, 0.57735027, 1.23, 0.0) q[0]
+ControlledGate(control_qubit=Qubit[0], target_qubit=Qubit[1], target_gate=BlochSphereRotation(axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
 MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])
 CR(1.234) q[0], q[1]
 """  # noqa: E501

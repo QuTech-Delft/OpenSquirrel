@@ -6,6 +6,7 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import Gate
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.exporter import CqasmV1Exporter
 
 
@@ -258,8 +259,10 @@ measure_z q[1]
 @pytest.mark.parametrize(
     "gate",
     [
-        BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23, phase=0.0),
-        ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23, phase=0.0)),
+        SingleQubitGate(0, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
+        ControlledGate(
+            0, SingleQubitGate(qubit=1, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
+        ),
         MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]),
     ],
 )

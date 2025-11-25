@@ -26,9 +26,9 @@ if TYPE_CHECKING:
     from opensquirrel import Circuit
     from opensquirrel.ir import Qubit
     from opensquirrel.ir.semantics import (
-        BlochSphereRotation,
         MatrixGate,
     )
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.register_manager import RegisterManager
 
 OperationCycles = dict[str, int]
@@ -220,15 +220,16 @@ class _ScheduleCreator(IRVisitor):
         self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
+        # def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         # Note that when adding a rotation gate to the Quantify-scheduler Schedule,
         # there exists an ambiguity with how Quantify-scheduler will store an angle of 180 degrees.
         # Depending on the system the angle may be stored as either 180 or -180 degrees.
         # This ambiguity has no physical consequences, but may cause the exporter test fail.
         if (
-            abs(gate.axis[0] - 1 / math.sqrt(2)) < ATOL
-            and abs(gate.axis[1]) < ATOL
-            and abs(gate.axis[2] - 1 / math.sqrt(2)) < ATOL
+            abs(gate.bsr.axis[0] - 1 / math.sqrt(2)) < ATOL
+            and abs(gate.bsr.axis[1]) < ATOL
+            and abs(gate.bsr.axis[2] - 1 / math.sqrt(2)) < ATOL
         ):
             # Hadamard gate.
             self.schedule.add(
@@ -236,10 +237,10 @@ class _ScheduleCreator(IRVisitor):
                 label=self._get_operation_label("H", gate.get_qubit_operands()),
             )
             return
-        if abs(gate.axis[2]) < ATOL:
+        if abs(gate.bsr.axis[2]) < ATOL:
             # Rxy rotation.
-            theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
-            phi: float = round(math.degrees(math.atan2(gate.axis[1], gate.axis[0])), FIXED_POINT_DEG_PRECISION)
+            theta = round(math.degrees(gate.bsr.angle), FIXED_POINT_DEG_PRECISION)
+            phi: float = round(math.degrees(math.atan2(gate.bsr.axis[1], gate.bsr.axis[0])), FIXED_POINT_DEG_PRECISION)
 
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.Rxy(
@@ -248,9 +249,9 @@ class _ScheduleCreator(IRVisitor):
                 label=self._get_operation_label("Rxy", gate.get_qubit_operands()),
             )
             return
-        if abs(gate.axis[0]) < ATOL and abs(gate.axis[1]) < ATOL:
+        if abs(gate.bsr.axis[0]) < ATOL and abs(gate.bsr.axis[1]) < ATOL:
             # Rz rotation.
-            theta = round(math.degrees(gate.angle), FIXED_POINT_DEG_PRECISION)
+            theta = round(math.degrees(gate.bsr.angle), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)),
                 label=self._get_operation_label("Rz", gate.get_qubit_operands()),
