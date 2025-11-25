@@ -25,7 +25,7 @@ CRk(23) q[0], q[1]
     )
 
     assert circuit.qubit_register_size == 2
-    assert circuit.qubit_register_name == "q"
+    assert circuit.qubit_register_names()[0] == "q"
     assert circuit.ir.statements == [H(0), I(0), Ry(1, 1.234), CNOT(0, 1), CR(1, 0, 5.123), CRk(0, 1, 23)]
 
 
@@ -43,7 +43,7 @@ CRk(23) q[0, 3], q[1, 4]
     )
 
     assert circuit.qubit_register_size == 20
-    assert circuit.qubit_register_name == "q"
+    assert circuit.qubit_register_names()[0] == "q"
     assert circuit.ir.statements == [
         H(5),
         H(6),

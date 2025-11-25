@@ -40,9 +40,9 @@ class TestCircuitBuilder:
     def test_instructions(self, builder: CircuitBuilder, expected_result: list[Instruction]) -> None:
         circuit = builder.to_circuit()
         assert circuit.qubit_register_size == 2
-        assert circuit.qubit_register_name == "q"
+        assert circuit.qubit_register_names()[0] == "q"
         assert circuit.bit_register_size == 2
-        assert circuit.bit_register_name == "b"
+        assert circuit.bit_register_names()[0] == "b"
         assert circuit.ir.statements == expected_result
 
     def test_chain(self) -> None:

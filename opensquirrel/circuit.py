@@ -89,10 +89,17 @@ class Circuit:
         for register in self.register_manager.qubit_registers:
             qubit_registers.append(register.name)
 
-        return qubit_registers 
+        return qubit_registers
 
-    def bit_register_name(self, bit_register: BitRegister) -> str:
-        return self.register_manager.get_bit_register_name(bit_register)
+    def bit_register_names(self, bit_register: BitRegister | None = None) -> list[str] | str:
+        if bit_register is not None:
+            return self.register_manager.get_bit_register_name(bit_register)
+        
+        bit_registers = []
+        for register in self.register_manager.bit_registers:
+            bit_registers.append(register.name)
+        
+        return bit_registers
 
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [

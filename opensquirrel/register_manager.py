@@ -196,9 +196,6 @@ class RegisterManager:
 
         self.qubit_registers, self.bit_registers = self.split_registers(registers)
 
-        if not self.qubit_registers:
-            raise ValueError("A qubit register is needed")
-
         self.bit_registers = self.bit_registers or [BitRegister(0)]
         self.num_qubits = self._get_total_qubit_register_size()
         self.num_bits = self._get_total_bit_register_size()
