@@ -28,9 +28,9 @@ For instance, if we want to export our circuit to
 [cQASM 1.0](https://libqasm.readthedocs.io/) (given by the export format `CQASM_V1`) we write the following:
 
 ```python
-from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.passes.exporter import CqasmV1Exporter
 
-exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+exported_circuit = circuit.export(exporter=CqasmV1Exporter())
 ```
 
 This uses the [cQASMv1 exporter](../compilation-passes/exporting/cqasm-v1-exporter.md) to export the

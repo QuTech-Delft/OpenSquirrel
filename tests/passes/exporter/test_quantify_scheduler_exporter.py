@@ -15,8 +15,7 @@ from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-from opensquirrel.passes.exporter import ExportFormat
-from opensquirrel.passes.exporter.quantify_scheduler_exporter import CYCLE_TIME
+from opensquirrel.passes.exporter.quantify_scheduler_exporter import CYCLE_TIME, QuantifySchedulerExporter
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -34,7 +33,7 @@ class FloatEq(float):
 
 def _check_ref_schedulables(exported_schedule: Schedule, expected_ref_schedulable_indices: list[int | None]) -> None:
     ref_schedulables = [
-        schedulable_data["timing_constraints"][0]["ref_schedulable"]
+        schedulable_data["timing_constraints"][0].ref_schedulable
         for schedulable_data in list(exported_schedule.schedulables.values())
     ]
     schedulable_index_map = {
@@ -51,8 +50,13 @@ def _check_waiting_cycles(exported_schedule: Schedule, expected_waiting_cycles: 
     for schedulable_data, expected_waiting_cycle in zip(
         exported_schedule.schedulables.values(), expected_waiting_cycles, strict=False
     ):
-        waiting_time = schedulable_data.data["timing_constraints"][0]["rel_time"]
+        waiting_time = schedulable_data.data["timing_constraints"][0].rel_time
         assert waiting_time == -1.0 * expected_waiting_cycle * CYCLE_TIME
+
+
+@pytest.fixture
+def exporter() -> QuantifySchedulerExporter:
+    return QuantifySchedulerExporter()
 
 
 @pytest.fixture
@@ -60,14 +64,14 @@ def qs_is_installed() -> bool:
     return importlib.util.find_spec("quantify_scheduler") is not None
 
 
-def test_empty_circuit_export(qs_is_installed: bool) -> None:
+def test_empty_circuit_export(exporter: QuantifySchedulerExporter, qs_is_installed: bool) -> None:
     if qs_is_installed:
         circuit = CircuitBuilder(1).to_circuit()
-        exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, _ = circuit.export(exporter=exporter)
         assert len(exported_schedule.schedulables) == 0
 
 
-def test_supported_gate_set(qs_is_installed: bool) -> None:
+def test_supported_gate_set(qs_is_installed: bool, exporter: QuantifySchedulerExporter) -> None:
     if qs_is_installed:
         builder = CircuitBuilder(2, 2)
         builder.I(0).H(0).X(0).X90(0).mX90(0).Y(0).Y90(0).mY90(0).Z(0).Z90(0).mZ90(0).S(0).Sdag(0).T(0).Tdag(0)
@@ -92,7 +96,7 @@ def test_supported_gate_set(qs_is_installed: bool) -> None:
             "Measure q[0]",
             "Reset q[0]",
         ]
-        exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, _ = circuit.export(exporter=exporter)
         for operation_data in exported_schedule.operations.values():
             assert operation_data.name in expected_operations
 
@@ -134,10 +138,15 @@ def test_supported_gate_set(qs_is_installed: bool) -> None:
     ],
     ids=["alap_1", "alap_2", "alap_3", "alap_4", "alap_5", "alap_6"],
 )
-def test_alap(qs_is_installed: bool, cqasm_string: str, expected_ref_schedulable_indices: list[int | None]) -> None:
+def test_alap(
+    exporter: QuantifySchedulerExporter,
+    qs_is_installed: bool,
+    cqasm_string: str,
+    expected_ref_schedulable_indices: list[int | None],
+) -> None:
     if qs_is_installed:
         circuit = Circuit.from_string(cqasm_string)
-        exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, _ = circuit.export(exporter=exporter)
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
 
 
@@ -225,6 +234,7 @@ def test_alap(qs_is_installed: bool, cqasm_string: str, expected_ref_schedulable
     ],
 )
 def test_wait(
+    exporter: QuantifySchedulerExporter,
     qs_is_installed: bool,
     cqasm_string: str,
     expected_ref_schedulable_indices: list[int | None],
@@ -232,12 +242,13 @@ def test_wait(
 ) -> None:
     if qs_is_installed:
         circuit = Circuit.from_string(cqasm_string)
-        exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, _ = circuit.export(exporter=exporter)
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
 
 
 def test_control_instruction_stress_test(
+    exporter: QuantifySchedulerExporter,
     qs_is_installed: bool,
 ) -> None:
     if qs_is_installed:
@@ -380,7 +391,42 @@ def test_control_instruction_stress_test(
             0,
             0,
         ]
-        exported_schedule, _ = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, _ = circuit.export(exporter=exporter)
+        _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
+        _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
+
+
+@pytest.mark.parametrize(
+    ("circuit", "expected_ref_schedulable_indices", "expected_waiting_cycles"),
+    [
+        (
+            Circuit.from_string("""version 3; qubit[2] q; bit b; init q; barrier q; b = measure q[0];
+            wait(2) q[1]; X q[1]; Y q[1]; barrier q; X q[0]; CZ q[0], q[1]"""),
+            [2, 2, 5, 4, 5, 6, None],
+            [0, 0, 0, 0, 0, 0, 0],
+        ),
+        (
+            Circuit.from_string("""version 3; qubit[2] q; bit b; init q; barrier q; b = measure q[0];
+            wait(4) q[1]; X q[1]; Y q[1]; barrier q; X q[0]; CZ q[0], q[1]"""),
+            [3, 3, 5, 4, 5, 6, None],
+            [4, 4, 0, 0, 0, 0, 0],
+        ),
+    ],
+    ids=["on_measure", "on_waited_instruction"],
+)
+def test_operation_timing(
+    qs_is_installed: bool,
+    circuit: Circuit,
+    expected_ref_schedulable_indices: list[int | None],
+    expected_waiting_cycles: list[int],
+) -> None:
+    if qs_is_installed:
+        operation_cycles = {
+            "CZ": 2,
+            "CNOT": 2,
+            "Measure": 5,
+        }
+        exported_schedule, _ = circuit.export(exporter=QuantifySchedulerExporter(operation_cycles=operation_cycles))
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
 
@@ -410,7 +456,7 @@ def test_export(mock_qs: MagicMock) -> None:
     builder.measure(2, 2)
     circuit = builder.to_circuit()
 
-    quantify_scheduler_exporter.export(circuit)
+    quantify_scheduler_exporter.QuantifySchedulerExporter().export(circuit)
 
     mock_qs.Schedule.assert_called_with("Exported OpenSquirrel circuit")
 
@@ -445,7 +491,7 @@ def test_gates_not_supported(mock_qs: MagicMock, gate: Gate) -> None:
     circuit = builder.to_circuit()
 
     with pytest.raises(ExporterError, match="cannot export circuit: "):
-        quantify_scheduler_exporter.export(circuit)
+        quantify_scheduler_exporter.QuantifySchedulerExporter().export(circuit)
 
 
 def test_quantify_scheduler_not_installed(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -462,4 +508,4 @@ def test_quantify_scheduler_not_installed(monkeypatch: pytest.MonkeyPatch) -> No
         quantify_scheduler_exporter = importlib.import_module(
             "opensquirrel.passes.exporter.quantify_scheduler_exporter"
         )
-        quantify_scheduler_exporter.export(empty_circuit)
+        quantify_scheduler_exporter.QuantifySchedulerExporter().export(empty_circuit)

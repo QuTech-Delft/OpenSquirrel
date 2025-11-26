@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 
 from opensquirrel import Circuit
-from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.passes.exporter import CqasmV1Exporter
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 
 DataType = dict[str, Any]
@@ -119,7 +119,7 @@ class TestStarmon7:
         )
         circuit.validate(validator=InteractionValidator(**data))
         circuit.validate(validator=PrimitiveGateValidator(**data))
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CqasmV1Exporter())
 
         assert (
             exported_circuit

@@ -1,23 +1,23 @@
 Instead of writing the circuit out to the [default cQASM format](https://qutech-delft.github.io/cQASM-spec/),
 one can also use a custom exporter pass to export the circuit to a particular output format.
 
-Exporting can be done by calling the `export` method on the circuit object and providing the desired output
-format `fmt` as an input argument to the call, _e.g._,
+Exporting can be done by calling the `export` method on the circuit object and providing the desired exporter
+`exporter` as an input argument to the call, _e.g._,
 
 !!! example ""
 
     ```python
-    from opensquirrel import ExportFormat
+    from opensquirrel import CQasmV1Exporter
 
-    exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+    exported_circuit = circuit.export(exporter=CQasmV1Exporter)
     ```
 
 As shown in the example above, the exported circuit is given as the return value.
 
 The following exporting passes are available in OpenSquirrel:
 
-- [cQASMv1 exporter](cqasm-v1-exporter.md) (`ExportFormat.CQASM_V1`)
-- [quantify-scheduler exporter](quantify-scheduler-exporter.md) (`ExportFormat.QUANTIFY_SCHEDULER`)
+- [cQASMv1 exporter](cqasm-v1-exporter.md) (`CQasmV1Exporter`)
+- [quantify-scheduler exporter](quantify-scheduler-exporter.md) (`QuantifySchedulerExporter`)
 
 !!! warning "Unsupported language features"
 

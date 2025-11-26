@@ -7,7 +7,7 @@ import pytest
 
 from opensquirrel import Circuit, Measure
 from opensquirrel.passes.decomposer import CZDecomposer, SWAP2CZDecomposer, XYXDecomposer
-from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.passes.exporter import QuantifySchedulerExporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 
@@ -96,7 +96,7 @@ class TestTuna5:
                 Exception,
                 match="quantify-scheduler is not installed, or cannot be installed on your system",
             ):
-                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+                circuit.export(exporter=QuantifySchedulerExporter())
 
     def test_complete_circuit(self, qs_is_installed: bool, data: DataType) -> None:
         circuit = Circuit.from_string(
@@ -162,7 +162,7 @@ class TestTuna5:
         circuit.validate(validator=PrimitiveGateValidator(**data))
 
         if qs_is_installed:
-            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
             operations = _get_operations(exported_schedule)
 
             assert exported_schedule.name == "Exported OpenSquirrel circuit"
@@ -280,7 +280,7 @@ class TestTuna5:
         )
         # No compilation passes are performed
         if qs_is_installed:
-            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
             operations = _get_operations(exported_schedule)
 
             assert exported_schedule.name == "Exported OpenSquirrel circuit"

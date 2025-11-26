@@ -3,7 +3,7 @@ import importlib
 import pytest
 
 from opensquirrel import Circuit
-from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.passes.exporter import CqasmV1Exporter, QuantifySchedulerExporter
 
 
 class TestCqasmV1Exporter:
@@ -20,7 +20,7 @@ class TestCqasmV1Exporter:
             b = measure q
             """,
         )
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CqasmV1Exporter())
         assert (
             str(exported_circuit)
             == """version 1.0
@@ -57,7 +57,7 @@ measure_z q[1]
             bB[1] = measure qA[1]
             """,
         )
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CqasmV1Exporter())
         assert (
             str(exported_circuit)
             == """version 1.0
@@ -97,7 +97,7 @@ measure_z q[1]
             b = measure q
             """,
         )
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CqasmV1Exporter())
         assert (
             str(exported_circuit)
             == """version 1.0
@@ -153,7 +153,7 @@ measure_z q[1]
             b[2,3] = measure q[2,3]
             """,
         )
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CqasmV1Exporter())
         assert (
             str(exported_circuit)
             == """version 1.0
@@ -200,9 +200,9 @@ class TestQuantifySchedulerExporter:
                 Exception,
                 match="quantify-scheduler is not installed, or cannot be installed on your system",
             ):
-                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+                circuit.export(exporter=QuantifySchedulerExporter())
         else:
-            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
             operations = [
                 exported_schedule.operations[schedulable["operation_id"]].name
                 for schedulable in exported_schedule.schedulables.values()
@@ -247,9 +247,9 @@ class TestQuantifySchedulerExporter:
                 Exception,
                 match="quantify-scheduler is not installed, or cannot be installed on your system",
             ):
-                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+                circuit.export(exporter=QuantifySchedulerExporter())
         else:
-            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
             operations = [
                 exported_schedule.operations[schedulable["operation_id"]].name
                 for schedulable in exported_schedule.schedulables.values()
@@ -298,9 +298,9 @@ class TestQuantifySchedulerExporter:
                 Exception,
                 match="quantify-scheduler is not installed, or cannot be installed on your system",
             ):
-                circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+                circuit.export(exporter=QuantifySchedulerExporter())
         else:
-            exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
             operations = [
                 exported_schedule.operations[schedulable["operation_id"]].name
                 for schedulable in exported_schedule.schedulables.values()
