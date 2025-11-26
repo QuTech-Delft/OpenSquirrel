@@ -3260,14 +3260,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/passes/exporter/export_format.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/general_exporter.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    export_format
+    general_exporter
   
 
     
@@ -4636,7 +4636,7 @@
 
   <h1>quantify-scheduler exporter</h1>
 
-<p>The <a href="https://quantify-os.org/docs/quantify-scheduler/">quantify-scheduler</a> exporter (<code>ExportFormat.QUANTIFY_SCHEDULER</code>)
+<p>The <a href="https://quantify-os.org/docs/quantify-scheduler/">quantify-scheduler</a> exporter (<code>QuantifySchedulerExporter</code>)
 exports the circuit to <a href="https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/index.html#quantify_scheduler.Schedule"><code>Schedule</code></a>
 object and a <em>bitstring mapping</em>.</p>
 <p>The latter can be used to relate the measurement outcomes to the (virtual) bit variables they have
@@ -4702,7 +4702,7 @@ quantify-scheduler exporter supports.</p>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantifySchedulerExporter</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">"""</span>
@@ -4717,7 +4717,7 @@ quantify-scheduler exporter supports.</p>
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="sd">    """</span>
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">)</span>
 <a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">exported_schedule</span><span class="p">,</span> <span class="n">bitstring_mapping</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">QUANTIFY_SCHEDULER</span><span class="p">)</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="n">exported_schedule</span><span class="p">,</span> <span class="n">bitstring_mapping</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">exporter</span><span class="o">=</span><span class="n">QuantifySchedulerExporter</span><span class="p">)</span>
 <a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
 <a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="k">for</span> <span class="n">schedulable</span> <span class="ow">in</span> <span class="n">exported_schedule</span><span class="o">.</span><span class="n">schedulables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
 <a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">exported_schedule</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">schedulable</span><span class="p">[</span><span class="s2">"operation_id"</span><span class="p">]]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -4741,7 +4741,7 @@ variable (<span class="arithmatex">\(k=1\)</span>; the second ordered pair).</p>
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantifySchedulerExporter</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="sd">"""</span>
@@ -4766,7 +4766,7 @@ variable (<span class="arithmatex">\(k=1\)</span>; the second ordered pair).</p>
 <a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="sd">    """</span>
 <a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="p">)</span>
 <a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>
-<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">QUANTIFY_SCHEDULER</span><span class="p">)</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">exporter</span><span class="o">=</span><span class="n">QuantifySchedulerExporter</span><span class="p">)</span>
 <a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="k">for</span> <span class="n">schedulable</span> <span class="ow">in</span> <span class="n">exported_schedule</span><span class="o">.</span><span class="n">schedulables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
 <a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">exported_schedule</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">schedulable</span><span class="p">[</span><span class="s2">"operation_id"</span><span class="p">]]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 <a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="s2">"bitstring mapping: "</span><span class="p">,</span> <span class="n">bitstring_mapping</span><span class="p">)</span>
@@ -4809,7 +4809,7 @@ the ordered pair is at index <span class="arithmatex">\(4\)</span> in the bitreg
 </div>
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantifySchedulerExporter</span>
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="sd">"""</span>
@@ -4833,7 +4833,7 @@ the ordered pair is at index <span class="arithmatex">\(4\)</span> in the bitreg
 <a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="sd">    """</span>
 <a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="p">)</span>
 <a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>
-<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">QUANTIFY_SCHEDULER</span><span class="p">)</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">exporter</span><span class="o">=</span><span class="n">QuantifySchedulerExporter</span><span class="p">())</span>
 <a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="k">for</span> <span class="n">schedulable</span> <span class="ow">in</span> <span class="n">exported_schedule</span><span class="o">.</span><span class="n">schedulables</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
 <a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">exported_schedule</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">schedulable</span><span class="p">[</span><span class="s2">"operation_id"</span><span class="p">]]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 <a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="nb">print</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="s2">"bitstring mapping: "</span><span class="p">,</span> <span class="n">bitstring_mapping</span><span class="p">)</span>

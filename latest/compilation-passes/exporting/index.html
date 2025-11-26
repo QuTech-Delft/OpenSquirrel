@@ -3252,14 +3252,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/passes/exporter/export_format.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/general_exporter.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    export_format
+    general_exporter
   
 
     
@@ -4630,19 +4630,19 @@
 
 <p>Instead of writing the circuit out to the <a href="https://qutech-delft.github.io/cQASM-spec/">default cQASM format</a>,
 one can also use a custom exporter pass to export the circuit to a particular output format.</p>
-<p>Exporting can be done by calling the <code>export</code> method on the circuit object and providing the desired output
-format <code>fmt</code> as an input argument to the call, <em>e.g.</em>,</p>
+<p>Exporting can be done by calling the <code>export</code> method on the circuit object and providing the desired exporter
+<code>exporter</code> as an input argument to the call, <em>e.g.</em>,</p>
 <div class="admonition example">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportFormat</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CQasmV1Exporter</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="n">ExportFormat</span><span class="o">.</span><span class="n">CQASM_V1</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">exporter</span><span class="o">=</span><span class="n">CQasmV1Exporter</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <p>As shown in the example above, the exported circuit is given as the return value.</p>
 <p>The following exporting passes are available in OpenSquirrel:</p>
 <ul>
-<li><a href="cqasm-v1-exporter.html">cQASMv1 exporter</a> (<code>ExportFormat.CQASM_V1</code>)</li>
-<li><a href="quantify-scheduler-exporter.html">quantify-scheduler exporter</a> (<code>ExportFormat.QUANTIFY_SCHEDULER</code>)</li>
+<li><a href="cqasm-v1-exporter.html">cQASMv1 exporter</a> (<code>CQasmV1Exporter</code>)</li>
+<li><a href="quantify-scheduler-exporter.html">quantify-scheduler exporter</a> (<code>QuantifySchedulerExporter</code>)</li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Unsupported language features</p>

@@ -20,7 +20,7 @@
     
     
       
-        <title>export_format - OpenSquirrel</title>
+        <title>general_exporter - OpenSquirrel</title>
       
     
     
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#opensquirrel.passes.exporter.export_format" class="md-skip">
+        <a href="#opensquirrel.passes.exporter.general_exporter" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              export_format
+              general_exporter
             
           </span>
         </div>
@@ -3277,7 +3277,7 @@
   <span class="md-ellipsis">
     
   
-    export_format
+    general_exporter
   
 
     
@@ -3288,14 +3288,14 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="export_format.html" class="md-nav__link md-nav__link--active">
+      <a href="general_exporter.html" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    export_format
+    general_exporter
   
 
     
@@ -3319,13 +3319,41 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#opensquirrel.passes.exporter.export_format" class="md-nav__link">
+  <a href="#opensquirrel.passes.exporter.general_exporter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        export_format
+        general_exporter
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opensquirrel.passes.exporter.general_exporter.Exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.passes.exporter.general_exporter.Exporter.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4680,13 +4708,41 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#opensquirrel.passes.exporter.export_format" class="md-nav__link">
+  <a href="#opensquirrel.passes.exporter.general_exporter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        export_format
+        general_exporter
       
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opensquirrel.passes.exporter.general_exporter.Exporter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exporter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.passes.exporter.general_exporter.Exporter.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __init__
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4710,13 +4766,13 @@
   
 
 
-  <h1>export_format</h1>
+  <h1>general_exporter</h1>
 
 <div class="doc doc-object doc-module">
 
 
 
-<a id="opensquirrel.passes.exporter.export_format"></a>
+<a id="opensquirrel.passes.exporter.general_exporter"></a>
     <div class="doc doc-contents first">
 
 
@@ -4737,6 +4793,94 @@
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="opensquirrel.passes.exporter.general_exporter.Exporter" class="doc doc-heading">
+            <code>Exporter</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="abc.ABC">ABC</span></code></p>
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>opensquirrel/passes/exporter/general_exporter.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="k">class</span><span class="w"> </span><span class="nc">Exporter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">        </span><span class="sd">"""Generic router class"""</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a>    <span class="nd">@abstractmethod</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">circuit</span><span class="p">:</span> <span class="n">Circuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</code></pre></div></td></tr></tbody></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.passes.exporter.general_exporter.Exporter.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Generic router class</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/passes/exporter/general_exporter.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-8">8</a></span>
+<span class="normal"><a href="#__codelineno-0-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="sd">"""Generic router class"""</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 
