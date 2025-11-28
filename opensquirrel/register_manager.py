@@ -196,7 +196,6 @@ class RegisterManager:
 
         self.qubit_registers, self.bit_registers = self.split_registers(registers)
 
-        self.bit_registers = self.bit_registers or [BitRegister(0)]
         self.num_qubits = self._get_total_qubit_register_size()
         self.num_bits = self._get_total_bit_register_size()
 
@@ -301,9 +300,10 @@ class RegisterManager:
             if qubit_register is None:
                 return self.qubit_registers[0].name
             if qubit_register == register:
-                return qubit_register.name
+                return qubit_register.name   
+            else:
+                raise ValueError(f"Register {qubit_register} not found")
         
-        raise ValueError(f"Register {qubit_register} not found")
 
     def get_bit_register_name(self, bit_register: BitRegister | None = None) -> str:
 
@@ -312,8 +312,9 @@ class RegisterManager:
                 return self.bit_registers[0].name
             if bit_register == register:
                 return bit_register.name
+            else:
+                raise ValueError(f"Register {bit_register} not found")
         
-        raise ValueError(f"Register {bit_register} not found")
 
     def get_qubit_range(self, qubit_register: QubitRegister | str, variable_name: str) -> Range:
         for register in self.qubit_registers:

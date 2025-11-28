@@ -28,5 +28,5 @@ def test_init_in_circuit_builder() -> None:
     builder.init(0).init(1)
     circuit = builder.to_circuit()
     assert circuit.qubit_register_size == 2
-    assert circuit.qubit_register_name == "q"
+    assert circuit.qubit_register_names()[0] == "q"
     assert circuit.ir.statements == [Init(0), Init(1)]

@@ -406,7 +406,7 @@ def test_export(mock_qs: MagicMock) -> None:
     [BlochSphereRotation(qubit=0, axis=(1, 2, 3), angle=0.9876, phase=2.34)],
     ids=["BSR"],
 )
-def test_gates_not_supported(mock_qs: MagicMock, gate: Gate) -> None:
+def test_gates_not_supported(gate: Gate) -> None:
     quantify_scheduler_exporter = importlib.import_module("opensquirrel.passes.exporter.quantify_scheduler_exporter")
 
     builder = CircuitBuilder(3)
