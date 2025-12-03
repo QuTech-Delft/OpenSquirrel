@@ -4,6 +4,7 @@ from collections import Counter
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
+from opensquirrel.ir.non_unitary import Measure
 from opensquirrel.ir.statement import AsmDeclaration
 
 if TYPE_CHECKING:
@@ -16,6 +17,10 @@ if TYPE_CHECKING:
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator
     from opensquirrel.register_manager import RegisterManager
+
+
+InstructionCount = dict[str, int]
+MeasurementToBitMap = dict[str, list[int]]
 
 
 class Circuit:
@@ -92,8 +97,8 @@ class Circuit:
         return self.register_manager.get_bit_register_name()
 
     @property
-    def instruction_count(self) -> dict[str, int]:
-        """Count the operations in the circuit by name"""
+    def instruction_count(self) -> InstructionCount:
+        """Count the instructions in the circuit by name."""
         counter: Counter[str] = Counter()
         counter.update(
             getattr(statement, "name", "unknown")
@@ -101,6 +106,16 @@ class Circuit:
             if not isinstance(statement, AsmDeclaration)
         )
         return dict(counter)
+
+    @property
+    def measurement_to_bit_map(self) -> MeasurementToBitMap:
+        """Determines and returns the measurement to bit register index mapping."""
+        m2b_map: MeasurementToBitMap = {}
+        for statement in self.ir.statements:
+            if isinstance(statement, Measure):
+                qubit_index, bit_index = statement.qubit.index, statement.bit.index
+                m2b_map.setdefault(str(qubit_index), []).append(bit_index)
+        return m2b_map
 
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [
