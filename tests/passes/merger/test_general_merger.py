@@ -4,39 +4,45 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder, H, I, Rx, Ry, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.ir.semantics.bsr import compose_bloch_sphere_rotations
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
 
 
-def test_compose_bloch_sphere_rotations_same_axis() -> None:
-    a = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.4, phase=0.2)
-    b = BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=-0.3, phase=-0.15)
-    composed = compose_bloch_sphere_rotations(a, b)
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 2, 3), angle=0.1, phase=0.05)
+def test_compose_single_qubit_gates_same_axis() -> None:
+    a = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=0.4, phase=0.2))
+    b = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=-0.3, phase=-0.15))
+    composed = a * b
+    assert composed == SingleQubitGate(
+        qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 2, 3), angle=0.1, phase=0.05)
+    )
 
 
-def test_compose_bloch_sphere_rotations_different_axis() -> None:
+def test_compose_single_qubit_gates_different_axis() -> None:
     # Visualizing this in 3D is difficult...
-    a = BlochSphereRotation(qubit=123, axis=(1, 0, 0), angle=pi / 2, phase=pi / 4)
-    b = BlochSphereRotation(qubit=123, axis=(0, 0, 1), angle=-pi / 2, phase=pi / 4)
-    c = BlochSphereRotation(qubit=123, axis=(0, 1, 0), angle=pi / 2, phase=pi / 4)
-    composed = compose_bloch_sphere_rotations(compose_bloch_sphere_rotations(c, b), a)
-    assert composed == BlochSphereRotation(qubit=123, axis=(1, 1, 0), angle=pi, phase=3 * pi / 4)
+    a = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi / 2, phase=pi / 4))
+    b = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 2, phase=pi / 4))
+    c = SingleQubitGate(qubit=123, gate_semantic=BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4))
+    composed = c * b * a
+    assert composed == SingleQubitGate(
+        qubit=123, gate_semantic=BlochSphereRotation(axis=(1, 1, 0), angle=pi, phase=3 * pi / 4)
+    )
 
 
 @pytest.mark.parametrize(
-    ("bsr_a", "bsr_b", "expected_result"),
+    ("gate_a", "gate_b", "expected_result"),
     [
-        (Y(0), X(0), BlochSphereRotation(0, axis=(0, 0, 1), angle=pi, phase=pi)),
-        (X(0), Y(0), BlochSphereRotation(0, axis=(0, 0, -1), angle=pi, phase=pi)),
-        (Z(0), Y(0), BlochSphereRotation(0, axis=(1, 0, 0), angle=pi, phase=pi)),
-        (Y(0), Z(0), BlochSphereRotation(0, axis=(-1, 0, 0), angle=pi, phase=pi)),
-        (Z(0), X(0), BlochSphereRotation(0, axis=(0, -1, 0), angle=pi, phase=pi)),
-        (X(0), Z(0), BlochSphereRotation(0, axis=(0, 1, 0), angle=pi, phase=pi)),
+        (Y(0), X(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi))),
+        (X(0), Y(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 0, -1), angle=pi, phase=pi))),
+        (Z(0), Y(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi))),
+        (Y(0), Z(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(-1, 0, 0), angle=pi, phase=pi))),
+        (Z(0), X(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, -1, 0), angle=pi, phase=pi))),
+        (X(0), Z(0), SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(axis=(0, 1, 0), angle=pi, phase=pi))),
         (
             Rx(0, theta=pi),
             Ry(0, theta=-pi / 2),
-            BlochSphereRotation(0, axis=(0.70711, 0.0, 0.70711), angle=pi, phase=0.0),
+            SingleQubitGate(
+                qubit=0, gate_semantic=BlochSphereRotation(axis=(0.70711, 0.0, 0.70711), angle=pi, phase=0.0)
+            ),
         ),
         (I(0), Rx(0, theta=pi), Rx(0, theta=pi)),
         (Rx(0, theta=pi), I(0), Rx(0, theta=pi)),
@@ -61,10 +67,10 @@ def test_compose_bloch_sphere_rotations_different_axis() -> None:
         "[bsr_a.generator == bsr_b.generator] Rx(pi/2) * Rx(pi/2) = Rx(pi) ~ X",
     ],
 )
-def test_compose_bloch_sphere_rotations(
-    bsr_a: BlochSphereRotation, bsr_b: BlochSphereRotation, expected_result: BlochSphereRotation
+def test_compose_single_qubit_gates(
+    gate_a: SingleQubitGate, gate_b: SingleQubitGate, expected_result: SingleQubitGate
 ) -> None:
-    assert compose_bloch_sphere_rotations(bsr_a, bsr_b) == expected_result
+    assert gate_a * gate_b == expected_result
 
 
 @pytest.mark.parametrize(

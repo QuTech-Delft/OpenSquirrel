@@ -5,20 +5,26 @@ from typing import Any, SupportsFloat, SupportsInt
 import numpy as np
 
 from opensquirrel.common import normalize_angle
+from opensquirrel.ir import Gate
 from opensquirrel.ir.default_gates import X, Z
 from opensquirrel.ir.expression import Expression, Float, Int, Qubit, QubitLike
 from opensquirrel.ir.ir import IRVisitor
 from opensquirrel.ir.semantics.bsr import BsrAngleParam
 from opensquirrel.ir.semantics.controlled_gate import ControlledGate
 from opensquirrel.ir.semantics.matrix_gate import MatrixGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
 # The R gate is only defined for the purpose of defining the CR and CRk gates and does not appear as a separate gate in
 # the default instruction set.
-class R(BsrAngleParam):
+class TwoQubitGate(Gate):
+    pass
+
+
+class R(SingleQubitGate):
     def __init__(self, qubit: QubitLike, theta: SupportsFloat) -> None:
         phase = float(theta) / 2
-        BsrAngleParam.__init__(self, qubit=qubit, axis=(0, 0, 1), angle=theta, phase=phase, name="R")
+        super().__init__(qubit=qubit, gate_semantic=BsrAngleParam(axis=(0, 0, 1), angle=theta, phase=phase), name="R")
 
 
 class SWAP(MatrixGate):

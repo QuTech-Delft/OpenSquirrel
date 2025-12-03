@@ -20,10 +20,13 @@ from opensquirrel.ir import (
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
+    BsrAngleParam,
+    BsrNoParams,
     BsrUnitaryParams,
     ControlledGate,
     MatrixGate,
 )
+from opensquirrel.passes.exporter.general_exporter import Exporter
 from opensquirrel.utils.general_math import matrix_from_u_gate_params
 
 if TYPE_CHECKING:
@@ -35,11 +38,21 @@ if TYPE_CHECKING:
         CRk,
     )
     from opensquirrel.circuit import Circuit
-    from opensquirrel.ir.semantics import (
-        BsrAngleParam,
-        BsrNoParams,
-    )
+    from opensquirrel.ir.semantics.bsr import BsrFullParams
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.register_manager import RegisterManager
+
+
+class CqasmV1Exporter(Exporter):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+
+    def export(self, circuit: Circuit) -> str:
+        cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
+
+        circuit.ir.accept(cqasmv1_creator)
+
+        return _post_process(cqasmv1_creator.output).rstrip() + "\n"
 
 
 class CqasmV1ExporterParseError(Exception):
@@ -67,6 +80,24 @@ class _CQASMv1Creator(IRVisitor):
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
+        qubit_operand = gate.qubit.accept(self)
+        if isinstance(gate.bsr, BsrNoParams):
+            self.output += f"{gate.name.lower()} {qubit_operand}\n"
+        elif isinstance(gate.bsr, BsrAngleParam):
+            theta_argument = gate.bsr.theta.accept(self)
+            self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
+        elif isinstance(gate.bsr, BsrUnitaryParams):
+            matrix = matrix_from_u_gate_params(gate.bsr.theta.value, gate.bsr.phi.value, gate.bsr.lmbda.value)
+            elements: list[str] = [_convert_complex_number(matrix[i, j]) for i in range(2) for j in range(2)]
+            matrix_repr = f"[{elements[0]}, {elements[1]}; {elements[2]}, {elements[3]}]"
+            self.output += f"{gate.name.lower()} {qubit_operand}, {matrix_repr}\n"
+        else:
+            gate.bsr.accept(self)
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
+        raise UnsupportedGateError(gate)
+
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
             return
@@ -81,22 +112,6 @@ class _CQASMv1Creator(IRVisitor):
         if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
             return
         raise UnsupportedGateError(gate)
-
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name.lower()} {qubit_operand}\n"
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
-        theta_argument = gate.theta.accept(self)
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
-
-    def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> Any:
-        qubit_operand = gate.qubit.accept(self)
-        matrix = matrix_from_u_gate_params(gate.theta.value, gate.phi.value, gate.lmbda.value)
-        elements: list[str] = [_convert_complex_number(matrix[i, j]) for i in range(2) for j in range(2)]
-        matrix_repr = f"[{elements[0]}, {elements[1]}; {elements[2]}, {elements[3]}]"
-        self.output += f"{gate.name.lower()} {qubit_operand}, {matrix_repr}\n"
 
     def visit_swap(self, gate: SWAP) -> Any:
         qubit_operand_0 = gate.qubit_0.accept(self)
@@ -186,12 +201,3 @@ def _get_barrier_index(line: str) -> int:
         msg = "expecting a barrier index but found none"
         raise CqasmV1ExporterParseError(msg)
     return int(barrier_index_match.group(0))
-
-
-def export(circuit: Circuit) -> str:
-    cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
-
-    circuit.ir.accept(cqasmv1_creator)
-
-    # Remove all trailing lines and leave only one
-    return _post_process(cqasmv1_creator.output).rstrip() + "\n"

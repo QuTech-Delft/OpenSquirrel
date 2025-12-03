@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import Any, cast
 
 from opensquirrel.ir import IR, Barrier, Instruction, Statement
-from opensquirrel.utils.list import flatten_list
+from opensquirrel.utils import flatten_list
 
 
 class Merger(ABC):

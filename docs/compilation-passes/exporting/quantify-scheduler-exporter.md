@@ -1,4 +1,4 @@
-The [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/) exporter (`ExportFormat.QUANTIFY_SCHEDULER`)
+The [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/) exporter (`QuantifySchedulerExporter`)
 exports the circuit to [`Schedule`](https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/index.html#quantify_scheduler.Schedule)
 object and a _bitstring mapping_.
 
@@ -72,7 +72,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import QuantifySchedulerExporter
         ```
 
         ```python
@@ -89,7 +89,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
             """
         )
 
-        exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter)
 
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
@@ -119,7 +119,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import QuantifySchedulerExporter
         ```
 
         ```python
@@ -146,7 +146,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_circuit = circuit.export(exporter=QuantifySchedulerExporter)
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
         print('\n', "bitstring mapping: ", bitstring_mapping)
@@ -198,7 +198,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import QuantifySchedulerExporter
         ```
 
         ```python
@@ -224,7 +224,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_circuit = circuit.export(exporter=QuantifySchedulerExporter())
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
         print('\n', "bitstring mapping: ", bitstring_mapping)

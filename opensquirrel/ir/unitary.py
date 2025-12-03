@@ -1,11 +1,15 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
-from opensquirrel.ir import IRVisitor
-from opensquirrel.ir.expression import Expression, Qubit
 from opensquirrel.ir.statement import Instruction
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import IRVisitor
+    from opensquirrel.ir.expression import Qubit
 
 
 class Unitary(Instruction, ABC):
@@ -16,11 +20,6 @@ class Unitary(Instruction, ABC):
 class Gate(Unitary, ABC):
     def __init__(self, name: str) -> None:
         Unitary.__init__(self, name)
-
-    @property
-    @abstractmethod
-    def arguments(self) -> tuple[Expression, ...]:
-        pass
 
     @staticmethod
     def _check_repeated_qubit_operands(qubits: Sequence[Qubit]) -> bool:

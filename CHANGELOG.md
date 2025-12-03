@@ -17,10 +17,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `QGymMapper` mapper pass
 - `U`(theta, phi, lambda) gate to default single-qubit gates
 - `Z90` and `mZ90` pi-half rotation gates (equivalent to `S` and `Sdag` gates)
+- Operation duration in terms of execution cycles can be specified for the `QuantifySchedulerExporter`
 
 ### Changed
 
-- Moved Bloch sphere rotation composition from the merger pass interface to Bloch sphere rotation semantic module.
+- `Circuit.export` expects an `Exporter` instance as input argument (instead of an `ExportFormat`)
+- Moved Bloch sphere rotation composition from the merger pass interface to Bloch sphere rotation semantic module
+
+### Removed
+
+- The `ExportFormat` has been deprecated
+(exporters can be specified by providing an instance as input argument to `Circuit.export`)
 
 ## [ 0.8.0 ] - [ 2025-11-03 ]
 

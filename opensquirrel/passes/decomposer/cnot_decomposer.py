@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING
 
 from opensquirrel import CNOT, Ry, Rz, X
 from opensquirrel.common import ATOL
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
-from opensquirrel.ir.semantics.bsr import compose_bloch_sphere_rotations
+from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import ZYZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 from opensquirrel.utils.identity_filter import filter_out_identities
@@ -30,7 +30,7 @@ class CNOTDecomposer(Decomposer):
             # - decomposing MatrixGate is currently not supported.
             return [g]
 
-        if not isinstance(g.target_gate, BlochSphereRotation):
+        if not isinstance(g.target_gate, SingleQubitGate):
             # Do nothing.
             # ControlledGate's with 2+ control qubits are ignored.
             return [g]
@@ -42,10 +42,10 @@ class CNOTDecomposer(Decomposer):
         # See https://threeplusone.com/pubs/on_gates.pdf
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
-        controlled_rotation_times_x = compose_bloch_sphere_rotations(g.target_gate, X(target_qubit))
+        controlled_rotation_times_x = g.target_gate * X(target_qubit)
         theta0_with_x, theta1_with_x, theta2_with_x = ZYZDecomposer().get_decomposition_angles(
-            controlled_rotation_times_x.axis,
-            controlled_rotation_times_x.angle,
+            controlled_rotation_times_x.bsr.axis,
+            controlled_rotation_times_x.bsr.angle,
         )
         if abs((theta0_with_x - theta2_with_x) % (2 * pi)) < ATOL:
             # The decomposition can use a single CNOT according to the lemma.
@@ -56,11 +56,13 @@ class CNOTDecomposer(Decomposer):
                     *B,
                     CNOT(g.control_qubit, target_qubit),
                     *A,
-                    Rz(g.control_qubit, g.target_gate.phase - pi / 2),
+                    Rz(g.control_qubit, g.target_gate.bsr.phase - pi / 2),
                 ],
             )
 
-        theta0, theta1, theta2 = ZYZDecomposer().get_decomposition_angles(g.target_gate.axis, g.target_gate.angle)
+        theta0, theta1, theta2 = ZYZDecomposer().get_decomposition_angles(
+            g.target_gate.bsr.axis, g.target_gate.bsr.angle
+        )
 
         A = [Ry(target_qubit, theta1 / 2), Rz(target_qubit, theta2)]  # noqa: N806
         B = [Rz(target_qubit, -(theta0 + theta2) / 2), Ry(target_qubit, -theta1 / 2)]  # noqa: N806
@@ -73,6 +75,6 @@ class CNOTDecomposer(Decomposer):
                 *B,
                 CNOT(g.control_qubit, target_qubit),
                 *A,
-                Rz(g.control_qubit, g.target_gate.phase),
+                Rz(g.control_qubit, g.target_gate.bsr.phase),
             ],
         )
