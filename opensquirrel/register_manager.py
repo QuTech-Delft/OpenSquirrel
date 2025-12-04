@@ -182,7 +182,6 @@ class RegisterManager:
         """
 
         
-        
         registers: List[Register] = []
         for arg in args:
             if isinstance(arg, Register):
@@ -277,7 +276,33 @@ class RegisterManager:
         
         return size
 
-    def get_qubit_register_size(self, qubit_register: QubitRegister | str) -> int:
+    def get_qubit_register_size(self, qubit_register: QubitRegister | str | None = None) -> int:
+        
+        """
+        Retrieve the size of a specified qubit register.
+
+        Parameters
+        ----------
+        qubit_register : Optional qubit register to return size  
+
+        Returns
+        -------
+        int
+            The size of the matching qubit register, or 0 if `qubit_register` is None.
+
+        Raises
+        ------
+        ValueError
+            If the specified register (by name or object) is not found in `self.qubit_registers`.
+        """
+
+        if qubit_register is None:
+            size = 0
+            
+            for register in self.qubit_registers:
+                register.register_size += size
+            
+            return size
         for register in self.qubit_registers:
             if isinstance(qubit_register, str) and register.name == qubit_register:
                 return register.size()
@@ -286,7 +311,34 @@ class RegisterManager:
         
         raise ValueError(f"Register {qubit_register} not found")
 
-    def get_bit_register_size(self, bit_register: BitRegister | str) -> int:
+
+    def get_bit_register_size(self, bit_register: BitRegister | str | None = None) -> int:
+        
+        """
+        Retrieve the size of a specified bit register.
+
+        Parameters
+        ----------
+        qubit_register : Optional bit register to return size  
+
+        Returns
+        -------
+        int
+            The size of the matching bit register, or 0 if `qubit_register` is None.
+
+        Raises
+        ------
+        ValueError
+            If the specified register (by name or object) is not found in `self.bit_registers`.
+        """
+
+        if bit_register is None:
+            size = 0
+            
+            for register in self.bit_registers:
+                register.register_size += size
+            
+            return size
         for register in self.bit_registers:
             if isinstance(bit_register, str) and register.name == bit_register:
                 return register.size()
@@ -300,9 +352,9 @@ class RegisterManager:
             if qubit_register is None:
                 return self.qubit_registers[0].name
             if qubit_register == register:
-                return qubit_register.name   
-            else:
-                raise ValueError(f"Register {qubit_register} not found")
+                return qubit_register.name
+            
+        return ""
         
 
     def get_bit_register_name(self, bit_register: BitRegister | None = None) -> str:
@@ -312,8 +364,8 @@ class RegisterManager:
                 return self.bit_registers[0].name
             if bit_register == register:
                 return bit_register.name
-            else:
-                raise ValueError(f"Register {bit_register} not found")
+        
+        return ""
         
 
     def get_qubit_range(self, qubit_register: QubitRegister | str, variable_name: str) -> Range:

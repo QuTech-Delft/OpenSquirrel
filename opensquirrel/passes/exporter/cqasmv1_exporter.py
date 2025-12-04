@@ -53,8 +53,7 @@ class _CQASMv1Creator(IRVisitor):
     def visit_qubit(self, qubit: Qubit) -> str:
         for qubit_register in self.register_manager.qubit_registers:
             if qubit in qubit_register:
-                qubit_register_name = self.register_manager.get_qubit_register_name(qubit_register)
-                return f"{qubit_register_name}[{qubit.index}]"
+                return f"q[{qubit.index}]"
         
         raise ValueError("Qubit not found")
 
