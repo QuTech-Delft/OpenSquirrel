@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import importlib
 from itertools import combinations
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import networkx as nx
 from qgym.envs import InitialMapping
@@ -16,25 +16,37 @@ if TYPE_CHECKING:
 
 
 class QGymMapper(Mapper):
-    """
-    QGym-based Mapper using a Stable-Baselines3 agent.
-    - Builds a qubit interaction graph from the IR.
-    - Runs the InitialMapping environment with the trained agent.
-    - Returns a Mapping compatible with OpenSquirrel.
-    """
+    """QGym-based mapper pass using a Stable-Baselines3 agent."""
 
     def __init__(
         self,
         agent_class: str,
         agent_path: str,
-        hardware_connectivity: nx.Graph,
+        hardware_connectivity: dict[str, list[int]],
         env_kwargs: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self.env = InitialMapping(connection_graph=hardware_connectivity, **(env_kwargs or {}))
-        self.hardware_connectivity = hardware_connectivity
+        self.hardware_connectivity = self._build_connectivity_graph(hardware_connectivity)
+        self.env = InitialMapping(connection_graph=self.hardware_connectivity, **(env_kwargs or {}))
         self.agent = self._load_agent(agent_class, agent_path)
+
+    def _build_connectivity_graph(self, connectivity: dict[str, list[int]]) -> nx.Graph:
+        """Convert connectivity dictionary to NetworkX graph.
+
+        Args:
+            connectivity: Dictionary with connectivity scheme (e.g., {"edges": [[0,1], [1,2]]}).
+
+        Returns:
+            NetworkX graph representing the hardware connectivity.
+        """
+        graph = nx.Graph()
+        if isinstance(connectivity, dict):
+            edges = connectivity.get("edges", next(iter(connectivity.values())) if connectivity else [])
+        else:
+            edges = connectivity
+        graph.add_edges_from(edges)
+        return graph
 
     def _load_agent(self, agent_class: str, agent_path: str) -> BaseAlgorithm:
         """Load a trained Stable-Baselines3 agent from a file."""
@@ -64,8 +76,11 @@ class QGymMapper(Mapper):
         """
         num_physical = self.hardware_connectivity.number_of_nodes()
         if qubit_register_size != num_physical:
-            error_msg = f"QGym requires equal logical and physical qubits: logical={qubit_register_size}, physical={num_physical}"  # noqa: E501
-            raise ValueError(error_msg)
+            msg = (
+                f"The QGym mapper requires an equal number of logical and physical  qubits.  "
+                f"Respectively, got {qubit_register_size} logical and {num_physical} physical qubits instead."
+            )
+            raise ValueError(msg)
 
         circuit_graph = self._ir_to_interaction_graph(ir)
 
@@ -79,16 +94,23 @@ class QGymMapper(Mapper):
             done = terminated or truncated
             last_obs = obs
 
-        mapping_data = self._extract_mapping_data(last_obs)
-        return self._get_mapping(mapping_data, qubit_register_size)
+        return self._get_mapping(last_obs, qubit_register_size)
 
     def _ir_to_interaction_graph(self, ir: IR) -> nx.Graph:
-        """Build an undirected interaction graph representation of the IR."""
+        """Build an undirected interaction graph representation of the IR.
+
+        Args:
+            ir: Intermediate representation of the quantum circuit.
+
+        Returns:
+            NetworkX graph representation of the quantum circuit, compatible with QGym.
+        """
         interaction_graph = nx.Graph()
-        for instr in ir.statements:
-            if not isinstance(instr, Instruction):
+        for statement in ir.statements:
+            if not isinstance(statement, Instruction):
                 continue
-            qubit_indices = [q.index for q in instr.get_qubit_operands()]
+            instruction = cast("Instruction", statement)  # type: ignore[redundant-cast]
+            qubit_indices = [q.index for q in instruction.get_qubit_operands()]
             for q_index in qubit_indices:
                 interaction_graph.add_node(q_index)
             if len(qubit_indices) >= 2:
@@ -99,13 +121,34 @@ class QGymMapper(Mapper):
                         interaction_graph.add_edge(q_i, q_j, weight=1)
         return interaction_graph
 
-    def _get_mapping(self, mapping_data: Any, qubit_register_size: int) -> Mapping:
-        """Convert QGym's physical-to-logical mapping to OpenSquirrel's logical-to-physical mapping."""
+    def _get_mapping(self, last_obs: Any, qubit_register_size: int) -> Mapping:
+        """Extract and convert QGym's physical-to-logical mapping to OpenSquirrel's logical-to-physical mapping.
+
+        Args:
+            last_obs: Final observation from the QGym environment containing the mapping.
+            qubit_register_size: Number of qubits.
+
+        Returns:
+            Mapping object where index=logical qubit, value=physical qubit.
+
+        Raises:
+            RuntimeError: If 'mapping' key is not found in the observation.
+            ValueError: If mapping length doesn't match qubit_register_size.
+            ValueError: If the mapping is incomplete (not all logical qubits are mapped).
+        """
+        if not isinstance(last_obs, dict) or last_obs.get("mapping") is None:
+            msg = "QGym environment did not provide 'mapping' in observation."
+            raise RuntimeError(msg)
+
+        mapping_data = last_obs["mapping"]
         physical_to_logical = mapping_data.tolist()
 
         if len(physical_to_logical) != qubit_register_size:
-            error_msg = f"Mapping length {len(physical_to_logical)} != qubit_register_size {qubit_register_size}."
-            raise ValueError(error_msg)
+            msg = (
+                f"Mapping length {len(physical_to_logical)} is not equal to "
+                f"the size of the qubit register {qubit_register_size}."
+            )
+            raise ValueError(msg)
 
         logical_to_physical = [-1] * qubit_register_size
         for physical_qubit, logical_qubit in enumerate(physical_to_logical):
@@ -113,14 +156,7 @@ class QGymMapper(Mapper):
                 logical_to_physical[logical_qubit] = physical_qubit
 
         if -1 in logical_to_physical:
-            error_msg = f"Incomplete mapping. Physical-to-logical: {physical_to_logical}"
-            raise ValueError(error_msg)
+            msg = f"Incomplete mapping. Physical-to-logical: {physical_to_logical}"
+            raise ValueError(msg)
 
         return Mapping(logical_to_physical)
-
-    def _extract_mapping_data(self, last_obs: Any) -> Any:
-        """Extract mapping from the observation dict only."""
-        if isinstance(last_obs, dict) and last_obs.get("mapping") is not None:
-            return last_obs["mapping"]
-        error_msg = "QGym env did not provide 'mapping' in observation."
-        raise RuntimeError(error_msg)

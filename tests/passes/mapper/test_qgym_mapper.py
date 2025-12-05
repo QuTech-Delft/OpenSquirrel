@@ -3,7 +3,6 @@ import importlib.util
 import json
 from importlib.resources import files
 
-import networkx as nx
 import pytest
 
 from opensquirrel import CircuitBuilder
@@ -18,31 +17,27 @@ if importlib.util.find_spec("stable_baselines3") is None and importlib.util.find
     pytest.skip("stable-baselines3 and sb3_contrib not installed; skipping QGym mapper tests", allow_module_level=True)
 
 CONNECTIVITY_SCHEMES = json.loads(
-    (files("opensquirrel.passes.mapper") / "connectivities.json").read_text(encoding="utf-8")
+    (files("opensquirrel.passes.mapper.qgym_mapper") / "connectivities.json").read_text(encoding="utf-8")
 )
-AGENT1 = "opensquirrel/passes/mapper/TRPO_tuna5_2e5.zip"
-AGENT2 = "opensquirrel/passes/mapper/TRPO_starmon7_5e5.zip"
+PATH_TO_AGENT1 = "opensquirrel/passes/mapper/qgym_mapper/TRPO_tuna5_2e5.zip"
+PATH_TO_AGENT2 = "opensquirrel/passes/mapper/qgym_mapper/TRPO_starmon7_5e5.zip"
 AGENT_CLASS = "TRPO"
 
 
 @pytest.fixture
 def mapper1() -> QGymMapper:
     agent_class = AGENT_CLASS
-    agent_path = AGENT1
+    agent_path = PATH_TO_AGENT1
     connectivity = CONNECTIVITY_SCHEMES["tuna-5"]
-    connection_graph = nx.Graph()
-    connection_graph.add_edges_from(connectivity)
-    return QGymMapper(agent_class, agent_path, connection_graph)
+    return QGymMapper(agent_class, agent_path, connectivity)
 
 
 @pytest.fixture
 def mapper2() -> QGymMapper:
     agent_class = AGENT_CLASS
-    agent_path = AGENT2
+    agent_path = PATH_TO_AGENT2
     connectivity = CONNECTIVITY_SCHEMES["starmon-7"]
-    connection_graph = nx.Graph()
-    connection_graph.add_edges_from(connectivity)
-    return QGymMapper(agent_class, agent_path, connection_graph)
+    return QGymMapper(agent_class, agent_path, connectivity)
 
 
 @pytest.fixture
@@ -77,6 +72,7 @@ def circuit2() -> Circuit:
 @pytest.mark.parametrize(
     "mapper, circuit, expected_mapping_length",  # noqa: PT006
     [("mapper1", "circuit1", 5), ("mapper2", "circuit2", 7)],
+    ids=["tuna-5-mapping", "starmon-7-mapping"],
 )
 def test_mapping(
     mapper: QGymMapper, circuit: Circuit, expected_mapping_length: int, request: pytest.FixtureRequest
@@ -84,8 +80,14 @@ def test_mapping(
     circuit = request.getfixturevalue(circuit)  # type: ignore[arg-type]
     mapper = request.getfixturevalue(mapper)  # type: ignore[arg-type]
     mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
+
     assert isinstance(mapping, Mapping)
     assert len(mapping) == expected_mapping_length
+
+    physical_qubits = [mapping[i] for i in range(len(mapping))]
+    assert all(0 <= physical_qubit < expected_mapping_length for physical_qubit in physical_qubits)
+
+    assert len(set(physical_qubits)) == expected_mapping_length, "Mapping contains duplicate physical qubits"
 
 
 def test_map_on_circuit(mapper1: QGymMapper, circuit1: Circuit) -> None:
@@ -94,6 +96,10 @@ def test_map_on_circuit(mapper1: QGymMapper, circuit1: Circuit) -> None:
     assert str(circuit1) != initial_circuit
 
 
-def test_check_not_many_logical_as_physical_qubits(mapper1: QGymMapper, circuit2: Circuit) -> None:
-    with pytest.raises(ValueError, match=r"QGym requires equal logical and physical qubits: logical=7, physical=5"):
+def test_unequal_number_logical_and_physical_qubits(mapper1: QGymMapper, circuit2: Circuit) -> None:
+    expected_error = (
+        r"The QGym mapper requires an equal number of logical and physical  qubits.  "
+        r"Respectively, got 7 logical and 5 physical qubits instead."
+    )
+    with pytest.raises(ValueError, match=expected_error):
         circuit2.map(mapper1)
