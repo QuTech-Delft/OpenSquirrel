@@ -43,7 +43,7 @@ class QuantifySchedulerExporter(Exporter):
         super().__init__(**kwargs)
         self._operation_cycles = operation_cycles
 
-    def export(self, circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:
+    def export(self, circuit: Circuit) -> quantify_scheduler.Schedule:
         if "quantify_scheduler" not in globals():
 
             class QuantifySchedulerNotInstalled:
@@ -56,7 +56,7 @@ class QuantifySchedulerExporter(Exporter):
 
         try:
             # Create circuit, with measure data
-            schedule_creator = _ScheduleCreator(circuit.register_manager)
+            schedule_creator = _ScheduleCreator(circuit)
             circuit.ir.accept(schedule_creator)
 
             # Obtain ALAP reference timing for schedulables
@@ -79,7 +79,7 @@ class QuantifySchedulerExporter(Exporter):
             )
             raise ExporterError(msg) from e
 
-        return schedule_creator.schedule, schedule_creator.bit_string_mapping
+        return schedule_creator.schedule
 
 
 class OperationRecord:
@@ -210,14 +210,10 @@ class _Scheduler(IRVisitor):
 class _ScheduleCreator(IRVisitor):
     def __init__(
         self,
-        register_manager: RegisterManager,
+        circuit: Circuit,
     ) -> None:
-        self.register_manager = register_manager
-        self.qubit_register_size = register_manager.get_qubit_register_size()
-        self.qubit_register_name = register_manager.get_qubit_register_name()
-        self.bit_register_size = register_manager.get_bit_register_size()
-        self.acq_index_record = [0] * self.qubit_register_size
-        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
+        self.circuit = circuit
+        self.measurement_index_record = [0] * circuit.qubit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
@@ -288,9 +284,7 @@ class _ScheduleCreator(IRVisitor):
 
     def visit_measure(self, gate: Measure) -> None:
         qubit_index = gate.qubit.index
-        bit_index = gate.bit.index
-        acq_index = self.acq_index_record[qubit_index]
-        self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
+        acq_index = self.measurement_index_record[qubit_index]
         self.schedule.add(
             quantify_scheduler.operations.gate_library.Measure(
                 self._get_qubit_string(gate.qubit),
@@ -300,7 +294,7 @@ class _ScheduleCreator(IRVisitor):
             ),
             label=self._get_operation_label("Measure", gate.get_qubit_operands()),
         )
-        self.acq_index_record[qubit_index] += 1
+        self.measurement_index_record[qubit_index] += 1
 
     def visit_init(self, gate: Init) -> None:
         self.visit_reset(cast("Reset", gate))
@@ -312,7 +306,7 @@ class _ScheduleCreator(IRVisitor):
         )
 
     def _get_qubit_string(self, qubit: Qubit) -> str:
-        return f"{self.qubit_register_name}[{qubit.index}]"
+        return f"{self.circuit.qubit_register_name}[{qubit.index}]"
 
     def _get_operation_label(self, name: str, qubits: list[Qubit]) -> str:
         qubit_operands = ", ".join([self._get_qubit_string(qubit) for qubit in qubits])
