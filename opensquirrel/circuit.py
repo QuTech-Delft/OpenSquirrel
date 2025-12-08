@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 InstructionCount = dict[str, int]
-MeasurementToBitMap = dict[str, list[int]]
+MeasurementToBitMap = defaultdict[str, list[int]]
 
 
 class Circuit:
@@ -110,11 +110,11 @@ class Circuit:
     @property
     def measurement_to_bit_map(self) -> MeasurementToBitMap:
         """Determines and returns the measurement to bit register index mapping."""
-        m2b_map: MeasurementToBitMap = {}
+        m2b_map: MeasurementToBitMap = defaultdict(list[int])
         for statement in self.ir.statements:
             if isinstance(statement, Measure):
                 qubit_index, bit_index = statement.qubit.index, statement.bit.index
-                m2b_map.setdefault(str(qubit_index), []).append(bit_index)
+                m2b_map[str(qubit_index)].append(bit_index)
         return m2b_map
 
     def asm_filter(self, backend_name: str) -> None:
