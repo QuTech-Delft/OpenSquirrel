@@ -1,8 +1,17 @@
+import importlib.util
 import json
 from importlib.resources import files
 
+import pytest
+
 from opensquirrel import CircuitBuilder
 from opensquirrel.passes.mapper import QGymMapper
+
+if importlib.util.find_spec("qgym") is None:
+    pytest.skip("qgym not installed; skipping QGym mapper tests", allow_module_level=True)
+
+if importlib.util.find_spec("stable_baselines3") is None and importlib.util.find_spec("sb3_contrib") is None:
+    pytest.skip("stable-baselines3 and sb3_contrib not installed; skipping QGym mapper tests", allow_module_level=True)
 
 
 class TestQGymMapper:
@@ -15,7 +24,6 @@ class TestQGymMapper:
 
         connectivity = connectivity_schemes["tuna-5"]
 
-        # Build a simple circuit IR
         builder = CircuitBuilder(5)
         builder.H(0)
         builder.CNOT(0, 1)
