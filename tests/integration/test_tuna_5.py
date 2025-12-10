@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import importlib
-from typing import Any
+from typing import cast
 
 import pytest
 
@@ -10,8 +10,12 @@ from opensquirrel.passes.decomposer import CZDecomposer, SWAP2CZDecomposer, XYXD
 from opensquirrel.passes.exporter import QuantifySchedulerExporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
+from tests import STATIC_DATA
+from tests.integration import DataType  # noqa: TC001
 
-DataType = dict[str, Any]
+BACKEND_ID = "tuna-5"
+
+
 BitStringMappingType = list[tuple[None, None] | tuple[int, int]]
 
 
@@ -53,41 +57,7 @@ class TestTuna5:
 
     @pytest.fixture
     def data(self) -> DataType:
-        # Tuna-5 (full-connectivity assumed for now)
-        connectivity = {
-            "0": [1, 2, 3, 4],
-            "1": [0, 2, 3, 4],
-            "2": [0, 1, 3, 4],
-            "3": [0, 1, 2, 4],
-            "4": [0, 1, 2, 3],
-        }
-        primitive_gate_set = [
-            "I",
-            "X",
-            "X90",
-            "mX90",
-            "Y",
-            "Y90",
-            "mY90",
-            "Z",
-            "S",
-            "Sdag",
-            "T",
-            "Tdag",
-            "Rx",
-            "Ry",
-            "Rz",
-            "CNOT",
-            "CZ",
-            "measure",
-            "wait",
-            "init",
-            "barrier",
-        ]
-        return {
-            "connectivity": connectivity,
-            "primitive_gate_set": primitive_gate_set,
-        }
+        return cast(DataType, STATIC_DATA["backends"][BACKEND_ID])
 
     def test_qs_is_not_installed(self, qs_is_installed: bool) -> None:
         circuit = Circuit.from_string("""version 3.0;""")
@@ -140,11 +110,11 @@ class TestTuna5:
             b[0:4] = measure q
 
             // Two-qubit gates
-            CNOT q[0], q[1]
+            CNOT q[0], q[2]
             CZ q[2], q[3]
-            CR(pi) q[4], q[0]
+            CR(pi) q[4], q[2]
             CRk(2) q[1], q[2]
-            SWAP q[3], q[4]
+            SWAP q[3], q[2]
 
             // Control instructions
             barrier q
@@ -192,39 +162,37 @@ class TestTuna5:
                 "Measure q[2]",
                 "Measure q[3]",
                 "Measure q[4]",
-                "Rxy(180, 0, 'q[1]')",
-                "Rxy(90, 90, 'q[1]')",
-                "Rxy(180, 0, 'q[1]')",
-                "CZ (q[0], q[1])",
+                "Rxy(180, 0, 'q[2]')",
+                "Rxy(90, 90, 'q[2]')",
+                "Rxy(180, 0, 'q[2]')",
+                "CZ (q[0], q[2])",
+                "Rxy(90, 90, 'q[2]')",
                 "CZ (q[2], q[3])",
-                "CZ (q[4], q[0])",
-                "Rxy(90, 90, 'q[1]')",
+                "CZ (q[4], q[2])",
                 "Rxy(-90, 0, 'q[2]')",
                 "CZ (q[1], q[2])",
                 "Rxy(180, 0, 'q[2]')",
                 "Rxy(45, 90, 'q[2]')",
                 "Rxy(180, 0, 'q[2]')",
                 "CZ (q[1], q[2])",
-                "Rxy(180, 0, 'q[4]')",
-                "Rxy(90, 90, 'q[4]')",
-                "Rxy(180, 0, 'q[4]')",
-                "CZ (q[3], q[4])",
-                "Rxy(90, 90, 'q[4]')",
+                "Rxy(-90, 0, 'q[2]')",
+                "Rxy(90, 90, 'q[2]')",
+                "Rxy(135.00001, 0, 'q[2]')",
+                "CZ (q[3], q[2])",
+                "Rxy(90, 90, 'q[2]')",
                 "Rxy(180, 0, 'q[3]')",
                 "Rxy(90, 90, 'q[3]')",
                 "Rxy(180, 0, 'q[3]')",
-                "CZ (q[4], q[3])",
+                "CZ (q[2], q[3])",
                 "Rxy(90, 90, 'q[3]')",
-                "Rxy(180, 0, 'q[4]')",
-                "Rxy(90, 90, 'q[4]')",
-                "Rxy(180, 0, 'q[4]')",
-                "CZ (q[3], q[4])",
+                "Rxy(180, 0, 'q[2]')",
+                "Rxy(90, 90, 'q[2]')",
+                "Rxy(180, 0, 'q[2]')",
+                "CZ (q[3], q[2])",
                 "Rxy(-90, 0, 'q[1]')",
                 "Rxy(45, 90, 'q[1]')",
                 "Rxy(90, 0, 'q[1]')",
-                "Rxy(45, 90, 'q[2]')",
-                "Rxy(90, 0, 'q[2]')",
-                "Rxy(90, 90, 'q[4]')",
+                "Rxy(90, 90, 'q[2]')",
                 "Measure q[0]",
                 "Measure q[1]",
                 "Measure q[2]",

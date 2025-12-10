@@ -1,7 +1,4 @@
-# Tests for the QGymMapper class
 import importlib.util
-import json
-from importlib.resources import files
 
 import pytest
 
@@ -9,6 +6,7 @@ from opensquirrel import CircuitBuilder
 from opensquirrel.circuit import Circuit
 from opensquirrel.passes.mapper import QGymMapper
 from opensquirrel.passes.mapper.mapping import Mapping
+from tests import PROJECT_ROOT_PATH, STATIC_DATA
 
 if importlib.util.find_spec("qgym") is None:
     pytest.skip("qgym not installed; skipping QGym mapper tests", allow_module_level=True)
@@ -16,27 +14,23 @@ if importlib.util.find_spec("qgym") is None:
 if importlib.util.find_spec("stable_baselines3") is None and importlib.util.find_spec("sb3_contrib") is None:
     pytest.skip("stable-baselines3 and sb3_contrib not installed; skipping QGym mapper tests", allow_module_level=True)
 
-CONNECTIVITY_SCHEMES = json.loads(
-    (files("opensquirrel.passes.mapper.qgym_mapper") / "connectivities.json").read_text(encoding="utf-8")
-)
-PATH_TO_AGENT1 = "opensquirrel/passes/mapper/qgym_mapper/TRPO_tuna5_2e5.zip"
-PATH_TO_AGENT2 = "opensquirrel/passes/mapper/qgym_mapper/TRPO_starmon7_5e5.zip"
+QGYM_MAPPER_DATA_PATH = PROJECT_ROOT_PATH / "data" / "qgym_mapper"
 AGENT_CLASS = "TRPO"
 
 
 @pytest.fixture
 def mapper1() -> QGymMapper:
     agent_class = AGENT_CLASS
-    agent_path = PATH_TO_AGENT1
-    connectivity = CONNECTIVITY_SCHEMES["tuna-5"]
+    agent_path = str(QGYM_MAPPER_DATA_PATH / "TRPO_tuna5_2e5.zip")
+    connectivity = STATIC_DATA["backends"]["tuna-5"]["connectivity"]
     return QGymMapper(agent_class, agent_path, connectivity)
 
 
 @pytest.fixture
 def mapper2() -> QGymMapper:
     agent_class = AGENT_CLASS
-    agent_path = PATH_TO_AGENT2
-    connectivity = CONNECTIVITY_SCHEMES["starmon-7"]
+    agent_path = str(QGYM_MAPPER_DATA_PATH / "TRPO_starmon7_5e5.zip")
+    connectivity = STATIC_DATA["backends"]["starmon-7"]["connectivity"]
     return QGymMapper(agent_class, agent_path, connectivity)
 
 
@@ -98,7 +92,7 @@ def test_map_on_circuit(mapper1: QGymMapper, circuit1: Circuit) -> None:
 
 def test_unequal_number_logical_and_physical_qubits(mapper1: QGymMapper, circuit2: Circuit) -> None:
     expected_error = (
-        r"The QGym mapper requires an equal number of logical and physical  qubits.  "
+        r"The QGym mapper requires an equal number of logical and physical qubits."
         r"Respectively, got 7 logical and 5 physical qubits instead."
     )
     with pytest.raises(ValueError, match=expected_error):

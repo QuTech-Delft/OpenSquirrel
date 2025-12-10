@@ -5,14 +5,23 @@ from itertools import combinations
 from typing import TYPE_CHECKING, Any, cast
 
 import networkx as nx
-from qgym.envs import InitialMapping
 
 from opensquirrel.ir import IR, Instruction
 from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
+try:
+    from qgym.envs import InitialMapping
+except ModuleNotFoundError:
+    pass
+
 if TYPE_CHECKING:
-    from stable_baselines3.common.base_class import BaseAlgorithm
+    from opensquirrel import Connectivity
+
+    try:
+        from stable_baselines3.common.base_class import BaseAlgorithm
+    except ModuleNotFoundError:
+        pass
 
 
 class QGymMapper(Mapper):
@@ -22,40 +31,14 @@ class QGymMapper(Mapper):
         self,
         agent_class: str,
         agent_path: str,
-        hardware_connectivity: dict[str, list[int]],
+        connectivity: Connectivity,
         env_kwargs: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self.hardware_connectivity = self._build_connectivity_graph(hardware_connectivity)
+        self.hardware_connectivity = self._build_connectivity_graph(connectivity)
         self.env = InitialMapping(connection_graph=self.hardware_connectivity, **(env_kwargs or {}))
         self.agent = self._load_agent(agent_class, agent_path)
-
-    def _build_connectivity_graph(self, connectivity: dict[str, list[int]]) -> nx.Graph:
-        """Convert connectivity dictionary to NetworkX graph.
-
-        Args:
-            connectivity: Dictionary with connectivity scheme (e.g., {"edges": [[0,1], [1,2]]}).
-
-        Returns:
-            NetworkX graph representing the hardware connectivity.
-        """
-        graph = nx.Graph()
-        if isinstance(connectivity, dict):
-            edges = connectivity.get("edges", next(iter(connectivity.values())) if connectivity else [])
-        else:
-            edges = connectivity
-        graph.add_edges_from(edges)
-        return graph
-
-    def _load_agent(self, agent_class: str, agent_path: str) -> BaseAlgorithm:
-        """Load a trained Stable-Baselines3 agent from a file."""
-        if agent_class in ["PPO", "A2C"]:
-            sb3 = importlib.import_module("stable_baselines3")
-        else:
-            sb3 = importlib.import_module("sb3_contrib")
-        agent_cls = getattr(sb3, agent_class)
-        return agent_cls.load(agent_path)
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
         """
@@ -77,7 +60,7 @@ class QGymMapper(Mapper):
         num_physical = self.hardware_connectivity.number_of_nodes()
         if qubit_register_size != num_physical:
             msg = (
-                f"The QGym mapper requires an equal number of logical and physical  qubits.  "
+                f"The QGym mapper requires an equal number of logical and physical qubits."
                 f"Respectively, got {qubit_register_size} logical and {num_physical} physical qubits instead."
             )
             raise ValueError(msg)
@@ -96,7 +79,38 @@ class QGymMapper(Mapper):
 
         return self._get_mapping(last_obs, qubit_register_size)
 
-    def _ir_to_interaction_graph(self, ir: IR) -> nx.Graph:
+    @staticmethod
+    def _build_connectivity_graph(connectivity: Connectivity) -> nx.Graph:
+        """Convert connectivity dictionary to NetworkX graph.
+
+        Args:
+            connectivity (Connectivity): Connectivity of the target backend.
+
+        Returns:
+            NetworkX graph representing the hardware connectivity.
+        """
+        edges = []
+        for qubit_start, qubit_ends in connectivity.items():
+            for qubit_end in qubit_ends:
+                if [qubit_end, int(qubit_start)] in edges:
+                    continue
+                edges.append([int(qubit_start), qubit_end])
+        graph = nx.Graph()
+        graph.add_edges_from(edges)
+        return graph
+
+    @staticmethod
+    def _load_agent(agent_class: str, agent_path: str) -> BaseAlgorithm:
+        """Load a trained Stable-Baselines3 agent from a file."""
+        if agent_class in ["PPO", "A2C"]:
+            sb3 = importlib.import_module("stable_baselines3")
+        else:
+            sb3 = importlib.import_module("sb3_contrib")
+        agent_cls = getattr(sb3, agent_class)
+        return agent_cls.load(agent_path)
+
+    @staticmethod
+    def _ir_to_interaction_graph(ir: IR) -> nx.Graph:
         """Build an undirected interaction graph representation of the IR.
 
         Args:
@@ -121,7 +135,8 @@ class QGymMapper(Mapper):
                         interaction_graph.add_edge(q_i, q_j, weight=1)
         return interaction_graph
 
-    def _get_mapping(self, last_obs: Any, qubit_register_size: int) -> Mapping:
+    @staticmethod
+    def _get_mapping(last_obs: Any, qubit_register_size: int) -> Mapping:
         """Extract and convert QGym's physical-to-logical mapping to OpenSquirrel's logical-to-physical mapping.
 
         Args:

@@ -34,7 +34,7 @@ class TestQGymMapper:
         circuit = builder.to_circuit()
 
         agent_class = "TRPO"
-        qgym_mapper = QGymMapper(agent_class=agent_class, agent_path=agent_path, hardware_connectivity=connectivity)
+        qgym_mapper = QGymMapper(agent_class=agent_class, agent_path=agent_path, connectivity=connectivity)
 
         initial_circuit_str = str(circuit)
 
