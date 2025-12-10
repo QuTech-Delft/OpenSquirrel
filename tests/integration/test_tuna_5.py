@@ -11,12 +11,9 @@ from opensquirrel.passes.exporter import QuantifySchedulerExporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 from tests import STATIC_DATA
-from tests.integration import DataType  # noqa: TC001
+from tests.integration import DataType
 
 BACKEND_ID = "tuna-5"
-
-
-DataType = dict[str, Any]
 
 
 def _get_operations(exported_schedule) -> list[str]:  # type: ignore  # noqa: ANN001
@@ -48,7 +45,7 @@ class TestTuna5:
 
     @pytest.fixture
     def data(self) -> DataType:
-        return cast(DataType, STATIC_DATA["backends"][BACKEND_ID])
+        return cast("DataType", STATIC_DATA["backends"][BACKEND_ID])
 
     def test_qs_is_not_installed(self, qs_is_installed: bool) -> None:
         circuit = Circuit.from_string("""version 3.0;""")

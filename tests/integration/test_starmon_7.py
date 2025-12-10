@@ -22,7 +22,7 @@ class TestStarmon7:
            //     \\
            0 = 2 = 5
         """
-        return cast(DataType, STATIC_DATA["backends"][BACKEND_ID])
+        return cast("DataType", STATIC_DATA["backends"][BACKEND_ID])
 
     def test_complete_circuit(self, data: DataType) -> None:
         circuit = Circuit.from_string(

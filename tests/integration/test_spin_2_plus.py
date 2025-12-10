@@ -19,7 +19,7 @@ class TestSpin2Plus:
         Spin-2+ chip topology:
             0 <--> 1
         """
-        return cast(DataType, STATIC_DATA["backends"][BACKEND_ID])
+        return cast("DataType", STATIC_DATA["backends"][BACKEND_ID])
 
     def test_complete_circuit(self, data: DataType) -> None:
         circuit = Circuit.from_string(
