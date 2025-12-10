@@ -67,7 +67,7 @@ def qs_is_installed() -> bool:
 def test_empty_circuit_export(exporter: QuantifySchedulerExporter, qs_is_installed: bool) -> None:
     if qs_is_installed:
         circuit = CircuitBuilder(1).to_circuit()
-        exported_schedule, _ = circuit.export(exporter=exporter)
+        exported_schedule = circuit.export(exporter=exporter)
         assert len(exported_schedule.schedulables) == 0
 
 
@@ -96,7 +96,7 @@ def test_supported_gate_set(qs_is_installed: bool, exporter: QuantifySchedulerEx
             "Measure q[0]",
             "Reset q[0]",
         ]
-        exported_schedule, _ = circuit.export(exporter=exporter)
+        exported_schedule = circuit.export(exporter=exporter)
         for operation_data in exported_schedule.operations.values():
             assert operation_data.name in expected_operations
 
@@ -146,7 +146,7 @@ def test_alap(
 ) -> None:
     if qs_is_installed:
         circuit = Circuit.from_string(cqasm_string)
-        exported_schedule, _ = circuit.export(exporter=exporter)
+        exported_schedule = circuit.export(exporter=exporter)
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
 
 
@@ -242,7 +242,7 @@ def test_wait(
 ) -> None:
     if qs_is_installed:
         circuit = Circuit.from_string(cqasm_string)
-        exported_schedule, _ = circuit.export(exporter=exporter)
+        exported_schedule = circuit.export(exporter=exporter)
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
 
@@ -391,7 +391,7 @@ def test_control_instruction_stress_test(
             0,
             0,
         ]
-        exported_schedule, _ = circuit.export(exporter=exporter)
+        exported_schedule = circuit.export(exporter=exporter)
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
 
@@ -426,7 +426,7 @@ def test_operation_timing(
             "CNOT": 2,
             "Measure": 5,
         }
-        exported_schedule, _ = circuit.export(exporter=QuantifySchedulerExporter(operation_cycles=operation_cycles))
+        exported_schedule = circuit.export(exporter=QuantifySchedulerExporter(operation_cycles=operation_cycles))
         _check_ref_schedulables(exported_schedule, expected_ref_schedulable_indices)
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
 
