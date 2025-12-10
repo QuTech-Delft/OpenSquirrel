@@ -11,7 +11,7 @@ from opensquirrel.passes.exporter import QuantifySchedulerExporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 from tests import STATIC_DATA
-from tests.integration import DataType
+from tests.integration import DataType  # noqa: TC001
 
 BACKEND_ID = "tuna-5"
 

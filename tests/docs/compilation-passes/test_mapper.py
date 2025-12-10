@@ -1,6 +1,4 @@
 import importlib.util
-import json
-from importlib.resources import files
 
 import pytest
 
@@ -16,13 +14,17 @@ if importlib.util.find_spec("stable_baselines3") is None and importlib.util.find
 
 class TestQGymMapper:
     def test_qgym_mapper(self) -> None:
-        agent_path = "opensquirrel/passes/mapper/qgym_mapper/TRPO_tuna5_2e5.zip"
+        agent_path = "data/qgym_mapper/TRPO_tuna5_2e5.zip"
 
-        connectivity_schemes = json.loads(
-            (files("opensquirrel.passes.mapper.qgym_mapper") / "connectivities.json").read_text(encoding="utf-8")
-        )
+        connectivity = {
+            "0": [2],
+            "1": [2],
+            "2": [0, 1, 3, 4],
+            "3": [2],
+            "4": [2],
+        }
 
-        connectivity = connectivity_schemes["tuna-5"]
+        qgym_mapper = QGymMapper(agent_class="TRPO", agent_path=agent_path, connectivity=connectivity)
 
         builder = CircuitBuilder(5)
         builder.H(0)
@@ -32,9 +34,6 @@ class TestQGymMapper:
         builder.CNOT(2, 4)
         builder.CNOT(3, 4)
         circuit = builder.to_circuit()
-
-        agent_class = "TRPO"
-        qgym_mapper = QGymMapper(agent_class=agent_class, agent_path=agent_path, connectivity=connectivity)
 
         initial_circuit_str = str(circuit)
 

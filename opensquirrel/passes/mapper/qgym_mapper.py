@@ -107,7 +107,7 @@ class QGymMapper(Mapper):
         else:
             sb3 = importlib.import_module("sb3_contrib")
         agent_cls = getattr(sb3, agent_class)
-        return agent_cls.load(agent_path)
+        return cast("BaseAlgorithm", agent_cls.load(agent_path))
 
     @staticmethod
     def _ir_to_interaction_graph(ir: IR) -> nx.Graph:
