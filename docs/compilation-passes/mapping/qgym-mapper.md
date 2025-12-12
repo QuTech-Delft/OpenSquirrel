@@ -1,4 +1,4 @@
-The [QGym](https://github.com/QuTech-Delft/qgym) package functions in a manner similar to the well-known gym package,
+The [QGym](https://github.com/QuTech-Delft/qgym) package functions in a manner similar to the well-known [gym](https://gymnasium.farama.org/) package,
 in the sense that it provides a number of environments on which reinforcement learning (RL) agents can be applied.
 The main purpose of qgym is to develop reinforcement learning environments which represent various passes of the
 [OpenQL framework](https://arxiv.org/abs/2005.13283).
