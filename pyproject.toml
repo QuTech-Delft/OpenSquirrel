@@ -51,7 +51,7 @@ export = [
 qgym_mapper = [
     "qgym==0.3.1",
     "stable-baselines3==2.7.0",
-    "sb3-contrib==2.7.0",
+    "sb3-contrib==2.7.1",
 ]
 docs = [
     "mike>=2.1.3",
