@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import itertools
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, milp
@@ -11,9 +11,10 @@ from opensquirrel.ir import IR, Instruction, Qubit
 from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
-DISTANCE_UL = 999999
+if TYPE_CHECKING:
+    from opensquirrel import Connectivity
 
-Connectivity = dict[str, list[int]]
+DISTANCE_UL = 999999
 
 
 class MIPMapper(Mapper):

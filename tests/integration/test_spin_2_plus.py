@@ -1,4 +1,4 @@
-from typing import Any
+from typing import cast
 
 import pytest
 
@@ -6,8 +6,10 @@ from opensquirrel import Circuit
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer, CNOTDecomposer, McKayDecomposer, SWAP2CNOTDecomposer
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
+from tests import STATIC_DATA
+from tests.integration import DataType
 
-DataType = dict[str, Any]
+BACKEND_ID = "spin-2-plus"
 
 
 class TestSpin2Plus:
@@ -17,12 +19,7 @@ class TestSpin2Plus:
         Spin-2+ chip topology:
             0 <--> 1
         """
-        connectivity = {"0": [1], "1": [0]}
-        primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ", "measure", "wait", "init", "barrier"]
-        return {
-            "connectivity": connectivity,
-            "primitive_gate_set": primitive_gate_set,
-        }
+        return cast("DataType", STATIC_DATA["backends"][BACKEND_ID])
 
     def test_complete_circuit(self, data: DataType) -> None:
         circuit = Circuit.from_string(

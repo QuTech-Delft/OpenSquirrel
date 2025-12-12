@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `QGymMapper` mapper pass
 - `U`(theta, phi, lambda) gate to default single-qubit gates
 - `Z90` and `mZ90` pi-half rotation gates (equivalent to `S` and `Sdag` gates)
 - Operation duration in terms of execution cycles can be specified for the `QuantifySchedulerExporter`

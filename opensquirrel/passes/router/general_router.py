@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+from opensquirrel import Connectivity
 from opensquirrel.ir import IR
-
-Connectivity = dict[str, list[int]]
 
 
 class Router(ABC):
