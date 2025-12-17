@@ -3,8 +3,8 @@ import numpy.testing
 import pytest
 from numpy.typing import NDArray
 
-from opensquirrel.ir.semantics import CanonicalAxis, CanonicalGate
-from opensquirrel.ir.unitary import Gate
+from opensquirrel.ir import GateSemantic
+from opensquirrel.ir.semantics import CanonicalAxis, CanonicalGateSemantic
 
 
 class TestCanonicalAxis:
@@ -25,17 +25,15 @@ class TestCanonicalAxis:
         numpy.testing.assert_array_almost_equal(CanonicalAxis.restrict_to_weyl_chamber(axis), restricted_axis)
 
 
-class TestCanonicalGate:
+class TestCanonicalGateSemantic:
     @pytest.fixture
-    def gate(self) -> CanonicalGate:
-        return CanonicalGate(0, 1, (0, 0, 0))
+    def semantic(self) -> CanonicalGateSemantic:
+        return CanonicalGateSemantic((0, 0, 0))
 
-    def test_eq(self, gate: CanonicalGate) -> None:
-        assert gate.is_identity()
+    def test_eq(self, semantic: CanonicalGateSemantic) -> None:
+        assert semantic.is_identity()
 
-    def test_init(self, gate: CanonicalGate) -> None:
-        assert isinstance(gate, Gate)
-        assert hasattr(gate, "axis")
-        assert isinstance(gate.axis, CanonicalAxis)
-        with pytest.raises(ValueError, match="the two qubits cannot be the same"):
-            CanonicalGate(0, 0, (0, 0, 0))
+    def test_init(self, semantic: CanonicalGateSemantic) -> None:
+        assert isinstance(semantic, GateSemantic)
+        assert hasattr(semantic, "axis")
+        assert isinstance(semantic.axis, CanonicalAxis)

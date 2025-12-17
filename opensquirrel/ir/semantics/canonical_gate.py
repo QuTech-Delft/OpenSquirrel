@@ -3,9 +3,8 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.common import repr_round
-from opensquirrel.ir import AxisLike, Gate, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.expression import BaseAxis, Expression
+from opensquirrel.ir import AxisLike, GateSemantic, IRVisitor
+from opensquirrel.ir.expression import BaseAxis
 
 
 class CanonicalAxis(BaseAxis):
@@ -74,29 +73,12 @@ class CanonicalAxis(BaseAxis):
         return visitor.visit_canonical_axis(self)
 
 
-class CanonicalGate(Gate):
-    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike, axis: AxisLike) -> None:
-        Gate.__init__(self, name="CanonicalGate")
-        self.qubit_0 = Qubit(qubit_0)
-        self.qubit_1 = Qubit(qubit_1)
+class CanonicalGateSemantic(GateSemantic):
+    def __init__(self, axis: AxisLike) -> None:
         self.axis = CanonicalAxis(axis)
 
-        if self._check_repeated_qubit_operands([self.qubit_0, self.qubit_1]):
-            msg = "the two qubits cannot be the same"
-            raise ValueError(msg)
-
     def __repr__(self) -> str:
-        return f"{self.name}(q0={self.qubit_0}, q1={self.qubit_1}, axis={repr_round(self.axis)})"
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_canonical_gate(self)
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return (self.qubit_0, self.qubit_1, self.axis)
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit_0, self.qubit_1]
+        return f"CanonicalGateSemantic(axis={self.axis})"
 
     def is_identity(self) -> bool:
-        return self.axis == CanonicalAxis(0, 0, 0)
+        return self.axis == CanonicalAxis((0, 0, 0))

@@ -9,9 +9,9 @@ import numpy as np
 from numpy.typing import ArrayLike, DTypeLike
 
 from opensquirrel.common import ATOL, normalize_angle, repr_round
+from opensquirrel.ir import GateSemantic
 from opensquirrel.ir.expression import Axis, AxisLike, Float
 from opensquirrel.ir.ir import IRNode
-from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 from opensquirrel.utils.general_math import acos
 
 if TYPE_CHECKING:

@@ -39,11 +39,8 @@ from opensquirrel.ir.default_gates import (
 
 if TYPE_CHECKING:
     from opensquirrel.ir import ControlInstruction, Gate, Instruction, NonUnitary, Unitary
-    from opensquirrel.ir.semantics import (
-        ControlledGate,
-        MatrixGate,
-    )
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 default_bsr_without_params_set: dict[str, type[SingleQubitGate]] = {
     "H": H,
@@ -82,23 +79,21 @@ default_bloch_sphere_rotation_set: dict[str, type[SingleQubitGate]] = {
     **default_bsr_with_angle_param_set,
     **default_bsr_unitary_param_set,
 }
-default_controlled_gate_set: dict[str, type[ControlledGate]] = {
+default_two_qubit_gate_set: dict[str, type[TwoQubitGate]] = {
     "CNOT": CNOT,
     "CR": CR,
     "CRk": CRk,
     "CZ": CZ,
-}
-default_matrix_gate_set: dict[str, type[MatrixGate]] = {
     "SWAP": SWAP,
 }
+
 default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
 }
 default_gate_set: dict[str, type[Gate]] = {
     **default_bloch_sphere_rotation_set,
-    **default_controlled_gate_set,
-    **default_matrix_gate_set,
+    **default_two_qubit_gate_set,
     **default_gate_alias_set,
 }
 default_unitary_set: dict[str, type[Unitary]] = {**default_gate_set}
