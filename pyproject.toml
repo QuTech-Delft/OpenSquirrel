@@ -17,7 +17,7 @@ dependencies = [
     "libqasm==1.2.1",
     "networkx>=3.4.2",
     "numpy>=2.2.6",
-    "scipy>=1.15.3"
+    "scipy>=1.15.3",
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -48,6 +48,11 @@ export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
     "quantify-scheduler==0.26.0; sys_platform != 'darwin'",
 ]
+qgym_mapper = [
+    "qgym==0.3.1",
+    "stable-baselines3==2.7.0",
+    "sb3-contrib==2.7.0",
+]
 docs = [
     "mike>=2.1.3",
     "mkdocs>=1.6.1,<2",
@@ -59,7 +64,7 @@ docs = [
     "mkdocs-material-extensions==1.3.1",
     "mkdocs-render-swagger-plugin==0.1.2",
     "mkdocs_gen_files>=0.5.0,<0.7",
-    "mkdocstrings[python]>=0.24,<0.31",
+    "mkdocstrings[python]>=0.24,<1.1",
     "pymdown-extensions>=10.7.1,<11",
 ]
 examples = [
@@ -176,3 +181,5 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
 [tool.mypy]
 ignore_missing_imports = true
 strict = true
+
+

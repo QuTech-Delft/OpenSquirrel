@@ -3,9 +3,10 @@ from typing import Any
 
 import networkx as nx
 
+from opensquirrel import Connectivity
 from opensquirrel.ir import IR
 from opensquirrel.passes.router.common import PathFinderType, ProcessSwaps
-from opensquirrel.passes.router.general_router import Connectivity, Router
+from opensquirrel.passes.router.general_router import Router
 from opensquirrel.passes.router.heuristics import DistanceMetric, calculate_distance
 
 

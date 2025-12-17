@@ -47,6 +47,7 @@ __all__ = [
     "CRk",
     "Circuit",
     "CircuitBuilder",
+    "Connectivity",
     "H",
     "I",
     "Init",
@@ -73,3 +74,5 @@ __all__ = [
 from importlib.metadata import version
 
 __version__ = version("opensquirrel")
+
+Connectivity = dict[str, list[int]]

@@ -14,9 +14,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `QGymMapper` mapper pass
 - `U`(theta, phi, lambda) gate to default single-qubit gates
 - `Z90` and `mZ90` pi-half rotation gates (equivalent to `S` and `Sdag` gates)
 - Operation duration in terms of execution cycles can be specified for the `QuantifySchedulerExporter`
+- `measurement_to_bit_map` property added to the Circuit class
 
 ### Changed
 
@@ -25,6 +27,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
+- The `QuantifySchedulerExporter` no longer returns a `bit_register_mapping`
+(use `Circuit.measurement_to_bit_map` property instead), it only returns a quantify-scheduler `Schedule`
 - The `ExportFormat` has been deprecated
 (exporters can be specified by providing an instance as input argument to `Circuit.export`)
 
