@@ -3,6 +3,10 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any, SupportsFloat, SupportsInt
 
+import numpy as np
+
+from opensquirrel.common import ATOL, repr_round
+from opensquirrel.default_instructions import default_two_qubit_gate_set
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
     Barrier,
@@ -17,24 +21,35 @@ from opensquirrel.ir import (
 )
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
-    ControlledGate,
-    MatrixGate,
+    BsrAngleParam,
+    BsrNoParams,
+    BsrUnitaryParams,
 )
+from opensquirrel.passes.exporter.general_exporter import Exporter
+from opensquirrel.utils.general_math import matrix_from_u_gate_params
 
 if TYPE_CHECKING:
     from opensquirrel import (
-        CNOT,
         CR,
-        CZ,
-        SWAP,
         CRk,
     )
     from opensquirrel.circuit import Circuit
-    from opensquirrel.ir.semantics import (
-        BsrAngleParam,
-        BsrNoParams,
-    )
+    from opensquirrel.ir.semantics.bsr import BsrFullParams
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
     from opensquirrel.register_manager import RegisterManager
+
+
+class CqasmV1Exporter(Exporter):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+
+    def export(self, circuit: Circuit) -> str:
+        cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
+
+        circuit.ir.accept(cqasmv1_creator)
+
+        return _post_process(cqasmv1_creator.output).rstrip() + "\n"
 
 
 class CqasmV1ExporterParseError(Exception):
@@ -62,44 +77,44 @@ class _CQASMv1Creator(IRVisitor):
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
 
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
+        qubit_operand = gate.qubit.accept(self)
+        if isinstance(gate.bsr, BsrNoParams):
+            self.output += f"{gate.name.lower()} {qubit_operand}\n"
+        elif isinstance(gate.bsr, BsrAngleParam):
+            theta_argument = gate.bsr.theta.accept(self)
+            self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
+        elif isinstance(gate.bsr, BsrUnitaryParams):
+            matrix = matrix_from_u_gate_params(gate.bsr.theta.value, gate.bsr.phi.value, gate.bsr.lmbda.value)
+            elements: list[str] = [_convert_complex_number(matrix[i, j]) for i in range(2) for j in range(2)]
+            matrix_repr = f"[{elements[0]}, {elements[1]}; {elements[2]}, {elements[3]}]"
+            self.output += f"{gate.name.lower()} {qubit_operand}, {matrix_repr}\n"
+        else:
+            gate.bsr.accept(self)
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
+        raise UnsupportedGateError(gate)
+
     def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
         if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
             return
         raise UnsupportedGateError(gate)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
-            return
-        raise UnsupportedGateError(gate)
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        if gate.name not in default_two_qubit_gate_set:
+            raise UnsupportedGateError(gate)
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
-            return
-        raise UnsupportedGateError(gate)
+        qubit_operand_0 = gate.qubit0.accept(self)
+        qubit_operand_1 = gate.qubit1.accept(self)
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name.lower()} {qubit_operand}\n"
-
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
-        theta_argument = gate.theta.accept(self)
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
-
-    def visit_swap(self, gate: SWAP) -> Any:
-        qubit_operand_0 = gate.qubit_0.accept(self)
-        qubit_operand_1 = gate.qubit_1.accept(self)
-        self.output += f"swap {qubit_operand_0}, {qubit_operand_1}\n"
-
-    def visit_cnot(self, gate: CNOT) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"cnot {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_cz(self, gate: CZ) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"cz {control_qubit_operand}, {target_qubit_operand}\n"
+        if len(gate.arguments) == 2:
+            self.output += f"{gate.name.lower()} {qubit_operand_0}, {qubit_operand_1}\n"
+        elif len(gate.arguments) == 3:
+            _, _, arg = gate.arguments
+            argument = arg.accept(self)
+            self.output += f"{gate.name.lower()}({argument}) {qubit_operand_0}, {qubit_operand_1}\n"
+        else:
+            raise UnsupportedGateError(gate)
 
     def visit_cr(self, gate: CR) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
@@ -135,7 +150,18 @@ class _CQASMv1Creator(IRVisitor):
         self.output += f"wait {qubit_argument}, {parameter}\n"
 
 
-def post_process(output: str) -> str:
+def _convert_complex_number(number: np.complex128) -> str:
+    real_part = repr_round(number.real) if abs(number.real) > ATOL else ""
+    imag_part = repr_round(abs(number.imag)) if abs(number.imag) > ATOL else ""
+    if imag_part:
+        sign = "+" if number.imag >= 0 else "-"
+        sign = "" if not real_part and sign == "+" else sign
+        imag_part = f"{sign}{imag_part} * im"
+    result = f"{real_part}{imag_part}"
+    return result or "0.0"
+
+
+def _post_process(output: str) -> str:
     return _merge_barrier_groups(output)
 
 
@@ -163,12 +189,3 @@ def _get_barrier_index(line: str) -> int:
         msg = "expecting a barrier index but found none"
         raise CqasmV1ExporterParseError(msg)
     return int(barrier_index_match.group(0))
-
-
-def export(circuit: Circuit) -> str:
-    cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)
-
-    circuit.ir.accept(cqasmv1_creator)
-
-    # Remove all trailing lines and leave only one
-    return post_process(cqasmv1_creator.output).rstrip() + "\n"

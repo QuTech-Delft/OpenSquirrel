@@ -36,6 +36,7 @@ nav:
       - Hardcoded mapper: compilation-passes/mapping/hardcoded-mapper.md
       - Identity mapper: compilation-passes/mapping/identity-mapper.md
       - Random mapper: compilation-passes/mapping/random-mapper.md
+      - QGym mapper: compilation-passes/mapping/qgym-mapper.md
     - Merging:
       - Merging: compilation-passes/merging/index.md
       - Single-qubit gates merger: compilation-passes/merging/single-qubit-gates-merger.md

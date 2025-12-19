@@ -1,12 +1,14 @@
-from typing import Any
+from typing import cast
 
 import pytest
 
 from opensquirrel import Circuit
-from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.passes.exporter import CqasmV1Exporter
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
+from tests import STATIC_DATA
+from tests.integration import DataType
 
-DataType = dict[str, Any]
+BACKEND_ID = "starmon-7"
 
 
 class TestStarmon7:
@@ -20,46 +22,7 @@ class TestStarmon7:
            //     \\
            0 = 2 = 5
         """
-        connectivity = {
-            "0": [2, 3],
-            "1": [3, 4],
-            "2": [0, 5],
-            "3": [0, 1, 5, 6],
-            "4": [1, 6],
-            "5": [2, 3],
-            "6": [3, 4],
-        }
-        primitive_gate_set = [
-            "I",
-            "H",
-            "X",
-            "X90",
-            "mX90",
-            "Y",
-            "Y90",
-            "mY90",
-            "Z",
-            "S",
-            "Sdag",
-            "T",
-            "Tdag",
-            "Rx",
-            "Ry",
-            "Rz",
-            "CNOT",
-            "CZ",
-            "CR",
-            "CRk",
-            "SWAP",
-            "measure",
-            "wait",
-            "init",
-            "barrier",
-        ]
-        return {
-            "connectivity": connectivity,
-            "primitive_gate_set": primitive_gate_set,
-        }
+        return cast("DataType", STATIC_DATA["backends"][BACKEND_ID])
 
     def test_complete_circuit(self, data: DataType) -> None:
         circuit = Circuit.from_string(
@@ -119,7 +82,7 @@ class TestStarmon7:
         )
         circuit.validate(validator=InteractionValidator(**data))
         circuit.validate(validator=PrimitiveGateValidator(**data))
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CqasmV1Exporter())
 
         assert (
             exported_circuit

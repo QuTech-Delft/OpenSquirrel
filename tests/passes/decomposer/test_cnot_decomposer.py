@@ -11,7 +11,7 @@ from opensquirrel.passes.decomposer.general_decomposer import check_gate_replace
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
-    from opensquirrel.ir.semantics import ControlledGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
 @pytest.fixture
@@ -51,6 +51,6 @@ def test_CZ(decomposer: CNOTDecomposer) -> None:  # noqa: N802
     ],
     ids=["CR_1", "CR_2", "CR_3", "CRk_1", "CRk_2", "CRk_3"],
 )
-def test_controlled_gates(decomposer: CNOTDecomposer, controlled_gate: ControlledGate) -> None:
+def test_controlled_gates(decomposer: CNOTDecomposer, controlled_gate: TwoQubitGate) -> None:
     decomposed_gate = decomposer.decompose(controlled_gate)
     check_gate_replacement(controlled_gate, decomposed_gate)

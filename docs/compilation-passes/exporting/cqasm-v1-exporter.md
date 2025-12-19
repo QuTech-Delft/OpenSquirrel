@@ -1,4 +1,4 @@
-The cQASM v1 exporter (`ExportFormat.CQASM_V1`) exports the circuit to a string that adheres to the
+The cQASM v1 exporter (`CQasmV1Exporter`) exports the circuit to a string that adheres to the
 [cQASM version 1.0 language specification](https://libqasm.readthedocs.io/).
 
 Here are some important differences to take note of:
@@ -40,7 +40,7 @@ cQASM v1.
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import CQasmV1Exporter
         ```
 
         ```python
@@ -57,7 +57,7 @@ cQASM v1.
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CQasmV1Exporter)
         print(exported_circuit)
         ```
 
@@ -81,7 +81,7 @@ cQASM v1.
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import CQasmv1Exporter
         ```
 
         ```python
@@ -108,7 +108,7 @@ cQASM v1.
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CQasmv1Exporter)
         print(exported_circuit)
         ```
 
@@ -150,7 +150,7 @@ cQASM v1.
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import CQasmV1Exporter
         ```
 
         ```python
@@ -176,7 +176,7 @@ cQASM v1.
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CQasmV1Exporter)
         print(exported_circuit)
         ```
 
@@ -215,7 +215,7 @@ cQASM v1.
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import CQasmV1Exporter
         ```
 
         ```python
@@ -252,7 +252,7 @@ cQASM v1.
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CQasmV1Exporter)
         print(exported_circuit)
         ```
 

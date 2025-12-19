@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 from math import pi
-from typing import TYPE_CHECKING
 
 import pytest
 
 from opensquirrel import CNOT, CR, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import ZYZDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
-
-if TYPE_CHECKING:
-    from opensquirrel.ir import Gate
 
 
 @pytest.fixture
@@ -38,13 +35,15 @@ def test_identity(decomposer: ZYZDecomposer) -> None:
         (Rz(0, 0.123), [Rz(0, 0.123)]),
         (H(0), [Rz(0, pi), Ry(0, pi / 2)]),
         (
-            BlochSphereRotation(qubit=0, angle=5.21, axis=(1, 2, 3), phase=0.324),
+            SingleQubitGate(qubit=0, gate_semantic=BlochSphereRotation(angle=5.21, axis=(1, 2, 3), phase=0.324)),
             [Rz(0, 0.018644578210710527), Ry(0, -0.6209410696845807), Rz(0, -0.9086506397909061)],
         ),
     ],
     ids=["CNOT", "CR", "X", "Rx", "Y", "Ry", "Z", "Rz", "H", "arbitrary"],
 )
-def test_zyz_decomposer(decomposer: ZYZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
+def test_zyz_decomposer(
+    decomposer: ZYZDecomposer, gate: SingleQubitGate, expected_result: list[SingleQubitGate]
+) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_replacement(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result

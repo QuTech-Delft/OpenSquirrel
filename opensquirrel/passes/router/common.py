@@ -11,7 +11,7 @@ from opensquirrel.exceptions import NoRoutingPathError
 from opensquirrel.ir import IR, Gate, Instruction, Statement
 
 if TYPE_CHECKING:
-    from opensquirrel.passes.router.general_router import Connectivity
+    from opensquirrel import Connectivity
 
 PathFinderType = Callable[[nx.Graph, int, int], list[int]]
 

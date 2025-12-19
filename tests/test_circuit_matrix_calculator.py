@@ -1,3 +1,4 @@
+from math import pi
 from typing import Any
 
 import numpy as np
@@ -14,6 +15,10 @@ from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
         (CircuitBuilder(1).H(0), np.sqrt(0.5) * np.array([[1, 1], [1, -1]])),
         (CircuitBuilder(1).H(0).H(0), np.eye(2)),
         (CircuitBuilder(1).H(0).H(0).H(0), np.sqrt(0.5) * np.array([[1, 1], [1, -1]])),
+        (
+            CircuitBuilder(1).U(0, pi / 2, 0, pi),
+            np.array([[0.70710678, 0.70710678], [0.70710678, -0.70710678]]),
+        ),
         (
             CircuitBuilder(2).H(0).X(1),
             np.sqrt(0.5) * np.array([[0, 0, 1, 1], [0, 0, 1, -1], [1, 1, 0, 0], [1, -1, 0, 0]]),
@@ -49,6 +54,7 @@ from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
         "H[0]",
         "H[0]H[0]",
         "H[0]H[0]H[0]",
+        "U(pi / 2, 0, pi)[0]",
         "H[0]X[1]",
         "H[1]X[0]",
         "CNOT[1,0]",

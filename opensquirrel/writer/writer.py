@@ -1,13 +1,8 @@
 from typing import Any, SupportsFloat, SupportsInt
 
-from opensquirrel import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
 from opensquirrel.circuit import Circuit
+from opensquirrel.default_instructions import default_two_qubit_gate_set
+from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
     AsmDeclaration,
     Barrier,
@@ -24,13 +19,13 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
     BsrAngleParam,
     BsrFullParams,
     BsrNoParams,
-    ControlledGate,
-    MatrixGate,
+    BsrUnitaryParams,
 )
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -77,65 +72,48 @@ class _WriterImpl(IRVisitor):
         backend_code = asm_declaration.backend_code.accept(self)
         self.output += f"asm({backend_name}) '''{backend_code}'''\n"
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
-            return
-        self.output += f"{gate}\n"
-
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
-            return
-        self.output += f"{gate}\n"
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
-            return
-        self.output += f"{gate}\n"
-
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
+        if isinstance(gate, SingleQubitGate) and type(gate) is SingleQubitGate:
+            gate = try_match_replace_with_default_gate(gate)
+        bsr_parameters = gate.bsr.accept(self)
         qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name} {qubit_operand}\n"
+        self.output += f"{gate.name}{bsr_parameters} {qubit_operand}\n"
 
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        qubit_operand_0 = gate.qubit0.accept(self)
+        qubit_operand_1 = gate.qubit1.accept(self)
+
+        if gate.name not in default_two_qubit_gate_set:
+            self.output += f"{gate}\n"
+        elif len(gate.arguments) == 2:
+            self.output += f"{gate.name} {qubit_operand_0}, {qubit_operand_1}\n"
+        elif len(gate.arguments) == 3:
+            _, _, arg = gate.arguments
+            argument = arg.accept(self)
+            self.output += f"{gate.name}({argument}) {qubit_operand_0}, {qubit_operand_1}\n"
+        else:
+            raise UnsupportedGateError(gate)
+
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> str:
+        return ""
+
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> str:
         nx = gate.nx.accept(self)
         ny = gate.ny.accept(self)
         nz = gate.nz.accept(self)
         theta_argument = gate.theta.accept(self)
         phi_argument = gate.phi.accept(self)
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name}({nx}, {ny}, {nz}, {theta_argument}, {phi_argument}) {qubit_operand}\n"
+        return f"({nx}, {ny}, {nz}, {theta_argument}, {phi_argument})"
 
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> None:
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> str:
         theta_argument = gate.theta.accept(self)
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name}({theta_argument}) {qubit_operand}\n"
+        return f"({theta_argument})"
 
-    def visit_swap(self, gate: SWAP) -> Any:
-        qubit_operand_0 = gate.qubit_0.accept(self)
-        qubit_operand_1 = gate.qubit_1.accept(self)
-        self.output += f"SWAP {qubit_operand_0}, {qubit_operand_1}\n"
-
-    def visit_cnot(self, gate: CNOT) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CNOT {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_cz(self, gate: CZ) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CZ {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_cr(self, gate: CR) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
+    def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> str:
         theta_argument = gate.theta.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CR({theta_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_crk(self, gate: CRk) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        k_argument = gate.k.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CRk({k_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
+        phi_argument = gate.phi.accept(self)
+        lmbda_argument = gate.lmbda.accept(self)
+        return f"({theta_argument}, {phi_argument}, {lmbda_argument})"
 
     def visit_measure(self, measure: Measure) -> None:
         qubit_operand = measure.qubit.accept(self)
