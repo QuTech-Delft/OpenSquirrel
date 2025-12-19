@@ -38,13 +38,21 @@ class _WriterImpl(IRVisitor):
     # Precision used when writing out a float number
     FLOAT_PRECISION = 8
 
-    def __init__(self, register_manager: RegisterManager) -> None:
+    def __init__(self, register_manager: RegisterManager, strict: bool = False) -> None:
         self.register_manager = register_manager
         qubit_register_size = self.register_manager.num_qubits
-        qubit_register_name = self.register_manager.get_qubit_register_name()
-
+        self.is_strict = strict
+        if strict:
+            qubit_register_name = "q"
+        else:
+            qubit_register_name = self.register_manager.get_qubit_register_name()
+        
         bit_register_size = self.register_manager.num_bits
-        bit_register_name = self.register_manager.get_bit_register_name()
+        if strict:
+            bit_register_name = "b"
+        else:
+            bit_register_name = self.register_manager.get_bit_register_name()
+        
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
             (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
@@ -65,11 +73,17 @@ class _WriterImpl(IRVisitor):
         return f"{i.value}"
 
     def visit_bit(self, bit: Bit) -> str:
-        bit_register_name = self.register_manager.get_bit_register_name()
+        if self.is_strict:
+            bit_register_name = "b"
+        else:    
+            bit_register_name = self.register_manager.get_bit_register_name()
         return f"{bit_register_name}[{bit.index}]"
 
     def visit_qubit(self, qubit: Qubit) -> str:
-        qubit_register_name = self.register_manager.get_qubit_register_name()
+        if self.is_strict:
+            qubit_register_name = "q"
+        else:    
+            qubit_register_name = self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
@@ -160,8 +174,8 @@ class _WriterImpl(IRVisitor):
         self.output += f"wait({time_parameter}) {qubit_operand}\n"
 
 
-def circuit_to_string(circuit: Circuit) -> str:
-    writer_impl = _WriterImpl(circuit.register_manager)
+def circuit_to_string(circuit: Circuit, strict: bool = False) -> str:
+    writer_impl = _WriterImpl(circuit.register_manager, strict)
     circuit.ir.accept(writer_impl)
 
     # Remove all trailing lines and leave only one

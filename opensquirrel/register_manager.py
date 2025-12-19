@@ -118,6 +118,9 @@ class QubitRegister(Register):
         index_to_variable_name: dict[int, str] | None = None,
     ) -> None:
         self.register_size = register_size
+        if variable_name_to_range is None and index_to_variable_name is None:
+            variable_name_to_range = {name: Range(register_size)}
+            index_to_variable_name = {i: name for i in range(register_size)}
         super().__init__(register_size, name, variable_name_to_range, index_to_variable_name)
 
     @property

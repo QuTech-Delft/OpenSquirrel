@@ -49,7 +49,7 @@ class Circuit:
         """Write the circuit to a cQASM 3 string."""
         from opensquirrel.writer import writer
 
-        return writer.circuit_to_string(self)
+        return writer.circuit_to_string(self, self.is_strict)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Circuit):
@@ -57,7 +57,7 @@ class Circuit:
         return self.register_manager == other.register_manager and self.ir == other.ir
 
     @classmethod
-    def from_string(cls, cqasm3_string: str) -> Circuit:
+    def from_string(cls, cqasm3_string: str, strict: bool = False) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
@@ -71,6 +71,7 @@ class Circuit:
         """
         from opensquirrel.reader import LibQasmParser
 
+        cls.is_strict = strict
         return LibQasmParser().circuit_from_string(cqasm3_string)
 
     @property
