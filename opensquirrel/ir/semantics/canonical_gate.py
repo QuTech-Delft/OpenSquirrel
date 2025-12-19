@@ -3,8 +3,9 @@ from typing import Any
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import AxisLike, GateSemantic, IRVisitor
+from opensquirrel.ir import AxisLike, IRVisitor
 from opensquirrel.ir.expression import BaseAxis
+from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 
 
 class CanonicalAxis(BaseAxis):
@@ -82,3 +83,6 @@ class CanonicalGateSemantic(GateSemantic):
 
     def is_identity(self) -> bool:
         return self.axis == CanonicalAxis((0, 0, 0))
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_canonical_gate_semantic(self)

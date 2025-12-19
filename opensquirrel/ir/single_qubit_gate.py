@@ -19,18 +19,21 @@ def try_match_replace_with_default_gate(gate: SingleQubitGate) -> SingleQubitGat
             or the input SingleQubitGate otherwise.
     """
     from opensquirrel.default_instructions import (
-        default_bsr_set_without_rn,
-        default_bsr_with_angle_param_set,
+        default_bsr_with_param_set,
+        default_single_qubit_gate_set,
     )
     from opensquirrel.ir.default_gates.single_qubit_gates import Rn
 
-    for gate_name in default_bsr_set_without_rn:
+    for gate_name in default_single_qubit_gate_set:
+        if gate_name in ("Rn", "U"):
+            continue
+
         arguments: tuple[Any, ...] = (gate.qubit,)
-        if gate_name in default_bsr_with_angle_param_set:
+        if gate_name in default_bsr_with_param_set:
             arguments += (Float(gate.bsr.angle),)
-        possible_gate = default_bsr_set_without_rn[gate_name](*arguments)
-        gate_bsr = BlochSphereRotation(axis=gate.bsr.axis, angle=gate.bsr.angle, phase=gate.bsr.phase)
-        if possible_gate.bsr == gate_bsr:
+
+        possible_gate = default_single_qubit_gate_set[gate_name](*arguments)
+        if possible_gate == gate:
             return possible_gate
 
     nx, ny, nz = gate.bsr.axis.value

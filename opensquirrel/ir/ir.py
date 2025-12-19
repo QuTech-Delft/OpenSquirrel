@@ -28,6 +28,9 @@ if TYPE_CHECKING:
         BsrFullParams,
         BsrNoParams,
         BsrUnitaryParams,
+        CanonicalGateSemantic,
+        ControlledGateSemantic,
+        MatrixGateSemantic,
     )
     from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
@@ -112,6 +115,15 @@ class IRVisitor:
         pass
 
     def visit_wait(self, wait: Wait) -> Any:
+        pass
+
+    def visit_canonical_gate_semantic(self, canonical: CanonicalGateSemantic) -> Any:
+        pass
+
+    def visit_controlled_gate_semantic(self, controlled: ControlledGateSemantic) -> Any:
+        pass
+
+    def visit_matrix_gate_semantic(self, matrix: MatrixGateSemantic) -> Any:
         pass
 
 

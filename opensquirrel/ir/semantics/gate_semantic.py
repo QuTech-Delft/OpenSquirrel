@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
+from opensquirrel.ir import IRNode
 
-class GateSemantic(ABC):
+
+class GateSemantic(IRNode, ABC):
     @abstractmethod
     def is_identity(self) -> bool:
         pass

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir import GateSemantic
+from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 
 if TYPE_CHECKING:
+    from opensquirrel.ir import IRVisitor
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
@@ -24,3 +25,6 @@ class ControlledGateSemantic(GateSemantic):
             f"ControlledGateSemantic(target_gate={self.target_gate.name}"
             f"(qubit={self.target_gate.qubit.index}, bsr={self.target_gate.bsr}))"
         )
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_controlled_gate_semantic(self)

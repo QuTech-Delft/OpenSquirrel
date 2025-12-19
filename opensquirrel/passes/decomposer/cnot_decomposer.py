@@ -26,13 +26,13 @@ class CNOTDecomposer(Decomposer):
         if not isinstance(g, TwoQubitGate):
             return [g]
 
-        if g.control is None:
+        if not g.controlled:
             # Do nothing, this is not a controlled unitary gate.
             return [g]
 
         control_qubit = g.qubit0
         target_qubit = g.qubit1
-        target_gate = g.control.target_gate
+        target_gate = g.controlled.target_gate
 
         # Perform ZYZ decomposition on the target gate.
         # This gives us an ABC decomposition (U = AXBXC, ABC = I) of the target gate.

@@ -64,8 +64,8 @@ class _QubitReindexer(IRVisitor):
         qubit0 = self.qubit_indices.index(gate.qubit0.index)
         qubit1 = self.qubit_indices.index(gate.qubit1.index)
 
-        if gate.control is not None:
-            target_gate = gate.control.target_gate.accept(self)
+        if gate.controlled:
+            target_gate = gate.controlled.target_gate.accept(self)
             return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=ControlledGateSemantic(target_gate))
 
         return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=gate.gate_semantic)

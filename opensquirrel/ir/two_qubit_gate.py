@@ -5,8 +5,8 @@ import numpy as np
 
 from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.expression import Expression
-from opensquirrel.ir.gate_semantic import GateSemantic
 from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 from opensquirrel.utils import get_matrix
 
 
@@ -18,11 +18,12 @@ class TwoQubitGate(Gate):
         self.qubit0 = Qubit(qubit0)
         self.qubit1 = Qubit(qubit1)
 
-        self._control = gate_semantic if isinstance(gate_semantic, ControlledGateSemantic) else None
+        self._controlled = gate_semantic if isinstance(gate_semantic, ControlledGateSemantic) else None
         self._matrix = gate_semantic if isinstance(gate_semantic, MatrixGateSemantic) else None
-        self._can = gate_semantic if isinstance(gate_semantic, CanonicalGateSemantic) else None
+        self._canonical = gate_semantic if isinstance(gate_semantic, CanonicalGateSemantic) else None
         self.gate_semantic = gate_semantic
-        if self._control and (self.qubit1 != self._control.target_gate.qubit):
+
+        if self._controlled and (self.qubit1 != self._controlled.target_gate.qubit):
             msg = "the qubit from the target gate does not match with 'qubit1'."
             raise ValueError(msg)
 
@@ -38,25 +39,23 @@ class TwoQubitGate(Gate):
         if self._matrix:
             return self._matrix
 
-        if self.control is not None:
+        if self.controlled:
             self._matrix = MatrixGateSemantic(get_matrix(self, 2))
             return self._matrix
 
-        if self.can:
+        if self.canonical:
             from opensquirrel.utils.matrix_expander import can2
 
-            return MatrixGateSemantic(can2(self.can.axis))
+            return MatrixGateSemantic(can2(self.canonical.axis))
         return MatrixGateSemantic(np.eye(4))
 
     @cached_property
-    def can(self) -> CanonicalGateSemantic | None:
-        return self._can
+    def canonical(self) -> CanonicalGateSemantic | None:
+        return self._canonical
 
     @cached_property
-    def control(self) -> ControlledGateSemantic | None:
-        if self._control is None:
-            return None
-        return self._control
+    def controlled(self) -> ControlledGateSemantic | None:
+        return self._controlled
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_parent = super().accept(visitor)
@@ -70,10 +69,10 @@ class TwoQubitGate(Gate):
         return [self.qubit0, self.qubit1]
 
     def is_identity(self) -> bool:
-        if self.control is not None:
-            return self.control.is_identity()
-        if self.matrix is not None:
+        if self.controlled:
+            return self.controlled.is_identity()
+        if self.matrix:
             return self.matrix.is_identity()
-        if self.can is not None:
-            return self.can.is_identity()
+        if self.canonical:
+            return self.canonical.is_identity()
         return False

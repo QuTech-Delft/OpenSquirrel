@@ -58,8 +58,8 @@ class TestParsing:
             builder.CRk(0, 1, k)
             gate = builder.ir.statements[i]
             assert isinstance(gate, TwoQubitGate)
-            assert gate.control is not None
-            theta_expected = gate.control.target_gate.bsr.angle
+            assert gate.controlled
+            theta_expected = gate.controlled.target_gate.bsr.angle
             assert theta_expected == normalize_angle(2 * pi / 2**k)
 
         with pytest.warns(UserWarning, match=r"value of parameter 'k' is not an integer: got <class 'float'> instead."):

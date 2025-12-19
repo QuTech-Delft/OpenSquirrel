@@ -26,14 +26,14 @@ class CZDecomposer(Decomposer):
         if not isinstance(g, TwoQubitGate):
             return [g]
 
-        if g.control is None:
+        if not g.controlled:
             # Do nothing:
             # - BlochSphereRotation's are only single-qubit,
             # - decomposing MatrixGate is currently not supported.
             return [g]
 
         control_qubit, target_qubit = g.get_qubit_operands()
-        target_gate = g.control.target_gate
+        target_gate = g.controlled.target_gate
 
         # Perform XYX decomposition on the target gate.
         # This gives us an ABC decomposition (U = exp(i phase) * AZBZC, ABC = I) of the target gate.

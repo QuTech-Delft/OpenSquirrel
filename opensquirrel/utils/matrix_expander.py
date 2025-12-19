@@ -12,7 +12,6 @@ from numpy.typing import NDArray
 from opensquirrel.ir import (
     Axis,
     AxisLike,
-    Gate,
     IRVisitor,
     Qubit,
     QubitLike,
@@ -20,6 +19,7 @@ from opensquirrel.ir import (
 from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
 
 if TYPE_CHECKING:
+    from opensquirrel.ir import Gate
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
@@ -127,16 +127,17 @@ class MatrixExpander(IRVisitor):
         return np.asarray(result, dtype=np.complex128)
 
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
-        if gate.control is None:
-            return self.visit_matrix_gate(gate)
-        return self.visit_controlled_gate(gate)
+        if not gate.controlled:
+            return self._matrix_gate(gate)
+        return self._controlled_gate(gate)
 
-    def visit_controlled_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
-        control_qubit = gate.qubit0
-        if gate.control is None:
-            msg = "controlled gate must have a target gate"
+    def _controlled_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
+        if not gate.controlled:
+            msg = "the gate must have a controlled gate semantic."
             raise ValueError(msg)
-        target_gate = gate.control.target_gate
+
+        control_qubit = gate.qubit0
+        target_gate = gate.controlled.target_gate
 
         if control_qubit.index >= self.qubit_register_size:
             msg = "index out of range"
@@ -149,7 +150,7 @@ class MatrixExpander(IRVisitor):
                 col[col_index] = 1
         return np.asarray(expanded_matrix, dtype=np.complex128)
 
-    def visit_matrix_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
+    def _matrix_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as
         #   1, 0, 0, 0
@@ -190,7 +191,7 @@ class MatrixExpander(IRVisitor):
     def visit_canonical_gate(self, gate: TwoQubitGate) -> Any:
         qubit_operands = list(reversed(gate.get_qubit_operands()))
 
-        if gate.can is None:
+        if not gate.canonical:
             msg = "gate needs to have a canonical representation"
             raise ValueError(msg)
 
