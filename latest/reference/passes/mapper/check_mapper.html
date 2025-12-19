@@ -2255,6 +2255,8 @@
       
         
       
+        
+      
     
     
     
@@ -2783,6 +2785,34 @@
     
   
     statement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ir/two_qubit_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    two_qubit_gate
   
 
     
@@ -4933,8 +4963,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/passes/mapper/check_mapper.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-29">29</a></span>
 <span class="normal"><a href="#__codelineno-0-30">30</a></span>
 <span class="normal"><a href="#__codelineno-0-31">31</a></span>
 <span class="normal"><a href="#__codelineno-0-32">32</a></span>
@@ -4953,27 +4982,28 @@
 <span class="normal"><a href="#__codelineno-0-45">45</a></span>
 <span class="normal"><a href="#__codelineno-0-46">46</a></span>
 <span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="k">def</span><span class="w"> </span><span class="nf">check_mapper</span><span class="p">(</span><span class="n">mapper</span><span class="p">:</span> <span class="n">Mapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="w">    </span><span class="sd">"""Check if the `mapper` complies with the OpenSquirrel requirements.</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    If a ``Mapper`` implementation passes these checks, it should be compatible with the ``Circuit.map`` method.</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        mapper: Mapper to check.</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">    """</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">Mapper</span><span class="p">)</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="n">register_manager</span> <span class="o">=</span> <span class="n">RegisterManager</span><span class="p">(</span><span class="n">QubitRegister</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">BitRegister</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">()</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">register_manager</span><span class="p">,</span> <span class="n">ir</span><span class="p">)</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="n">_check_scenario</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="n">ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">()</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">SingleQubitGate</span><span class="p">(</span><span class="n">qubit</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">gate_semantic</span><span class="o">=</span><span class="n">BlochSphereRotation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">ControlledGate</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">I</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">add_non_unitary</span><span class="p">(</span><span class="n">Measure</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="n">Circuit</span><span class="p">(</span><span class="n">register_manager</span><span class="p">,</span> <span class="n">ir</span><span class="p">)</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="n">_check_scenario</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="k">def</span><span class="w"> </span><span class="nf">check_mapper</span><span class="p">(</span><span class="n">mapper</span><span class="p">:</span> <span class="n">Mapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="w">    </span><span class="sd">"""Check if the `mapper` complies with the OpenSquirrel requirements.</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    If a ``Mapper`` implementation passes these checks, it should be compatible with the ``Circuit.map`` method.</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">        mapper: Mapper to check.</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    """</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapper</span><span class="p">,</span> <span class="n">Mapper</span><span class="p">)</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">register_manager</span> <span class="o">=</span> <span class="n">RegisterManager</span><span class="p">(</span><span class="n">QubitRegister</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">BitRegister</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="n">ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">()</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="n">circuit</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">register_manager</span><span class="p">,</span> <span class="n">ir</span><span class="p">)</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>    <span class="n">_check_scenario</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>    <span class="n">ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">()</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">SingleQubitGate</span><span class="p">(</span><span class="n">qubit</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">gate_semantic</span><span class="o">=</span><span class="n">BlochSphereRotation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">TwoQubitGate</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="n">gate_semantic</span><span class="o">=</span><span class="n">ControlledGateSemantic</span><span class="p">(</span><span class="n">I</span><span class="p">(</span><span class="mi">100</span><span class="p">))))</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">add_non_unitary</span><span class="p">(</span><span class="n">Measure</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="n">Circuit</span><span class="p">(</span><span class="n">register_manager</span><span class="p">,</span> <span class="n">ir</span><span class="p">)</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="n">_check_scenario</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">mapper</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

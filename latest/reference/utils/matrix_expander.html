@@ -2255,6 +2255,8 @@
       
         
       
+        
+      
     
     
     
@@ -2783,6 +2785,34 @@
     
   
     statement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ir/two_qubit_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    two_qubit_gate
   
 
     
@@ -5053,7 +5083,10 @@ Roughly equivalent to the <code>pdep</code> assembly instruction (bits deposit).
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-0-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-0-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
 <span class="normal"><a href="#__codelineno-0-67"> 67</a></span>
 <span class="normal"><a href="#__codelineno-0-68"> 68</a></span>
 <span class="normal"><a href="#__codelineno-0-69"> 69</a></span>
@@ -5092,52 +5125,49 @@ Roughly equivalent to the <code>pdep</code> assembly instruction (bits deposit).
 <span class="normal"><a href="#__codelineno-0-102">102</a></span>
 <span class="normal"><a href="#__codelineno-0-103">103</a></span>
 <span class="normal"><a href="#__codelineno-0-104">104</a></span>
-<span class="normal"><a href="#__codelineno-0-105">105</a></span>
-<span class="normal"><a href="#__codelineno-0-106">106</a></span>
-<span class="normal"><a href="#__codelineno-0-107">107</a></span>
-<span class="normal"><a href="#__codelineno-0-108">108</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="k">def</span><span class="w"> </span><span class="nf">expand_ket</span><span class="p">(</span><span class="n">base_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reduced_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">    where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">    Roughly equivalent to the `pdep` assembly instruction (bits deposit).</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">        base_ket: A quantum ket, represented by its corresponding non-negative integer.</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">                  By convention, qubit #0 corresponds to the least significant bit.</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">        reduced_ket: A quantum ket, represented by its corresponding non-negative integer.</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">                     By convention, qubit #0 corresponds to the least significant bit.</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">        qubits: The indices of the qubits to expand from the reduced ket. Order matters.</span>
+<span class="normal"><a href="#__codelineno-0-105">105</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="k">def</span><span class="w"> </span><span class="nf">expand_ket</span><span class="p">(</span><span class="n">base_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reduced_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="sd">    Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">    where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="sd">    Roughly equivalent to the `pdep` assembly instruction (bits deposit).</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">        base_ket: A quantum ket, represented by its corresponding non-negative integer.</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">                  By convention, qubit #0 corresponds to the least significant bit.</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">        reduced_ket: A quantum ket, represented by its corresponding non-negative integer.</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">                     By convention, qubit #0 corresponds to the least significant bit.</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">        qubits: The indices of the qubits to expand from the reduced ket. Order matters.</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">        The non-negative integer corresponding to the expanded ket.</span>
 <a id="__codelineno-0-78" name="__codelineno-0-78"></a>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">        The non-negative integer corresponding to the expanded ket.</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b0, [Qubit(5)])   # 0b000000</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="sd">        0</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b1, [Qubit(5)])   # 0b100000</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">        32</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b0, [Qubit(5)])   # 0b000111</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a><span class="sd">        7</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b1, [Qubit(5)])   # 0b100111</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">        39</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b000, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0000</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">        0</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b001, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0010</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">        2</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b011, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0110</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="sd">        6</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1010</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">        10</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0001, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1011</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a><span class="sd">        11</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">    """</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a>    <span class="n">expanded_ket</span> <span class="o">=</span> <span class="n">base_ket</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="n">expanded_ket</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># erase bit</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="n">expanded_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">reduced_ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># set bit to value from reduced_ket</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>
-<a id="__codelineno-0-108" name="__codelineno-0-108"></a>    <span class="k">return</span> <span class="n">expanded_ket</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b0, [Qubit(5)])   # 0b000000</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">        0</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b1, [Qubit(5)])   # 0b100000</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">        32</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b0, [Qubit(5)])   # 0b000111</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">        7</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b1, [Qubit(5)])   # 0b100111</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="sd">        39</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b000, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0000</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">        0</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b001, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0010</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">        2</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b011, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0110</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">        6</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1010</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="sd">        10</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0001, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1011</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">        11</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">    """</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="n">expanded_ket</span> <span class="o">=</span> <span class="n">base_ket</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>        <span class="n">expanded_ket</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># erase bit</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>        <span class="n">expanded_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">reduced_ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># set bit to value from reduced_ket</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="k">return</span> <span class="n">expanded_ket</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -5241,20 +5271,7 @@ qubits. This can be used for, e.g.,
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-255">255</a></span>
-<span class="normal"><a href="#__codelineno-0-256">256</a></span>
-<span class="normal"><a href="#__codelineno-0-257">257</a></span>
-<span class="normal"><a href="#__codelineno-0-258">258</a></span>
-<span class="normal"><a href="#__codelineno-0-259">259</a></span>
-<span class="normal"><a href="#__codelineno-0-260">260</a></span>
-<span class="normal"><a href="#__codelineno-0-261">261</a></span>
-<span class="normal"><a href="#__codelineno-0-262">262</a></span>
-<span class="normal"><a href="#__codelineno-0-263">263</a></span>
-<span class="normal"><a href="#__codelineno-0-264">264</a></span>
-<span class="normal"><a href="#__codelineno-0-265">265</a></span>
-<span class="normal"><a href="#__codelineno-0-266">266</a></span>
-<span class="normal"><a href="#__codelineno-0-267">267</a></span>
-<span class="normal"><a href="#__codelineno-0-268">268</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-268">268</a></span>
 <span class="normal"><a href="#__codelineno-0-269">269</a></span>
 <span class="normal"><a href="#__codelineno-0-270">270</a></span>
 <span class="normal"><a href="#__codelineno-0-271">271</a></span>
@@ -5282,48 +5299,61 @@ qubits. This can be used for, e.g.,
 <span class="normal"><a href="#__codelineno-0-293">293</a></span>
 <span class="normal"><a href="#__codelineno-0-294">294</a></span>
 <span class="normal"><a href="#__codelineno-0-295">295</a></span>
-<span class="normal"><a href="#__codelineno-0-296">296</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-255" name="__codelineno-0-255"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
-<a id="__codelineno-0-256" name="__codelineno-0-256"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-257" name="__codelineno-0-257"></a><span class="sd">    Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of</span>
-<a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="sd">    qubits. This can be used for, e.g.,</span>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="sd">    - testing,</span>
-<a id="__codelineno-0-260" name="__codelineno-0-260"></a><span class="sd">    - permuting the operands of multi-qubit gates,</span>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="sd">    - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).</span>
-<a id="__codelineno-0-262" name="__codelineno-0-262"></a>
-<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-264" name="__codelineno-0-264"></a><span class="sd">        gate: The gate, including the qubits on which it is operated on.</span>
-<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">        qubit_register_size: The size of the qubit register.</span>
-<a id="__codelineno-0-266" name="__codelineno-0-266"></a>
-<a id="__codelineno-0-267" name="__codelineno-0-267"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="sd">        &gt;&gt;&gt; X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)</span>
-<a id="__codelineno-0-269" name="__codelineno-0-269"></a><span class="sd">        &gt;&gt;&gt; get_matrix(X(1), 2).astype(int)           # X q[1]</span>
-<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">        array([[0, 0, 1, 0],</span>
-<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="sd">               [0, 0, 0, 1],</span>
-<a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="sd">               [1, 0, 0, 0],</span>
-<a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="sd">               [0, 1, 0, 0]])</span>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a><span class="sd">        &gt;&gt;&gt; CNOT02 = ControlledGate(0, X(2))</span>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a><span class="sd">        &gt;&gt;&gt; get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
-<a id="__codelineno-0-279" name="__codelineno-0-279"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">        &gt;&gt;&gt; get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
+<span class="normal"><a href="#__codelineno-0-296">296</a></span>
+<span class="normal"><a href="#__codelineno-0-297">297</a></span>
+<span class="normal"><a href="#__codelineno-0-298">298</a></span>
+<span class="normal"><a href="#__codelineno-0-299">299</a></span>
+<span class="normal"><a href="#__codelineno-0-300">300</a></span>
+<span class="normal"><a href="#__codelineno-0-301">301</a></span>
+<span class="normal"><a href="#__codelineno-0-302">302</a></span>
+<span class="normal"><a href="#__codelineno-0-303">303</a></span>
+<span class="normal"><a href="#__codelineno-0-304">304</a></span>
+<span class="normal"><a href="#__codelineno-0-305">305</a></span>
+<span class="normal"><a href="#__codelineno-0-306">306</a></span>
+<span class="normal"><a href="#__codelineno-0-307">307</a></span>
+<span class="normal"><a href="#__codelineno-0-308">308</a></span>
+<span class="normal"><a href="#__codelineno-0-309">309</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<a id="__codelineno-0-269" name="__codelineno-0-269"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">    Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="sd">    qubits. This can be used for, e.g.,</span>
+<a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="sd">    - testing,</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="sd">    - permuting the operands of multi-qubit gates,</span>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="sd">    - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="sd">        gate: The gate, including the qubits on which it is operated on.</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="sd">        qubit_register_size: The size of the qubit register.</span>
+<a id="__codelineno-0-279" name="__codelineno-0-279"></a>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">        &gt;&gt;&gt; X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">        &gt;&gt;&gt; get_matrix(X(1), 2).astype(int)           # X q[1]</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a><span class="sd">        array([[0, 0, 1, 0],</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a><span class="sd">               [0, 0, 0, 1],</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">               [1, 0, 0, 0],</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">               [0, 1, 0, 0]])</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a><span class="sd">        &gt;&gt;&gt; CNOT02 = ControlledGate(0, X(2))</span>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">        &gt;&gt;&gt; get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
 <a id="__codelineno-0-291" name="__codelineno-0-291"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
 <a id="__codelineno-0-292" name="__codelineno-0-292"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a><span class="sd">    """</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a>    <span class="n">expander</span> <span class="o">=</span> <span class="n">MatrixExpander</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">expander</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a><span class="sd">        &gt;&gt;&gt; get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a><span class="sd">    """</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>    <span class="n">expander</span> <span class="o">=</span> <span class="n">MatrixExpander</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">expander</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -5435,7 +5465,10 @@ Roughly equivalent to the <code>pext</code> assembly instruction (bits extractio
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span>
 <span class="normal"><a href="#__codelineno-0-31">31</a></span>
 <span class="normal"><a href="#__codelineno-0-32">32</a></span>
 <span class="normal"><a href="#__codelineno-0-33">33</a></span>
@@ -5465,43 +5498,40 @@ Roughly equivalent to the <code>pext</code> assembly instruction (bits extractio
 <span class="normal"><a href="#__codelineno-0-57">57</a></span>
 <span class="normal"><a href="#__codelineno-0-58">58</a></span>
 <span class="normal"><a href="#__codelineno-0-59">59</a></span>
-<span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_reduced_ket</span><span class="p">(</span><span class="n">ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    where only the given qubits appear, in order.</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">    Roughly equivalent to the `pext` assembly instruction (bits extraction).</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        ket: A quantum ket, represented by its corresponding non-negative integer.</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">             By convention, qubit #0 corresponds to the least significant bit.</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        qubits: The indices of the qubits to extract. Order matters.</span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_reduced_ket</span><span class="p">(</span><span class="n">ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    where only the given qubits appear, in order.</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    Roughly equivalent to the `pext` assembly instruction (bits extraction).</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        ket: A quantum ket, represented by its corresponding non-negative integer.</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">             By convention, qubit #0 corresponds to the least significant bit.</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        qubits: The indices of the qubits to extract. Order matters.</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        The non-negative integer corresponding to the reduced ket.</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        The non-negative integer corresponding to the reduced ket.</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1, [Qubit(0)])         # 0b01</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        1</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2)])      # 0b01</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        1</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(5)])      # 0b0</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        0</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2), Qubit(5)])   # 0b01</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">        1</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(1), Qubit(0)])    # 0b10</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">        2</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">        1</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    """</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="n">reduced_ket</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="n">reduced_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">return</span> <span class="n">reduced_ket</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1, [Qubit(0)])         # 0b01</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">        1</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2)])      # 0b01</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        1</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(5)])      # 0b0</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        0</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2), Qubit(5)])   # 0b01</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        1</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(1), Qubit(0)])    # 0b10</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        2</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">        1</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">    """</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="n">reduced_ket</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>        <span class="n">reduced_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="k">return</span> <span class="n">reduced_ket</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
