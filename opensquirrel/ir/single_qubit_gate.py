@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from functools import cached_property
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir import Float, Gate, Qubit, QubitLike
-from opensquirrel.ir.semantics.bsr import BlochSphereRotation
-from opensquirrel.ir.semantics.gate_semantic import GateSemantic, MatrixSemantic
+from opensquirrel.ir import Float, Gate, GateSemantic, Qubit, QubitLike
+from opensquirrel.ir.semantics import BlochSphereRotation, MatrixGateSemantic
 
 if TYPE_CHECKING:
     from opensquirrel.ir.ir import IRVisitor
@@ -19,18 +19,21 @@ def try_match_replace_with_default_gate(gate: SingleQubitGate) -> SingleQubitGat
             or the input SingleQubitGate otherwise.
     """
     from opensquirrel.default_instructions import (
-        default_bsr_set_without_rn,
-        default_bsr_with_angle_param_set,
+        default_bsr_with_param_set,
+        default_single_qubit_gate_set,
     )
     from opensquirrel.ir.default_gates.single_qubit_gates import Rn
 
-    for gate_name in default_bsr_set_without_rn:
+    for gate_name in default_single_qubit_gate_set:
+        if gate_name in ("Rn", "U"):
+            continue
+
         arguments: tuple[Any, ...] = (gate.qubit,)
-        if gate_name in default_bsr_with_angle_param_set:
+        if gate_name in default_bsr_with_param_set:
             arguments += (Float(gate.bsr.angle),)
-        possible_gate = default_bsr_set_without_rn[gate_name](*arguments)
-        gate_bsr = BlochSphereRotation(axis=gate.bsr.axis, angle=gate.bsr.angle, phase=gate.bsr.phase)
-        if possible_gate.bsr == gate_bsr:
+
+        possible_gate = default_single_qubit_gate_set[gate_name](*arguments)
+        if possible_gate == gate:
             return possible_gate
 
     nx, ny, nz = gate.bsr.axis.value
@@ -38,32 +41,28 @@ def try_match_replace_with_default_gate(gate: SingleQubitGate) -> SingleQubitGat
 
 
 class SingleQubitGate(Gate):
-    bsr: BlochSphereRotation
-    matrix: MatrixSemantic
-
     def __init__(self, qubit: QubitLike, gate_semantic: GateSemantic, name: str = "SingleQubitGate") -> None:
         Gate.__init__(self, name)
         self.qubit = Qubit(qubit)
 
         self._bsr = gate_semantic if isinstance(gate_semantic, BlochSphereRotation) else None
-        self._matrix = gate_semantic if isinstance(gate_semantic, MatrixSemantic) else None
+        self._matrix = gate_semantic if isinstance(gate_semantic, MatrixGateSemantic) else None
 
-    def __getattr__(self, name: str) -> Any:
-        match name:
-            case "bsr":
-                if self._bsr is None:
-                    from opensquirrel.ir.semantics.bsr import bsr_from_matrix
+    @cached_property
+    def bsr(self) -> BlochSphereRotation:
+        if self._bsr is None:
+            from opensquirrel.ir.semantics.bsr import bsr_from_matrix
 
-                    self._bsr = bsr_from_matrix(self.matrix)
-                return self._bsr
-            case "matrix":
-                if self._matrix is None:
-                    from opensquirrel.utils import can1
+            self._bsr = bsr_from_matrix(self.matrix)
+        return self._bsr
 
-                    self._matrix = MatrixSemantic(can1(self.bsr.axis, self.bsr.angle, self.bsr.phase))
-                return self._matrix
-            case _:
-                return self.__getattribute__(name)
+    @cached_property
+    def matrix(self) -> MatrixGateSemantic:
+        if self._matrix is None:
+            from opensquirrel.utils import can1
+
+            self._matrix = MatrixGateSemantic(can1(self.bsr.axis, self.bsr.angle, self.bsr.phase))
+        return self._matrix
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_gate = super().accept(visitor)

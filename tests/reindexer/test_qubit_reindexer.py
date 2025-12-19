@@ -6,8 +6,9 @@ import pytest
 
 from opensquirrel import Y90, Circuit, CircuitBuilder, X
 from opensquirrel.ir import Gate, Measure
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
 
 
@@ -26,8 +27,12 @@ def replacement_gates_2() -> list[Gate | Measure]:
     return [
         Measure(1, 1),
         SingleQubitGate(qubit=3, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi / 2)),
-        MatrixGate([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], [0, 3]),
-        ControlledGate(1, X(2)),
+        TwoQubitGate(
+            qubit0=0,
+            qubit1=3,
+            gate_semantic=MatrixGateSemantic([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]),
+        ),
+        TwoQubitGate(qubit0=1, qubit1=2, gate_semantic=ControlledGateSemantic(target_gate=X(2))),
     ]
 
 
@@ -37,8 +42,10 @@ def circuit_2_reindexed() -> Circuit:
     builder.ir.add_gate(
         SingleQubitGate(qubit=2, gate_semantic=BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi / 2))
     )
-    builder.ir.add_gate(MatrixGate([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]], [1, 2]))
-    builder.ir.add_gate(ControlledGate(0, X(3)))
+    builder.ir.add_gate(
+        TwoQubitGate(1, 2, gate_semantic=MatrixGateSemantic([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]))
+    )
+    builder.ir.add_gate(TwoQubitGate(0, 3, gate_semantic=ControlledGateSemantic(target_gate=X(3))))
     return builder.to_circuit()
 
 
