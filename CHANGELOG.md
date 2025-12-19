@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
-## [ M.m.P ] - [ yyyy-mm-dd ]
+## [ 0.9.0 ] - [ 2025-12-19 ]
 
 ### Added
 
@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Circuit.export` expects an `Exporter` instance as input argument (instead of an `ExportFormat`)
 - Moved Bloch sphere rotation composition from the merger pass interface to Bloch sphere rotation semantic module
+- Refactor gate semantics as attributes of gates
 
 ### Removed
 
