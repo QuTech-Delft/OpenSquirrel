@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, SupportsFloat, SupportsInt
 import numpy as np
 
 from opensquirrel.common import ATOL, repr_round
+from opensquirrel.default_instructions import default_two_qubit_gate_set
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
     Barrier,
@@ -23,23 +24,19 @@ from opensquirrel.ir.semantics import (
     BsrAngleParam,
     BsrNoParams,
     BsrUnitaryParams,
-    ControlledGate,
-    MatrixGate,
 )
 from opensquirrel.passes.exporter.general_exporter import Exporter
 from opensquirrel.utils.general_math import matrix_from_u_gate_params
 
 if TYPE_CHECKING:
     from opensquirrel import (
-        CNOT,
         CR,
-        CZ,
-        SWAP,
         CRk,
     )
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir.semantics.bsr import BsrFullParams
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
     from opensquirrel.register_manager import RegisterManager
 
 
@@ -103,30 +100,21 @@ class _CQASMv1Creator(IRVisitor):
             return
         raise UnsupportedGateError(gate)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
-            return
-        raise UnsupportedGateError(gate)
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        if gate.name not in default_two_qubit_gate_set:
+            raise UnsupportedGateError(gate)
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
-            return
-        raise UnsupportedGateError(gate)
+        qubit_operand_0 = gate.qubit0.accept(self)
+        qubit_operand_1 = gate.qubit1.accept(self)
 
-    def visit_swap(self, gate: SWAP) -> Any:
-        qubit_operand_0 = gate.qubit_0.accept(self)
-        qubit_operand_1 = gate.qubit_1.accept(self)
-        self.output += f"swap {qubit_operand_0}, {qubit_operand_1}\n"
-
-    def visit_cnot(self, gate: CNOT) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"cnot {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_cz(self, gate: CZ) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"cz {control_qubit_operand}, {target_qubit_operand}\n"
+        if len(gate.arguments) == 2:
+            self.output += f"{gate.name.lower()} {qubit_operand_0}, {qubit_operand_1}\n"
+        elif len(gate.arguments) == 3:
+            _, _, arg = gate.arguments
+            argument = arg.accept(self)
+            self.output += f"{gate.name.lower()}({argument}) {qubit_operand_0}, {qubit_operand_1}\n"
+        else:
+            raise UnsupportedGateError(gate)
 
     def visit_cr(self, gate: CR) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)

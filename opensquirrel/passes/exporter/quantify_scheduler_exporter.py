@@ -4,7 +4,7 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
-from opensquirrel import CNOT, CR, CZ, CRk, Init, Measure, Reset, Wait
+from opensquirrel import Init, Measure, Reset, Wait
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (
@@ -25,10 +25,8 @@ except ModuleNotFoundError:
 if TYPE_CHECKING:
     from opensquirrel import Circuit
     from opensquirrel.ir import Qubit
-    from opensquirrel.ir.semantics import (
-        MatrixGate,
-    )
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
     from opensquirrel.register_manager import RegisterManager
 
 OperationCycles = dict[str, int]
@@ -255,32 +253,28 @@ class _ScheduleCreator(IRVisitor):
             return
         raise UnsupportedGateError(gate)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        raise UnsupportedGateError(gate)
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        if gate.name not in ["CNOT", "CZ"]:
+            raise UnsupportedGateError(gate)
 
-    def visit_cnot(self, gate: CNOT) -> None:
-        self.schedule.add(
-            quantify_scheduler.operations.gate_library.CNOT(
-                qC=self._get_qubit_string(gate.control_qubit),
-                qT=self._get_qubit_string(gate.target_qubit),
-            ),
-            label=self._get_operation_label("CNOT", gate.get_qubit_operands()),
-        )
+        control_qubit, target_qubit = gate.get_qubit_operands()
 
-    def visit_cz(self, gate: CZ) -> None:
-        self.schedule.add(
-            quantify_scheduler.operations.gate_library.CZ(
-                qC=self._get_qubit_string(gate.control_qubit),
-                qT=self._get_qubit_string(gate.target_qubit),
-            ),
-            label=self._get_operation_label("CZ", gate.get_qubit_operands()),
-        )
-
-    def visit_cr(self, gate: CR) -> None:
-        raise UnsupportedGateError(gate)
-
-    def visit_crk(self, gate: CRk) -> None:
-        raise UnsupportedGateError(gate)
+        if gate.name == "CNOT":
+            self.schedule.add(
+                quantify_scheduler.operations.gate_library.CNOT(
+                    qC=self._get_qubit_string(control_qubit),
+                    qT=self._get_qubit_string(target_qubit),
+                ),
+                label=self._get_operation_label("CNOT", gate.get_qubit_operands()),
+            )
+        if gate.name == "CZ":
+            self.schedule.add(
+                quantify_scheduler.operations.gate_library.CZ(
+                    qC=self._get_qubit_string(control_qubit),
+                    qT=self._get_qubit_string(target_qubit),
+                ),
+                label=self._get_operation_label("CZ", gate.get_qubit_operands()),
+            )
 
     def visit_measure(self, gate: Measure) -> None:
         qubit_index = gate.qubit.index

@@ -7,8 +7,7 @@ import pytest
 
 from opensquirrel import X90, H, MinusX90, Rn, Rx, Ry, Rz, TDagger, X, Y, Z
 from opensquirrel.common import ATOL
-from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.ir.semantics.gate_semantic import MatrixSemantic
+from opensquirrel.ir.semantics import BlochSphereRotation, MatrixGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
 from opensquirrel.utils import can1
 
@@ -75,11 +74,11 @@ class TestSingleQubitGate:
         assert gate.bsr == bsr
 
         matrix = gate.matrix
-        assert isinstance(matrix, MatrixSemantic)
+        assert isinstance(matrix, MatrixGateSemantic)
         assert np.allclose(matrix, can1(bsr.axis, bsr.angle, bsr.phase), atol=ATOL)
 
     def test_init_with_matrix(self) -> None:
-        matrix = MatrixSemantic((1 / np.sqrt(2)) * np.array([[1, 1], [1, -1]]))
+        matrix = MatrixGateSemantic((1 / np.sqrt(2)) * np.array([[1, 1], [1, -1]]))
         gate = SingleQubitGate(0, gate_semantic=matrix)
         assert gate.matrix == matrix
         assert gate._bsr is None

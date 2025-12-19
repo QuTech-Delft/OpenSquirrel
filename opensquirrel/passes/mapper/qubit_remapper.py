@@ -7,11 +7,8 @@ from opensquirrel.ir import (
     Qubit,
     Wait,
 )
-from opensquirrel.ir.semantics import (
-    ControlledGate,
-    MatrixGate,
-)
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.mapper.mapping import Mapping
 
 
@@ -54,16 +51,13 @@ class _QubitRemapper(IRVisitor):
         gate.qubit.accept(self)
         return gate
 
-    def visit_matrix_gate(self, matrix_gate: MatrixGate) -> MatrixGate:
-        for operand in matrix_gate.operands:
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> TwoQubitGate:
+        for operand in gate.get_qubit_operands():
             operand.accept(self)
-        return matrix_gate
 
-    def visit_controlled_gate(self, controlled_gate: ControlledGate) -> ControlledGate:
-        controlled_gate.control_qubit.accept(self)
-        controlled_gate.target_gate.accept(self)
-        controlled_gate.target_qubit.accept(self)
-        return controlled_gate
+        if gate.controlled is not None:
+            gate.controlled.target_gate.qubit.accept(self)
+        return gate
 
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:

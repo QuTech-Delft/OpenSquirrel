@@ -5,9 +5,9 @@ from opensquirrel.ir.semantics.bsr import (
     BsrNoParams,
     BsrUnitaryParams,
 )
-from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
-from opensquirrel.ir.semantics.controlled_gate import ControlledGate
-from opensquirrel.ir.semantics.matrix_gate import MatrixGate
+from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGateSemantic
+from opensquirrel.ir.semantics.controlled_gate import ControlledGateSemantic
+from opensquirrel.ir.semantics.matrix_gate import MatrixGateSemantic
 
 __all__ = [
     "BlochSphereRotation",
@@ -16,7 +16,7 @@ __all__ = [
     "BsrNoParams",
     "BsrUnitaryParams",
     "CanonicalAxis",
-    "CanonicalGate",
-    "ControlledGate",
-    "MatrixGate",
+    "CanonicalGateSemantic",
+    "ControlledGateSemantic",
+    "MatrixGateSemantic",
 ]
