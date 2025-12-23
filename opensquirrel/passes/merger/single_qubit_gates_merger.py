@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import cast
 
 from opensquirrel import I
@@ -33,7 +34,7 @@ class SingleQubitGatesMerger(Merger):
                 del ir.statements[statement_index]
                 continue
 
-            def insert_accumulated_bloch_sphere_rotations(qubits: list[Qubit]) -> None:
+            def insert_accumulated_bloch_sphere_rotations(qubits: Iterable[Qubit]) -> None:
                 nonlocal statement_index
                 for qubit in qubits:
                     if not accumulators_per_qubit[qubit].is_identity():
@@ -47,7 +48,7 @@ class SingleQubitGatesMerger(Merger):
             if isinstance(instruction, Barrier) or isinstance(statement, AsmDeclaration):
                 insert_accumulated_bloch_sphere_rotations([Qubit(i) for i in range(qubit_register_size)])
             else:
-                insert_accumulated_bloch_sphere_rotations(instruction.get_qubit_operands())
+                insert_accumulated_bloch_sphere_rotations(instruction.qubit_operands)
             statement_index += 1
 
         for accumulated_bloch_sphere_rotation in accumulators_per_qubit.values():

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from opensquirrel.ir.expression import Expression, Qubit, String, SupportsStr
+from opensquirrel.ir.expression import Bit, Expression, Qubit, String, SupportsStr
 from opensquirrel.ir.ir import IRNode, IRVisitor
 
 
@@ -40,8 +40,18 @@ class Instruction(Statement, ABC):
     def arguments(self) -> tuple[Expression, ...]:
         pass
 
+    @property
     @abstractmethod
-    def get_qubit_operands(self) -> list[Qubit]:
+    def qubit_operands(self) -> tuple[Qubit, ...]:
+        pass
+
+    @property
+    def qubit_indices(self) -> list[int]:
+        return [qubit.index for qubit in self.qubit_operands]
+
+    @property
+    @abstractmethod
+    def bit_operands(self) -> tuple[Bit, ...]:
         pass
 
     def accept(self, visitor: IRVisitor) -> Any:

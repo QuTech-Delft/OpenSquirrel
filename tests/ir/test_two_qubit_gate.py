@@ -20,8 +20,8 @@ class TestTwoQubitGate:
         ]
         return TwoQubitGate(42, 100, gate_semantic=MatrixGateSemantic(cnot_matrix))
 
-    def test_get_qubit_operands(self, gate: TwoQubitGate) -> None:
-        assert gate.get_qubit_operands() == [Qubit(42), Qubit(100)]
+    def test_qubit_operands(self, gate: TwoQubitGate) -> None:
+        assert gate.qubit_operands == (Qubit(42), Qubit(100))
 
     def test_same_qubits(self) -> None:
         with pytest.raises(ValueError, match="qubit0 and qubit1 cannot be the same"):

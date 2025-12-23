@@ -7,12 +7,13 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from scipy.optimize import Bounds, LinearConstraint, milp
 
-from opensquirrel.ir import IR, Instruction, Qubit
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 if TYPE_CHECKING:
     from opensquirrel import Connectivity
+    from opensquirrel.ir import IR
 
 DISTANCE_UL = 999999
 
@@ -90,13 +91,11 @@ class MIPMapper(Mapper):
     ) -> list[list[int]]:
         reference_counter = [[0 for _ in range(num_virtual_qubits)] for _ in range(num_virtual_qubits)]
         for statement in getattr(ir, "statements", []):
-            if isinstance(statement, Instruction):
-                args = statement.arguments
-                if args and len(args) > 1 and all(isinstance(arg, Qubit) for arg in args):
-                    qubit_args = [arg for arg in args if isinstance(arg, Qubit)]
-                    for q_0, q_1 in itertools.pairwise(qubit_args):
-                        reference_counter[q_0.index][q_1.index] += 1
-                        reference_counter[q_1.index][q_0.index] += 1
+            if isinstance(statement, TwoQubitGate):
+                for q_0, q_1 in itertools.pairwise(statement.qubit_operands):
+                    reference_counter[q_0.index][q_1.index] += 1
+                    reference_counter[q_1.index][q_0.index] += 1
+
         cost = [[0 for _ in range(num_physical_qubits)] for _ in range(num_virtual_qubits)]
         for i in range(num_virtual_qubits):
             for k in range(num_physical_qubits):

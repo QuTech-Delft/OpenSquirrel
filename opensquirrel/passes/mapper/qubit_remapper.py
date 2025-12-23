@@ -52,7 +52,7 @@ class _QubitRemapper(IRVisitor):
         return gate
 
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> TwoQubitGate:
-        for operand in gate.get_qubit_operands():
+        for operand in gate.qubit_operands:
             operand.accept(self)
 
         if gate.controlled is not None:

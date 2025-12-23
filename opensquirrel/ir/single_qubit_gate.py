@@ -3,10 +3,11 @@ from __future__ import annotations
 from functools import cached_property
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir import Float, Gate, GateSemantic, Qubit, QubitLike
+from opensquirrel.ir import Bit, Float, Gate, GateSemantic, Qubit, QubitLike
 from opensquirrel.ir.semantics import BlochSphereRotation, MatrixGateSemantic
 
 if TYPE_CHECKING:
+    from opensquirrel.ir.expression import Expression
     from opensquirrel.ir.ir import IRVisitor
 
 
@@ -84,11 +85,16 @@ class SingleQubitGate(Gate):
         return SingleQubitGate(self.qubit, self.bsr * other.bsr)
 
     @property
-    def arguments(self) -> tuple[Qubit, ...]:
+    def arguments(self) -> tuple[Expression, ...]:
+        return ()
+
+    @property
+    def qubit_operands(self) -> tuple[Qubit, ...]:
         return (self.qubit,)
 
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
+    @property
+    def bit_operands(self) -> tuple[Bit, ...]:
+        return ()
 
     def is_identity(self) -> bool:
         if self.bsr is not None:

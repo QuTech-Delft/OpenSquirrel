@@ -159,7 +159,7 @@ class MatrixExpander(IRVisitor):
         #   0, 0, 1, 0
         # which corresponds to control being q[1] and target being q[0],
         # since qubit #i corresponds to the i-th least significant bit.
-        qubit_operands = list(reversed(gate.get_qubit_operands()))
+        qubit_operands = list(reversed(gate.qubit_operands))
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
             msg = "index out of range"
@@ -189,7 +189,7 @@ class MatrixExpander(IRVisitor):
         return expanded_matrix
 
     def visit_canonical_gate(self, gate: TwoQubitGate) -> Any:
-        qubit_operands = list(reversed(gate.get_qubit_operands()))
+        qubit_operands = list(reversed(gate.qubit_operands))
 
         if not gate.canonical:
             msg = "gate needs to have a canonical representation"

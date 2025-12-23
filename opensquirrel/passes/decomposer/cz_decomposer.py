@@ -32,7 +32,7 @@ class CZDecomposer(Decomposer):
             # - decomposing MatrixGate is currently not supported.
             return [g]
 
-        control_qubit, target_qubit = g.get_qubit_operands()
+        control_qubit, target_qubit = g.qubit_operands
         target_gate = g.controlled.target_gate
 
         # Perform XYX decomposition on the target gate.

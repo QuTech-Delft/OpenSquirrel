@@ -22,7 +22,7 @@ class SWAP2CZDecomposer(Decomposer):
     def decompose(self, gate: Gate) -> list[Gate]:
         if gate.name != "SWAP":
             return [gate]
-        qubit0, qubit1 = gate.get_qubit_operands()
+        qubit0, qubit1 = gate.qubit_operands
         return [
             Ry(qubit1, -pi / 2),
             CZ(qubit0, qubit1),

@@ -41,13 +41,6 @@ class SWAP(TwoQubitGate):
         self.qubit_0 = Qubit(qubit_0)
         self.qubit_1 = Qubit(qubit_1)
 
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.qubit_0, self.qubit_1
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit_0, self.qubit_1]
-
 
 class CNOT(TwoQubitGate):
     def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike) -> None:

@@ -26,8 +26,8 @@ class TestMeasure:
     def test_inequality(self, measure: Measure, other_measure: Measure | str) -> None:
         assert measure != other_measure
 
-    def test_get_bit_operands(self, measure: Measure) -> None:
-        assert measure.get_bit_operands() == [Bit(42)]
+    def test_bit_operands(self, measure: Measure) -> None:
+        assert measure.bit_operands == (Bit(42),)
 
-    def test_get_qubit_operands(self, measure: Measure) -> None:
-        assert measure.get_qubit_operands() == [Qubit(42)]
+    def test_qubit_operands(self, measure: Measure) -> None:
+        assert measure.qubit_operands == (Qubit(42),)
