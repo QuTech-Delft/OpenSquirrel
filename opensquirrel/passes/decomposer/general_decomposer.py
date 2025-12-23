@@ -20,7 +20,7 @@ class Decomposer(ABC):
 
 
 def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> None:
-    gate_qubit_indices = [q.index for q in gate.get_qubit_operands()]
+    gate_qubit_indices = gate.qubit_indices
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
 
@@ -28,7 +28,7 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
         return
 
     for g in replacement_gates:
-        replacement_gates_qubit_indices.update([q.index for q in g.get_qubit_operands()])
+        replacement_gates_qubit_indices.update(g.qubit_indices)
 
     if set(gate_qubit_indices) != replacement_gates_qubit_indices:
         msg = f"replacement for gate {gate.name} does not seem to operate on the right qubits"
@@ -70,7 +70,7 @@ class _GenericReplacer(Decomposer):
     def decompose(self, gate: Gate) -> list[Gate]:
         if is_anonymous_gate(gate.name) or type(gate) is not self.gate_type:
             return [gate]
-        return self.replacement_gates_function(*gate.arguments)
+        return self.replacement_gates_function(*gate.qubit_operands, *gate.arguments)
 
 
 def replace(ir: IR, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:

@@ -3,7 +3,7 @@ from typing import Any
 
 import numpy as np
 
-from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir import Bit, Gate, IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.expression import Expression
 from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
@@ -27,7 +27,7 @@ class TwoQubitGate(Gate):
             msg = "the qubit from the target gate does not match with 'qubit1'."
             raise ValueError(msg)
 
-        if self._check_repeated_qubit_operands([self.qubit0, self.qubit1]):
+        if self._check_repeated_qubit_operands(self.qubit_operands):
             msg = "qubit0 and qubit1 cannot be the same"
             raise ValueError(msg)
 
@@ -63,10 +63,15 @@ class TwoQubitGate(Gate):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
+        return ()
+
+    @property
+    def qubit_operands(self) -> tuple[Qubit, ...]:
         return (self.qubit0, self.qubit1)
 
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit0, self.qubit1]
+    @property
+    def bit_operands(self) -> tuple[Bit, ...]:
+        return ()
 
     def is_identity(self) -> bool:
         if self.controlled:

@@ -26,10 +26,6 @@ class Gate(Unitary, ABC):
         return len(qubits) != len(set(qubits))
 
     @abstractmethod
-    def get_qubit_operands(self) -> list[Qubit]:
-        pass
-
-    @abstractmethod
     def is_identity(self) -> bool:
         pass
 
@@ -43,7 +39,7 @@ class Gate(Unitary, ABC):
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
-    union_mapping = [q.index for q in list(set(g1.get_qubit_operands()) | set(g2.get_qubit_operands()))]
+    union_mapping = [q.index for q in list(set(g1.qubit_operands) | set(g2.qubit_operands))]
 
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
     from opensquirrel.reindexer import get_reindexed_circuit
