@@ -4,8 +4,8 @@ from collections import Counter, defaultdict
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir.non_unitary import Measure
 from opensquirrel.ir import AsmDeclaration
+from opensquirrel.ir.non_unitary import Measure
 
 if TYPE_CHECKING:
     from opensquirrel.ir.ir import IR
@@ -16,12 +16,11 @@ if TYPE_CHECKING:
     from opensquirrel.passes.merger.general_merger import Merger
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator
-    from opensquirrel.register_manager import RegisterManager, BitRegister, QubitRegister
+    from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 
 InstructionCount = dict[str, int]
 MeasurementToBitMap = defaultdict[str, list[int]]
-
 
 
 class Circuit:
@@ -66,7 +65,7 @@ class Circuit:
         return self.register_manager == other.register_manager and self.ir == other.ir
 
     @classmethod
-    def from_string(cls, cqasm3_string: str, strict: bool = False) -> Circuit:
+    def from_string(cls, cqasm3_string: str, strict: bool = False) -> Circuit:  # noqa: FBT001, FBT002
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
@@ -89,7 +88,7 @@ class Circuit:
 
     @property
     def bit_register_size(self) -> int:
-        return (self.register_manager.get_bit_register_size())
+        return self.register_manager.get_bit_register_size()
 
     @property
     def instruction_count(self) -> InstructionCount:
@@ -113,24 +112,14 @@ class Circuit:
         return m2b_map
 
     def qubit_register_names(self, qubit_register: QubitRegister | None = None) -> list[str] | str:
-        if qubit_register is not None:
+        if qubit_register:
             return self.register_manager.get_qubit_register_name(qubit_register)
-
-        qubit_registers = []
-        for register in self.register_manager.qubit_registers:
-            qubit_registers.append(register.name)
-
-        return qubit_registers
+        return [register.name for register in self.register_manager.qubit_registers]
 
     def bit_register_names(self, bit_register: BitRegister | None = None) -> list[str] | str:
-        if bit_register is not None:
+        if bit_register:
             return self.register_manager.get_bit_register_name(bit_register)
-
-        bit_registers = []
-        for register in self.register_manager.bit_registers:
-            bit_registers.append(register.name)
-
-        return bit_registers
+        return [register.name for register in self.register_manager.bit_registers]
 
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [

@@ -6,6 +6,9 @@ on:
       - master
   pull_request:
 
+env:
+  UV_USE_ACTIVE_ENV: 1
+
 jobs:
   lint:
     name: Static analysis

@@ -33,21 +33,13 @@ class _WriterImpl(IRVisitor):
     # Precision used when writing out a float number
     FLOAT_PRECISION = 8
 
-    def __init__(self, register_manager: RegisterManager, strict: bool = False) -> None:
+    def __init__(self, register_manager: RegisterManager, strict: bool = True) -> None:  # noqa: FBT001, FBT002
         self.register_manager = register_manager
-        qubit_register_size = self.register_manager.num_qubits
         self.is_strict = strict
-        if strict:
-            qubit_register_name = "q"
-        else:
-            qubit_register_name = self.register_manager.get_qubit_register_name()
-
-        bit_register_size = self.register_manager.num_bits
-        if strict:
-            bit_register_name = "b"
-        else:
-            bit_register_name = self.register_manager.get_bit_register_name()
-
+        qubit_register_size = self.register_manager.get_total_qubit_register_size()
+        qubit_register_name = "q" if strict else self.register_manager.get_qubit_register_name()
+        bit_register_size = self.register_manager.get_total_bit_register_size()
+        bit_register_name = "b" if strict else self.register_manager.get_bit_register_name()
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
             (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
@@ -68,17 +60,11 @@ class _WriterImpl(IRVisitor):
         return f"{i.value}"
 
     def visit_bit(self, bit: Bit) -> str:
-        if self.is_strict:
-            bit_register_name = "b"
-        else:
-            bit_register_name = self.register_manager.get_bit_register_name()
+        bit_register_name = "b" if self.is_strict else self.register_manager.get_bit_register_name()
         return f"{bit_register_name}[{bit.index}]"
 
     def visit_qubit(self, qubit: Qubit) -> str:
-        if self.is_strict:
-            qubit_register_name = "q"
-        else:
-            qubit_register_name = self.register_manager.get_qubit_register_name()
+        qubit_register_name = "q" if self.is_strict else self.register_manager.get_qubit_register_name()
         return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
@@ -92,15 +78,7 @@ class _WriterImpl(IRVisitor):
         bsr_parameters = gate.bsr.accept(self)
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name}{bsr_parameters} {qubit_operand}\n"
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
-            return
-        self.output += f"{gate}\n"
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
-            return
-        self.output += f"{gate}\n"
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
         qubit_operand_0 = gate.qubit0.accept(self)
         qubit_operand_1 = gate.qubit1.accept(self)
@@ -116,18 +94,9 @@ class _WriterImpl(IRVisitor):
         else:
             raise UnsupportedGateError(gate)
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
-            return
-        self.output += f"{gate}\n"
     def visit_bsr_no_params(self, gate: BsrNoParams) -> str:
         return ""
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> None:
-        qubit_operand = gate.qubit.accept(self)
-        self.output += f"{gate.name} {qubit_operand}\n"
-
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> None:
     def visit_bsr_full_params(self, gate: BsrFullParams) -> str:
         nx = gate.nx.accept(self)
         ny = gate.ny.accept(self)
@@ -169,7 +138,7 @@ class _WriterImpl(IRVisitor):
         self.output += f"wait({time_parameter}) {qubit_operand}\n"
 
 
-def circuit_to_string(circuit: Circuit, strict: bool = False) -> str:
+def circuit_to_string(circuit: Circuit, strict: bool = False) -> str:  # noqa: FBT001, FBT002
     writer_impl = _WriterImpl(circuit.register_manager, strict)
     circuit.ir.accept(writer_impl)
 

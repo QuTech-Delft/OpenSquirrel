@@ -92,7 +92,9 @@ class LibQasmParser:
                     ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
                 if isinstance(ast_qubit_expression, cqasm.values.IndexRef):
                     int_indices = [int(i.value) for i in ast_qubit_expression.indices]
-                    indices = [self.register_manager.get_qubit_index(qubit_register, variable_name, i) for i in int_indices]
+                    indices = [
+                        self.register_manager.get_qubit_index(qubit_register, variable_name, i) for i in int_indices
+                    ]
                     ret = [Qubit(index) for index in indices]
         return ret
 

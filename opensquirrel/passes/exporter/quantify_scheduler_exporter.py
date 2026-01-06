@@ -300,7 +300,7 @@ class _ScheduleCreator(IRVisitor):
         )
 
     def _get_qubit_string(self, qubit: Qubit) -> str:
-        return f"{self.circuit.qubit_register_name}[{qubit.index}]"
+        return f"{self.circuit.qubit_register_names()[0]}[{qubit.index}]"
 
     def _get_operation_label(self, name: str, qubits: list[Qubit]) -> str:
         qubit_operands = ", ".join([self._get_qubit_string(qubit) for qubit in qubits])

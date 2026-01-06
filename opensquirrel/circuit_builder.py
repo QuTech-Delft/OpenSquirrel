@@ -52,7 +52,6 @@ class CircuitBuilder:
         # Default behaviour
         return self.__getattribute__(attr)
 
-
     def add_register(self, register: Register) -> None:
         """Adds a new register to the CircuitBuilder's RegisterManager.
 
@@ -75,13 +74,13 @@ class CircuitBuilder:
         """
         if isinstance(register, QubitRegister):
             self.register_manager.qubit_registers.append(register)
-            self.register_manager.num_qubits = self.register_manager._get_total_qubit_register_size()
+            self.register_manager.num_qubits = self.register_manager.get_total_qubit_register_size()
         elif isinstance(register, BitRegister):
             self.register_manager.bit_registers.append(register)
-            self.register_manager.num_bits = self.register_manager._get_total_bit_register_size()
+            self.register_manager.num_bits = self.register_manager.get_total_bit_register_size()
         else:
-            raise TypeError(f"Unsupported register type: {type(register).__name__}")
-
+            msg = f"Unsupported register type: {type(register).__name__}"
+            raise TypeError(msg)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.
