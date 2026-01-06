@@ -36,7 +36,7 @@ Repository = "https://github.com/QuTech-Delft/OpenSquirrel"
 [dependency-groups]
 dev = [
     "coverage>=7.10.7,<8",
-    "IPython>=8.37,<9",
+    "IPython>=8.37,<10",
     "mypy>=1.18.2,<2",
     "pytest>=8.4.2,<10",
     "pytest-cov>=4.1,<8.0",
