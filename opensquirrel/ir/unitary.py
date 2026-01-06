@@ -39,7 +39,7 @@ class Gate(Unitary, ABC):
 
 
 def compare_gates(g1: Gate, g2: Gate) -> bool:
-    union_mapping = [q.index for q in list(set(g1.qubit_operands) | set(g2.qubit_operands))]
+    union_mapping = list(set(g1.qubit_indices) | set(g2.qubit_indices))
 
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
     from opensquirrel.reindexer import get_reindexed_circuit

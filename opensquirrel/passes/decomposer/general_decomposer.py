@@ -27,8 +27,8 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
     if is_identity_matrix_up_to_a_global_phase(replaced_matrix):
         return
 
-    for g in replacement_gates:
-        replacement_gates_qubit_indices.update(g.qubit_indices)
+    for replacement_gate in replacement_gates:
+        replacement_gates_qubit_indices.update(replacement_gate.qubit_indices)
 
     if set(gate_qubit_indices) != replacement_gates_qubit_indices:
         msg = f"replacement for gate {gate.name} does not seem to operate on the right qubits"
