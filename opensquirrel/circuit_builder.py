@@ -51,8 +51,8 @@ class CircuitBuilder:
             return partial(self._add_statement, attr)
         # Default behaviour
         return self.__getattribute__(attr)
-    
-    
+
+
     def add_register(self, register: Register) -> None:
         """Adds a new register to the CircuitBuilder's RegisterManager.
 

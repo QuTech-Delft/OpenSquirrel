@@ -5,11 +5,10 @@ from typing import TYPE_CHECKING
 
 from opensquirrel import CZ, Rx, Ry, Rz, Z
 from opensquirrel.common import ATOL
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.decomposer import XYXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
-from opensquirrel.passes.merger import general_merger
-from opensquirrel.utils import filter_out_identities
+from opensquirrel.utils.identity_filter import filter_out_identities
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -24,18 +23,17 @@ class CZDecomposer(Decomposer):
     """
 
     def decompose(self, g: Gate) -> list[Gate]:
-        if not isinstance(g, ControlledGate):
+        if not isinstance(g, TwoQubitGate):
+            return [g]
+
+        if not g.controlled:
             # Do nothing:
             # - BlochSphereRotation's are only single-qubit,
             # - decomposing MatrixGate is currently not supported.
             return [g]
 
-        if not isinstance(g.target_gate, BlochSphereRotation):
-            # Do nothing.
-            # ControlledGate's with 2+ control qubits are ignored.
-            return [g]
-
-        target_qubit = g.target_gate.qubit
+        control_qubit, target_qubit = g.get_qubit_operands()
+        target_gate = g.controlled.target_gate
 
         # Perform XYX decomposition on the target gate.
         # This gives us an ABC decomposition (U = exp(i phase) * AZBZC, ABC = I) of the target gate.
@@ -43,10 +41,10 @@ class CZDecomposer(Decomposer):
 
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
         # Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I
-        controlled_rotation_times_z = general_merger.compose_bloch_sphere_rotations(g.target_gate, Z(target_qubit))
+        controlled_rotation_times_z = target_gate * Z(target_qubit)
         theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer().get_decomposition_angles(
-            controlled_rotation_times_z.axis,
-            controlled_rotation_times_z.angle,
+            controlled_rotation_times_z.bsr.axis,
+            controlled_rotation_times_z.bsr.angle,
         )
         if abs((theta0_with_z - theta2_with_z) % (2 * pi)) < ATOL:
             # The decomposition can use a single CZ according to the lemma.
@@ -55,13 +53,13 @@ class CZDecomposer(Decomposer):
             return filter_out_identities(
                 [
                     *B,
-                    CZ(g.control_qubit, target_qubit),
+                    CZ(control_qubit, target_qubit),
                     *A,
-                    Rz(g.control_qubit, g.target_gate.phase - pi / 2),
+                    Rz(control_qubit, target_gate.bsr.phase - pi / 2),
                 ],
             )
 
-        theta0, theta1, theta2 = XYXDecomposer().get_decomposition_angles(g.target_gate.axis, g.target_gate.angle)
+        theta0, theta1, theta2 = XYXDecomposer().get_decomposition_angles(target_gate.bsr.axis, target_gate.bsr.angle)
 
         A = [Ry(target_qubit, theta1 / 2), Rx(target_qubit, theta2)]  # noqa: N806
         B = [Rx(target_qubit, -(theta0 + theta2) / 2), Ry(target_qubit, -theta1 / 2)]  # noqa: N806
@@ -70,10 +68,10 @@ class CZDecomposer(Decomposer):
         return filter_out_identities(
             [
                 *C,
-                CZ(g.control_qubit, target_qubit),
+                CZ(control_qubit, target_qubit),
                 *B,
-                CZ(g.control_qubit, target_qubit),
+                CZ(control_qubit, target_qubit),
                 *A,
-                Rz(g.control_qubit, g.target_gate.phase),
+                Rz(control_qubit, target_gate.bsr.phase),
             ],
         )

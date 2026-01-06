@@ -8,7 +8,7 @@ from opensquirrel.passes.validator import PrimitiveGateValidator
 
 @pytest.fixture
 def validator() -> PrimitiveGateValidator:
-    primitive_gate_set = ["I", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
+    primitive_gate_set = ["I", "U", "X90", "mX90", "Y90", "mY90", "Rz", "CZ"]
     return PrimitiveGateValidator(primitive_gate_set)
 
 
@@ -16,6 +16,7 @@ def validator() -> PrimitiveGateValidator:
 def circuit_with_matching_gate_set() -> Circuit:
     builder = CircuitBuilder(5)
     builder.I(0)
+    builder.U(0, 1, 2, 3)
     builder.X90(1)
     builder.mX90(2)
     builder.Y90(3)
@@ -29,6 +30,7 @@ def circuit_with_matching_gate_set() -> Circuit:
 def circuit_with_unmatching_gate_set() -> Circuit:
     builder = CircuitBuilder(5)
     builder.I(0)
+    builder.U(0, 1, 2, 3)
     builder.X90(1)
     builder.mX90(2)
     builder.Y90(3)

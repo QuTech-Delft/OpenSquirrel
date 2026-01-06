@@ -2,83 +2,93 @@ from __future__ import annotations
 
 from math import pi, tau
 
+import numpy as np
 import pytest
+from numpy.typing import ArrayLike, DTypeLike
 
-from opensquirrel import (
-    X90,
-    H,
-    I,
-    MinusX90,
-    Rn,
-    Rx,
-    Ry,
-    Rz,
-    TDagger,
-    X,
-)
+from opensquirrel import X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, S, SDagger, T, TDagger, U, X, Y, Z
 from opensquirrel.common import ATOL
-from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation
+from opensquirrel.ir.semantics.bsr import bsr_from_matrix
+
+
+@pytest.mark.parametrize(
+    ("matrix", "bsr"),
+    [
+        (np.array([[1, 0], [0, 1]]), I(0).bsr),
+        ((1 / np.sqrt(2)) * np.array([[1, 1], [1, -1]]), H(0).bsr),
+        (np.array([[0, 1], [1, 0]]), X(0).bsr),
+        ((1 / 2) * np.array([[1 + 1j, 1 - 1j], [1 - 1j, 1 + 1j]]), X90(0).bsr),
+        ((1 / 2) * np.array([[1 - 1j, 1 + 1j], [1 + 1j, 1 - 1j]]), MinusX90(0).bsr),
+        (np.array([[0, -1j], [1j, 0]]), Y(0).bsr),
+        ((1 / 2) * np.array([[1 + 1j, -1 - 1j], [1 + 1j, 1 + 1j]]), Y90(0).bsr),
+        ((1 / 2) * np.array([[1 - 1j, 1 - 1j], [-1 + 1j, 1 - 1j]]), MinusY90(0).bsr),
+        (np.array([[1, 0], [0, -1]]), Z(0).bsr),
+        (np.array([[1, 0], [0, 1j]]), S(0).bsr),
+        (np.array([[1, 0], [0, -1j]]), SDagger(0).bsr),
+        (np.array([[1, 0], [0, np.exp(1j * pi / 4)]]), T(0).bsr),
+        (np.array([[1, 0], [0, np.exp(-1j * pi / 4)]]), TDagger(0).bsr),
+    ],
+    ids=["I", "H", "X", "X90", "mX90", "Y", "Y90", "mY90", "Z", "S", "SDagger", "T", "TDagger"],
+)
+def test_bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]], bsr: BlochSphereRotation) -> None:
+    assert bsr_from_matrix(matrix) == bsr
+
+
+def assert_equal_upto_phase(bsr1: BlochSphereRotation, bsr2: BlochSphereRotation) -> None:
+    assert bsr1.axis == bsr2.axis
+    assert bsr1.angle == bsr2.angle
 
 
 class TestBlochSphereRotation:
     @pytest.fixture
-    def gate(self) -> BlochSphereRotation:
-        return BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=tau)
+    def bsr(self) -> BlochSphereRotation:
+        return BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=tau)
 
     @pytest.mark.parametrize(
-        "other_gate",
+        "other_bsr",
         [
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=tau),
-            BlochSphereRotation(qubit=42, axis=(1 + ATOL / 2, 0, 0), angle=pi, phase=tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi + ATOL / 2, phase=tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=tau + ATOL / 2),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi + tau, phase=tau),
+            BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=tau),
+            BlochSphereRotation(axis=(1 + ATOL / 2, 0, 0), angle=pi, phase=tau),
+            BlochSphereRotation(axis=(1, 0, 0), angle=pi + ATOL / 2, phase=tau),
+            BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=tau + ATOL / 2),
+            BlochSphereRotation(axis=(1, 0, 0), angle=pi + tau, phase=tau),
         ],
         ids=["all_equal", "close_axis", "close_angle", "close_phase", "angle+tau"],
     )
-    def test_equality(self, gate: BlochSphereRotation, other_gate: BlochSphereRotation) -> None:
-        assert gate == other_gate
+    def test_equality(self, bsr: BlochSphereRotation, other_bsr: BlochSphereRotation) -> None:
+        assert bsr == other_bsr
 
     @pytest.mark.parametrize(
-        "other_gate",
+        "other_bsr",
         [
-            BlochSphereRotation(qubit=43, axis=(1, 0, 0), angle=pi, phase=tau),
-            BlochSphereRotation(qubit=42, axis=(0, 1, 0), angle=pi, phase=tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=0, phase=tau),
-            BlochSphereRotation(qubit=42, axis=(1, 0, 0), angle=pi, phase=1),
+            BlochSphereRotation(axis=(0, 1, 0), angle=pi, phase=tau),
+            BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=tau),
+            BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=1),
             "test",
         ],
-        ids=["qubit", "axis", "angle", "phase", "type"],
+        ids=["axis", "angle", "phase", "type"],
     )
-    def test_inequality(self, gate: BlochSphereRotation, other_gate: BlochSphereRotation | str) -> None:
-        assert gate != other_gate
+    def test_inequality(self, bsr: BlochSphereRotation, other_bsr: BlochSphereRotation | str) -> None:
+        assert bsr != other_bsr
 
-    def test_get_qubit_operands(self, gate: BlochSphereRotation) -> None:
-        assert gate.get_qubit_operands() == [Qubit(42)]
-
-    def test_is_identity(self, gate: BlochSphereRotation) -> None:
+    def test_is_identity(self, bsr: BlochSphereRotation) -> None:
         assert I(42).is_identity()
-        assert not gate.is_identity()
+        assert not bsr.is_identity()
 
-    @pytest.mark.parametrize(
-        ("bsr", "default_gate"),
-        [
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=pi, phase=pi / 2), H(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi, phase=pi / 2), X(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi / 2, phase=pi / 4), X90(0)),
-            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=-pi / 2, phase=-pi / 4), X90(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=-pi / 2, phase=-pi / 4), MinusX90(0)),
-            (BlochSphereRotation(qubit=0, axis=(-1, 0, 0), angle=pi / 2, phase=pi / 4), MinusX90(0)),
-            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=-pi / 4, phase=-pi / 8), TDagger(0)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 0), angle=pi / 4, phase=0), Rx(0, pi / 4)),
-            (BlochSphereRotation(qubit=0, axis=(0, 1, 0), angle=pi / 3, phase=0), Ry(0, pi / 3)),
-            (BlochSphereRotation(qubit=0, axis=(0, 0, 1), angle=3 * pi / 4, phase=0), Rz(0, 3 * pi / 4)),
-            (BlochSphereRotation(qubit=0, axis=(1, 0, 1), angle=pi, phase=0), Rn(0, 1, 0, 1, pi, 0)),
-        ],
-        ids=["H", "X", "X90-1", "X90-2", "mX90-1", "mX90-2", "Tdag", "Rx", "Ry", "Rz", "Rn"],
-    )
-    def test_default_gate_matching(self, bsr: BlochSphereRotation, default_gate: BlochSphereRotation) -> None:
-        matched_bsr = BlochSphereRotation.try_match_replace_with_default(bsr)
-        assert matched_bsr == default_gate
-        assert matched_bsr.name == default_gate.name
+    def test_u_gate(self) -> None:
+        assert U(0, 0, 0, 0).is_identity()
+        u = U(0, pi / 2, 0, 0)
+        assert_equal_upto_phase(u.bsr, Y90(0).bsr)
+        u = U(0, 0, pi / 2, 0)
+        assert_equal_upto_phase(u.bsr, Z90(0).bsr)
+
+    def test_y_rotations(self) -> None:
+        assert Y90(0).bsr == BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4)
+        assert Y(0).bsr == BlochSphereRotation(axis=(0, 1, 0), angle=pi, phase=pi / 2)
+        assert MinusY90(0).bsr == BlochSphereRotation(axis=(0, 1, 0), angle=-pi / 2, phase=-pi / 4)
+
+    def test_z_rotations(self) -> None:
+        assert Z90(0).bsr == BlochSphereRotation(axis=(0, 0, 1), angle=pi / 2, phase=pi / 4)
+        assert Z(0).bsr == BlochSphereRotation(axis=(0, 0, 1), angle=pi, phase=pi / 2)
+        assert MinusZ90(0).bsr == BlochSphereRotation(axis=(0, 0, 1), angle=-pi / 2, phase=-pi / 4)

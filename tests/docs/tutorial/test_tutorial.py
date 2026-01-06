@@ -5,7 +5,7 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.passes.decomposer import CNOT2CZDecomposer, McKayDecomposer, SWAP2CZDecomposer
-from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.passes.exporter import CqasmV1Exporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 
@@ -358,7 +358,7 @@ class TestApplyingCompilationPasses:
 class TestWritingOutAndExporting:
     def test_exporting_to_cqasm_v1(self, circuit_6: Circuit) -> None:
         circuit = circuit_6
-        exported_circuit = circuit.export(fmt=ExportFormat.CQASM_V1)
+        exported_circuit = circuit.export(exporter=CqasmV1Exporter())
 
         assert (
             str(exported_circuit)

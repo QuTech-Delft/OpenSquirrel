@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from opensquirrel import CNOT, CZ, SWAP, H, I, Rx, Ry, Rz, X, Y, Z
+from opensquirrel import CNOT, CZ, SWAP, X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, Rx, Ry, Rz, U, X, Y, Z
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
 
@@ -27,7 +27,12 @@ class TestCircuitBuilder:
         ("builder", "expected_result"),
         [
             (CircuitBuilder(2, 2).I(0).X(0).Y(0).Z(0), [I(0), X(0), Y(0), Z(0)]),
+            (
+                CircuitBuilder(2, 2).X90(0).mX90(0).Y90(0).mY90(0).Z90(0).mZ90(0),
+                [X90(0), MinusX90(0), Y90(0), MinusY90(0), Z90(0), MinusZ90(0)],
+            ),
             (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, math.pi), [Rx(0, -1), Ry(1, 1), Rz(0, math.pi)]),
+            (CircuitBuilder(2, 2).U(0, 1, 2, 3), [U(0, 1.0, 2.0, 3.0)]),
             (CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1), [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]),
             (CircuitBuilder(2, 2).measure(0, 0).measure(1, 1), [Measure(0, 0), Measure(1, 1)]),
             (CircuitBuilder(2, 2).init(0).init(1), [Init(0), Init(1)]),
@@ -35,7 +40,18 @@ class TestCircuitBuilder:
             (CircuitBuilder(2, 2).barrier(0).barrier(1), [Barrier(0), Barrier(1)]),
             (CircuitBuilder(2, 2).wait(0, 1).wait(1, 2), [Wait(0, 1), Wait(1, 2)]),
         ],
-        ids=["Pauli_gates", "rotation_gates", "two-qubit_gates", "measure", "init", "reset", "barrier", "wait"],
+        ids=[
+            "Pauli_gates",
+            "pi/2-rotations",
+            "rotation_gates",
+            "u_gate",
+            "two-qubit_gates",
+            "measure",
+            "init",
+            "reset",
+            "barrier",
+            "wait",
+        ],
     )
     def test_instructions(self, builder: CircuitBuilder, expected_result: list[Instruction]) -> None:
         circuit = builder.to_circuit()

@@ -4,7 +4,8 @@ import pytest
 
 from opensquirrel import CNOT, CR, CRk, H, I, Rn, Ry, X
 from opensquirrel.ir import Gate
-from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel.ir.semantics import ControlledGateSemantic
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.reader import LibQasmParser
 
 
@@ -27,6 +28,102 @@ CRk(23) q[0], q[1]
     assert circuit.qubit_register_size == 2
     assert circuit.qubit_register_names()[0] == "q"
     assert circuit.ir.statements == [H(0), I(0), Ry(1, 1.234), CNOT(0, 1), CR(1, 0, 5.123), CRk(0, 1, 23)]
+
+
+def test_parse_instructions() -> None:
+    circuit = LibQasmParser().circuit_from_string(
+        """
+        version 3.0
+
+        qubit[2] q
+        bit[2] b
+
+        // Initialization
+        init q
+
+        // Control instructions
+        barrier q
+        wait(5) q
+
+        // Single-qubit instructions
+        I q[0]
+        H q[0]
+        X q[0]
+        X90 q[0]
+        mX90 q[0]
+        Y q[0]
+        Y90 q[0]
+        mY90 q[0]
+        Z q[0]
+        S q[0]
+        Sdag q[0]
+        T q[0]
+        Tdag q[0]
+        Rn(1,0,0,pi/2,pi/4) q[0]
+        Rx(pi/2) q[0]
+        Ry(pi/2) q[0]
+        Rz(tau) q[0]
+
+        // Reset instruction
+        reset q
+
+        // Measurement instruction (mid-circuit)
+        b = measure q
+
+        // Two-qubit instructions
+        CNOT q[0], q[1]
+        CZ q[0], q[1]
+        CR(pi) q[0], q[1]
+        CRk(2) q[0], q[1]
+        SWAP q[0], q[1]
+
+        // Measurement instruction (final)
+        b = measure q
+        """,
+    )
+    assert (
+        str(circuit)
+        == """version 3.0
+
+qubit[2] q
+bit[2] b
+
+init q[0]
+init q[1]
+barrier q[0]
+barrier q[1]
+wait(5) q[0]
+wait(5) q[1]
+I q[0]
+H q[0]
+X q[0]
+X90 q[0]
+mX90 q[0]
+Y q[0]
+Y90 q[0]
+mY90 q[0]
+Z q[0]
+S q[0]
+Sdag q[0]
+T q[0]
+Tdag q[0]
+Rn(1.0, 0.0, 0.0, 1.5707963, 0.78539816) q[0]
+Rx(1.5707963) q[0]
+Ry(1.5707963) q[0]
+Rz(0.0) q[0]
+reset q[0]
+reset q[1]
+b[0] = measure q[0]
+b[1] = measure q[1]
+CNOT q[0], q[1]
+CZ q[0], q[1]
+CR(3.1415927) q[0], q[1]
+CRk(2) q[0], q[1]
+SWAP q[0], q[1]
+b[0] = measure q[0]
+b[1] = measure q[1]
+"""
+    )
 
 
 def test_sgmq() -> None:
@@ -55,6 +152,24 @@ CRk(23) q[0, 3], q[1, 4]
         CRk(0, 1, 23),
         CRk(3, 4, 23),
     ]
+
+
+def test_unsupported_gates() -> None:
+    with pytest.raises(
+        IOError,
+        match=r"parsing error: Error at <unknown file name>:1:32..33: couldn't find instruction 'U'",
+    ):
+        LibQasmParser().circuit_from_string("version 3; qubit[1] q; H q[0]; U(1, 2, 3) q[0]")
+    with pytest.raises(
+        IOError,
+        match=r"parsing error: Error at <unknown file name>:1:32..35: couldn't find instruction 'Z90'",
+    ):
+        LibQasmParser().circuit_from_string("version 3; qubit[1] q; H q[0]; Z90 q[0]")
+    with pytest.raises(
+        IOError,
+        match=r"parsing error: Error at <unknown file name>:1:32..36: couldn't find instruction 'mZ90'",
+    ):
+        LibQasmParser().circuit_from_string("version 3; qubit[1] q; H q[0]; mZ90 q[0]")
 
 
 def test_error() -> None:
@@ -134,8 +249,12 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
         (
             "version 3.0; qubit[2] q; ctrl.pow(2).inv.X q[0], q[1]",
             [
-                ControlledGate(
-                    control_qubit=0, target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=pi * -2, phi=pi / 2 * -2)
+                TwoQubitGate(
+                    0,
+                    1,
+                    gate_semantic=ControlledGateSemantic(
+                        target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=pi * -2, phi=pi / 2 * -2)
+                    ),
                 )
             ],
         ),

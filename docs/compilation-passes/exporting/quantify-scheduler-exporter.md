@@ -1,30 +1,31 @@
-The [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/) exporter (`ExportFormat.QUANTIFY_SCHEDULER`)
-exports the circuit to [`Schedule`](https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/index.html#quantify_scheduler.Schedule)
-object and a _bitstring mapping_.
+The [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/) exporter (`QuantifySchedulerExporter`)
+exports the circuit to a [`Schedule`](https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/index.html#quantify_scheduler.Schedule)
+object.
 
-The latter can be used to relate the measurement outcomes to the (virtual) bit variables they have
-been assigned to in the cQASM circuit: this connection is lost in the `Schedule`.
+!!! warning "The _bit string mapping_ has been deprecated"
 
-!!! warning "Under active development"
-
-    The bitstring mapping, currently, consists of a list of ordered pairs; the first element denotes the acquisition
-    index $i$ and the second element denotes the qubit index $j$.
-    The acquisition index represents the $i$-th measurement on qubit at index $j$.
-    The index $k$ of the ordered pair in the bitstring mapping corresponds to the index of the (virtual) bit register,
-    referring to the (virtual) bit variable the outcome of measurement $(i,j)$ has been assigned to in the
-    cQASM circuit.
+    The `QuantifySchedulerExporter` used to return a bit string mapping next to the `Schedule`.
+    This bit string mapping has been deprecated.
+    To obtain a mapping from the measurements to the bit register index their outcomes are assigned to,
+    use the circuit property `Circuit.measurement_to_bit_map`, instead.
+    This mapping has the following structure:
 
     ```python
-    [
-        (<acquisition-index-i: int>, <qubit-index-j: int>),
-        (<acquisition-index-i: int>, <qubit-index-j: int>),
+    {
+        <qubit-index: str> : [
+            <bit-index: int>,
+            <bit-index: int>,
+            ...
+        ],
+        <qubit-index: str> : [ ... ],
         ...
-        <(i,j)-at-index-k: tuple[int, int]>,
-        ...
-    ]
+    }
     ```
 
-    _A redesign of the bitstring mapping is under active development._
+    Each qubit at index $i$ contains a list of bit indices.
+    The index $j$ of this list is the measurement index and denotes the order in which the qubit was measured.
+    The values at $j$ denote the bit register index $k$ to which the measurement outcome was assigned in the circuit.
+    Qubits that are not measured do not have an entry in the measurement to bit mapping.
 
 Here are some important differences to take note of:
 
@@ -35,8 +36,8 @@ and [assignments of measurement outcomes to bit register variables](https://qute
 are discarded; quantify-scheduler does not support bit registers or variables.
 Note that the measurement statement is not discarded; the `measure` instruction is translated to
 [`Measure`](https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/operations/gate_library/index.html#quantify_scheduler.operations.gate_library.Measure).
-Furthermore, measurement outcomes are related to the (virtual) bit registers they were assigned to in the cQASM circuit
-through the _bitstring mapping_, as described above.
+Furthermore, measurement outcomes are related to the (virtual) bit registers they were assigned to in the cQASM circuit.
+Their mapping can be obtained through the `Circuit.measurement_to_bit_map` property, as described above.
 3. The non-unitary [`init`](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/init_instruction.html)
 instruction is ignored and [`reset`](https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/reset_instruction.html)
 instruction is translated to [`Reset`](https://quantify-os.org/docs/quantify-scheduler/v0.25.0/autoapi/quantify_scheduler/operations/gate_library/index.html#quantify_scheduler.operations.gate_library.Reset).
@@ -72,7 +73,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import QuantifySchedulerExporter
         ```
 
         ```python
@@ -89,11 +90,11 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
             """
         )
 
-        exported_schedule, bitstring_mapping = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_schedule = circuit.export(exporter=QuantifySchedulerExporter)
 
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
-        print('\n', "bitstring mapping: ", bitstring_mapping)
+        print('\n', "measurement to bit map: ", circuit.measurement_to_bit_map)
         ```
 
         ```
@@ -103,23 +104,23 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
         Measure q[0]
         Measure q[1]
 
-        bitstring mapping:  [(0, 0), (0, 1)]
+        measurement to bit map: {"0": [0], "1": [1]}
         ```
 
         Note that the bit register declaration and assignment to bit variables have been discarded (2.),
         the SGMQ notation has been unpacked (4.), and the angles have been translated from radians to degrees (6.).
         _The numbers refer to the differences listed above._
 
-        According to the description of the _bitstring mapping_ above, note that the outcome of the first measurement on
-        qubit at index $0$, $(i,j) = (0,0)$, is mapped to the (virtual) bit variable ($k=0$; the first ordered pair),
-        and the outcome of the first measurement on qubit at index $1$, $(i,j) = (0,1)$, is mapped to the (virtual) bit
-        variable ($k=1$; the second ordered pair).
+        According to the description of the _measurement to bit mapping_ above,
+        note that the outcome of the first measurement ($j=0$) on qubit at index $i=0$, is mapped to the (virtual)
+        bit variable at index $k=0$, and the outcome of the first measurement ($j=0$) on qubit at index $i=1$,
+        is mapped to the (virtual) bit variable at index $k=1$.
 
     === "Registers"
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import QuantifySchedulerExporter
         ```
 
         ```python
@@ -146,10 +147,10 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_circuit = circuit.export(exporter=QuantifySchedulerExporter)
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
-        print('\n', "bitstring mapping: ", bitstring_mapping)
+        print('\n', "measurement to bit map: ", circuit.measurement_to_bit_map)
         ```
 
         ```
@@ -164,7 +165,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
         Measure q[3]
         Measure q[1]
 
-        bitstring mapping:  [(None, None), (0, 0), (0, 1), (0, 3), (1, 1)]
+        measurement to bit map:  {"0": [1], "1": [2, 4], "3": [3]}
         ```
 
         Note that all qubit register declarations are combined into a single (virtual) qubit register (1.), the bit
@@ -178,27 +179,25 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
         The qubit registers are concatenated in the order they are declared.
 
         Moreover, even though the bit registers have been discarded in the circuit, the mapping from meausurement to
-        (virtual) bit variable has been stored in the _bitstring mapping_.
+        (virtual) bit variable has been stored in the _measurement to bit mapping_.
         Note that, just like with the translation of the qubit register declarations to the single virtual register `q`,
         the bit register declarations are also concatenated in the order they are declared into a single bit register
         `b`.
         In this example, the virtual bit register translation is as follows: `bA[0], bA[1], bA[2] = b[0], b[1], b[2]`
         and `bB[0], bB[1] = b[3], b[4]`.
-        Accodingly, the $k$-th element in the bitstring mapping corresponds to the $k$-th element of the bit register.
 
-        For instance, the statement `bB[1] = measure qA[1]` in the original circuit becomes, in terms of virtual
-        registers, `b[4] = measure q[1]`.
-        Since this is the second measurement on `q[1]`, the acquisition index is $i = 1$ (counting starts at $0$) and
-        the qubit index is $j = 1$, such that the measurement is given by the ordered pair $(1, 1)$.
-        Because the outcome of this measurement is stored in `b[4]`,
-        the ordered pair is at index $4$ in the bitregister mapping.
+        For instance, the statement `bB[1] = measure qA[1]` in the original circuit becomes,
+        in terms of virtual registers, `b[4] = measure q[1]`.
+        Note that in the measurement to bit mapping the outcome of the second measurement (measurement index $j=1$)
+        on `q[1]`, _i.e._ qubit at index $i=1$, is assigned to the bit at index $k=4$.
+
 
 
     === "`init` and `reset`"
 
         ```python
         from opensquirrel import Circuit
-        from opensquirrel.passes.exporter import ExportFormat
+        from opensquirrel.passes.exporter import QuantifySchedulerExporter
         ```
 
         ```python
@@ -224,10 +223,10 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
             """
         )
 
-        exported_circuit = circuit.export(fmt=ExportFormat.QUANTIFY_SCHEDULER)
+        exported_circuit = circuit.export(exporter=QuantifySchedulerExporter())
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
-        print('\n', "bitstring mapping: ", bitstring_mapping)
+        print('\n', "measurement to bit map: ", circuit.measurement_to_bit_map)
         ```
 
         ```
@@ -247,7 +246,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
         Measure q[0]
         Measure q[1]
 
-        bitstring mapping:  [(1, 0), (1, 1)]
+        measurement to bit map:  {"0": [0, 0], "1": [1, 1]}
         ```
 
         Note that the bit register declaration and assignment to bit variables have been discarded (2.),

@@ -1,5 +1,7 @@
 from opensquirrel import CircuitBuilder
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.writer import writer
 
 
@@ -108,9 +110,10 @@ def test_all_instructions() -> None:
     builder.init(0).reset(1).barrier(0).wait(1, 3)
     builder.I(0).X(0).Y(0).Z(0)
     builder.Rx(0, 1.234).Ry(0, -1.234).Rz(0, 1.234)
-    builder.X90(0).Y90(0)
-    builder.mX90(0).mY90(0)
+    builder.X90(0).Y90(0).Z90(0)
+    builder.mX90(0).mY90(0).mZ90(0)
     builder.S(0).Sdag(0).T(0).Tdag(0)
+    builder.U(0, 1.0, 2.0, 3.0)
     builder.CZ(0, 1).CNOT(1, 0).SWAP(0, 1)
     builder.measure(0, 0).measure(1, 1)
     circuit = builder.to_circuit()
@@ -135,12 +138,15 @@ Ry(-1.234) q[0]
 Rz(1.234) q[0]
 X90 q[0]
 Y90 q[0]
+Z90 q[0]
 mX90 q[0]
 mY90 q[0]
+mZ90 q[0]
 S q[0]
 Sdag q[0]
 T q[0]
 Tdag q[0]
+U(1.0, 2.0, 3.0) q[0]
 CZ q[0], q[1]
 CNOT q[1], q[0]
 SWAP q[0], q[1]
@@ -153,9 +159,19 @@ b[1] = measure q[1]
 def test_anonymous_gate() -> None:
     builder = CircuitBuilder(2, 2)
     builder.H(0)
-    builder.ir.add_gate(BlochSphereRotation(0, axis=(1, 1, 1), angle=1.23, phase=0.0))
-    builder.ir.add_gate(ControlledGate(0, BlochSphereRotation(1, axis=(1, 1, 1), angle=1.23, phase=0.0)))
-    builder.ir.add_gate(MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]))
+    builder.ir.add_gate(SingleQubitGate(0, BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)))
+    builder.ir.add_gate(
+        TwoQubitGate(
+            0,
+            1,
+            gate_semantic=ControlledGateSemantic(
+                target_gate=SingleQubitGate(1, BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
+            ),
+        )
+    )
+    builder.ir.add_gate(
+        TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]))
+    )
     builder.CR(0, 1, 1.234)
     assert (
         str(builder.to_circuit())
@@ -165,9 +181,9 @@ qubit[2] q
 bit[2] b
 
 H q[0]
-BlochSphereRotation(qubit=Qubit[0], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)
-ControlledGate(control_qubit=Qubit[0], target_gate=BlochSphereRotation(qubit=Qubit[1], axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))
-MatrixGate(qubits=[Qubit[0], Qubit[1]], matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]])
+Rn(0.57735027, 0.57735027, 0.57735027, 1.23, 0.0) q[0]
+TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=ControlledGateSemantic(target_gate=SingleQubitGate(qubit=1, bsr=BlochSphereRotation(axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))))
+TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=MatrixGateSemantic(matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]]))
 CR(1.234) q[0], q[1]
 """  # noqa: E501
     )

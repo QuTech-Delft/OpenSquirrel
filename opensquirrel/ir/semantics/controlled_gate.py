@@ -1,37 +1,30 @@
-from typing import Any
+from __future__ import annotations
 
-from opensquirrel.ir import IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.expression import Expression
-from opensquirrel.ir.semantics import BlochSphereRotation
-from opensquirrel.ir.unitary import Gate
+from typing import TYPE_CHECKING, Any
+
+from opensquirrel.ir.semantics.gate_semantic import GateSemantic
+
+if TYPE_CHECKING:
+    from opensquirrel.ir import IRVisitor
+    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 
 
-class ControlledGate(Gate):
-    def __init__(
-        self, control_qubit: QubitLike, target_gate: BlochSphereRotation, name: str = "ControlledGate"
-    ) -> None:
-        Gate.__init__(self, name)
-        self.control_qubit = Qubit(control_qubit)
+class ControlledGateSemantic(GateSemantic):
+    def __init__(self, target_gate: SingleQubitGate) -> None:
         self.target_gate = target_gate
-        self.target_qubit = Qubit(target_gate.qubit)
-
-        if self._check_repeated_qubit_operands([self.control_qubit, self.target_qubit]):
-            msg = "control and target qubit cannot be the same"
-            raise ValueError(msg)
-
-    def __repr__(self) -> str:
-        return f"{self.name}(control_qubit={self.control_qubit}, target_gate={self.target_gate})"
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visit_parent = super().accept(visitor)
-        return visit_parent if visit_parent is not None else visitor.visit_controlled_gate(self)
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return self.control_qubit, *self.target_gate.arguments
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.control_qubit, self.target_qubit]
 
     def is_identity(self) -> bool:
         return self.target_gate.is_identity()
+
+    def __repr__(self) -> str:
+        from opensquirrel.default_instructions import default_gate_set
+
+        if self.target_gate.name in default_gate_set:
+            return f"ControlledGateSemantic(target_gate={self.target_gate.name}(qubit={self.target_gate.qubit.index}))"
+        return (
+            f"ControlledGateSemantic(target_gate={self.target_gate.name}"
+            f"(qubit={self.target_gate.qubit.index}, bsr={self.target_gate.bsr}))"
+        )
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        return visitor.visit_controlled_gate_semantic(self)

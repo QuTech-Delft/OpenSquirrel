@@ -1,19 +1,27 @@
 from __future__ import annotations
 
-from collections import Counter
+from collections import Counter, defaultdict
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir import IR, AsmDeclaration, Gate
-from opensquirrel.passes.exporter import ExportFormat
+from opensquirrel.ir.non_unitary import Measure
+from opensquirrel.ir import AsmDeclaration
 
 if TYPE_CHECKING:
+    from opensquirrel.ir.ir import IR
+    from opensquirrel.ir.unitary import Gate
     from opensquirrel.passes.decomposer.general_decomposer import Decomposer
+    from opensquirrel.passes.exporter.general_exporter import Exporter
     from opensquirrel.passes.mapper.general_mapper import Mapper
     from opensquirrel.passes.merger.general_merger import Merger
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator
     from opensquirrel.register_manager import RegisterManager, BitRegister, QubitRegister
+
+
+InstructionCount = dict[str, int]
+MeasurementToBitMap = defaultdict[str, list[int]]
+
 
 
 class Circuit:
@@ -49,6 +57,7 @@ class Circuit:
         """Write the circuit to a cQASM 3 string."""
         from opensquirrel.writer import writer
 
+        return writer.circuit_to_string(self)
         return writer.circuit_to_string(self, self.is_strict)
 
     def __eq__(self, other: Any) -> bool:
@@ -80,12 +89,33 @@ class Circuit:
 
     @property
     def bit_register_size(self) -> int:
-        return self.register_manager.num_bits
+        return (self.register_manager.get_bit_register_size())
+
+    @property
+    def instruction_count(self) -> InstructionCount:
+        """Count the instructions in the circuit by name."""
+        counter: Counter[str] = Counter()
+        counter.update(
+            getattr(statement, "name", "unknown")
+            for statement in self.ir.statements
+            if not isinstance(statement, AsmDeclaration)
+        )
+        return dict(counter)
+
+    @property
+    def measurement_to_bit_map(self) -> MeasurementToBitMap:
+        """Determines and returns the measurement to bit register index mapping."""
+        m2b_map: MeasurementToBitMap = defaultdict(list[int])
+        for statement in self.ir.statements:
+            if isinstance(statement, Measure):
+                qubit_index, bit_index = statement.qubit.index, statement.bit.index
+                m2b_map[str(qubit_index)].append(bit_index)
+        return m2b_map
 
     def qubit_register_names(self, qubit_register: QubitRegister | None = None) -> list[str] | str:
         if qubit_register is not None:
             return self.register_manager.get_qubit_register_name(qubit_register)
-        
+
         qubit_registers = []
         for register in self.register_manager.qubit_registers:
             qubit_registers.append(register.name)
@@ -95,11 +125,11 @@ class Circuit:
     def bit_register_names(self, bit_register: BitRegister | None = None) -> list[str] | str:
         if bit_register is not None:
             return self.register_manager.get_bit_register_name(bit_register)
-        
+
         bit_registers = []
         for register in self.register_manager.bit_registers:
             bit_registers.append(register.name)
-        
+
         return bit_registers
 
     def asm_filter(self, backend_name: str) -> None:
@@ -118,21 +148,12 @@ class Circuit:
 
         general_decomposer.decompose(self.ir, decomposer)
 
-    def export(self, fmt: ExportFormat | None = None) -> Any:
-        match fmt:
-            case ExportFormat.QUANTIFY_SCHEDULER:
-                from opensquirrel.passes.exporter import quantify_scheduler_exporter
+    def export(self, exporter: Exporter) -> Any:
+        """Generic export pass.
+        Exports the circuit using the specified exporter.
 
-                return quantify_scheduler_exporter.export(self)
-
-            case ExportFormat.CQASM_V1:
-                from opensquirrel.passes.exporter import cqasmv1_exporter
-
-                return cqasmv1_exporter.export(self)
-
-            case _:
-                msg = "unknown exporter format"
-                raise ValueError(msg)
+        """
+        return exporter.export(self)
 
     def map(self, mapper: Mapper) -> None:
         """Generic qubit mapper pass.
@@ -163,14 +184,3 @@ class Circuit:
     def validate(self, validator: Validator) -> None:
         """Generic validator pass. It applies the given validator to the circuit."""
         validator.validate(self.ir)
-
-    @property
-    def instruction_count(self) -> dict[str, int]:
-        """Count the operations in the circuit by name"""
-        counter: Counter[str] = Counter()
-        counter.update(
-            getattr(statement, "name", "unknown")
-            for statement in self.ir.statements
-            if not isinstance(statement, AsmDeclaration)
-        )
-        return dict(counter)

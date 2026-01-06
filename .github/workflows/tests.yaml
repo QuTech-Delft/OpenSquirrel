@@ -6,15 +6,12 @@ on:
       - master
   pull_request:
 
-env:
-  UV_USE_ACTIVE_ENV: 1
-
 jobs:
   lint:
     name: Static analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
@@ -44,7 +41,7 @@ jobs:
           - "3.13"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
