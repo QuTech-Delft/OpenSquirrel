@@ -8,7 +8,7 @@ def make_interaction_graph(ir: IR) -> nx.Graph:
     gates = (statement for statement in ir.statements if isinstance(statement, Gate))
 
     for gate in gates:
-        target_qubits = gate.get_qubit_operands()
+        target_qubits = gate.qubit_operands
         match len(target_qubits):
             case 1:
                 continue

@@ -25,7 +25,7 @@ class CNOT2CZDecomposer(Decomposer):
         if gate.name != "CNOT":
             return [gate]
 
-        control_qubit, target_qubit = gate.get_qubit_operands()
+        control_qubit, target_qubit = gate.qubit_operands
         return [
             Ry(target_qubit, -pi / 2),
             CZ(control_qubit, target_qubit),

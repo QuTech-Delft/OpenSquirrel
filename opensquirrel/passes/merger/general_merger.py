@@ -19,9 +19,8 @@ def can_move_statement_before_barrier(instruction: Instruction, barriers: list[I
     """Checks whether an instruction can be moved before a group of 'linked' barriers.
     Returns True if none of the qubits used by the instruction are part of any barrier, False otherwise.
     """
-    instruction_qubit_operands = instruction.get_qubit_operands()
-    barriers_group_qubit_operands = set(flatten_list([barrier.get_qubit_operands() for barrier in barriers]))
-    return not any(qubit in barriers_group_qubit_operands for qubit in instruction_qubit_operands)
+    barriers_group_qubit_operands = set(flatten_list([list(barrier.qubit_operands) for barrier in barriers]))
+    return not any(qubit in barriers_group_qubit_operands for qubit in instruction.qubit_operands)
 
 
 def can_move_before(statement: Statement, statement_group: list[Statement]) -> bool:

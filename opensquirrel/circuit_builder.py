@@ -8,7 +8,7 @@ from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
-from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Measure, Qubit, QubitLike
+from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
 
 _builder_dynamic_attributes = (*default_instruction_set, "asm")
@@ -75,12 +75,11 @@ class CircuitBuilder:
             raise IndexError(msg)
 
     def _check_out_of_bounds_access(self, instruction: Instruction) -> None:
-        for qubit in instruction.get_qubit_operands():
+        for qubit in instruction.qubit_operands:
             self._check_qubit_out_of_bounds_access(qubit)
 
-        if isinstance(instruction, Measure):
-            for bit in instruction.get_bit_operands():
-                self._check_bit_out_of_bounds_access(bit)
+        for bit in instruction.bit_operands:
+            self._check_bit_out_of_bounds_access(bit)
 
     def _add_statement(self, attr: str, *args: Any) -> Self:
         if attr == "asm":

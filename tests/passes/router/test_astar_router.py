@@ -137,6 +137,6 @@ def test_route_indices_propagation(router4: AStarRouter, circuit4: Circuit) -> N
 
     for actual, expected in zip(actual_statements, expected_statements, strict=False):
         assert type(actual) is type(expected)
-        actual_indices = [q.index for q in actual.get_qubit_operands()]  # type: ignore[attr-defined]
-        expected_indices = [q.index for q in expected.get_qubit_operands()]  # type: ignore[attr-defined]
+        actual_indices = actual.qubit_indices  # type: ignore[attr-defined]
+        expected_indices = expected.qubit_indices  # type: ignore[attr-defined]
         assert actual_indices == expected_indices

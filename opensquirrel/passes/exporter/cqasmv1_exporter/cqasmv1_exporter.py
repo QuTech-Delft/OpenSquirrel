@@ -107,14 +107,11 @@ class _CQASMv1Creator(IRVisitor):
         qubit_operand_0 = gate.qubit0.accept(self)
         qubit_operand_1 = gate.qubit1.accept(self)
 
-        if len(gate.arguments) == 2:
-            self.output += f"{gate.name.lower()} {qubit_operand_0}, {qubit_operand_1}\n"
-        elif len(gate.arguments) == 3:
-            _, _, arg = gate.arguments
-            argument = arg.accept(self)
-            self.output += f"{gate.name.lower()}({argument}) {qubit_operand_0}, {qubit_operand_1}\n"
+        if gate.arguments:
+            arguments = ", ".join(arg.accept(self) for arg in gate.arguments)
+            self.output += f"{gate.name.lower()}({arguments}) {qubit_operand_0}, {qubit_operand_1}\n"
         else:
-            raise UnsupportedGateError(gate)
+            self.output += f"{gate.name.lower()} {qubit_operand_0}, {qubit_operand_1}\n"
 
     def visit_cr(self, gate: CR) -> None:
         control_qubit_operand = gate.control_qubit.accept(self)
