@@ -5,16 +5,16 @@ from dataclasses import dataclass
 from typing import Any
 
 import cqasm.v3x as cqasm
+import cqasm.v3x.types as cqasm_types
 from typing_extensions import Self
 
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, (cqasm.types.Qubit, cqasm.types.QubitArray))
+    return isinstance(variable.typ, (cqasm_types.Qubit, cqasm_types.QubitArray))
 
 
 def is_bit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, (cqasm.types.Bit, cqasm.types.BitArray))
-
+    return isinstance(variable.typ, (cqasm_types.Bit, cqasm_types.BitArray))
 
 @dataclass
 class Range:
