@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, cast, Type
 
 import cqasm.v3x as cqasm
 
@@ -20,7 +20,7 @@ from opensquirrel.ir import (
     Qubit,
     Statement,
 )
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import RegisterManager, QubitRegister, BitRegister, Range, Register
 
 if TYPE_CHECKING:
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
@@ -29,6 +29,7 @@ if TYPE_CHECKING:
 class LibQasmParser:
     def __init__(self) -> None:
         self.ir = IR()
+        self.register_manager = None
 
     @staticmethod
     def _ast_literal_to_ir_literal(
@@ -60,12 +61,12 @@ class LibQasmParser:
     @staticmethod
     def _is_qubit_type(ast_expression: Any) -> bool:
         ast_type = LibQasmParser._type_of(ast_expression)
-        return bool(ast_type == cqasm.types.Qubit or ast_type == cqasm.types.QubitArray)
+        return ast_type == cqasm.types.Qubit or ast_type == cqasm.types.QubitArray
 
     @staticmethod
     def _is_bit_type(ast_expression: Any) -> bool:
         ast_type = LibQasmParser._type_of(ast_expression)
-        return bool(ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray)
+        return ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray
 
     @staticmethod
     def _is_gate_instruction(ast_node: Any) -> bool:
@@ -205,6 +206,39 @@ class LibQasmParser:
             return lambda *args: default_control_instruction_set[instruction.name](*args)
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
+    @staticmethod
+    def is_qubit(variable: cqasm.semantic.MultiVariable) -> bool:
+        return isinstance(variable.typ, (cqasm.types.Qubit, cqasm.types.QubitArray))
+
+    @staticmethod
+    def is_bit(variable: cqasm.semantic.MultiVariable) -> bool:
+        return isinstance(variable.typ, (cqasm.types.Bit, cqasm.types.BitArray))
+
+    @staticmethod
+    def _get_virtual_register(
+        ast,
+        register_cls: Type[QubitRegister | BitRegister],
+        type_check: Callable[[Any]],
+    ) -> QubitRegister | BitRegister:
+        variables = [v for v in ast.variables if type_check(v)]
+        register_size = sum(v.typ.size for v in variables)
+        variable_name_to_range: dict[str, Range] = {}
+        index_to_variable_name: dict[int, str] = {}
+        virtual_index: int = 0
+        for v in variables:
+            v_name = v.name
+            v_size = v.typ.size
+            variable_name_to_range[v_name] = Range(virtual_index, v_size)
+            for _ in range(v_size):
+                index_to_variable_name[virtual_index] = v_name
+                virtual_index += 1
+        return register_cls(register_size, variable_name_to_range, index_to_variable_name)
+
+    def _create_register_manager(self, ast) -> RegisterManager:
+        virtual_qubit_register = self._get_virtual_register(ast, QubitRegister, LibQasmParser.is_qubit)
+        virtual_bit_register = self._get_virtual_register(ast, BitRegister, LibQasmParser.is_bit)
+        return RegisterManager(virtual_qubit_register, virtual_bit_register)
+
     def circuit_from_string(self, s: str) -> Circuit:
         # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
         analyzer = LibQasmParser._create_analyzer()
@@ -213,7 +247,7 @@ class LibQasmParser:
         ast = analysis_result
 
         # Create RegisterManager
-        self.register_manager = RegisterManager.from_ast(ast)
+        self.register_manager = self._create_register_manager(ast)
 
         # Parse statements
         expanded_args: list[tuple[Any, ...]] = []
