@@ -4998,7 +4998,8 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/passes/merger/general_merger.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-27">27</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
 <span class="normal"><a href="#__codelineno-0-28">28</a></span>
 <span class="normal"><a href="#__codelineno-0-29">29</a></span>
 <span class="normal"><a href="#__codelineno-0-30">30</a></span>
@@ -5009,20 +5010,19 @@
 <span class="normal"><a href="#__codelineno-0-35">35</a></span>
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="k">def</span><span class="w"> </span><span class="nf">can_move_before</span><span class="p">(</span><span class="n">statement</span><span class="p">:</span> <span class="n">Statement</span><span class="p">,</span> <span class="n">statement_group</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="w">    </span><span class="sd">"""Checks whether a statement can be moved before a group of statements, following the logic below:</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    - A barrier cannot be moved up.</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    - A (non-barrier) statement cannot be moved before another (non-barrier) statement.</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    - A (non-barrier) statement may be moved before a group of 'linked' barriers.</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    """</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">):</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>        <span class="k">return</span> <span class="kc">False</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="n">first_statement_from_group</span> <span class="o">=</span> <span class="n">statement_group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_statement_from_group</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">):</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="k">return</span> <span class="kc">False</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="n">instruction</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Instruction"</span><span class="p">,</span> <span class="n">statement</span><span class="p">)</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="k">return</span> <span class="n">can_move_statement_before_barrier</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"list[Instruction]"</span><span class="p">,</span> <span class="n">statement_group</span><span class="p">))</span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="k">def</span><span class="w"> </span><span class="nf">can_move_before</span><span class="p">(</span><span class="n">statement</span><span class="p">:</span> <span class="n">Statement</span><span class="p">,</span> <span class="n">statement_group</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">    </span><span class="sd">"""Checks whether a statement can be moved before a group of statements, following the logic below:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    - A barrier cannot be moved up.</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    - A (non-barrier) statement cannot be moved before another (non-barrier) statement.</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    - A (non-barrier) statement may be moved before a group of 'linked' barriers.</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    """</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">):</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">first_statement_from_group</span> <span class="o">=</span> <span class="n">statement_group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_statement_from_group</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">):</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>        <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="n">instruction</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"Instruction"</span><span class="p">,</span> <span class="n">statement</span><span class="p">)</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="k">return</span> <span class="n">can_move_statement_before_barrier</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">cast</span><span class="p">(</span><span class="s2">"list[Instruction]"</span><span class="p">,</span> <span class="n">statement_group</span><span class="p">))</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -5051,14 +5051,12 @@ Returns True if none of the qubits used by the instruction are part of any barri
 <span class="normal"><a href="#__codelineno-0-20">20</a></span>
 <span class="normal"><a href="#__codelineno-0-21">21</a></span>
 <span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="k">def</span><span class="w"> </span><span class="nf">can_move_statement_before_barrier</span><span class="p">(</span><span class="n">instruction</span><span class="p">:</span> <span class="n">Instruction</span><span class="p">,</span> <span class="n">barriers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Instruction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="k">def</span><span class="w"> </span><span class="nf">can_move_statement_before_barrier</span><span class="p">(</span><span class="n">instruction</span><span class="p">:</span> <span class="n">Instruction</span><span class="p">,</span> <span class="n">barriers</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Instruction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">    </span><span class="sd">"""Checks whether an instruction can be moved before a group of 'linked' barriers.</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    Returns True if none of the qubits used by the instruction are part of any barrier, False otherwise.</span>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    """</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">instruction_qubit_operands</span> <span class="o">=</span> <span class="n">instruction</span><span class="o">.</span><span class="n">get_qubit_operands</span><span class="p">()</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="n">barriers_group_qubit_operands</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">flatten_list</span><span class="p">([</span><span class="n">barrier</span><span class="o">.</span><span class="n">get_qubit_operands</span><span class="p">()</span> <span class="k">for</span> <span class="n">barrier</span> <span class="ow">in</span> <span class="n">barriers</span><span class="p">]))</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="k">return</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">qubit</span> <span class="ow">in</span> <span class="n">barriers_group_qubit_operands</span> <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">instruction_qubit_operands</span><span class="p">)</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">barriers_group_qubit_operands</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">flatten_list</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">barrier</span><span class="o">.</span><span class="n">qubit_operands</span><span class="p">)</span> <span class="k">for</span> <span class="n">barrier</span> <span class="ow">in</span> <span class="n">barriers</span><span class="p">]))</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="k">return</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">qubit</span> <span class="ow">in</span> <span class="n">barriers_group_qubit_operands</span> <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">instruction</span><span class="o">.</span><span class="n">qubit_operands</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -5083,7 +5081,8 @@ either a single instruction, or a list of 'linked' barriers (consecutive barrier
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/passes/merger/general_merger.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-42">42</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
 <span class="normal"><a href="#__codelineno-0-43">43</a></span>
 <span class="normal"><a href="#__codelineno-0-44">44</a></span>
 <span class="normal"><a href="#__codelineno-0-45">45</a></span>
@@ -5097,23 +5096,22 @@ either a single instruction, or a list of 'linked' barriers (consecutive barrier
 <span class="normal"><a href="#__codelineno-0-53">53</a></span>
 <span class="normal"><a href="#__codelineno-0-54">54</a></span>
 <span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="k">def</span><span class="w"> </span><span class="nf">group_linked_barriers</span><span class="p">(</span><span class="n">statements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">]]:</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="w">    </span><span class="sd">"""Receives a list of statements.</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    Returns a list of lists of statements, where each list of statements is</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    """</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="n">adding_linked_barriers_to_group</span> <span class="o">=</span> <span class="kc">False</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="n">statements</span><span class="p">:</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">adding_linked_barriers_to_group</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">)):</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">statement</span><span class="p">])</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>            <span class="n">ret</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="n">adding_linked_barriers_to_group</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">)</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">return</span> <span class="n">ret</span>
+<span class="normal"><a href="#__codelineno-0-56">56</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="k">def</span><span class="w"> </span><span class="nf">group_linked_barriers</span><span class="p">(</span><span class="n">statements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">]]:</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="w">    </span><span class="sd">"""Receives a list of statements.</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    Returns a list of lists of statements, where each list of statements is</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    """</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>    <span class="n">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>    <span class="n">adding_linked_barriers_to_group</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="n">statements</span><span class="p">:</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">adding_linked_barriers_to_group</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">)):</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a>            <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">statement</span><span class="p">])</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="n">ret</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="n">adding_linked_barriers_to_group</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">)</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="k">return</span> <span class="n">ret</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -5140,7 +5138,8 @@ And updates the input IR with the flattened list of sorted statements.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/passes/merger/general_merger.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-60">60</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-59">59</a></span>
+<span class="normal"><a href="#__codelineno-0-60">60</a></span>
 <span class="normal"><a href="#__codelineno-0-61">61</a></span>
 <span class="normal"><a href="#__codelineno-0-62">62</a></span>
 <span class="normal"><a href="#__codelineno-0-63">63</a></span>
@@ -5157,26 +5156,25 @@ And updates the input IR with the flattened list of sorted statements.</p>
 <span class="normal"><a href="#__codelineno-0-74">74</a></span>
 <span class="normal"><a href="#__codelineno-0-75">75</a></span>
 <span class="normal"><a href="#__codelineno-0-76">76</a></span>
-<span class="normal"><a href="#__codelineno-0-77">77</a></span>
-<span class="normal"><a href="#__codelineno-0-78">78</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="k">def</span><span class="w"> </span><span class="nf">rearrange_barriers</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="w">    </span><span class="sd">"""Receives an IR.</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    Builds an enumerated list of lists of statements, where each list of statements is</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    Then sorts that enumerated list of lists so that instructions can be moved before groups of barriers.</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="sd">    And updates the input IR with the flattened list of sorted statements.</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">    """</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="n">statements_groups</span> <span class="o">=</span> <span class="n">group_linked_barriers</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">)</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">statement_group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">statements_groups</span><span class="p">):</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="n">statement</span> <span class="o">=</span> <span class="n">statement_group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">):</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">statement_group</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="n">previous_statement_groups</span> <span class="o">=</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">statements_groups</span><span class="p">[:</span><span class="n">i</span><span class="p">])))</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">previous_statement_group</span> <span class="ow">in</span> <span class="n">previous_statement_groups</span><span class="p">:</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">can_move_before</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">previous_statement_group</span><span class="p">):</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>                    <span class="n">statements_groups</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="n">statement</span><span class="p">])</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>                    <span class="k">del</span> <span class="n">statements_groups</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>                    <span class="k">break</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">statements</span> <span class="o">=</span> <span class="n">flatten_list</span><span class="p">(</span><span class="n">statements_groups</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-77">77</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="k">def</span><span class="w"> </span><span class="nf">rearrange_barriers</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="w">    </span><span class="sd">"""Receives an IR.</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    Builds an enumerated list of lists of statements, where each list of statements is</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">    Then sorts that enumerated list of lists so that instructions can be moved before groups of barriers.</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    And updates the input IR with the flattened list of sorted statements.</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a><span class="sd">    """</span>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="n">statements_groups</span> <span class="o">=</span> <span class="n">group_linked_barriers</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">)</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">statement_group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">statements_groups</span><span class="p">):</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="n">statement</span> <span class="o">=</span> <span class="n">statement_group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Barrier</span><span class="p">):</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">statement_group</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="n">previous_statement_groups</span> <span class="o">=</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">statements_groups</span><span class="p">[:</span><span class="n">i</span><span class="p">])))</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">previous_statement_group</span> <span class="ow">in</span> <span class="n">previous_statement_groups</span><span class="p">:</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">can_move_before</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">previous_statement_group</span><span class="p">):</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>                    <span class="n">statements_groups</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="n">statement</span><span class="p">])</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>                    <span class="k">del</span> <span class="n">statements_groups</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>                    <span class="k">break</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">statements</span> <span class="o">=</span> <span class="n">flatten_list</span><span class="p">(</span><span class="n">statements_groups</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

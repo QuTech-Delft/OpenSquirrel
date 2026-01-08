@@ -4983,7 +4983,7 @@
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>        <span class="k">if</span> <span class="n">gate</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"CNOT"</span><span class="p">:</span>
 <a id="__codelineno-0-26" name="__codelineno-0-26"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">gate</span><span class="p">]</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27"></a>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">get_qubit_operands</span><span class="p">()</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubit_operands</span>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a>        <span class="k">return</span> <span class="p">[</span>
 <a id="__codelineno-0-30" name="__codelineno-0-30"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
 <a id="__codelineno-0-31" name="__codelineno-0-31"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span><span class="p">),</span>
