@@ -8,8 +8,8 @@ from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.ir.statement import Instruction
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IRVisitor
-    from opensquirrel.ir.expression import Qubit
+    from opensquirrel.ir import Bit, IRVisitor, Qubit
+    from opensquirrel.ir.expression import Expression
 
 
 class Unitary(Instruction, ABC):
@@ -28,6 +28,14 @@ class Gate(Unitary, ABC):
     @abstractmethod
     def is_identity(self) -> bool:
         pass
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return ()
+
+    @property
+    def bit_operands(self) -> tuple[Bit, ...]:
+        return ()
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_gate(self)

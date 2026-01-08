@@ -3,8 +3,7 @@ from typing import Any
 
 import numpy as np
 
-from opensquirrel.ir import Bit, Gate, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.expression import Expression
+from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 from opensquirrel.utils import get_matrix
@@ -62,16 +61,8 @@ class TwoQubitGate(Gate):
         return visit_parent if visit_parent is not None else visitor.visit_two_qubit_gate(self)
 
     @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return ()
-
-    @property
     def qubit_operands(self) -> tuple[Qubit, ...]:
         return (self.qubit0, self.qubit1)
-
-    @property
-    def bit_operands(self) -> tuple[Bit, ...]:
-        return ()
 
     def is_identity(self) -> bool:
         if self.controlled:
