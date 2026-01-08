@@ -2,9 +2,11 @@ import math
 
 import pytest
 
-from opensquirrel import CNOT, CZ, SWAP, X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, Rx, Ry, Rz, U, X, Y, Z
+from opensquirrel import CNOT, CZ, SWAP, X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, Rx, Ry, Rz, U, X, Y, Z, \
+    Circuit
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
+from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait, Qubit
+from opensquirrel.register_manager import QubitRegister, BitRegister
 
 
 class TestCircuitBuilder:
@@ -17,7 +19,7 @@ class TestCircuitBuilder:
         circuit = builder.to_circuit()
 
         assert circuit.qubit_register_size == 2
-        assert circuit.qubit_register_names()[0] == "q"
+        assert circuit.qubit_register_name == "q"
         assert circuit.ir.statements == [
             H(0),
             CNOT(0, 1),
@@ -56,9 +58,9 @@ class TestCircuitBuilder:
     def test_instructions(self, builder: CircuitBuilder, expected_result: list[Instruction]) -> None:
         circuit = builder.to_circuit()
         assert circuit.qubit_register_size == 2
-        assert circuit.qubit_register_names()[0] == "q"
+        assert circuit.qubit_register_name == "q"
         assert circuit.bit_register_size == 2
-        assert circuit.bit_register_names()[0] == "b"
+        assert circuit.bit_register_name == "b"
         assert circuit.ir.statements == expected_result
 
     def test_chain(self) -> None:
@@ -102,3 +104,24 @@ class TestCircuitBuilder:
         circuit = builder.H(0).CNOT(0, 1).to_circuit()
 
         assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+
+    def test_mulitple_registers(self) -> None:
+        builder = CircuitBuilder()
+        q0 = QubitRegister(1, 'q0')
+        q1 = QubitRegister(1, 'q1')
+        b = BitRegister(2)
+
+        builder.add_register(q0)
+        builder.add_register(q1)
+        builder.add_register(b)
+
+        builder.H(0)
+
+        circuit = builder.to_circuit()
+
+        print(circuit)
+
+        # cqasm_string = """version 3.0\nqubit[3] q0\nbit[2] b\nH q0[0]\nqubit[4] q1\nH q1[0]"""
+        # circuit = Circuit.from_string(cqasm_string)
+        # print(circuit)
+

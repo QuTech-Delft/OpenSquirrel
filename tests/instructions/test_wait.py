@@ -28,7 +28,7 @@ def test_wait_in_circuit_builder() -> None:
     builder.wait(0, 3).wait(1, 1)
     circuit = builder.to_circuit()
     assert circuit.qubit_register_size == 2
-    assert circuit.qubit_register_names()[0] == "q"
+    assert circuit.qubit_register_name == "q"
     assert circuit.ir.statements == [Wait(0, 3), Wait(1, 1)]
 
 
@@ -37,7 +37,7 @@ def test_wait_in_instruction_context() -> None:
     builder.H(0).H(1).wait(0, 1).barrier(1).wait(1, 3).barrier(0).CNOT(0, 1).wait(0, 3)
     circuit = builder.to_circuit()
     assert circuit.qubit_register_size == 2
-    assert circuit.qubit_register_names()[0] == "q"
+    assert circuit.qubit_register_name == "q"
     assert circuit.ir.statements == [
         H(0),
         H(1),

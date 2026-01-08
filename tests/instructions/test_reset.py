@@ -28,5 +28,5 @@ def test_reset_in_circuit_builder() -> None:
     builder.reset(0).reset(1)
     circuit = builder.to_circuit()
     assert circuit.qubit_register_size == 2
-    assert circuit.qubit_register_names()[0] == "q"
+    assert circuit.qubit_register_name == "q"
     assert circuit.ir.statements == [Reset(0), Reset(1)]

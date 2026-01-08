@@ -62,15 +62,12 @@ class _CQASMv1Creator(IRVisitor):
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
-        qubit_register_size = self.register_manager.num_qubits
+        qubit_register_size = self.register_manager.get_qubit_register_size()
         self.output = "version 1.0{}\n\n".format(f"\n\nqubits {qubit_register_size}" if qubit_register_size > 0 else "")
 
     def visit_qubit(self, qubit: Qubit) -> str:
-        for qubit_register in self.register_manager.qubit_registers:
-            if qubit in qubit_register:
-                return f"q[{qubit.index}]"
-        msg = f"{qubit} not found in any of the qubit registers."
-        raise ValueError(msg)
+        qubit_register_name = self.register_manager.get_qubit_register_name()
+        return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_int(self, i: SupportsInt) -> str:
         i = Int(i)

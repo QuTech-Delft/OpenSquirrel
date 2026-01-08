@@ -20,7 +20,7 @@ from opensquirrel.ir import (
     Qubit,
     Statement,
 )
-from opensquirrel.register_manager import Register, RegisterManager
+from opensquirrel.register_manager import RegisterManager
 
 if TYPE_CHECKING:
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
@@ -29,8 +29,6 @@ if TYPE_CHECKING:
 class LibQasmParser:
     def __init__(self) -> None:
         self.ir = IR()
-        self.registers = None
-        self.register_manager = None
 
     @staticmethod
     def _ast_literal_to_ir_literal(
@@ -83,34 +81,26 @@ class LibQasmParser:
 
     def _get_qubits(self, ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef) -> list[Qubit]:
         ret = []
-        indices = []
         variable_name = ast_qubit_expression.variable.name
-        for qubit_register in self.register_manager.qubit_registers:
-            if self.register_manager.get_qubit_register_name(qubit_register) == variable_name:
-                if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
-                    qubit_range = self.register_manager.get_qubit_range(qubit_register, variable_name)
-                    ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
-                if isinstance(ast_qubit_expression, cqasm.values.IndexRef):
-                    int_indices = [int(i.value) for i in ast_qubit_expression.indices]
-                    indices = [
-                        self.register_manager.get_qubit_index(qubit_register, variable_name, i) for i in int_indices
-                    ]
-                    ret = [Qubit(index) for index in indices]
+        if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
+            qubit_range = self.register_manager.get_qubit_range(variable_name)
+            ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
+        if isinstance(ast_qubit_expression, cqasm.values.IndexRef):
+            int_indices = [int(i.value) for i in ast_qubit_expression.indices]
+            indices = [self.register_manager.get_qubit_index(variable_name, i) for i in int_indices]
+            ret = [Qubit(index) for index in indices]
         return ret
 
     def _get_bits(self, ast_bit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef) -> list[Bit]:
         ret = []
-        indices = []
         variable_name = ast_bit_expression.variable.name
-        for bit_register in self.register_manager.bit_registers:
-            if bit_register.name == variable_name:
-                if isinstance(ast_bit_expression, cqasm.values.VariableRef):
-                    bit_range = self.register_manager.get_bit_range(bit_register, variable_name)
-                    ret = [Bit(index) for index in range(bit_range.first, bit_range.first + bit_range.size)]
-                if isinstance(ast_bit_expression, cqasm.values.IndexRef):
-                    int_indices = [int(i.value) for i in ast_bit_expression.indices]
-                    indices = [self.register_manager.get_bit_index(bit_register, variable_name, i) for i in int_indices]
-                    ret = [Bit(index) for index in indices]
+        if isinstance(ast_bit_expression, cqasm.values.VariableRef):
+            bit_range = self.register_manager.get_bit_range(variable_name)
+            ret = [Bit(index) for index in range(bit_range.first, bit_range.first + bit_range.size)]
+        if isinstance(ast_bit_expression, cqasm.values.IndexRef):
+            int_indices = [int(i.value) for i in ast_bit_expression.indices]
+            indices = [self.register_manager.get_bit_index(variable_name, i) for i in int_indices]
+            ret = [Bit(index) for index in indices]
         return ret
 
     def _get_instruction_operands(self, instruction: cqasm.semantic.Instruction) -> list[list[Any]]:
@@ -222,9 +212,8 @@ class LibQasmParser:
         LibQasmParser._check_analysis_result(analysis_result)
         ast = analysis_result
 
-        # Create Registers
-        self.registers = Register.from_ast(ast)
-        self.register_manager = RegisterManager(self.registers)
+        # Create RegisterManager
+        self.register_manager = RegisterManager.from_ast(ast)
 
         # Parse statements
         expanded_args: list[tuple[Any, ...]] = []

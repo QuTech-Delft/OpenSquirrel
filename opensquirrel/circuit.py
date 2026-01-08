@@ -4,8 +4,8 @@ from collections import Counter, defaultdict
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from opensquirrel.ir import AsmDeclaration
 from opensquirrel.ir.non_unitary import Measure
+from opensquirrel.ir.statement import AsmDeclaration
 
 if TYPE_CHECKING:
     from opensquirrel.ir.ir import IR
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from opensquirrel.passes.merger.general_merger import Merger
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator
-    from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+    from opensquirrel.register_manager import RegisterManager
 
 
 InstructionCount = dict[str, int]
@@ -57,7 +57,6 @@ class Circuit:
         from opensquirrel.writer import writer
 
         return writer.circuit_to_string(self)
-        return writer.circuit_to_string(self, self.is_strict)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Circuit):
@@ -65,7 +64,7 @@ class Circuit:
         return self.register_manager == other.register_manager and self.ir == other.ir
 
     @classmethod
-    def from_string(cls, cqasm3_string: str, strict: bool = False) -> Circuit:  # noqa: FBT001, FBT002
+    def from_string(cls, cqasm3_string: str) -> Circuit:
         """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
         the `gates` argument.
 
@@ -79,16 +78,23 @@ class Circuit:
         """
         from opensquirrel.reader import LibQasmParser
 
-        cls.is_strict = strict
         return LibQasmParser().circuit_from_string(cqasm3_string)
 
     @property
     def qubit_register_size(self) -> int:
-        return self.register_manager.num_qubits
+        return self.register_manager.get_qubit_register_size()
 
     @property
     def bit_register_size(self) -> int:
         return self.register_manager.get_bit_register_size()
+
+    @property
+    def qubit_register_name(self) -> str:
+        return self.register_manager.get_qubit_register_name()
+
+    @property
+    def bit_register_name(self) -> str:
+        return self.register_manager.get_bit_register_name()
 
     @property
     def instruction_count(self) -> InstructionCount:
@@ -110,16 +116,6 @@ class Circuit:
                 qubit_index, bit_index = statement.qubit.index, statement.bit.index
                 m2b_map[str(qubit_index)].append(bit_index)
         return m2b_map
-
-    def qubit_register_names(self, qubit_register: QubitRegister | None = None) -> list[str] | str:
-        if qubit_register:
-            return self.register_manager.get_qubit_register_name(qubit_register)
-        return [register.name for register in self.register_manager.qubit_registers]
-
-    def bit_register_names(self, bit_register: BitRegister | None = None) -> list[str] | str:
-        if bit_register:
-            return self.register_manager.get_bit_register_name(bit_register)
-        return [register.name for register in self.register_manager.bit_registers]
 
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [

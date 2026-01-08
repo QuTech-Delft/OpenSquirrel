@@ -18,7 +18,6 @@ def test_qubit_variable_b_and_bit_variable_q() -> None:
         q[1] = measure b[1]
         q[0] = measure b[0]
         """,
-        strict=True,
     )
     circuit.merge(merger=SingleQubitGatesMerger())
     circuit.decompose(decomposer=McKayDecomposer())
