@@ -2,14 +2,20 @@ from __future__ import annotations
 
 from copy import deepcopy
 from functools import partial
-from typing import Any
+from typing import Any, OrderedDict
 
 from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Measure, Qubit, QubitLike
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.register_manager import (
+    BIT_REGISTER_NAME,
+    QUBIT_REGISTER_NAME,
+    BitRegister,
+    QubitRegister,
+    RegisterManager,
+)
 
 _builder_dynamic_attributes = (*default_instruction_set, "asm")
 
@@ -40,7 +46,10 @@ class CircuitBuilder:
     """
 
     def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
-        self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
+        self.register_manager = RegisterManager(
+            OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
+            OrderedDict({BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+        )
         self.ir = IR()
 
     def __dir__(self) -> list[str]:

@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, OrderedDict
+from typing import Any, Type
+
+QUBIT_REGISTER_NAME = "q"
+BIT_REGISTER_NAME = "b"
 
 
 @dataclass
@@ -14,125 +18,132 @@ class Range:
         return "[{}{}]".format(self.first, "" if self.size == 1 else f"..{self.first + self.size - 1}")
 
 
-class Register(ABC):
+class Register:
     """Register manages a (virtual) register."""
-
-    @property
-    @abstractmethod
-    def name(self) -> str: ...
 
     def __init__(
         self,
         size: int,
-        variable_name_to_range: dict[str, Range] | None = None,
-        index_to_variable_name: dict[int, str] | None = None,
+        name: str,
+        virtual_index_0: int = 0,
     ) -> None:
-        self._size: int = size
-        self.variable_name_to_range: dict[str, Range] = variable_name_to_range or {}
-        self.index_to_variable_name: dict[int, str] = index_to_variable_name or {}
+        self._size = size
+        self._name = name
+        self._virtual_index_0 = virtual_index_0
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     @property
     def size(self) -> int:
         return self._size
 
-    def get_variable_name(self, index: int) -> str:
-        """Get the variable name at `index`."""
-        return self.index_to_variable_name[index]
+    @property
+    def virtual_index_0(self) -> int:
+        return self._virtual_index_0
 
-    def get_range(self, variable_name: str) -> Range:
-        """Get the Range for a `variable_name`."""
-        return self.variable_name_to_range[variable_name]
+    @virtual_index_0.setter
+    def virtual_index_0(self, value: int) -> None:
+        self._virtual_index_0 = value
 
-    def get_index(self, variable_name: str, sub_index: int) -> int:
-        """Get the Index for a given `subIndex` of a `variable_name`."""
-        return self.variable_name_to_range[variable_name].first + sub_index
+    def __getitem__(self, index: int) -> Any:
+        if index > self._size:
+            msg = f"Index {index} is out of range"
+            raise IndexError(msg)
+        return self._virtual_index_0 + index
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Register):
             return False
-        return (
-            self._size == other.size
-            and self.variable_name_to_range == other.variable_name_to_range
-            and self.index_to_variable_name == other.index_to_variable_name
-        )
+        return self._size == other.size and self._name == other.name and self._virtual_index_0 == other.virtual_index_0
 
     def __repr__(self) -> str:
-        entries: str = ""
-        first: bool = True
-        for variable_name, register_range in self.variable_name_to_range.items():
-            entries += "{}{}: {}".format("" if first else ", ", variable_name, register_range)
-            first = False
-        return f"{{ {entries} }}"
+        return f"{type(self)}: {self.name}, {self.size}"
 
 
 class QubitRegister(Register):
     """QubitRegister manages a (virtual) qubit register."""
 
-    _default_qubit_register_name: str = "q"
+    _default_name: str = QUBIT_REGISTER_NAME
 
-    @property
-    def name(self) -> str:
-        return self._default_qubit_register_name
+    def __init__(self, size: int, name: str = _default_name) -> None:
+        super().__init__(size, name=name)
 
 
 class BitRegister(Register):
     """BitRegister manages a (virtual) bit register."""
 
-    _default_bit_register_name: str = "b"
+    _default_name: str = BIT_REGISTER_NAME
 
-    @property
-    def name(self) -> str:
-        return self._default_bit_register_name
+    def __init__(self, size: int, name: str = _default_name) -> None:
+        super().__init__(size, name=name)
+
+
+Registry = OrderedDict[str, QubitRegister | BitRegister]
 
 
 class RegisterManager:
+    def __init__(self, qubit_registry: Registry, bit_registry: Registry) -> None:
+        self._qubit_registry = qubit_registry
+        self._bit_registry = bit_registry
+        self._virtual_qubit_register = RegisterManager.generate_virtual_register(
+            qubit_registry
+        ) or QubitRegister(0)
+        self._virtual_bit_register = RegisterManager.generate_virtual_register(
+            bit_registry
+        ) or BitRegister(0)
 
-    def __init__(self, virtual_qubit_register: QubitRegister, virtual_bit_register: BitRegister | None = None) -> None:
-        self.virtual_qubit_register: QubitRegister = virtual_qubit_register
-        self.virtual_bit_register: BitRegister = virtual_bit_register or BitRegister(0)
-        self._qubit_registers: OrderedDict[str, QubitRegister] = OrderedDict()
-        self._bit_registers: OrderedDict[str, BitRegister] = OrderedDict()
+    @staticmethod
+    def generate_virtual_register(registry: Registry) -> QubitRegister | BitRegister | None:
+        registers = list(registry.values())
+        if not registers:
+            return None
+        register_cls = registers[0].__class__
+        virtual_index = 0
+        for register in registers:
+            register.virtual_index_0 = virtual_index
+            virtual_index += register.size
+        return register_cls(virtual_index)
+
+    def add_qubit_register(self, qubit_register: QubitRegister) -> None:
+        self._qubit_registry[qubit_register.name] = qubit_register
+
+    def add_bit_register(self, bit_register: BitRegister) -> None:
+        self._bit_registry[bit_register.name] = bit_register
 
     @property
     def qubit_register_size(self) -> int:
-        return self.virtual_qubit_register.size
-
-    @property
-    def bit_register_size(self) -> int:
-        return self.virtual_bit_register.size
+        return self._virtual_qubit_register.size
 
     @property
     def qubit_register_name(self) -> str:
-        return self.virtual_qubit_register.name
+        return self._virtual_qubit_register.name
+
+    @property
+    def bit_register_size(self) -> int:
+        return self._virtual_bit_register.size
 
     @property
     def bit_register_name(self) -> str:
-        return self.virtual_bit_register.name
+        return self._virtual_bit_register.name
 
-    def get_qubit_range(self, variable_name: str) -> Range:
-        return self.virtual_qubit_register.get_range(variable_name)
+    def get_qubit_register(self, qubit_register_name: str) -> QubitRegister:
+        return self._qubit_registry[qubit_register_name]  # type: ignore[return-value]
 
-    def get_bit_range(self, variable_name: str) -> Range:
-        return self.virtual_bit_register.get_range(variable_name)
-
-    def get_qubit_index(self, variable_name: str, sub_index: int) -> int:
-        return self.virtual_qubit_register.get_index(variable_name, sub_index)
-
-    def get_bit_index(self, variable_name: str, sub_index: int) -> int:
-        return self.virtual_bit_register.get_index(variable_name, sub_index)
-
-    def get_qubit_variable_name(self, index: int) -> str:
-        return self.virtual_qubit_register.get_variable_name(index)
-
-    def get_bit_variable_name(self, index: int) -> str:
-        return self.virtual_bit_register.get_variable_name(index)
+    def get_bit_register(self, bit_register_name: str) -> BitRegister:
+        return self._bit_registry[bit_register_name]  # type: ignore[return-value]
 
     def __repr__(self) -> str:
-        return (f"virtual_qubit_register:\n{self.virtual_qubit_register}\n"
-                f"virtual_bit_register:\n{self.virtual_bit_register}")
+        return (
+            f"virtual_qubit_register:\n{self._virtual_qubit_register}\n"
+            f"virtual_bit_register:\n{self._virtual_bit_register}"
+        )
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, RegisterManager):
             return False
-        return (self.virtual_qubit_register == other.virtual_qubit_register
-                and self.virtual_bit_register == other.virtual_bit_register)
+        return (
+            self._virtual_qubit_register == other._virtual_qubit_register
+            and self._virtual_bit_register == other._virtual_bit_register
+        )
