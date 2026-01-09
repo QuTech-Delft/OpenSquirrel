@@ -43,14 +43,8 @@ class QuantifySchedulerExporter(Exporter):
 
     def export(self, circuit: Circuit) -> quantify_scheduler.Schedule:
         if "quantify_scheduler" not in globals():
-
-            class QuantifySchedulerNotInstalled:
-                def __getattr__(self, attr_name: Any) -> None:
-                    msg = "quantify-scheduler is not installed, or cannot be installed on your system"
-                    raise ModuleNotFoundError(msg)
-
-            global quantify_scheduler
-            quantify_scheduler = QuantifySchedulerNotInstalled()
+            msg = "quantify-scheduler is not installed, or cannot be installed on your system"
+            raise ModuleNotFoundError(msg)
 
         try:
             # Create circuit, with measure data
@@ -99,7 +93,7 @@ class OperationRecord:
 
     @staticmethod
     def get_index_of_max_value(input_list: list[int]) -> int:
-        return max(range(len(input_list)), key=input_list.__getitem__)
+        return max(range(len(input_list)), key=lambda i: input_list[i])
 
     @property
     def schedulable_timing_constraints(self) -> dict[str, TimingConstraint]:
@@ -125,7 +119,7 @@ class OperationRecord:
         self._process_barriers()
         self._cycles[qubit_index] += cycles
 
-    def _get_reference(self, qubit_indices: list[int]) -> tuple[int, Schedulable, int]:
+    def _get_reference(self, qubit_indices: list[int]) -> tuple[int, Schedulable | None, int]:
         schedulable_counts = [self._cycles[qubit_index] for qubit_index in qubit_indices]
         pertinent_qubit_index = qubit_indices[self.get_index_of_max_value(schedulable_counts)]
         ref_schedulable, ref_counter_value = self._ref_schedulables[pertinent_qubit_index]
@@ -139,11 +133,11 @@ class OperationRecord:
         self._cycles = temp_cycles
 
     def _set_timing_constraints(
-        self, schedulable: Schedulable, ref_schedulable: Schedulable, waiting_time: float
+        self, schedulable: Schedulable, ref_schedulable: Schedulable | None, waiting_time: float
     ) -> None:
         if not ref_schedulable:
             timing_constraint = TimingConstraint(
-                ref_schedulable=None,
+                ref_schedulable="",
                 ref_pt="end",
                 ref_pt_new="end",
                 rel_time=0,
@@ -169,9 +163,9 @@ class OperationRecord:
             self._barrier_record = []
 
     def _get_operation_cycles(self, schedulable: Schedulable) -> int:
-        if not self._operation_cycles:
+        if not self._operation_cycles or (operation_name := schedulable.get("name")) is None:
             return DEFAULT_OPERATION_CYCLES
-        operation_name = schedulable.get("name").split()[0]
+        operation_name = operation_name.split()[0]
         return self._operation_cycles.get(operation_name, DEFAULT_OPERATION_CYCLES)
 
 
@@ -274,27 +268,27 @@ class _ScheduleCreator(IRVisitor):
                 label=self._get_operation_label("CZ", gate.qubit_operands),
             )
 
-    def visit_measure(self, gate: Measure) -> None:
-        qubit_index = gate.qubit.index
+    def visit_measure(self, measure: Measure) -> None:
+        qubit_index = measure.qubit.index
         acq_index = self.measurement_index_record[qubit_index]
         self.schedule.add(
             quantify_scheduler.operations.gate_library.Measure(
-                self._get_qubit_string(gate.qubit),
+                self._get_qubit_string(measure.qubit),
                 acq_channel=qubit_index,
                 acq_index=acq_index,
                 acq_protocol="ThresholdedAcquisition",
             ),
-            label=self._get_operation_label("Measure", gate.qubit_operands),
+            label=self._get_operation_label("Measure", measure.qubit_operands),
         )
         self.measurement_index_record[qubit_index] += 1
 
-    def visit_init(self, gate: Init) -> None:
-        self.visit_reset(cast("Reset", gate))
+    def visit_init(self, init: Init) -> None:
+        self.visit_reset(cast("Reset", init))
 
-    def visit_reset(self, gate: Reset) -> None:
+    def visit_reset(self, reset: Reset) -> None:
         self.schedule.add(
-            quantify_scheduler.operations.gate_library.Reset(self._get_qubit_string(gate.qubit)),
-            label=self._get_operation_label("Reset", gate.qubit_operands),
+            quantify_scheduler.operations.gate_library.Reset(self._get_qubit_string(reset.qubit)),
+            label=self._get_operation_label("Reset", reset.qubit_operands),
         )
 
     def _get_qubit_string(self, qubit: Qubit) -> str:

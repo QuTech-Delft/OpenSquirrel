@@ -43,6 +43,7 @@ dev = [
     "ruff>=0.13.2,<0.15",
     "sympy>=1.14.0,<2",
     "tox>=4.30.2,<5",
+    "ty>=0.0.10",
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
@@ -182,4 +183,6 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
 ignore_missing_imports = true
 strict = true
 
+[tool.ty.rules]
+unresolved-import = "ignore"
 

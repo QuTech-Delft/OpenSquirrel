@@ -11,7 +11,7 @@ from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
 class McKayDecomposer(Decomposer):
-    def decompose(self, g: Gate) -> list[Gate]:
+    def decompose(self, gate: Gate) -> list[Gate]:
         """Return the McKay decomposition of a 1-qubit gate as a list of gates.
                 gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
 
@@ -22,17 +22,17 @@ class McKayDecomposer(Decomposer):
 
         Relevant literature: https://arxiv.org/abs/1612.00858
         """
-        if not isinstance(g, SingleQubitGate) or g == X90(g.qubit):
-            return [g]
+        if not isinstance(gate, SingleQubitGate) or gate == X90(gate.qubit):
+            return [gate]
 
-        if abs(g.bsr.angle) < ATOL:
-            return [I(g.qubit)]
+        if abs(gate.bsr.angle) < ATOL:
+            return [I(gate.qubit)]
 
-        if g.bsr.axis[0] == 0 and g.bsr.axis[1] == 0:
-            rz_angle = float(g.bsr.angle * g.bsr.axis[2])
-            return [Rz(g.qubit, rz_angle)]
+        if gate.bsr.axis[0] == 0 and gate.bsr.axis[1] == 0:
+            rz_angle = float(gate.bsr.angle * gate.bsr.axis[2])
+            return [Rz(gate.qubit, rz_angle)]
 
-        zxz_decomposition = ZXZDecomposer().decompose(g)
+        zxz_decomposition = ZXZDecomposer().decompose(gate)
         zxz_angle = 0.0
         if len(zxz_decomposition) >= 2:
             zxz_angle = next(
@@ -43,18 +43,18 @@ class McKayDecomposer(Decomposer):
 
         if abs(zxz_angle - pi / 2) < ATOL:
             return [
-                X90(g.qubit) if isinstance(gate, SingleQubitGate) and gate.bsr.axis == Axis(1, 0, 0) else gate
+                X90(gate.qubit) if isinstance(gate, SingleQubitGate) and gate.bsr.axis == Axis(1, 0, 0) else gate
                 for gate in zxz_decomposition
             ]
 
         # McKay decomposition
-        za_mod = sqrt(cos(g.bsr.angle / 2) ** 2 + (g.bsr.axis[2] * sin(g.bsr.angle / 2)) ** 2)
-        zb_mod = abs(sin(g.bsr.angle / 2)) * sqrt(g.bsr.axis[0] ** 2 + g.bsr.axis[1] ** 2)
+        za_mod = sqrt(cos(gate.bsr.angle / 2) ** 2 + (gate.bsr.axis[2] * sin(gate.bsr.angle / 2)) ** 2)
+        zb_mod = abs(sin(gate.bsr.angle / 2)) * sqrt(gate.bsr.axis[0] ** 2 + gate.bsr.axis[1] ** 2)
 
         theta = pi - 2 * atan2(zb_mod, za_mod)
 
-        alpha = atan2(-sin(g.bsr.angle / 2) * g.bsr.axis[2], cos(g.bsr.angle / 2))
-        beta = atan2(-sin(g.bsr.angle / 2) * g.bsr.axis[0], -sin(g.bsr.angle / 2) * g.bsr.axis[1])
+        alpha = atan2(-sin(gate.bsr.angle / 2) * gate.bsr.axis[2], cos(gate.bsr.angle / 2))
+        beta = atan2(-sin(gate.bsr.angle / 2) * gate.bsr.axis[0], -sin(gate.bsr.angle / 2) * gate.bsr.axis[1])
 
         lam = beta - alpha
         phi = -beta - alpha - pi
@@ -66,20 +66,19 @@ class McKayDecomposer(Decomposer):
         decomposed_g: list[Gate] = []
 
         if abs(theta) < ATOL and lam == phi:
-            decomposed_g.extend((X90(g.qubit), X90(g.qubit)))
+            decomposed_g.extend((X90(gate.qubit), X90(gate.qubit)))
             return decomposed_g
 
         if abs(lam) > ATOL:
-            decomposed_g.append(Rz(g.qubit, lam))
-
-        decomposed_g.append(X90(g.qubit))
+            decomposed_g.append(Rz(gate.qubit, lam))
+        decomposed_g.append(X90(gate.qubit))
 
         if abs(theta) > ATOL:
-            decomposed_g.append(Rz(g.qubit, theta))
+            decomposed_g.append(Rz(gate.qubit, theta))
 
-        decomposed_g.append(X90(g.qubit))
+        decomposed_g.append(X90(gate.qubit))
 
         if abs(phi) > ATOL:
-            decomposed_g.append(Rz(g.qubit, phi))
+            decomposed_g.append(Rz(gate.qubit, phi))
 
         return decomposed_g

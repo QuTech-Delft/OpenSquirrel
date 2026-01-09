@@ -65,10 +65,10 @@ class TestReplacer:
 
         # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
-            def decompose(self, g: Gate) -> list[Gate]:
-                if isinstance(g, SingleQubitGate):
-                    return [I(g.qubit), g, I(g.qubit)]
-                return [g]
+            def decompose(self, gate: Gate) -> list[Gate]:
+                if isinstance(gate, SingleQubitGate):
+                    return [I(gate.qubit), gate, I(gate.qubit)]
+                return [gate]
 
         decompose(circuit.ir, decomposer=TestDecomposer())
 

@@ -22,18 +22,17 @@ class CNOTDecomposer(Decomposer):
     Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
     """
 
-    def decompose(self, g: Gate) -> list[Gate]:
-        if not isinstance(g, TwoQubitGate):
-            return [g]
+    def decompose(self, gate: Gate) -> list[Gate]:
+        if not isinstance(gate, TwoQubitGate):
+            return [gate]
 
-        if not g.controlled:
+        if not gate.controlled:
             # Do nothing, this is not a controlled unitary gate.
-            return [g]
+            return [gate]
 
-        control_qubit = g.qubit0
-        target_qubit = g.qubit1
-        target_gate = g.controlled.target_gate
-
+        control_qubit = gate.qubit0
+        target_qubit = gate.qubit1
+        target_gate = gate.controlled.target_gate
         # Perform ZYZ decomposition on the target gate.
         # This gives us an ABC decomposition (U = AXBXC, ABC = I) of the target gate.
         # See https://threeplusone.com/pubs/on_gates.pdf

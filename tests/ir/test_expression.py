@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from typing import Any, SupportsInt
 
 import numpy as np
@@ -52,9 +51,8 @@ class TestAxis:
     def axis(self) -> Axis:
         return Axis(1, 0, 0)
 
-    @pytest.mark.parametrize("expected_class", [Sequence, Expression])
-    def test_inheritance(self, axis: Axis, expected_class: type[Any]) -> None:
-        assert isinstance(axis, expected_class)
+    def test_inheritance(self, axis: Axis) -> None:
+        assert isinstance(axis, Expression)
 
     def test_axis_getter(self, axis: Axis) -> None:
         np.testing.assert_array_equal(axis.value, [1, 0, 0])

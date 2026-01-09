@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import importlib
+import importlib.util
 import sys
 import unittest.mock
 from collections.abc import Generator
@@ -37,7 +37,7 @@ def _check_ref_schedulables(exported_schedule: Schedule, expected_ref_schedulabl
         for schedulable_data in list(exported_schedule.schedulables.values())
     ]
     schedulable_index_map = {
-        None: None,
+        "": None,
         **{schedulable: index for index, schedulable in enumerate(list(exported_schedule.schedulables.keys()))},
     }
     for ref_schedulable, expected_ref_schedulable_index in zip(

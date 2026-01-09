@@ -127,22 +127,21 @@ class ABADecomposer(Decomposer, ABC):
 
         return theta_1, theta_2, theta_3
 
-    def decompose(self, g: Gate) -> list[Gate]:
+    def decompose(self, gate: Gate) -> list[Gate]:
         """General A-B-A decomposition function for a single gate.
 
         Args:
-            g: gate to decompose.
-
+            gate: gate to decompose.
         Returns:
             Three gates, following the A-B-A convention, corresponding to the decomposition of the input gate.
         """
-        if not isinstance(g, SingleQubitGate):
-            return [g]
+        if not isinstance(gate, SingleQubitGate):
+            return [gate]
 
-        theta1, theta2, theta3 = self.get_decomposition_angles(g.bsr.axis, g.bsr.angle)
-        a1 = self.ra(g.qubit, theta1)
-        b = self.rb(g.qubit, theta2)
-        a2 = self.ra(g.qubit, theta3)
+        theta1, theta2, theta3 = self.get_decomposition_angles(gate.bsr.axis, gate.bsr.angle)
+        a1 = self.ra(gate.qubit, theta1)
+        b = self.rb(gate.qubit, theta2)
+        a2 = self.ra(gate.qubit, theta3)
 
         return filter_out_identities([a1, b, a2])
 
