@@ -206,15 +206,18 @@ class LibQasmParser:
         # Analyzer will return an Abstract Syntax Tree (AST).
         analyzer = LibQasmParser._create_analyzer()
         ast = analyzer.analyze_string(s)
+        if not isinstance(ast, cqasm.semantic.Program):            
+            msg = "parsing error: " + ", ".join(ast)
+            raise OSError(msg)
+
+        if ast.block is None:
+            msg = "AST should have a Block"
+            raise TypeError(msg)
 
         # Create RegisterManager
         self.register_manager = RegisterManager.from_ast(ast)
 
         expanded_args: list[tuple[Any, ...]] = []
-        if ast.block is None:
-            msg = "AST should have a Block"
-            raise TypeError(msg)
-
         # Parse statements
         for statement in ast.block.statements:
             instruction_generator: Callable[..., Statement]
