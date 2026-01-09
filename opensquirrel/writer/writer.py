@@ -2,7 +2,6 @@ from typing import Any, SupportsFloat, SupportsInt
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_two_qubit_gate_set
-from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import (
     AsmDeclaration,
     Barrier,
@@ -35,11 +34,11 @@ class _WriterImpl(IRVisitor):
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
-        qubit_register_size = self.register_manager.get_qubit_register_size()
-        qubit_register_name = self.register_manager.get_qubit_register_name()
+        qubit_register_size = self.register_manager.qubit_register_size
+        qubit_register_name = self.register_manager.qubit_register_name
 
-        bit_register_size = self.register_manager.get_bit_register_size()
-        bit_register_name = self.register_manager.get_bit_register_name()
+        bit_register_size = self.register_manager.bit_register_size
+        bit_register_name = self.register_manager.bit_register_name
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
             (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
@@ -60,11 +59,11 @@ class _WriterImpl(IRVisitor):
         return f"{i.value}"
 
     def visit_bit(self, bit: Bit) -> str:
-        bit_register_name = self.register_manager.get_bit_register_name()
+        bit_register_name = self.register_manager.bit_register_name
         return f"{bit_register_name}[{bit.index}]"
 
     def visit_qubit(self, qubit: Qubit) -> str:
-        qubit_register_name = self.register_manager.get_qubit_register_name()
+        qubit_register_name = self.register_manager.qubit_register_name
         return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
@@ -85,14 +84,11 @@ class _WriterImpl(IRVisitor):
 
         if gate.name not in default_two_qubit_gate_set:
             self.output += f"{gate}\n"
-        elif len(gate.arguments) == 2:
-            self.output += f"{gate.name} {qubit_operand_0}, {qubit_operand_1}\n"
-        elif len(gate.arguments) == 3:
-            _, _, arg = gate.arguments
-            argument = arg.accept(self)
-            self.output += f"{gate.name}({argument}) {qubit_operand_0}, {qubit_operand_1}\n"
+        elif gate.arguments:
+            arguments = ", ".join(arg.accept(self) for arg in gate.arguments)
+            self.output += f"{gate.name}({arguments}) {qubit_operand_0}, {qubit_operand_1}\n"
         else:
-            raise UnsupportedGateError(gate)
+            self.output += f"{gate.name} {qubit_operand_0}, {qubit_operand_1}\n"
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> str:
         return ""

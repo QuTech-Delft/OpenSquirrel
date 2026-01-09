@@ -84,11 +84,8 @@ class SingleQubitGate(Gate):
         return SingleQubitGate(self.qubit, self.bsr * other.bsr)
 
     @property
-    def arguments(self) -> tuple[Qubit, ...]:
+    def qubit_operands(self) -> tuple[Qubit, ...]:
         return (self.qubit,)
-
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
 
     def is_identity(self) -> bool:
         if self.bsr is not None:

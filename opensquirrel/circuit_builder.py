@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from copy import deepcopy
 from functools import partial
 from typing import Any
@@ -8,8 +9,14 @@ from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
-from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Measure, Qubit, QubitLike
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager, Register
+from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
+from opensquirrel.register_manager import (
+    BIT_REGISTER_NAME,
+    QUBIT_REGISTER_NAME,
+    BitRegister,
+    QubitRegister,
+    RegisterManager, Register,
+)
 
 _builder_dynamic_attributes = (*default_instruction_set, "asm")
 
@@ -39,8 +46,11 @@ class CircuitBuilder:
         <BLANKLINE>
     """
 
-    def __init__(self, qubit_register_size: int = 1, bit_register_size: int = 0) -> None:
-        self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
+    def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
+        self.register_manager = RegisterManager(
+            OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
+            OrderedDict({BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+        )
         self.ir = IR()
 
     def __dir__(self) -> list[str]:
@@ -65,7 +75,7 @@ class CircuitBuilder:
             qubit: qubit to check.
         """
         index = Qubit(qubit).index
-        if index >= self.register_manager.get_qubit_register_size():
+        if index >= self.register_manager.qubit_register_size:
             msg = f"qubit index {index} is out of bounds"
             raise IndexError(msg)
 
@@ -76,17 +86,16 @@ class CircuitBuilder:
             bit: bit to check.
         """
         index = Bit(bit).index
-        if index >= self.register_manager.get_bit_register_size():
+        if index >= self.register_manager.bit_register_size:
             msg = f"bit index {index} is out of bounds"
             raise IndexError(msg)
 
     def _check_out_of_bounds_access(self, instruction: Instruction) -> None:
-        for qubit in instruction.get_qubit_operands():
+        for qubit in instruction.qubit_operands:
             self._check_qubit_out_of_bounds_access(qubit)
 
-        if isinstance(instruction, Measure):
-            for bit in instruction.get_bit_operands():
-                self._check_bit_out_of_bounds_access(bit)
+        for bit in instruction.bit_operands:
+            self._check_bit_out_of_bounds_access(bit)
 
     def _add_statement(self, attr: str, *args: Any) -> Self:
         if attr == "asm":

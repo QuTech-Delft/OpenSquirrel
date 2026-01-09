@@ -182,7 +182,7 @@ class _Scheduler(IRVisitor):
         schedulables: list[Schedulable],
         operation_cycles: OperationCycles | None,
     ) -> None:
-        self._qubit_register_size = register_manager.get_qubit_register_size()
+        self._qubit_register_size = register_manager.qubit_register_size
         self._operation_cycles = operation_cycles
         self._operation_record = OperationRecord(self._qubit_register_size, schedulables, operation_cycles)
 
@@ -191,12 +191,10 @@ class _Scheduler(IRVisitor):
         return self._operation_record
 
     def visit_gate(self, gate: Gate) -> None:
-        qubit_indices = [qubit.index for qubit in gate.get_qubit_operands()]
-        self._operation_record.set_schedulable_timing_constraints(qubit_indices)
+        self._operation_record.set_schedulable_timing_constraints(gate.qubit_indices)
 
     def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
-        qubit_indices = [qubit.index for qubit in non_unitary.get_qubit_operands()]
-        self._operation_record.set_schedulable_timing_constraints(qubit_indices)
+        self._operation_record.set_schedulable_timing_constraints(non_unitary.qubit_indices)
 
     def visit_control_instruction(self, control_instruction: ControlInstruction) -> None:
         if isinstance(control_instruction, Wait):
@@ -228,7 +226,7 @@ class _ScheduleCreator(IRVisitor):
             # Hadamard gate.
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.H(self._get_qubit_string(gate.qubit)),
-                label=self._get_operation_label("H", gate.get_qubit_operands()),
+                label=self._get_operation_label("H", gate.qubit_operands),
             )
             return
         if abs(gate.bsr.axis[2]) < ATOL:
@@ -240,7 +238,7 @@ class _ScheduleCreator(IRVisitor):
                 quantify_scheduler.operations.gate_library.Rxy(
                     theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit)
                 ),
-                label=self._get_operation_label("Rxy", gate.get_qubit_operands()),
+                label=self._get_operation_label("Rxy", gate.qubit_operands),
             )
             return
         if abs(gate.bsr.axis[0]) < ATOL and abs(gate.bsr.axis[1]) < ATOL:
@@ -248,7 +246,7 @@ class _ScheduleCreator(IRVisitor):
             theta = round(math.degrees(gate.bsr.angle), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)),
-                label=self._get_operation_label("Rz", gate.get_qubit_operands()),
+                label=self._get_operation_label("Rz", gate.qubit_operands),
             )
             return
         raise UnsupportedGateError(gate)
@@ -257,7 +255,7 @@ class _ScheduleCreator(IRVisitor):
         if gate.name not in ["CNOT", "CZ"]:
             raise UnsupportedGateError(gate)
 
-        control_qubit, target_qubit = gate.get_qubit_operands()
+        control_qubit, target_qubit = gate.qubit_operands
 
         if gate.name == "CNOT":
             self.schedule.add(
@@ -265,7 +263,7 @@ class _ScheduleCreator(IRVisitor):
                     qC=self._get_qubit_string(control_qubit),
                     qT=self._get_qubit_string(target_qubit),
                 ),
-                label=self._get_operation_label("CNOT", gate.get_qubit_operands()),
+                label=self._get_operation_label("CNOT", gate.qubit_operands),
             )
         if gate.name == "CZ":
             self.schedule.add(
@@ -273,7 +271,7 @@ class _ScheduleCreator(IRVisitor):
                     qC=self._get_qubit_string(control_qubit),
                     qT=self._get_qubit_string(target_qubit),
                 ),
-                label=self._get_operation_label("CZ", gate.get_qubit_operands()),
+                label=self._get_operation_label("CZ", gate.qubit_operands),
             )
 
     def visit_measure(self, gate: Measure) -> None:
@@ -286,7 +284,7 @@ class _ScheduleCreator(IRVisitor):
                 acq_index=acq_index,
                 acq_protocol="ThresholdedAcquisition",
             ),
-            label=self._get_operation_label("Measure", gate.get_qubit_operands()),
+            label=self._get_operation_label("Measure", gate.qubit_operands),
         )
         self.measurement_index_record[qubit_index] += 1
 
@@ -296,12 +294,12 @@ class _ScheduleCreator(IRVisitor):
     def visit_reset(self, gate: Reset) -> None:
         self.schedule.add(
             quantify_scheduler.operations.gate_library.Reset(self._get_qubit_string(gate.qubit)),
-            label=self._get_operation_label("Reset", gate.get_qubit_operands()),
+            label=self._get_operation_label("Reset", gate.qubit_operands),
         )
 
     def _get_qubit_string(self, qubit: Qubit) -> str:
         return f"{self.circuit.qubit_register_name}[{qubit.index}]"
 
-    def _get_operation_label(self, name: str, qubits: list[Qubit]) -> str:
+    def _get_operation_label(self, name: str, qubits: tuple[Qubit, ...]) -> str:
         qubit_operands = ", ".join([self._get_qubit_string(qubit) for qubit in qubits])
         return f"{name} {qubit_operands} | " + str(uuid4())
