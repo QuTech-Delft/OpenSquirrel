@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol, SupportsFloat, SupportsInt, cast, overload, runtime_checkable
 
@@ -177,7 +176,7 @@ class Qubit(Expression):
         return visitor.visit_qubit(self)
 
 
-class BaseAxis(Sequence[np.float64], Expression, ABC):
+class BaseAxis(Expression, ABC):
     _len = 3
 
     def __init__(self, *axis: AxisLike) -> None:
@@ -209,11 +208,11 @@ class BaseAxis(Sequence[np.float64], Expression, ABC):
     def __getitem__(self, i: int, /) -> np.float64: ...
 
     @overload
-    def __getitem__(self, s: slice, /) -> list[np.float64]: ...
+    def __getitem__(self, s: slice, /) -> NDArray[np.float64]: ...
 
-    def __getitem__(self, index: int | slice, /) -> np.float64 | list[np.float64]:
+    def __getitem__(self, index: int | slice, /) -> np.float64 | NDArray[np.float64]:
         """Get the item at `index`."""
-        return cast("np.float64", self.value[index])
+        return self.value[index]
 
     def __len__(self) -> int:
         """Length of the axis, which is always 3."""

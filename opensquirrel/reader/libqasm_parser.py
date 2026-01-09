@@ -4,8 +4,8 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, cast
 
 import cqasm.v3x as cqasm
-import cqasm.v3x.values as cqasm_values
 import cqasm.v3x.types as cqasm_types
+import cqasm.v3x.values as cqasm_values
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
@@ -111,7 +111,7 @@ class LibQasmParser:
         For example, for CNOT q[0, 1] q[2, 3], this function returns [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]].
         """
         ret: list[list[Any]] = []
-        for operand in instruction.operands:
+        for operand in instruction.operands:  # ty: ignore[unresolved-attribute]
             if self._is_qubit_type(operand):
                 ret.append(self._get_qubits(operand))
             else:
@@ -139,7 +139,7 @@ class LibQasmParser:
         if isinstance(instruction, cqasm.semantic.GateInstruction):
             gate_parameters = self._get_named_gate_parameters(instruction.gate)
         else:
-            gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]
+            gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]  # ty: ignore[unresolved-attribute]
         if gate_parameters:
             number_of_operands = len(extended_operands[0])
             extended_gate_parameters = [gate_parameters] * number_of_operands
@@ -205,7 +205,7 @@ class LibQasmParser:
     def circuit_from_string(self, s: str) -> Circuit:
         # Analyzer will return an Abstract Syntax Tree (AST).
         analyzer = LibQasmParser._create_analyzer()
-        ast = analyzer.analyze_string(s)        
+        ast = analyzer.analyze_string(s)
 
         # Create RegisterManager
         self.register_manager = RegisterManager.from_ast(ast)
@@ -214,7 +214,7 @@ class LibQasmParser:
         if ast.block is None:
             msg = "AST should have a Block"
             raise TypeError(msg)
-        
+
         # Parse statements
         for statement in ast.block.statements:
             instruction_generator: Callable[..., Statement]

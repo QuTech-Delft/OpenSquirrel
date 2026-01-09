@@ -20,21 +20,15 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.semantics import (
-    BlochSphereRotation,
     BsrAngleParam,
     BsrNoParams,
     BsrUnitaryParams,
+    MatrixGateSemantic,
 )
 from opensquirrel.passes.exporter.general_exporter import Exporter
-from opensquirrel.utils.general_math import matrix_from_u_gate_params
 
 if TYPE_CHECKING:
-    from opensquirrel import (
-        CR,
-        CRk,
-    )
     from opensquirrel.circuit import Circuit
-    from opensquirrel.ir.semantics.bsr import BsrFullParams
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.two_qubit_gate import TwoQubitGate
     from opensquirrel.register_manager import RegisterManager
@@ -79,26 +73,21 @@ class _CQASMv1Creator(IRVisitor):
 
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
         qubit_operand = gate.qubit.accept(self)
-        if isinstance(gate.bsr, BsrNoParams):
-            self.output += f"{gate.name.lower()} {qubit_operand}\n"
-        elif isinstance(gate.bsr, BsrAngleParam):
-            theta_argument = gate.bsr.theta.accept(self)
-            self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
-        elif isinstance(gate.bsr, BsrUnitaryParams):
-            matrix = matrix_from_u_gate_params(gate.bsr.theta.value, gate.bsr.phi.value, gate.bsr.lmbda.value)
-            elements: list[str] = [_convert_complex_number(matrix[i, j]) for i in range(2) for j in range(2)]
-            matrix_repr = f"[{elements[0]}, {elements[1]}; {elements[2]}, {elements[3]}]"
-            self.output += f"{gate.name.lower()} {qubit_operand}, {matrix_repr}\n"
-        else:
-            gate.bsr.accept(self)
 
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
-        raise UnsupportedGateError(gate)
+        match gate.bsr:
+            case BsrNoParams():
+                self.output += f"{gate.name.lower()} {qubit_operand}\n"
 
-    def visit_bloch_sphere_rotation(self, gate: BlochSphereRotation) -> None:
-        if isinstance(gate, BlochSphereRotation) and type(gate) is not BlochSphereRotation:
-            return
-        raise UnsupportedGateError(gate)
+            case BsrAngleParam():
+                theta_argument = gate.bsr.theta.accept(self)
+                self.output += f"{gate.name.lower()} {qubit_operand}, {theta_argument}\n"
+
+            case BsrUnitaryParams():
+                matrix_repr = self.visit_matrix_gate_semantic(gate.matrix)
+                self.output += f"{gate.name.lower()} {qubit_operand}, {matrix_repr}\n"
+
+            case _:
+                raise UnsupportedGateError(gate)
 
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
         if gate.name not in default_two_qubit_gate_set:
@@ -113,38 +102,31 @@ class _CQASMv1Creator(IRVisitor):
         else:
             self.output += f"{gate.name.lower()} {qubit_operand_0}, {qubit_operand_1}\n"
 
-    def visit_cr(self, gate: CR) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        theta_argument = gate.theta.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"cr({theta_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_crk(self, gate: CRk) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        k_argument = gate.k.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"crk({k_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
-
     def visit_measure(self, measure: Measure) -> None:
-        qubit_argument = measure.arguments[0].accept(self)
+        qubit_argument = measure.qubit_operands[0].accept(self)
         self.output += f"measure_z {qubit_argument}\n"
 
     def visit_init(self, init: Init) -> None:
-        qubit_argument = init.arguments[0].accept(self)
+        qubit_argument = init.qubit_operands[0].accept(self)
         self.output += f"prep_z {qubit_argument}\n"
 
     def visit_reset(self, reset: Reset) -> None:
-        qubit_argument = reset.arguments[0].accept(self)
+        qubit_argument = reset.qubit_operands[0].accept(self)
         self.output += f"prep_z {qubit_argument}\n"
 
     def visit_barrier(self, barrier: Barrier) -> None:
-        qubit_argument = barrier.arguments[0].accept(self)
+        qubit_argument = barrier.qubit_operands[0].accept(self)
         self.output += f"barrier {qubit_argument}\n"
 
     def visit_wait(self, wait: Wait) -> None:
-        qubit_argument = wait.arguments[0].accept(self)
-        parameter = wait.arguments[1].accept(self)
+        qubit_argument = wait.qubit_operands[0].accept(self)
+        parameter = wait.arguments[0].accept(self)
         self.output += f"wait {qubit_argument}, {parameter}\n"
+
+    def visit_matrix_gate_semantic(self, matrix: MatrixGateSemantic) -> Any:
+        mat = np.array(matrix)
+        elements: list[str] = [_convert_complex_number(mat[i, j]) for i in range(2) for j in range(2)]
+        return f"[{elements[0]}, {elements[1]}; {elements[2]}, {elements[3]}]"
 
 
 def _convert_complex_number(number: np.complex128) -> str:

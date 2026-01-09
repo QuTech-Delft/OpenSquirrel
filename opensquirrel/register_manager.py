@@ -10,11 +10,12 @@ from typing_extensions import Self
 
 
 def is_qubit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, (cqasm_types.Qubit, cqasm_types.QubitArray))
+    return isinstance(variable.typ, (cqasm_types.Qubit, cqasm_types.QubitArray))  # ty: ignore[unresolved-attribute]
 
 
 def is_bit_type(variable: cqasm.semantic.MultiVariable) -> bool:
-    return isinstance(variable.typ, (cqasm_types.Bit, cqasm_types.BitArray))
+    return isinstance(variable.typ, (cqasm_types.Bit, cqasm_types.BitArray))  # ty: ignore[unresolved-attribute]
+
 
 @dataclass
 class Range:

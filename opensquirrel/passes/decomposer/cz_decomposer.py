@@ -22,18 +22,17 @@ class CZDecomposer(Decomposer):
     Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
     """
 
-    def decompose(self, g: Gate) -> list[Gate]:
-        if not isinstance(g, TwoQubitGate):
-            return [g]
+    def decompose(self, gate: Gate) -> list[Gate]:
+        if not isinstance(gate, TwoQubitGate):
+            return [gate]
 
-        if not g.controlled:
+        if not gate.controlled:
             # Do nothing:
             # - BlochSphereRotation's are only single-qubit,
             # - decomposing MatrixGate is currently not supported.
-            return [g]
-
-        control_qubit, target_qubit = g.qubit_operands
-        target_gate = g.controlled.target_gate
+            return [gate]
+        control_qubit, target_qubit = gate.qubit_operands
+        target_gate = gate.controlled.target_gate
 
         # Perform XYX decomposition on the target gate.
         # This gives us an ABC decomposition (U = exp(i phase) * AZBZC, ABC = I) of the target gate.
