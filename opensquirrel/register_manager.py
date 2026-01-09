@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import ABC
 from collections import OrderedDict
 from typing import Any
 
