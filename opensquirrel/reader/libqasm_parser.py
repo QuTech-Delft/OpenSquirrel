@@ -208,7 +208,6 @@ class LibQasmParser:
             return lambda *args: default_control_instruction_set[instruction.name](*args)
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
-
     @staticmethod
     def _get_registry(
         ast: Any,
@@ -265,5 +264,6 @@ class LibQasmParser:
                 expanded_args = []
 
         if not self.register_manager:
-            raise OSError("parsing error: no registers found")
+            msg = "parsing error: no registers found"
+            raise OSError(msg)
         return Circuit(self.register_manager, self.ir)

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from copy import deepcopy
 from functools import partial
-from typing import Any, OrderedDict
+from typing import Any
 
 from typing_extensions import Self
 

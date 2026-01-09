@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections import OrderedDict
 from copy import deepcopy
-from typing import OrderedDict
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import IR, Measure
@@ -44,8 +44,7 @@ def check_mapper(mapper: Mapper) -> None:
     assert isinstance(mapper, Mapper)
 
     register_manager = RegisterManager(
-        OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(10)}),
-        OrderedDict({BIT_REGISTER_NAME: BitRegister(10)})
+        OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(10)}), OrderedDict({BIT_REGISTER_NAME: BitRegister(10)})
     )
     ir = IR()
     circuit = Circuit(register_manager, ir)

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from collections.abc import Iterable
-from typing import TYPE_CHECKING, OrderedDict
+from typing import TYPE_CHECKING
 
 from opensquirrel.ir import (
     IR,

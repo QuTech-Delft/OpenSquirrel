@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections import OrderedDict
-from typing import Any, Type
+from typing import Any
 
 QUBIT_REGISTER_NAME = "q"
 BIT_REGISTER_NAME = "b"
 
 
-class Register(ABC):
+class Register:
     """Register manages a (virtual) register."""
 
     def __init__(
@@ -77,12 +77,8 @@ class RegisterManager:
     def __init__(self, qubit_registry: Registry, bit_registry: Registry) -> None:
         self._qubit_registry = qubit_registry
         self._bit_registry = bit_registry
-        self._virtual_qubit_register = RegisterManager.generate_virtual_register(
-            qubit_registry
-        ) or QubitRegister(0)
-        self._virtual_bit_register = RegisterManager.generate_virtual_register(
-            bit_registry
-        ) or BitRegister(0)
+        self._virtual_qubit_register = RegisterManager.generate_virtual_register(qubit_registry) or QubitRegister(0)
+        self._virtual_bit_register = RegisterManager.generate_virtual_register(bit_registry) or BitRegister(0)
 
     @staticmethod
     def generate_virtual_register(registry: Registry) -> QubitRegister | BitRegister | None:
