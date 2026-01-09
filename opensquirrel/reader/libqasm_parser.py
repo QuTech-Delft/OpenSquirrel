@@ -206,7 +206,7 @@ class LibQasmParser:
         # Analyzer will return an Abstract Syntax Tree (AST).
         analyzer = LibQasmParser._create_analyzer()
         ast = analyzer.analyze_string(s)
-        if not isinstance(ast, cqasm.semantic.Program):            
+        if not isinstance(ast, cqasm.semantic.Program):
             msg = "parsing error: " + ", ".join(ast)
             raise OSError(msg)
 
