@@ -208,13 +208,6 @@ class LibQasmParser:
             return lambda *args: default_control_instruction_set[instruction.name](*args)
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
-    @staticmethod
-    def is_qubit(variable: cqasm.semantic.MultiVariable) -> bool:
-        return isinstance(variable.typ, (cqasm.types.Qubit, cqasm.types.QubitArray))
-
-    @staticmethod
-    def is_bit(variable: cqasm.semantic.MultiVariable) -> bool:
-        return isinstance(variable.typ, (cqasm.types.Bit, cqasm.types.BitArray))
 
     @staticmethod
     def _get_registry(
@@ -223,13 +216,13 @@ class LibQasmParser:
         type_check: Callable[[Any], bool],
     ) -> Registry:
         registry = OrderedDict()
-        for variable in [v for v in ast.variables if type_check(v)]:
+        for variable in [v for v in ast.variables if type_check(v.typ)]:
             registry[variable.name] = register_cls(variable.typ.size, variable.name)
         return registry
 
     def _create_register_manager(self, ast: Any) -> RegisterManager:
-        qubit_registry = self._get_registry(ast, QubitRegister, LibQasmParser.is_qubit)
-        bit_registry = self._get_registry(ast, BitRegister, LibQasmParser.is_bit)
+        qubit_registry = self._get_registry(ast, QubitRegister, LibQasmParser._is_qubit_type)
+        bit_registry = self._get_registry(ast, BitRegister, LibQasmParser._is_bit_type)
         return RegisterManager(qubit_registry, bit_registry)
 
     def circuit_from_string(self, s: str) -> Circuit:

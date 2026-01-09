@@ -2,23 +2,13 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections import OrderedDict
-from dataclasses import dataclass
 from typing import Any, Type
 
 QUBIT_REGISTER_NAME = "q"
 BIT_REGISTER_NAME = "b"
 
 
-@dataclass
-class Range:
-    first: int = 0
-    size: int = 0
-
-    def __repr__(self) -> str:
-        return "[{}{}]".format(self.first, "" if self.size == 1 else f"..{self.first + self.size - 1}")
-
-
-class Register:
+class Register(ABC):
     """Register manages a (virtual) register."""
 
     def __init__(
