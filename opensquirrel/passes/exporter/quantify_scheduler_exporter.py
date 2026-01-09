@@ -182,7 +182,7 @@ class _Scheduler(IRVisitor):
         schedulables: list[Schedulable],
         operation_cycles: OperationCycles | None,
     ) -> None:
-        self._qubit_register_size = register_manager.get_qubit_register_size()
+        self._qubit_register_size = register_manager.qubit_register_size
         self._operation_cycles = operation_cycles
         self._operation_record = OperationRecord(self._qubit_register_size, schedulables, operation_cycles)
 

@@ -62,11 +62,11 @@ class _CQASMv1Creator(IRVisitor):
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
-        qubit_register_size = self.register_manager.get_qubit_register_size()
+        qubit_register_size = self.register_manager.qubit_register_size
         self.output = "version 1.0{}\n\n".format(f"\n\nqubits {qubit_register_size}" if qubit_register_size > 0 else "")
 
     def visit_qubit(self, qubit: Qubit) -> str:
-        qubit_register_name = self.register_manager.get_qubit_register_name()
+        qubit_register_name = self.register_manager.qubit_register_name
         return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_int(self, i: SupportsInt) -> str:

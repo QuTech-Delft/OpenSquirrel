@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
@@ -16,7 +17,13 @@ from opensquirrel.ir import (
 from opensquirrel.ir.semantics import ControlledGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.register_manager import (
+    BIT_REGISTER_NAME,
+    QUBIT_REGISTER_NAME,
+    BitRegister,
+    QubitRegister,
+    RegisterManager,
+)
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -79,9 +86,10 @@ def get_reindexed_circuit(
     from opensquirrel.circuit import Circuit
 
     qubit_reindexer = _QubitReindexer(qubit_indices)
-    qubit_register = QubitRegister(len(qubit_indices))
-    bit_register = BitRegister(bit_register_size)
-    register_manager = RegisterManager(qubit_register, bit_register)
+    register_manager = RegisterManager(
+        OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(len(qubit_indices))}),
+        OrderedDict({BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+    )
     replacement_ir = IR()
     for gate in replacement_gates:
         gate_with_reindexed_qubits = gate.accept(qubit_reindexer)

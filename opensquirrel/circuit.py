@@ -82,19 +82,19 @@ class Circuit:
 
     @property
     def qubit_register_size(self) -> int:
-        return self.register_manager.get_qubit_register_size()
+        return self.register_manager.qubit_register_size
 
     @property
     def bit_register_size(self) -> int:
-        return self.register_manager.get_bit_register_size()
+        return self.register_manager.bit_register_size
 
     @property
     def qubit_register_name(self) -> str:
-        return self.register_manager.get_qubit_register_name()
+        return self.register_manager.qubit_register_name
 
     @property
     def bit_register_name(self) -> str:
-        return self.register_manager.get_bit_register_name()
+        return self.register_manager.bit_register_name
 
     @property
     def instruction_count(self) -> InstructionCount:
