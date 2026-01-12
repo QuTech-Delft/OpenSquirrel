@@ -11,8 +11,8 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import (
-    BIT_REGISTER_NAME,
-    QUBIT_REGISTER_NAME,
+    DEFAULT_BIT_REGISTER_NAME,
+    DEFAULT_QUBIT_REGISTER_NAME,
     BitRegister,
     QubitRegister,
     RegisterManager,
@@ -48,8 +48,8 @@ class CircuitBuilder:
 
     def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
         self.register_manager = RegisterManager(
-            OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
-            OrderedDict({BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+            OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
+            OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
         )
         self.ir = IR()
 
