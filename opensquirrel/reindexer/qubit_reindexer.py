@@ -18,8 +18,8 @@ from opensquirrel.ir.semantics import ControlledGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.register_manager import (
-    BIT_REGISTER_NAME,
-    QUBIT_REGISTER_NAME,
+    DEFAULT_BIT_REGISTER_NAME,
+    DEFAULT_QUBIT_REGISTER_NAME,
     BitRegister,
     QubitRegister,
     RegisterManager,
@@ -87,8 +87,8 @@ def get_reindexed_circuit(
 
     qubit_reindexer = _QubitReindexer(qubit_indices)
     register_manager = RegisterManager(
-        OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(len(qubit_indices))}),
-        OrderedDict({BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+        OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(len(qubit_indices))}),
+        OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
     )
     replacement_ir = IR()
     for gate in replacement_gates:

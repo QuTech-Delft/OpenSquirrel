@@ -11,11 +11,11 @@ from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import (
-    BIT_REGISTER_NAME,
-    QUBIT_REGISTER_NAME,
+    DEFAULT_BIT_REGISTER_NAME,
+    DEFAULT_QUBIT_REGISTER_NAME,
     BitRegister,
     QubitRegister,
-    RegisterManager, Register,
+    RegisterManager,
 )
 
 _builder_dynamic_attributes = (*default_instruction_set, "asm")
@@ -48,8 +48,8 @@ class CircuitBuilder:
 
     def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
         self.register_manager = RegisterManager(
-            OrderedDict({QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
-            OrderedDict({BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+            OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
+            OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
         )
         self.ir = IR()
 
@@ -61,12 +61,6 @@ class CircuitBuilder:
             return partial(self._add_statement, attr)
         # Default behaviour
         return self.__getattribute__(attr)
-
-    def add_register(self, register: Register) -> None:
-        if isinstance(register, QubitRegister):
-            self.register_manager.add_qubit_register(register)
-        if isinstance(register, BitRegister):
-            self.register_manager.add_bit_register(register)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.
@@ -117,6 +111,7 @@ class CircuitBuilder:
             raise TypeError(msg) from e
 
         self._check_out_of_bounds_access(instruction)
+
         self.ir.add_statement(instruction)
         return self
 
