@@ -2,11 +2,29 @@ import math
 
 import pytest
 
-from opensquirrel import CNOT, CZ, SWAP, X90, Y90, Z90, H, I, MinusX90, MinusY90, MinusZ90, Rx, Ry, Rz, U, X, Y, Z, \
-    Circuit
+from opensquirrel import (
+    CNOT,
+    CZ,
+    SWAP,
+    X90,
+    Y90,
+    Z90,
+    H,
+    I,
+    MinusX90,
+    MinusY90,
+    MinusZ90,
+    Rx,
+    Ry,
+    Rz,
+    U,
+    X,
+    Y,
+    Z,
+)
 from opensquirrel.circuit_builder import CircuitBuilder
-from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait, Qubit
-from opensquirrel.register_manager import QubitRegister, BitRegister
+from opensquirrel.ir import Barrier, Init, Instruction, Measure, Reset, Wait
+from opensquirrel.register_manager import BitRegister, QubitRegister
 
 
 class TestCircuitBuilder:
@@ -107,21 +125,32 @@ class TestCircuitBuilder:
 
     def test_mulitple_registers(self) -> None:
         builder = CircuitBuilder()
-        q0 = QubitRegister(1, 'q0')
-        q1 = QubitRegister(1, 'q1')
+        q0 = QubitRegister(1, "q0")
+        q1 = QubitRegister(1, "q1")
         b = BitRegister(2)
 
         builder.add_register(q0)
         builder.add_register(q1)
         builder.add_register(b)
 
+        builder.H(q0[0])
         builder.H(0)
+
+        builder.H(q1[0])
+        builder.H(1)
 
         circuit = builder.to_circuit()
 
-        print(circuit)
+        assert (
+            str(circuit)
+            == """version 3.0
 
-        # cqasm_string = """version 3.0\nqubit[3] q0\nbit[2] b\nH q0[0]\nqubit[4] q1\nH q1[0]"""
-        # circuit = Circuit.from_string(cqasm_string)
-        # print(circuit)
+qubit[2] q
+bit[2] b
 
+H q[0]
+H q[0]
+H q[1]
+H q[1]
+"""
+        )

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import OrderedDict
-from typing import Any
+from typing import Any, ClassVar
 
 DEFAULT_QUBIT_REGISTER_NAME = "q"
 DEFAULT_BIT_REGISTER_NAME = "b"
@@ -9,6 +9,8 @@ DEFAULT_BIT_REGISTER_NAME = "b"
 
 class Register:
     """Register manages a (virtual) register."""
+
+    default_name: ClassVar[str]
 
     def __init__(
         self,
@@ -57,54 +59,60 @@ class Register:
 class QubitRegister(Register):
     """QubitRegister manages a (virtual) qubit register."""
 
-    _default_name: str = DEFAULT_QUBIT_REGISTER_NAME
+    default_name: ClassVar[str] = DEFAULT_QUBIT_REGISTER_NAME
 
-    def __init__(self, size: int, name: str = _default_name) -> None:
+    def __init__(self, size: int, name: str = default_name) -> None:
         super().__init__(size, name=name)
 
 
 class BitRegister(Register):
     """BitRegister manages a (virtual) bit register."""
 
-    _default_name: str = DEFAULT_BIT_REGISTER_NAME
+    default_name: ClassVar[str] = DEFAULT_BIT_REGISTER_NAME
 
-    def __init__(self, size: int, name: str = _default_name) -> None:
+    def __init__(self, size: int, name: str = default_name) -> None:
         super().__init__(size, name=name)
 
 
-Registry = OrderedDict[str, QubitRegister | BitRegister]
+QubitRegistry = OrderedDict[str, QubitRegister]
+BitRegistry = OrderedDict[str, BitRegister]
+Registry = QubitRegistry | BitRegistry
 
 
 class RegisterManager:
-    def __init__(self, qubit_registry: Registry, bit_registry: Registry) -> None:
+    def __init__(self, qubit_registry: QubitRegistry, bit_registry: BitRegistry) -> None:
         self._qubit_registry = qubit_registry
         self._bit_registry = bit_registry
-        self._virtual_qubit_register = RegisterManager.generate_virtual_register(qubit_registry) or QubitRegister(0)
-        self._virtual_bit_register = RegisterManager.generate_virtual_register(bit_registry) or BitRegister(0)
+        self._virtual_qubit_register = (
+            QubitRegister(0) if not qubit_registry else (RegisterManager.generate_virtual_register(qubit_registry))
+        )
+        self._virtual_bit_register = (
+            BitRegister(0) if not bit_registry else (RegisterManager.generate_virtual_register(bit_registry))
+        )
 
     @staticmethod
-    def generate_virtual_register(registry: Registry) -> QubitRegister | BitRegister | None:
+    def generate_virtual_register(registry: Registry) -> Register:
         registers = list(registry.values())
-        if not registers:
-            return None
         register_cls = registers[0].__class__
         virtual_index = 0
         for register in registers:
             register.virtual_zero_index = virtual_index
             virtual_index += register.size
-        return register_cls(virtual_index)
+        return register_cls(virtual_index, register_cls.default_name)
 
     def add_qubit_register(self, qubit_register: QubitRegister) -> None:
         if qubit_register.name in self._qubit_registry:
             msg = f"Qubit register with name '{qubit_register.name}' already exists"
             raise KeyError(msg)
         self._qubit_registry[qubit_register.name] = qubit_register
+        self._virtual_qubit_register = RegisterManager.generate_virtual_register(self._qubit_registry)
 
     def add_bit_register(self, bit_register: BitRegister) -> None:
-        if bit_register.name in self._qubit_registry:
+        if bit_register.name in self._bit_registry:
             msg = f"Bit register with name '{bit_register.name}' already exists"
             raise KeyError(msg)
         self._bit_registry[bit_register.name] = bit_register
+        self._virtual_bit_register = RegisterManager.generate_virtual_register(self._bit_registry)
 
     @property
     def qubit_register_size(self) -> int:
@@ -123,10 +131,10 @@ class RegisterManager:
         return self._virtual_bit_register.name
 
     def get_qubit_register(self, qubit_register_name: str) -> QubitRegister:
-        return self._qubit_registry[qubit_register_name]  # type: ignore[return-value]
+        return self._qubit_registry[qubit_register_name]
 
     def get_bit_register(self, bit_register_name: str) -> BitRegister:
-        return self._bit_registry[bit_register_name]  # type: ignore[return-value]
+        return self._bit_registry[bit_register_name]
 
     def __repr__(self) -> str:
         return (

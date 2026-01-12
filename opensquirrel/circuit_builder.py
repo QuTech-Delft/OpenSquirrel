@@ -15,6 +15,7 @@ from opensquirrel.register_manager import (
     DEFAULT_QUBIT_REGISTER_NAME,
     BitRegister,
     QubitRegister,
+    Register,
     RegisterManager,
 )
 
@@ -46,10 +47,24 @@ class CircuitBuilder:
         <BLANKLINE>
     """
 
-    def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
+    def __init__(
+        self,
+        qubit_register_size: int = 0,
+        bit_register_size: int = 0,
+    ) -> None:
+        initial_qubit_registry = (
+            OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)})
+            if (qubit_register_size > 0)
+            else OrderedDict()
+        )
+        initial_bit_registry = (
+            OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(bit_register_size)})
+            if (bit_register_size > 0)
+            else OrderedDict()
+        )
         self.register_manager = RegisterManager(
-            OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
-            OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+            initial_qubit_registry,
+            initial_bit_registry,
         )
         self.ir = IR()
 
@@ -61,6 +76,12 @@ class CircuitBuilder:
             return partial(self._add_statement, attr)
         # Default behaviour
         return self.__getattribute__(attr)
+
+    def add_register(self, register: Register) -> None:
+        if isinstance(register, QubitRegister):
+            self.register_manager.add_qubit_register(register)
+        if isinstance(register, BitRegister):
+            self.register_manager.add_bit_register(register)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.
