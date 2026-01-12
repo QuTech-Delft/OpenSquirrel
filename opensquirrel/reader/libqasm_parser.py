@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, cast
 
@@ -22,7 +23,7 @@ from opensquirrel.ir import (
     Qubit,
     Statement,
 )
-from opensquirrel.register_manager import RegisterManager
+from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager, Registry
 
 if TYPE_CHECKING:
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
@@ -47,7 +48,9 @@ class LibQasmParser:
 
     @staticmethod
     def _type_of(ast_expression: Any) -> type:
-        if isinstance(ast_expression, (cqasm_values.IndexRef, cqasm_values.VariableRef)):
+        if isinstance(ast_expression, cqasm.semantic.Variable):
+            return type(ast_expression.typ)
+        if isinstance(ast_expression, (cqasm.values.IndexRef, cqasm.values.VariableRef)):
             return type(ast_expression.variable.typ)
         return type(ast_expression)
 
@@ -83,25 +86,27 @@ class LibQasmParser:
 
     def _get_qubits(self, ast_qubit_expression: cqasm_values.VariableRef | cqasm_values.IndexRef) -> list[Qubit]:
         ret = []
-        variable_name = ast_qubit_expression.variable.name
-        if isinstance(ast_qubit_expression, cqasm_values.VariableRef):
-            qubit_range = self.register_manager.get_qubit_range(variable_name)
-            ret = [Qubit(index) for index in range(qubit_range.first, qubit_range.first + qubit_range.size)]
-        if isinstance(ast_qubit_expression, cqasm_values.IndexRef):
+        qubit_register = self.register_manager.get_qubit_register(ast_qubit_expression.variable.name)
+        if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
+            index_first = qubit_register.virtual_zero_index
+            index_last = index_first + qubit_register.size
+            ret = [Qubit(index) for index in range(index_first, index_last)]
+        if isinstance(ast_qubit_expression, cqasm.values.IndexRef):
             int_indices = [int(i.value) for i in ast_qubit_expression.indices]
-            indices = [self.register_manager.get_qubit_index(variable_name, i) for i in int_indices]
+            indices = [qubit_register.virtual_zero_index + i for i in int_indices]
             ret = [Qubit(index) for index in indices]
         return ret
 
     def _get_bits(self, ast_bit_expression: cqasm_values.VariableRef | cqasm_values.IndexRef) -> list[Bit]:
         ret = []
-        variable_name = ast_bit_expression.variable.name
-        if isinstance(ast_bit_expression, cqasm_values.VariableRef):
-            bit_range = self.register_manager.get_bit_range(variable_name)
-            ret = [Bit(index) for index in range(bit_range.first, bit_range.first + bit_range.size)]
-        if isinstance(ast_bit_expression, cqasm_values.IndexRef):
+        bit_register = self.register_manager.get_bit_register(ast_bit_expression.variable.name)
+        if isinstance(ast_bit_expression, cqasm.values.VariableRef):
+            index_first = bit_register.virtual_zero_index
+            index_last = index_first + bit_register.size
+            ret = [Bit(index) for index in range(index_first, index_last)]
+        if isinstance(ast_bit_expression, cqasm.values.IndexRef):
             int_indices = [int(i.value) for i in ast_bit_expression.indices]
-            indices = [self.register_manager.get_bit_index(variable_name, i) for i in int_indices]
+            indices = [bit_register.virtual_zero_index + i for i in int_indices]
             ret = [Bit(index) for index in indices]
         return ret
 
@@ -202,6 +207,22 @@ class LibQasmParser:
             return lambda *args: default_control_instruction_set[instruction.name](*args)
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
+    @staticmethod
+    def _get_registry(
+        ast: Any,
+        register_cls: type[QubitRegister | BitRegister],
+        type_check: Callable[[Any], bool],
+    ) -> Registry:
+        registry = OrderedDict()
+        for variable in filter(type_check, ast.variables):
+            registry[variable.name] = register_cls(variable.typ.size, variable.name)
+        return registry
+
+    def _create_register_manager(self, ast: Any) -> RegisterManager:
+        qubit_registry = self._get_registry(ast, QubitRegister, LibQasmParser._is_qubit_type)
+        bit_registry = self._get_registry(ast, BitRegister, LibQasmParser._is_bit_type)
+        return RegisterManager(qubit_registry, bit_registry)
+
     def circuit_from_string(self, s: str) -> Circuit:
         # Analyzer will return an Abstract Syntax Tree (AST).
         analyzer = LibQasmParser._create_analyzer()
@@ -215,8 +236,12 @@ class LibQasmParser:
             raise TypeError(msg)
 
         # Create RegisterManager
-        self.register_manager = RegisterManager.from_ast(ast)
+        self.register_manager = self._create_register_manager(ast)
 
+        if not self.register_manager:
+            msg = "parsing error: no registers found"
+            raise OSError(msg)
+        
         expanded_args: list[tuple[Any, ...]] = []
         # Parse statements
         for statement in ast.block.statements:
@@ -245,5 +270,4 @@ class LibQasmParser:
                 for args in expanded_args:
                     self.ir.add_statement(instruction_generator(*args))
                 expanded_args = []
-
         return Circuit(self.register_manager, self.ir)

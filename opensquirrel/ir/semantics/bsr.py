@@ -12,6 +12,7 @@ from opensquirrel.common import ATOL, normalize_angle, repr_round
 from opensquirrel.ir.expression import Axis, AxisLike, Float
 from opensquirrel.ir.ir import IRNode
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
+from opensquirrel.utils import can1
 from opensquirrel.utils.general_math import acos
 
 if TYPE_CHECKING:
@@ -210,7 +211,11 @@ class BsrUnitaryParams(BlochSphereRotation):
         a = BlochSphereRotation((0, 0, 1), lmbda, 0)
         b = BlochSphereRotation((0, 1, 0), theta, 0)
         c = BlochSphereRotation((0, 0, 1), phi, (float(phi) + float(lmbda)) / 2)
-        return a * b * c
+
+        ma = can1(a.axis, a.angle, a.phase)
+        mb = can1(b.axis, b.angle, b.phase)
+        mc = can1(c.axis, c.angle, c.phase)
+        return bsr_from_matrix(mc @ mb @ ma)
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_bsr = super().accept(visitor)
