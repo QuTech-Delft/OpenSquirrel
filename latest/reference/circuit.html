@@ -3493,62 +3493,8 @@
   
   
   
-    
-    
-      
-        
-      
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_2_1">
-        
-          
-          <label class="md-nav__link" for="__nav_5_1_9_2_1" id="__nav_5_1_9_2_1_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    cqasmv1_exporter
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_5_1_9_2_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_1_9_2_1">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    cqasmv1_exporter
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="passes/exporter/cqasmv1_exporter/cqasmv1_exporter.html" class="md-nav__link">
+      <a href="passes/exporter/cqasmv1_exporter.html" class="md-nav__link">
         
   
   
@@ -3564,14 +3510,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -5435,19 +5373,19 @@
 <a id="__codelineno-0-82" name="__codelineno-0-82"></a>
 <a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="nd">@property</span>
 <a id="__codelineno-0-84" name="__codelineno-0-84"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">qubit_register_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">get_qubit_register_size</span><span class="p">()</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">qubit_register_size</span>
 <a id="__codelineno-0-86" name="__codelineno-0-86"></a>
 <a id="__codelineno-0-87" name="__codelineno-0-87"></a>    <span class="nd">@property</span>
 <a id="__codelineno-0-88" name="__codelineno-0-88"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">bit_register_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">get_bit_register_size</span><span class="p">()</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">bit_register_size</span>
 <a id="__codelineno-0-90" name="__codelineno-0-90"></a>
 <a id="__codelineno-0-91" name="__codelineno-0-91"></a>    <span class="nd">@property</span>
 <a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">qubit_register_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">get_qubit_register_name</span><span class="p">()</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">qubit_register_name</span>
 <a id="__codelineno-0-94" name="__codelineno-0-94"></a>
 <a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="nd">@property</span>
 <a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">bit_register_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">get_bit_register_name</span><span class="p">()</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">register_manager</span><span class="o">.</span><span class="n">bit_register_name</span>
 <a id="__codelineno-0-98" name="__codelineno-0-98"></a>
 <a id="__codelineno-0-99" name="__codelineno-0-99"></a>    <span class="nd">@property</span>
 <a id="__codelineno-0-100" name="__codelineno-0-100"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">instruction_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InstructionCount</span><span class="p">:</span>
