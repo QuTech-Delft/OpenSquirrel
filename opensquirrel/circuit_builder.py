@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from copy import deepcopy
 from functools import partial
 from typing import Any
@@ -9,7 +10,13 @@ from typing_extensions import Self
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.register_manager import (
+    DEFAULT_BIT_REGISTER_NAME,
+    DEFAULT_QUBIT_REGISTER_NAME,
+    BitRegister,
+    QubitRegister,
+    RegisterManager,
+)
 
 _builder_dynamic_attributes = (*default_instruction_set, "asm")
 
@@ -40,7 +47,10 @@ class CircuitBuilder:
     """
 
     def __init__(self, qubit_register_size: int, bit_register_size: int = 0) -> None:
-        self.register_manager = RegisterManager(QubitRegister(qubit_register_size), BitRegister(bit_register_size))
+        self.register_manager = RegisterManager(
+            OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(qubit_register_size)}),
+            OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+        )
         self.ir = IR()
 
     def __dir__(self) -> list[str]:
@@ -59,7 +69,7 @@ class CircuitBuilder:
             qubit: qubit to check.
         """
         index = Qubit(qubit).index
-        if index >= self.register_manager.get_qubit_register_size():
+        if index >= self.register_manager.qubit_register_size:
             msg = f"qubit index {index} is out of bounds"
             raise IndexError(msg)
 
@@ -70,7 +80,7 @@ class CircuitBuilder:
             bit: bit to check.
         """
         index = Bit(bit).index
-        if index >= self.register_manager.get_bit_register_size():
+        if index >= self.register_manager.bit_register_size:
             msg = f"bit index {index} is out of bounds"
             raise IndexError(msg)
 
