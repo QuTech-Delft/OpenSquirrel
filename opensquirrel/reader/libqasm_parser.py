@@ -221,7 +221,7 @@ class LibQasmParser:
         registry = OrderedDict()
         for variable in filter(type_check, ast.variables):
             registry[variable.name] = register_cls(variable.typ.size, variable.name)
-        return registry or OrderedDict({register_cls.default_name: register_cls(0)})  # type: ignore  [return-value]
+        return registry or OrderedDict({register_cls.default_name: register_cls(0)})
 
     def _create_register_manager(self, ast: Any) -> RegisterManager:
         qubit_registry = self._get_registry(ast, QubitRegister, LibQasmParser._is_qubit_type)

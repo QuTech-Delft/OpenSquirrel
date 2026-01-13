@@ -49,6 +49,7 @@ class Register:
         if isinstance(key, slice):
             start, stop, step = key.indices(len(self))
             return list(range(start + self._virtual_zero_index, stop + self._virtual_zero_index, step))
+        return None
 
     def __len__(self) -> int:
         return self._size
