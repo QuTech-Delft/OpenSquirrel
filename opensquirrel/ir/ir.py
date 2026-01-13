@@ -96,10 +96,10 @@ class IRVisitor:
     def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> Any:
         pass
 
-    def visit_non_unitary(self, gate: NonUnitary) -> Any:
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> Any:
         pass
 
-    def visit_control_instruction(self, instruction: ControlInstruction) -> Any:
+    def visit_control_instruction(self, control_instruction: ControlInstruction) -> Any:
         pass
 
     def visit_measure(self, measure: Measure) -> Any:

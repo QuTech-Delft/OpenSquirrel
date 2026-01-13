@@ -37,12 +37,12 @@ Repository = "https://github.com/QuTech-Delft/OpenSquirrel"
 dev = [
     "coverage>=7.10.7,<8",
     "IPython>=8.37,<9",
-    "mypy>=1.18.2,<2",
     "pytest>=8.4.2,<10",
     "pytest-cov>=4.1,<8.0",
     "ruff>=0.13.2,<0.15",
     "sympy>=1.14.0,<2",
     "tox>=4.30.2,<5",
+    "ty>=0.0.10",
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
@@ -160,6 +160,7 @@ ignore = [
     "W605", # deprecated in Python 3.6
     "PT012", # pytest.raises() block should contain only a single simple statement
     "SIM105", # Use `contextlib.suppress(ModuleNotFoundError)` instead of `try`-`except`-`pass`
+    "RUF067", # Ignore "non-empty" __init__.py
 ]
 isort.combine-as-imports = true
 pydocstyle.convention = "google"
@@ -178,8 +179,6 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
     "SLF001", # Checking private functions is OK
 ]
 
-[tool.mypy]
-ignore_missing_imports = true
-strict = true
-
+[tool.ty.rules]
+unresolved-import = "ignore"
 
