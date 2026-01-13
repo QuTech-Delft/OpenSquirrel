@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import OrderedDict
+from collections.abc import Iterator
 from typing import Any, ClassVar
 
 DEFAULT_QUBIT_REGISTER_NAME = "q"
@@ -38,12 +39,25 @@ class Register:
     def virtual_zero_index(self, value: int) -> None:
         self._virtual_zero_index = value
 
-    def __getitem__(self, index: int) -> Any:
-        if abs(index) > self._size:
-            msg = f"Index {index} is out of range"
-            raise IndexError(msg)
-        size = self._size if index < 0 else 0
-        return self._virtual_zero_index + index + size
+    def __getitem__(self, key: int | slice) -> Any:
+        if isinstance(key, int):
+            if abs(key) >= len(self):
+                msg = f"Index {key} is out of range"
+                raise IndexError(msg)
+            size = len(self) if key < 0 else 0
+            return self._virtual_zero_index + key + size
+        if isinstance(key, slice):
+            start, stop, step = key.indices(len(self))
+            return list(range(start + self._virtual_zero_index, stop + self._virtual_zero_index, step))
+
+    def __len__(self) -> int:
+        return self._size
+
+    def __iter__(self) -> Iterator[int]:
+        index = self._virtual_zero_index
+        while index < self._virtual_zero_index + self._size:
+            yield index
+            index += 1
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Register):
