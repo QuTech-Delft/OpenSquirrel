@@ -299,9 +299,9 @@ def test_anonymous_gates(exporter: CqasmV1Exporter, gate: Gate) -> None:
             "version 1.0\n\nqubits 6\n\nbarrier q[0, 1, 2, 5, 3, 4, 1]\n",
         ),
         (
-            "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];",
+            "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];"  # noqa: ISC004
             "barrier q[0]; barrier q[2]",
-            "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]\n",
+            "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]\n"  # noqa: ISC004
             "barrier q[0, 2]\n",
         ),
         (
