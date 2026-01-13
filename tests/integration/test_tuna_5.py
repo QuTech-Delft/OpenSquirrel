@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import importlib
+import importlib.util
 from typing import cast
 
 import pytest
@@ -16,14 +16,14 @@ from tests.integration import DataType  # noqa: TC001
 BACKEND_ID = "tuna-5"
 
 
-def _get_operations(exported_schedule) -> list[str]:  # type: ignore  # noqa: ANN001
+def _get_operations(exported_schedule) -> list[str]:  # noqa: ANN001
     return [
         exported_schedule.operations[schedulable["operation_id"]].name
         for schedulable in exported_schedule.schedulables.values()
     ]
 
 
-def _check_measurement_to_bit_mapping(circuit: Circuit, exported_schedule) -> None:  # type: ignore  # noqa: ANN001
+def _check_measurement_to_bit_mapping(circuit: Circuit, exported_schedule) -> None:  # noqa: ANN001
     qs_measures = [
         operation.data["gate_info"]
         for operation in exported_schedule.operations.values()

@@ -5,6 +5,8 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, cast
 
 import cqasm.v3x as cqasm
+import cqasm.v3x.types as cqasm_types
+import cqasm.v3x.values as cqasm_values
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_gate_modifiers import ControlGateModifier, InverseGateModifier, PowerGateModifier
@@ -33,14 +35,14 @@ class LibQasmParser:
 
     @staticmethod
     def _ast_literal_to_ir_literal(
-        ast_literal: cqasm.values.ConstInt | cqasm.values.ConstFloat | None,
+        ast_literal: cqasm_values.ConstInt | cqasm_values.ConstFloat | None,
     ) -> Int | Float | None:
-        if type(ast_literal) not in [cqasm.values.ConstInt, cqasm.values.ConstFloat, type(None)]:
+        if type(ast_literal) not in [cqasm_values.ConstInt, cqasm_values.ConstFloat, type(None)]:
             msg = f"unrecognized type: {type(ast_literal)}"
             raise TypeError(msg)
-        if isinstance(ast_literal, cqasm.values.ConstInt):
+        if isinstance(ast_literal, cqasm_values.ConstInt):
             return Int(ast_literal.value)
-        if isinstance(ast_literal, cqasm.values.ConstFloat):
+        if isinstance(ast_literal, cqasm_values.ConstFloat):
             return Float(ast_literal.value)
         return None
 
@@ -54,21 +56,21 @@ class LibQasmParser:
 
     @staticmethod
     def _size_of(ast_expression: Any) -> int:
-        if isinstance(ast_expression, cqasm.values.IndexRef):
+        if isinstance(ast_expression, cqasm_values.IndexRef):
             return len(ast_expression.indices)
-        if isinstance(ast_expression, cqasm.values.VariableRef):
+        if isinstance(ast_expression, cqasm_values.VariableRef):
             return int(ast_expression.variable.typ.size)
         return 1
 
     @staticmethod
     def _is_qubit_type(ast_expression: Any) -> bool:
         ast_type = LibQasmParser._type_of(ast_expression)
-        return bool(ast_type == cqasm.types.Qubit or ast_type == cqasm.types.QubitArray)
+        return bool(ast_type == cqasm_types.Qubit or ast_type == cqasm_types.QubitArray)
 
     @staticmethod
     def _is_bit_type(ast_expression: Any) -> bool:
         ast_type = LibQasmParser._type_of(ast_expression)
-        return bool(ast_type == cqasm.types.Bit or ast_type == cqasm.types.BitArray)
+        return bool(ast_type == cqasm_types.Bit or ast_type == cqasm_types.BitArray)
 
     @staticmethod
     def _is_gate_instruction(ast_node: Any) -> bool:
@@ -82,7 +84,7 @@ class LibQasmParser:
     def _is_asm_declaration(ast_node: Any) -> bool:
         return isinstance(ast_node, cqasm.semantic.AsmDeclaration)
 
-    def _get_qubits(self, ast_qubit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef) -> list[Qubit]:
+    def _get_qubits(self, ast_qubit_expression: cqasm_values.VariableRef | cqasm_values.IndexRef) -> list[Qubit]:
         ret = []
         qubit_register = self.register_manager.get_qubit_register(ast_qubit_expression.variable.name)
         if isinstance(ast_qubit_expression, cqasm.values.VariableRef):
@@ -95,7 +97,7 @@ class LibQasmParser:
             ret = [Qubit(index) for index in indices]
         return ret
 
-    def _get_bits(self, ast_bit_expression: cqasm.values.VariableRef | cqasm.values.IndexRef) -> list[Bit]:
+    def _get_bits(self, ast_bit_expression: cqasm_values.VariableRef | cqasm_values.IndexRef) -> list[Bit]:
         ret = []
         bit_register = self.register_manager.get_bit_register(ast_bit_expression.variable.name)
         if isinstance(ast_bit_expression, cqasm.values.VariableRef):
@@ -114,7 +116,7 @@ class LibQasmParser:
         For example, for CNOT q[0, 1] q[2, 3], this function returns [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]].
         """
         ret: list[list[Any]] = []
-        for operand in instruction.operands:
+        for operand in instruction.operands:  # ty: ignore[unresolved-attribute]
             if self._is_qubit_type(operand):
                 ret.append(self._get_qubits(operand))
             else:
@@ -142,7 +144,7 @@ class LibQasmParser:
         if isinstance(instruction, cqasm.semantic.GateInstruction):
             gate_parameters = self._get_named_gate_parameters(instruction.gate)
         else:
-            gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]
+            gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]  # ty: ignore[unresolved-attribute]
         if gate_parameters:
             number_of_operands = len(extended_operands[0])
             extended_gate_parameters = [gate_parameters] * number_of_operands
@@ -175,11 +177,6 @@ class LibQasmParser:
     def _create_analyzer() -> cqasm.Analyzer:
         without_defaults = False
         return cqasm.Analyzer("3.0", without_defaults)
-
-    @staticmethod
-    def _check_analysis_result(result: Any) -> None:
-        if isinstance(result, list):
-            raise OSError("parsing error: " + ", ".join(result))
 
     def _get_gate_generator(self, instruction: cqasm.semantic.GateInstruction) -> Callable[..., Gate]:
         gate_name = instruction.gate.name
@@ -227,11 +224,16 @@ class LibQasmParser:
         return RegisterManager(qubit_registry, bit_registry)
 
     def circuit_from_string(self, s: str) -> Circuit:
-        # Analysis result will be either an Abstract Syntax Tree (AST) or a list of error messages
+        # Analyzer will return an Abstract Syntax Tree (AST).
         analyzer = LibQasmParser._create_analyzer()
-        analysis_result = analyzer.analyze_string(s)
-        LibQasmParser._check_analysis_result(analysis_result)
-        ast = analysis_result
+        ast = analyzer.analyze_string(s)
+        if not isinstance(ast, cqasm.semantic.Program):
+            msg = "parsing error: " + ", ".join(ast)
+            raise OSError(msg)
+
+        if ast.block is None:
+            msg = "AST should have a Block"
+            raise TypeError(msg)
 
         # Create RegisterManager
         self.register_manager = self._create_register_manager(ast)
@@ -240,8 +242,8 @@ class LibQasmParser:
             msg = "parsing error: no registers found"
             raise OSError(msg)
 
-        # Parse statements
         expanded_args: list[tuple[Any, ...]] = []
+        # Parse statements
         for statement in ast.block.statements:
             instruction_generator: Callable[..., Statement]
             if LibQasmParser._is_gate_instruction(statement):

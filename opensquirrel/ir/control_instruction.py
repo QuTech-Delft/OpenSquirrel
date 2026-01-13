@@ -38,7 +38,7 @@ class Barrier(ControlInstruction):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return (self.qubit,)
+        return ()
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_control_instruction(self)
@@ -59,7 +59,7 @@ class Wait(ControlInstruction):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return self.qubit, self.time
+        return (self.time,)
 
     def accept(self, visitor: IRVisitor) -> Any:
         visitor.visit_control_instruction(self)
