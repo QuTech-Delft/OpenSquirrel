@@ -241,7 +241,7 @@ class LibQasmParser:
         if not self.register_manager:
             msg = "parsing error: no registers found"
             raise OSError(msg)
-        
+
         expanded_args: list[tuple[Any, ...]] = []
         # Parse statements
         for statement in ast.block.statements:

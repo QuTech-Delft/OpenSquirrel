@@ -222,7 +222,7 @@ class BaseAxis(Expression, ABC):
         """String representation of the ``BaseAxis``."""
         return f"{self.__class__.__name__}{self.value}"
 
-    def __array__(self, dtype: DTypeLike = None, *, copy: bool | None = None) -> NDArray[Any]:
+    def __array__(self, dtype: DTypeLike | None = None, *, copy: bool | None = None) -> NDArray[Any]:
         """Convert the ``BaseAxis`` data to an array."""
         return np.array(self.value, dtype=dtype, copy=copy)
 

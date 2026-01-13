@@ -18,7 +18,7 @@ def make_interaction_graph(ir: IR) -> nx.Graph:
 
             case _:
                 msg = (
-                    f"the gate {gate} acts on more than 2 qubits. "
+                    f"the gate {gate} acts on more than 2 qubits. ",
                     "The gate must be decomposed before an interaction graph can be made",
                 )
                 raise ValueError(msg)

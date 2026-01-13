@@ -106,8 +106,8 @@ def circuit4() -> Circuit:
 def test_router(
     router: ShortestPathRouter, circuit: Circuit, expected_swap_count: int, request: pytest.FixtureRequest
 ) -> None:
-    circuit = request.getfixturevalue(circuit)  # type: ignore[arg-type]
-    router = request.getfixturevalue(router)  # type: ignore[arg-type]
+    circuit = request.getfixturevalue(circuit)  # ty: ignore[invalid-argument-type]
+    router = request.getfixturevalue(router)  # ty: ignore[invalid-argument-type]
     circuit.route(router=router)
     swap_count = sum(1 for statement in circuit.ir.statements if isinstance(statement, SWAP))
     assert swap_count == expected_swap_count
@@ -136,6 +136,6 @@ def test_route_indices_propagation(router4: ShortestPathRouter, circuit4: Circui
 
     for actual, expected in zip(actual_statements, expected_statements, strict=False):
         assert type(actual) is type(expected)
-        actual_indices = [q.index for q in actual.qubit_operands]  # type: ignore[attr-defined]
-        expected_indices = [q.index for q in expected.qubit_operands]  # type: ignore[attr-defined]
+        actual_indices = [q.index for q in actual.qubit_operands]
+        expected_indices = [q.index for q in expected.qubit_operands]
         assert actual_indices == expected_indices
