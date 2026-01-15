@@ -81,13 +81,14 @@ def circuit3() -> Circuit:
 
 
 def test_mip_mapper_simple_connectivity(mapper1: MIPMapper, circuit1: Circuit) -> None:
-    expected_mapping = Mapping([4, 3, 2, 0, 1])
+    expected_mapping = Mapping([0, 1, 2, 3, 4])
     mapping = mapper1.map(circuit1.ir, circuit1.qubit_register_size)
     assert mapping == expected_mapping
 
 
 def test_mip_mapper_complex_connectivity(mapper2: MIPMapper, circuit2: Circuit) -> None:
-    expected_mapping = Mapping([3, 4, 2, 5, 1, 0, 6])
+    # expected_mapping = Mapping([3, 4, 2, 5, 1, 0, 6])
+    expected_mapping = Mapping([2, 1, 3, 0, 4, 5, 6])
     mapping = mapper2.map(circuit2.ir, circuit2.qubit_register_size)
     assert mapping == expected_mapping
 
@@ -106,7 +107,7 @@ def test_timeout(mapper3: MIPMapper, circuit2: Circuit) -> None:
 def test_map_method(mapper1: MIPMapper, circuit1: Circuit) -> None:
     initial_circuit = str(circuit1)
     circuit1.map(mapper=mapper1)
-    assert str(circuit1) != initial_circuit
+    assert str(circuit1) == initial_circuit
 
 
 def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
@@ -131,10 +132,6 @@ def test_remap_controlled_gates(mapper4: MIPMapper, mapper5: MIPMapper) -> None:
 
     circuit.map(mapper=mapper4)
 
-    # This first assert needs to be updated, because in this case the MIP mapper should NOT
-    # remap this circuit at all!
-    # Issue: https://qutech-sd.atlassian.net/browse/CQT-414
-
     assert (
         str(circuit)
         == """version 3.0
@@ -142,10 +139,10 @@ def test_remap_controlled_gates(mapper4: MIPMapper, mapper5: MIPMapper) -> None:
 qubit[5] q
 bit[2] b
 
-H q[2]
-CNOT q[2], q[3]
-b[0] = measure q[2]
-b[1] = measure q[3]
+H q[0]
+CNOT q[0], q[1]
+b[0] = measure q[0]
+b[1] = measure q[1]
 """
     )
 
