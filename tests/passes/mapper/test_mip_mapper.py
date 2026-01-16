@@ -1,5 +1,7 @@
 # Tests for the MIPMapper pass
 
+import sys
+
 import pytest
 
 from opensquirrel import CircuitBuilder
@@ -80,16 +82,40 @@ def circuit3() -> Circuit:
     return builder.to_circuit()
 
 
-def test_mip_mapper_simple_connectivity(mapper1: MIPMapper, circuit1: Circuit) -> None:
-    expected_mapping = Mapping([4, 3, 2, 0, 1])
-    mapping = mapper1.map(circuit1.ir, circuit1.qubit_register_size)
-    assert mapping == expected_mapping
+@pytest.fixture
+def circuit4() -> Circuit:
+    builder = CircuitBuilder(3)
+    builder.CNOT(0, 1)
+    builder.CNOT(0, 2)
+    return builder.to_circuit()
 
 
-def test_mip_mapper_complex_connectivity(mapper2: MIPMapper, circuit2: Circuit) -> None:
-    expected_mapping = Mapping([3, 4, 2, 5, 1, 0, 6])
+@pytest.mark.parametrize(
+    ("mapper", "circuit", "expected_mapping"),
+    [("mapper1", "circuit1", Mapping([0, 1, 2, 3, 4])), ("mapper1", "circuit4", Mapping([0, 1, 2]))],
+)
+def test_identity_mapping(mapper: str, circuit: str, expected_mapping: Mapping, request: pytest.FixtureRequest) -> None:
+    # This test checks specifically that circuit fixtures 1 and 4 are not remapped
+    # Given the connectivity schemes specified in mapper fixture 1 as all two-qubit
+    # Gates can be executed from the get-go, as if by applying an identity mapping.
+    mapper_fixture = request.getfixturevalue(mapper)
+    circuit_fixture = request.getfixturevalue(circuit)
+
+    computed_mapping = mapper_fixture.map(circuit_fixture.ir, circuit_fixture.qubit_register_size)
+
+    assert computed_mapping.items() == expected_mapping.items()
+
+
+def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) -> None:
+    if sys.platform.startswith("linux") or sys.platform == "win32":
+        expected_mapping = Mapping([2, 1, 3, 0, 4, 5, 6])
+    elif sys.platform == "darwin":  # pragma: no cover
+        expected_mapping = Mapping([3, 4, 2, 0, 1, 5, 6])
+    else:  # pragma: no cover
+        pytest.skip(f"Unknown platform: {sys.platform}")
     mapping = mapper2.map(circuit2.ir, circuit2.qubit_register_size)
-    assert mapping == expected_mapping
+
+    assert mapping.items() == expected_mapping.items()
 
 
 def test_more_logical_qubits_than_physical(mapper1: MIPMapper, circuit3: Circuit) -> None:
@@ -106,7 +132,7 @@ def test_timeout(mapper3: MIPMapper, circuit2: Circuit) -> None:
 def test_map_method(mapper1: MIPMapper, circuit1: Circuit) -> None:
     initial_circuit = str(circuit1)
     circuit1.map(mapper=mapper1)
-    assert str(circuit1) != initial_circuit
+    assert str(circuit1) == initial_circuit
 
 
 def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
@@ -127,13 +153,10 @@ def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
 
 
 def test_remap_controlled_gates(mapper4: MIPMapper, mapper5: MIPMapper) -> None:
+    # Given the connectivity of the mapper4 fixture, this circuit should not be remapped
     circuit = Circuit.from_string("""version 3.0; qubit[5] q; bit[2] b; H q[0]; CNOT q[0], q[1]; b = measure q[0, 1]""")
 
     circuit.map(mapper=mapper4)
-
-    # This first assert needs to be updated, because in this case the MIP mapper should NOT
-    # remap this circuit at all!
-    # Issue: https://qutech-sd.atlassian.net/browse/CQT-414
 
     assert (
         str(circuit)
@@ -142,12 +165,14 @@ def test_remap_controlled_gates(mapper4: MIPMapper, mapper5: MIPMapper) -> None:
 qubit[5] q
 bit[2] b
 
-H q[2]
-CNOT q[2], q[3]
-b[0] = measure q[2]
-b[1] = measure q[3]
+H q[0]
+CNOT q[0], q[1]
+b[0] = measure q[0]
+b[1] = measure q[1]
 """
     )
+
+    # Given the connectivity of the mapper5 fixture, this circuit should be remapped
 
     builder = CircuitBuilder(3)
     builder.CNOT(0, 1)

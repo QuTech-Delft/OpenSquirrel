@@ -22,8 +22,19 @@ class Mapping:
             raise ValueError(msg)
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Mapping):
+        if len(self.data) != len(other.data):
             return False
+
+        if set(self.data.keys()) != set(other.data.keys()):
+            return False
+
+        for key in self.data:
+            if self.data[key] != other.data[key]:
+                return False
+
+        if self.data != other.data:
+            return False
+
         return self.data == other.data
 
     def __getitem__(self, key: int) -> int:

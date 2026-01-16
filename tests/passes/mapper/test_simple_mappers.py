@@ -27,7 +27,7 @@ class TestIdentityMapper:
 
     def test_get_mapping(self, mapper: IdentityMapper, circuit: Circuit) -> None:
         mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
-        assert mapping == Mapping([0, 1, 2])
+        assert mapping.items() == Mapping([0, 1, 2]).items()
 
     def test_map_method(self, mapper: IdentityMapper, circuit: Circuit) -> None:
         initial_circuit = str(circuit)
@@ -61,7 +61,7 @@ class TestHardcodedMapper:
 
     def test_get_mapping(self, mapper: HardcodedMapper, circuit: Circuit) -> None:
         mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
-        assert mapping == Mapping([1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
+        assert mapping.items() == Mapping([1, 2, 3, 4, 5, 6, 7, 8, 9, 0]).items()
 
     def test_map_method(self, mapper: HardcodedMapper, circuit: Circuit) -> None:
         circuit.map(mapper=mapper)
