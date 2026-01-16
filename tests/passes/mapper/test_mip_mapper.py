@@ -101,7 +101,7 @@ def test_identity_mapping(mapper: str, circuit: str, expected_mapping: Mapping, 
 
     computed_mapping = mapper_fixture.map(circuit_fixture.ir, circuit_fixture.qubit_register_size)
 
-    assert computed_mapping == expected_mapping
+    assert computed_mapping.items() == expected_mapping.items()
 
 
 def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) -> None:
