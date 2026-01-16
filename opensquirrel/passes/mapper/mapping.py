@@ -32,6 +32,9 @@ class Mapping:
             if self.data[key] != other.data[key]:
                 return False
 
+        if self.data != other.data:
+            return False
+
         return self.data == other.data
 
     def __getitem__(self, key: int) -> int:
