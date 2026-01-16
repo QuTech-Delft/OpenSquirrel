@@ -101,13 +101,13 @@ def test_identity_mapping(mapper: str, circuit: str, expected_mapping: Mapping, 
 
     computed_mapping = mapper_fixture.map(circuit_fixture.ir, circuit_fixture.qubit_register_size)
 
-    assert computed_mapping.items() == expected_mapping.items()
+    assert computed_mapping == expected_mapping
 
 
 def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) -> None:
     expected_mapping = Mapping([2, 1, 3, 0, 4, 5, 6])
     mapping = mapper2.map(circuit2.ir, circuit2.qubit_register_size)
-    assert mapping == expected_mapping
+    assert mapping.items() == expected_mapping.items()
 
 
 def test_more_logical_qubits_than_physical(mapper1: MIPMapper, circuit3: Circuit) -> None:
