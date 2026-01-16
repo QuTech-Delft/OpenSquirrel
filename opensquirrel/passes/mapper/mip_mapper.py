@@ -1,4 +1,4 @@
-# OpenQL MIP-Like Mapper. This mapper pass takes inspiration from: 
+# OpenQL MIP-Like Mapper. This mapper pass takes inspiration from:
 # https://github.com/QuTech-Delft/OpenQL/blob/develop/src/ql/pass/map/qubits/place_mip/place_mip.cc
 
 from __future__ import annotations
@@ -59,14 +59,14 @@ class MIPMapper(Mapper):
                 f"number of physical qubits ({num_physical_qubits})"
             )
             raise RuntimeError(error_message)
-            
+
         distance = self._get_distance(self.connectivity)
         reference_counter = self._get_reference_counter(ir, qubit_register_size)
-        
+
         cost, constraints, integrality, bounds = self._get_linearized_formulation(
             reference_counter, distance, qubit_register_size, num_physical_qubits
         )
-        
+
         milp_options = self._get_milp_options()
         mapping = self._solve_and_extract_mapping(
             cost, constraints, integrality, bounds, milp_options, qubit_register_size, num_physical_qubits
@@ -111,89 +111,114 @@ class MIPMapper(Mapper):
     ) -> tuple[list[float], list[LinearConstraint], list[bool], Bounds]:
         """
         Create the linearized MIP formulation following OpenQL's approach.
-        
+
         Variables:
             x[i][k]: binary, virtual qubit i mapped to physical qubit k (num_virtual * num_physical)
             w[i][k]: continuous, cost contribution for mapping i to k (num_virtual * num_physical)
-        
+
         Objective:
             min sum(w[i][k]) + epsilon * sum_{i,k: i!=k} x[i][k]
             (small epsilon penalty for non-identity mappings as tiebreaker)
-        
+
         Constraints:
             1. Each virtual qubit assigned to exactly one physical qubit: sum_k x[i][k] == 1
             2. Each physical qubit assigned to at most one virtual qubit: sum_i x[i][k] <= 1
             3. Linearization: costmax[i][k] * x[i][k] + sum_{j,l} refcount[i][j]*distance[k][l]*x[j][l] - w[i][k] <= costmax[i][k]
-        """
+        """  # noqa: E501
         num_x_vars = num_virtual_qubits * num_physical_qubits
         num_w_vars = num_virtual_qubits * num_physical_qubits
         num_vars = num_x_vars + num_w_vars
-    
+
+        costmax = self._compute_costmax(reference_counter, distance, num_virtual_qubits, num_physical_qubits)
+        cost = self._get_cost(num_virtual_qubits, num_physical_qubits, num_x_vars, num_w_vars)
+        constraints = self._get_constraints(
+            reference_counter, distance, costmax, num_virtual_qubits, num_physical_qubits, num_vars, num_x_vars
+        )
+        integrality, bounds = self._get_integrality_and_bounds(num_x_vars, num_w_vars)
+
+        return list(cost), constraints, list(integrality), bounds
+
+    @staticmethod
+    def _compute_costmax(
+        reference_counter: list[list[int]],
+        distance: list[list[int]],
+        num_virtual_qubits: int,
+        num_physical_qubits: int,
+    ) -> np.ndarray:
         costmax = np.zeros((num_virtual_qubits, num_physical_qubits))
         for i in range(num_virtual_qubits):
             for k in range(num_physical_qubits):
                 costmax[i][k] = sum(
                     reference_counter[i][j] * distance[k][l]
                     for j in range(num_virtual_qubits)
-                    for l in range(num_physical_qubits)
+                    for l in range(num_physical_qubits)  # noqa: E741
                 )
-        
-        epsilon = 1e-6  
+        return costmax
+
+    @staticmethod
+    def _get_cost(num_virtual_qubits: int, num_physical_qubits: int, num_x_vars: int, num_w_vars: int) -> np.ndarray:
+        epsilon = 1e-6
         x_cost = np.zeros(num_x_vars)
         for i in range(num_virtual_qubits):
             for k in range(num_physical_qubits):
                 if i != k:
                     x_cost[i * num_physical_qubits + k] += epsilon
                 x_cost[i * num_physical_qubits + k] += epsilon * epsilon * k
-        
-        cost = np.concatenate([x_cost, np.ones(num_w_vars)])
 
+        return np.concatenate([x_cost, np.ones(num_w_vars)])
+
+    @staticmethod
+    def _get_constraints(
+        reference_counter: list[list[int]],
+        distance: list[list[int]],
+        costmax: np.ndarray,
+        num_virtual_qubits: int,
+        num_physical_qubits: int,
+        num_vars: int,
+        num_x_vars: int,
+    ) -> list[LinearConstraint]:
         eq_a = np.zeros((num_virtual_qubits, num_vars))
         for i in range(num_virtual_qubits):
             for k in range(num_physical_qubits):
                 eq_a[i, i * num_physical_qubits + k] = 1
         eq_b = np.ones(num_virtual_qubits)
-        
+
         ub_a = np.zeros((num_physical_qubits, num_vars))
         for k in range(num_physical_qubits):
             for i in range(num_virtual_qubits):
                 ub_a[k, i * num_physical_qubits + k] = 1
         ub_b = np.ones(num_physical_qubits)
-        
+
         num_linearization_constraints = num_virtual_qubits * num_physical_qubits
         lin_a = np.zeros((num_linearization_constraints, num_vars))
         lin_b = np.zeros(num_linearization_constraints)
-        
+
         constraint_idx = 0
         for i in range(num_virtual_qubits):
             for k in range(num_physical_qubits):
                 lin_a[constraint_idx, i * num_physical_qubits + k] = costmax[i][k]
-                
+
                 for j in range(num_virtual_qubits):
-                    for l in range(num_physical_qubits):
-                        lin_a[constraint_idx, j * num_physical_qubits + l] += (
-                            reference_counter[i][j] * distance[k][l]
-                        )
-                
+                    for l in range(num_physical_qubits):  # noqa: E741
+                        lin_a[constraint_idx, j * num_physical_qubits + l] += reference_counter[i][j] * distance[k][l]
+
                 lin_a[constraint_idx, num_x_vars + i * num_physical_qubits + k] = -1
-                
                 lin_b[constraint_idx] = costmax[i][k]
-                
                 constraint_idx += 1
-        
-        constraints = [
-            LinearConstraint(eq_a, eq_b, eq_b), 
-            LinearConstraint(ub_a, -np.inf, ub_b),  
-            LinearConstraint(lin_a, -np.inf, lin_b),  
+
+        return [
+            LinearConstraint(eq_a, eq_b, eq_b),
+            LinearConstraint(ub_a, -np.inf, ub_b),
+            LinearConstraint(lin_a, -np.inf, lin_b),
         ]
-        
+
+    @staticmethod
+    def _get_integrality_and_bounds(num_x_vars: int, num_w_vars: int) -> tuple[np.ndarray, Bounds]:
         integrality = np.concatenate([np.ones(num_x_vars, dtype=bool), np.zeros(num_w_vars, dtype=bool)])
-        
         lb = np.concatenate([np.zeros(num_x_vars), np.zeros(num_w_vars)])
         ub = np.concatenate([np.ones(num_x_vars), np.full(num_w_vars, np.inf)])
         bounds = Bounds(lb, ub)
-        
-        return list(cost), constraints, list(integrality), bounds
+        return integrality, bounds
 
     def _get_milp_options(self) -> dict[str, float]:
         milp_options = {}
@@ -221,11 +246,10 @@ class MIPMapper(Mapper):
 
         num_x_vars = num_virtual_qubits * num_physical_qubits
         x_sol = res.x[:num_x_vars].reshape((num_virtual_qubits, num_physical_qubits))
-        
+
         mapping = []
         for i in range(num_virtual_qubits):
             k = int(np.argmax(x_sol[i]))
             mapping.append(k)
 
         return mapping
-
