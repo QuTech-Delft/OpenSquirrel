@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from collections.abc import Iterator
-from typing import Any, ClassVar
+from typing import Any, ClassVar, overload
 
 DEFAULT_QUBIT_REGISTER_NAME = "q"
 DEFAULT_BIT_REGISTER_NAME = "b"
@@ -105,30 +105,6 @@ class RegisterManager:
             BitRegister(0) if not bit_registry else (RegisterManager.generate_virtual_register(bit_registry))
         )
 
-    @staticmethod
-    def generate_virtual_register(registry: Registry) -> Register:
-        registers = list(registry.values())
-        register_cls = registers[0].__class__
-        virtual_index = 0
-        for register in registers:
-            register.virtual_zero_index = virtual_index
-            virtual_index += register.size
-        return register_cls(virtual_index, register_cls.default_name)
-
-    def add_qubit_register(self, qubit_register: QubitRegister) -> None:
-        if qubit_register.name in self._qubit_registry:
-            msg = f"Qubit register with name '{qubit_register.name}' already exists"
-            raise KeyError(msg)
-        self._qubit_registry[qubit_register.name] = qubit_register
-        self._virtual_qubit_register = RegisterManager.generate_virtual_register(self._qubit_registry)
-
-    def add_bit_register(self, bit_register: BitRegister) -> None:
-        if bit_register.name in self._bit_registry:
-            msg = f"Bit register with name '{bit_register.name}' already exists"
-            raise KeyError(msg)
-        self._bit_registry[bit_register.name] = bit_register
-        self._virtual_bit_register = RegisterManager.generate_virtual_register(self._bit_registry)
-
     @property
     def qubit_register_size(self) -> int:
         return self._virtual_qubit_register.size
@@ -144,6 +120,39 @@ class RegisterManager:
     @property
     def bit_register_name(self) -> str:
         return self._virtual_bit_register.name
+
+    @staticmethod
+    def generate_virtual_register(registry: Registry) -> Register:
+        registers = list(registry.values())
+        register_cls = registers[0].__class__
+        virtual_index = 0
+        for register in registers:
+            register.virtual_zero_index = virtual_index
+            virtual_index += register.size
+        return register_cls(virtual_index, register_cls.default_name)
+
+    @overload
+    def add_register(self, register: QubitRegister) -> None: ...
+
+    @overload
+    def add_register(self, register: BitRegister) -> None: ...
+
+    def add_register(self, register: Register) -> None:
+        if isinstance(register, QubitRegister):
+            if register.name in self._qubit_registry:
+                msg = f"Qubit register with name '{register.name}' already exists"
+                raise KeyError(msg)
+            self._qubit_registry[register.name] = register
+            self._virtual_qubit_register = RegisterManager.generate_virtual_register(self._qubit_registry)
+        if isinstance(register, BitRegister):
+            if register.name in self._bit_registry:
+                msg = f"Bit register with name '{register.name}' already exists"
+                raise KeyError(msg)
+            self._bit_registry[register.name] = register
+            self._virtual_bit_register = RegisterManager.generate_virtual_register(self._bit_registry)
+        else:
+            msg = f"Unsupported register type: {type(register)}"
+            raise TypeError(msg)
 
     def get_qubit_register(self, qubit_register_name: str) -> QubitRegister:
         return self._qubit_registry[qubit_register_name]

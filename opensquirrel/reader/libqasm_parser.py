@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, cast, overload
 
 import cqasm.v3x as cqasm
 import cqasm.v3x.types as cqasm_types
@@ -25,7 +25,9 @@ from opensquirrel.ir import (
 )
 from opensquirrel.register_manager import (
     BitRegister,
+    BitRegistry,
     QubitRegister,
+    QubitRegistry,
     RegisterManager,
     Registry,
 )
@@ -213,6 +215,22 @@ class LibQasmParser:
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
     @staticmethod
+    @overload
+    def _get_registry(
+        ast: Any,
+        register_cls: type[QubitRegister],
+        type_check: Callable[[Any], bool],
+    ) -> QubitRegistry: ...
+
+    @staticmethod
+    @overload
+    def _get_registry(
+        ast: Any,
+        register_cls: type[BitRegister],
+        type_check: Callable[[Any], bool],
+    ) -> BitRegistry: ...
+
+    @staticmethod
     def _get_registry(
         ast: Any,
         register_cls: type[QubitRegister | BitRegister],
@@ -226,7 +244,7 @@ class LibQasmParser:
     def _create_register_manager(self, ast: Any) -> RegisterManager:
         qubit_registry = self._get_registry(ast, QubitRegister, LibQasmParser._is_qubit_type)
         bit_registry = self._get_registry(ast, BitRegister, LibQasmParser._is_bit_type)
-        return RegisterManager(qubit_registry, bit_registry)  # type: ignore [arg-type]
+        return RegisterManager(qubit_registry, bit_registry)
 
     def circuit_from_string(self, s: str) -> Circuit:
         # Analyzer will return an Abstract Syntax Tree (AST).

@@ -77,11 +77,8 @@ class CircuitBuilder:
         # Default behaviour
         return self.__getattribute__(attr)
 
-    def add_register(self, register: Register) -> None:
-        if isinstance(register, QubitRegister):
-            self.register_manager.add_qubit_register(register)
-        if isinstance(register, BitRegister):
-            self.register_manager.add_bit_register(register)
+    def add_register(self, register: QubitRegister | BitRegister) -> None:
+        self.register_manager.add_register(register)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
         """Throw error if qubit index is outside the qubit register range.

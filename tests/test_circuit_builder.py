@@ -146,20 +146,30 @@ class TestCircuitBuilder:
         builder.H(q1[0])
         builder.H(1)
 
+        q2 = QubitRegister(2, "q2")
+        builder.add_register(q2)
+        builder.H(q2[-1])
+
+        q3 = QubitRegister(3, "q3")
+        builder.add_register(q3)
+        builder.H(q3[-1])
+
         circuit = builder.to_circuit()
 
-        assert circuit.ir.statements == [H(0), H(0), H(1), H(1)]
+        assert circuit.ir.statements == [H(0), H(0), H(1), H(1), H(3), H(6)]
         assert (
             str(circuit)
             == """version 3.0
 
-qubit[2] q
+qubit[7] q
 bit[2] b
 
 H q[0]
 H q[0]
 H q[1]
 H q[1]
+H q[3]
+H q[6]
 """
         )
 
@@ -240,7 +250,7 @@ H q[1]
         q2_index = 5
         q3_index = 9
 
-        assert q1[q1_index] == q1[q1_index]
+        assert q1[q1_index] == q1_index
         assert q2[q2_index] == q1_size + q2_index
         assert q3[q3_index] == q1_size + q2_size + q3_index
 
