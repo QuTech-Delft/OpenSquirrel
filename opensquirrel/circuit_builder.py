@@ -15,7 +15,6 @@ from opensquirrel.register_manager import (
     DEFAULT_QUBIT_REGISTER_NAME,
     BitRegister,
     QubitRegister,
-    Register,
     RegisterManager,
 )
 

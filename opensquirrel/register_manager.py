@@ -137,14 +137,14 @@ class RegisterManager:
     @overload
     def add_register(self, register: BitRegister) -> None: ...
 
-    def add_register(self, register: Register) -> None:
+    def add_register(self, register: QubitRegister | BitRegister) -> None:
         if isinstance(register, QubitRegister):
             if register.name in self._qubit_registry:
                 msg = f"Qubit register with name '{register.name}' already exists"
                 raise KeyError(msg)
             self._qubit_registry[register.name] = register
             self._virtual_qubit_register = RegisterManager.generate_virtual_register(self._qubit_registry)
-        if isinstance(register, BitRegister):
+        elif isinstance(register, BitRegister):
             if register.name in self._bit_registry:
                 msg = f"Bit register with name '{register.name}' already exists"
                 raise KeyError(msg)
