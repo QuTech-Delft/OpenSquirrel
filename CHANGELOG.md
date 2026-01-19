@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
+## [ 0.10.0 ] - [ YYYY-MM-DD ]
+
+### Added
+
+- `CircuitBuilder` accepts multiple (qu)bit registers through `add_register` method.
+
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 
 ### Added
