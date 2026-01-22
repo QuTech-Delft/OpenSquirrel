@@ -21,7 +21,6 @@ if TYPE_CHECKING:
         Wait,
     )
     from opensquirrel.ir.control_instruction import ControlInstruction
-    from opensquirrel.ir.default_gates import CNOT, CR, CZ, SWAP, CRk
     from opensquirrel.ir.non_unitary import NonUnitary
     from opensquirrel.ir.semantics import (
         BlochSphereRotation,
@@ -29,12 +28,14 @@ if TYPE_CHECKING:
         BsrFullParams,
         BsrNoParams,
         BsrUnitaryParams,
-        ControlledGate,
-        MatrixGate,
+        CanonicalGateSemantic,
+        ControlledGateSemantic,
+        MatrixGateSemantic,
     )
-    from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
+    from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.statement import Instruction, Statement
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
 class IRVisitor:
@@ -77,6 +78,9 @@ class IRVisitor:
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
         pass
 
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        pass
+
     def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
         pass
 
@@ -92,34 +96,10 @@ class IRVisitor:
     def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> Any:
         pass
 
-    def visit_matrix_gate(self, matrix_gate: MatrixGate) -> Any:
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> Any:
         pass
 
-    def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
-        pass
-
-    def visit_swap(self, gate: SWAP) -> Any:
-        pass
-
-    def visit_controlled_gate(self, gate: ControlledGate) -> Any:
-        pass
-
-    def visit_cnot(self, gate: CNOT) -> Any:
-        pass
-
-    def visit_cz(self, gate: CZ) -> Any:
-        pass
-
-    def visit_cr(self, gate: CR) -> Any:
-        pass
-
-    def visit_crk(self, gate: CRk) -> Any:
-        pass
-
-    def visit_non_unitary(self, gate: NonUnitary) -> Any:
-        pass
-
-    def visit_control_instruction(self, instruction: ControlInstruction) -> Any:
+    def visit_control_instruction(self, control_instruction: ControlInstruction) -> Any:
         pass
 
     def visit_measure(self, measure: Measure) -> Any:
@@ -135,6 +115,15 @@ class IRVisitor:
         pass
 
     def visit_wait(self, wait: Wait) -> Any:
+        pass
+
+    def visit_canonical_gate_semantic(self, canonical: CanonicalGateSemantic) -> Any:
+        pass
+
+    def visit_controlled_gate_semantic(self, controlled: ControlledGateSemantic) -> Any:
+        pass
+
+    def visit_matrix_gate_semantic(self, matrix: MatrixGateSemantic) -> Any:
         pass
 
 

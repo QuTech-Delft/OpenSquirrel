@@ -1,49 +1,41 @@
 from __future__ import annotations
 
-import importlib
-from typing import Any
+import importlib.util
+from typing import cast
 
 import pytest
 
-from opensquirrel import Circuit, Measure
+from opensquirrel import Circuit
 from opensquirrel.passes.decomposer import CZDecomposer, SWAP2CZDecomposer, XYXDecomposer
 from opensquirrel.passes.exporter import QuantifySchedulerExporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
+from tests import STATIC_DATA
+from tests.integration import DataType  # noqa: TC001
 
-DataType = dict[str, Any]
-BitStringMappingType = list[tuple[None, None] | tuple[int, int]]
+BACKEND_ID = "tuna-5"
 
 
-def _get_operations(exported_schedule) -> list[str]:  # type: ignore  # noqa: ANN001
+def _get_operations(exported_schedule) -> list[str]:  # noqa: ANN001
     return [
         exported_schedule.operations[schedulable["operation_id"]].name
         for schedulable in exported_schedule.schedulables.values()
     ]
 
 
-def _check_bitstring_mapping(circuit: Circuit, exported_schedule, bitstring_mapping: BitStringMappingType) -> None:  # type: ignore  # noqa: ANN001
-    ir_measures = [instruction for instruction in circuit.ir.statements if isinstance(instruction, Measure)]
-    ir_acq_index_record = [0] * circuit.qubit_register_size
-    ir_bitstring_mapping = [(None, None)] * circuit.bit_register_size
-
+def _check_measurement_to_bit_mapping(circuit: Circuit, exported_schedule) -> None:  # noqa: ANN001
     qs_measures = [
         operation.data["gate_info"]
         for operation in exported_schedule.operations.values()
         if operation.data["gate_info"]["operation_type"] == "measure"
     ]
-
-    for i, ir_measure in enumerate(ir_measures):
-        qubit_index = ir_measure.qubit.index
-        ir_acq_index = ir_acq_index_record[qubit_index]
-        ir_bitstring_mapping[ir_measure.bit.index] = (ir_acq_index, qubit_index)  # type: ignore
-        assert qs_measures[i]["acq_channel_override"] == qubit_index
-        assert qs_measures[i]["acq_index"] == ir_acq_index
-        assert qs_measures[i]["acq_protocol"] == "ThresholdedAcquisition"
-        ir_acq_index_record[qubit_index] += 1
-
-    assert len(bitstring_mapping) == circuit.bit_register_size
-    assert bitstring_mapping == ir_bitstring_mapping
+    measurement_index_record = [0] * circuit.qubit_register_size
+    for qs_measure in qs_measures:
+        measurement_index_record[qs_measure["acq_channel_override"]] = qs_measure["acq_index"]
+    assert all(
+        measurement_index_record[int(qubit_index)] == len(measurements) - 1
+        for qubit_index, measurements in circuit.measurement_to_bit_map.items()
+    )
 
 
 class TestTuna5:
@@ -53,41 +45,7 @@ class TestTuna5:
 
     @pytest.fixture
     def data(self) -> DataType:
-        # Tuna-5 (full-connectivity assumed for now)
-        connectivity = {
-            "0": [1, 2, 3, 4],
-            "1": [0, 2, 3, 4],
-            "2": [0, 1, 3, 4],
-            "3": [0, 1, 2, 4],
-            "4": [0, 1, 2, 3],
-        }
-        primitive_gate_set = [
-            "I",
-            "X",
-            "X90",
-            "mX90",
-            "Y",
-            "Y90",
-            "mY90",
-            "Z",
-            "S",
-            "Sdag",
-            "T",
-            "Tdag",
-            "Rx",
-            "Ry",
-            "Rz",
-            "CNOT",
-            "CZ",
-            "measure",
-            "wait",
-            "init",
-            "barrier",
-        ]
-        return {
-            "connectivity": connectivity,
-            "primitive_gate_set": primitive_gate_set,
-        }
+        return cast("DataType", STATIC_DATA["backends"][BACKEND_ID])
 
     def test_qs_is_not_installed(self, qs_is_installed: bool) -> None:
         circuit = Circuit.from_string("""version 3.0;""")
@@ -140,11 +98,11 @@ class TestTuna5:
             b[0:4] = measure q
 
             // Two-qubit gates
-            CNOT q[0], q[1]
+            CNOT q[0], q[2]
             CZ q[2], q[3]
-            CR(pi) q[4], q[0]
+            CR(pi) q[4], q[2]
             CRk(2) q[1], q[2]
-            SWAP q[3], q[4]
+            SWAP q[3], q[2]
 
             // Control instructions
             barrier q
@@ -162,7 +120,7 @@ class TestTuna5:
         circuit.validate(validator=PrimitiveGateValidator(**data))
 
         if qs_is_installed:
-            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
+            exported_schedule = circuit.export(exporter=QuantifySchedulerExporter())
             operations = _get_operations(exported_schedule)
 
             assert exported_schedule.name == "Exported OpenSquirrel circuit"
@@ -192,46 +150,44 @@ class TestTuna5:
                 "Measure q[2]",
                 "Measure q[3]",
                 "Measure q[4]",
-                "Rxy(180, 0, 'q[1]')",
-                "Rxy(90, 90, 'q[1]')",
-                "Rxy(180, 0, 'q[1]')",
-                "CZ (q[0], q[1])",
+                "Rxy(180, 0, 'q[2]')",
+                "Rxy(90, 90, 'q[2]')",
+                "Rxy(180, 0, 'q[2]')",
+                "CZ (q[0], q[2])",
+                "Rxy(90, 90, 'q[2]')",
                 "CZ (q[2], q[3])",
-                "CZ (q[4], q[0])",
-                "Rxy(90, 90, 'q[1]')",
+                "CZ (q[4], q[2])",
                 "Rxy(-90, 0, 'q[2]')",
                 "CZ (q[1], q[2])",
                 "Rxy(180, 0, 'q[2]')",
                 "Rxy(45, 90, 'q[2]')",
                 "Rxy(180, 0, 'q[2]')",
                 "CZ (q[1], q[2])",
-                "Rxy(180, 0, 'q[4]')",
-                "Rxy(90, 90, 'q[4]')",
-                "Rxy(180, 0, 'q[4]')",
-                "CZ (q[3], q[4])",
-                "Rxy(90, 90, 'q[4]')",
+                "Rxy(-90, 0, 'q[2]')",
+                "Rxy(90, 90, 'q[2]')",
+                "Rxy(135.00001, 0, 'q[2]')",
+                "CZ (q[3], q[2])",
+                "Rxy(90, 90, 'q[2]')",
                 "Rxy(180, 0, 'q[3]')",
                 "Rxy(90, 90, 'q[3]')",
                 "Rxy(180, 0, 'q[3]')",
-                "CZ (q[4], q[3])",
+                "CZ (q[2], q[3])",
                 "Rxy(90, 90, 'q[3]')",
-                "Rxy(180, 0, 'q[4]')",
-                "Rxy(90, 90, 'q[4]')",
-                "Rxy(180, 0, 'q[4]')",
-                "CZ (q[3], q[4])",
+                "Rxy(180, 0, 'q[2]')",
+                "Rxy(90, 90, 'q[2]')",
+                "Rxy(180, 0, 'q[2]')",
+                "CZ (q[3], q[2])",
                 "Rxy(-90, 0, 'q[1]')",
                 "Rxy(45, 90, 'q[1]')",
                 "Rxy(90, 0, 'q[1]')",
-                "Rxy(45, 90, 'q[2]')",
-                "Rxy(90, 0, 'q[2]')",
-                "Rxy(90, 90, 'q[4]')",
+                "Rxy(90, 90, 'q[2]')",
                 "Measure q[0]",
                 "Measure q[1]",
                 "Measure q[2]",
                 "Measure q[3]",
                 "Measure q[4]",
             ]
-            _check_bitstring_mapping(circuit, exported_schedule, bitstring_mapping)
+            _check_measurement_to_bit_mapping(circuit, exported_schedule)
 
     def test_all_xy(self, qs_is_installed: bool, data: DataType) -> None:
         circuit = Circuit.from_string(
@@ -280,7 +236,7 @@ class TestTuna5:
         )
         # No compilation passes are performed
         if qs_is_installed:
-            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
+            exported_schedule = circuit.export(exporter=QuantifySchedulerExporter())
             operations = _get_operations(exported_schedule)
 
             assert exported_schedule.name == "Exported OpenSquirrel circuit"
@@ -315,4 +271,4 @@ class TestTuna5:
                 "Measure q[1]",
                 "Measure q[0]",
             ]
-            _check_bitstring_mapping(circuit, exported_schedule, bitstring_mapping)
+            _check_measurement_to_bit_mapping(circuit, exported_schedule)

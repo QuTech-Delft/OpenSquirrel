@@ -4,7 +4,8 @@ import pytest
 
 from opensquirrel import CNOT, CR, CRk, H, I, Rn, Ry, X
 from opensquirrel.ir import Gate
-from opensquirrel.ir.semantics import ControlledGate
+from opensquirrel.ir.semantics import ControlledGateSemantic
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.reader import LibQasmParser
 
 
@@ -248,8 +249,12 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
         (
             "version 3.0; qubit[2] q; ctrl.pow(2).inv.X q[0], q[1]",
             [
-                ControlledGate(
-                    control_qubit=0, target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=pi * -2, phi=pi / 2 * -2)
+                TwoQubitGate(
+                    0,
+                    1,
+                    gate_semantic=ControlledGateSemantic(
+                        target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=pi * -2, phi=pi / 2 * -2)
+                    ),
                 )
             ],
         ),

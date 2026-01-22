@@ -6,8 +6,14 @@ import pytest
 from numpy.typing import NDArray
 
 from opensquirrel.ir import AxisLike
-from opensquirrel.ir.semantics import BlochSphereRotation, CanonicalGate, ControlledGate, MatrixGate
+from opensquirrel.ir.semantics import (
+    BlochSphereRotation,
+    CanonicalGateSemantic,
+    ControlledGateSemantic,
+    MatrixGateSemantic,
+)
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.utils import get_matrix
 
 
@@ -25,7 +31,13 @@ def test_bloch_sphere_rotation() -> None:
 
 
 def test_controlled_gate() -> None:
-    gate = ControlledGate(2, SingleQubitGate(0, BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)))
+    gate = TwoQubitGate(
+        2,
+        0,
+        gate_semantic=ControlledGateSemantic(
+            target_gate=SingleQubitGate(0, BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2))
+        ),
+    )
     np.testing.assert_almost_equal(
         get_matrix(gate, 3),
         [
@@ -42,14 +54,17 @@ def test_controlled_gate() -> None:
 
 
 def test_matrix_gate() -> None:
-    gate = MatrixGate(
-        [
-            [1, 0, 0, 0],
-            [0, 0, 1, 0],
-            [0, 1, 0, 0],
-            [0, 0, 0, 1],
-        ],
-        operands=[1, 2],
+    gate = TwoQubitGate(
+        1,
+        2,
+        gate_semantic=MatrixGateSemantic(
+            [
+                [1, 0, 0, 0],
+                [0, 0, 1, 0],
+                [0, 1, 0, 0],
+                [0, 0, 0, 1],
+            ],
+        ),
     )
     np.testing.assert_almost_equal(
         get_matrix(gate, 3),
@@ -89,6 +104,6 @@ def test_matrix_gate() -> None:
     ],
 )
 def test_canonical_gate(axis: AxisLike, expected_matrix: NDArray[Any]) -> None:
-    gate = CanonicalGate(0, 1, axis)
+    gate = TwoQubitGate(0, 1, gate_semantic=CanonicalGateSemantic(axis))
 
     np.testing.assert_almost_equal(get_matrix(gate, 2), expected_matrix)

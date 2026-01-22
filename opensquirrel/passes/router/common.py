@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 import itertools
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from typing import TYPE_CHECKING
 
 import networkx as nx
 
 from opensquirrel import SWAP
 from opensquirrel.exceptions import NoRoutingPathError
-from opensquirrel.ir import IR, Gate, Instruction, Statement
+from opensquirrel.ir import IR, Instruction, Statement
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 if TYPE_CHECKING:
-    from opensquirrel.passes.router.general_router import Connectivity
+    from opensquirrel import Connectivity
 
 PathFinderType = Callable[[nx.Graph, int, int], list[int]]
 
@@ -89,8 +90,8 @@ class ProcessSwaps:
         temp_mapping = initial_mapping.copy()
 
         for statement_index, statement in enumerate(ir.statements):
-            if isinstance(statement, Gate) and len(statement.get_qubit_operands()) == 2:
-                q0, q1 = statement.get_qubit_operands()
+            if isinstance(statement, TwoQubitGate):
+                q0, q1 = statement.qubit_operands
                 physical_q0_index = temp_mapping[q0.index]
                 physical_q1_index = temp_mapping[q1.index]
 
@@ -129,19 +130,18 @@ class ProcessSwaps:
         for statement in ir.statements:
             while len(new_ir_statements) in planned_swaps:
                 swap_gate = planned_swaps[len(new_ir_statements)]
-                swap_qubit_indices = tuple(qubit.index for qubit in swap_gate.get_qubit_operands())
-                ProcessSwaps._update_mapping_for_swap(new_mapping, swap_qubit_indices)
+                ProcessSwaps._update_mapping_for_swap(new_mapping, swap_gate.qubit_indices)
                 new_ir_statements.append(swap_gate)
 
             if isinstance(statement, Instruction):
-                for qubit in statement.get_qubit_operands():
+                for qubit in statement.qubit_operands:
                     qubit.index = new_mapping[qubit.index]
 
             new_ir_statements.append(statement)
         return new_ir_statements
 
     @staticmethod
-    def _update_mapping_for_swap(mapping: dict[int, int], swap_qubit_indices: tuple[int, ...]) -> None:
+    def _update_mapping_for_swap(mapping: dict[int, int], swap_qubit_indices: Iterable[int]) -> None:
         """Updates the mapping for the given swap qubit indices.
 
         Args:

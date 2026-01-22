@@ -1,4 +1,4 @@
-import importlib
+import importlib.util
 
 import pytest
 
@@ -202,7 +202,7 @@ class TestQuantifySchedulerExporter:
             ):
                 circuit.export(exporter=QuantifySchedulerExporter())
         else:
-            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
+            exported_schedule = circuit.export(exporter=QuantifySchedulerExporter())
             operations = [
                 exported_schedule.operations[schedulable["operation_id"]].name
                 for schedulable in exported_schedule.schedulables.values()
@@ -215,7 +215,7 @@ class TestQuantifySchedulerExporter:
                 "Measure q[0]",
                 "Measure q[1]",
             ]
-            assert bitstring_mapping == [(0, 0), (0, 1)]
+            assert circuit.measurement_to_bit_map == {"0": [0], "1": [1]}
 
     def test_registers(self) -> None:
         circuit = Circuit.from_string(
@@ -249,7 +249,7 @@ class TestQuantifySchedulerExporter:
             ):
                 circuit.export(exporter=QuantifySchedulerExporter())
         else:
-            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
+            exported_schedule = circuit.export(exporter=QuantifySchedulerExporter())
             operations = [
                 exported_schedule.operations[schedulable["operation_id"]].name
                 for schedulable in exported_schedule.schedulables.values()
@@ -267,7 +267,7 @@ class TestQuantifySchedulerExporter:
                 "Measure q[3]",
                 "Measure q[1]",
             ]
-            assert bitstring_mapping == [(None, None), (0, 0), (0, 1), (0, 3), (1, 1)]
+            assert circuit.measurement_to_bit_map == {"0": [1], "1": [2, 4], "3": [3]}
 
     def test_init_and_reset(self) -> None:
         circuit = Circuit.from_string(
@@ -300,7 +300,7 @@ class TestQuantifySchedulerExporter:
             ):
                 circuit.export(exporter=QuantifySchedulerExporter())
         else:
-            exported_schedule, bitstring_mapping = circuit.export(exporter=QuantifySchedulerExporter())
+            exported_schedule = circuit.export(exporter=QuantifySchedulerExporter())
             operations = [
                 exported_schedule.operations[schedulable["operation_id"]].name
                 for schedulable in exported_schedule.schedulables.values()
@@ -323,4 +323,4 @@ class TestQuantifySchedulerExporter:
                 "Measure q[0]",
                 "Measure q[1]",
             ]
-            assert bitstring_mapping == [(1, 0), (1, 1)]
+            assert circuit.measurement_to_bit_map == {"0": [0, 0], "1": [1, 1]}

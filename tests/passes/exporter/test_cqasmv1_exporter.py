@@ -5,8 +5,9 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import Gate
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate, MatrixGate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.exporter import CqasmV1Exporter
 
 
@@ -260,10 +261,14 @@ measure_z q[1]
     "gate",
     [
         SingleQubitGate(0, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
-        ControlledGate(
-            0, SingleQubitGate(qubit=1, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
+        TwoQubitGate(
+            0,
+            1,
+            gate_semantic=ControlledGateSemantic(
+                SingleQubitGate(qubit=1, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
+            ),
         ),
-        MatrixGate([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], [0, 1]),
+        TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])),
     ],
 )
 def test_anonymous_gates(exporter: CqasmV1Exporter, gate: Gate) -> None:
@@ -294,9 +299,9 @@ def test_anonymous_gates(exporter: CqasmV1Exporter, gate: Gate) -> None:
             "version 1.0\n\nqubits 6\n\nbarrier q[0, 1, 2, 5, 3, 4, 1]\n",
         ),
         (
-            "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];"
+            "version 3.0; qubit[5] q; barrier q[0]; H q[1]; barrier q[1:2]; X q[2]; barrier q[3:4, 1]; Y q[3];"  # noqa: ISC004
             "barrier q[0]; barrier q[2]",
-            "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]\n"
+            "version 1.0\n\nqubits 5\n\nbarrier q[0]\nh q[1]\nbarrier q[1, 2]\nx q[2]\nbarrier q[3, 4, 1]\ny q[3]\n"  # noqa: ISC004
             "barrier q[0, 2]\n",
         ),
         (

@@ -1,4 +1,7 @@
+import pytest
+
 from opensquirrel import CircuitBuilder
+from opensquirrel.circuit import MeasurementToBitMap
 from opensquirrel.ir import AsmDeclaration
 
 
@@ -56,3 +59,34 @@ def test_instruction_count() -> None:
     circuit = builder.to_circuit()
     counts = circuit.instruction_count
     assert counts == {"barrier": 2}
+
+
+@pytest.mark.parametrize(
+    ("builder", "m2b_mapping"),
+    [
+        (
+            CircuitBuilder(3, 3).X(0).Y(1).Z(2),
+            {},
+        ),
+        (
+            CircuitBuilder(3, 3).measure(0, 2).measure(2, 0),
+            {"0": [2], "2": [0]},
+        ),
+        (
+            CircuitBuilder(3, 3).measure(2, 2).measure(1, 2).measure(0, 2),
+            {"0": [2], "1": [2], "2": [2]},
+        ),
+        (
+            CircuitBuilder(3, 3).measure(1, 1).measure(0, 0).measure(1, 1).measure(0, 0),
+            {"0": [0, 0], "1": [1, 1]},
+        ),
+        (
+            CircuitBuilder(3, 3).X(0).measure(0, 0).X(1).measure(1, 1).X(2).measure(2, 0).X(0).measure(0, 2),
+            {"0": [0, 2], "1": [1], "2": [0]},
+        ),
+    ],
+    ids=["no_measurement", "no_measurement_on_1_qubit", "overwriting_bit_1", "overwriting_bit_2", "example_circuit"],
+)
+def test_measurement_to_bit_mapping(builder: CircuitBuilder, m2b_mapping: MeasurementToBitMap) -> None:
+    circuit = builder.to_circuit()
+    assert circuit.measurement_to_bit_map == m2b_mapping

@@ -38,12 +38,9 @@ from opensquirrel.ir.default_gates import (
 )
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import ControlInstruction, Gate, Instruction, NonUnitary, Unitary
-    from opensquirrel.ir.semantics import (
-        ControlledGate,
-        MatrixGate,
-    )
+    from opensquirrel.ir import ControlInstruction, Gate, Instruction, NonUnitary
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 default_bsr_without_params_set: dict[str, type[SingleQubitGate]] = {
     "H": H,
@@ -63,45 +60,37 @@ default_bsr_without_params_set: dict[str, type[SingleQubitGate]] = {
     "mZ90": MinusZ90,
 }
 
-default_bsr_full_params_set: dict[str, type[SingleQubitGate]] = {
-    "Rn": Rn,
-}
-
-default_bsr_with_angle_param_set: dict[str, type[SingleQubitGate]] = {
+default_bsr_with_param_set: dict[str, type[SingleQubitGate]] = {
     "Rx": Rx,
     "Ry": Ry,
     "Rz": Rz,
+    "U": U,
+    "Rn": Rn,
 }
 
-default_bsr_unitary_param_set: dict[str, type[SingleQubitGate]] = {
-    "U": U,
-}
-default_bloch_sphere_rotation_set: dict[str, type[SingleQubitGate]] = {
-    **default_bsr_full_params_set,
+default_single_qubit_gate_set: dict[str, type[SingleQubitGate]] = {
     **default_bsr_without_params_set,
-    **default_bsr_with_angle_param_set,
-    **default_bsr_unitary_param_set,
+    **default_bsr_with_param_set,
 }
-default_controlled_gate_set: dict[str, type[ControlledGate]] = {
+
+default_two_qubit_gate_set: dict[str, type[TwoQubitGate]] = {
     "CNOT": CNOT,
     "CR": CR,
     "CRk": CRk,
     "CZ": CZ,
-}
-default_matrix_gate_set: dict[str, type[MatrixGate]] = {
     "SWAP": SWAP,
 }
+
 default_gate_alias_set = {
     "Hadamard": H,
     "Identity": I,
 }
 default_gate_set: dict[str, type[Gate]] = {
-    **default_bloch_sphere_rotation_set,
-    **default_controlled_gate_set,
-    **default_matrix_gate_set,
+    **default_single_qubit_gate_set,
+    **default_two_qubit_gate_set,
     **default_gate_alias_set,
 }
-default_unitary_set: dict[str, type[Unitary]] = {**default_gate_set}
+
 default_non_unitary_set: dict[str, type[NonUnitary]] = {
     "init": Init,
     "measure": Measure,
@@ -112,13 +101,10 @@ default_control_instruction_set: dict[str, type[ControlInstruction]] = {
     "wait": Wait,
 }
 default_instruction_set: dict[str, type[Instruction]] = {
-    **default_unitary_set,
+    **default_gate_set,
     **default_non_unitary_set,
     **default_control_instruction_set,
 }
-
-default_bsr_set_without_rn: dict[str, type[SingleQubitGate]]
-default_bsr_set_without_rn = {**default_bsr_without_params_set, **default_bsr_with_angle_param_set}
 
 
 def is_anonymous_gate(name: str) -> bool:

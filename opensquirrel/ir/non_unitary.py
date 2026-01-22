@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any
 
 import numpy as np
@@ -14,13 +14,26 @@ class NonUnitary(Instruction, ABC):
         Instruction.__init__(self, name)
         self.qubit = Qubit(qubit)
 
-    @property
-    @abstractmethod
-    def arguments(self) -> tuple[Expression, ...]:
-        pass
+    def __repr__(self) -> str:
+        if self.arguments:
+            args = ", ".join(f"{arg.__class__.__name__.lower()}={arg}" for arg in self.arguments)
+            return f"{self.__class__.__name__}(qubit={self.qubit}, {args})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
-    def get_qubit_operands(self) -> list[Qubit]:
-        return [self.qubit]
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__) and self.qubit == other.qubit
+
+    @property
+    def arguments(self) -> tuple[Expression, ...]:
+        return ()
+
+    @property
+    def qubit_operands(self) -> tuple[Qubit, ...]:
+        return (self.qubit,)
+
+    @property
+    def bit_operands(self) -> tuple[Bit, ...]:
+        return ()
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_non_unitary(self)
@@ -29,12 +42,8 @@ class NonUnitary(Instruction, ABC):
 class Measure(NonUnitary):
     def __init__(self, qubit: QubitLike, bit: BitLike, axis: AxisLike = (0, 0, 1)) -> None:
         NonUnitary.__init__(self, qubit=qubit, name="measure")
-        self.qubit = Qubit(qubit)
         self.bit = Bit(bit)
         self.axis = Axis(axis)
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(qubit={self.qubit}, bit={self.bit}, axis={self.axis})"
 
     def __eq__(self, other: object) -> bool:
         return (
@@ -43,30 +52,20 @@ class Measure(NonUnitary):
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
-        return self.qubit, self.bit, self.axis
+        return self.bit, self.axis
 
     def accept(self, visitor: IRVisitor) -> Any:
         non_unitary_visit = super().accept(visitor)
         return non_unitary_visit if non_unitary_visit is not None else visitor.visit_measure(self)
 
-    def get_bit_operands(self) -> list[Bit]:
-        return [self.bit]
+    @property
+    def bit_operands(self) -> tuple[Bit, ...]:
+        return (self.bit,)
 
 
 class Init(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
         NonUnitary.__init__(self, qubit=qubit, name="init")
-        self.qubit = Qubit(qubit)
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(qubit={self.qubit})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Init) and self.qubit == other.qubit
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
         non_unitary_visit = super().accept(visitor)
@@ -76,17 +75,6 @@ class Init(NonUnitary):
 class Reset(NonUnitary):
     def __init__(self, qubit: QubitLike) -> None:
         NonUnitary.__init__(self, qubit=qubit, name="reset")
-        self.qubit = Qubit(qubit)
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(qubit={self.qubit})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Reset) and self.qubit == other.qubit
-
-    @property
-    def arguments(self) -> tuple[Expression, ...]:
-        return (self.qubit,)
 
     def accept(self, visitor: IRVisitor) -> Any:
         non_unitary_visit = super().accept(visitor)

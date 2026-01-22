@@ -3,9 +3,9 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, SupportsFloat
 
-from opensquirrel.ir.semantics import ControlledGate
-from opensquirrel.ir.semantics.bsr import BlochSphereRotation
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.utils.context import temporary_class_attr
 
 if TYPE_CHECKING:
@@ -49,6 +49,6 @@ class ControlGateModifier(GateModifier):
     def __init__(self, gate_generator: Callable[..., SingleQubitGate]) -> None:
         self.gate_generator = gate_generator
 
-    def __call__(self, control: QubitLike, *args: Any) -> ControlledGate:
+    def __call__(self, control: QubitLike, *args: Any) -> TwoQubitGate:
         gate: SingleQubitGate = self.gate_generator(*args)
-        return ControlledGate(control, gate)
+        return TwoQubitGate(control, gate.qubit, gate_semantic=ControlledGateSemantic(gate))

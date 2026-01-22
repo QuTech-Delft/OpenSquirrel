@@ -12,19 +12,16 @@ from numpy.typing import NDArray
 from opensquirrel.ir import (
     Axis,
     AxisLike,
-    Gate,
     IRVisitor,
     Qubit,
     QubitLike,
 )
-from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis, CanonicalGate
+from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
 
 if TYPE_CHECKING:
-    from opensquirrel.ir.semantics import (
-        ControlledGate,
-        MatrixGate,
-    )
+    from opensquirrel.ir import Gate
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
@@ -129,19 +126,31 @@ class MatrixExpander(IRVisitor):
             ValueError(msg)
         return np.asarray(result, dtype=np.complex128)
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> NDArray[np.complex128]:
-        if gate.control_qubit.index >= self.qubit_register_size:
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
+        if not gate.controlled:
+            return self._matrix_gate(gate)
+        return self._controlled_gate(gate)
+
+    def _controlled_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
+        if not gate.controlled:
+            msg = "the gate must have a controlled gate semantic."
+            raise ValueError(msg)
+
+        control_qubit = gate.qubit0
+        target_gate = gate.controlled.target_gate
+
+        if control_qubit.index >= self.qubit_register_size:
             msg = "index out of range"
             raise IndexError(msg)
 
-        expanded_matrix = gate.target_gate.accept(self)
+        expanded_matrix = target_gate.accept(self)
         for col_index, col in enumerate(expanded_matrix.T):
-            if col_index & (1 << gate.control_qubit.index) == 0:
+            if col_index & (1 << control_qubit.index) == 0:
                 col[:] = 0
                 col[col_index] = 1
         return np.asarray(expanded_matrix, dtype=np.complex128)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> NDArray[np.complex128]:
+    def _matrix_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as
         #   1, 0, 0, 0
@@ -150,13 +159,13 @@ class MatrixExpander(IRVisitor):
         #   0, 0, 1, 0
         # which corresponds to control being q[1] and target being q[0],
         # since qubit #i corresponds to the i-th least significant bit.
-        qubit_operands = list(reversed(gate.get_qubit_operands()))
+        qubit_operands = list(reversed(gate.qubit_operands))
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
             msg = "index out of range"
             raise IndexError(msg)
 
-        m = gate.matrix
+        m = np.array(gate.matrix)
 
         if m.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
             msg = (
@@ -179,14 +188,18 @@ class MatrixExpander(IRVisitor):
             raise ValueError(msg)
         return expanded_matrix
 
-    def visit_canonical_gate(self, gate: CanonicalGate) -> Any:
-        qubit_operands = list(reversed(gate.get_qubit_operands()))
+    def visit_canonical_gate(self, gate: TwoQubitGate) -> Any:
+        qubit_operands = list(reversed(gate.qubit_operands))
+
+        if not gate.canonical:
+            msg = "gate needs to have a canonical representation"
+            raise ValueError(msg)
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
             msg = "index out of range"
             raise IndexError(msg)
 
-        m = can2(gate.axis)
+        m = np.array(gate.matrix)
 
         expanded_matrix = np.zeros((1 << self.qubit_register_size, 1 << self.qubit_register_size), dtype=m.dtype)
 

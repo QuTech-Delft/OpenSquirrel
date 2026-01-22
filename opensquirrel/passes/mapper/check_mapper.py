@@ -2,15 +2,23 @@
 
 from __future__ import annotations
 
+from collections import OrderedDict
 from copy import deepcopy
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.ir import IR, Measure
 from opensquirrel.ir.default_gates import I
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGate
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.mapper.general_mapper import Mapper
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.register_manager import (
+    DEFAULT_BIT_REGISTER_NAME,
+    DEFAULT_QUBIT_REGISTER_NAME,
+    BitRegister,
+    QubitRegister,
+    RegisterManager,
+)
 
 
 def _check_scenario(circuit: Circuit, mapper: Mapper) -> None:
@@ -35,14 +43,17 @@ def check_mapper(mapper: Mapper) -> None:
     """
     assert isinstance(mapper, Mapper)
 
-    register_manager = RegisterManager(QubitRegister(10), BitRegister(10))
+    register_manager = RegisterManager(
+        OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(10)}),
+        OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(10)}),
+    )
     ir = IR()
     circuit = Circuit(register_manager, ir)
     _check_scenario(circuit, mapper)
 
     ir = IR()
     ir.add_gate(SingleQubitGate(qubit=42, gate_semantic=BlochSphereRotation((1, 0, 0), 1, 2)))
-    ir.add_gate(ControlledGate(42, I(100)))
+    ir.add_gate(TwoQubitGate(42, 100, gate_semantic=ControlledGateSemantic(I(100))))
     ir.add_non_unitary(Measure(42, 42, (0, 0, 1)))
     Circuit(register_manager, ir)
     _check_scenario(circuit, mapper)

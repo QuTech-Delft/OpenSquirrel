@@ -4,7 +4,7 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
-from opensquirrel import CNOT, CR, CZ, CRk, Init, Measure, Reset, Wait
+from opensquirrel import Init, Measure, Reset, Wait
 from opensquirrel.common import ATOL
 from opensquirrel.exceptions import ExporterError, UnsupportedGateError
 from opensquirrel.ir import (
@@ -25,10 +25,8 @@ except ModuleNotFoundError:
 if TYPE_CHECKING:
     from opensquirrel import Circuit
     from opensquirrel.ir import Qubit
-    from opensquirrel.ir.semantics import (
-        MatrixGate,
-    )
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.two_qubit_gate import TwoQubitGate
     from opensquirrel.register_manager import RegisterManager
 
 OperationCycles = dict[str, int]
@@ -43,20 +41,14 @@ class QuantifySchedulerExporter(Exporter):
         super().__init__(**kwargs)
         self._operation_cycles = operation_cycles
 
-    def export(self, circuit: Circuit) -> tuple[quantify_scheduler.Schedule, list[tuple[Any, Any]]]:
+    def export(self, circuit: Circuit) -> quantify_scheduler.Schedule:
         if "quantify_scheduler" not in globals():
-
-            class QuantifySchedulerNotInstalled:
-                def __getattr__(self, attr_name: Any) -> None:
-                    msg = "quantify-scheduler is not installed, or cannot be installed on your system"
-                    raise ModuleNotFoundError(msg)
-
-            global quantify_scheduler
-            quantify_scheduler = QuantifySchedulerNotInstalled()
+            msg = "quantify-scheduler is not installed, or cannot be installed on your system"
+            raise ModuleNotFoundError(msg)
 
         try:
             # Create circuit, with measure data
-            schedule_creator = _ScheduleCreator(circuit.register_manager)
+            schedule_creator = _ScheduleCreator(circuit)
             circuit.ir.accept(schedule_creator)
 
             # Obtain ALAP reference timing for schedulables
@@ -79,7 +71,7 @@ class QuantifySchedulerExporter(Exporter):
             )
             raise ExporterError(msg) from e
 
-        return schedule_creator.schedule, schedule_creator.bit_string_mapping
+        return schedule_creator.schedule
 
 
 class OperationRecord:
@@ -101,7 +93,7 @@ class OperationRecord:
 
     @staticmethod
     def get_index_of_max_value(input_list: list[int]) -> int:
-        return max(range(len(input_list)), key=input_list.__getitem__)
+        return max(range(len(input_list)), key=lambda i: input_list[i])
 
     @property
     def schedulable_timing_constraints(self) -> dict[str, TimingConstraint]:
@@ -127,7 +119,7 @@ class OperationRecord:
         self._process_barriers()
         self._cycles[qubit_index] += cycles
 
-    def _get_reference(self, qubit_indices: list[int]) -> tuple[int, Schedulable, int]:
+    def _get_reference(self, qubit_indices: list[int]) -> tuple[int, Schedulable | None, int]:
         schedulable_counts = [self._cycles[qubit_index] for qubit_index in qubit_indices]
         pertinent_qubit_index = qubit_indices[self.get_index_of_max_value(schedulable_counts)]
         ref_schedulable, ref_counter_value = self._ref_schedulables[pertinent_qubit_index]
@@ -141,11 +133,11 @@ class OperationRecord:
         self._cycles = temp_cycles
 
     def _set_timing_constraints(
-        self, schedulable: Schedulable, ref_schedulable: Schedulable, waiting_time: float
+        self, schedulable: Schedulable, ref_schedulable: Schedulable | None, waiting_time: float
     ) -> None:
         if not ref_schedulable:
             timing_constraint = TimingConstraint(
-                ref_schedulable=None,
+                ref_schedulable="",
                 ref_pt="end",
                 ref_pt_new="end",
                 rel_time=0,
@@ -171,9 +163,9 @@ class OperationRecord:
             self._barrier_record = []
 
     def _get_operation_cycles(self, schedulable: Schedulable) -> int:
-        if not self._operation_cycles:
+        if not self._operation_cycles or (operation_name := schedulable.get("name")) is None:
             return DEFAULT_OPERATION_CYCLES
-        operation_name = schedulable.get("name").split()[0]
+        operation_name = operation_name.split()[0]
         return self._operation_cycles.get(operation_name, DEFAULT_OPERATION_CYCLES)
 
 
@@ -184,7 +176,7 @@ class _Scheduler(IRVisitor):
         schedulables: list[Schedulable],
         operation_cycles: OperationCycles | None,
     ) -> None:
-        self._qubit_register_size = register_manager.get_qubit_register_size()
+        self._qubit_register_size = register_manager.qubit_register_size
         self._operation_cycles = operation_cycles
         self._operation_record = OperationRecord(self._qubit_register_size, schedulables, operation_cycles)
 
@@ -193,12 +185,10 @@ class _Scheduler(IRVisitor):
         return self._operation_record
 
     def visit_gate(self, gate: Gate) -> None:
-        qubit_indices = [qubit.index for qubit in gate.get_qubit_operands()]
-        self._operation_record.set_schedulable_timing_constraints(qubit_indices)
+        self._operation_record.set_schedulable_timing_constraints(gate.qubit_indices)
 
     def visit_non_unitary(self, non_unitary: NonUnitary) -> None:
-        qubit_indices = [qubit.index for qubit in non_unitary.get_qubit_operands()]
-        self._operation_record.set_schedulable_timing_constraints(qubit_indices)
+        self._operation_record.set_schedulable_timing_constraints(non_unitary.qubit_indices)
 
     def visit_control_instruction(self, control_instruction: ControlInstruction) -> None:
         if isinstance(control_instruction, Wait):
@@ -210,14 +200,10 @@ class _Scheduler(IRVisitor):
 class _ScheduleCreator(IRVisitor):
     def __init__(
         self,
-        register_manager: RegisterManager,
+        circuit: Circuit,
     ) -> None:
-        self.register_manager = register_manager
-        self.qubit_register_size = register_manager.get_qubit_register_size()
-        self.qubit_register_name = register_manager.get_qubit_register_name()
-        self.bit_register_size = register_manager.get_bit_register_size()
-        self.acq_index_record = [0] * self.qubit_register_size
-        self.bit_string_mapping: list[tuple[None, None] | tuple[int, int]] = [(None, None)] * self.bit_register_size
+        self.circuit = circuit
+        self.measurement_index_record = [0] * circuit.qubit_register_size
         self.schedule = quantify_scheduler.Schedule("Exported OpenSquirrel circuit")
 
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> None:
@@ -234,7 +220,7 @@ class _ScheduleCreator(IRVisitor):
             # Hadamard gate.
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.H(self._get_qubit_string(gate.qubit)),
-                label=self._get_operation_label("H", gate.get_qubit_operands()),
+                label=self._get_operation_label("H", gate.qubit_operands),
             )
             return
         if abs(gate.bsr.axis[2]) < ATOL:
@@ -246,7 +232,7 @@ class _ScheduleCreator(IRVisitor):
                 quantify_scheduler.operations.gate_library.Rxy(
                     theta=theta, phi=phi, qubit=self._get_qubit_string(gate.qubit)
                 ),
-                label=self._get_operation_label("Rxy", gate.get_qubit_operands()),
+                label=self._get_operation_label("Rxy", gate.qubit_operands),
             )
             return
         if abs(gate.bsr.axis[0]) < ATOL and abs(gate.bsr.axis[1]) < ATOL:
@@ -254,66 +240,60 @@ class _ScheduleCreator(IRVisitor):
             theta = round(math.degrees(gate.bsr.angle), FIXED_POINT_DEG_PRECISION)
             self.schedule.add(
                 quantify_scheduler.operations.gate_library.Rz(theta=theta, qubit=self._get_qubit_string(gate.qubit)),
-                label=self._get_operation_label("Rz", gate.get_qubit_operands()),
+                label=self._get_operation_label("Rz", gate.qubit_operands),
             )
             return
         raise UnsupportedGateError(gate)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        raise UnsupportedGateError(gate)
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        if gate.name not in ["CNOT", "CZ"]:
+            raise UnsupportedGateError(gate)
 
-    def visit_cnot(self, gate: CNOT) -> None:
-        self.schedule.add(
-            quantify_scheduler.operations.gate_library.CNOT(
-                qC=self._get_qubit_string(gate.control_qubit),
-                qT=self._get_qubit_string(gate.target_qubit),
-            ),
-            label=self._get_operation_label("CNOT", gate.get_qubit_operands()),
-        )
+        control_qubit, target_qubit = gate.qubit_operands
 
-    def visit_cz(self, gate: CZ) -> None:
-        self.schedule.add(
-            quantify_scheduler.operations.gate_library.CZ(
-                qC=self._get_qubit_string(gate.control_qubit),
-                qT=self._get_qubit_string(gate.target_qubit),
-            ),
-            label=self._get_operation_label("CZ", gate.get_qubit_operands()),
-        )
+        if gate.name == "CNOT":
+            self.schedule.add(
+                quantify_scheduler.operations.gate_library.CNOT(
+                    qC=self._get_qubit_string(control_qubit),
+                    qT=self._get_qubit_string(target_qubit),
+                ),
+                label=self._get_operation_label("CNOT", gate.qubit_operands),
+            )
+        if gate.name == "CZ":
+            self.schedule.add(
+                quantify_scheduler.operations.gate_library.CZ(
+                    qC=self._get_qubit_string(control_qubit),
+                    qT=self._get_qubit_string(target_qubit),
+                ),
+                label=self._get_operation_label("CZ", gate.qubit_operands),
+            )
 
-    def visit_cr(self, gate: CR) -> None:
-        raise UnsupportedGateError(gate)
-
-    def visit_crk(self, gate: CRk) -> None:
-        raise UnsupportedGateError(gate)
-
-    def visit_measure(self, gate: Measure) -> None:
-        qubit_index = gate.qubit.index
-        bit_index = gate.bit.index
-        acq_index = self.acq_index_record[qubit_index]
-        self.bit_string_mapping[bit_index] = (acq_index, qubit_index)
+    def visit_measure(self, measure: Measure) -> None:
+        qubit_index = measure.qubit.index
+        acq_index = self.measurement_index_record[qubit_index]
         self.schedule.add(
             quantify_scheduler.operations.gate_library.Measure(
-                self._get_qubit_string(gate.qubit),
+                self._get_qubit_string(measure.qubit),
                 acq_channel=qubit_index,
                 acq_index=acq_index,
                 acq_protocol="ThresholdedAcquisition",
             ),
-            label=self._get_operation_label("Measure", gate.get_qubit_operands()),
+            label=self._get_operation_label("Measure", measure.qubit_operands),
         )
-        self.acq_index_record[qubit_index] += 1
+        self.measurement_index_record[qubit_index] += 1
 
-    def visit_init(self, gate: Init) -> None:
-        self.visit_reset(cast("Reset", gate))
+    def visit_init(self, init: Init) -> None:
+        self.visit_reset(cast("Reset", init))
 
-    def visit_reset(self, gate: Reset) -> None:
+    def visit_reset(self, reset: Reset) -> None:
         self.schedule.add(
-            quantify_scheduler.operations.gate_library.Reset(self._get_qubit_string(gate.qubit)),
-            label=self._get_operation_label("Reset", gate.get_qubit_operands()),
+            quantify_scheduler.operations.gate_library.Reset(self._get_qubit_string(reset.qubit)),
+            label=self._get_operation_label("Reset", reset.qubit_operands),
         )
 
     def _get_qubit_string(self, qubit: Qubit) -> str:
-        return f"{self.qubit_register_name}[{qubit.index}]"
+        return f"{self.circuit.qubit_register_name}[{qubit.index}]"
 
-    def _get_operation_label(self, name: str, qubits: list[Qubit]) -> str:
+    def _get_operation_label(self, name: str, qubits: tuple[Qubit, ...]) -> str:
         qubit_operands = ", ".join([self._get_qubit_string(qubit) for qubit in qubits])
         return f"{name} {qubit_operands} | " + str(uuid4())

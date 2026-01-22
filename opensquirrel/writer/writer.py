@@ -1,13 +1,7 @@
 from typing import Any, SupportsFloat, SupportsInt
 
-from opensquirrel import (
-    CNOT,
-    CR,
-    CZ,
-    SWAP,
-    CRk,
-)
 from opensquirrel.circuit import Circuit
+from opensquirrel.default_instructions import default_two_qubit_gate_set
 from opensquirrel.ir import (
     AsmDeclaration,
     Barrier,
@@ -28,10 +22,9 @@ from opensquirrel.ir.semantics import (
     BsrFullParams,
     BsrNoParams,
     BsrUnitaryParams,
-    ControlledGate,
-    MatrixGate,
 )
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -41,11 +34,11 @@ class _WriterImpl(IRVisitor):
 
     def __init__(self, register_manager: RegisterManager) -> None:
         self.register_manager = register_manager
-        qubit_register_size = self.register_manager.get_qubit_register_size()
-        qubit_register_name = self.register_manager.get_qubit_register_name()
+        qubit_register_size = self.register_manager.qubit_register_size
+        qubit_register_name = self.register_manager.qubit_register_name
 
-        bit_register_size = self.register_manager.get_bit_register_size()
-        bit_register_name = self.register_manager.get_bit_register_name()
+        bit_register_size = self.register_manager.bit_register_size
+        bit_register_name = self.register_manager.bit_register_name
         self.output = "version 3.0{}{}{}{}\n\n".format(
             "\n\n" if qubit_register_size > 0 or bit_register_size > 0 else "",
             (f"qubit[{qubit_register_size}] {qubit_register_name}" if qubit_register_size > 0 else ""),
@@ -66,11 +59,11 @@ class _WriterImpl(IRVisitor):
         return f"{i.value}"
 
     def visit_bit(self, bit: Bit) -> str:
-        bit_register_name = self.register_manager.get_bit_register_name()
+        bit_register_name = self.register_manager.bit_register_name
         return f"{bit_register_name}[{bit.index}]"
 
     def visit_qubit(self, qubit: Qubit) -> str:
-        qubit_register_name = self.register_manager.get_qubit_register_name()
+        qubit_register_name = self.register_manager.qubit_register_name
         return f"{qubit_register_name}[{qubit.index}]"
 
     def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
@@ -85,15 +78,17 @@ class _WriterImpl(IRVisitor):
         qubit_operand = gate.qubit.accept(self)
         self.output += f"{gate.name}{bsr_parameters} {qubit_operand}\n"
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> None:
-        if isinstance(gate, MatrixGate) and type(gate) is not MatrixGate:
-            return
-        self.output += f"{gate}\n"
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        qubit_operand_0 = gate.qubit0.accept(self)
+        qubit_operand_1 = gate.qubit1.accept(self)
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> None:
-        if isinstance(gate, ControlledGate) and type(gate) is not ControlledGate:
-            return
-        self.output += f"{gate}\n"
+        if gate.name not in default_two_qubit_gate_set:
+            self.output += f"{gate}\n"
+        elif gate.arguments:
+            arguments = ", ".join(arg.accept(self) for arg in gate.arguments)
+            self.output += f"{gate.name}({arguments}) {qubit_operand_0}, {qubit_operand_1}\n"
+        else:
+            self.output += f"{gate.name} {qubit_operand_0}, {qubit_operand_1}\n"
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> str:
         return ""
@@ -115,33 +110,6 @@ class _WriterImpl(IRVisitor):
         phi_argument = gate.phi.accept(self)
         lmbda_argument = gate.lmbda.accept(self)
         return f"({theta_argument}, {phi_argument}, {lmbda_argument})"
-
-    def visit_swap(self, gate: SWAP) -> Any:
-        qubit_operand_0 = gate.qubit_0.accept(self)
-        qubit_operand_1 = gate.qubit_1.accept(self)
-        self.output += f"SWAP {qubit_operand_0}, {qubit_operand_1}\n"
-
-    def visit_cnot(self, gate: CNOT) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CNOT {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_cz(self, gate: CZ) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CZ {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_cr(self, gate: CR) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        theta_argument = gate.theta.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CR({theta_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
-
-    def visit_crk(self, gate: CRk) -> None:
-        control_qubit_operand = gate.control_qubit.accept(self)
-        k_argument = gate.k.accept(self)
-        target_qubit_operand = gate.target_qubit.accept(self)
-        self.output += f"CRk({k_argument}) {control_qubit_operand}, {target_qubit_operand}\n"
 
     def visit_measure(self, measure: Measure) -> None:
         qubit_operand = measure.qubit.accept(self)

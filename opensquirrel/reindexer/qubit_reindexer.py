@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
@@ -13,12 +14,16 @@ from opensquirrel.ir import (
     Reset,
     Wait,
 )
-from opensquirrel.ir.semantics import (
-    ControlledGate,
-    MatrixGate,
-)
+from opensquirrel.ir.semantics import ControlledGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
+from opensquirrel.register_manager import (
+    DEFAULT_BIT_REGISTER_NAME,
+    DEFAULT_QUBIT_REGISTER_NAME,
+    BitRegister,
+    QubitRegister,
+    RegisterManager,
+)
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
@@ -62,14 +67,15 @@ class _QubitReindexer(IRVisitor):
         gate.qubit.accept(self)
         return SingleQubitGate(qubit=self.qubit_indices.index(gate.qubit.index), gate_semantic=gate.bsr)
 
-    def visit_matrix_gate(self, gate: MatrixGate) -> MatrixGate:
-        reindexed_operands = [self.qubit_indices.index(op.index) for op in gate.operands]
-        return MatrixGate(matrix=gate.matrix, operands=reindexed_operands)
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> TwoQubitGate:
+        qubit0 = self.qubit_indices.index(gate.qubit0.index)
+        qubit1 = self.qubit_indices.index(gate.qubit1.index)
 
-    def visit_controlled_gate(self, gate: ControlledGate) -> ControlledGate:
-        control_qubit = self.qubit_indices.index(gate.control_qubit.index)
-        target_gate = gate.target_gate.accept(self)
-        return ControlledGate(control_qubit=control_qubit, target_gate=target_gate)
+        if gate.controlled:
+            target_gate = gate.controlled.target_gate.accept(self)
+            return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=ControlledGateSemantic(target_gate))
+
+        return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=gate.gate_semantic)
 
 
 def get_reindexed_circuit(
@@ -80,9 +86,10 @@ def get_reindexed_circuit(
     from opensquirrel.circuit import Circuit
 
     qubit_reindexer = _QubitReindexer(qubit_indices)
-    qubit_register = QubitRegister(len(qubit_indices))
-    bit_register = BitRegister(bit_register_size)
-    register_manager = RegisterManager(qubit_register, bit_register)
+    register_manager = RegisterManager(
+        OrderedDict({DEFAULT_QUBIT_REGISTER_NAME: QubitRegister(len(qubit_indices))}),
+        OrderedDict({DEFAULT_BIT_REGISTER_NAME: BitRegister(bit_register_size)}),
+    )
     replacement_ir = IR()
     for gate in replacement_gates:
         gate_with_reindexed_qubits = gate.accept(qubit_reindexer)
