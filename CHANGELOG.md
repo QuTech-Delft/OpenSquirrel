@@ -10,6 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
+## [ M.m.P ] - [ YYYY-MM-DD ]
+
+### Added
+
+- The cycle time [seconds] can be set when instantiating the `QuantifySchedulerExporter` through the `cycle_time`
+parameter. 
+
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 
 ### Added
