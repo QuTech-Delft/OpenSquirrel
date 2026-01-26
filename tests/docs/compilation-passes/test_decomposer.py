@@ -1,9 +1,7 @@
-
 class TestABADecomposer:
-
     def test_example_circuit(self) -> None:
-
         import math
+
         from opensquirrel.circuit_builder import CircuitBuilder
         from opensquirrel.passes.decomposer import ZYZDecomposer
 
@@ -13,7 +11,8 @@ class TestABADecomposer:
 
         circuit.decompose(decomposer=ZYZDecomposer())
 
-        assert (str(circuit)
+        assert (
+            str(circuit)
             == """version 3.0
 
 qubit[1] q
