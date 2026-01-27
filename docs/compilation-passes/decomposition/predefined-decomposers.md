@@ -19,7 +19,7 @@ Three predefined decomposers are available in OpenSquirrel:
 
 The decomposition of the CNOT gate into a CZ gate (with additional single-qubit gates) is used frequently.
 To this end a CNOT to CZ decomposer (`CNOT2CZDecomposer`) has been implemented that decomposes any CNOTs in a circuit 
-to a Ry(-π/2)-CZ-Ry(π/2).
+to a Ry(-π/2), a CZ, and Ry(π/2) gate, in that order; with the single-qubit gates acting on the target qubit.
 The decomposition is illustrated in the image below.
 
 ![image](../../_static/cnot2cz.png#only-light)

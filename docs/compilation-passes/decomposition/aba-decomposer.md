@@ -1,5 +1,5 @@
 The ABA decomposer is a collection of single-qubit gate decomposers that follow the A-B-A pattern,
-where the A and B stand for a rotation about a particular axis (and A is not the same as B).
+where the A and B stand for a rotation gate about a particular axis (and A is not the same as B).
 The following decomposers are available:
 
 - XYX decomposer (`XYXDecomposer`)

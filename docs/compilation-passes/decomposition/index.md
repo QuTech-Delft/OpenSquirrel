@@ -10,7 +10,7 @@ In general, the native gate set is a subset of the primitive gate set, and the p
 [standard gate set](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html),
 _i.e._, the gate set as supported by the cQASM language.
 
-The input circuit may be written in terms of the the gates as they are defined in the
+The input circuit may be written in terms of the gates as they are defined in the
 [standard gate set](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html),
 yet the output circuit will need to be in terms of the gates from the primitive gate set.
 To ensure the latter, the compiler can be used to _decompose_ the gates into gates that are part of the primitive gate

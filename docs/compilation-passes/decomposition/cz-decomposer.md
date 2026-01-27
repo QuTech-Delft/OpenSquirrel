@@ -25,15 +25,16 @@ The single-qubit unitary $U$ of an arbitrary controlled-U gate, can be written a
 
 $$U = \text{e}^{i\alpha} A \cdot Z \cdot B \cdot Z \cdot C, $$
 
-where $\alpha$ denotes a global phase factor, and the single-qubit unitaries A, B, and C, are chosen such that
-$A \cdot B \cdot C = I$. In terms of the latter, the decomposition looks as illustrated below:
+where $\alpha$ denotes a global phase factor, and the single-qubit unitaries $A$, $B$, and $C$, are chosen such that
+$A \cdot B \cdot C = I$. 
+In terms of the latter, the decomposition looks as illustrated below:
 
 ![image](../../_static/abc_decomposition_cz.png#only-light)
 ![image](../../_static/abc_decomposition_cz_dm.png#only-dark)
 
 The ABC decomposition is made using the ABA decomposer,
 and in particular, the [XYX decomposer](aba-decomposer.md) (`XYXDecomposer`),
-whereby the arbitary U gate is written as,
+whereby the arbitary unitary $U$ is written as,
 
 $$ U = \text{e}^{i\alpha} R_x(\theta_2) \cdot R_y(\theta_1) \cdot R_x(\theta_0), $$
 
@@ -49,9 +50,9 @@ $$
 
 !!! note "Decomposition using a single CZ"
 
-    In certain cases where U can be written as
+    In certain cases where the unitary $U$ can be written as
 
     $$ U = R_x(\theta_1) \cdot R_y(\theta_0) \cdot R_x(\theta_1) \cdot Z, $$
 
-    only a single CZ is required in the decomposition,
+    only a single CZ gate is required in the decomposition,
     according to [Lemma 5.5 in Barenco et al. 1995](https://arxiv.org/abs/quant-ph/9503016).
