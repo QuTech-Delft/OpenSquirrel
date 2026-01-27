@@ -37,8 +37,11 @@ FIXED_POINT_DEG_PRECISION = 5  # Radian to degree conversion outcome precision.
 
 
 class QuantifySchedulerExporter(Exporter):
-    def __init__(self, operation_cycles: OperationCycles | None = None, **kwargs: Any) -> None:
+    def __init__(
+        self, cycle_time: float = CYCLE_TIME, operation_cycles: OperationCycles | None = None, **kwargs: Any
+    ) -> None:
         super().__init__(**kwargs)
+        self._cycle_time = cycle_time
         self._operation_cycles = operation_cycles
 
     def export(self, circuit: Circuit) -> quantify_scheduler.Schedule:
@@ -54,7 +57,7 @@ class QuantifySchedulerExporter(Exporter):
             # Obtain ALAP reference timing for schedulables
             schedulables = list(schedule_creator.schedule.schedulables.values())
             if schedulables:
-                scheduler = _Scheduler(circuit.register_manager, schedulables, self._operation_cycles)
+                scheduler = _Scheduler(circuit.register_manager, schedulables, self._cycle_time, self._operation_cycles)
                 circuit.ir.reverse().accept(scheduler)
 
                 # Update timing constraints of schedulables
@@ -79,9 +82,11 @@ class OperationRecord:
         self,
         qubit_register_size: int,
         schedulables: list[Schedulable],
+        cycle_time: float,
         operation_cycles: OperationCycles | None,
     ) -> None:
         self._schedulables = schedulables
+        self._cycle_time = cycle_time
         self._operation_cycles = operation_cycles
         self._cycles: list[int] = [0] * qubit_register_size
         self._ref_index: list[int] = list(range(qubit_register_size))
@@ -106,7 +111,7 @@ class OperationRecord:
 
         operation_cycles = self._get_operation_cycles(schedulable) if ref_schedulable else 0
         cycle = self._cycles[pertinent_qubit_index] + operation_cycles
-        waiting_time = -1.0 * ((cycle - operation_cycles) - ref_cycle) * CYCLE_TIME
+        waiting_time = -1.0 * ((cycle - operation_cycles) - ref_cycle) * self._cycle_time
         self._set_timing_constraints(schedulable, ref_schedulable, waiting_time)
 
         self._set_reference(qubit_indices, schedulable, cycle)
@@ -174,11 +179,11 @@ class _Scheduler(IRVisitor):
         self,
         register_manager: RegisterManager,
         schedulables: list[Schedulable],
+        cycle_time: float,
         operation_cycles: OperationCycles | None,
     ) -> None:
         self._qubit_register_size = register_manager.qubit_register_size
-        self._operation_cycles = operation_cycles
-        self._operation_record = OperationRecord(self._qubit_register_size, schedulables, operation_cycles)
+        self._operation_record = OperationRecord(self._qubit_register_size, schedulables, cycle_time, operation_cycles)
 
     @property
     def operation_record(self) -> OperationRecord:

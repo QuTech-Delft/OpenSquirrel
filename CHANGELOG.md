@@ -10,10 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
-## [ 0.10.0 ] - [ YYYY-MM-DD ]
+## [ M.m.P ] - [ YYYY-MM-DD ]
 
 ### Added
 
+- The cycle time [seconds] can be set when instantiating the `QuantifySchedulerExporter` through the `cycle_time`
+parameter. 
 - `CircuitBuilder` accepts multiple (qu)bit registers through `add_register` method.
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
