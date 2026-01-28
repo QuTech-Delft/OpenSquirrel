@@ -34,6 +34,7 @@ from opensquirrel.ir.default_gates import (
     Y,
     Z,
 )
+from opensquirrel.register_manager import BitRegister, QubitRegister
 
 __all__ = [
     "CNOT",
@@ -44,6 +45,7 @@ __all__ = [
     "Y90",
     "Z90",
     "Barrier",
+    "BitRegister",
     "CRk",
     "Circuit",
     "CircuitBuilder",
@@ -55,6 +57,7 @@ __all__ = [
     "MinusX90",
     "MinusY90",
     "MinusZ90",
+    "QubitRegister",
     "Reset",
     "Rn",
     "Rx",

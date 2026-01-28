@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, cast, overload
 
 import cqasm.v3x as cqasm
 import cqasm.v3x.types as cqasm_types
@@ -23,7 +23,14 @@ from opensquirrel.ir import (
     Qubit,
     Statement,
 )
-from opensquirrel.register_manager import BitRegister, QubitRegister, RegisterManager, Registry
+from opensquirrel.register_manager import (
+    BitRegister,
+    BitRegistry,
+    QubitRegister,
+    QubitRegistry,
+    RegisterManager,
+    Registry,
+)
 
 if TYPE_CHECKING:
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
@@ -208,6 +215,22 @@ class LibQasmParser:
         return lambda *args: default_non_unitary_set[instruction.name](*args)
 
     @staticmethod
+    @overload
+    def _get_registry(
+        ast: Any,
+        register_cls: type[QubitRegister],
+        type_check: Callable[[Any], bool],
+    ) -> QubitRegistry: ...
+
+    @staticmethod
+    @overload
+    def _get_registry(
+        ast: Any,
+        register_cls: type[BitRegister],
+        type_check: Callable[[Any], bool],
+    ) -> BitRegistry: ...
+
+    @staticmethod
     def _get_registry(
         ast: Any,
         register_cls: type[QubitRegister | BitRegister],
@@ -216,7 +239,7 @@ class LibQasmParser:
         registry = OrderedDict()
         for variable in filter(type_check, ast.variables):
             registry[variable.name] = register_cls(variable.typ.size, variable.name)
-        return registry
+        return registry or OrderedDict({register_cls.default_name: register_cls(0)})
 
     def _create_register_manager(self, ast: Any) -> RegisterManager:
         qubit_registry = self._get_registry(ast, QubitRegister, LibQasmParser._is_qubit_type)
