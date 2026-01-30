@@ -24,8 +24,8 @@ _builder_dynamic_attributes = (*default_instruction_set, "asm")
 class CircuitBuilder:
     """
     A class using the builder pattern to make construction of circuits easy from Python.
-    Adds corresponding instruction when a method is called. Checks that instructions are known and called with the right
-    arguments.
+    Adds corresponding instruction when a method is called. Checks that instructions are known and
+    called with the right arguments.
     Mainly here to allow for Qiskit-style circuit construction:
 
     Args:
@@ -33,17 +33,19 @@ class CircuitBuilder:
         bit_register_size (int): Size of the bit register
 
     Example:
-        >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
-        H(0).CNOT(0, 1).CNOT(0, 2).\
-        to_circuit()
+        ```python
+        >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).H(0).CNOT(0, 1).CNOT(0, 2).to_circuit()
+        ```
+        ```
         version 3.0
-        <BLANKLINE>
+
         qubit[3] q
-        <BLANKLINE>
+        
         h q[0]
         cnot q[0], q[1]
         cnot q[0], q[2]
-        <BLANKLINE>
+    
+        ```
     """
 
     def __init__(

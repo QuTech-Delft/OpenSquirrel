@@ -39,14 +39,14 @@ class CqasmV1Exporter(Exporter):
         super().__init__(**kwargs)
 
     def export(self, circuit: Circuit) -> str:
-        """Exports the given circuit to [cQASM v1](https://libqasm.readthedocs.io/en/latest/index.html)
+        """Exports the given circuit to the [cQASM v1](https://libqasm.readthedocs.io/en/latest/index.html)
         format.
 
         Args:
             circuit (Circuit): The quantum circuit to export.
 
         Returns:
-            str: The [cQASM v1](https://libqasm.readthedocs.io/en/latest/index.html) representation of the circuit.
+            The [cQASM v1](https://libqasm.readthedocs.io/en/latest/index.html) representation of the circuit.
 
         """
         cqasmv1_creator = _CQASMv1Creator(circuit.register_manager)

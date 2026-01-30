@@ -45,7 +45,7 @@ class QuantifySchedulerExporter(Exporter):
         self._operation_cycles = operation_cycles
 
     def export(self, circuit: Circuit) -> quantify_scheduler.Schedule:
-        """Exports the given circuit to [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/)
+        """Exports the given circuit to the [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/)
         format.
 
         Args:

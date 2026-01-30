@@ -25,8 +25,7 @@ class _CircuitMatrixCalculator(IRVisitor):
 def get_circuit_matrix(circuit: Circuit) -> NDArray[np.complex128]:
     """Compute the (large) unitary matrix corresponding to the circuit.
 
-    This matrix has $4^n$ elements, where $n$ is the number of qubits. Result is stored as an array
-    of complex numbers.
+    This matrix has $4^n$ elements, where $n$ is the number of qubits.
 
     Args:
         circuit (Circuit): The circuit for which to compute the matrix.
