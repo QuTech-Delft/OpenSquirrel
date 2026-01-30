@@ -24,7 +24,16 @@ class MatrixGateSemantic(GateSemantic):
             msg = "incorrect matrix shape. The number of rows/columns should be a power of 2."
             raise ValueError(msg)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_matrix_gate_semantic(self)
+
     def is_identity(self) -> bool:
+        """Checks if the matrix gate semantic represents an identity operation.
+
+        Returns:
+            True if the matrix gate semantic represents an identity operation, False otherwise.
+        """
         return np.allclose(self.matrix, np.eye(self.matrix.shape[0]), atol=ATOL)
 
     def __array__(self, *args: Any, **kwargs: Any) -> NDArray[np.complex128]:
@@ -32,6 +41,3 @@ class MatrixGateSemantic(GateSemantic):
 
     def __repr__(self) -> str:
         return f"MatrixGateSemantic(matrix={repr_round(self.matrix)})"
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_matrix_gate_semantic(self)

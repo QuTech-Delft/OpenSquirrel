@@ -77,6 +77,12 @@ class CircuitBuilder:
         return self.__getattribute__(attr)
 
     def add_register(self, register: QubitRegister | BitRegister) -> None:
+        """Add a (qu)bit register to the circuit builder.
+
+        Args:
+            register (QubitRegister | BitRegister): (Qu)bit register to add.
+
+        """
         self.register_manager.add_register(register)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
@@ -133,4 +139,10 @@ class CircuitBuilder:
         return self
 
     def to_circuit(self) -> Circuit:
+        """Build the circuit.
+
+        Returns:
+            Circuit: The built circuit.
+
+        """
         return Circuit(deepcopy(self.register_manager), deepcopy(self.ir))

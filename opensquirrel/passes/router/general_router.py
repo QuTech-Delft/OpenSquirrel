@@ -11,5 +11,4 @@ class Router(ABC):
         """Generic router class"""
 
     @abstractmethod
-    def route(self, ir: IR, qubit_register_size: int) -> IR:
-        raise NotImplementedError
+    def route(self, ir: IR, qubit_register_size: int) -> IR: ...

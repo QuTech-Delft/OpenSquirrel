@@ -10,9 +10,10 @@ def temporary_class_attr(cls: type[Any], attr: str, value: Any) -> Generator[Non
     The assigned value will only be held within the context.
 
     Args:
-        cls: Class of which the class attribute value is to be assigned.
-        attr: Name of class attribute.
-        value: Value to assign to class attribute (must be correct type).
+        cls (type[Any]): Class of which the class attribute value is to be assigned.
+        attr (str): Name of class attribute.
+        value (Any): Value to assign to class attribute (must be correct type).
+
     """
     original_value = getattr(cls, attr)
     setattr(cls, attr, value)

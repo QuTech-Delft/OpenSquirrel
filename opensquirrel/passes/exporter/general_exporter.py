@@ -9,5 +9,4 @@ class Exporter(ABC):
         """Generic router class"""
 
     @abstractmethod
-    def export(self, circuit: Circuit) -> Any:
-        raise NotImplementedError
+    def export(self, circuit: Circuit) -> Any: ...

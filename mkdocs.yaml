@@ -116,6 +116,16 @@ plugins:
         - scripts/gen_reference_page.py
   - literate-nav:
       nav_file: reference.md
-  - mkdocstrings
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_bases: true
+            show_signature: true
+            separate_signature: true
+            show_type_annotations: true
   - glightbox
   - search
+

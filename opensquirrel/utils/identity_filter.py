@@ -8,4 +8,13 @@ if TYPE_CHECKING:
 
 
 def filter_out_identities(gates: Iterable[Gate]) -> list[Gate]:
+    """Filter out identity gates from a list of gates.
+
+    Args:
+        gates (Iterable[Gate]): The list of gates to filter.
+
+    Returns:
+        A list of gates with identity gates removed.
+
+    """
     return [gate for gate in gates if not gate.is_identity()]

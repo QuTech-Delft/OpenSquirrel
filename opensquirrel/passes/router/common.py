@@ -24,7 +24,7 @@ def get_graph(connectivity: Connectivity) -> nx.Graph:
         connectivity (dict[str, list[int]]): Connectivity mapping of physical qubits.
 
     Returns:
-        nx.Graph: Networkx graph from the given connectivity.
+        Graph of the given connectivity.
 
     """
     return nx.Graph({int(start): ends for start, ends in connectivity.items()})
@@ -37,7 +37,7 @@ def get_identity_mapping(qubit_register_size: int) -> dict[int, int]:
         qubit_register_size (int): The size of the qubit register.
 
     Returns:
-        dict[int, int]: An identity mapping.
+        An identity mapping.
 
     """
     return {qubit_index: qubit_index for qubit_index in range(qubit_register_size)}
@@ -59,7 +59,7 @@ class ProcessSwaps:
             connectivity (dict[str, list[int]]): Connectivity mapping of physical qubits.
             pathfinder (PathFinderType): The pathfinder algorithm.
         Returns:
-            IR: IR with the SWAPs processed through.
+            IR with the SWAPs processed through.
 
         """
         graph = get_graph(connectivity)
@@ -83,7 +83,7 @@ class ProcessSwaps:
             initial_mapping (dict[int, int]): The initial mapping of the qubits.
             pathfinder (Callable[[nx.Graph, int, int], list[int]]):
         Returns:
-            dict[int, SWAP]: An mapping from the insert position to SWAP instruction.
+            An mapping from the insert position to SWAP instruction.
 
         """
         planned_swaps: dict[int, SWAP] = {}
@@ -121,7 +121,7 @@ class ProcessSwaps:
             planned_swaps (dict[int, SWAP]): The mapping from the insert position to SWAP instruction.
             initial_mapping (dict[int, int]): The initial mapping of the qubits.
         Returns:
-            list[Statement]: An updated list of IR Statements.
+            An updated list of IR Statements.
 
         """
         new_ir_statements: list[Statement] = []

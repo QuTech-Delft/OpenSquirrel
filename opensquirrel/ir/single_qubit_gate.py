@@ -11,12 +11,22 @@ if TYPE_CHECKING:
 
 
 def try_match_replace_with_default_gate(gate: SingleQubitGate) -> SingleQubitGate:
-    """Try replacing a given SingleQubitGate with a default SingleQubitGate.
-        It does that by matching the input SingleQubitGate to a default SingleQubitGate.
+    """Tries to match a given single-qubit gate with a _default_ single-qubit gate.
+    It does that by checking if the parameters of the Bloch sphere rotation (BSR) semantic of the
+    input single-qubit gate are close to those of any of the default single-qubit gates.
+
+    Note:
+        - The default (single-qubit) gates are defined in the
+        [cQASM standard gate set](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html).
+        - If no specific match is found, the general Rn gate is returned with the same parameters
+        values as those of the input gate.
+
+    Args:
+        gate: The single-qubit gate to be matched.
 
     Returns:
-            A default SingleQubitGate if this SingleQubitGate is close to it,
-            or the input SingleQubitGate otherwise.
+        A default single-qubit gate if this single-qubit gate matches it, the Rn gate otherwise.
+
     """
     from opensquirrel.default_instructions import (
         default_bsr_with_param_set,
@@ -64,9 +74,25 @@ class SingleQubitGate(Gate):
             self._matrix = MatrixGateSemantic(can1(self.bsr.axis, self.bsr.angle, self.bsr.phase))
         return self._matrix
 
+    @property
+    def qubit_operands(self) -> tuple[Qubit, ...]:
+        return (self.qubit,)
+
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         visit_gate = super().accept(visitor)
         return visit_gate if visit_gate is not None else visitor.visit_single_qubit_gate(self)
+
+    def is_identity(self) -> bool:
+        """Checks if the single-qubit gate is an identity gate.
+
+        Returns:
+            True if the single-qubit gate is an identity gate, False otherwise.
+
+        """
+        if self.bsr is not None:
+            return self.bsr.is_identity()
+        return self.matrix.is_identity() if self.matrix else False
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, SingleQubitGate):
@@ -82,12 +108,3 @@ class SingleQubitGate(Gate):
             msg = "cannot merge two single qubit gates on different qubits."
             raise ValueError(msg)
         return SingleQubitGate(self.qubit, self.bsr * other.bsr)
-
-    @property
-    def qubit_operands(self) -> tuple[Qubit, ...]:
-        return (self.qubit,)
-
-    def is_identity(self) -> bool:
-        if self.bsr is not None:
-            return self.bsr.is_identity()
-        return self.matrix.is_identity() if self.matrix else False

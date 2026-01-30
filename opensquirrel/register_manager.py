@@ -123,6 +123,15 @@ class RegisterManager:
 
     @staticmethod
     def generate_virtual_register(registry: Registry) -> Register:
+        """Generate a virtual (qu)bit register from a registry of (qu)bit registers.
+
+        Args:
+            registry (Registry): Registry of (qu)bit registers.
+
+        Returns:
+            Register: Virtual (qu)bit register.
+
+        """
         registers = list(registry.values())
         register_cls = registers[0].__class__
         virtual_index = 0
@@ -138,6 +147,12 @@ class RegisterManager:
     def add_register(self, register: BitRegister) -> None: ...
 
     def add_register(self, register: QubitRegister | BitRegister) -> None:
+        """Add a (qu)bit register to the register manager.
+
+        Args:
+            register (QubitRegister | BitRegister): (Qu)bit register to add.
+
+        """
         if isinstance(register, QubitRegister):
             if register.name in self._qubit_registry:
                 msg = f"Qubit register with name '{register.name}' already exists"
@@ -155,16 +170,28 @@ class RegisterManager:
             raise TypeError(msg)
 
     def get_qubit_register(self, qubit_register_name: str) -> QubitRegister:
+        """Get a qubit register by name.
+
+        Args:
+            qubit_register_name (str): Name of the qubit register.
+
+        Returns:
+            The qubit register with the specified name.
+
+        """
         return self._qubit_registry[qubit_register_name]
 
     def get_bit_register(self, bit_register_name: str) -> BitRegister:
-        return self._bit_registry[bit_register_name]
+        """Get a bit register by name.
 
-    def __repr__(self) -> str:
-        return (
-            f"virtual_qubit_register:\n{self._virtual_qubit_register}\n"
-            f"virtual_bit_register:\n{self._virtual_bit_register}"
-        )
+        Args:
+            bit_register_name (str): Name of the bit register.
+
+        Returns:
+            The bit register with the specified name.
+
+        """
+        return self._bit_registry[bit_register_name]
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, RegisterManager):
@@ -172,4 +199,10 @@ class RegisterManager:
         return (
             self._virtual_qubit_register == other._virtual_qubit_register
             and self._virtual_bit_register == other._virtual_bit_register
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"virtual_qubit_register:\n{self._virtual_qubit_register}\n"
+            f"virtual_bit_register:\n{self._virtual_bit_register}"
         )

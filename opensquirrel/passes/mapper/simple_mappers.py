@@ -23,7 +23,16 @@ class IdentityMapper(Mapper):
         super().__init__(**kwargs)
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-        """Create identity mapping."""
+        """Map the circuit according to a identity mapping.
+
+        Args:
+            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            qubit_register_size (int): The size of the (virtual) qubit register.
+
+        Returns:
+            Mapping from virtual to physical qubits.
+
+        """
         return Mapping(list(range(qubit_register_size)))
 
 
@@ -39,7 +48,16 @@ class HardcodedMapper(Mapper):
         self._mapping = mapping
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-        """Return the hardcoded mapping."""
+        """Map the circuit according to the hardcoded mapping.
+
+        Args:
+            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            qubit_register_size (int): The size of the (virtual) qubit register.
+
+        Returns:
+            Mapping from virtual to physical qubits.
+
+        """
         if qubit_register_size != self._mapping.size():
             msg = f"qubit register size ({qubit_register_size}) and mapping size ({self._mapping.size()}) differ"
             raise ValueError(msg)
@@ -58,7 +76,16 @@ class RandomMapper(Mapper):
         self.seed = seed
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-        """Create a random mapping."""
+        """Map the circuit according to the random mapping.
+
+        Args:
+            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            qubit_register_size (int): The size of the (virtual) qubit register.
+
+        Returns:
+            Mapping from virtual to physical qubits.
+
+        """
         if self.seed:
             random.seed(self.seed)
 

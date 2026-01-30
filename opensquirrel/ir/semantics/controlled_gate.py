@@ -13,7 +13,17 @@ class ControlledGateSemantic(GateSemantic):
     def __init__(self, target_gate: SingleQubitGate) -> None:
         self.target_gate = target_gate
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_controlled_gate_semantic(self)
+
     def is_identity(self) -> bool:
+        """Checks if the controlled gate semantic represents an identity operation.
+
+        Returns:
+            True if the controlled gate semantic represents an identity operation, False otherwise.
+
+        """
         return self.target_gate.is_identity()
 
     def __repr__(self) -> str:
@@ -25,6 +35,3 @@ class ControlledGateSemantic(GateSemantic):
             f"ControlledGateSemantic(target_gate={self.target_gate.name}"
             f"(qubit={self.target_gate.qubit.index}, bsr={self.target_gate.bsr}))"
         )
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_controlled_gate_semantic(self)

@@ -18,6 +18,17 @@ class AStarRouter(Router):
         self._distance_metric = distance_metric
 
     def route(self, ir: IR, qubit_register_size: int) -> IR:
+        """Route the input IR using the [A*](https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.shortest_paths.astar.astar_path.html)
+        search algorithm.
+
+        Args:
+            ir (IR): The input IR to be routed.
+            qubit_register_size (int): Size of the qubit register.
+
+        Returns:
+            The routed IR.
+
+        """
         pathfinder: PathFinderType = self._astar_pathfinder
         return ProcessSwaps.process_swaps(ir, qubit_register_size, self._connectivity, pathfinder)
 

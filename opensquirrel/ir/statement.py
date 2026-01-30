@@ -5,16 +5,15 @@ from opensquirrel.ir.expression import Bit, Expression, Qubit, String, SupportsS
 from opensquirrel.ir.ir import IRNode, IRVisitor
 
 
-class Statement(IRNode, ABC):
-    pass
+class Statement(IRNode, ABC): ...
 
 
 class AsmDeclaration(Statement):
     """``AsmDeclaration`` is used to define an assembly declaration statement in the IR.
 
     Args:
-        backend_name: Name of the backend that is to process the provided backend code.
-        backend_code: (Assembly) code to be processed by the specified backend.
+        backend_name (SupportsStr): Name of the backend that is to process the provided backend code.
+        backend_code (SupportsStr): Assembly code to be processed by the specified backend.
     """
 
     def __init__(
@@ -27,6 +26,7 @@ class AsmDeclaration(Statement):
         Statement.__init__(self)
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         visitor.visit_statement(self)
         return visitor.visit_asm_declaration(self)
 
@@ -37,22 +37,20 @@ class Instruction(Statement, ABC):
 
     @property
     @abstractmethod
-    def arguments(self) -> tuple[Expression, ...]:
-        pass
+    def arguments(self) -> tuple[Expression, ...]: ...
 
     @property
     @abstractmethod
-    def qubit_operands(self) -> tuple[Qubit, ...]:
-        pass
+    def qubit_operands(self) -> tuple[Qubit, ...]: ...
+
+    @property
+    @abstractmethod
+    def bit_operands(self) -> tuple[Bit, ...]: ...
 
     @property
     def qubit_indices(self) -> list[int]:
         return [qubit.index for qubit in self.qubit_operands]
 
-    @property
-    @abstractmethod
-    def bit_operands(self) -> tuple[Bit, ...]:
-        pass
-
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         return visitor.visit_instruction(self)

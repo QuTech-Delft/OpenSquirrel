@@ -45,6 +45,18 @@ class QuantifySchedulerExporter(Exporter):
         self._operation_cycles = operation_cycles
 
     def export(self, circuit: Circuit) -> quantify_scheduler.Schedule:
+        """Exports the given circuit to [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/)
+        format.
+
+        Args:
+            circuit (Circuit): The quantum circuit to export.
+
+        Returns:
+            The quantify-scheduler [Schedule](https://quantify-os.org/docs/quantify-scheduler/v0.26.0/autoapi/quantify_scheduler/index.html#quantify_scheduler.Schedule)
+            representation of the circuit.
+
+        """
+
         if "quantify_scheduler" not in globals():
             msg = "quantify-scheduler is not installed, or cannot be installed on your system"
             raise ModuleNotFoundError(msg)

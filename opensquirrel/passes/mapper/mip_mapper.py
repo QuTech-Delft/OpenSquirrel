@@ -30,13 +30,12 @@ class MIPMapper(Mapper):
         self.timeout = timeout
 
     def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-        """
-        Find an initial mapping of virtual qubits to physical qubits that minimizes
+        """Find an initial mapping of virtual qubits to physical qubits that minimizes
         the sum of distances between mapped operands of all two-qubit gates, using
         Mixed Integer Programming (MIP).
 
         This method formulates the mapping as a linear assignment problem, where the
-        objective is to minimize the total "distance cost" of executing all two-qubit
+        objective is to minimize the total _distance cost_ of executing all two-qubit
         gates, given the connectivity.
 
         Args:
@@ -44,11 +43,12 @@ class MIPMapper(Mapper):
             qubit_register_size (int): The number of virtual qubits in the circuit.
 
         Returns:
-            Mapping: Mapping from virtual to physical qubits.
+            Mapping from virtual to physical qubits.
 
         Raises:
             RuntimeError: If the MIP solver fails to find a feasible mapping or times out.
             RuntimeError: If the number of virtual qubits exceeds the number of physical qubits.
+
         """
         num_physical_qubits = len(self.connectivity)
 

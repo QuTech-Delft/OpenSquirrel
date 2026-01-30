@@ -10,14 +10,14 @@ class PrimitiveGateValidator(Validator):
         self.primitive_gate_set = primitive_gate_set
 
     def validate(self, ir: IR) -> None:
-        """
-        Check if all unitary gates in the circuit are part of the primitive gate set.
+        """Check if all gates in the circuit are part of the primitive gate set.
 
         Args:
             ir (IR): The intermediate representation of the circuit to be checked.
 
         Raises:
-            ValueError: If any unitary gate in the circuit is not part of the primitive gate set.
+            ValueError: If any gate in the circuit is not part of the primitive gate set.
+
         """
         gates_not_in_primitive_gate_set = [
             statement.name
