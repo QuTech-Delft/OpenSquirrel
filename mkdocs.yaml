@@ -125,7 +125,7 @@ plugins:
             show_bases: true
             show_signature: true
             separate_signature: true
-            show_type_annotations: true
+            show_signature_annotations: true
   - glightbox
   - search
 
