@@ -40,11 +40,11 @@ class CircuitBuilder:
         version 3.0
 
         qubit[3] q
-        
+
         h q[0]
         cnot q[0], q[1]
         cnot q[0], q[2]
-    
+
         ```
     """
 
