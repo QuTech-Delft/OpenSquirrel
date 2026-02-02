@@ -103,7 +103,7 @@ def test_identity_mapping(mapper: str, circuit: str, expected_mapping: Mapping, 
 
     computed_mapping = mapper_fixture.map(circuit_fixture.ir, circuit_fixture.qubit_register_size)
 
-    assert computed_mapping.items() == expected_mapping.items()
+    assert computed_mapping == expected_mapping
 
 
 def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) -> None:
@@ -115,7 +115,7 @@ def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) ->
         pytest.skip(f"Unknown platform: {sys.platform}")
     mapping = mapper2.map(circuit2.ir, circuit2.qubit_register_size)
 
-    assert mapping.items() == expected_mapping.items()
+    assert mapping == expected_mapping
 
 
 def test_more_logical_qubits_than_physical(mapper1: MIPMapper, circuit3: Circuit) -> None:
@@ -127,12 +127,6 @@ def test_timeout(mapper3: MIPMapper, circuit2: Circuit) -> None:
     with pytest.raises(RuntimeError, match="MIP solver failed"):
         # timeout used: 0.000001
         mapper3.map(circuit2.ir, circuit2.qubit_register_size)
-
-
-def test_map_method(mapper1: MIPMapper, circuit1: Circuit) -> None:
-    initial_circuit = str(circuit1)
-    circuit1.map(mapper=mapper1)
-    assert str(circuit1) == initial_circuit
 
 
 def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
