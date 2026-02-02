@@ -431,6 +431,18 @@ def test_operation_timing(
         _check_waiting_cycles(exported_schedule, expected_waiting_cycles)
 
 
+def test_cycle_time(qs_is_installed: bool) -> None:
+    if qs_is_installed:
+        cycle_time = 10e-9
+        wait_cycles = 5
+        expected_relative_time = -1.0 * wait_cycles * cycle_time
+        circuit = Circuit.from_string(f"""version 3; qubit q; X q; wait({wait_cycles}) q; X q""")
+        exported_schedule = circuit.export(exporter=QuantifySchedulerExporter(cycle_time=cycle_time))
+        rel_time = next(iter(exported_schedule.schedulables.values()))["timing_constraints"][0].rel_time
+        assert cycle_time != CYCLE_TIME
+        assert rel_time == expected_relative_time
+
+
 @pytest.fixture
 def mock_qs() -> Generator[MagicMock, None, None]:
     mock_qs = MagicMock()
