@@ -117,7 +117,7 @@ CNOT q[9], q[4]
         circuit = builder.to_circuit()
 
         a_star_router = AStarRouter(connectivity=connectivity, distance_metric=DistanceMetric.EUCLIDEAN)
-        with pytest.raises(NoRoutingPathError, match=r"No routing path available between qubit 0 and qubit 2"):
+        with pytest.raises(NoRoutingPathError, match=r"no routing path available between qubits 0 and 2"):
             circuit.route(router=a_star_router)
 
 
@@ -211,5 +211,5 @@ CNOT q[5], q[6]
 
         shortest_path_router = ShortestPathRouter(connectivity=connectivity)
 
-        with pytest.raises(NoRoutingPathError, match=r"No routing path available between qubit 0 and qubit 2"):
+        with pytest.raises(NoRoutingPathError, match=r"no routing path available between qubits 0 and 2"):
             circuit.route(router=shortest_path_router)

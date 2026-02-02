@@ -99,7 +99,7 @@ class ProcessSwaps:
                     try:
                         path = pathfinder(graph, physical_q0_index, physical_q1_index)
                     except nx.NetworkXNoPath as e:
-                        msg = f"No routing path available between qubit {q0.index} and qubit {q1.index}"
+                        msg = f"no routing path available between qubits {q0.index!r} and {q1.index!r}"
                         raise NoRoutingPathError(msg) from e
 
                     base_offset = len(planned_swaps)

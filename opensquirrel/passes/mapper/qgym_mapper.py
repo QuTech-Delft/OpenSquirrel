@@ -60,8 +60,8 @@ class QGymMapper(Mapper):
         num_physical = self.hardware_connectivity.number_of_nodes()
         if qubit_register_size != num_physical:
             msg = (
-                f"The QGym mapper requires an equal number of logical and physical qubits."
-                f"Respectively, got {qubit_register_size} logical and {num_physical} physical qubits instead."
+                f"number of logical qubits {qubit_register_size!r} is not equal to the number of physical qubits"
+                f" {num_physical!r}: the QGym mapper requires them to be equal"
             )
             raise ValueError(msg)
 
@@ -152,7 +152,7 @@ class QGymMapper(Mapper):
             ValueError: If the mapping is incomplete (not all logical qubits are mapped).
         """
         if not isinstance(last_obs, dict) or last_obs.get("mapping") is None:
-            msg = "QGym environment did not provide 'mapping' in observation."
+            msg = "QGym environment did not provide 'mapping' in observation"
             raise RuntimeError(msg)
 
         mapping_data = last_obs["mapping"]
@@ -160,8 +160,8 @@ class QGymMapper(Mapper):
 
         if len(physical_to_logical) != qubit_register_size:
             msg = (
-                f"Mapping length {len(physical_to_logical)} is not equal to "
-                f"the size of the qubit register {qubit_register_size}."
+                f"the size of the mapping {len(physical_to_logical)!r} is not equal to "
+                f"the number of qubits {qubit_register_size!r}."
             )
             raise ValueError(msg)
 
@@ -171,7 +171,7 @@ class QGymMapper(Mapper):
                 logical_to_physical[logical_qubit] = physical_qubit
 
         if -1 in logical_to_physical:
-            msg = f"Incomplete mapping. Physical-to-logical: {physical_to_logical}"
+            msg = f"mapping is incomplete: obtained mapping {physical_to_logical!r}"
             raise ValueError(msg)
 
         return Mapping(logical_to_physical)
