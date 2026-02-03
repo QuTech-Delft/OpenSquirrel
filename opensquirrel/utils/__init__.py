@@ -11,6 +11,5 @@ __all__ = [
     "filter_out_identities",
     "flatten_list",
     "get_matrix",
-    "get_matrix",
     "get_reduced_ket",
 ]

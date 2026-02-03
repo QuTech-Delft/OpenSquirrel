@@ -28,7 +28,7 @@ class Mapping:
         if set(self.data.keys()) != set(other.data.keys()):
             return False
 
-        return self.data == other.data
+        return all(self.data[key] == other.data[key] for key in self.data)
 
     def __getitem__(self, key: int) -> int:
         return self.data[key]

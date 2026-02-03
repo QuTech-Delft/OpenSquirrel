@@ -72,7 +72,7 @@ class MIPMapper(Mapper):
             raise RuntimeError(error_message)
 
         distance = self._get_distance()
-        reference_counter = self._get_reference_counter(ir)
+        reference_counter = self._get_reference_counter(ir, self.num_virtual_qubits)
 
         cost, constraints, integrality, bounds = self._get_linearized_formulation(reference_counter, distance)
 
@@ -96,8 +96,9 @@ class MIPMapper(Mapper):
 
         return list(distance)
 
-    def _get_reference_counter(self, ir: IR) -> list[list[int]]:
-        reference_counter = [[0 for _ in range(self.num_virtual_qubits)] for _ in range(self.num_virtual_qubits)]
+    @staticmethod
+    def _get_reference_counter(ir: IR, num_virtual_qubits: int) -> list[list[int]]:
+        reference_counter = [[0 for _ in range(num_virtual_qubits)] for _ in range(num_virtual_qubits)]
         for statement in ir.statements:
             if isinstance(statement, TwoQubitGate):
                 qubit_operands = statement.qubit_operands
