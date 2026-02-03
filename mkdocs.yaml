@@ -7,6 +7,9 @@ nav:
   - Home:
     - Home: index.md
     - Installation: installation.md
+    - Contributing: contributing.md
+    - Authors: authors.md
+    - Acknowledgements: acknowledgements.md
   - Tutorial:
     - Tutorial: tutorial/index.md
     - Creating a circuit: tutorial/creating-a-circuit.md
