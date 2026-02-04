@@ -6,9 +6,9 @@ Accordingly, installation is as easy as running:
 $ pip install opensquirrel
 ```
 
-You can check if the package is installed properly by running a Python console and importing it:
+You can check if the package is installed properly by importing it in a Python console:
 ```python
 import opensquirrel
 ```
 
-Head out to the [tutorial](./tutorial/index.md) to see how you can use it!
+_Head out to the [Tutorial](./tutorial/index.md) to see how you can use it!_
