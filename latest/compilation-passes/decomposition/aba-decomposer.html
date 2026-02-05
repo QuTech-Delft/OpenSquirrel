@@ -4726,41 +4726,57 @@
 
   <h1>ABA decomposer</h1>
 
-<p>One of the most common single qubit decomposition techniques is the ZYZ decomposition.
-This technique decomposes a quantum gate into an <code>Rz</code>, <code>Ry</code> and <code>Rz</code> gate in that order.
-The decompositions are found in <code>opensquirrel.passes.decomposer</code>,
-an example can be seen below where a <code>H</code>, <code>Z</code>, <code>Y</code>, and <code>Rx</code> gate are all decomposed on a single qubit circuit.</p>
-<p></p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.circuit_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZYZDecomposer</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">Z</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">Rx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">ZYZDecomposer</span><span class="p">())</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span>
+<p>The ABA decomposer is a collection of single-qubit gate decomposers that follow the A-B-A pattern,
+where the A and B stand for a rotation gate about a particular axis (and A is not the same as B).
+The following decomposers are available:</p>
+<ul>
+<li>XYX decomposer (<code>XYXDecomposer</code>)</li>
+<li>XZX decomposer (<code>XZXDecomposer</code>)</li>
+<li>YXY decomposer (<code>YXYDecomposer</code>)</li>
+<li>YZY decomposer (<code>YZYDecomposer</code>)</li>
+<li>ZXZ decomposer (<code>ZXZDecomposer</code>)</li>
+<li>ZYZ decomposer (<code>ZYZDecomposer</code>)</li>
+</ul>
+<p>For instance, the ZYZ decomposer, decomposes every single-qubit gate into (at most) 3 gates,
+ <em>i.e.</em>, a sequence of an Rz, Ry, and Rz gate.
+The decomposition is done in fewer than 3 gates where possible.</p>
+<p>In the example below a H, Z, Y, and Rx gate are all decomposed to Rz and Ry gates using the ZYZ decomposer.</p>
+<p><em>Check the <a href="../../circuit-builder/index.html">circuit builder</a> on how to generate a circuit.</em></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.circuit_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZYZDecomposer</span>
 </code></pre></div>
-<em>Output</em>:<p></p>
-<div class="highlight"><pre><span></span><code>version 3.0
-
-qubit[1] q
-
-Rz(3.1415927) q[0]
-Ry(1.5707963) q[0]
-Rz(3.1415927) q[0]
-Ry(3.1415927) q[0]
-Rz(1.5707963) q[0]
-Ry(1.0471976) q[0]
-Rz(-1.5707963) q[0]
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">Z</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">Y</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">Rx</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">circuit</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">decomposer</span><span class="o">=</span><span class="n">ZYZDecomposer</span><span class="p">())</span>
 </code></pre></div>
-<p>Similarly, the decomposer can be used on individual gates.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZYZDecomposer</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">H</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">ZYZDecomposer</span><span class="p">()</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
-</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>version 3.0
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a>qubit[1] q
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a>Rz(3.1415927) q[0]
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a>Ry(1.5707963) q[0]
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a>Rz(3.1415927) q[0]
+<a id="__codelineno-2-8" name="__codelineno-2-8"></a>Ry(3.1415927) q[0]
+<a id="__codelineno-2-9" name="__codelineno-2-9"></a>Rz(1.5707963) q[0]
+<a id="__codelineno-2-10" name="__codelineno-2-10"></a>Ry(1.0471976) q[0]
+<a id="__codelineno-2-11" name="__codelineno-2-11"></a>Rz(-1.5707963) q[0]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
 
 
 

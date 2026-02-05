@@ -4726,8 +4726,51 @@
 
   <h1>CZ decomposer</h1>
 
+<p>The CZ decomposer (<code>CZDecomposer</code>) is a two-qubit gate decomposer.
+When applied to a circuit, it decomposes every controlled two-qubit gate into a sequence of (at most 2) CZ gates
+and single-qubit gates. It decomposes the CR, CRk and CNOT controlled two-qubit gates.</p>
+<div class="admonition warning">
+<p class="admonition-title">The SWAP gate is not decomposed by the CZ decomposer</p>
+<p>The SWAP gate is not a <em>controlled</em> two-qubit gate and can therefore not be decomposed using the CZ decomposer.
+To decompose a SWAP gate into either CZ or CNOT gates,
+use the predefined <a href="predefined-decomposers.html#swap-to-cz-decomposer">SWAP to CZ decomposer</a> (<code>SWAP2CZDecomposer</code>)
+or <a href="predefined-decomposers.html#swap-to-cnot-decomposer">SWAP to CNOT decomposer</a> (<code>SWAP2CNOTDecomposer</code>).</p>
+</div>
 <div class="admonition note">
-<p class="admonition-title">Coming soon</p>
+<p>The CZ gate is more likely to be part of the <a href="../../tutorial/applying-compilation-passes.html#primitive-gate-set">primitive gate set</a> over the CNOT gate.
+It is therefore recommended to decompose two-qubit controlled gates using the CZ decomposer over the
+<a href="cnot-decomposer.html">CNOT decomposer</a> (<code>CNOTDecomposer</code>).</p>
+</div>
+<p>The algorithm for the CZ decomposer is derived from that of the
+<a href="cnot-decomposer.html">CNOT decomposer</a> (<code>CNOTDecomposer</code>), which in turn is based on the the ABC decomposition
+(not to be confused with the ABA decomposer). 
+The procedure is described in
+<a href="https://threeplusone.com/pubs/on_gates.pdf">Quantum Gates, section 7.5 by G. Crooks (2024)</a>.</p>
+<p>The single-qubit unitary <span class="arithmatex">\(U\)</span> of an arbitrary controlled-U gate, can be written as,</p>
+<div class="arithmatex">\[U = \text{e}^{i\alpha} A \cdot Z \cdot B \cdot Z \cdot C, \]</div>
+<p>where <span class="arithmatex">\(\alpha\)</span> denotes a global phase factor, and the single-qubit unitaries <span class="arithmatex">\(A\)</span>, <span class="arithmatex">\(B\)</span>, and <span class="arithmatex">\(C\)</span>, are chosen such that
+<span class="arithmatex">\(A \cdot B \cdot C = I\)</span>. 
+In terms of the latter, the decomposition looks as illustrated below:</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/abc_decomposition_cz.png#only-light" data-desc-position="bottom"><img alt="image" src="../../_static/abc_decomposition_cz.png#only-light"></a>
+<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/abc_decomposition_cz_dm.png#only-dark" data-desc-position="bottom"><img alt="image" src="../../_static/abc_decomposition_cz_dm.png#only-dark"></a></p>
+<p>The ABC decomposition is made using the ABA decomposer,
+and in particular, the <a href="aba-decomposer.html">XYX decomposer</a> (<code>XYXDecomposer</code>),
+whereby the arbitary unitary <span class="arithmatex">\(U\)</span> is written as,</p>
+<div class="arithmatex">\[ U = \text{e}^{i\alpha} R_x(\theta_2) \cdot R_y(\theta_1) \cdot R_x(\theta_0), \]</div>
+<p>which can be rearranged such that,</p>
+<div class="arithmatex">\[
+\begin{align*}
+A&amp; = R_x(\theta_2) \cdot R_y(\theta_1/2), \\ 
+B&amp; = R_y(-\theta_1/2) \cdot R_x(-\theta_0/2 - \theta_2/2), \\
+C&amp; = R_x(\theta_0/2 - \theta_2/2). \\
+\end{align*}
+\]</div>
+<div class="admonition note">
+<p class="admonition-title">Decomposition using a single CZ</p>
+<p>In certain cases where the unitary <span class="arithmatex">\(U\)</span> can be written as</p>
+<div class="arithmatex">\[ U = R_x(\theta_1) \cdot R_y(\theta_0) \cdot R_x(\theta_1) \cdot Z, \]</div>
+<p>only a single CZ gate is required in the decomposition,
+according to <a href="https://arxiv.org/abs/quant-ph/9503016">Lemma 5.5 in Barenco et al. 1995</a>.</p>
 </div>
 
 

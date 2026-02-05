@@ -4726,9 +4726,58 @@
 
   <h1>McKay decomposer</h1>
 
-<div class="admonition note">
-<p class="admonition-title">Coming soon</p>
+<p>The McKay decomposer (<code>McKayDecomposer</code>) is a single-qubit gate decomposer.</p>
+<p>It decomposes any single-qubit unitary <span class="arithmatex">\(U\)</span> into a sequence of (at most 5) single-qubit gates,
+consisting of Rz and Rx rotations:</p>
+<div class="arithmatex">\[U = R_z(\theta) \cdot R_x(\pi/2) \cdot R_z(\phi) \cdot R_x(\pi/2) \cdot R_z(\lambda). \]</div>
+<p>The algorithm used by the McKay decomposer is described in
+<a href="https://arxiv.org/abs/1612.00858">McKay et al. (2017)</a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Global phase difference</p>
+<p>Note that the resulting decomposition using the McKay decomposer (<code>McKayDecomposer</code>)
+is equal to the original gate, up to a (possible) difference in <em>global phase</em>.
+A difference in global phase can, in certain cases, lead to a semantically different circuit,
+therefore we urge the user to be aware of this risk.</p>
 </div>
+<p>Example decompositions of notable single-qubit gates are:</p>
+<table>
+<thead>
+<tr>
+<th>Unitary</th>
+<th>Decomposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>I</td>
+<td><span class="arithmatex">\(I\)</span></td>
+</tr>
+<tr>
+<td>H</td>
+<td><span class="arithmatex">\(Rz(\pi/2) \cdot X^{1/2} \cdot Rz(\pi/2)\)</span></td>
+</tr>
+<tr>
+<td>X</td>
+<td><span class="arithmatex">\(X^{1/2} \cdot X^{1/2}\)</span></td>
+</tr>
+<tr>
+<td>Y</td>
+<td><span class="arithmatex">\(X^{1/2} \cdot X^{1/2} \cdot Rz(\pi)\)</span></td>
+</tr>
+<tr>
+<td>Z</td>
+<td><span class="arithmatex">\(Rz(\pi)\)</span></td>
+</tr>
+<tr>
+<td>S</td>
+<td><span class="arithmatex">\(Rz(\pi/2)\)</span></td>
+</tr>
+<tr>
+<td>T</td>
+<td><span class="arithmatex">\(Rz(\pi/4)\)</span></td>
+</tr>
+</tbody>
+</table>
 
 
 
