@@ -1,3 +1,4 @@
+import re
 from typing import Any, SupportsInt
 
 import numpy as np
@@ -10,7 +11,7 @@ from opensquirrel.ir.expression import Expression
 
 class TestFloat:
     def test_type_error(self) -> None:
-        with pytest.raises(TypeError, match="value must be a float"):
+        with pytest.raises(TypeError, match="value 'f' must be a float"):
             Float("f")  # type: ignore
 
     def test_init(self) -> None:
@@ -20,7 +21,8 @@ class TestFloat:
 class TestInt:
     @pytest.mark.parametrize("value", ["f", None, {1}])
     def test_type_error(self, value: Any) -> None:
-        with pytest.raises(TypeError, match="value must be an int"):
+        msg = re.escape(f"value {value!r} must be an int")
+        with pytest.raises(TypeError, match=msg):
             Int(value)
 
     @pytest.mark.parametrize("value", [1, 1.0, 1.1, Int(1)])
@@ -30,7 +32,7 @@ class TestInt:
 
 class TestBit:
     def test_type_error(self) -> None:
-        with pytest.raises(TypeError, match="index must be a BitLike"):
+        with pytest.raises(TypeError, match="index 'f' must be a BitLike"):
             Bit("f")  # type: ignore
 
     def test_init(self) -> None:
@@ -39,7 +41,7 @@ class TestBit:
 
 class TestQubit:
     def test_type_error(self) -> None:
-        with pytest.raises(TypeError, match="index must be a QubitLike"):
+        with pytest.raises(TypeError, match="index 'f' must be a QubitLike"):
             Qubit("f")  # type: ignore
 
     def test_init(self) -> None:
@@ -72,15 +74,15 @@ class TestAxis:
     @pytest.mark.parametrize(
         ("erroneous_axis", "expected_error", "expected_error_message"),
         [
-            (Qubit(1), TypeError, "axis requires an ArrayLike"),
-            ([0, [3], [2]], TypeError, "axis requires an ArrayLike"),
-            (0, ValueError, "axis requires an ArrayLike of length 3, but received an ArrayLike of length 1"),
+            (Qubit(1), TypeError, re.escape("axis Qubit[1] requires an ArrayLike")),
+            ([0, [3], [2]], TypeError, re.escape("axis [0, [3], [2]] requires an ArrayLike")),
+            (0, ValueError, "axis has size 1: requires an ArrayLike of length 3"),
             (
                 [1, 2, 3, 4],
                 ValueError,
-                "axis requires an ArrayLike of length 3, but received an ArrayLike of length 4",
+                "axis has size 4: requires an ArrayLike of length 3",
             ),
-            ([0, 0, 0], ValueError, "axis requires at least one element to be non-zero"),
+            ([0, 0, 0], ValueError, "all elements of axis are zero: requires a non-zero axis"),
         ],
     )
     def test_axis_setter_with_error(

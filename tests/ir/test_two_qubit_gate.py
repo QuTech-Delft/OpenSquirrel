@@ -1,3 +1,4 @@
+import re
 from math import pi
 
 import numpy as np
@@ -24,11 +25,12 @@ class TestTwoQubitGate:
         assert gate.qubit_operands == (Qubit(42), Qubit(100))
 
     def test_same_qubits(self) -> None:
-        with pytest.raises(ValueError, match="qubit0 and qubit1 cannot be the same"):
+        with pytest.raises(ValueError, match="qubit operands cannot be the same qubit"):
             TwoQubitGate(0, 0, gate_semantic=MatrixGateSemantic(np.eye(4, dtype=np.complex128)))
 
     def test_controlled_gate_with_mismatch_in_target_and_target_gate_qubit(self) -> None:
-        with pytest.raises(ValueError, match="the qubit from the target gate does not match with 'qubit1'"):
+        msg = re.escape("the qubit from the target gate does not match with qubit1 Qubit[1]")
+        with pytest.raises(ValueError, match=msg):
             TwoQubitGate(
                 0,
                 1,

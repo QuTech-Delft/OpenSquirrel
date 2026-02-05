@@ -18,7 +18,7 @@ class Mapping:
     def __init__(self, physical_qubit_register: list[int]) -> None:
         self.data: dict[int, int] = dict(enumerate(physical_qubit_register))
         if (self.data.keys()) != set(self.data.values()):
-            msg = "the mapping is incorrect"
+            msg = f"the mapping {self!r} is incorrect"
             raise ValueError(msg)
 
     def __eq__(self, other: Any) -> bool:
@@ -31,6 +31,9 @@ class Mapping:
 
     def __len__(self) -> int:
         return len(self.data)
+
+    def __repr__(self) -> str:
+        return f"Mapping({self.data!r})"
 
     def size(self) -> int:
         return len(self.data)

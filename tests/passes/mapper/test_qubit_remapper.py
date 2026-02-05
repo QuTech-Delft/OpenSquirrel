@@ -50,7 +50,7 @@ class TestRemapper:
         return Mapping([3, 1, 0, 2])
 
     def test_get_remapped_ir_raise_value_error(self, circuit_3: Circuit, mapping_4: Mapping) -> None:
-        with pytest.raises(ValueError, match="mapping is larger than the qubit register size"):
+        with pytest.raises(ValueError, match="size of the mapping 4 is larger than the number of qubits 3"):
             get_remapped_ir(circuit_3, mapping_4)
 
     def test_get_remapped_ir_3_ok(self, circuit_3: Circuit, circuit_3_remapped: Circuit, mapping_3: Mapping) -> None:
@@ -62,7 +62,7 @@ class TestRemapper:
         assert circuit_4 == circuit_4_remapped
 
     def test_remap_ir_raise_value_error(self, circuit_3: Circuit, mapping_4: Mapping) -> None:
-        with pytest.raises(ValueError, match="mapping is larger than the qubit register size"):
+        with pytest.raises(ValueError, match="size of the mapping 4 is larger than the number of qubits 3"):
             remap_ir(circuit_3, mapping_4)
 
     def test_remap_ir_3_ok(self, circuit_3: Circuit, circuit_3_remapped: Circuit, mapping_3: Mapping) -> None:

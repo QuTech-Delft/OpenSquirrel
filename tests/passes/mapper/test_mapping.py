@@ -1,3 +1,5 @@
+import re
+
 import pytest
 
 from opensquirrel.passes.mapper.mapping import Mapping
@@ -11,5 +13,6 @@ class TestMapping:
         Mapping([0, 1])
 
     def test_incorrect(self) -> None:
-        with pytest.raises(ValueError, match="the mapping is incorrect"):
+        msg = re.escape("the mapping Mapping({0: 0, 1: 2}) is incorrect")
+        with pytest.raises(ValueError, match=msg):
             Mapping([0, 2])

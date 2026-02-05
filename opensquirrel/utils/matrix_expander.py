@@ -111,7 +111,7 @@ class MatrixExpander(IRVisitor):
 
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
         if gate.qubit.index >= self.qubit_register_size:
-            msg = "index out of range"
+            msg = f"index {gate.qubit.index!r} out of range {self.qubit_register_size!r}"
             raise IndexError(msg)
 
         result = np.kron(
@@ -122,7 +122,7 @@ class MatrixExpander(IRVisitor):
             np.eye(1 << gate.qubit.index),
         )
         if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
-            msg = "result has incorrect shape"
+            msg = f"matrix has incorrect shape {result.shape!r}"
             ValueError(msg)
         return np.asarray(result, dtype=np.complex128)
 
@@ -133,14 +133,14 @@ class MatrixExpander(IRVisitor):
 
     def _controlled_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
         if not gate.controlled:
-            msg = "the gate must have a controlled gate semantic."
+            msg = f"gate {gate!r} does not have a controlled gate semantic"
             raise ValueError(msg)
 
         control_qubit = gate.qubit0
         target_gate = gate.controlled.target_gate
 
         if control_qubit.index >= self.qubit_register_size:
-            msg = "index out of range"
+            msg = f"index {control_qubit.index!r} out of range {self.qubit_register_size!r}"
             raise IndexError(msg)
 
         expanded_matrix = target_gate.accept(self)
@@ -169,8 +169,8 @@ class MatrixExpander(IRVisitor):
 
         if m.shape != (1 << len(qubit_operands), 1 << len(qubit_operands)):
             msg = (
-                f"matrix has incorrect shape."
-                f"Expected {(1 << len(qubit_operands), 1 << len(qubit_operands))}, but received {m.shape}"
+                f"matrix has incorrect shape {m.shape!r}:"
+                f" expected shape {(1 << len(qubit_operands), 1 << len(qubit_operands))}"
             )
             raise ValueError(msg)
 
@@ -184,7 +184,8 @@ class MatrixExpander(IRVisitor):
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
         if expanded_matrix.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
-            msg = "expended matrix has incorrect shape"
+            msg = f"expended matrix has incorrect shape {expanded_matrix.shape!r}:"
+            f" expected shape {(1 << self.qubit_register_size, 1 << self.qubit_register_size)}"
             raise ValueError(msg)
         return expanded_matrix
 
@@ -192,11 +193,11 @@ class MatrixExpander(IRVisitor):
         qubit_operands = list(reversed(gate.qubit_operands))
 
         if not gate.canonical:
-            msg = "gate needs to have a canonical representation"
+            msg = f"gate {gate!r} needs to have a canonical representation"
             raise ValueError(msg)
 
         if any(q.index >= self.qubit_register_size for q in qubit_operands):
-            msg = "index out of range"
+            msg = f"index out of range for gate {gate!r}"
             raise IndexError(msg)
 
         m = np.array(gate.matrix)
@@ -211,7 +212,10 @@ class MatrixExpander(IRVisitor):
                 expanded_matrix[expanded_matrix_row][expanded_matrix_column] = value
 
         if expanded_matrix.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
-            msg = "expended matrix has incorrect shape"
+            msg = (
+                f"expended matrix has incorrect shape {expanded_matrix.shape!r}:"
+                f" expected {(1 << self.qubit_register_size, 1 << self.qubit_register_size)}"
+            )
             raise ValueError(msg)
         return expanded_matrix
 

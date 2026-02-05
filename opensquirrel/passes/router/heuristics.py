@@ -34,5 +34,5 @@ def calculate_distance(q0_index: int, q1_index: int, num_columns: int, distance_
             return max(abs(x1 - x2), abs(y1 - y2))
 
         case _:
-            msg = "Invalid distance metric. Choose Manhattan, Euclidean, or Chebyshev."
+            msg = f"invalid distance metric {distance_metric!r}: choose Manhattan, Euclidean, or Chebyshev"
             raise ValueError(msg)

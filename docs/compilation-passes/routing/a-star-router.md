@@ -150,4 +150,4 @@ circuit.route(router=a_star_router)
 
 !!! example ""
 
-    `NoRoutingPathError: No routing path available between qubit 0 and qubit 2`
+    `NoRoutingPathError: no routing path available between qubits 0 and 2`

@@ -91,7 +91,7 @@ class ABADecomposer(Decomposer, ABC):
             axes A, B, and C, respectively.
         """
         if not (-math.pi + ATOL < alpha <= math.pi + ATOL):
-            msg = "angle needs to be normalized"
+            msg = f"angle {alpha!r} is not normalized between -pi and pi"
             raise ValueError(msg)
 
         a_axis_value, b_axis_value, c_axis_value = self._set_a_b_c_axes_values(axis)

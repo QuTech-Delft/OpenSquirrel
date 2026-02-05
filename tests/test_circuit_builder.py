@@ -1,4 +1,5 @@
 import math
+import re
 
 import pytest
 
@@ -188,10 +189,12 @@ H q[6]
         assert qubit_registry[DEFAULT_QUBIT_REGISTER_NAME].size == initial_qubit_register_size
         assert bit_registry[DEFAULT_BIT_REGISTER_NAME].size == initial_bit_register_size
 
-        with pytest.raises(KeyError, match=f"Qubit register with name '{DEFAULT_QUBIT_REGISTER_NAME}' already exists"):
+        msg = re.escape(f"qubit register with name {DEFAULT_QUBIT_REGISTER_NAME!r} already exists")
+        with pytest.raises(KeyError, match=msg):
             builder.add_register(QubitRegister(1, DEFAULT_QUBIT_REGISTER_NAME))
 
-        with pytest.raises(KeyError, match=f"Bit register with name '{DEFAULT_BIT_REGISTER_NAME}' already exists"):
+        msg = re.escape(f"bit register with name {DEFAULT_BIT_REGISTER_NAME!r} already exists")
+        with pytest.raises(KeyError, match=msg):
             builder.add_register(BitRegister(1, DEFAULT_BIT_REGISTER_NAME))
 
         builder.add_register(QubitRegister(1, DEFAULT_BIT_REGISTER_NAME))
@@ -226,7 +229,7 @@ H q[6]
         q1 = QubitRegister(q1_size, "q1")
         builder.add_register(q1)
 
-        with pytest.raises(IndexError, match=f"Index {q1_size} is out of range"):
+        with pytest.raises(IndexError, match=f"index {q1_size!r} is out of range"):
             builder.H(q1[q1_size])
 
         assert q1[0] == q0_size

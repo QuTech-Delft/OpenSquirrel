@@ -86,8 +86,9 @@ class CircuitBuilder:
             qubit: qubit to check.
         """
         index = Qubit(qubit).index
-        if index >= self.register_manager.qubit_register_size:
-            msg = f"qubit index {index} is out of bounds"
+        qubit_register_size = self.register_manager.qubit_register_size
+        if index >= qubit_register_size:
+            msg = f"qubit index {index!r} is out of bounds: must be smaller than {qubit_register_size!r}"
             raise IndexError(msg)
 
     def _check_bit_out_of_bounds_access(self, bit: BitLike) -> None:
@@ -97,8 +98,9 @@ class CircuitBuilder:
             bit: bit to check.
         """
         index = Bit(bit).index
-        if index >= self.register_manager.bit_register_size:
-            msg = f"bit index {index} is out of bounds"
+        bit_register_size = self.register_manager.bit_register_size
+        if index >= bit_register_size:
+            msg = f"bit index {index!r} is out of bounds: must be smaller than {bit_register_size!r}"
             raise IndexError(msg)
 
     def _check_out_of_bounds_access(self, instruction: Instruction) -> None:
@@ -114,12 +116,12 @@ class CircuitBuilder:
                 asm_declaration = AsmDeclaration(*args)
                 self.ir.add_asm_declaration(asm_declaration)
             except TypeError:
-                msg = f"trying to build '{attr}' with the wrong number or type of arguments: '{args}'"
+                msg = f"trying to build {attr!r} with the wrong number or type of arguments: {args!r}"
                 raise TypeError(msg) from None
             return self
 
         if attr not in default_instruction_set:
-            msg = f"unknown instruction '{attr}'"
+            msg = f"unknown instruction {attr!r}"
             raise ValueError(msg)
         try:
             instruction = default_instruction_set[attr](*args)
