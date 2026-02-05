@@ -5209,11 +5209,7 @@ qubits. This can be used for, e.g.,
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-268">268</a></span>
-<span class="normal"><a href="#__codelineno-0-269">269</a></span>
-<span class="normal"><a href="#__codelineno-0-270">270</a></span>
-<span class="normal"><a href="#__codelineno-0-271">271</a></span>
-<span class="normal"><a href="#__codelineno-0-272">272</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-272">272</a></span>
 <span class="normal"><a href="#__codelineno-0-273">273</a></span>
 <span class="normal"><a href="#__codelineno-0-274">274</a></span>
 <span class="normal"><a href="#__codelineno-0-275">275</a></span>
@@ -5250,48 +5246,52 @@ qubits. This can be used for, e.g.,
 <span class="normal"><a href="#__codelineno-0-306">306</a></span>
 <span class="normal"><a href="#__codelineno-0-307">307</a></span>
 <span class="normal"><a href="#__codelineno-0-308">308</a></span>
-<span class="normal"><a href="#__codelineno-0-309">309</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-268" name="__codelineno-0-268"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
-<a id="__codelineno-0-269" name="__codelineno-0-269"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="sd">    Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of</span>
-<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="sd">    qubits. This can be used for, e.g.,</span>
-<a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="sd">    - testing,</span>
-<a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="sd">    - permuting the operands of multi-qubit gates,</span>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="sd">    - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).</span>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="sd">        gate: The gate, including the qubits on which it is operated on.</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="sd">        qubit_register_size: The size of the qubit register.</span>
+<span class="normal"><a href="#__codelineno-0-309">309</a></span>
+<span class="normal"><a href="#__codelineno-0-310">310</a></span>
+<span class="normal"><a href="#__codelineno-0-311">311</a></span>
+<span class="normal"><a href="#__codelineno-0-312">312</a></span>
+<span class="normal"><a href="#__codelineno-0-313">313</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-272" name="__codelineno-0-272"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="sd">    Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a><span class="sd">    qubits. This can be used for, e.g.,</span>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a><span class="sd">    - testing,</span>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="sd">    - permuting the operands of multi-qubit gates,</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="sd">    - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).</span>
 <a id="__codelineno-0-279" name="__codelineno-0-279"></a>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">    Examples:</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">        &gt;&gt;&gt; X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)</span>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">        &gt;&gt;&gt; get_matrix(X(1), 2).astype(int)           # X q[1]</span>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a><span class="sd">        array([[0, 0, 1, 0],</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a><span class="sd">               [0, 0, 0, 1],</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">               [1, 0, 0, 0],</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">               [0, 1, 0, 0]])</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a><span class="sd">        &gt;&gt;&gt; CNOT02 = ControlledGate(0, X(2))</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">        &gt;&gt;&gt; get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
-<a id="__codelineno-0-298" name="__codelineno-0-298"></a><span class="sd">        &gt;&gt;&gt; get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]</span>
-<a id="__codelineno-0-299" name="__codelineno-0-299"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-300" name="__codelineno-0-300"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-301" name="__codelineno-0-301"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
-<a id="__codelineno-0-302" name="__codelineno-0-302"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
-<a id="__codelineno-0-303" name="__codelineno-0-303"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
-<a id="__codelineno-0-304" name="__codelineno-0-304"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
-<a id="__codelineno-0-305" name="__codelineno-0-305"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-306" name="__codelineno-0-306"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
-<a id="__codelineno-0-307" name="__codelineno-0-307"></a><span class="sd">    """</span>
-<a id="__codelineno-0-308" name="__codelineno-0-308"></a>    <span class="n">expander</span> <span class="o">=</span> <span class="n">MatrixExpander</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span>
-<a id="__codelineno-0-309" name="__codelineno-0-309"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">expander</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">        gate: The gate, including the qubits on which it is operated on.</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a><span class="sd">        qubit_register_size: The size of the qubit register.</span>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a><span class="sd">        &gt;&gt;&gt; X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)</span>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a><span class="sd">        &gt;&gt;&gt; get_matrix(X(1), 2).astype(int)           # X q[1]</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a><span class="sd">        array([[0, 0, 1, 0],</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a><span class="sd">               [0, 0, 0, 1],</span>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a><span class="sd">               [1, 0, 0, 0],</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a><span class="sd">               [0, 1, 0, 0]])</span>
+<a id="__codelineno-0-291" name="__codelineno-0-291"></a>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a><span class="sd">        &gt;&gt;&gt; CNOT02 = ControlledGate(0, X(2))</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a><span class="sd">        &gt;&gt;&gt; get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a><span class="sd">        &gt;&gt;&gt; get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-304" name="__codelineno-0-304"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
+<a id="__codelineno-0-311" name="__codelineno-0-311"></a><span class="sd">    """</span>
+<a id="__codelineno-0-312" name="__codelineno-0-312"></a>    <span class="n">expander</span> <span class="o">=</span> <span class="n">MatrixExpander</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span>
+<a id="__codelineno-0-313" name="__codelineno-0-313"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">expander</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

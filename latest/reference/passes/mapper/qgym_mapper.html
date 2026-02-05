@@ -5098,8 +5098,8 @@
 <a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="n">num_physical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hardware_connectivity</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span>
 <a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="k">if</span> <span class="n">qubit_register_size</span> <span class="o">!=</span> <span class="n">num_physical</span><span class="p">:</span>
 <a id="__codelineno-0-62" name="__codelineno-0-62"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>                <span class="sa">f</span><span class="s2">"The QGym mapper requires an equal number of logical and physical qubits."</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>                <span class="sa">f</span><span class="s2">"Respectively, got </span><span class="si">{</span><span class="n">qubit_register_size</span><span class="si">}</span><span class="s2"> logical and </span><span class="si">{</span><span class="n">num_physical</span><span class="si">}</span><span class="s2"> physical qubits instead."</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>                <span class="sa">f</span><span class="s2">"number of logical qubits </span><span class="si">{</span><span class="n">qubit_register_size</span><span class="si">!r}</span><span class="s2"> is not equal to the number of physical qubits"</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>                <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">num_physical</span><span class="si">!r}</span><span class="s2">: the QGym mapper requires them to be equal"</span>
 <a id="__codelineno-0-65" name="__codelineno-0-65"></a>            <span class="p">)</span>
 <a id="__codelineno-0-66" name="__codelineno-0-66"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <a id="__codelineno-0-67" name="__codelineno-0-67"></a>
@@ -5190,7 +5190,7 @@
 <a id="__codelineno-0-152" name="__codelineno-0-152"></a><span class="sd">            ValueError: If the mapping is incomplete (not all logical qubits are mapped).</span>
 <a id="__codelineno-0-153" name="__codelineno-0-153"></a><span class="sd">        """</span>
 <a id="__codelineno-0-154" name="__codelineno-0-154"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">last_obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="n">last_obs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"mapping"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-155" name="__codelineno-0-155"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"QGym environment did not provide 'mapping' in observation."</span>
+<a id="__codelineno-0-155" name="__codelineno-0-155"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"QGym environment did not provide 'mapping' in observation"</span>
 <a id="__codelineno-0-156" name="__codelineno-0-156"></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <a id="__codelineno-0-157" name="__codelineno-0-157"></a>
 <a id="__codelineno-0-158" name="__codelineno-0-158"></a>        <span class="n">mapping_data</span> <span class="o">=</span> <span class="n">last_obs</span><span class="p">[</span><span class="s2">"mapping"</span><span class="p">]</span>
@@ -5198,8 +5198,8 @@
 <a id="__codelineno-0-160" name="__codelineno-0-160"></a>
 <a id="__codelineno-0-161" name="__codelineno-0-161"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">physical_to_logical</span><span class="p">)</span> <span class="o">!=</span> <span class="n">qubit_register_size</span><span class="p">:</span>
 <a id="__codelineno-0-162" name="__codelineno-0-162"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-<a id="__codelineno-0-163" name="__codelineno-0-163"></a>                <span class="sa">f</span><span class="s2">"Mapping length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">physical_to_logical</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not equal to "</span>
-<a id="__codelineno-0-164" name="__codelineno-0-164"></a>                <span class="sa">f</span><span class="s2">"the size of the qubit register </span><span class="si">{</span><span class="n">qubit_register_size</span><span class="si">}</span><span class="s2">."</span>
+<a id="__codelineno-0-163" name="__codelineno-0-163"></a>                <span class="sa">f</span><span class="s2">"the size of the mapping </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">physical_to_logical</span><span class="p">)</span><span class="si">!r}</span><span class="s2"> is not equal to "</span>
+<a id="__codelineno-0-164" name="__codelineno-0-164"></a>                <span class="sa">f</span><span class="s2">"the number of qubits </span><span class="si">{</span><span class="n">qubit_register_size</span><span class="si">!r}</span><span class="s2">."</span>
 <a id="__codelineno-0-165" name="__codelineno-0-165"></a>            <span class="p">)</span>
 <a id="__codelineno-0-166" name="__codelineno-0-166"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <a id="__codelineno-0-167" name="__codelineno-0-167"></a>
@@ -5209,7 +5209,7 @@
 <a id="__codelineno-0-171" name="__codelineno-0-171"></a>                <span class="n">logical_to_physical</span><span class="p">[</span><span class="n">logical_qubit</span><span class="p">]</span> <span class="o">=</span> <span class="n">physical_qubit</span>
 <a id="__codelineno-0-172" name="__codelineno-0-172"></a>
 <a id="__codelineno-0-173" name="__codelineno-0-173"></a>        <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">in</span> <span class="n">logical_to_physical</span><span class="p">:</span>
-<a id="__codelineno-0-174" name="__codelineno-0-174"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Incomplete mapping. Physical-to-logical: </span><span class="si">{</span><span class="n">physical_to_logical</span><span class="si">}</span><span class="s2">"</span>
+<a id="__codelineno-0-174" name="__codelineno-0-174"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"mapping is incomplete: obtained mapping </span><span class="si">{</span><span class="n">physical_to_logical</span><span class="si">!r}</span><span class="s2">"</span>
 <a id="__codelineno-0-175" name="__codelineno-0-175"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <a id="__codelineno-0-176" name="__codelineno-0-176"></a>
 <a id="__codelineno-0-177" name="__codelineno-0-177"></a>        <span class="k">return</span> <span class="n">Mapping</span><span class="p">(</span><span class="n">logical_to_physical</span><span class="p">)</span>
@@ -5416,8 +5416,8 @@ Stable-Baselines3 agent acting in the QGym InitialMapping environment.</p>
 <a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="n">num_physical</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hardware_connectivity</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span>
 <a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="k">if</span> <span class="n">qubit_register_size</span> <span class="o">!=</span> <span class="n">num_physical</span><span class="p">:</span>
 <a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>            <span class="sa">f</span><span class="s2">"The QGym mapper requires an equal number of logical and physical qubits."</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>            <span class="sa">f</span><span class="s2">"Respectively, got </span><span class="si">{</span><span class="n">qubit_register_size</span><span class="si">}</span><span class="s2"> logical and </span><span class="si">{</span><span class="n">num_physical</span><span class="si">}</span><span class="s2"> physical qubits instead."</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>            <span class="sa">f</span><span class="s2">"number of logical qubits </span><span class="si">{</span><span class="n">qubit_register_size</span><span class="si">!r}</span><span class="s2"> is not equal to the number of physical qubits"</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>            <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">num_physical</span><span class="si">!r}</span><span class="s2">: the QGym mapper requires them to be equal"</span>
 <a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="p">)</span>
 <a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <a id="__codelineno-0-67" name="__codelineno-0-67"></a>
