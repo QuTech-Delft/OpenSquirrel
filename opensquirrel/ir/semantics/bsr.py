@@ -13,6 +13,7 @@ from opensquirrel.ir.expression import Axis, AxisLike, Float
 from opensquirrel.ir.ir import IRNode
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 from opensquirrel.utils import can1
+from opensquirrel.utils.context import temporary_class_attr
 from opensquirrel.utils.general_math import acos
 
 if TYPE_CHECKING:
@@ -95,9 +96,9 @@ class BlochSphereRotation(GateSemantic, IRNode):
         return False
 
     def __mul__(self, other: BlochSphereRotation) -> BlochSphereRotation:
-        """Computes the single qubit gate resulting from the composition of two single
-        qubit gates, by composing the Bloch sphere rotations of the two gates.
-        The first rotation (A) is applied and then the second (B):
+        """Computes the single-qubit gate resulting from the composition of two single-qubit gates,
+        by composing the Bloch sphere rotations of the two gates. The first rotation (A) is applied
+        and then the second (B):
 
         As separate gates:
             A q
@@ -110,35 +111,29 @@ class BlochSphereRotation(GateSemantic, IRNode):
 
         Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
         """
-        acos_argument = cos(self.angle / 2) * cos(other.angle / 2) - sin(self.angle / 2) * sin(
-            other.angle / 2
-        ) * np.dot(self.axis, other.axis)
-        combined_angle = 2 * acos(acos_argument)
+        combined_angle = 2 * acos(
+            cos(self.angle / 2) * cos(other.angle / 2) - 
+            sin(self.angle / 2) * sin(other.angle / 2) * 
+            np.dot(self.axis, other.axis)
+            )
 
         if abs(sin(combined_angle / 2)) < ATOL:
             return bsr_from_matrix([[1, 0], [0, 1]])
-
-        order_of_magnitude = abs(floor(log10(ATOL)))
-        combined_axis = np.round(
-            (
+        
+        combined_axis = (
                 1
                 / sin(combined_angle / 2)
                 * (
                     sin(self.angle / 2) * cos(other.angle / 2) * self.axis.value
                     + cos(self.angle / 2) * sin(other.angle / 2) * other.axis.value
                     + sin(self.angle / 2) * sin(other.angle / 2) * np.cross(other.axis, self.axis)
-                )
-            ),
-            order_of_magnitude,
-        )
-
-        combined_phase = np.round(self.phase + other.phase, order_of_magnitude)
+                ))
+        combined_phase = self.phase + other.phase
         return BlochSphereRotation(
             axis=combined_axis,
             angle=combined_angle,
             phase=combined_phase,
         )
-
 
 class BsrNoParams(BlochSphereRotation):
     def __init__(
@@ -208,10 +203,11 @@ class BsrUnitaryParams(BlochSphereRotation):
 
     @staticmethod
     def _get_bsr(theta: SupportsFloat, phi: SupportsFloat, lmbda: SupportsFloat) -> BlochSphereRotation:
+        phase = (float(phi) + float(lmbda)) / 2
         a = BlochSphereRotation((0, 0, 1), lmbda, 0)
         b = BlochSphereRotation((0, 1, 0), theta, 0)
-        c = BlochSphereRotation((0, 0, 1), phi, (float(phi) + float(lmbda)) / 2)
-
+        c = BlochSphereRotation((0, 0, 1), phi, phase)
+        
         ma = can1(a.axis, a.angle, a.phase)
         mb = can1(b.axis, b.angle, b.phase)
         mc = can1(c.axis, c.angle, c.phase)
