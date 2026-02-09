@@ -20,6 +20,36 @@ DISTANCE_UL = 999999
 
 
 class MIPMapper(Mapper):
+    """
+    Mixed Integer Programming (MIP) mapper for finding optimal initial qubit mappings.
+
+    This mapper finds an initial mapping of virtual qubits to physical qubits that minimizes
+    the sum of distances between mapped operands of all two-qubit gates, using a linearized
+    MIP formulation based on OpenQL's approach.
+
+    The formulation uses binary variables x[i][k] indicating whether virtual qubit i
+    is mapped to physical qubit k, and continuous variables w[i][k] representing the
+    cost contribution for mapping i to k.
+
+    The objective function minimizes sum(w[i][k]) + epsilon * sum_{i,k: i!=k} x[i][k],
+    where the epsilon term provides a small penalty for non-identity mappings as a tiebreaker.
+
+    Subject to the following constraints:
+    1. Each virtual qubit assigned to exactly one physical qubit: sum_k x[i][k] == 1
+    2. Each physical qubit assigned to at most one virtual qubit: sum_i x[i][k] <= 1
+    3. Linearization: costmax[i][k] * x[i][k] + sum_{j,l} refcount[i][j]*distance[k][l]*x[j][l] - w[i][k] <= costmax[i][k]
+
+    Args:
+        connectivity: Physical qubit connectivity graph.
+        timeout: Maximum time (in seconds) allowed for the MIP solver. None means no timeout.
+        epsilon: Small penalty coefficient for non-identity mappings (default: 1e-6).
+
+    Example:
+        >>> connectivity = {"0": [1], "1": [0, 2], "2": [1]}
+        >>> mapper = MIPMapper(connectivity=connectivity, timeout=10.0)
+        >>> mapping = mapper.map(circuit, qubit_register_size=3)
+    """  # noqa: E501
+
     def __init__(
         self,
         connectivity: Connectivity,
@@ -114,32 +144,15 @@ class MIPMapper(Mapper):
         distance: list[list[int]],
     ) -> tuple[list[float], list[LinearConstraint], list[int], Bounds]:
         """
-        Create the linearized MIP formulation following OpenQL's approach.
-
-        The formulation uses binary variables x[i][k] indicating whether virtual qubit i
-        is mapped to physical qubit k, and continuous variables w[i][k] representing the
-        cost contribution for mapping i to k. The total number of variables is
-        (num_virtual * num_physical) for x and (num_virtual * num_physical) for w.
-
-        The objective function minimizes sum(w[i][k]) + epsilon * sum_{i,k: i!=k} x[i][k],
-        where the epsilon term provides a small penalty for non-identity mappings as a tiebreaker.
-
-        Subject to the following constraints:
-        1. Each virtual qubit assigned to exactly one physical qubit: sum_k x[i][k] == 1
-        2. Each physical qubit assigned to at most one virtual qubit: sum_i x[i][k] <= 1
-        3. Linearization: costmax[i][k] * x[i][k] + sum_{j,l} refcount[i][j]*distance[k][l]*x[j][l] - w[i][k] <= costmax[i][k]
+        Create the linearized MIP formulation.
 
         Args:
             reference_counter: Matrix counting two-qubit gate interactions between virtual qubits.
             distance: Distance matrix between physical qubits (minimum swap count).
 
         Returns:
-            A tuple containing:
-                - cost: Objective function coefficients (length: num_vars).
-                - constraints: List of LinearConstraint objects (equality, upper bound, linearization).
-                - integrality: List of integers indicating which variables are integer (x) vs continuous (w).
-                - bounds: Bounds object specifying variable lower and upper bounds.
-        """  # noqa: E501
+            Tuple of (cost coefficients, constraints, integrality indicators, variable bounds).
+        """
         max_cost = self._compute_max_cost(reference_counter, distance)
         cost = self._get_cost()
         constraints = self._get_constraints(reference_counter, distance, max_cost)
