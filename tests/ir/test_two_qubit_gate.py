@@ -1,12 +1,8 @@
-import re
-from math import pi
-
 import numpy as np
 import pytest
 
 from opensquirrel.ir import Qubit
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.semantics import MatrixGateSemantic
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
@@ -27,14 +23,3 @@ class TestTwoQubitGate:
     def test_same_qubits(self) -> None:
         with pytest.raises(ValueError, match="qubit operands cannot be the same qubit"):
             TwoQubitGate(0, 0, gate_semantic=MatrixGateSemantic(np.eye(4, dtype=np.complex128)))
-
-    def test_controlled_gate_with_mismatch_in_target_and_target_gate_qubit(self) -> None:
-        msg = re.escape("the qubit from the target gate does not match with qubit1 Qubit[1]")
-        with pytest.raises(ValueError, match=msg):
-            TwoQubitGate(
-                0,
-                1,
-                gate_semantic=ControlledGateSemantic(
-                    SingleQubitGate(0, BlochSphereRotation([0, 0, 1], angle=pi, phase=pi / 2))
-                ),
-            )
