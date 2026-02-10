@@ -220,7 +220,10 @@ def bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]]) -> BlochSph
     cmatrix = np.asarray(matrix, dtype=np.complex128)
 
     if cmatrix.shape != (2, 2):
-        msg = f"Expected shape for generating BSR is (2, 2), got {cmatrix.shape}"
+        msg = (
+            f"matrix has incorrect shape for generating a Bloch sphere rotation {cmatrix.shape},"
+            " required shape is (2, 2)"
+        )
         raise ValueError(msg)
 
     a, b, c, d = map(complex, cmatrix.flatten())

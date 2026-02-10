@@ -15,13 +15,16 @@ class MatrixGateSemantic(GateSemantic):
         number_of_rows, number_of_cols = self.matrix.shape
         if number_of_cols != number_of_rows:
             msg = (
-                f"incorrect matrix shape. The number of rows should be equal to the number of columns, but"
-                f"{number_of_rows=} and {number_of_cols=}. "
+                f"incorrect matrix shape {number_of_rows=} and {number_of_cols=}: number of rows should be equal to"
+                " the number of columns"
             )
             raise ValueError(msg)
 
         if number_of_cols & (number_of_cols - 1) != 0:
-            msg = "incorrect matrix shape. The number of rows/columns should be a power of 2."
+            msg = (
+                f"incorrect matrix shape  {number_of_rows=} and {number_of_cols=}: number of rows/columns should be"
+                " a power of 2."
+            )
             raise ValueError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:

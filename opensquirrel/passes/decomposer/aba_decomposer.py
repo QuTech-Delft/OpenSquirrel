@@ -90,7 +90,7 @@ class ABADecomposer(Decomposer, ABC):
 
         """
         if not (-math.pi + ATOL < theta <= math.pi + ATOL):
-            msg = "angle needs to be normalized"
+            msg = f"angle {theta!r} is not normalized between -pi and pi"
             raise ValueError(msg)
 
         component_a, component_b, component_c = self._set_components(axis)

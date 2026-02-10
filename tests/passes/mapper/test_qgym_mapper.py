@@ -91,9 +91,9 @@ def test_map_on_circuit(mapper1: QGymMapper, circuit1: Circuit) -> None:
 
 
 def test_unequal_number_logical_and_physical_qubits(mapper1: QGymMapper, circuit2: Circuit) -> None:
-    expected_error = (
-        r"The QGym mapper requires an equal number of logical and physical qubits."
-        r"Respectively, got 7 logical and 5 physical qubits instead."
+    msg = (
+        "number of logical qubits 7 is not equal to the number of physical qubits 5: the QGym mapper requires them to"
+        " be equal"
     )
-    with pytest.raises(ValueError, match=expected_error):
+    with pytest.raises(ValueError, match=msg):
         circuit2.map(mapper1)

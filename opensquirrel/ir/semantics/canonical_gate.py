@@ -37,7 +37,7 @@ class CanonicalAxis(BaseAxis):
             raise TypeError(msg) from e
         axis = axis.flatten()
         if len(axis) != 3:
-            msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
+            msg = f"axis has size {len(axis)!r}: requires an ArrayLike of length 3"
             raise ValueError(msg)
 
         return CanonicalAxis.restrict_to_weyl_chamber(axis)

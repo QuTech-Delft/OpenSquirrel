@@ -30,13 +30,13 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
         replacement_gates_qubit_indices.update(replacement_gate.qubit_indices)
 
     if set(gate_qubit_indices) != replacement_gates_qubit_indices:
-        msg = f"replacement for gate {gate.name} does not seem to operate on the right qubits"
+        msg = f"replacement for gate {gate.name!r} does not operate on the correct qubits"
         raise ValueError(msg)
 
     replacement_matrix = get_circuit_matrix(get_reindexed_circuit(replacement_gates, gate_qubit_indices))
 
     if not are_matrices_equivalent_up_to_global_phase(replaced_matrix, replacement_matrix):
-        msg = f"replacement for gate {gate.name} does not preserve the quantum state"
+        msg = f"replacement for gate {gate.name!r} does not preserve the quantum state"
         raise ValueError(msg)
 
 

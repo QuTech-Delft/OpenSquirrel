@@ -38,7 +38,7 @@ class String(Expression):
             self.value = str(value)
             return
 
-        msg = "value must be a str"
+        msg = f"value {value!r} must be a str"
         raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -75,7 +75,7 @@ class Float(Expression):
             self.value = float(value)
             return
 
-        msg = "value must be a float"
+        msg = f"value {value!r} must be a float"
         raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -111,7 +111,7 @@ class Int(Expression):
             self.value = int(value)
             return
 
-        msg = "value must be an int"
+        msg = f"value {value!r} must be an int"
         raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -137,7 +137,7 @@ class Bit(Expression):
         elif isinstance(index, Bit):
             self.index = index.index
         else:
-            msg = "index must be a BitLike"
+            msg = f"index {index!r} must be a BitLike"
             raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -167,7 +167,7 @@ class Qubit(Expression):
         elif isinstance(index, Qubit):
             self.index = index.index
         else:
-            msg = "index must be a QubitLike"
+            msg = f"index {index!r} must be a QubitLike"
             raise TypeError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
@@ -266,14 +266,14 @@ class Axis(BaseAxis):
         try:
             axis = np.asarray(axis, dtype=np.float64)
         except (ValueError, TypeError) as e:
-            msg = "axis requires an ArrayLike"
+            msg = f"axis {axis!r} requires an ArrayLike"
             raise TypeError(msg) from e
         axis = axis.flatten()
         if len(axis) != 3:
-            msg = f"axis requires an ArrayLike of length 3, but received an ArrayLike of length {len(axis)}"
+            msg = f"axis has size {len(axis)!r}: requires an ArrayLike of length 3"
             raise ValueError(msg)
         if np.all(axis == 0):
-            msg = "axis requires at least one element to be non-zero"
+            msg = "all elements of axis are zero: requires a non-zero axis"
             raise ValueError(msg)
         axis = cast("NDArray[np.float64]", axis)
         return axis / np.linalg.norm(axis)
