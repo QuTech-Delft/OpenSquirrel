@@ -23,11 +23,11 @@ class TwoQubitGate(Gate):
         self.gate_semantic = gate_semantic
 
         if self._controlled and (self.qubit1 != self._controlled.target_gate.qubit):
-            msg = f"the qubit from the target gate does not match with qubit1 {self.qubit1!r}"
+            msg = "the qubit from the target gate does not match with 'qubit1'."
             raise ValueError(msg)
 
         if self._check_repeated_qubit_operands(self.qubit_operands):
-            msg = "qubit operands cannot be the same qubit"
+            msg = "qubit0 and qubit1 cannot be the same"
             raise ValueError(msg)
 
     def __repr__(self) -> str:
@@ -38,23 +38,42 @@ class TwoQubitGate(Gate):
         if self._matrix:
             return self._matrix
 
-        if self.controlled:
+        if self._controlled:
             self._matrix = MatrixGateSemantic(get_matrix(self, 2))
             return self._matrix
 
-        if self.canonical:
+        if self._canonical:
             from opensquirrel.utils.matrix_expander import can2
 
-            return MatrixGateSemantic(can2(self.canonical.axis))
+            return MatrixGateSemantic(can2(self._canonical.axis))
         return MatrixGateSemantic(np.eye(4))
 
     @cached_property
-    def canonical(self) -> CanonicalGateSemantic | None:
-        return self._canonical
+    def canonical(self) -> CanonicalGateSemantic:
+        if self._canonical: 
+            return self._canonical
+
+        if self._controlled:
+            ...
+
+        if self._matrix:
+            ...
 
     @cached_property
     def controlled(self) -> ControlledGateSemantic | None:
-        return self._controlled
+        if self._controlled:
+            return self._controlled
+
+        if self._matrix:
+            return None
+
+        if self._canonical:
+            if ():
+                return ...
+
+            else:
+                return None  
+
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_parent = super().accept(visitor)

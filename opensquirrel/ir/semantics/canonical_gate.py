@@ -75,7 +75,7 @@ class CanonicalAxis(BaseAxis):
 
 
 class CanonicalGateSemantic(GateSemantic):
-    def __init__(self, axis: AxisLike) -> None:
+    def __init__(self, axis: AxisLike, rotations:list[SingleQubitGate]]) -> None:
         self.axis = CanonicalAxis(axis)
 
     def __repr__(self) -> str:
