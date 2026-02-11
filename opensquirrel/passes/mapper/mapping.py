@@ -22,6 +22,9 @@ class Mapping:
             raise ValueError(msg)
 
     def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Mapping):
+            return False
+
         if len(self.data) != len(other.data):
             return False
 
