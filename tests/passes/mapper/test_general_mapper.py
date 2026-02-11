@@ -20,7 +20,9 @@ class TestMapper:
                 super().__init__(**kwargs)
                 self._qubit_register = qubit_register_size
 
-            def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+            def map(
+                self, ir: IR, qubit_register_size: int, interaction_graph: dict[tuple[int, int], int] | None = None
+            ) -> Mapping:
                 return Mapping(list(range(self._qubit_register)))
 
         Mapper2(qubit_register_size=1)

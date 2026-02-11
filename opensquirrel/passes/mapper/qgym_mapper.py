@@ -40,7 +40,12 @@ class QGymMapper(Mapper):
         self.env = InitialMapping(connection_graph=self.hardware_connectivity, **(env_kwargs or {}))
         self.agent = self._load_agent(agent_class, agent_path)
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        ir: IR,
+        qubit_register_size: int,
+        interaction_graph: dict[tuple[int, int], int] | None = None,
+    ) -> Mapping:
         """
         Compute an initial logical-to-physical qubit mapping using a trained
         Stable-Baselines3 agent acting in the QGym InitialMapping environment.
@@ -48,6 +53,8 @@ class QGymMapper(Mapper):
         Args:
             ir (IR): Intermediate representation of the quantum circuit to be mapped.
             qubit_register_size (int): Number of logical (virtual) qubits in the circuit.
+            interaction_graph: Pre-computed interaction graph from Circuit.
+                            If None, generate interaction graph from IR as fallback.
 
         Returns:
             Mapping: Mapping from virtual to physical qubits.
@@ -65,7 +72,10 @@ class QGymMapper(Mapper):
             )
             raise ValueError(msg)
 
-        circuit_graph = self._ir_to_interaction_graph(ir)
+        if interaction_graph is None:
+            circuit_graph = self._ir_to_networkx(ir)
+        else:
+            circuit_graph = self._interaction_graph_to_networkx(interaction_graph)
 
         obs, _ = self.env.reset(options={"interaction_graph": circuit_graph})
 
@@ -110,7 +120,7 @@ class QGymMapper(Mapper):
         return cast("BaseAlgorithm", agent_cls.load(agent_path))
 
     @staticmethod
-    def _ir_to_interaction_graph(ir: IR) -> nx.Graph:
+    def _ir_to_networkx(ir: IR) -> nx.Graph:
         """Build an undirected interaction graph representation of the IR.
 
         Args:
@@ -134,6 +144,31 @@ class QGymMapper(Mapper):
                     else:
                         interaction_graph.add_edge(q_i, q_j, weight=1)
         return interaction_graph
+
+    @staticmethod
+    def _interaction_graph_to_networkx(edges: dict[tuple[int, int], int]) -> nx.Graph:
+        """Convert Circuit's simple interaction graph to NetworkX graph.
+
+        Args:
+            edges: Dictionary mapping (qubit_i, qubit_j) tuples to interaction weights.
+
+        Returns:
+            NetworkX graph representation of the quantum circuit, compatible with QGym.
+        """
+        graph = nx.Graph()
+
+        # Extract all nodes from edges
+        all_nodes = set()
+        for q_i, q_j in edges:
+            all_nodes.add(q_i)
+            all_nodes.add(q_j)
+        graph.add_nodes_from(all_nodes)
+
+        # Add weighted edges
+        for (q_i, q_j), weight in edges.items():
+            graph.add_edge(q_i, q_j, weight=weight)
+
+        return graph
 
     @staticmethod
     def _get_mapping(last_obs: Any, qubit_register_size: int) -> Mapping:

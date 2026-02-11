@@ -22,7 +22,12 @@ class IdentityMapper(Mapper):
         """An ``IdentityMapper`` maps each virtual qubit to exactly the same physical qubit."""
         super().__init__(**kwargs)
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        ir: IR,
+        qubit_register_size: int,
+        interaction_graph: dict[tuple[int, int], int] | None = None,
+    ) -> Mapping:
         """Create identity mapping."""
         return Mapping(list(range(qubit_register_size)))
 
@@ -38,7 +43,12 @@ class HardcodedMapper(Mapper):
         super().__init__(**kwargs)
         self._mapping = mapping
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        ir: IR,
+        qubit_register_size: int,
+        interaction_graph: dict[tuple[int, int], int] | None = None,
+    ) -> Mapping:
         """Return the hardcoded mapping."""
         if qubit_register_size != self._mapping.size():
             msg = f"qubit register size ({qubit_register_size}) and mapping size ({self._mapping.size()}) differ"
@@ -57,7 +67,12 @@ class RandomMapper(Mapper):
         super().__init__(**kwargs)
         self.seed = seed
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        ir: IR,
+        qubit_register_size: int,
+        interaction_graph: dict[tuple[int, int], int] | None = None,
+    ) -> Mapping:
         """Create a random mapping."""
         if self.seed:
             random.seed(self.seed)

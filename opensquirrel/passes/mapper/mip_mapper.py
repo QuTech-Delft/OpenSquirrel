@@ -29,7 +29,12 @@ class MIPMapper(Mapper):
         self.connectivity = connectivity
         self.timeout = timeout
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        ir: IR,
+        qubit_register_size: int,
+        interaction_graph: dict[tuple[int, int], int] | None = None,
+    ) -> Mapping:
         """
         Find an initial mapping of virtual qubits to physical qubits that minimizes
         the sum of distances between mapped operands of all two-qubit gates, using
@@ -42,6 +47,7 @@ class MIPMapper(Mapper):
         Args:
             ir (IR): The intermediate representation of the quantum circuit to be mapped.
             qubit_register_size (int): The number of virtual qubits in the circuit.
+            interaction_graph: Pre-computed interaction graph (not used by this mapper).
 
         Returns:
             Mapping: Mapping from virtual to physical qubits.

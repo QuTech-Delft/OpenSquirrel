@@ -16,5 +16,10 @@ class Mapper(ABC):
     def __init__(self, **kwargs: Any) -> None: ...
 
     @abstractmethod
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        ir: IR,
+        qubit_register_size: int,
+        interaction_graph: dict[tuple[int, int], int] | None = None,
+    ) -> Mapping:
         raise NotImplementedError
