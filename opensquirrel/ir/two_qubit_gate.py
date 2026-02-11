@@ -22,10 +22,6 @@ class TwoQubitGate(Gate):
         self._canonical = gate_semantic if isinstance(gate_semantic, CanonicalGateSemantic) else None
         self.gate_semantic = gate_semantic
 
-        if self._controlled and (self.qubit1 != self._controlled.target_gate.qubit):
-            msg = "the qubit from the target gate does not match with 'qubit1'."
-            raise ValueError(msg)
-
         if self._check_repeated_qubit_operands(self.qubit_operands):
             msg = "qubit0 and qubit1 cannot be the same"
             raise ValueError(msg)
@@ -50,7 +46,7 @@ class TwoQubitGate(Gate):
 
     @cached_property
     def canonical(self) -> CanonicalGateSemantic:
-        if self._canonical: 
+        if self._canonical:
             return self._canonical
 
         if self._controlled:
@@ -71,9 +67,7 @@ class TwoQubitGate(Gate):
             if ():
                 return ...
 
-            else:
-                return None  
-
+            return None
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_parent = super().accept(visitor)

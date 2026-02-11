@@ -136,14 +136,30 @@ class MatrixExpander(IRVisitor):
             msg = f"gate {gate!r} does not have a controlled gate semantic"
             raise ValueError(msg)
 
-        control_qubit = gate.qubit0
-        target_gate = gate.controlled.target_gate
-
-        if control_qubit.index >= self.qubit_register_size:
-            msg = f"index {control_qubit.index!r} out of range {self.qubit_register_size!r}"
+        if any(q.index >= self.qubit_register_size for q in gate.qubit_operands):
+            msg = "index out of range"
             raise IndexError(msg)
 
-        expanded_matrix = target_gate.accept(self)
+        control_qubit, target_qubit = gate.qubit_operands
+        target_bsr = gate.controlled.target_bsr
+
+        from opensquirrel.utils import can1
+
+        matrix = can1(target_bsr.axis, target_bsr.angle, target_bsr.phase)
+
+        result = np.kron(
+            np.kron(
+                np.eye(1 << (self.qubit_register_size - target_qubit.index - 1)),
+                matrix,
+            ),
+            np.eye(1 << target_qubit.index),
+        )
+
+        if result.shape != (1 << self.qubit_register_size, 1 << self.qubit_register_size):
+            msg = f"matrix has incorrect shape {result.shape!r}"
+            ValueError(msg)
+        expanded_matrix = np.asarray(result, dtype=np.complex128)
+
         for col_index, col in enumerate(expanded_matrix.T):
             if col_index & (1 << control_qubit.index) == 0:
                 col[:] = 0

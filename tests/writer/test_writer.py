@@ -164,9 +164,7 @@ def test_anonymous_gate() -> None:
         TwoQubitGate(
             0,
             1,
-            gate_semantic=ControlledGateSemantic(
-                target_gate=SingleQubitGate(1, BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
-            ),
+            gate_semantic=ControlledGateSemantic(target_bsr=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
         )
     )
     builder.ir.add_gate(
@@ -182,7 +180,7 @@ bit[2] b
 
 H q[0]
 Rn(0.57735027, 0.57735027, 0.57735027, 1.23, 0.0) q[0]
-TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=ControlledGateSemantic(target_gate=SingleQubitGate(qubit=1, bsr=BlochSphereRotation(axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0))))
+TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=ControlledGateSemantic(target_bsr=BlochSphereRotation(axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)))
 TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=MatrixGateSemantic(matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]]))
 CR(1.234) q[0], q[1]
 """  # noqa: E501

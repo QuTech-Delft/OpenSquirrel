@@ -7,6 +7,7 @@ from opensquirrel import Circuit, CircuitBuilder, Rn, Rx, Ry, Rz, X
 from opensquirrel.common import normalize_angle
 from opensquirrel.ir import Gate
 from opensquirrel.ir.semantics import ControlledGateSemantic
+from opensquirrel.ir.semantics.bsr import BsrAngleParam
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.merger import SingleQubitGatesMerger
@@ -59,7 +60,7 @@ class TestParsing:
             gate = builder.ir.statements[i]
             assert isinstance(gate, TwoQubitGate)
             assert gate.controlled
-            theta_expected = gate.controlled.target_gate.bsr.angle
+            theta_expected = gate.controlled.target_bsr.angle
             assert theta_expected == normalize_angle(2 * pi / 2**k)
 
         with pytest.warns(UserWarning, match=r"value of parameter 'k' is not an integer: got <class 'float'> instead."):
@@ -74,7 +75,11 @@ class TestParsing:
             ("version 3; qubit q; pow(4).X q", [Rx(0, 0.0)]),
             (
                 "version 3; qubit[2] q; ctrl.Rx(-pi) q[0], q[1]",
-                [TwoQubitGate(0, 1, gate_semantic=ControlledGateSemantic(Rx(1, pi)))],
+                [
+                    TwoQubitGate(
+                        0, 1, gate_semantic=ControlledGateSemantic(BsrAngleParam(axis=(1, 0, 0), angle=pi, phase=0.0))
+                    )
+                ],
             ),
         ],
         ids=["inv", "pow-1/2", "pow-2", "pow-4", "ctrl"],

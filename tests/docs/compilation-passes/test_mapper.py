@@ -1,4 +1,5 @@
 import importlib.util
+from collections.abc import Generator
 
 import pytest
 
@@ -10,6 +11,19 @@ if importlib.util.find_spec("qgym") is None:
 
 if importlib.util.find_spec("stable_baselines3") is None and importlib.util.find_spec("sb3_contrib") is None:
     pytest.skip("stable-baselines3 and sb3_contrib not installed; skipping QGym mapper tests", allow_module_level=True)
+
+
+@pytest.fixture(autouse=True)
+def reset_torch_cache() -> Generator[None, None, None]:
+    """Reset PyTorch's artifact registry."""
+    yield
+    try:
+        from torch.compiler._cache import CacheArtifactFactory
+
+        if hasattr(CacheArtifactFactory, "_artifact_types"):
+            CacheArtifactFactory._artifact_types.clear()
+    except (ImportError, AttributeError):
+        pass
 
 
 class TestQGymMapper:
