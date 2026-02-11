@@ -55,8 +55,6 @@ class _QubitRemapper(IRVisitor):
         for operand in gate.qubit_operands:
             operand.accept(self)
 
-        if gate.controlled:
-            gate.controlled.target_gate.qubit.accept(self)
         return gate
 
 

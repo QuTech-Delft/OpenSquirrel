@@ -6,25 +6,18 @@ from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 
 if TYPE_CHECKING:
     from opensquirrel.ir import IRVisitor
-    from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.single_qubit_gate import BlochSphereRotation
 
 
 class ControlledGateSemantic(GateSemantic):
-    def __init__(self, target_gate: SingleQubitGate) -> None:
-        self.target_gate = target_gate
+    def __init__(self, target_bsr: BlochSphereRotation) -> None:
+        self.target_bsr = target_bsr
 
     def is_identity(self) -> bool:
-        return self.target_gate.is_identity()
+        return self.target_bsr.is_identity()
 
     def __repr__(self) -> str:
-        from opensquirrel.default_instructions import default_gate_set
-
-        if self.target_gate.name in default_gate_set:
-            return f"ControlledGateSemantic(target_gate={self.target_gate.name}(qubit={self.target_gate.qubit.index}))"
-        return (
-            f"ControlledGateSemantic(target_gate={self.target_gate.name}"
-            f"(qubit={self.target_gate.qubit.index}, bsr={self.target_gate.bsr}))"
-        )
+        return f"ControlledGateSemantic(target_bsr={self.target_bsr})"
 
     def accept(self, visitor: IRVisitor) -> Any:
         return visitor.visit_controlled_gate_semantic(self)

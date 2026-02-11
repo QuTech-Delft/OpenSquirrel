@@ -34,9 +34,7 @@ def test_controlled_gate() -> None:
     gate = TwoQubitGate(
         2,
         0,
-        gate_semantic=ControlledGateSemantic(
-            target_gate=SingleQubitGate(0, BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2))
-        ),
+        gate_semantic=ControlledGateSemantic(target_bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
     )
     np.testing.assert_almost_equal(
         get_matrix(gate, 3),
