@@ -42,7 +42,7 @@ class Register:
     def __getitem__(self, key: int | slice) -> Any:
         if isinstance(key, int):
             if abs(key) >= len(self):
-                msg = f"Index {key} is out of range"
+                msg = f"index {key!r} is out of range: register size is {len(self)!r}"
                 raise IndexError(msg)
             size = len(self) if key < 0 else 0
             return self._virtual_zero_index + key + size
@@ -140,18 +140,18 @@ class RegisterManager:
     def add_register(self, register: QubitRegister | BitRegister) -> None:
         if isinstance(register, QubitRegister):
             if register.name in self._qubit_registry:
-                msg = f"Qubit register with name '{register.name}' already exists"
+                msg = f"qubit register with name {register.name!r} already exists"
                 raise KeyError(msg)
             self._qubit_registry[register.name] = register
             self._virtual_qubit_register = RegisterManager.generate_virtual_register(self._qubit_registry)
         elif isinstance(register, BitRegister):
             if register.name in self._bit_registry:
-                msg = f"Bit register with name '{register.name}' already exists"
+                msg = f"bit register with name {register.name!r} already exists"
                 raise KeyError(msg)
             self._bit_registry[register.name] = register
             self._virtual_bit_register = RegisterManager.generate_virtual_register(self._bit_registry)
         else:
-            msg = f"Unsupported register type: {type(register)}"
+            msg = f"unsupported register type: {type(register)}"
             raise TypeError(msg)
 
     def get_qubit_register(self, qubit_register_name: str) -> QubitRegister:

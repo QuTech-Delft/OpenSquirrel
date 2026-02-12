@@ -264,9 +264,7 @@ measure_z q[1]
         TwoQubitGate(
             0,
             1,
-            gate_semantic=ControlledGateSemantic(
-                SingleQubitGate(qubit=1, gate_semantic=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0))
-            ),
+            gate_semantic=ControlledGateSemantic(BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
         ),
         TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]])),
     ],

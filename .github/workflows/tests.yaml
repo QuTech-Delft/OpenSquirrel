@@ -56,6 +56,8 @@ jobs:
       - name: Install tox
         run: pip install tox
       - name: run tox test
+        env:
+          USERNAME: ${{ github.actor }}
         run: tox -e test
   complete:
     # see https://github.community/t/status-check-for-a-matrix-jobs/127354/7

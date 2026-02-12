@@ -1,10 +1,12 @@
 from math import pi
 
+import numpy as np
 import pytest
 
 from opensquirrel import CNOT, CR, CRk, H, I, Rn, Ry, X
-from opensquirrel.ir import Gate
+from opensquirrel.ir import Axis, Gate
 from opensquirrel.ir.semantics import ControlledGateSemantic
+from opensquirrel.ir.semantics.bsr import BsrFullParams
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.reader import LibQasmParser
 
@@ -253,7 +255,9 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
                     0,
                     1,
                     gate_semantic=ControlledGateSemantic(
-                        target_gate=Rn(qubit=1, nx=1, ny=0, nz=0, theta=pi * -2, phi=pi / 2 * -2)
+                        BsrFullParams(
+                            axis=Axis(np.asarray([1.0, 0.0, 0.0], dtype=np.float64)), angle=pi * -2, phase=pi / 2 * -2
+                        )
                     ),
                 )
             ],

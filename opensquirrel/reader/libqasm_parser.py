@@ -45,7 +45,7 @@ class LibQasmParser:
         ast_literal: cqasm_values.ConstInt | cqasm_values.ConstFloat | None,
     ) -> Int | Float | None:
         if type(ast_literal) not in [cqasm_values.ConstInt, cqasm_values.ConstFloat, type(None)]:
-            msg = f"unrecognized type: {type(ast_literal)}"
+            msg = f"unrecognized type {type(ast_literal)!r}"
             raise TypeError(msg)
         if isinstance(ast_literal, cqasm_values.ConstInt):
             return Int(ast_literal.value)
@@ -127,7 +127,7 @@ class LibQasmParser:
             if self._is_qubit_type(operand):
                 ret.append(self._get_qubits(operand))
             else:
-                msg = "argument is not of qubit type"
+                msg = f"argument {operand!r} is not of qubit type"
                 raise TypeError(msg)
         return ret
 
@@ -176,7 +176,7 @@ class LibQasmParser:
             elif self._is_bit_type(ast_arg):
                 expanded_args.append(self._get_bits(ast_arg))
             else:
-                msg = "argument is neither of qubit nor bit type"
+                msg = f"argument {ast_arg!r} is neither of qubit nor bit type"
                 raise TypeError(msg)
         return list(zip(*expanded_args, strict=False))
 
@@ -255,7 +255,7 @@ class LibQasmParser:
             raise OSError(msg)
 
         if ast.block is None:
-            msg = "AST should have a Block"
+            msg = "AST does not have a Block"
             raise TypeError(msg)
 
         # Create RegisterManager

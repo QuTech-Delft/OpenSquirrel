@@ -14,7 +14,6 @@ from opensquirrel.ir import (
     Reset,
     Wait,
 )
-from opensquirrel.ir.semantics import ControlledGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.register_manager import (
@@ -64,17 +63,11 @@ class _QubitReindexer(IRVisitor):
         return Wait(qubit=self.qubit_indices.index(wait.qubit.index), time=wait.time)
 
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> SingleQubitGate:
-        gate.qubit.accept(self)
         return SingleQubitGate(qubit=self.qubit_indices.index(gate.qubit.index), gate_semantic=gate.bsr)
 
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> TwoQubitGate:
         qubit0 = self.qubit_indices.index(gate.qubit0.index)
         qubit1 = self.qubit_indices.index(gate.qubit1.index)
-
-        if gate.controlled:
-            target_gate = gate.controlled.target_gate.accept(self)
-            return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=ControlledGateSemantic(target_gate))
-
         return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=gate.gate_semantic)
 
 

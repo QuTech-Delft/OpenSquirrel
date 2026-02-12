@@ -51,4 +51,4 @@ class ControlGateModifier(GateModifier):
 
     def __call__(self, control: QubitLike, *args: Any) -> TwoQubitGate:
         gate: SingleQubitGate = self.gate_generator(*args)
-        return TwoQubitGate(control, gate.qubit, gate_semantic=ControlledGateSemantic(gate))
+        return TwoQubitGate(control, gate.qubit, gate_semantic=ControlledGateSemantic(gate.bsr))

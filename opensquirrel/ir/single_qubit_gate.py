@@ -79,7 +79,7 @@ class SingleQubitGate(Gate):
 
     def __mul__(self, other: SingleQubitGate) -> SingleQubitGate:
         if self.qubit != other.qubit:
-            msg = "cannot merge two single qubit gates on different qubits."
+            msg = "cannot merge two single-qubit gates on different qubits"
             raise ValueError(msg)
         return SingleQubitGate(self.qubit, self.bsr * other.bsr)
 

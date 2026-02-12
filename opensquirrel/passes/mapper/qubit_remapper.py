@@ -55,14 +55,14 @@ class _QubitRemapper(IRVisitor):
         for operand in gate.qubit_operands:
             operand.accept(self)
 
-        if gate.controlled:
-            gate.controlled.target_gate.qubit.accept(self)
         return gate
 
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
     if len(mapping) > circuit.qubit_register_size:
-        msg = "mapping is larger than the qubit register size"
+        msg = (
+            f"size of the mapping {len(mapping)!r} is larger than the number of qubits {circuit.qubit_register_size!r}"
+        )
         raise ValueError(msg)
     qubit_remapper = _QubitRemapper(mapping)
     replacement_ir = circuit.ir
@@ -73,7 +73,9 @@ def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
 
 def remap_ir(circuit: Circuit, mapping: Mapping) -> None:
     if len(mapping) > circuit.qubit_register_size:
-        msg = "mapping is larger than the qubit register size"
+        msg = (
+            f"size of the mapping {len(mapping)!r} is larger than the number of qubits {circuit.qubit_register_size!r}"
+        )
         raise ValueError(msg)
     qubit_remapper = _QubitRemapper(mapping)
     for statement in circuit.ir.statements:

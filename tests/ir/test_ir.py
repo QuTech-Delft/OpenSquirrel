@@ -7,7 +7,6 @@ from opensquirrel.ir import (
     Qubit,
 )
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
-from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
@@ -23,11 +22,10 @@ class TestIR:
         )
         cnot_matrix_gate = TwoQubitGate(qubit0=4, qubit1=100, gate_semantic=MatrixGateSemantic(matrix))
 
-        target_gate = SingleQubitGate(
-            qubit=100, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)
-        )
         cnot_controlled_gate = TwoQubitGate(
-            qubit0=4, qubit1=100, gate_semantic=ControlledGateSemantic(target_gate=target_gate)
+            qubit0=4,
+            qubit1=100,
+            gate_semantic=ControlledGateSemantic(BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert cnot_controlled_gate == cnot_matrix_gate
@@ -41,9 +39,10 @@ class TestIR:
         ]
         large_identity_matrix_gate = TwoQubitGate(qubit0=0, qubit1=2, gate_semantic=MatrixGateSemantic(matrix))
 
-        target_gate = SingleQubitGate(qubit=2, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=0))
         small_identity_control_gate = TwoQubitGate(
-            qubit0=0, qubit1=2, gate_semantic=ControlledGateSemantic(target_gate=target_gate)
+            qubit0=0,
+            qubit1=2,
+            gate_semantic=ControlledGateSemantic(BlochSphereRotation(axis=(1, 0, 0), angle=0, phase=0)),
         )
 
         assert large_identity_matrix_gate == small_identity_control_gate
@@ -57,11 +56,10 @@ class TestIR:
         ]
         inverted_matrix_gate = TwoQubitGate(qubit0=0, qubit1=1, gate_semantic=MatrixGateSemantic(matrix))
 
-        target_gate = SingleQubitGate(
-            qubit=0, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)
-        )
         inverted_cnot_gate = TwoQubitGate(
-            qubit0=1, qubit1=0, gate_semantic=ControlledGateSemantic(target_gate=target_gate)
+            qubit0=1,
+            qubit1=0,
+            gate_semantic=ControlledGateSemantic(BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert inverted_matrix_gate == inverted_cnot_gate
@@ -75,11 +73,10 @@ class TestIR:
         ]
         inverted_matrix_with_phase = TwoQubitGate(qubit0=0, qubit1=1, gate_semantic=MatrixGateSemantic(matrix))
 
-        target_gate = SingleQubitGate(
-            qubit=0, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)
-        )
         inverted_cnot_gate = TwoQubitGate(
-            qubit0=1, qubit1=0, gate_semantic=ControlledGateSemantic(target_gate=target_gate)
+            qubit0=1,
+            qubit1=0,
+            gate_semantic=ControlledGateSemantic(BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
 
         assert inverted_matrix_with_phase == inverted_cnot_gate
@@ -93,10 +90,11 @@ class TestIR:
         ]
         swap_matrix_gate = TwoQubitGate(qubit0=4, qubit1=100, gate_semantic=MatrixGateSemantic(matrix))
 
-        target_gate = SingleQubitGate(
-            qubit=100, gate_semantic=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)
+        cnot_controlled_gate = TwoQubitGate(
+            qubit0=4,
+            qubit1=100,
+            gate_semantic=ControlledGateSemantic(BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
         )
-        cnot_controlled_gate = TwoQubitGate(qubit0=4, qubit1=100, gate_semantic=ControlledGateSemantic(target_gate))
 
         assert cnot_controlled_gate != swap_matrix_gate
 

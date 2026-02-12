@@ -68,8 +68,8 @@ class QuantifySchedulerExporter(Exporter):
 
         except UnsupportedGateError as e:
             msg = (
-                f"cannot export circuit: {e}. "
-                "Decompose all gates to the gate set supported by quantify-scheduler first, i.e., "
+                f"cannot export circuit: {e}, "
+                "decompose all gates to the gate set supported by quantify-scheduler, i.e., "
                 "(init, reset, H, Rx, Ry, Rz, CNOT, CZ, measure)"
             )
             raise ExporterError(msg) from e

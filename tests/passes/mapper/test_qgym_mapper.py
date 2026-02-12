@@ -1,4 +1,5 @@
 import importlib.util
+from collections.abc import Generator
 
 import pytest
 
@@ -13,6 +14,20 @@ if importlib.util.find_spec("qgym") is None:
 
 if importlib.util.find_spec("stable_baselines3") is None and importlib.util.find_spec("sb3_contrib") is None:
     pytest.skip("stable-baselines3 and sb3_contrib not installed; skipping QGym mapper tests", allow_module_level=True)
+
+
+@pytest.fixture(autouse=True)
+def reset_torch_cache() -> Generator[None, None, None]:
+    """Reset PyTorch's artifact registry."""
+    yield
+    try:
+        from torch.compiler._cache import CacheArtifactFactory
+
+        if hasattr(CacheArtifactFactory, "_artifact_types"):
+            CacheArtifactFactory._artifact_types.clear()
+    except (ImportError, AttributeError):
+        pass
+
 
 QGYM_MAPPER_DATA_PATH = PROJECT_ROOT_PATH / "data" / "qgym_mapper"
 AGENT_CLASS = "TRPO"
@@ -91,9 +106,9 @@ def test_map_on_circuit(mapper1: QGymMapper, circuit1: Circuit) -> None:
 
 
 def test_unequal_number_logical_and_physical_qubits(mapper1: QGymMapper, circuit2: Circuit) -> None:
-    expected_error = (
-        r"The QGym mapper requires an equal number of logical and physical qubits."
-        r"Respectively, got 7 logical and 5 physical qubits instead."
+    msg = (
+        "number of logical qubits 7 is not equal to the number of physical qubits 5: the QGym mapper requires them to"
+        " be equal"
     )
-    with pytest.raises(ValueError, match=expected_error):
+    with pytest.raises(ValueError, match=msg):
         circuit2.map(mapper1)
