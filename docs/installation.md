@@ -1,13 +1,14 @@
-# Installation
+OpenSquirrel is available through the Python Package Index ([PyPI](<https://pypi.org/project/opensquirrel/>)).
 
-_OpenSquirrel_ is available through the Python Package Index ([PyPI](<https://pypi.org/project/opensquirrel/>)).
+Accordingly, installation is as easy as running:
 
-Accordingly, installation is as easy as ABC:
-```shell
+```bash
 $ pip install opensquirrel
 ```
 
-You can check if the package is installed by importing it:
+You can check if the package is installed properly by importing it in a Python console:
 ```python
 import opensquirrel
 ```
+
+_Head out to the [Tutorial](./tutorial/index.md) to see how you can use it!_
