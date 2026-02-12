@@ -414,6 +414,12 @@
       
         
       
+        
+      
+        
+      
+        
+      
     
     
     
@@ -484,6 +490,90 @@
     
   
     Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contributing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="authors.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="acknowledgements.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acknowledgements
   
 
     
@@ -4716,27 +4806,33 @@
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#authors" class="md-nav__link">
+    <nav class="md-nav" aria-label="Table of Contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel_1" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Authors
+        Opensquirrel
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#acknowledgements" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#user-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Acknowledgements
+        User documentation
       
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4761,29 +4857,43 @@
 
 
 <h1 id="opensquirrel">OpenSquirrel</h1>
-<p>This site contains the documentation for OpenSquirrel, <em>i.e.</em>, a flexible quantum program compiler.
-OpenSquirrel chooses a <em>modular</em>, over a <em>configurable</em>, approach to prepare and optimize quantum circuits for
-heterogeneous target architectures.</p>
-<p>It has a user-friendly interface and is straightforwardly extensible with custom-made readers,
-compiler passes, and exporters.
-As a quantum circuit compiler, it is fully aware of the semantics of each gate and arbitrary quantum gates can be
-constructed manually.
-It understands the quantum programming language cQASM 3 and will support additional quantum programming languages in the
-future.
-It is developed in modern Python and follows best practices.</p>
+<p>This site contains the <strong>User documentation</strong> for OpenSquirrel, <em>i.e.</em>, a flexible compiler for gate-based quantum
+circuits written in Python.</p>
+<p>OpenSquirrel adopts a <em>modular</em> approach to prepare and optimize circuits for heterogeneous target quantum processing
+units (QPUs). It has a user-friendly interface through its <em>circuit builder</em> and <em>circuit</em> object, 
+and a collection of compilation passes which includes passes for</p>
+<ul>
+<li><a href="compilation-passes/decomposition/index.html">decomposition</a>,</li>
+<li><a href="compilation-passes/exporting/index.html">exporting</a>,</li>
+<li><a href="compilation-passes/mapping/index.html">mapping</a>,</li>
+<li><a href="compilation-passes/merging/index.html">merging</a>,</li>
+<li><a href="compilation-passes/routing/index.html">routing</a>, and</li>
+<li><a href="compilation-passes/validation/index.html">validation</a>.</li>
+</ul>
+<p>Moreover, this collection is straightforwardly extensible with custom-made passes.</p>
+<p>The OpenSquirrel <em>reader</em> uses the <a href="https://qutech-delft.github.io/libqasm/">libQASM</a> parser
+to generate the abstract syntax tree (AST) of a circuit written in the
+<a href="https://qutech-delft.github.io/cQASM-spec/">cQASM</a> quantum programming language. </p>
+<p>It is developed in modern Python and follows best practices.</p>
 <p>[<a href="https://github.com/QuTech-Delft/OpenSquirrel">GitHub repository</a>]
 [<a href="https://pypi.org/project/opensquirrel/">PyPI</a>]</p>
 <h2 id="table-of-contents">Table of Contents</h2>
+<h3 id="opensquirrel_1">Opensquirrel</h3>
+<ul>
+<li><a href="installation.html">Installation</a></li>
+<li><a href="contributing.html">Contributing</a></li>
+<li><a href="authors.html">Authors</a></li>
+<li><a href="acknowledgements.html">Acknowledgements</a></li>
+</ul>
+<h3 id="user-documentation">User documentation</h3>
 <ul>
 <li><a href="tutorial/index.html">Tutorial</a></li>
 <li><a href="circuit-builder/index.html">Circuit builder</a></li>
 <li><a href="compilation-passes/index.html">Compilation passes</a></li>
 <li><a href="reference/reference.html">API documentation</a></li>
 </ul>
-<h2 id="authors">Authors</h2>
-<p>Quantum Inspire (<a href="mailto:support@quantum-inspire.com">support@quantum-inspire.com</a>)</p>
-<h2 id="acknowledgements">Acknowledgements</h2>
-<p>The Quantum Inspire project (by QuTech: a collaboration of TNO and TU Delft)</p>
+<p><em>OpenSquirrel is licensed under the Apache License: version 2.0. Click</em>
+<em><a href="https://github.com/QuTech-Delft/OpenSquirrel/blob/develop/LICENSE.md">here</a> for the full license text.</em></p>
 
 
 
