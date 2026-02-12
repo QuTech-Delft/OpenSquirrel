@@ -1,4 +1,4 @@
-![image](_static/quantum_inspire_logo.svg#only-light)
+![image](_static/quantum_inspire_logo.png#only-light)
 ![image](_static/quantum_inspire_logo_dm.png#only-dark)
 
 OpenSquirrel was created as part of the toolset of the

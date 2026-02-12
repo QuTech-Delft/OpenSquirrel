@@ -6,8 +6,9 @@ Some details of that procedure and actions specific to OpenSquirrel are describe
 
 - [git](https://github.com/git-guides) version control system (VCS) for software programming:
   [Install Git](https://github.com/git-guides/install-git) and check if it is installed properly by running 
-  `git version`
-- [uv](https://docs.astral.sh/uv/) Python package manager: install through `pip install uv`
+  `git version`.
+- [uv](https://docs.astral.sh/uv/) Python package manager: easy install through `pip install uv` or follow
+[these instructions](https://docs.astral.sh/uv/getting-started/installation/).
 
 ## Forking the project and creating a feature branch
 
@@ -15,7 +16,7 @@ Contributing to OpenSquirrel as an external developer is done via a new fork.
 
 - Navigate to the [OpenSquirrel GitHub project](https://github.com/QuTech-Delft/OpenSquirrel)
 and create a [fork](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project#creating-your-own-copy-of-a-project).
-- Clone the repository locally using `git clone`
+- Clone the repository locally using `git clone`.
 - Create a new feature branch:
   ```bash
   git checkout develop
