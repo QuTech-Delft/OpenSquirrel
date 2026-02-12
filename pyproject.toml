@@ -46,7 +46,7 @@ dev = [
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
-    "quantify-scheduler==0.26.0; sys_platform != 'darwin'",
+    "quantify-scheduler==0.27.1; sys_platform != 'darwin'",
 ]
 qgym_mapper = [
     "qgym==0.3.1",
