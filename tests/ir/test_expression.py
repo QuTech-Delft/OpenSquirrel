@@ -15,7 +15,7 @@ class TestFloat:
             Float("f")  # type: ignore
 
     def test_init(self) -> None:
-        assert Float(1).value == 1.0
+        assert Float(1).value == 1.0  # noqa: RUF069
 
 
 class TestInt:
