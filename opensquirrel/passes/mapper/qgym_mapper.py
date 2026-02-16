@@ -27,6 +27,8 @@ if TYPE_CHECKING:
 class QGymMapper(Mapper):
     """QGym-based mapper pass using a Stable-Baselines3 agent."""
 
+    uses_interaction_graph = True
+
     def __init__(
         self,
         agent_class: str,
@@ -157,14 +159,12 @@ class QGymMapper(Mapper):
         """
         graph = nx.Graph()
 
-        # Extract all nodes from edges
         all_nodes = set()
         for q_i, q_j in edges:
             all_nodes.add(q_i)
             all_nodes.add(q_j)
         graph.add_nodes_from(all_nodes)
 
-        # Add weighted edges
         for (q_i, q_j), weight in edges.items():
             graph.add_edge(q_i, q_j, weight=weight)
 

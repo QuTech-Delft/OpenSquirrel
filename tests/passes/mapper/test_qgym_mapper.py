@@ -1,6 +1,9 @@
 import importlib.util
 from collections.abc import Generator
+from typing import Any
 
+import networkx as nx
+import numpy as np
 import pytest
 
 from opensquirrel import CircuitBuilder
@@ -112,3 +115,96 @@ def test_unequal_number_logical_and_physical_qubits(mapper1: QGymMapper, circuit
     )
     with pytest.raises(ValueError, match=msg):
         circuit2.map(mapper1)
+
+
+def test_circuit_interaction_graph_property(circuit1: Circuit) -> None:
+    graph = circuit1.interaction_graph
+
+    assert (0, 1) in graph
+    assert (1, 2) in graph
+    assert (2, 4) in graph
+    assert (3, 4) in graph
+
+    assert all(weight == 1 for weight in graph.values())
+
+
+def test_qgym_mapper_uses_provided_interaction_graph(
+    monkeypatch: pytest.MonkeyPatch, mapper1: QGymMapper, circuit1: Circuit
+) -> None:
+    """Verify QGymMapper uses interaction_graph parameter if provided."""
+    used_interaction_graph = {"called": False}
+    used_ir = {"called": False}
+
+    def fake_interaction_graph_to_networkx(_: Any) -> Any:
+        used_interaction_graph["called"] = True
+        return nx.Graph()
+
+    def fake_ir_to_networkx(_: Any) -> Any:
+        used_ir["called"] = True
+        return nx.Graph()
+
+    monkeypatch.setattr(mapper1, "_interaction_graph_to_networkx", fake_interaction_graph_to_networkx)
+    monkeypatch.setattr(mapper1, "_ir_to_networkx", fake_ir_to_networkx)
+
+    obs = np.asarray(mapper1.env.observation_space.sample())
+    identity_mapping = np.arange(circuit1.qubit_register_size)
+    final_obs = {"mapping": identity_mapping}
+
+    def fake_reset(*, options: Any) -> Any:
+        return obs, {}
+
+    def fake_predict(_obs: Any, deterministic: bool = True) -> Any:
+        return 0, None
+
+    def fake_step(_action: Any) -> Any:
+        return final_obs, 0.0, True, False, {}
+
+    monkeypatch.setattr(mapper1.env, "reset", fake_reset)
+    monkeypatch.setattr(mapper1.env, "step", fake_step)
+    monkeypatch.setattr(mapper1.agent, "predict", fake_predict)
+
+    mapper1.map(circuit1.ir, circuit1.qubit_register_size, interaction_graph=circuit1.interaction_graph)
+
+    assert used_interaction_graph["called"] is True
+    assert used_ir["called"] is False
+
+
+def test_qgym_mapper_falls_back_to_ir_graph(
+    monkeypatch: pytest.MonkeyPatch, mapper1: QGymMapper, circuit1: Circuit
+) -> None:
+    """Verify QGymMapper computes graph from IR when interaction_graph is not provided."""
+    used_interaction_graph = {"called": False}
+    used_ir = {"called": False}
+
+    def fake_interaction_graph_to_networkx(_: Any) -> Any:
+        used_interaction_graph["called"] = True
+        return nx.Graph()
+
+    def fake_ir_to_networkx(_: Any) -> Any:
+        used_ir["called"] = True
+        return nx.Graph()
+
+    monkeypatch.setattr(mapper1, "_interaction_graph_to_networkx", fake_interaction_graph_to_networkx)
+    monkeypatch.setattr(mapper1, "_ir_to_networkx", fake_ir_to_networkx)
+
+    obs = np.asarray(mapper1.env.observation_space.sample())
+    identity_mapping = np.arange(circuit1.qubit_register_size)
+    final_obs = {"mapping": identity_mapping}
+
+    def fake_reset(*, options: Any) -> Any:
+        return obs, {}
+
+    def fake_predict(_obs: Any, deterministic: bool = True) -> Any:
+        return 0, None
+
+    def fake_step(_action: Any) -> Any:
+        return final_obs, 0.0, True, False, {}
+
+    monkeypatch.setattr(mapper1.env, "reset", fake_reset)
+    monkeypatch.setattr(mapper1.env, "step", fake_step)
+    monkeypatch.setattr(mapper1.agent, "predict", fake_predict)
+
+    mapper1.map(circuit1.ir, circuit1.qubit_register_size)
+
+    assert used_interaction_graph["called"] is False
+    assert used_ir["called"] is True

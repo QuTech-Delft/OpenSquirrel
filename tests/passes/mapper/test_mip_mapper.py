@@ -185,3 +185,9 @@ CNOT q[1], q[0]
 CNOT q[1], q[2]
 """
     )
+
+
+def test_interaction_graph_warning(mapper1: MIPMapper, circuit1: Circuit) -> None:
+    msg = "The MIPMapper does not effectively use the interaction graph, thus this argument should be set to None"
+    with pytest.warns(Warning, match=msg):
+        mapper1.map(circuit1.ir, circuit1.qubit_register_size, interaction_graph=circuit1.interaction_graph)

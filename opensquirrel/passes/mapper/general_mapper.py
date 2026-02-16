@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 class Mapper(ABC):
     """Base class for the Mapper pass."""
 
+    uses_interaction_graph = False
+
     def __init__(self, **kwargs: Any) -> None: ...
 
     @abstractmethod

@@ -161,12 +161,13 @@ class Circuit:
         return exporter.export(self)
 
     def map(self, mapper: Mapper) -> None:
-        """Generic qubit mapper pass.
-        Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
-        """
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
-        mapping = mapper.map(self.ir, self.qubit_register_size, self.interaction_graph)
+        if mapper.uses_interaction_graph:
+            mapping = mapper.map(self.ir, self.qubit_register_size, self.interaction_graph)
+        else:
+            mapping = mapper.map(self.ir, self.qubit_register_size)
+
         remap_ir(self, mapping)
 
     def merge(self, merger: Merger) -> None:

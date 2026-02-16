@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import warnings
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
@@ -94,6 +95,11 @@ class MIPMapper(Mapper):
             RuntimeError: If the MIP solver fails to find a feasible mapping or times out.
             RuntimeError: If the number of virtual qubits exceeds the number of physical qubits.
         """
+        if interaction_graph is not None:
+            msg = (
+                "The MIPMapper does not effectively use the interaction graph, thus this argument should be set to None"
+            )
+            warnings.warn(msg, stacklevel=2)
         self.num_virtual_qubits = qubit_register_size
         self.num_physical_qubits = len(self.connectivity)
         self.num_x_vars = self.num_virtual_qubits * self.num_physical_qubits

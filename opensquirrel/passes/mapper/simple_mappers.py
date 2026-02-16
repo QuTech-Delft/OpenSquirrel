@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import random
+import warnings
 from typing import TYPE_CHECKING, Any
 
 from opensquirrel.passes.mapper.general_mapper import Mapper
@@ -29,6 +30,12 @@ class IdentityMapper(Mapper):
         interaction_graph: dict[tuple[int, int], int] | None = None,
     ) -> Mapping:
         """Create identity mapping."""
+        if interaction_graph is not None:
+            msg = (
+                "The IdentityMapper does not effectively use the interaction graph, "
+                "thus this argument should be set to None"
+            )
+            warnings.warn(msg, stacklevel=2)
         return Mapping(list(range(qubit_register_size)))
 
 
@@ -50,6 +57,12 @@ class HardcodedMapper(Mapper):
         interaction_graph: dict[tuple[int, int], int] | None = None,
     ) -> Mapping:
         """Return the hardcoded mapping."""
+        if interaction_graph is not None:
+            msg = (
+                "The HardcodedMapper does not effectively use the interaction graph, "
+                "thus this argument should be set to None"
+            )
+            warnings.warn(msg, stacklevel=2)
         if qubit_register_size != self._mapping.size():
             msg = (
                 f"the size of the mapping {self._mapping.size()!r} is not equal to the number of qubits"
@@ -77,6 +90,12 @@ class RandomMapper(Mapper):
         interaction_graph: dict[tuple[int, int], int] | None = None,
     ) -> Mapping:
         """Create a random mapping."""
+        if interaction_graph is not None:
+            msg = (
+                "The RandomMapper does not effectively use the interaction graph, "
+                "thus this argument should be set to None"
+            )
+            warnings.warn(msg, stacklevel=2)
         if self.seed:
             random.seed(self.seed)
 

@@ -1,6 +1,6 @@
 import pytest
 
-from opensquirrel import CircuitBuilder
+from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.circuit import MeasurementToBitMap
 from opensquirrel.ir import AsmDeclaration
 
@@ -90,3 +90,41 @@ def test_instruction_count() -> None:
 def test_measurement_to_bit_mapping(builder: CircuitBuilder, m2b_mapping: MeasurementToBitMap) -> None:
     circuit = builder.to_circuit()
     assert circuit.measurement_to_bit_map == m2b_mapping
+
+
+def test_interaction_graph_counts_pairs() -> None:
+    circuit = Circuit.from_string(
+        """
+        version 3.0
+        qubit[4] q
+        H q[0]
+        CNOT q[0], q[1]
+        CNOT q[1], q[2]
+        CNOT q[0], q[1]
+        CZ q[2], q[3]
+        """
+    )
+
+    assert circuit.interaction_graph == {
+        (0, 1): 2,
+        (1, 2): 1,
+        (2, 3): 1,
+    }
+
+
+def test_interaction_graph_multi_qubit_gate_pairs() -> None:
+    circuit = Circuit.from_string(
+        """
+        version 3.0
+        qubit[3] q
+        CNOT q[0], q[1]
+        CNOT q[0], q[2]
+        CNOT q[1], q[2]
+        """
+    )
+
+    assert circuit.interaction_graph == {
+        (0, 1): 1,
+        (0, 2): 1,
+        (1, 2): 1,
+    }

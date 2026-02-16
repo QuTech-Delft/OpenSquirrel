@@ -34,6 +34,14 @@ class TestIdentityMapper:
         circuit.map(mapper=mapper)
         assert str(circuit) == initial_circuit
 
+    def test_interaction_graph_warning(self, mapper: IdentityMapper, circuit: Circuit) -> None:
+        msg = (
+            "The IdentityMapper does not effectively use the interaction graph, "
+            "thus this argument should be set to None"
+        )
+        with pytest.warns(Warning, match=msg):
+            mapper.map(circuit.ir, circuit.qubit_register_size, interaction_graph=circuit.interaction_graph)
+
 
 class TestHardcodedMapper:
     @pytest.fixture
@@ -85,6 +93,14 @@ H q[0]
 """
         )
 
+    def test_interaction_graph_warning(self, mapper: HardcodedMapper, circuit: Circuit) -> None:
+        msg = (
+            "The HardcodedMapper does not effectively use the interaction graph, "
+            "thus this argument should be set to None"
+        )
+        with pytest.warns(Warning, match=msg):
+            mapper.map(circuit.ir, circuit.qubit_register_size, interaction_graph=circuit.interaction_graph)
+
 
 class TestRandomMapper:
     @pytest.fixture
@@ -121,3 +137,10 @@ class TestRandomMapper:
         new_mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
 
         assert new_mapping != original_mapping
+
+    def test_interaction_graph_warning(self, mapper: RandomMapper, circuit: Circuit) -> None:
+        msg = (
+            "The RandomMapper does not effectively use the interaction graph, thus this argument should be set to None"
+        )
+        with pytest.warns(Warning, match=msg):
+            mapper.map(circuit.ir, circuit.qubit_register_size, interaction_graph=circuit.interaction_graph)
