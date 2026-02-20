@@ -131,6 +131,8 @@ class MatrixExpander(IRVisitor):
             return self._matrix_gate(gate)
         return self._controlled_gate(gate)
 
+    def _canonical_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]: ...
+
     def _controlled_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
         if not gate.controlled:
             msg = f"gate {gate!r} does not have a controlled gate semantic"
@@ -283,6 +285,48 @@ def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
         ],
         dtype=np.complex128,
     )
+
+
+def nearest_kronecker_product(C: NDArray[np.complex128]) -> tuple[NDArray[np.complex128], NDArray[np.complex128]]:
+    """ """
+    if C.shape != (4, 4):
+        msg = "C has to have the shape (4, 4), but has shape {C.shape} instead."
+        raise ValueError(msg)
+    # phase = np.trace(C.conj().T @ C)
+    # phase /= np.abs(phase)
+    # C /= phase
+
+    C = C.reshape(2, 2, 2, 2)
+    C = C.transpose(0, 2, 1, 3)
+    C = C.reshape(4, 4)
+
+    u, sv, vh = np.linalg.svd(C)
+    A = np.sqrt(sv[0]) * u[:, 0].reshape(2, 2)
+    B = np.sqrt(sv[0]) * vh[0, :].reshape(2, 2)
+    return A, B
+
+
+def canonical_decomposition(U: NDArray[np.complex128]):
+    # Magic gate
+    M = (1 / np.sqrt(2)) * np.array([[1, 1j, 0, 0], [0, 0, 1j, 1], [0, 0, 1j, -1], [1, -1j, 0, 0]], dtype=np.complex128)
+
+    V = M @ U @ M.conj().T
+    eig_vals, Q1 = np.linalg.eig(V.T @ V)
+    _, Q2 = np.linalg.eig(V @ V.T)
+
+    # Extract canonical gate coordinates from eigenvalues
+    v = -1j * np.log(eig_vals) / np.pi
+    Ainv = (1 / 4) * np.array([[1, -1, 1, -1], [-1, 1, 1, -1], [1, 1, -1, -1]])
+    tx, ty, tz = Ainv @ v
+
+    # Find single-qubit operations
+    X = M @ Q1 @ M.conj().T
+    K1, K2 = nearest_kronecker_product(X)
+
+    Y = M @ Q2 @ M.conj().T
+    K3, K4 = nearest_kronecker_product(Y)
+
+    return (tx, ty, tz), [K1, K2, K3, K4]
 
 
 def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:

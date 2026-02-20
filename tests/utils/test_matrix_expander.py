@@ -2,12 +2,14 @@ from math import pi, sqrt
 from typing import Any
 
 import numpy as np
+import numpy.testing
 import pytest
 from numpy.typing import NDArray
 
 from opensquirrel.ir import AxisLike
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
+    CanonicalAxis,
     CanonicalGateSemantic,
     ControlledGateSemantic,
     MatrixGateSemantic,
@@ -15,6 +17,7 @@ from opensquirrel.ir.semantics import (
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.utils import get_matrix
+from opensquirrel.utils.matrix_expander import can2, canonical_decomposition, nearest_kronecker_product
 
 
 def test_bloch_sphere_rotation() -> None:
@@ -105,3 +108,27 @@ def test_canonical_gate(axis: AxisLike, expected_matrix: NDArray[Any]) -> None:
     gate = TwoQubitGate(0, 1, gate_semantic=CanonicalGateSemantic(axis))
 
     np.testing.assert_almost_equal(get_matrix(gate, 2), expected_matrix)
+
+
+@pytest.mark.parametrize(
+    ("matrix_a", "matrix_b"),
+    [
+        (np.array([[1, 0], [0, 1]]), np.array([[1, 0], [0, 1]])),
+        (np.array([[0, 1], [1, 0]]), np.array([[1, 0], [0, -1]])),
+        (np.array([[0, 1j], [-1j, 0]]), np.array([[1, 0], [0, -1]])),
+        (1 / np.sqrt(2) * np.array([[1, 1], [1, -1]]), 1 / np.sqrt(2) * np.array([[1, 1], [1, -1]])),
+    ],
+)
+def test_nearest_kronecker_product(matrix_a: NDArray[Any], matrix_b: NDArray[Any]) -> None:
+    C = np.kron(matrix_a, matrix_b)
+    recovered_matrix_a, recovered_matrix_b = nearest_kronecker_product(C)
+    np.testing.assert_almost_equal(C, np.kron(recovered_matrix_a, recovered_matrix_b))
+
+
+def test_can_decomp():
+    axis_original = CanonicalAxis(1 / 2, 0, 0)
+    X = can2(axis_original)
+
+    axis, (K1, K2, K3, K4) = canonical_decomposition(X)
+
+    np.testing.assert_almost_equal(X, np.kron(K1, K2))

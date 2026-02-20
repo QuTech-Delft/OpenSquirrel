@@ -1,4 +1,6 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -6,6 +8,9 @@ from numpy.typing import NDArray
 from opensquirrel.ir import AxisLike, IRVisitor
 from opensquirrel.ir.expression import BaseAxis
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
+
+if TYPE_CHECKING:
+    from opensquirrel.ir.semantics import BlochSphereRotation
 
 
 class CanonicalAxis(BaseAxis):
@@ -22,6 +27,7 @@ class CanonicalAxis(BaseAxis):
         Returns:
             Parsed axis represented as a 1DArray of length 3.
         """
+
         if isinstance(axis, CanonicalAxis):
             return axis.value
 
@@ -75,8 +81,9 @@ class CanonicalAxis(BaseAxis):
 
 
 class CanonicalGateSemantic(GateSemantic):
-    def __init__(self, axis: AxisLike, rotations:list[SingleQubitGate]]) -> None:
+    def __init__(self, axis: AxisLike, rotations: list[BlochSphereRotation] | None = None) -> None:
         self.axis = CanonicalAxis(axis)
+        self.rotations = rotations
 
     def __repr__(self) -> str:
         return f"CanonicalGateSemantic(axis={self.axis})"
