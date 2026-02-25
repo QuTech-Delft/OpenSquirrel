@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import warnings
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
@@ -14,7 +13,7 @@ from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 if TYPE_CHECKING:
-    from opensquirrel import Connectivity
+    from opensquirrel import Circuit, Connectivity
     from opensquirrel.ir import IR
 
 DISTANCE_UL = 999999
@@ -70,9 +69,8 @@ class MIPMapper(Mapper):
 
     def map(
         self,
-        ir: IR,
+        circuit: Circuit,
         qubit_register_size: int,
-        interaction_graph: dict[tuple[int, int], int] | None = None,
     ) -> Mapping:
         """
         Find an initial mapping of virtual qubits to physical qubits that minimizes
@@ -84,9 +82,8 @@ class MIPMapper(Mapper):
         gates, given the connectivity.
 
         Args:
-            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            circuit (Circuit): The quantum circuit to be mapped.
             qubit_register_size (int): The number of virtual qubits in the circuit.
-            interaction_graph: Pre-computed interaction graph (not used by this mapper).
 
         Returns:
             Mapping: Mapping from virtual to physical qubits.
@@ -95,11 +92,6 @@ class MIPMapper(Mapper):
             RuntimeError: If the MIP solver fails to find a feasible mapping or times out.
             RuntimeError: If the number of virtual qubits exceeds the number of physical qubits.
         """
-        if interaction_graph is not None:
-            msg = (
-                "The MIPMapper does not effectively use the interaction graph, thus this argument should be set to None"
-            )
-            warnings.warn(msg, stacklevel=2)
         self.num_virtual_qubits = qubit_register_size
         self.num_physical_qubits = len(self.connectivity)
         self.num_x_vars = self.num_virtual_qubits * self.num_physical_qubits
@@ -114,7 +106,7 @@ class MIPMapper(Mapper):
             raise RuntimeError(error_message)
 
         distance = self._get_distance()
-        reference_counter = self._get_reference_counter(ir, self.num_virtual_qubits)
+        reference_counter = self._get_reference_counter(circuit.ir, self.num_virtual_qubits)
 
         cost, constraints, integrality, bounds = self._get_linearized_formulation(reference_counter, distance)
 

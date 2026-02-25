@@ -16,7 +16,7 @@ except ModuleNotFoundError:
     pass
 
 if TYPE_CHECKING:
-    from opensquirrel import Connectivity
+    from opensquirrel import Circuit, Connectivity
 
     try:
         from stable_baselines3.common.base_class import BaseAlgorithm
@@ -26,8 +26,6 @@ if TYPE_CHECKING:
 
 class QGymMapper(Mapper):
     """QGym-based mapper pass using a Stable-Baselines3 agent."""
-
-    uses_interaction_graph = True
 
     def __init__(
         self,
@@ -44,19 +42,16 @@ class QGymMapper(Mapper):
 
     def map(
         self,
-        ir: IR,
+        circuit: Circuit,
         qubit_register_size: int,
-        interaction_graph: dict[tuple[int, int], int] | None = None,
     ) -> Mapping:
         """
         Compute an initial logical-to-physical qubit mapping using a trained
         Stable-Baselines3 agent acting in the QGym InitialMapping environment.
 
         Args:
-            ir (IR): Intermediate representation of the quantum circuit to be mapped.
+            circuit (Circuit): The quantum circuit to be mapped.
             qubit_register_size (int): Number of logical (virtual) qubits in the circuit.
-            interaction_graph: Pre-computed interaction graph from Circuit.
-                            If None, generate interaction graph from IR as fallback.
 
         Returns:
             Mapping: Mapping from virtual to physical qubits.
@@ -74,10 +69,10 @@ class QGymMapper(Mapper):
             )
             raise ValueError(msg)
 
-        if interaction_graph is None:
-            circuit_graph = self._ir_to_networkx(ir)
+        if not circuit.interaction_graph:
+            circuit_graph = self._ir_to_graph(circuit.ir)
         else:
-            circuit_graph = self._interaction_graph_to_networkx(interaction_graph)
+            circuit_graph = self._convert_interaction_graph(circuit.interaction_graph)
 
         obs, _ = self.env.reset(options={"interaction_graph": circuit_graph})
 
@@ -122,7 +117,7 @@ class QGymMapper(Mapper):
         return cast("BaseAlgorithm", agent_cls.load(agent_path))
 
     @staticmethod
-    def _ir_to_networkx(ir: IR) -> nx.Graph:
+    def _ir_to_graph(ir: IR) -> nx.Graph:
         """Build an undirected interaction graph representation of the IR.
 
         Args:
@@ -148,7 +143,7 @@ class QGymMapper(Mapper):
         return interaction_graph
 
     @staticmethod
-    def _interaction_graph_to_networkx(edges: dict[tuple[int, int], int]) -> nx.Graph:
+    def _convert_interaction_graph(edges: dict[tuple[int, int], int]) -> nx.Graph:
         """Convert Circuit's simple interaction graph to NetworkX graph.
 
         Args:

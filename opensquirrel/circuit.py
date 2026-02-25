@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
 InstructionCount = dict[str, int]
 MeasurementToBitMap = defaultdict[str, list[int]]
+InteractionGraph = dict[tuple[int, int], int]
 
 
 class Circuit:
@@ -120,22 +121,18 @@ class Circuit:
         return m2b_map
 
     @property
-    def interaction_graph(self) -> dict[tuple[int, int], int]:
-        """Interaction graph representation of the circuit, expresed as a dictionary."""
-
-        edges: dict[tuple[int, int], int] = {}
-
+    def interaction_graph(self) -> InteractionGraph:
+        """Interaction graph of the circuit."""
+        graph = {}
         for statement in self.ir.statements:
             if not isinstance(statement, Instruction):
                 continue
-
             qubit_indices = statement.qubit_indices
             if len(qubit_indices) >= 2:
                 for q_i, q_j in combinations(qubit_indices, 2):
                     edge = (min(q_i, q_j), max(q_i, q_j))
-                    edges[edge] = edges.get(edge, 0) + 1
-
-        return edges
+                    graph[edge] = graph.get(edge, 0) + 1
+        return graph
 
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [
@@ -163,10 +160,7 @@ class Circuit:
     def map(self, mapper: Mapper) -> None:
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
-        if mapper.uses_interaction_graph:
-            mapping = mapper.map(self.ir, self.qubit_register_size, self.interaction_graph)
-        else:
-            mapping = mapper.map(self.ir, self.qubit_register_size)
+        mapping = mapper.map(self, self.qubit_register_size)
 
         remap_ir(self, mapping)
 

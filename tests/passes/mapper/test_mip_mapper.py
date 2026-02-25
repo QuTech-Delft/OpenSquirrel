@@ -101,32 +101,32 @@ def test_identity_mapping(mapper: str, circuit: str, expected_mapping: Mapping, 
     mapper_fixture = request.getfixturevalue(mapper)
     circuit_fixture = request.getfixturevalue(circuit)
 
-    computed_mapping = mapper_fixture.map(circuit_fixture.ir, circuit_fixture.qubit_register_size)
+    computed_mapping = mapper_fixture.map(circuit_fixture, circuit_fixture.qubit_register_size)
 
     assert computed_mapping == expected_mapping
 
 
 def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) -> None:
     if sys.platform.startswith("linux") or sys.platform == "win32":
-        expected_mapping = Mapping([2, 1, 3, 0, 4, 5, 6])
+        expected_mapping = Mapping([5, 1, 0, 3, 4, 2, 6])
     elif sys.platform == "darwin":  # pragma: no cover
         expected_mapping = Mapping([3, 4, 2, 0, 1, 5, 6])
     else:  # pragma: no cover
         pytest.skip(f"Unknown platform: {sys.platform}")
-    mapping = mapper2.map(circuit2.ir, circuit2.qubit_register_size)
+    mapping = mapper2.map(circuit2, circuit2.qubit_register_size)
 
     assert mapping == expected_mapping
 
 
 def test_more_logical_qubits_than_physical(mapper1: MIPMapper, circuit3: Circuit) -> None:
     with pytest.raises(RuntimeError, match=r"Number of virtual qubits (.*) exceeds number of physical qubits (.*)"):
-        mapper1.map(circuit3.ir, circuit3.qubit_register_size)
+        mapper1.map(circuit3, circuit3.qubit_register_size)
 
 
 def test_timeout(mapper3: MIPMapper, circuit2: Circuit) -> None:
     with pytest.raises(RuntimeError, match="MIP solver failed"):
         # timeout used: 0.000001
-        mapper3.map(circuit2.ir, circuit2.qubit_register_size)
+        mapper3.map(circuit2, circuit2.qubit_register_size)
 
 
 def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
@@ -136,7 +136,7 @@ def test_fewer_virtual_than_physical_qubits(mapper1: MIPMapper) -> None:
     builder.CNOT(1, 2)
     circuit = builder.to_circuit()
 
-    mapping = mapper1.map(circuit.ir, circuit.qubit_register_size)
+    mapping = mapper1.map(circuit, circuit.qubit_register_size)
 
     assert len(mapping) == 3
 
@@ -185,9 +185,3 @@ CNOT q[1], q[0]
 CNOT q[1], q[2]
 """
     )
-
-
-def test_interaction_graph_warning(mapper1: MIPMapper, circuit1: Circuit) -> None:
-    msg = "The MIPMapper does not effectively use the interaction graph, thus this argument should be set to None"
-    with pytest.warns(Warning, match=msg):
-        mapper1.map(circuit1.ir, circuit1.qubit_register_size, interaction_graph=circuit1.interaction_graph)

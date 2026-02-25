@@ -120,11 +120,12 @@ def test_interaction_graph_multi_qubit_gate_pairs() -> None:
         CNOT q[0], q[1]
         CNOT q[0], q[2]
         CNOT q[1], q[2]
+        CNOT q[1], q[0]
         """
     )
 
     assert circuit.interaction_graph == {
-        (0, 1): 1,
+        (0, 1): 2,
         (0, 2): 1,
         (1, 2): 1,
     }
