@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from opensquirrel import CZ, Rx, Ry, Rz, Z
 from opensquirrel.common import ATOL
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.decomposer import XYXDecomposer
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
@@ -51,7 +52,7 @@ class CZDecomposer(Decomposer):
             # - decomposing MatrixGate is currently not supported.
             return [gate]
         control_qubit, target_qubit = gate.qubit_operands
-        target_gate = gate.controlled.target_gate
+        target_gate = SingleQubitGate(qubit=target_qubit, gate_semantic=gate.controlled.target_bsr)
 
         # Perform XYX decomposition on the target gate.
         # This gives us an ABC decomposition (U = exp(i phase) * AZBZC, ABC = I) of the target gate.

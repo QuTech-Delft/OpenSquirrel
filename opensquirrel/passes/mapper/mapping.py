@@ -24,7 +24,14 @@ class Mapping:
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Mapping):
             return False
-        return self.data == other.data
+
+        if len(self.data) != len(other.data):
+            return False
+
+        if set(self.data.keys()) != set(other.data.keys()):
+            return False
+
+        return all(self.data[key] == other.data[key] for key in self.data)
 
     def __getitem__(self, key: int) -> int:
         return self.data[key]

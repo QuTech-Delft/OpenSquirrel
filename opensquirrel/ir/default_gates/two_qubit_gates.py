@@ -5,10 +5,9 @@ from typing import SupportsFloat, SupportsInt
 import numpy as np
 
 from opensquirrel.common import normalize_angle
-from opensquirrel.ir.default_gates import X, Z
 from opensquirrel.ir.expression import Expression, Float, Int, Qubit, QubitLike
 from opensquirrel.ir.semantics import ControlledGateSemantic, MatrixGateSemantic
-from opensquirrel.ir.semantics.bsr import BsrAngleParam
+from opensquirrel.ir.semantics.bsr import BsrAngleParam, BsrNoParams
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
@@ -47,7 +46,7 @@ class CNOT(TwoQubitGate):
         super().__init__(
             qubit0=control_qubit,
             qubit1=target_qubit,
-            gate_semantic=ControlledGateSemantic(X(target_qubit)),
+            gate_semantic=ControlledGateSemantic(BsrNoParams(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
             name="CNOT",
         )
         self.control_qubit = Qubit(control_qubit)
@@ -57,7 +56,10 @@ class CNOT(TwoQubitGate):
 class CZ(TwoQubitGate):
     def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike) -> None:
         super().__init__(
-            qubit0=control_qubit, qubit1=target_qubit, gate_semantic=ControlledGateSemantic(Z(target_qubit)), name="CZ"
+            qubit0=control_qubit,
+            qubit1=target_qubit,
+            gate_semantic=ControlledGateSemantic(BsrNoParams(axis=(0, 0, 1), angle=pi, phase=pi / 2)),
+            name="CZ",
         )
         self.control_qubit = Qubit(control_qubit)
         self.target_qubit = Qubit(target_qubit)
@@ -68,7 +70,7 @@ class CR(TwoQubitGate):
         super().__init__(
             qubit0=control_qubit,
             qubit1=target_qubit,
-            gate_semantic=ControlledGateSemantic(R(target_qubit, theta)),
+            gate_semantic=ControlledGateSemantic(BsrAngleParam(axis=(0, 0, 1), angle=theta, phase=float(theta) / 2)),
             name="CR",
         )
         self.control_qubit = Qubit(control_qubit)
@@ -90,7 +92,7 @@ class CRk(TwoQubitGate):
         super().__init__(
             qubit0=control_qubit,
             qubit1=target_qubit,
-            gate_semantic=ControlledGateSemantic(R(target_qubit, theta)),
+            gate_semantic=ControlledGateSemantic(BsrAngleParam(axis=(0, 0, 1), angle=theta, phase=float(theta) / 2)),
             name="CRk",
         )
         self.control_qubit = Qubit(control_qubit)
