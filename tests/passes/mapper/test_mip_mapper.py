@@ -105,14 +105,14 @@ def test_identity_mapping(mapper: str, circuit: str, expected_mapping: Mapping, 
 
     assert computed_mapping == expected_mapping
 
-
 def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) -> None:
-    if sys.platform.startswith("linux") or sys.platform == "win32":
+    if sys.version_info < (3, 11):
+        if sys.platform.startswith("linux") or sys.platform == "win32":
+            expected_mapping = Mapping([2, 1, 3, 0, 4, 5, 6])
+        else:
+            expected_mapping = Mapping([3, 4, 2, 0, 1, 5, 6])
+    else:
         expected_mapping = Mapping([5, 1, 0, 3, 4, 2, 6])
-    elif sys.platform == "darwin":  # pragma: no cover
-        expected_mapping = Mapping([3, 4, 2, 0, 1, 5, 6])
-    else:  # pragma: no cover
-        pytest.skip(f"Unknown platform: {sys.platform}")
     mapping = mapper2.map(circuit2, circuit2.qubit_register_size)
 
     assert mapping == expected_mapping
