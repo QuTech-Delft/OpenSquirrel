@@ -105,6 +105,7 @@ def test_identity_mapping(mapper: str, circuit: str, expected_mapping: Mapping, 
 
     assert computed_mapping == expected_mapping
 
+
 def test_mip_mapper_remaps_when_needed(mapper2: MIPMapper, circuit2: Circuit) -> None:
     if sys.version_info < (3, 11):
         if sys.platform.startswith("linux") or sys.platform == "win32":
