@@ -28,6 +28,3 @@ class ControlledGateSemantic(GateSemantic):
 
     def __repr__(self) -> str:
         return f"ControlledGateSemantic(target_bsr={self.target_bsr})"
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_controlled_gate_semantic(self)
