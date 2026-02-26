@@ -27,17 +27,20 @@ class MIPMapper(Mapper):
     the sum of distances between mapped operands of all two-qubit gates, using a linearized
     MIP formulation based on OpenQL's approach.
 
-    The formulation uses binary variables x[i][k] indicating whether virtual qubit i
-    is mapped to physical qubit k, and continuous variables w[i][k] representing the
-    cost contribution for mapping i to k.
+    The formulation uses binary variables $x_{ik}$ indicating whether virtual qubit $i$
+    is mapped to physical qubit $k$, and continuous variables $w_{ik}$ representing the
+    cost contribution for mapping $i$ to $k$.
 
-    The objective function minimizes sum(w[i][k]) + epsilon * sum_{i,k: i!=k} x[i][k],
+    The objective function minimizes $\\sum w_{ik} + \\epsilon \\sum_{i \\neq k} x_{ik}$,
     where the epsilon term provides a small penalty for non-identity mappings as a tiebreaker.
 
     Subject to the following constraints:
-    1. Each virtual qubit assigned to exactly one physical qubit: sum_k x[i][k] == 1
-    2. Each physical qubit assigned to at most one virtual qubit: sum_i x[i][k] <= 1
-    3. Linearization: costmax[i][k] * x[i][k] + sum_{j,l} refcount[i][j]*distance[k][l]*x[j][l] - w[i][k] <= costmax[i][k]
+
+    1. Each virtual qubit assigned to exactly one physical qubit: $\\sum_k x_{ik} = 1$
+
+    2. Each physical qubit assigned to at most one virtual qubit: $\\sum_i x_{ik} \\leq 1$
+
+    3. Linearization: $\\Gamma_{ik} x_{ik} + \\sum_{j,l} C^\\text{ref}_{ij}d_{kl}x_{jl} - w_{ik} \\leq \\Gamma_{ik}$
 
     Args:
         connectivity: Physical qubit connectivity graph.
@@ -45,10 +48,13 @@ class MIPMapper(Mapper):
         epsilon: Small penalty coefficient for non-identity mappings (default: 1e-6).
 
     Example:
+        ```python
         >>> connectivity = {"0": [1], "1": [0, 2], "2": [1]}
         >>> mapper = MIPMapper(connectivity=connectivity, timeout=10.0)
         >>> mapping = mapper.map(circuit, qubit_register_size=3)
-    """  # noqa: E501
+        ```
+
+    """
 
     def __init__(
         self,

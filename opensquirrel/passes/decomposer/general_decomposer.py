@@ -19,6 +19,18 @@ class Decomposer(ABC):
 
 
 def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> None:
+    """Checks that the replacement gate(s) are valid by verifying that they operate on the same
+    qubits and preserve the quantum state up to a global phase.
+
+    Args:
+        gate (Gate): Gate that is being replaced.
+        replacement_gates (Iterable[Gate]): Gate(s) that are replacing the original gate.
+
+    Raises:
+        ValueError: If the replacement gates do not operate on the same qubits as the original gate.
+        ValueError: If the replacement gates do not preserve the quantum state up to a global phase.
+
+    """
     gate_qubit_indices = gate.qubit_indices
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))

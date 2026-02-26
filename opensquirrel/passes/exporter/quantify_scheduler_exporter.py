@@ -89,7 +89,7 @@ class QuantifySchedulerExporter(Exporter):
         return schedule_creator.schedule
 
 
-class OperationRecord:
+class _OperationRecord:
     def __init__(
         self,
         qubit_register_size: int,
@@ -195,10 +195,10 @@ class _Scheduler(IRVisitor):
         operation_cycles: OperationCycles | None,
     ) -> None:
         self._qubit_register_size = register_manager.qubit_register_size
-        self._operation_record = OperationRecord(self._qubit_register_size, schedulables, cycle_time, operation_cycles)
+        self._operation_record = _OperationRecord(self._qubit_register_size, schedulables, cycle_time, operation_cycles)
 
     @property
-    def operation_record(self) -> OperationRecord:
+    def operation_record(self) -> _OperationRecord:
         return self._operation_record
 
     def visit_gate(self, gate: Gate) -> None:

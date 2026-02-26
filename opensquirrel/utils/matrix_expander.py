@@ -109,7 +109,7 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> 
     return expanded_ket
 
 
-class MatrixExpander(IRVisitor):
+class _MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
@@ -353,5 +353,5 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 0, 0, 1, 0, 0, 0, 0]])
 
     """
-    expander = MatrixExpander(qubit_register_size)
+    expander = _MatrixExpander(qubit_register_size)
     return np.asarray(gate.accept(expander), dtype=np.complex128)

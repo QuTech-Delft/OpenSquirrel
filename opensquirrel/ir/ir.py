@@ -113,18 +113,43 @@ class IR:
             statement.accept(visitor)
 
     def add_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
+        """Adds an assembly declaration to the IR.
+
+        Args:
+            asm_declaration (AsmDeclaration): The assembly declaration to add.
+
+        """
         self.statements.append(asm_declaration)
 
     def add_gate(self, gate: Gate) -> None:
+        """Adds a gate to the IR.
+
+        Args:
+            gate (Gate): The gate to add.
+
+        """
         self.statements.append(gate)
 
     def add_non_unitary(self, non_unitary: NonUnitary) -> None:
+        """Adds a non-unitary operation to the IR.
+
+        Args:
+            non_unitary (NonUnitary): The non-unitary operation to add.
+
+        """
         self.statements.append(non_unitary)
 
     def add_statement(self, statement: Statement) -> None:
+        """Adds a generic statement to the IR.
+
+        Args:
+            statement (Statement): The statement to add.
+
+        """
         self.statements.append(statement)
 
     def reverse(self) -> IR:
+        """Reverses the order of statements in the IR."""
         ir = IR()
         for statement in self.statements[::-1]:
             ir.add_statement(statement)
