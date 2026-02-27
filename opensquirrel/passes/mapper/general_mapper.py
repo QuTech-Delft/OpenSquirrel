@@ -16,9 +16,4 @@ class Mapper(ABC):
     def __init__(self, **kwargs: Any) -> None: ...
 
     @abstractmethod
-    def map(
-        self,
-        circuit: Circuit,
-        qubit_register_size: int,
-    ) -> Mapping:
-        raise NotImplementedError
+    def map(self, circuit: Circuit, qubit_register_size: int) -> Mapping: ...

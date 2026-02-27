@@ -69,10 +69,11 @@ class QGymMapper(Mapper):
             )
             raise ValueError(msg)
 
-        if not circuit.interaction_graph:
-            circuit_graph = self._ir_to_graph(circuit.ir)
-        else:
-            circuit_graph = self._convert_interaction_graph(circuit.interaction_graph)
+        circuit_graph = (
+            self._ir_to_graph(circuit.ir)
+            if not circuit.interaction_graph
+            else self._convert_interaction_graph(circuit.interaction_graph)
+        )
 
         obs, _ = self.env.reset(options={"interaction_graph": circuit_graph})
 
