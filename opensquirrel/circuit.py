@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 from opensquirrel.ir import Instruction
 from opensquirrel.ir.non_unitary import Measure
 from opensquirrel.ir.statement import AsmDeclaration
+from opensquirrel.passes.mapper import IdentityMapper
 
 if TYPE_CHECKING:
     from opensquirrel.ir.ir import IR
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from opensquirrel.passes.decomposer.general_decomposer import Decomposer
     from opensquirrel.passes.exporter.general_exporter import Exporter
     from opensquirrel.passes.mapper.general_mapper import Mapper
+    from opensquirrel.passes.mapper.mapping import Mapping
     from opensquirrel.passes.merger.general_merger import Merger
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator
@@ -54,6 +56,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
+        self.mapping = self._set_identity_mapping()
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
@@ -64,7 +67,7 @@ class Circuit:
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Circuit):
             return False
-        return self.register_manager == other.register_manager and self.ir == other.ir
+        return self.register_manager == other.register_manager and self.ir == other.ir and self.mapping == other.mapping
 
     @classmethod
     def from_string(cls, cqasm3_string: str) -> Circuit:
@@ -134,6 +137,9 @@ class Circuit:
                     graph[edge] = graph.get(edge, 0) + 1
         return graph
 
+    def _set_identity_mapping(self) -> Mapping:
+        return IdentityMapper().map(self, self.qubit_register_size)
+
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [
             statement
@@ -166,6 +172,8 @@ class Circuit:
         mapping = mapper.map(self, self.qubit_register_size)
 
         remap_ir(self, mapping)
+
+        self.mapping = mapping
 
     def merge(self, merger: Merger) -> None:
         """Generic merge pass. It applies the given merger to the circuit."""

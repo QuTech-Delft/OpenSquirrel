@@ -43,7 +43,9 @@ class TestMapQubits:
         builder.CNOT(1, 0)
         builder.CNOT(0, 2)
         builder.measure(1, 0)
-        return builder.to_circuit()
+        circuit = builder.to_circuit()
+        circuit.mapping = Mapping([1, 0, 2])
+        return circuit
 
     def test_circuit_map(self, circuit: Circuit, remapped_circuit: Circuit) -> None:
         mapper = HardcodedMapper(mapping=Mapping([1, 0, 2]))
