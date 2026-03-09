@@ -11,23 +11,39 @@ class Merger(ABC):
     def __init__(self, **kwargs: Any) -> None: ...
 
     @abstractmethod
-    def merge(self, ir: IR, qubit_register_size: int) -> None:
-        raise NotImplementedError
+    def merge(self, ir: IR, qubit_register_size: int) -> None: ...
 
 
 def can_move_statement_before_barrier(instruction: Instruction, barriers: list[Instruction]) -> bool:
-    """Checks whether an instruction can be moved before a group of 'linked' barriers.
-    Returns True if none of the qubits used by the instruction are part of any barrier, False otherwise.
+    """Checks whether an instruction can be moved before a group of _linked_ barriers.
+
+    Args:
+        instruction (Instruction): The instruction to be moved.
+        barriers (list[Instruction]): The group of linked barriers.
+
+    Returns:
+        True if none of the qubits used by the instruction are part of the linked barriers, otherwise False.
+
     """
     barriers_group_qubit_operands = set(flatten_list([list(barrier.qubit_operands) for barrier in barriers]))
     return not any(qubit in barriers_group_qubit_operands for qubit in instruction.qubit_operands)
 
 
 def can_move_before(statement: Statement, statement_group: list[Statement]) -> bool:
-    """Checks whether a statement can be moved before a group of statements, following the logic below:
+    """Checks whether a statement can be moved before a group of statements, following the logic
+    below:
+
     - A barrier cannot be moved up.
     - A (non-barrier) statement cannot be moved before another (non-barrier) statement.
-    - A (non-barrier) statement may be moved before a group of 'linked' barriers.
+    - A (non-barrier) statement may be moved before a group of _linked_ barriers.
+
+    Args:
+        statement (Statement): The statement to be moved.
+        statement_group (list[Statement]): The group of statements to move before.
+
+    Returns:
+        True if the statement can be moved before the group of statements, otherwise False.
+
     """
     if isinstance(statement, Barrier):
         return False
@@ -39,9 +55,14 @@ def can_move_before(statement: Statement, statement_group: list[Statement]) -> b
 
 
 def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:
-    """Receives a list of statements.
-    Returns a list of lists of statements, where each list of statements is
-    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).
+    """Groups linked barriers in the input list of statements.
+
+    Args:
+        statements (list[Statement]): The list of statements.
+
+    Returns:
+        A list of 'lists of statements', which are either single instructions or linked barriers.
+
     """
     ret: list[list[Statement]] = []
     index = -1
@@ -57,11 +78,16 @@ def group_linked_barriers(statements: list[Statement]) -> list[list[Statement]]:
 
 
 def rearrange_barriers(ir: IR) -> None:
-    """Receives an IR.
-    Builds an enumerated list of lists of statements, where each list of statements is
-    either a single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).
-    Then sorts that enumerated list of lists so that instructions can be moved before groups of barriers.
-    And updates the input IR with the flattened list of sorted statements.
+    """Rearrages barriers in the input IR.
+
+    Builds an enumerated list of lists of statements, where each list of statements is either a
+    single instruction, or a list of 'linked' barriers (consecutive barriers that cannot be split).
+    Then sorts that enumerated list of lists so that instructions can be moved before groups of
+    barriers. And updates the input IR with the flattened list of sorted statements.
+
+    Args:
+        ir (IR): The input IR to be modified.
+
     """
     statements_groups = group_linked_barriers(ir.statements)
     for i, statement_group in enumerate(statements_groups):

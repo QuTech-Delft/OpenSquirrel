@@ -45,6 +45,18 @@ class QuantifySchedulerExporter(Exporter):
         self._operation_cycles = operation_cycles
 
     def export(self, circuit: Circuit) -> quantify_scheduler.Schedule:
+        """Exports the given circuit to the [quantify-scheduler](https://quantify-os.org/docs/quantify-scheduler/)
+        format.
+
+        Args:
+            circuit (Circuit): The quantum circuit to export.
+
+        Returns:
+            The quantify-scheduler [Schedule](https://quantify-os.org/docs/quantify-scheduler/v0.26.0/autoapi/quantify_scheduler/index.html#quantify_scheduler.Schedule)
+            representation of the circuit.
+
+        """
+
         if "quantify_scheduler" not in globals():
             msg = "quantify-scheduler is not installed, or cannot be installed on your system"
             raise ModuleNotFoundError(msg)
@@ -77,7 +89,7 @@ class QuantifySchedulerExporter(Exporter):
         return schedule_creator.schedule
 
 
-class OperationRecord:
+class _OperationRecord:
     def __init__(
         self,
         qubit_register_size: int,
@@ -183,10 +195,10 @@ class _Scheduler(IRVisitor):
         operation_cycles: OperationCycles | None,
     ) -> None:
         self._qubit_register_size = register_manager.qubit_register_size
-        self._operation_record = OperationRecord(self._qubit_register_size, schedulables, cycle_time, operation_cycles)
+        self._operation_record = _OperationRecord(self._qubit_register_size, schedulables, cycle_time, operation_cycles)
 
     @property
-    def operation_record(self) -> OperationRecord:
+    def operation_record(self) -> _OperationRecord:
         return self._operation_record
 
     def visit_gate(self, gate: Gate) -> None:

@@ -24,8 +24,8 @@ _builder_dynamic_attributes = (*default_instruction_set, "asm")
 class CircuitBuilder:
     """
     A class using the builder pattern to make construction of circuits easy from Python.
-    Adds corresponding instruction when a method is called. Checks that instructions are known and called with the right
-    arguments.
+    Adds corresponding instruction when a method is called. Checks that instructions are known and
+    called with the right arguments.
     Mainly here to allow for Qiskit-style circuit construction:
 
     Args:
@@ -33,17 +33,19 @@ class CircuitBuilder:
         bit_register_size (int): Size of the bit register
 
     Example:
-        >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).\
-        H(0).CNOT(0, 1).CNOT(0, 2).\
-        to_circuit()
+        ```python
+        >>> CircuitBuilder(qubit_register_size=3, bit_register_size=3).H(0).CNOT(0, 1).CNOT(0, 2).to_circuit()
+        ```
+        ```
         version 3.0
-        <BLANKLINE>
+
         qubit[3] q
-        <BLANKLINE>
+
         h q[0]
         cnot q[0], q[1]
         cnot q[0], q[2]
-        <BLANKLINE>
+
+        ```
     """
 
     def __init__(
@@ -77,6 +79,12 @@ class CircuitBuilder:
         return self.__getattribute__(attr)
 
     def add_register(self, register: QubitRegister | BitRegister) -> None:
+        """Add a (qu)bit register to the circuit builder.
+
+        Args:
+            register (QubitRegister | BitRegister): (Qu)bit register to add.
+
+        """
         self.register_manager.add_register(register)
 
     def _check_qubit_out_of_bounds_access(self, qubit: QubitLike) -> None:
@@ -135,4 +143,10 @@ class CircuitBuilder:
         return self
 
     def to_circuit(self) -> Circuit:
+        """Build the circuit.
+
+        Returns:
+            Circuit: The built circuit.
+
+        """
         return Circuit(deepcopy(self.register_manager), deepcopy(self.ir))

@@ -25,20 +25,20 @@ if TYPE_CHECKING:
 
 
 def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
-    """
-    Given a quantum ket represented by its corresponding base-10 integer, this computes the reduced ket
-    where only the given qubits appear, in order.
-    Roughly equivalent to the `pext` assembly instruction (bits extraction).
+    """Given a quantum ket represented by its corresponding base-10 integer, this computes the
+    reduced ket where only the given qubits appear, in order.
+
+    Roughly equivalent to the PEXT assembly instruction (bits extraction).
 
     Args:
-        ket: A quantum ket, represented by its corresponding non-negative integer.
+        ket (int): A quantum ket, represented by its corresponding non-negative integer.
              By convention, qubit #0 corresponds to the least significant bit.
-        qubits: The indices of the qubits to extract. Order matters.
+        qubits (Iterable[QubitLike]): The indices of the qubits to extract. Order matters.
 
     Returns:
         The non-negative integer corresponding to the reduced ket.
 
-    Examples:
+    Example:
         >>> get_reduced_ket(1, [Qubit(0)])         # 0b01
         1
         >>> get_reduced_ket(1111, [Qubit(2)])      # 0b01
@@ -51,6 +51,7 @@ def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
         2
         >>> get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01
         1
+
     """
     reduced_ket = 0
     for i, qubit in enumerate(qubits):
@@ -61,22 +62,24 @@ def get_reduced_ket(ket: int, qubits: Iterable[QubitLike]) -> int:
 
 
 def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> int:
-    """
-    Given a base quantum ket on n qubits and a reduced ket on a subset of those qubits, this computes the expanded ket
-    where the reduction qubits and the other qubits are set based on the reduced ket and the base ket, respectively.
-    Roughly equivalent to the `pdep` assembly instruction (bits deposit).
+    """Given a base quantum ket on $n$ qubits and a reduced ket on a subset of those qubits, this
+    computes the expanded ket where the reduction qubits and the other qubits are set based on the
+    reduced ket and the base ket, respectively.
+
+    Roughly equivalent to the PDEP assembly instruction (bits deposit).
 
     Args:
-        base_ket: A quantum ket, represented by its corresponding non-negative integer.
+        base_ket (int): A quantum ket, represented by its corresponding non-negative integer.
                   By convention, qubit #0 corresponds to the least significant bit.
-        reduced_ket: A quantum ket, represented by its corresponding non-negative integer.
+        reduced_ket (int): A quantum ket, represented by its corresponding non-negative integer.
                      By convention, qubit #0 corresponds to the least significant bit.
-        qubits: The indices of the qubits to expand from the reduced ket. Order matters.
+        qubits (Iterable[QubitLike]): The indices of the qubits to expand from the reduced ket.
+                                      Order matters.
 
     Returns:
         The non-negative integer corresponding to the expanded ket.
 
-    Examples:
+    Example:
         >>> expand_ket(0b00000, 0b0, [Qubit(5)])   # 0b000000
         0
         >>> expand_ket(0b00000, 0b1, [Qubit(5)])   # 0b100000
@@ -95,6 +98,7 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> 
         10
         >>> expand_ket(0b0001, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1011
         11
+
     """
     expanded_ket = base_ket
     for i, qubit in enumerate(qubits):
@@ -105,7 +109,7 @@ def expand_ket(base_ket: int, reduced_ket: int, qubits: Iterable[QubitLike]) -> 
     return expanded_ket
 
 
-class MatrixExpander(IRVisitor):
+class _MatrixExpander(IRVisitor):
     def __init__(self, qubit_register_size: int) -> None:
         self.qubit_register_size = qubit_register_size
 
@@ -244,16 +248,35 @@ Z = np.array([[1, 0], [0, -1]])
 
 
 def can1(axis: AxisLike, angle: float, phase: float = 0) -> NDArray[np.complex128]:
+    """Generates the unitary matrix for a canonical single-qubit gate.
+
+    Args:
+        axis (AxisLike): The rotation axis.
+        angle (float): The rotation angle in radians.
+        phase (float): The phase in radians.
+
+    Returns:
+        The unitary $2\\times 2$ matrix.
+
+    """
     nx, ny, nz = Axis(axis)
 
     result = cmath.rect(1, phase) * (
         math.cos(angle / 2) * np.identity(2) - 1j * math.sin(angle / 2) * (nx * X + ny * Y + nz * Z)
     )
-
     return np.asarray(result, dtype=np.complex128)
 
 
 def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
+    """Generates the unitary matrix for a canonical two-qubit gate.
+
+    Args:
+        canonical_axis (AxisLike): The canonical axis.
+
+    Returns:
+        The unitary $4\\times 4$ matrix.
+
+    """
     tx, ty, tz = CanonicalAxis(canonical_axis)
 
     return np.array(
@@ -288,25 +311,27 @@ def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
 
 
 def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
-    """
-    Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken among any number of
-    qubits. This can be used for, e.g.,
+    """Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken
+    among any number of qubits. This can be used for, e.g.,
+
     - testing,
     - permuting the operands of multi-qubit gates,
     - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).
 
     Args:
-        gate: The gate, including the qubits on which it is operated on.
-        qubit_register_size: The size of the qubit register.
+        gate (Gate): The gate, including the qubits on which it is operated on.
+        qubit_register_size (int): The size of the qubit register.
 
-    Examples:
+    Returns:
+        The unitary matrix corresponding to the gate applied to the qubit operands.
+
+    Example:
         >>> X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)
         >>> get_matrix(X(1), 2).astype(int)           # X q[1]
         array([[0, 0, 1, 0],
                [0, 0, 0, 1],
                [1, 0, 0, 0],
                [0, 1, 0, 0]])
-
         >>> CNOT02 = ControlledGate(0, X(2))
         >>> get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]
         array([[1, 0, 0, 0, 0, 0, 0, 0],
@@ -326,6 +351,7 @@ def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
                [0, 0, 0, 0, 0, 1, 0, 0],
                [0, 0, 1, 0, 0, 0, 0, 0],
                [0, 0, 0, 1, 0, 0, 0, 0]])
+
     """
-    expander = MatrixExpander(qubit_register_size)
+    expander = _MatrixExpander(qubit_register_size)
     return np.asarray(gate.accept(expander), dtype=np.complex128)

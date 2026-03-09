@@ -108,4 +108,13 @@ default_instruction_set: dict[str, type[Instruction]] = {
 
 
 def is_anonymous_gate(name: str) -> bool:
+    """Checks whether the input name corresponds to a non-default gate.
+
+    Args:
+        name (str): Name of the gate.
+
+    Returns:
+        True if the name does not correspond to a default gate, otherwise False.
+
+    """
     return name not in default_gate_set

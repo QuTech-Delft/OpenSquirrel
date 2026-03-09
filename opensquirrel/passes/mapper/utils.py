@@ -4,6 +4,15 @@ from opensquirrel.ir import IR, Gate
 
 
 def make_interaction_graph(ir: IR) -> nx.Graph:
+    """Determine the interaction graph of the circuit.
+
+    Args:
+        ir (IR): Intermediate representation of the quantum circuit.
+
+    Returns:
+        The interaction graph of the circuit.
+
+    """
     interaction_graph = nx.Graph()
     gates = (statement for statement in ir.statements if isinstance(statement, Gate))
 

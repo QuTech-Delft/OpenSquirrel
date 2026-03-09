@@ -76,6 +76,17 @@ def get_reindexed_circuit(
     qubit_indices: list[int],
     bit_register_size: int = 0,
 ) -> Circuit:
+    """Reindex the qubit indices of the given (replacement) gates in a circuit.
+
+    Args:
+        replacement_gates (Iterable[Gate]): The gates to be reindexed.
+        qubit_indices (list[int]): The new qubit indices.
+        bit_register_size (int): The size of the bit register.
+
+    Returns:
+        The reindexed circuit.
+
+    """
     from opensquirrel.circuit import Circuit
 
     qubit_reindexer = _QubitReindexer(qubit_indices)

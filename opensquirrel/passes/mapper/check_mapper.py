@@ -22,11 +22,12 @@ from opensquirrel.register_manager import (
 
 
 def _check_scenario(circuit: Circuit, mapper: Mapper) -> None:
-    """Check if the given scenario can be mapped.
+    """Checks if the given scenario can be mapped.
 
     Args:
         circuit: Circuit containing the scenario to check against.
         mapper: Mapper to use.
+
     """
     ir_copy = deepcopy(circuit.ir)
     circuit.map(mapper)
@@ -34,12 +35,14 @@ def _check_scenario(circuit: Circuit, mapper: Mapper) -> None:
 
 
 def check_mapper(mapper: Mapper) -> None:
-    """Check if the `mapper` complies with the OpenSquirrel requirements.
+    """Checks if the mapper complies with the OpenSquirrel requirements.
 
-    If a ``Mapper`` implementation passes these checks, it should be compatible with the ``Circuit.map`` method.
+    If a ``Mapper`` implementation passes these checks, it should be compatible with the
+    ``Circuit.map`` method.
 
     Args:
         mapper: Mapper to check.
+
     """
     assert isinstance(mapper, Mapper)
 

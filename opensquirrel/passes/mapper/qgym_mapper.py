@@ -46,20 +46,21 @@ class QGymMapper(Mapper):
         qubit_register_size: int,
     ) -> Mapping:
         """
-        Compute an initial logical-to-physical qubit mapping using a trained
-        Stable-Baselines3 agent acting in the QGym InitialMapping environment.
+        Compute an initial logical-to-physical qubit mapping using a trained Stable-Baselines3
+        agent acting in the QGym InitialMapping environment.
 
         Args:
             circuit (Circuit): The quantum circuit to be mapped.
             qubit_register_size (int): Number of logical (virtual) qubits in the circuit.
 
         Returns:
-            Mapping: Mapping from virtual to physical qubits.
+            Mapping from virtual to physical qubits.
 
         Raises:
             ValueError: If the number of logical qubits differs from the number of physical qubits.
             ValueError: If the agent produces an incomplete or invalid mapping.
-            RuntimeError: If no 'mapping' key is found in the final observation.
+            RuntimeError: If no mapping key is found in the final observation.
+
         """
         num_physical = self.hardware_connectivity.number_of_nodes()
         if qubit_register_size != num_physical:
