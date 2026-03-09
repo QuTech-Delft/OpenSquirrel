@@ -3,6 +3,8 @@ import pytest
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.circuit import MeasurementToBitMap
 from opensquirrel.ir import AsmDeclaration
+from opensquirrel.passes.mapper import HardcodedMapper, IdentityMapper
+from opensquirrel.passes.mapper.mapping import Mapping
 
 
 def test_asm_filter() -> None:
@@ -129,3 +131,59 @@ def test_interaction_graph_multi_qubit_gate_pairs() -> None:
         (0, 2): 1,
         (1, 2): 1,
     }
+
+
+def test_mapping_attribute_initial_identity() -> None:
+    """Test that circuit.mapping is initially an identity mapping."""
+    builder = CircuitBuilder(5)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    circuit = builder.to_circuit()
+
+    assert hasattr(circuit, "mapping")
+    assert isinstance(circuit.mapping, Mapping)
+    assert circuit.mapping == Mapping([0, 1, 2, 3, 4])
+
+
+def test_mapping_attribute_after_mapping() -> None:
+    """Test that circuit.mapping contains the mapping produced by circuit.map()."""
+    builder = CircuitBuilder(5)
+    builder.H(0)
+    builder.CNOT(0, 1)
+    circuit = builder.to_circuit()
+
+    mapper = HardcodedMapper(Mapping([4, 3, 2, 1, 0]))
+    circuit.map(mapper=mapper)
+
+    assert circuit.mapping == Mapping([4, 3, 2, 1, 0])
+
+
+def test_mapping_attribute_identity_mapping() -> None:
+    """Test that circuit.mapping doesn't change when identity mapper is applied."""
+    builder = CircuitBuilder(3)
+    builder.H(0)
+    circuit = builder.to_circuit()
+
+    initial_mapping = circuit.mapping
+
+    mapper = IdentityMapper()
+    circuit.map(mapper=mapper)
+
+    assert circuit.mapping == initial_mapping
+    assert circuit.mapping == Mapping([0, 1, 2])
+
+
+def test_mapping_attribute_from_string() -> None:
+    """Test that circuit.mapping is set correctly when creating a circuit from string."""
+    circuit = Circuit.from_string(
+        """
+        version 3.0
+        qubit[4] q
+        H q[0]
+        CNOT q[0], q[1]
+        """
+    )
+
+    assert hasattr(circuit, "mapping")
+    assert isinstance(circuit.mapping, Mapping)
+    assert circuit.mapping == Mapping([0, 1, 2, 3])

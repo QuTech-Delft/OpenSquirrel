@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 from opensquirrel.ir import Instruction
 from opensquirrel.ir.non_unitary import Measure
 from opensquirrel.ir.statement import AsmDeclaration
+from opensquirrel.passes.mapper import IdentityMapper
 
 if TYPE_CHECKING:
     from opensquirrel.ir.ir import IR
@@ -62,6 +63,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
+        self.mapping = IdentityMapper().map(self, self.qubit_register_size)
 
     @classmethod
     def from_string(cls, cqasm_string: str) -> Circuit:
@@ -176,9 +178,9 @@ class Circuit:
         """
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
-        mapping = mapper.map(self, self.qubit_register_size)
+        self.mapping = mapper.map(self, self.qubit_register_size)
 
-        remap_ir(self, mapping)
+        remap_ir(self, self.mapping)
 
     def merge(self, merger: Merger) -> None:
         """Merges the circuit using the specified merger.
