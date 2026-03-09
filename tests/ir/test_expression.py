@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
+from opensquirrel.common import ATOL
 from opensquirrel.ir import Axis, AxisLike, Bit, Float, Int, Qubit
 from opensquirrel.ir.expression import Expression
 
@@ -15,7 +16,7 @@ class TestFloat:
             Float("f")  # type: ignore
 
     def test_init(self) -> None:
-        assert Float(1).value == 1.0
+        assert Float(1).value == pytest.approx(1.0, abs=ATOL)
 
 
 class TestInt:

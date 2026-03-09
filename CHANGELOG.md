@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 parameter
 - `CircuitBuilder` accepts multiple (qu)bit registers through `add_register` method
 - Docstrings added to (user facing) public methods
+- Add `interaction_graph` as a property of the `Circuit`.
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 

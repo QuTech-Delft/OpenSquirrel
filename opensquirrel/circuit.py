@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from collections import Counter, defaultdict
 from collections.abc import Callable
+from itertools import combinations
 from typing import TYPE_CHECKING, Any
 
+from opensquirrel.ir import Instruction
 from opensquirrel.ir.non_unitary import Measure
 from opensquirrel.ir.statement import AsmDeclaration
 
@@ -21,6 +23,7 @@ if TYPE_CHECKING:
 
 InstructionCount = dict[str, int]
 MeasurementToBitMap = defaultdict[str, list[int]]
+InteractionGraph = dict[tuple[int, int], int]
 
 
 class Circuit:
@@ -112,6 +115,20 @@ class Circuit:
                 m2b_map[str(qubit_index)].append(bit_index)
         return m2b_map
 
+    @property
+    def interaction_graph(self) -> InteractionGraph:
+        """Interaction graph of the circuit."""
+        graph = {}
+        for statement in self.ir.statements:
+            if not isinstance(statement, Instruction):
+                continue
+            qubit_indices = statement.qubit_indices
+            if len(qubit_indices) >= 2:
+                for q_i, q_j in combinations(qubit_indices, 2):
+                    edge = (min(q_i, q_j), max(q_i, q_j))
+                    graph[edge] = graph.get(edge, 0) + 1
+        return graph
+
     def asm_filter(self, backend_name: str) -> None:
         """Filter the assembly declarations in the circuit for a specific backend.
 
@@ -159,7 +176,8 @@ class Circuit:
         """
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
-        mapping = mapper.map(self.ir, self.qubit_register_size)
+        mapping = mapper.map(self, self.qubit_register_size)
+
         remap_ir(self, mapping)
 
     def merge(self, merger: Merger) -> None:

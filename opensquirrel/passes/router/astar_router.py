@@ -39,9 +39,9 @@ class AStarRouter(Router):
             graph,
             source=source,
             target=target,
-            heuristic=lambda q0_index, q1_index: calculate_distance(
-                q0_index, q1_index, num_columns, self._distance_metric
-            )
-            if self._distance_metric
-            else None,
+            heuristic=lambda q0_index, q1_index: (
+                calculate_distance(q0_index, q1_index, num_columns, self._distance_metric)
+                if self._distance_metric
+                else None
+            ),
         )

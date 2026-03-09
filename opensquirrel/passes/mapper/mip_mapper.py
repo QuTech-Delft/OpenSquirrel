@@ -13,7 +13,7 @@ from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 if TYPE_CHECKING:
-    from opensquirrel import Connectivity
+    from opensquirrel import Circuit, Connectivity
     from opensquirrel.ir import IR
 
 DISTANCE_UL = 999999
@@ -73,7 +73,11 @@ class MIPMapper(Mapper):
         self.num_w_vars = 0
         self.num_vars = 0
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        circuit: Circuit,
+        qubit_register_size: int,
+    ) -> Mapping:
         """Find an initial mapping of virtual qubits to physical qubits that minimizes
         the sum of distances between mapped operands of all two-qubit gates, using
         Mixed Integer Programming (MIP).
@@ -83,7 +87,7 @@ class MIPMapper(Mapper):
         gates, given the connectivity.
 
         Args:
-            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            circuit (Circuit): The quantum circuit to be mapped.
             qubit_register_size (int): The number of virtual qubits in the circuit.
 
         Returns:
@@ -108,7 +112,7 @@ class MIPMapper(Mapper):
             raise RuntimeError(error_message)
 
         distance = self._get_distance()
-        reference_counter = self._get_reference_counter(ir, self.num_virtual_qubits)
+        reference_counter = self._get_reference_counter(circuit.ir, self.num_virtual_qubits)
 
         cost, constraints, integrality, bounds = self._get_linearized_formulation(reference_counter, distance)
 
