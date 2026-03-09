@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from opensquirrel.passes.decomposer.general_decomposer import Decomposer
     from opensquirrel.passes.exporter.general_exporter import Exporter
     from opensquirrel.passes.mapper.general_mapper import Mapper
-    from opensquirrel.passes.mapper.mapping import Mapping
     from opensquirrel.passes.merger.general_merger import Merger
     from opensquirrel.passes.router.general_router import Router
     from opensquirrel.passes.validator.general_validator import Validator
@@ -56,7 +55,7 @@ class Circuit:
         """Create a circuit object from a register manager and an IR."""
         self.register_manager = register_manager
         self.ir = ir
-        self.mapping = self._set_identity_mapping()
+        self.mapping = IdentityMapper().map(self, self.qubit_register_size)
 
     def __repr__(self) -> str:
         """Write the circuit to a cQASM 3 string."""
@@ -137,9 +136,6 @@ class Circuit:
                     graph[edge] = graph.get(edge, 0) + 1
         return graph
 
-    def _set_identity_mapping(self) -> Mapping:
-        return IdentityMapper().map(self, self.qubit_register_size)
-
     def asm_filter(self, backend_name: str) -> None:
         self.ir.statements = [
             statement
@@ -169,11 +165,9 @@ class Circuit:
         """
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
-        mapping = mapper.map(self, self.qubit_register_size)
+        self.mapping = mapper.map(self, self.qubit_register_size)
 
-        remap_ir(self, mapping)
-
-        self.mapping = mapping
+        remap_ir(self, self.mapping)
 
     def merge(self, merger: Merger) -> None:
         """Generic merge pass. It applies the given merger to the circuit."""
