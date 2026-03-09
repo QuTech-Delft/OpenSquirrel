@@ -2908,6 +2908,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SingleQubitGate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SingleQubitGate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accept
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate.is_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#opensquirrel.ir.single_qubit_gate.try_match_replace_with_default_gate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4880,6 +4919,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SingleQubitGate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SingleQubitGate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accept
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate.is_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#opensquirrel.ir.single_qubit_gate.try_match_replace_with_default_gate" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4938,20 +5016,208 @@
 
 
 
+<div class="doc doc-object doc-class">
 
-<div class="doc doc-object doc-function">
 
 
-<h2 id="opensquirrel.ir.single_qubit_gate.try_match_replace_with_default_gate" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">try_match_replace_with_default_gate</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span></code>
+<h2 id="opensquirrel.ir.single_qubit_gate.SingleQubitGate" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">SingleQubitGate</span>
+
 
 </h2>
 
 
     <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="Gate (opensquirrel.ir.Gate)" href="unitary.html#opensquirrel.ir.unitary.Gate">Gate</a></code></p>
 
-        <p>Try replacing a given SingleQubitGate with a default SingleQubitGate.
-    It does that by matching the input SingleQubitGate to a default SingleQubitGate.</p>
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>opensquirrel/ir/single_qubit_gate.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-53"> 53</a></span>
+<span class="normal"><a href="#__codelineno-0-54"> 54</a></span>
+<span class="normal"><a href="#__codelineno-0-55"> 55</a></span>
+<span class="normal"><a href="#__codelineno-0-56"> 56</a></span>
+<span class="normal"><a href="#__codelineno-0-57"> 57</a></span>
+<span class="normal"><a href="#__codelineno-0-58"> 58</a></span>
+<span class="normal"><a href="#__codelineno-0-59"> 59</a></span>
+<span class="normal"><a href="#__codelineno-0-60"> 60</a></span>
+<span class="normal"><a href="#__codelineno-0-61"> 61</a></span>
+<span class="normal"><a href="#__codelineno-0-62"> 62</a></span>
+<span class="normal"><a href="#__codelineno-0-63"> 63</a></span>
+<span class="normal"><a href="#__codelineno-0-64"> 64</a></span>
+<span class="normal"><a href="#__codelineno-0-65"> 65</a></span>
+<span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
+<span class="normal"><a href="#__codelineno-0-67"> 67</a></span>
+<span class="normal"><a href="#__codelineno-0-68"> 68</a></span>
+<span class="normal"><a href="#__codelineno-0-69"> 69</a></span>
+<span class="normal"><a href="#__codelineno-0-70"> 70</a></span>
+<span class="normal"><a href="#__codelineno-0-71"> 71</a></span>
+<span class="normal"><a href="#__codelineno-0-72"> 72</a></span>
+<span class="normal"><a href="#__codelineno-0-73"> 73</a></span>
+<span class="normal"><a href="#__codelineno-0-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-0-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-0-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-0-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-0-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-0-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-0-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-0-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-0-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-0-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-0-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-0-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-0-100">100</a></span>
+<span class="normal"><a href="#__codelineno-0-101">101</a></span>
+<span class="normal"><a href="#__codelineno-0-102">102</a></span>
+<span class="normal"><a href="#__codelineno-0-103">103</a></span>
+<span class="normal"><a href="#__codelineno-0-104">104</a></span>
+<span class="normal"><a href="#__codelineno-0-105">105</a></span>
+<span class="normal"><a href="#__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="k">class</span><span class="w"> </span><span class="nc">SingleQubitGate</span><span class="p">(</span><span class="n">Gate</span><span class="p">):</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qubit</span><span class="p">:</span> <span class="n">QubitLike</span><span class="p">,</span> <span class="n">gate_semantic</span><span class="p">:</span> <span class="n">GateSemantic</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"SingleQubitGate"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="n">Gate</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_bsr</span> <span class="o">=</span> <span class="n">gate_semantic</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gate_semantic</span><span class="p">,</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="o">=</span> <span class="n">gate_semantic</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gate_semantic</span><span class="p">,</span> <span class="n">MatrixGateSemantic</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="nd">@cached_property</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">bsr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BlochSphereRotation</span><span class="p">:</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bsr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>            <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.ir.semantics.bsr</span><span class="w"> </span><span class="kn">import</span> <span class="n">bsr_from_matrix</span>
+<a id="__codelineno-0-65" name="__codelineno-0-65"></a>
+<a id="__codelineno-0-66" name="__codelineno-0-66"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_bsr</span> <span class="o">=</span> <span class="n">bsr_from_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bsr</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="nd">@cached_property</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MatrixGateSemantic</span><span class="p">:</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">can1</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="o">=</span> <span class="n">MatrixGateSemantic</span><span class="p">(</span><span class="n">can1</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">))</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="nd">@property</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">qubit_operands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Qubit</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a>        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="w">        </span><span class="sd">"""Accepts visitor and processes this IR node."""</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="n">visit_gate</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">)</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>        <span class="k">return</span> <span class="n">visit_gate</span> <span class="k">if</span> <span class="n">visit_gate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_single_qubit_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="w">        </span><span class="sd">"""Checks if the single-qubit gate is an identity gate.</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">        Returns:</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">            True if the single-qubit gate is an identity gate, False otherwise.</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">        """</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="k">else</span> <span class="kc">False</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">SingleQubitGate</span><span class="p">):</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubit</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">qubit</span><span class="p">:</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">bsr</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">SingleQubitGate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SingleQubitGate</span><span class="p">:</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qubit</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">qubit</span><span class="p">:</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">"cannot merge two single-qubit gates on different qubits"</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>        <span class="k">return</span> <span class="n">SingleQubitGate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">bsr</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.single_qubit_gate.SingleQubitGate.accept" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">accept</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Accepts visitor and processes this IR node.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/single_qubit_gate.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-81">81</a></span>
+<span class="normal"><a href="#__codelineno-0-82">82</a></span>
+<span class="normal"><a href="#__codelineno-0-83">83</a></span>
+<span class="normal"><a href="#__codelineno-0-84">84</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="w">    </span><span class="sd">"""Accepts visitor and processes this IR node."""</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="n">visit_gate</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">)</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>    <span class="k">return</span> <span class="n">visit_gate</span> <span class="k">if</span> <span class="n">visit_gate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_single_qubit_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.single_qubit_gate.SingleQubitGate.is_identity" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">is_identity</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_identity</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Checks if the single-qubit gate is an identity gate.</p>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -4965,21 +5231,131 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="opensquirrel.ir.single_qubit_gate.SingleQubitGate">SingleQubitGate</span></code>
+                  <code><span title="bool">bool</span></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>A default SingleQubitGate if this SingleQubitGate is close to it,</p>
+                <p>True if the single-qubit gate is an identity gate, False otherwise.</p>
               </div>
             </td>
           </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/single_qubit_gate.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-86">86</a></span>
+<span class="normal"><a href="#__codelineno-0-87">87</a></span>
+<span class="normal"><a href="#__codelineno-0-88">88</a></span>
+<span class="normal"><a href="#__codelineno-0-89">89</a></span>
+<span class="normal"><a href="#__codelineno-0-90">90</a></span>
+<span class="normal"><a href="#__codelineno-0-91">91</a></span>
+<span class="normal"><a href="#__codelineno-0-92">92</a></span>
+<span class="normal"><a href="#__codelineno-0-93">93</a></span>
+<span class="normal"><a href="#__codelineno-0-94">94</a></span>
+<span class="normal"><a href="#__codelineno-0-95">95</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="k">def</span><span class="w"> </span><span class="nf">is_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="w">    </span><span class="sd">"""Checks if the single-qubit gate is an identity gate.</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">        True if the single-qubit gate is an identity gate, False otherwise.</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">    """</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix</span> <span class="k">else</span> <span class="kc">False</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="opensquirrel.ir.single_qubit_gate.try_match_replace_with_default_gate" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">try_match_replace_with_default_gate</span>
+
+
+</h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">try_match_replace_with_default_gate</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">gate</span><span class="p">:</span> <span class="n">SingleQubitGate</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SingleQubitGate</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Tries to match a given single-qubit gate with a <em>default</em> single-qubit gate.
+It does that by checking if the parameters of the Bloch sphere rotation (BSR) semantic of the
+input single-qubit gate are close to those of any of the default single-qubit gates.</p>
+
+
+<details class="note" open>
+  <summary>Note</summary>
+  <ul>
+<li>The default (single-qubit) gates are defined in the
+<a href="https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html">cQASM standard gate set</a>.</li>
+<li>If no specific match is found, the general Rn gate is returned with the same parameters
+values as those of the input gate.</li>
+</ul>
+</details>
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
           <tr class="doc-section-item">
             <td>
-                  <code><span title="opensquirrel.ir.single_qubit_gate.SingleQubitGate">SingleQubitGate</span></code>
+                <code>gate</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="SingleQubitGate (opensquirrel.ir.single_qubit_gate.SingleQubitGate)" href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate">SingleQubitGate</a></code>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>or the input SingleQubitGate otherwise.</p>
+                <p>The single-qubit gate to be matched.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="SingleQubitGate (opensquirrel.ir.single_qubit_gate.SingleQubitGate)" href="#opensquirrel.ir.single_qubit_gate.SingleQubitGate">SingleQubitGate</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A default single-qubit gate if this single-qubit gate matches it, the Rn gate otherwise.</p>
               </div>
             </td>
           </tr>
@@ -5016,34 +5392,54 @@
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
 <span class="normal"><a href="#__codelineno-0-38">38</a></span>
 <span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">try_match_replace_with_default_gate</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">SingleQubitGate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SingleQubitGate</span><span class="p">:</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">    </span><span class="sd">"""Try replacing a given SingleQubitGate with a default SingleQubitGate.</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">        It does that by matching the input SingleQubitGate to a default SingleQubitGate.</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">            A default SingleQubitGate if this SingleQubitGate is close to it,</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">            or the input SingleQubitGate otherwise.</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    """</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.default_instructions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="n">default_bsr_with_param_set</span><span class="p">,</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>        <span class="n">default_single_qubit_gate_set</span><span class="p">,</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="p">)</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.ir.default_gates.single_qubit_gates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rn</span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span>
+<span class="normal"><a href="#__codelineno-0-42">42</a></span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span>
+<span class="normal"><a href="#__codelineno-0-47">47</a></span>
+<span class="normal"><a href="#__codelineno-0-48">48</a></span>
+<span class="normal"><a href="#__codelineno-0-49">49</a></span>
+<span class="normal"><a href="#__codelineno-0-50">50</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">try_match_replace_with_default_gate</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">SingleQubitGate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SingleQubitGate</span><span class="p">:</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">    </span><span class="sd">"""Tries to match a given single-qubit gate with a _default_ single-qubit gate.</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">    It does that by checking if the parameters of the Bloch sphere rotation (BSR) semantic of the</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    input single-qubit gate are close to those of any of the default single-qubit gates.</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">    Note:</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">        - The default (single-qubit) gates are defined in the</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">        [cQASM standard gate set](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html).</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">        - If no specific match is found, the general Rn gate is returned with the same parameters</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">        values as those of the input gate.</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">        gate: The single-qubit gate to be matched.</span>
 <a id="__codelineno-0-26" name="__codelineno-0-26"></a>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="k">for</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_single_qubit_gate_set</span><span class="p">:</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>        <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Rn"</span><span class="p">,</span> <span class="s2">"U"</span><span class="p">):</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>            <span class="k">continue</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>        <span class="n">arguments</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_with_param_set</span><span class="p">:</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>            <span class="n">arguments</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),)</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="n">possible_gate</span> <span class="o">=</span> <span class="n">default_single_qubit_gate_set</span><span class="p">[</span><span class="n">gate_name</span><span class="p">](</span><span class="o">*</span><span class="n">arguments</span><span class="p">)</span>  <span class="c1"># ty: ignore[invalid-argument-type]</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>        <span class="k">if</span> <span class="n">possible_gate</span> <span class="o">==</span> <span class="n">gate</span><span class="p">:</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>            <span class="k">return</span> <span class="n">possible_gate</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>    <span class="k">return</span> <span class="n">Rn</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="o">=</span><span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="o">=</span><span class="n">nz</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">        A default single-qubit gate if this single-qubit gate matches it, the Rn gate otherwise.</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    """</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.default_instructions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="n">default_bsr_with_param_set</span><span class="p">,</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="n">default_single_qubit_gate_set</span><span class="p">,</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="p">)</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.ir.default_gates.single_qubit_gates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rn</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="k">for</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_single_qubit_gate_set</span><span class="p">:</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"Rn"</span><span class="p">,</span> <span class="s2">"U"</span><span class="p">):</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>            <span class="k">continue</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>        <span class="n">arguments</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,)</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="k">if</span> <span class="n">gate_name</span> <span class="ow">in</span> <span class="n">default_bsr_with_param_set</span><span class="p">:</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>            <span class="n">arguments</span> <span class="o">+=</span> <span class="p">(</span><span class="n">Float</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">),)</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">possible_gate</span> <span class="o">=</span> <span class="n">default_single_qubit_gate_set</span><span class="p">[</span><span class="n">gate_name</span><span class="p">](</span><span class="o">*</span><span class="n">arguments</span><span class="p">)</span>  <span class="c1"># ty: ignore[invalid-argument-type]</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="k">if</span> <span class="n">possible_gate</span> <span class="o">==</span> <span class="n">gate</span><span class="p">:</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>            <span class="k">return</span> <span class="n">possible_gate</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">value</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a>    <span class="k">return</span> <span class="n">Rn</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="o">=</span><span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="o">=</span><span class="n">nz</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

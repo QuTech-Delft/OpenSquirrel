@@ -4501,6 +4501,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.reindexer.qubit_reindexer.get_reindexed_circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_reindexed_circuit
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4868,6 +4879,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.reindexer.qubit_reindexer.get_reindexed_circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_reindexed_circuit
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4916,6 +4938,175 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="opensquirrel.reindexer.qubit_reindexer.get_reindexed_circuit" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">get_reindexed_circuit</span>
+
+
+</h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_reindexed_circuit</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">replacement_gates</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Gate</span><span class="p">],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">qubit_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">bit_register_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Circuit</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Reindex the qubit indices of the given (replacement) gates in a circuit.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>replacement_gates</code>
+            </td>
+            <td>
+                  <code><span title="collections.abc.Iterable">Iterable</span>[<a class="autorefs autorefs-internal" title="Gate (opensquirrel.ir.Gate)" href="../ir/unitary.html#opensquirrel.ir.unitary.Gate">Gate</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The gates to be reindexed.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>qubit_indices</code>
+            </td>
+            <td>
+                  <code><span title="list">list</span>[<span title="int">int</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The new qubit indices.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>bit_register_size</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The size of the bit register.</p>
+              </div>
+            </td>
+            <td>
+                  <code>0</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Circuit (opensquirrel.circuit.Circuit)" href="../circuit.html#opensquirrel.circuit.Circuit">Circuit</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The reindexed circuit.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/reindexer/qubit_reindexer.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-74"> 74</a></span>
+<span class="normal"><a href="#__codelineno-0-75"> 75</a></span>
+<span class="normal"><a href="#__codelineno-0-76"> 76</a></span>
+<span class="normal"><a href="#__codelineno-0-77"> 77</a></span>
+<span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
+<span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
+<span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
+<span class="normal"><a href="#__codelineno-0-81"> 81</a></span>
+<span class="normal"><a href="#__codelineno-0-82"> 82</a></span>
+<span class="normal"><a href="#__codelineno-0-83"> 83</a></span>
+<span class="normal"><a href="#__codelineno-0-84"> 84</a></span>
+<span class="normal"><a href="#__codelineno-0-85"> 85</a></span>
+<span class="normal"><a href="#__codelineno-0-86"> 86</a></span>
+<span class="normal"><a href="#__codelineno-0-87"> 87</a></span>
+<span class="normal"><a href="#__codelineno-0-88"> 88</a></span>
+<span class="normal"><a href="#__codelineno-0-89"> 89</a></span>
+<span class="normal"><a href="#__codelineno-0-90"> 90</a></span>
+<span class="normal"><a href="#__codelineno-0-91"> 91</a></span>
+<span class="normal"><a href="#__codelineno-0-92"> 92</a></span>
+<span class="normal"><a href="#__codelineno-0-93"> 93</a></span>
+<span class="normal"><a href="#__codelineno-0-94"> 94</a></span>
+<span class="normal"><a href="#__codelineno-0-95"> 95</a></span>
+<span class="normal"><a href="#__codelineno-0-96"> 96</a></span>
+<span class="normal"><a href="#__codelineno-0-97"> 97</a></span>
+<span class="normal"><a href="#__codelineno-0-98"> 98</a></span>
+<span class="normal"><a href="#__codelineno-0-99"> 99</a></span>
+<span class="normal"><a href="#__codelineno-0-100">100</a></span>
+<span class="normal"><a href="#__codelineno-0-101">101</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_reindexed_circuit</span><span class="p">(</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="n">replacement_gates</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Gate</span><span class="p">],</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="n">qubit_indices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a>    <span class="n">bit_register_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Circuit</span><span class="p">:</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="w">    </span><span class="sd">"""Reindex the qubit indices of the given (replacement) gates in a circuit.</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">        replacement_gates (Iterable[Gate]): The gates to be reindexed.</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">        qubit_indices (list[int]): The new qubit indices.</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="sd">        bit_register_size (int): The size of the bit register.</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="sd">        The reindexed circuit.</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">    """</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a>    <span class="n">qubit_reindexer</span> <span class="o">=</span> <span class="n">_QubitReindexer</span><span class="p">(</span><span class="n">qubit_indices</span><span class="p">)</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a>    <span class="n">register_manager</span> <span class="o">=</span> <span class="n">RegisterManager</span><span class="p">(</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a>        <span class="n">OrderedDict</span><span class="p">({</span><span class="n">DEFAULT_QUBIT_REGISTER_NAME</span><span class="p">:</span> <span class="n">QubitRegister</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">qubit_indices</span><span class="p">))}),</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a>        <span class="n">OrderedDict</span><span class="p">({</span><span class="n">DEFAULT_BIT_REGISTER_NAME</span><span class="p">:</span> <span class="n">BitRegister</span><span class="p">(</span><span class="n">bit_register_size</span><span class="p">)}),</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a>    <span class="p">)</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a>    <span class="n">replacement_ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">()</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">replacement_gates</span><span class="p">:</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a>        <span class="n">gate_with_reindexed_qubits</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">qubit_reindexer</span><span class="p">)</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a>        <span class="n">replacement_ir</span><span class="o">.</span><span class="n">add_gate</span><span class="p">(</span><span class="n">gate_with_reindexed_qubits</span><span class="p">)</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a>    <span class="k">return</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">register_manager</span><span class="p">,</span> <span class="n">replacement_ir</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 

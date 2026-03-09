@@ -4943,10 +4943,14 @@
 
 
 <h2 id="opensquirrel.utils.context.temporary_class_attr" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">temporary_class_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">temporary_class_attr</span>
+
 
 </h2>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">temporary_class_attr</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -5035,23 +5039,25 @@
 <span class="normal"><a href="#__codelineno-0-19">19</a></span>
 <span class="normal"><a href="#__codelineno-0-20">20</a></span>
 <span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="nd">@contextmanager</span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="nd">@contextmanager</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">temporary_class_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">    </span><span class="sd">"""Context method to temporarily assign a value to a class attribute.</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9"></a>
 <a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="sd">    The assigned value will only be held within the context.</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11"></a>
 <a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">        cls: Class of which the class attribute value is to be assigned.</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">        attr: Name of class attribute.</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">        value: Value to assign to class attribute (must be correct type).</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    """</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>    <span class="n">original_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="k">try</span><span class="p">:</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>        <span class="k">yield</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>    <span class="k">finally</span><span class="p">:</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">original_value</span><span class="p">)</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">        cls (type[Any]): Class of which the class attribute value is to be assigned.</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">        attr (str): Name of class attribute.</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">        value (Any): Value to assign to class attribute (must be correct type).</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    """</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="n">original_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>    <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a>        <span class="k">yield</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="k">finally</span><span class="p">:</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>        <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">original_value</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

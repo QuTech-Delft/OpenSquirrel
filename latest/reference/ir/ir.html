@@ -2641,6 +2641,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accept
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_asm_declaration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_asm_declaration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_gate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_non_unitary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_non_unitary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.reverse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reverse
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4868,6 +4951,89 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IR
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IR">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accept
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_asm_declaration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_asm_declaration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_gate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_non_unitary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_non_unitary
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.add_statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_statement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.ir.IR.reverse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reverse
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4915,6 +5081,519 @@
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="opensquirrel.ir.ir.IR" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">IR</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>opensquirrel/ir/ir.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-106">106</a></span>
+<span class="normal"><a href="#__codelineno-0-107">107</a></span>
+<span class="normal"><a href="#__codelineno-0-108">108</a></span>
+<span class="normal"><a href="#__codelineno-0-109">109</a></span>
+<span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#__codelineno-0-115">115</a></span>
+<span class="normal"><a href="#__codelineno-0-116">116</a></span>
+<span class="normal"><a href="#__codelineno-0-117">117</a></span>
+<span class="normal"><a href="#__codelineno-0-118">118</a></span>
+<span class="normal"><a href="#__codelineno-0-119">119</a></span>
+<span class="normal"><a href="#__codelineno-0-120">120</a></span>
+<span class="normal"><a href="#__codelineno-0-121">121</a></span>
+<span class="normal"><a href="#__codelineno-0-122">122</a></span>
+<span class="normal"><a href="#__codelineno-0-123">123</a></span>
+<span class="normal"><a href="#__codelineno-0-124">124</a></span>
+<span class="normal"><a href="#__codelineno-0-125">125</a></span>
+<span class="normal"><a href="#__codelineno-0-126">126</a></span>
+<span class="normal"><a href="#__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#__codelineno-0-131">131</a></span>
+<span class="normal"><a href="#__codelineno-0-132">132</a></span>
+<span class="normal"><a href="#__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#__codelineno-0-140">140</a></span>
+<span class="normal"><a href="#__codelineno-0-141">141</a></span>
+<span class="normal"><a href="#__codelineno-0-142">142</a></span>
+<span class="normal"><a href="#__codelineno-0-143">143</a></span>
+<span class="normal"><a href="#__codelineno-0-144">144</a></span>
+<span class="normal"><a href="#__codelineno-0-145">145</a></span>
+<span class="normal"><a href="#__codelineno-0-146">146</a></span>
+<span class="normal"><a href="#__codelineno-0-147">147</a></span>
+<span class="normal"><a href="#__codelineno-0-148">148</a></span>
+<span class="normal"><a href="#__codelineno-0-149">149</a></span>
+<span class="normal"><a href="#__codelineno-0-150">150</a></span>
+<span class="normal"><a href="#__codelineno-0-151">151</a></span>
+<span class="normal"><a href="#__codelineno-0-152">152</a></span>
+<span class="normal"><a href="#__codelineno-0-153">153</a></span>
+<span class="normal"><a href="#__codelineno-0-154">154</a></span>
+<span class="normal"><a href="#__codelineno-0-155">155</a></span>
+<span class="normal"><a href="#__codelineno-0-156">156</a></span>
+<span class="normal"><a href="#__codelineno-0-157">157</a></span>
+<span class="normal"><a href="#__codelineno-0-158">158</a></span>
+<span class="normal"><a href="#__codelineno-0-159">159</a></span>
+<span class="normal"><a href="#__codelineno-0-160">160</a></span>
+<span class="normal"><a href="#__codelineno-0-161">161</a></span>
+<span class="normal"><a href="#__codelineno-0-162">162</a></span>
+<span class="normal"><a href="#__codelineno-0-163">163</a></span>
+<span class="normal"><a href="#__codelineno-0-164">164</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-106" name="__codelineno-0-106"></a><span class="k">class</span><span class="w"> </span><span class="nc">IR</span><span class="p">:</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="w">        </span><span class="sd">"""Accepts visitor and processes the IR nodes."""</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>        <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="p">:</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>            <span class="n">statement</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">)</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_asm_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asm_declaration</span><span class="p">:</span> <span class="n">AsmDeclaration</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a><span class="w">        </span><span class="sd">"""Adds an assembly declaration to the IR.</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117"></a>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a><span class="sd">        Args:</span>
+<a id="__codelineno-0-119" name="__codelineno-0-119"></a><span class="sd">            asm_declaration (AsmDeclaration): The assembly declaration to add.</span>
+<a id="__codelineno-0-120" name="__codelineno-0-120"></a>
+<a id="__codelineno-0-121" name="__codelineno-0-121"></a><span class="sd">        """</span>
+<a id="__codelineno-0-122" name="__codelineno-0-122"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asm_declaration</span><span class="p">)</span>
+<a id="__codelineno-0-123" name="__codelineno-0-123"></a>
+<a id="__codelineno-0-124" name="__codelineno-0-124"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-125" name="__codelineno-0-125"></a><span class="w">        </span><span class="sd">"""Adds a gate to the IR.</span>
+<a id="__codelineno-0-126" name="__codelineno-0-126"></a>
+<a id="__codelineno-0-127" name="__codelineno-0-127"></a><span class="sd">        Args:</span>
+<a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="sd">            gate (Gate): The gate to add.</span>
+<a id="__codelineno-0-129" name="__codelineno-0-129"></a>
+<a id="__codelineno-0-130" name="__codelineno-0-130"></a><span class="sd">        """</span>
+<a id="__codelineno-0-131" name="__codelineno-0-131"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span>
+<a id="__codelineno-0-132" name="__codelineno-0-132"></a>
+<a id="__codelineno-0-133" name="__codelineno-0-133"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_non_unitary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">non_unitary</span><span class="p">:</span> <span class="n">NonUnitary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-134" name="__codelineno-0-134"></a><span class="w">        </span><span class="sd">"""Adds a non-unitary operation to the IR.</span>
+<a id="__codelineno-0-135" name="__codelineno-0-135"></a>
+<a id="__codelineno-0-136" name="__codelineno-0-136"></a><span class="sd">        Args:</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137"></a><span class="sd">            non_unitary (NonUnitary): The non-unitary operation to add.</span>
+<a id="__codelineno-0-138" name="__codelineno-0-138"></a>
+<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">        """</span>
+<a id="__codelineno-0-140" name="__codelineno-0-140"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">non_unitary</span><span class="p">)</span>
+<a id="__codelineno-0-141" name="__codelineno-0-141"></a>
+<a id="__codelineno-0-142" name="__codelineno-0-142"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">add_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">Statement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-143" name="__codelineno-0-143"></a><span class="w">        </span><span class="sd">"""Adds a generic statement to the IR.</span>
+<a id="__codelineno-0-144" name="__codelineno-0-144"></a>
+<a id="__codelineno-0-145" name="__codelineno-0-145"></a><span class="sd">        Args:</span>
+<a id="__codelineno-0-146" name="__codelineno-0-146"></a><span class="sd">            statement (Statement): The statement to add.</span>
+<a id="__codelineno-0-147" name="__codelineno-0-147"></a>
+<a id="__codelineno-0-148" name="__codelineno-0-148"></a><span class="sd">        """</span>
+<a id="__codelineno-0-149" name="__codelineno-0-149"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+<a id="__codelineno-0-150" name="__codelineno-0-150"></a>
+<a id="__codelineno-0-151" name="__codelineno-0-151"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IR</span><span class="p">:</span>
+<a id="__codelineno-0-152" name="__codelineno-0-152"></a><span class="w">        </span><span class="sd">"""Reverses the order of statements in the IR."""</span>
+<a id="__codelineno-0-153" name="__codelineno-0-153"></a>        <span class="n">ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">()</span>
+<a id="__codelineno-0-154" name="__codelineno-0-154"></a>        <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+<a id="__codelineno-0-155" name="__codelineno-0-155"></a>            <span class="n">ir</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+<a id="__codelineno-0-156" name="__codelineno-0-156"></a>        <span class="k">return</span> <span class="n">ir</span>
+<a id="__codelineno-0-157" name="__codelineno-0-157"></a>
+<a id="__codelineno-0-158" name="__codelineno-0-158"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-159" name="__codelineno-0-159"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">IR</span><span class="p">):</span>
+<a id="__codelineno-0-160" name="__codelineno-0-160"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-161" name="__codelineno-0-161"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">statements</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">statements</span>
+<a id="__codelineno-0-162" name="__codelineno-0-162"></a>
+<a id="__codelineno-0-163" name="__codelineno-0-163"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-164" name="__codelineno-0-164"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">"IR: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="si">}</span><span class="s2">"</span>
+</code></pre></div></td></tr></tbody></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.ir.IR.accept" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">accept</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Accepts visitor and processes the IR nodes.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/ir.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-110" name="__codelineno-0-110"></a><span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="w">    </span><span class="sd">"""Accepts visitor and processes the IR nodes."""</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="p">:</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a>        <span class="n">statement</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.ir.IR.add_asm_declaration" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_asm_declaration</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">add_asm_declaration</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">asm_declaration</span><span class="p">:</span> <span class="n">AsmDeclaration</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds an assembly declaration to the IR.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>asm_declaration</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="AsmDeclaration (opensquirrel.ir.AsmDeclaration)" href="statement.html#opensquirrel.ir.statement.AsmDeclaration">AsmDeclaration</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The assembly declaration to add.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/ir.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-115">115</a></span>
+<span class="normal"><a href="#__codelineno-0-116">116</a></span>
+<span class="normal"><a href="#__codelineno-0-117">117</a></span>
+<span class="normal"><a href="#__codelineno-0-118">118</a></span>
+<span class="normal"><a href="#__codelineno-0-119">119</a></span>
+<span class="normal"><a href="#__codelineno-0-120">120</a></span>
+<span class="normal"><a href="#__codelineno-0-121">121</a></span>
+<span class="normal"><a href="#__codelineno-0-122">122</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-115" name="__codelineno-0-115"></a><span class="k">def</span><span class="w"> </span><span class="nf">add_asm_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asm_declaration</span><span class="p">:</span> <span class="n">AsmDeclaration</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a><span class="w">    </span><span class="sd">"""Adds an assembly declaration to the IR.</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117"></a>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-119" name="__codelineno-0-119"></a><span class="sd">        asm_declaration (AsmDeclaration): The assembly declaration to add.</span>
+<a id="__codelineno-0-120" name="__codelineno-0-120"></a>
+<a id="__codelineno-0-121" name="__codelineno-0-121"></a><span class="sd">    """</span>
+<a id="__codelineno-0-122" name="__codelineno-0-122"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asm_declaration</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.ir.IR.add_gate" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_gate</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">add_gate</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a gate to the IR.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>gate</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Gate (opensquirrel.ir.Gate)" href="unitary.html#opensquirrel.ir.unitary.Gate">Gate</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The gate to add.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/ir.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-124">124</a></span>
+<span class="normal"><a href="#__codelineno-0-125">125</a></span>
+<span class="normal"><a href="#__codelineno-0-126">126</a></span>
+<span class="normal"><a href="#__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#__codelineno-0-131">131</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-124" name="__codelineno-0-124"></a><span class="k">def</span><span class="w"> </span><span class="nf">add_gate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-125" name="__codelineno-0-125"></a><span class="w">    </span><span class="sd">"""Adds a gate to the IR.</span>
+<a id="__codelineno-0-126" name="__codelineno-0-126"></a>
+<a id="__codelineno-0-127" name="__codelineno-0-127"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="sd">        gate (Gate): The gate to add.</span>
+<a id="__codelineno-0-129" name="__codelineno-0-129"></a>
+<a id="__codelineno-0-130" name="__codelineno-0-130"></a><span class="sd">    """</span>
+<a id="__codelineno-0-131" name="__codelineno-0-131"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.ir.IR.add_non_unitary" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_non_unitary</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">add_non_unitary</span><span class="p">(</span><span class="n">non_unitary</span><span class="p">:</span> <span class="n">NonUnitary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a non-unitary operation to the IR.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>non_unitary</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="NonUnitary (opensquirrel.ir.non_unitary.NonUnitary)" href="non_unitary.html#opensquirrel.ir.non_unitary.NonUnitary">NonUnitary</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The non-unitary operation to add.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/ir.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#__codelineno-0-140">140</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-133" name="__codelineno-0-133"></a><span class="k">def</span><span class="w"> </span><span class="nf">add_non_unitary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">non_unitary</span><span class="p">:</span> <span class="n">NonUnitary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-134" name="__codelineno-0-134"></a><span class="w">    </span><span class="sd">"""Adds a non-unitary operation to the IR.</span>
+<a id="__codelineno-0-135" name="__codelineno-0-135"></a>
+<a id="__codelineno-0-136" name="__codelineno-0-136"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137"></a><span class="sd">        non_unitary (NonUnitary): The non-unitary operation to add.</span>
+<a id="__codelineno-0-138" name="__codelineno-0-138"></a>
+<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">    """</span>
+<a id="__codelineno-0-140" name="__codelineno-0-140"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">non_unitary</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.ir.IR.add_statement" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">add_statement</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">add_statement</span><span class="p">(</span><span class="n">statement</span><span class="p">:</span> <span class="n">Statement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Adds a generic statement to the IR.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>statement</code>
+            </td>
+            <td>
+                  <code><span title="opensquirrel.ir.statement.Statement">Statement</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The statement to add.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/ir.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-142">142</a></span>
+<span class="normal"><a href="#__codelineno-0-143">143</a></span>
+<span class="normal"><a href="#__codelineno-0-144">144</a></span>
+<span class="normal"><a href="#__codelineno-0-145">145</a></span>
+<span class="normal"><a href="#__codelineno-0-146">146</a></span>
+<span class="normal"><a href="#__codelineno-0-147">147</a></span>
+<span class="normal"><a href="#__codelineno-0-148">148</a></span>
+<span class="normal"><a href="#__codelineno-0-149">149</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-142" name="__codelineno-0-142"></a><span class="k">def</span><span class="w"> </span><span class="nf">add_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">:</span> <span class="n">Statement</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-143" name="__codelineno-0-143"></a><span class="w">    </span><span class="sd">"""Adds a generic statement to the IR.</span>
+<a id="__codelineno-0-144" name="__codelineno-0-144"></a>
+<a id="__codelineno-0-145" name="__codelineno-0-145"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-146" name="__codelineno-0-146"></a><span class="sd">        statement (Statement): The statement to add.</span>
+<a id="__codelineno-0-147" name="__codelineno-0-147"></a>
+<a id="__codelineno-0-148" name="__codelineno-0-148"></a><span class="sd">    """</span>
+<a id="__codelineno-0-149" name="__codelineno-0-149"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.ir.IR.reverse" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">reverse</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">reverse</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">IR</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Reverses the order of statements in the IR.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/ir.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-151">151</a></span>
+<span class="normal"><a href="#__codelineno-0-152">152</a></span>
+<span class="normal"><a href="#__codelineno-0-153">153</a></span>
+<span class="normal"><a href="#__codelineno-0-154">154</a></span>
+<span class="normal"><a href="#__codelineno-0-155">155</a></span>
+<span class="normal"><a href="#__codelineno-0-156">156</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-151" name="__codelineno-0-151"></a><span class="k">def</span><span class="w"> </span><span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IR</span><span class="p">:</span>
+<a id="__codelineno-0-152" name="__codelineno-0-152"></a><span class="w">    </span><span class="sd">"""Reverses the order of statements in the IR."""</span>
+<a id="__codelineno-0-153" name="__codelineno-0-153"></a>    <span class="n">ir</span> <span class="o">=</span> <span class="n">IR</span><span class="p">()</span>
+<a id="__codelineno-0-154" name="__codelineno-0-154"></a>    <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statements</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+<a id="__codelineno-0-155" name="__codelineno-0-155"></a>        <span class="n">ir</span><span class="o">.</span><span class="n">add_statement</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+<a id="__codelineno-0-156" name="__codelineno-0-156"></a>    <span class="k">return</span> <span class="n">ir</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 

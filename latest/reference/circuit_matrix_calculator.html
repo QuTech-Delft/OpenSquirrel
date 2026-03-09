@@ -4941,16 +4941,50 @@
 
 
 <h2 id="opensquirrel.circuit_matrix_calculator.get_circuit_matrix" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_circuit_matrix</span><span class="p">(</span><span class="n">circuit</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">get_circuit_matrix</span>
+
 
 </h2>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_circuit_matrix</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">circuit</span><span class="p">:</span> <span class="n">Circuit</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
         <p>Compute the (large) unitary matrix corresponding to the circuit.</p>
-<p>This matrix has 4**n elements, where n is the number of qubits. Result is stored as a numpy array of complex
-numbers.</p>
+<p>This matrix has <span class="arithmatex">\(4^n\)</span> elements, where <span class="arithmatex">\(n\)</span> is the number of qubits.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>circuit</code>
+            </td>
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="Circuit (opensquirrel.circuit.Circuit)" href="circuit.html#opensquirrel.circuit.Circuit">Circuit</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The circuit for which to compute the matrix.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
     <p><span class="doc-section-title">Returns:</span></p>
@@ -4991,20 +5025,26 @@ numbers.</p>
 <span class="normal"><a href="#__codelineno-0-35">35</a></span>
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_circuit_matrix</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">Circuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span>
+<span class="normal"><a href="#__codelineno-0-41">41</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_circuit_matrix</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">Circuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
 <a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">    </span><span class="sd">"""Compute the (large) unitary matrix corresponding to the circuit.</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27"></a>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    This matrix has 4**n elements, where n is the number of qubits. Result is stored as a numpy array of complex</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    numbers.</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">        Matrix representation of the circuit.</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    """</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="n">impl</span> <span class="o">=</span> <span class="n">_CircuitMatrixCalculator</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">qubit_register_size</span><span class="p">)</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    This matrix has $4^n$ elements, where $n$ is the number of qubits.</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">        circuit (Circuit): The circuit for which to compute the matrix.</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        Matrix representation of the circuit.</span>
 <a id="__codelineno-0-35" name="__codelineno-0-35"></a>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="n">circuit</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">impl</span><span class="p">)</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="k">return</span> <span class="n">impl</span><span class="o">.</span><span class="n">matrix</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    """</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="n">impl</span> <span class="o">=</span> <span class="n">_CircuitMatrixCalculator</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">qubit_register_size</span><span class="p">)</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="n">circuit</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">impl</span><span class="p">)</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="k">return</span> <span class="n">impl</span><span class="o">.</span><span class="n">matrix</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

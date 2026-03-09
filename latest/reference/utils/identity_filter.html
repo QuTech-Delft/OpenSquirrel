@@ -4655,6 +4655,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.utils.identity_filter.filter_out_identities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        filter_out_identities
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4868,6 +4879,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.utils.identity_filter.filter_out_identities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        filter_out_identities
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4916,6 +4938,105 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="opensquirrel.utils.identity_filter.filter_out_identities" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">filter_out_identities</span>
+
+
+</h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">filter_out_identities</span><span class="p">(</span><span class="n">gates</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Gate</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Filter out identity gates from a list of gates.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>gates</code>
+            </td>
+            <td>
+                  <code><span title="collections.abc.Iterable">Iterable</span>[<a class="autorefs autorefs-internal" title="Gate (opensquirrel.ir.Gate)" href="../ir/unitary.html#opensquirrel.ir.unitary.Gate">Gate</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The list of gates to filter.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="opensquirrel.utils.list" href="list.html#opensquirrel.utils.list">list</a>[<a class="autorefs autorefs-internal" title="Gate (opensquirrel.ir.Gate)" href="../ir/unitary.html#opensquirrel.ir.unitary.Gate">Gate</a>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of gates with identity gates removed.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/utils/identity_filter.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="k">def</span><span class="w"> </span><span class="nf">filter_out_identities</span><span class="p">(</span><span class="n">gates</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Gate</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">    </span><span class="sd">"""Filter out identity gates from a list of gates.</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">        gates (Iterable[Gate]): The list of gates to filter.</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">        A list of gates with identity gates removed.</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">    """</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="k">return</span> <span class="p">[</span><span class="n">gate</span> <span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">gates</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">gate</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()]</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 

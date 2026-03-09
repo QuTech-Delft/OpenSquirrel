@@ -5023,7 +5023,7 @@
 
 
 <h2 id="opensquirrel.passes.router.common.ProcessSwaps" class="doc doc-heading">
-            <code>ProcessSwaps</code>
+            <span class="doc doc-object-name doc-class-name">ProcessSwaps</span>
 
 
 </h2>
@@ -5170,7 +5170,7 @@
 <a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">            connectivity (dict[str, list[int]]): Connectivity mapping of physical qubits.</span>
 <a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">            pathfinder (PathFinderType): The pathfinder algorithm.</span>
 <a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">        Returns:</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">            IR: IR with the SWAPs processed through.</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">            IR with the SWAPs processed through.</span>
 <a id="__codelineno-0-63" name="__codelineno-0-63"></a>
 <a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">        """</span>
 <a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="n">graph</span> <span class="o">=</span> <span class="n">get_graph</span><span class="p">(</span><span class="n">connectivity</span><span class="p">)</span>
@@ -5194,7 +5194,7 @@
 <a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">            initial_mapping (dict[int, int]): The initial mapping of the qubits.</span>
 <a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="sd">            pathfinder (Callable[[nx.Graph, int, int], list[int]]):</span>
 <a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">        Returns:</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">            dict[int, SWAP]: An mapping from the insert position to SWAP instruction.</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">            An mapping from the insert position to SWAP instruction.</span>
 <a id="__codelineno-0-87" name="__codelineno-0-87"></a>
 <a id="__codelineno-0-88" name="__codelineno-0-88"></a><span class="sd">        """</span>
 <a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="n">planned_swaps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">SWAP</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5232,7 +5232,7 @@
 <a id="__codelineno-0-121" name="__codelineno-0-121"></a><span class="sd">            planned_swaps (dict[int, SWAP]): The mapping from the insert position to SWAP instruction.</span>
 <a id="__codelineno-0-122" name="__codelineno-0-122"></a><span class="sd">            initial_mapping (dict[int, int]): The initial mapping of the qubits.</span>
 <a id="__codelineno-0-123" name="__codelineno-0-123"></a><span class="sd">        Returns:</span>
-<a id="__codelineno-0-124" name="__codelineno-0-124"></a><span class="sd">            list[Statement]: An updated list of IR Statements.</span>
+<a id="__codelineno-0-124" name="__codelineno-0-124"></a><span class="sd">            An updated list of IR Statements.</span>
 <a id="__codelineno-0-125" name="__codelineno-0-125"></a>
 <a id="__codelineno-0-126" name="__codelineno-0-126"></a><span class="sd">        """</span>
 <a id="__codelineno-0-127" name="__codelineno-0-127"></a>        <span class="n">new_ir_statements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Statement</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5287,14 +5287,21 @@
 
 
 <h3 id="opensquirrel.passes.router.common.ProcessSwaps.process_swaps" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">process_swaps</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">,</span> <span class="n">pathfinder</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">process_swaps</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
   </span>
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">process_swaps</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">connectivity</span><span class="p">:</span> <span class="n">Connectivity</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">pathfinder</span><span class="p">:</span> <span class="n">PathFinderType</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IR</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -5317,7 +5324,7 @@
                 <code>ir</code>
             </td>
             <td>
-                  <code><span title="opensquirrel.ir.IR">IR</span></code>
+                  <code><a class="autorefs autorefs-internal" title="IR (opensquirrel.ir.IR)" href="../../ir/ir.html#opensquirrel.ir.ir.IR">IR</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5379,7 +5386,7 @@
       </tbody>
     </table>
         <p>Returns:
-    IR: IR with the SWAPs processed through.</p>
+    IR with the SWAPs processed through.</p>
 
 
             <details class="mkdocstrings-source">
@@ -5421,7 +5428,7 @@
 <a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="sd">        connectivity (dict[str, list[int]]): Connectivity mapping of physical qubits.</span>
 <a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="sd">        pathfinder (PathFinderType): The pathfinder algorithm.</span>
 <a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">        IR: IR with the SWAPs processed through.</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a><span class="sd">        IR with the SWAPs processed through.</span>
 <a id="__codelineno-0-63" name="__codelineno-0-63"></a>
 <a id="__codelineno-0-64" name="__codelineno-0-64"></a><span class="sd">    """</span>
 <a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">graph</span> <span class="o">=</span> <span class="n">get_graph</span><span class="p">(</span><span class="n">connectivity</span><span class="p">)</span>
@@ -5448,10 +5455,12 @@
 
 
 <h2 id="opensquirrel.passes.router.common.get_graph" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_graph</span><span class="p">(</span><span class="n">connectivity</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">get_graph</span>
+
 
 </h2>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_graph</span><span class="p">(</span><span class="n">connectivity</span><span class="p">:</span> <span class="n">Connectivity</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -5504,7 +5513,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>nx.Graph: Networkx graph from the given connectivity.</p>
+                <p>Graph of the given connectivity.</p>
               </div>
             </td>
           </tr>
@@ -5531,7 +5540,7 @@
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">        connectivity (dict[str, list[int]]): Connectivity mapping of physical qubits.</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>
 <a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">        nx.Graph: Networkx graph from the given connectivity.</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">        Graph of the given connectivity.</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    """</span>
 <a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="k">return</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">({</span><span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">):</span> <span class="n">ends</span> <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">ends</span> <span class="ow">in</span> <span class="n">connectivity</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
@@ -5545,10 +5554,14 @@
 
 
 <h2 id="opensquirrel.passes.router.common.get_identity_mapping" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_identity_mapping</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">get_identity_mapping</span>
+
 
 </h2>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_identity_mapping</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -5601,7 +5614,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>dict[int, int]: An identity mapping.</p>
+                <p>An identity mapping.</p>
               </div>
             </td>
           </tr>
@@ -5628,7 +5641,7 @@
 <a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        qubit_register_size (int): The size of the qubit register.</span>
 <a id="__codelineno-0-38" name="__codelineno-0-38"></a>
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">        dict[int, int]: An identity mapping.</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">        An identity mapping.</span>
 <a id="__codelineno-0-41" name="__codelineno-0-41"></a>
 <a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    """</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="k">return</span> <span class="p">{</span><span class="n">qubit_index</span><span class="p">:</span> <span class="n">qubit_index</span> <span class="k">for</span> <span class="n">qubit_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)}</span>

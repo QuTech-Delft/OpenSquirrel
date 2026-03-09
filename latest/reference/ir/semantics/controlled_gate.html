@@ -2817,6 +2817,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ControlledGateSemantic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ControlledGateSemantic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accept
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic.is_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4870,6 +4909,45 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ControlledGateSemantic
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ControlledGateSemantic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        accept
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic.is_identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4917,6 +4995,184 @@
 
 
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">ControlledGateSemantic</span>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="opensquirrel.ir.semantics.gate_semantic.GateSemantic">GateSemantic</span></code></p>
+
+
+
+
+
+
+
+
+
+
+              <details class="mkdocstrings-source">
+                <summary>Source code in <code>opensquirrel/ir/semantics/controlled_gate.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span>
+<span class="normal"><a href="#__codelineno-0-28">28</a></span>
+<span class="normal"><a href="#__codelineno-0-29">29</a></span>
+<span class="normal"><a href="#__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="k">class</span><span class="w"> </span><span class="nc">ControlledGateSemantic</span><span class="p">(</span><span class="n">GateSemantic</span><span class="p">):</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_bsr</span><span class="p">:</span> <span class="n">BlochSphereRotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">target_bsr</span> <span class="o">=</span> <span class="n">target_bsr</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">        </span><span class="sd">"""Accepts visitor and processes this IR node."""</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>        <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_controlled_gate_semantic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">        </span><span class="sd">"""Checks if the controlled gate semantic represents an identity operation.</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">        Returns:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">            True if the controlled gate semantic represents an identity operation, False otherwise.</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">        """</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_bsr</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">"ControlledGateSemantic(target_bsr=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_bsr</span><span class="si">}</span><span class="s2">)"</span>
+</code></pre></div></td></tr></tbody></table></div>
+              </details>
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic.accept" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">accept</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">accept</span><span class="p">(</span><span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Accepts visitor and processes this IR node.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/semantics/controlled_gate.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visitor</span><span class="p">:</span> <span class="n">IRVisitor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">    </span><span class="sd">"""Accepts visitor and processes this IR node."""</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a>    <span class="k">return</span> <span class="n">visitor</span><span class="o">.</span><span class="n">visit_controlled_gate_semantic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.semantics.controlled_gate.ControlledGateSemantic.is_identity" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">is_identity</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_identity</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Checks if the controlled gate semantic represents an identity operation.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>True if the controlled gate semantic represents an identity operation, False otherwise.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/semantics/controlled_gate.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span>
+<span class="normal"><a href="#__codelineno-0-27">27</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="k">def</span><span class="w"> </span><span class="nf">is_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="sd">"""Checks if the controlled gate semantic represents an identity operation.</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">        True if the controlled gate semantic represents an identity operation, False otherwise.</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    """</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_bsr</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
 
 
 

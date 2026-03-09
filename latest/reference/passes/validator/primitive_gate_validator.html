@@ -4979,7 +4979,7 @@
 
 
 <h2 id="opensquirrel.passes.validator.primitive_gate_validator.PrimitiveGateValidator" class="doc doc-heading">
-            <code>PrimitiveGateValidator</code>
+            <span class="doc doc-object-name doc-class-name">PrimitiveGateValidator</span>
 
 
 </h2>
@@ -4987,7 +4987,7 @@
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="Validator (opensquirrel.passes.validator.general_validator.Validator)" href="general_validator.html#opensquirrel.passes.validator.general_validator.Validator">Validator</a></code></p>
+              Bases: <code><span title="opensquirrel.passes.validator.general_validator.Validator">Validator</span></code></p>
 
 
 
@@ -5029,14 +5029,14 @@
 <a id="__codelineno-0-10" name="__codelineno-0-10"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">primitive_gate_set</span> <span class="o">=</span> <span class="n">primitive_gate_set</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11"></a>
 <a id="__codelineno-0-12" name="__codelineno-0-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">        </span><span class="sd">"""</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">        Check if all unitary gates in the circuit are part of the primitive gate set.</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">        Args:</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">            ir (IR): The intermediate representation of the circuit to be checked.</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">        Raises:</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">            ValueError: If any unitary gate in the circuit is not part of the primitive gate set.</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">        </span><span class="sd">"""Check if all gates in the circuit are part of the primitive gate set.</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">        Args:</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">            ir (IR): The intermediate representation of the circuit to be checked.</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">        Raises:</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">            ValueError: If any gate in the circuit is not part of the primitive gate set.</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">        """</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a>        <span class="n">gates_not_in_primitive_gate_set</span> <span class="o">=</span> <span class="p">[</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a>            <span class="n">statement</span><span class="o">.</span><span class="n">name</span>
@@ -5067,14 +5067,16 @@
 
 
 <h3 id="opensquirrel.passes.validator.primitive_gate_validator.PrimitiveGateValidator.validate" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">validate</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Check if all unitary gates in the circuit are part of the primitive gate set.</p>
+        <p>Check if all gates in the circuit are part of the primitive gate set.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -5093,7 +5095,7 @@
                 <code>ir</code>
             </td>
             <td>
-                  <code><span title="opensquirrel.ir.IR">IR</span></code>
+                  <code><a class="autorefs autorefs-internal" title="IR (opensquirrel.ir.IR)" href="../../ir/ir.html#opensquirrel.ir.ir.IR">IR</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5123,7 +5125,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If any unitary gate in the circuit is not part of the primitive gate set.</p>
+                <p>If any gate in the circuit is not part of the primitive gate set.</p>
               </div>
             </td>
           </tr>
@@ -5152,14 +5154,14 @@
 <span class="normal"><a href="#__codelineno-0-28">28</a></span>
 <span class="normal"><a href="#__codelineno-0-29">29</a></span>
 <span class="normal"><a href="#__codelineno-0-30">30</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">    Check if all unitary gates in the circuit are part of the primitive gate set.</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">        ir (IR): The intermediate representation of the circuit to be checked.</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">        ValueError: If any unitary gate in the circuit is not part of the primitive gate set.</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="sd">"""Check if all gates in the circuit are part of the primitive gate set.</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">        ir (IR): The intermediate representation of the circuit to be checked.</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">        ValueError: If any gate in the circuit is not part of the primitive gate set.</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    """</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="n">gates_not_in_primitive_gate_set</span> <span class="o">=</span> <span class="p">[</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a>        <span class="n">statement</span><span class="o">.</span><span class="n">name</span>

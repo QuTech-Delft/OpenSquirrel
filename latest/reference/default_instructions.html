@@ -2335,6 +2335,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.default_instructions.is_anonymous_gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_anonymous_gate
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4866,6 +4877,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#opensquirrel.default_instructions.is_anonymous_gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_anonymous_gate
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4914,6 +4936,105 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="opensquirrel.default_instructions.is_anonymous_gate" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">is_anonymous_gate</span>
+
+
+</h2>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">is_anonymous_gate</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Checks whether the input name corresponds to a non-default gate.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>name</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Name of the gate.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>True if the name does not correspond to a default gate, otherwise False.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/default_instructions.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-110">110</a></span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span>
+<span class="normal"><a href="#__codelineno-0-113">113</a></span>
+<span class="normal"><a href="#__codelineno-0-114">114</a></span>
+<span class="normal"><a href="#__codelineno-0-115">115</a></span>
+<span class="normal"><a href="#__codelineno-0-116">116</a></span>
+<span class="normal"><a href="#__codelineno-0-117">117</a></span>
+<span class="normal"><a href="#__codelineno-0-118">118</a></span>
+<span class="normal"><a href="#__codelineno-0-119">119</a></span>
+<span class="normal"><a href="#__codelineno-0-120">120</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-110" name="__codelineno-0-110"></a><span class="k">def</span><span class="w"> </span><span class="nf">is_anonymous_gate</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="w">    </span><span class="sd">"""Checks whether the input name corresponds to a non-default gate.</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>
+<a id="__codelineno-0-113" name="__codelineno-0-113"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a><span class="sd">        name (str): Name of the gate.</span>
+<a id="__codelineno-0-115" name="__codelineno-0-115"></a>
+<a id="__codelineno-0-116" name="__codelineno-0-116"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117"></a><span class="sd">        True if the name does not correspond to a default gate, otherwise False.</span>
+<a id="__codelineno-0-118" name="__codelineno-0-118"></a>
+<a id="__codelineno-0-119" name="__codelineno-0-119"></a><span class="sd">    """</span>
+<a id="__codelineno-0-120" name="__codelineno-0-120"></a>    <span class="k">return</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_gate_set</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 

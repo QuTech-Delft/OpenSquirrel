@@ -4945,21 +4945,123 @@
 
 
 <h2 id="opensquirrel.passes.router.heuristics.calculate_distance" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">calculate_distance</span><span class="p">(</span><span class="n">q0_index</span><span class="p">,</span> <span class="n">q1_index</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">,</span> <span class="n">distance_metric</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">calculate_distance</span>
+
 
 </h2>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">calculate_distance</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">q0_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">q1_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">num_columns</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">distance_metric</span><span class="p">:</span> <span class="n">DistanceMetric</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Calculate the distance between two qubits based on the specified distance metric.
-Args:
-    q0_index (int): The index of the first qubit.
-    q1_index (int): The index of the second qubit.
-    num_columns (int): The number of columns in the grid.
-    distance_metric (DistanceMetric): Distance metric to be used (Manhattan, Euclidean, or Chebyshev).
-Returns:
-    float: The distance between the two qubits.</p>
+        <p>Calculate the distance between two qubits based on the specified distance metric.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>q0_index</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The index of the first qubit.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>q1_index</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The index of the second qubit.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>num_columns</code>
+            </td>
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The number of columns in the grid.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>distance_metric</code>
+            </td>
+            <td>
+                  <code><span title="opensquirrel.passes.router.heuristics.DistanceMetric">DistanceMetric</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Distance metric to be used (Manhattan, Euclidean, or Chebyshev).</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="float">float</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The distance between the two qubits.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
 
             <details class="mkdocstrings-source">
@@ -4990,33 +5092,37 @@ Returns:
 <span class="normal"><a href="#__codelineno-0-35">35</a></span>
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_distance</span><span class="p">(</span><span class="n">q0_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">q1_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">distance_metric</span><span class="p">:</span> <span class="n">DistanceMetric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="sd">    Calculate the distance between two qubits based on the specified distance metric.</span>
+<span class="normal"><a href="#__codelineno-0-38">38</a></span>
+<span class="normal"><a href="#__codelineno-0-39">39</a></span>
+<span class="normal"><a href="#__codelineno-0-40">40</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="k">def</span><span class="w"> </span><span class="nf">calculate_distance</span><span class="p">(</span><span class="n">q0_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">q1_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">distance_metric</span><span class="p">:</span> <span class="n">DistanceMetric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="sd">"""Calculate the distance between two qubits based on the specified distance metric.</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>
 <a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="sd">    Args:</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">        q0_index (int): The index of the first qubit.</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">        q1_index (int): The index of the second qubit.</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">        num_columns (int): The number of columns in the grid.</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">        distance_metric (DistanceMetric): Distance metric to be used (Manhattan, Euclidean, or Chebyshev).</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">        float: The distance between the two qubits.</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    """</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a>    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">q0_index</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">)</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">q1_index</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">)</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="k">match</span> <span class="n">distance_metric</span><span class="p">:</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a>        <span class="k">case</span> <span class="n">DistanceMetric</span><span class="o">.</span><span class="n">MANHATTAN</span><span class="p">:</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">)</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="k">case</span> <span class="n">DistanceMetric</span><span class="o">.</span><span class="n">EUCLIDEAN</span><span class="p">:</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>            <span class="k">return</span> <span class="nb">float</span><span class="p">(((</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="k">case</span> <span class="n">DistanceMetric</span><span class="o">.</span><span class="n">CHEBYSHEV</span><span class="p">:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">))</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"invalid distance metric </span><span class="si">{</span><span class="n">distance_metric</span><span class="si">!r}</span><span class="s2">: choose Manhattan, Euclidean, or Chebyshev"</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">        The distance between the two qubits.</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    """</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">q0_index</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">)</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">q1_index</span><span class="p">,</span> <span class="n">num_columns</span><span class="p">)</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27"></a>
+<a id="__codelineno-0-28" name="__codelineno-0-28"></a>    <span class="k">match</span> <span class="n">distance_metric</span><span class="p">:</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29"></a>        <span class="k">case</span> <span class="n">DistanceMetric</span><span class="o">.</span><span class="n">MANHATTAN</span><span class="p">:</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>            <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">)</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="k">case</span> <span class="n">DistanceMetric</span><span class="o">.</span><span class="n">EUCLIDEAN</span><span class="p">:</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>            <span class="k">return</span> <span class="nb">float</span><span class="p">(((</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="k">case</span> <span class="n">DistanceMetric</span><span class="o">.</span><span class="n">CHEBYSHEV</span><span class="p">:</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y2</span><span class="p">))</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"invalid distance metric </span><span class="si">{</span><span class="n">distance_metric</span><span class="si">!r}</span><span class="s2">: choose Manhattan, Euclidean, or Chebyshev"</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

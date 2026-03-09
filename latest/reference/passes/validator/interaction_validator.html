@@ -4979,7 +4979,7 @@
 
 
 <h2 id="opensquirrel.passes.validator.interaction_validator.InteractionValidator" class="doc doc-heading">
-            <code>InteractionValidator</code>
+            <span class="doc doc-object-name doc-class-name">InteractionValidator</span>
 
 
 </h2>
@@ -4987,7 +4987,7 @@
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="Validator (opensquirrel.passes.validator.general_validator.Validator)" href="general_validator.html#opensquirrel.passes.validator.general_validator.Validator">Validator</a></code></p>
+              Bases: <code><span title="opensquirrel.passes.validator.general_validator.Validator">Validator</span></code></p>
 
 
 
@@ -5035,14 +5035,14 @@
 <a id="__codelineno-0-12" name="__codelineno-0-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">connectivity</span> <span class="o">=</span> <span class="n">connectivity</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13"></a>
 <a id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">        </span><span class="sd">"""</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">        Check if the circuit interactions faciliate a 1-to-1 mapping to the target hardware.</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">        Args:</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">            ir (IR): The intermediate representation of the circuit to be checked.</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">        Raises:</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">            ValueError: If the circuit can't be mapped to the target hardware.</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">        </span><span class="sd">"""Check if the circuit interactions faciliate a 1-to-1 mapping to the target hardware.</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">        Args:</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">            ir (IR): The intermediate representation of the circuit to be checked.</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">        Raises:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">            ValueError: If the circuit cannot be mapped to the target hardware.</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">        """</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a>        <span class="n">non_executable_interactions</span> <span class="o">=</span> <span class="p">[]</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>        <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">:</span>
@@ -5079,10 +5079,12 @@
 
 
 <h3 id="opensquirrel.passes.validator.interaction_validator.InteractionValidator.validate" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">validate</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">validate</span><span class="p">(</span><span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -5105,7 +5107,7 @@
                 <code>ir</code>
             </td>
             <td>
-                  <code><span title="opensquirrel.ir.IR">IR</span></code>
+                  <code><a class="autorefs autorefs-internal" title="IR (opensquirrel.ir.IR)" href="../../ir/ir.html#opensquirrel.ir.ir.IR">IR</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -5135,7 +5137,7 @@
             </td>
             <td>
               <div class="doc-md-description">
-                <p>If the circuit can't be mapped to the target hardware.</p>
+                <p>If the circuit cannot be mapped to the target hardware.</p>
               </div>
             </td>
           </tr>
@@ -5170,14 +5172,14 @@
 <span class="normal"><a href="#__codelineno-0-36">36</a></span>
 <span class="normal"><a href="#__codelineno-0-37">37</a></span>
 <span class="normal"><a href="#__codelineno-0-38">38</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="sd">    Check if the circuit interactions faciliate a 1-to-1 mapping to the target hardware.</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="sd">        ir (IR): The intermediate representation of the circuit to be checked.</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Raises:</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">        ValueError: If the circuit can't be mapped to the target hardware.</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">    </span><span class="sd">"""Check if the circuit interactions faciliate a 1-to-1 mapping to the target hardware.</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
+<a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">        ir (IR): The intermediate representation of the circuit to be checked.</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    Raises:</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">        ValueError: If the circuit cannot be mapped to the target hardware.</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    """</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a>    <span class="n">non_executable_interactions</span> <span class="o">=</span> <span class="p">[]</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="k">for</span> <span class="n">statement</span> <span class="ow">in</span> <span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">:</span>

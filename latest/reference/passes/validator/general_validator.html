@@ -4231,34 +4231,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#opensquirrel.passes.validator.general_validator.Validator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Validator
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Validator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#opensquirrel.passes.validator.general_validator.Validator.validate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        validate
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -4898,34 +4870,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#opensquirrel.passes.validator.general_validator.Validator" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Validator
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Validator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#opensquirrel.passes.validator.general_validator.Validator.validate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        validate
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -4973,102 +4917,6 @@
 
 
 
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="opensquirrel.passes.validator.general_validator.Validator" class="doc doc-heading">
-            <code>Validator</code>
-
-
-</h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="abc.ABC">ABC</span></code></p>
-
-
-
-
-
-
-
-
-
-
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>opensquirrel/passes/validator/general_validator.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="k">class</span><span class="w"> </span><span class="nc">Validator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9"></a>
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a>    <span class="nd">@abstractmethod</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">        </span><span class="sd">"""Base validate method to be implemented by inheriting validator classes."""</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</code></pre></div></td></tr></tbody></table></div>
-              </details>
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="opensquirrel.passes.validator.general_validator.Validator.validate" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">validate</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span></code>
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
-  </span>
-
-</h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Base validate method to be implemented by inheriting validator classes.</p>
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>opensquirrel/passes/validator/general_validator.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="nd">@abstractmethod</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">    </span><span class="sd">"""Base validate method to be implemented by inheriting validator classes."""</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a>    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-</code></pre></div></td></tr></tbody></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
 
 
 
