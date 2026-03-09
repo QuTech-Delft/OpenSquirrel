@@ -135,8 +135,16 @@ class _WriterImpl(IRVisitor):
 
 
 def circuit_to_string(circuit: Circuit) -> str:
+    """Convert a circuit to its [cQASM](https://qutech-delft.github.io/cQASM-spec/)
+    string representation.
+
+    Args:
+        circuit (Circuit): The circuit to convert.
+
+    Returns:
+        The [cQASM](https://qutech-delft.github.io/cQASM-spec/) string representation of the circuit.
+
+    """
     writer_impl = _WriterImpl(circuit.register_manager)
     circuit.ir.accept(writer_impl)
-
-    # Remove all trailing lines and leave only one
     return writer_impl.output.rstrip() + "\n"

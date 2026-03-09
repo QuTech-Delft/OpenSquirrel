@@ -13,8 +13,7 @@ class ControlInstruction(Instruction, ABC):
 
     @property
     @abstractmethod
-    def arguments(self) -> tuple[Expression, ...]:
-        pass
+    def arguments(self) -> tuple[Expression, ...]: ...
 
     @property
     def qubit_operands(self) -> tuple[Qubit, ...]:
@@ -30,19 +29,20 @@ class Barrier(ControlInstruction):
         ControlInstruction.__init__(self, qubit=qubit, name="barrier")
         self.qubit = Qubit(qubit)
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(qubit={self.qubit})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Barrier) and self.qubit == other.qubit
-
     @property
     def arguments(self) -> tuple[Expression, ...]:
         return ()
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         visitor.visit_control_instruction(self)
         return visitor.visit_barrier(self)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Barrier) and self.qubit == other.qubit
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
 
 
 class Wait(ControlInstruction):
@@ -51,16 +51,17 @@ class Wait(ControlInstruction):
         self.qubit = Qubit(qubit)
         self.time = Int(time)
 
-    def __repr__(self) -> str:
-        return f"{self.name}(qubit={self.qubit}, time={self.time})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, Wait) and self.qubit == other.qubit and self.time == other.time
-
     @property
     def arguments(self) -> tuple[Expression, ...]:
         return (self.time,)
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         visitor.visit_control_instruction(self)
         return visitor.visit_wait(self)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, Wait) and self.qubit == other.qubit and self.time == other.time
+
+    def __repr__(self) -> str:
+        return f"{self.name}(qubit={self.qubit}, time={self.time})"

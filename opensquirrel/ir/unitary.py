@@ -26,8 +26,7 @@ class Gate(Unitary, ABC):
         return len(qubits) != len(set(qubits))
 
     @abstractmethod
-    def is_identity(self) -> bool:
-        pass
+    def is_identity(self) -> bool: ...
 
     @property
     def arguments(self) -> tuple[Expression, ...]:
@@ -38,6 +37,7 @@ class Gate(Unitary, ABC):
         return ()
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         return visitor.visit_gate(self)
 
     def __eq__(self, other: object) -> bool:
@@ -46,13 +46,23 @@ class Gate(Unitary, ABC):
         return compare_gates(self, other)
 
 
-def compare_gates(g1: Gate, g2: Gate) -> bool:
-    union_mapping = list(set(g1.qubit_indices) | set(g2.qubit_indices))
+def compare_gates(gate_1: Gate, gate_2: Gate) -> bool:
+    """Checks if two gates are equivalent up to a global phase.
+
+    Args:
+        gate_1 (Gate): The first gate to compare.
+        gate_2 (Gate): The second gate to compare.
+
+    Returns:
+        True if the two gates are equivalent up to a global phase, False otherwise.
+
+    """
+    union_mapping = list(set(gate_1.qubit_indices) | set(gate_2.qubit_indices))
 
     from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
     from opensquirrel.reindexer import get_reindexed_circuit
 
-    matrix_g1 = get_circuit_matrix(get_reindexed_circuit([g1], union_mapping))
-    matrix_g2 = get_circuit_matrix(get_reindexed_circuit([g2], union_mapping))
+    matrix_gate_1 = get_circuit_matrix(get_reindexed_circuit([gate_1], union_mapping))
+    matrix_gate_2 = get_circuit_matrix(get_reindexed_circuit([gate_2], union_mapping))
 
-    return are_matrices_equivalent_up_to_global_phase(matrix_g1, matrix_g2)
+    return are_matrices_equivalent_up_to_global_phase(matrix_gate_1, matrix_gate_2)

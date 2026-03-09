@@ -19,7 +19,204 @@ if TYPE_CHECKING:
     from opensquirrel.ir import IRVisitor
 
 
+class BlochSphereRotation(GateSemantic, IRNode):
+    normalize_angle_params: bool = True
+
+    def __init__(
+        self,
+        axis: AxisLike,
+        angle: SupportsFloat,
+        phase: SupportsFloat,
+    ) -> None:
+        self.axis = Axis(axis)
+        self.angle = normalize_angle(angle) if self.normalize_angle_params else float(angle)
+        self.phase = normalize_angle(phase) if self.normalize_angle_params else float(phase)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_bloch_sphere_rotation(self)
+
+    def is_identity(self) -> bool:
+        """Checks if the Bloch sphere rotation represents an identity operation.
+
+        Returns:
+            True if the Bloch sphere rotation represents an identity operation, False otherwise.
+
+        """
+        return abs(self.angle) < ATOL and abs(self.phase) < ATOL
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, BlochSphereRotation):
+            return False
+
+        if np.allclose(self.axis.value, other.axis.value, atol=ATOL):
+            return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
+
+        if np.allclose(self.axis.value, -other.axis.value, atol=ATOL):
+            return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
+
+        return False
+
+    def __mul__(self, other: BlochSphereRotation) -> BlochSphereRotation:
+        """Computes the Bloch sphere rotation resulting from the multiplication of two Bloch sphere
+        rotations. Note that the multiplication of Bloch sphere rotations `A * B` corrensponds to
+        linear operation $B \\cdot A$.
+
+        Notes:
+            - It is checked whether the result is a known gate.
+            - Uses [Rodrigues' rotation formula](https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
+
+        Args:
+            other (BlochSphereRotation): The second Bloch sphere rotation to multiply with.
+
+        Returns:
+            The resulting Bloch sphere rotation.
+
+        """
+        acos_argument = cos(self.angle / 2) * cos(other.angle / 2) - sin(self.angle / 2) * sin(
+            other.angle / 2
+        ) * np.dot(self.axis, other.axis)
+        combined_angle = 2 * acos(acos_argument)
+
+        if abs(sin(combined_angle / 2)) < ATOL:
+            return bsr_from_matrix([[1, 0], [0, 1]])
+
+        order_of_magnitude = abs(floor(log10(ATOL)))
+        combined_axis = np.round(
+            (
+                1
+                / sin(combined_angle / 2)
+                * (
+                    sin(self.angle / 2) * cos(other.angle / 2) * self.axis.value
+                    + cos(self.angle / 2) * sin(other.angle / 2) * other.axis.value
+                    + sin(self.angle / 2) * sin(other.angle / 2) * np.cross(other.axis, self.axis)
+                )
+            ),
+            order_of_magnitude,
+        )
+
+        combined_phase = np.round(self.phase + other.phase, order_of_magnitude)
+        return BlochSphereRotation(
+            axis=combined_axis,
+            angle=combined_angle,
+            phase=combined_phase,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"BlochSphereRotation(axis={repr_round(self.axis)}, angle={repr_round(self.angle)}, "
+            f"phase={repr_round(self.phase)})"
+        )
+
+
+class BsrNoParams(BlochSphereRotation):
+    def __init__(
+        self,
+        axis: AxisLike,
+        angle: SupportsFloat,
+        phase: SupportsFloat,
+    ) -> None:
+        BlochSphereRotation.__init__(self, axis, angle, phase)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        visit_bsr = super().accept(visitor)
+        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_no_params(self)
+
+
+class BsrFullParams(BlochSphereRotation):
+    def __init__(self, axis: AxisLike, angle: SupportsFloat, phase: SupportsFloat) -> None:
+        BlochSphereRotation.__init__(self, axis, angle, phase)
+        self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
+        self.theta = Float(self.angle)
+        self.phi = Float(self.phase)
+
+    @property
+    def arguments(self) -> tuple[Float, ...]:
+        return self.nx, self.ny, self.nz, self.theta, self.phi
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        visit_bsr = super().accept(visitor)
+        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_full_params(self)
+
+
+class BsrAngleParam(BlochSphereRotation):
+    def __init__(
+        self,
+        axis: AxisLike,
+        angle: SupportsFloat,
+        phase: SupportsFloat,
+    ) -> None:
+        BlochSphereRotation.__init__(self, axis, angle, phase)
+        self.theta = Float(self.angle)
+
+    @property
+    def arguments(self) -> tuple[Float, ...]:
+        return (self.theta,)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        visit_bsr = super().accept(visitor)
+        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_angle_param(self)
+
+
+class BsrUnitaryParams(BlochSphereRotation):
+    def __init__(
+        self,
+        theta: SupportsFloat,
+        phi: SupportsFloat,
+        lmbda: SupportsFloat,
+    ) -> None:
+        bsr = self.get_bsr(theta, phi, lmbda)
+        BlochSphereRotation.__init__(self, bsr.axis, bsr.angle, bsr.phase)
+        self.theta = Float(theta)
+        self.phi = Float(phi)
+        self.lmbda = Float(lmbda)
+
+    @staticmethod
+    def get_bsr(theta: SupportsFloat, phi: SupportsFloat, lmbda: SupportsFloat) -> BlochSphereRotation:
+        """Generates the corresponding Bloch sphere rotation from the given Euler angles, $\\theta$,
+        $\\phi$, and $\\lambda$.
+
+        Args:
+            theta (SupportsFloat): The Euler angle $\\theta$.
+            phi (SupportsFloat): The Euler angle $\\phi$.
+            lmbda (SupportsFloat): The Euler angle $\\lambda$.
+
+        Returns:
+            The corresponding Bloch sphere rotation.
+
+        """
+        a = BlochSphereRotation((0, 0, 1), lmbda, 0)
+        b = BlochSphereRotation((0, 1, 0), theta, 0)
+        c = BlochSphereRotation((0, 0, 1), phi, (float(phi) + float(lmbda)) / 2)
+
+        ma = can1(a.axis, a.angle, a.phase)
+        mb = can1(b.axis, b.angle, b.phase)
+        mc = can1(c.axis, c.angle, c.phase)
+        return bsr_from_matrix(mc @ mb @ ma)
+
+    @property
+    def arguments(self) -> tuple[Float, ...]:
+        return self.theta, self.phi, self.lmbda
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        visit_bsr = super().accept(visitor)
+        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_unitary_params(self)
+
+
 def bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]]) -> BlochSphereRotation:
+    """Generates a Bloch sphere rotation from a $2\\times 2$ unitary matrix $U(2)$.
+
+    Args:
+        matrix (ArrayLike | list[list[int | DTypeLike]]): A $2\\times 2$ unitary matrix $U(2)$.
+
+    Returns:
+        The corresponding Bloch sphere rotation.
+
+    """
     cmatrix = np.asarray(matrix, dtype=np.complex128)
 
     if cmatrix.shape != (2, 2):
@@ -57,169 +254,3 @@ def bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]]) -> BlochSph
         angle = -angle
     axis = Axis((nx, ny, nz))
     return BlochSphereRotation(axis=axis, angle=angle, phase=phase)
-
-
-class BlochSphereRotation(GateSemantic, IRNode):
-    normalize_angle_params: bool = True
-
-    def __init__(
-        self,
-        axis: AxisLike,
-        angle: SupportsFloat,
-        phase: SupportsFloat,
-    ) -> None:
-        self.axis = Axis(axis)
-        self.angle = normalize_angle(angle) if self.normalize_angle_params else float(angle)
-        self.phase = normalize_angle(phase) if self.normalize_angle_params else float(phase)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bloch_sphere_rotation(self)
-
-    def is_identity(self) -> bool:
-        # Angle and phase are already normalized.
-        return abs(self.angle) < ATOL and abs(self.phase) < ATOL
-
-    def __repr__(self) -> str:
-        return (
-            f"BlochSphereRotation(axis={repr_round(self.axis)}, angle={repr_round(self.angle)}, "
-            f"phase={repr_round(self.phase)})"
-        )
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, BlochSphereRotation):
-            return False
-
-        if np.allclose(self.axis.value, other.axis.value, atol=ATOL):
-            return abs(self.angle - other.angle) < ATOL and abs(self.phase - other.phase) < ATOL
-
-        if np.allclose(self.axis.value, -other.axis.value, atol=ATOL):
-            return abs(self.angle + other.angle) < ATOL and abs(self.phase + other.phase) < ATOL
-
-        return False
-
-    def __mul__(self, other: BlochSphereRotation) -> BlochSphereRotation:
-        """Computes the single qubit gate resulting from the composition of two single
-        qubit gates, by composing the Bloch sphere rotations of the two gates.
-        The first rotation (A) is applied and then the second (B):
-
-        As separate gates:
-            A q
-            B q
-
-        As linear operations:
-            (B * A) q
-
-        If the final single qubit gate is anonymous, we try to match it to a default gate.
-
-        Uses Rodrigues' rotation formula (see https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula).
-        """
-        acos_argument = cos(self.angle / 2) * cos(other.angle / 2) - sin(self.angle / 2) * sin(
-            other.angle / 2
-        ) * np.dot(self.axis, other.axis)
-        combined_angle = 2 * acos(acos_argument)
-
-        if abs(sin(combined_angle / 2)) < ATOL:
-            return bsr_from_matrix([[1, 0], [0, 1]])
-
-        order_of_magnitude = abs(floor(log10(ATOL)))
-        combined_axis = np.round(
-            (
-                1
-                / sin(combined_angle / 2)
-                * (
-                    sin(self.angle / 2) * cos(other.angle / 2) * self.axis.value
-                    + cos(self.angle / 2) * sin(other.angle / 2) * other.axis.value
-                    + sin(self.angle / 2) * sin(other.angle / 2) * np.cross(other.axis, self.axis)
-                )
-            ),
-            order_of_magnitude,
-        )
-
-        combined_phase = np.round(self.phase + other.phase, order_of_magnitude)
-        return BlochSphereRotation(
-            axis=combined_axis,
-            angle=combined_angle,
-            phase=combined_phase,
-        )
-
-
-class BsrNoParams(BlochSphereRotation):
-    def __init__(
-        self,
-        axis: AxisLike,
-        angle: SupportsFloat,
-        phase: SupportsFloat,
-    ) -> None:
-        BlochSphereRotation.__init__(self, axis, angle, phase)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visit_bsr = super().accept(visitor)
-        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_no_params(self)
-
-
-class BsrFullParams(BlochSphereRotation):
-    def __init__(self, axis: AxisLike, angle: SupportsFloat, phase: SupportsFloat) -> None:
-        BlochSphereRotation.__init__(self, axis, angle, phase)
-        self.nx, self.ny, self.nz = (Float(component) for component in Axis(axis))
-        self.theta = Float(self.angle)
-        self.phi = Float(self.phase)
-
-    @property
-    def arguments(self) -> tuple[Float, ...]:
-        return self.nx, self.ny, self.nz, self.theta, self.phi
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visit_bsr = super().accept(visitor)
-        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_full_params(self)
-
-
-class BsrAngleParam(BlochSphereRotation):
-    def __init__(
-        self,
-        axis: AxisLike,
-        angle: SupportsFloat,
-        phase: SupportsFloat,
-    ) -> None:
-        BlochSphereRotation.__init__(self, axis, angle, phase)
-        self.theta = Float(self.angle)
-
-    @property
-    def arguments(self) -> tuple[Float, ...]:
-        return (self.theta,)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visit_bsr = super().accept(visitor)
-        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_angle_param(self)
-
-
-class BsrUnitaryParams(BlochSphereRotation):
-    def __init__(
-        self,
-        theta: SupportsFloat,
-        phi: SupportsFloat,
-        lmbda: SupportsFloat,
-    ) -> None:
-        bsr = self._get_bsr(theta, phi, lmbda)
-        BlochSphereRotation.__init__(self, bsr.axis, bsr.angle, bsr.phase)
-        self.theta = Float(theta)
-        self.phi = Float(phi)
-        self.lmbda = Float(lmbda)
-
-    @property
-    def arguments(self) -> tuple[Float, ...]:
-        return self.theta, self.phi, self.lmbda
-
-    @staticmethod
-    def _get_bsr(theta: SupportsFloat, phi: SupportsFloat, lmbda: SupportsFloat) -> BlochSphereRotation:
-        a = BlochSphereRotation((0, 0, 1), lmbda, 0)
-        b = BlochSphereRotation((0, 1, 0), theta, 0)
-        c = BlochSphereRotation((0, 0, 1), phi, (float(phi) + float(lmbda)) / 2)
-
-        ma = can1(a.axis, a.angle, a.phase)
-        mb = can1(b.axis, b.angle, b.phase)
-        mc = can1(c.axis, c.angle, c.phase)
-        return bsr_from_matrix(mc @ mb @ ma)
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        visit_bsr = super().accept(visitor)
-        return visit_bsr if visit_bsr is not None else visitor.visit_bsr_unitary_params(self)

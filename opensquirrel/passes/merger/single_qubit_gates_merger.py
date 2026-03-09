@@ -9,12 +9,11 @@ from opensquirrel.passes.merger.general_merger import Merger
 
 class SingleQubitGatesMerger(Merger):
     def merge(self, ir: IR, qubit_register_size: int) -> None:
-        """Merge all consecutive 1-qubit gates in the circuit.
-        Gates obtained from merging other gates become anonymous gates.
+        """Merge all consecutive single-qubit gates in the circuit.
 
         Args:
-            ir: Intermediate representation of the circuit.
-            qubit_register_size: Size of the qubit register
+            ir (IR): Intermediate representation of the circuit.
+            qubit_register_size (int): Size of the qubit register
 
         """
         accumulators_per_qubit: dict[Qubit, SingleQubitGate] = {

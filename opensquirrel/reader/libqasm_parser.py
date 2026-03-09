@@ -247,7 +247,16 @@ class LibQasmParser:
         return RegisterManager(qubit_registry, bit_registry)
 
     def circuit_from_string(self, s: str) -> Circuit:
-        # Analyzer will return an Abstract Syntax Tree (AST).
+        """Parse a cQASM string into a [Circuit][opensquirrel.Circuit] using the
+        [libQASM](https://qutech-delft.github.io/libqasm/) parser.
+
+        Args:
+            s (str): The cQASM string to be parsed.
+
+        Returns:
+            The parsed circuit.
+
+        """
         analyzer = LibQasmParser._create_analyzer()
         ast = analyzer.analyze_string(s)
         if not isinstance(ast, cqasm.semantic.Program):

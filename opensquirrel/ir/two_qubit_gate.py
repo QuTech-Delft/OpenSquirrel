@@ -26,9 +26,6 @@ class TwoQubitGate(Gate):
             msg = "qubit operands cannot be the same qubit"
             raise ValueError(msg)
 
-    def __repr__(self) -> str:
-        return f"TwoQubitGate(qubits=[{self.qubit0, self.qubit1}], gate_semantic={self.gate_semantic})"
-
     @cached_property
     def matrix(self) -> MatrixGateSemantic:
         if self._matrix:
@@ -52,15 +49,22 @@ class TwoQubitGate(Gate):
     def controlled(self) -> ControlledGateSemantic | None:
         return self._controlled
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        visit_parent = super().accept(visitor)
-        return visit_parent if visit_parent is not None else visitor.visit_two_qubit_gate(self)
-
     @property
     def qubit_operands(self) -> tuple[Qubit, ...]:
         return (self.qubit0, self.qubit1)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_two_qubit_gate(self)
+
     def is_identity(self) -> bool:
+        """Checks if the two-qubit gate is an identity gate.
+
+        Returns:
+            True if the two-qubit gate is an identity gate, False otherwise.
+
+        """
         if self.controlled:
             return self.controlled.is_identity()
         if self.matrix:
@@ -68,3 +72,6 @@ class TwoQubitGate(Gate):
         if self.canonical:
             return self.canonical.is_identity()
         return False
+
+    def __repr__(self) -> str:
+        return f"TwoQubitGate(qubits=[{self.qubit0, self.qubit1}], gate_semantic={self.gate_semantic})"

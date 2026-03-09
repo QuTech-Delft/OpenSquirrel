@@ -29,25 +29,33 @@ InteractionGraph = dict[tuple[int, int], int]
 class Circuit:
     """The Circuit class is the only interface to access OpenSquirrel's features.
 
-    Examples:
-        >>> c = Circuit.from_string("version 3.0; qubit[3] q; h q[0]")
-        >>> c
+    Example:
+        ```python
+        >>> circuit = Circuit.from_string("version 3.0; qubit[3] q; h q[0]")
+        >>> circuit
+        ```
+        ```
         version 3.0
-        <BLANKLINE>
+
         qubit[3] q
-        <BLANKLINE>
+
         h q[0]
-        <BLANKLINE>
-        >>> c.decomposer(decomposer=mckay_decomposer.McKayDecomposer)
-        >>> c
+        ```
+        ```python
+        >>> circuit.decompose(decomposer=McKayDecomposer())
+        >>> circuit
+        ```
+        ```
         version 3.0
-        <BLANKLINE>
+
         qubit[3] q
-        <BLANKLINE>
+
         x90 q[0]
         rz q[0], 1.5707963
         x90 q[0]
-        <BLANKLINE>
+
+        ```
+
     """
 
     def __init__(self, register_manager: RegisterManager, ir: IR) -> None:
@@ -55,33 +63,20 @@ class Circuit:
         self.register_manager = register_manager
         self.ir = ir
 
-    def __repr__(self) -> str:
-        """Write the circuit to a cQASM 3 string."""
-        from opensquirrel.writer import writer
-
-        return writer.circuit_to_string(self)
-
-    def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, Circuit):
-            return False
-        return self.register_manager == other.register_manager and self.ir == other.ir
-
     @classmethod
-    def from_string(cls, cqasm3_string: str) -> Circuit:
-        """Create a circuit object from a cQasm3 string. All the gates in the circuit need to be defined in
-        the `gates` argument.
-
-        * type-checking is performed, eliminating qubit indices errors and incoherences
-        * checks that used gates are supported and mentioned in `gates` with appropriate signatures
-        * does not support map or variables, and other things...
-        * for example of `gates` dictionary, please look at TestGates.py
+    def from_string(cls, cqasm_string: str) -> Circuit:
+        """Create a circuit from a [cQASM](https://qutech-delft.github.io/cQASM-spec/) string.
 
         Args:
-            cqasm3_string: a cQASM 3 string
+            cqasm_string (str): A cQASM string.
+
+        Returns:
+            Circuit: The circuit generated from the cQASM string.
+
         """
         from opensquirrel.reader import LibQasmParser
 
-        return LibQasmParser().circuit_from_string(cqasm3_string)
+        return LibQasmParser().circuit_from_string(cqasm_string)
 
     @property
     def qubit_register_size(self) -> int:
@@ -135,6 +130,15 @@ class Circuit:
         return graph
 
     def asm_filter(self, backend_name: str) -> None:
+        """Filter the assembly declarations in the circuit for a specific backend.
+
+        Note:
+            This will remove all assembly declarations that do not match the specified backend name.
+
+        Args:
+            backend_name (str): The backend name to filter for.
+
+        """
         self.ir.statements = [
             statement
             for statement in self.ir.statements
@@ -143,23 +147,32 @@ class Circuit:
         ]
 
     def decompose(self, decomposer: Decomposer) -> None:
-        """Generic decomposition pass.
-        It applies the given decomposer function to every gate in the circuit.
+        """Decomposes the circuit using to the specified decomposer.
+
+        Args:
+            decomposer (Decomposer): The decomposer to apply.
+
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.decompose(self.ir, decomposer)
 
     def export(self, exporter: Exporter) -> Any:
-        """Generic export pass.
-        Exports the circuit using the specified exporter.
+        """Exports the circuit using the specified exporter.
+
+        Args:
+            exporter (Exporter): The exporter to apply.
 
         """
         return exporter.export(self)
 
     def map(self, mapper: Mapper) -> None:
-        """Generic qubit mapper pass.
-        Map the (virtual) qubits of the circuit to the physical qubits of the target hardware.
+        """Maps the (virtual) qubits of the circuit to the physical qubits of the target hardware
+        using the specified mapper.
+
+        Args:
+            mapper (Mapper): The mapper to apply.
+
         """
         from opensquirrel.passes.mapper.qubit_remapper import remap_ir
 
@@ -168,22 +181,51 @@ class Circuit:
         remap_ir(self, mapping)
 
     def merge(self, merger: Merger) -> None:
-        """Generic merge pass. It applies the given merger to the circuit."""
+        """Merges the circuit using the specified merger.
+
+        Args:
+            merger (Merger): The merger to apply.
+
+        """
         merger.merge(self.ir, self.qubit_register_size)
 
     def route(self, router: Router) -> None:
-        """Generic router pass. It applies the given router to the circuit."""
+        """Routes the circuit using the specified router.
+
+        Args:
+            router (Router): The router to apply.
+
+        """
         router.route(self.ir, self.qubit_register_size)
 
     def replace(self, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
         """Manually replace occurrences of a given gate with a list of gates.
-        `replacement_gates_function` is a callable that takes the arguments of the gate that is to be replaced and
-        returns the decomposition as a list of gates.
+
+        Args:
+            gate (type[Gate]): The gate type to be replaced.
+            replacement_gates_function (Callable[..., list[Gate]]): function that describes the replacement gates.
+
         """
         from opensquirrel.passes.decomposer import general_decomposer
 
         general_decomposer.replace(self.ir, gate, replacement_gates_function)
 
     def validate(self, validator: Validator) -> None:
-        """Generic validator pass. It applies the given validator to the circuit."""
+        """Validates the circuit using the specified validator.
+
+        Args:
+            validator (Validator): The validator to apply.
+
+        """
         validator.validate(self.ir)
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, Circuit):
+            return False
+        return self.register_manager == other.register_manager and self.ir == other.ir
+
+    def __repr__(self) -> str:
+        """Write the circuit to a cQASM 3 string."""
+        from opensquirrel.writer import writer
+
+        return writer.circuit_to_string(self)

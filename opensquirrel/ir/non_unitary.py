@@ -14,15 +14,6 @@ class NonUnitary(Instruction, ABC):
         Instruction.__init__(self, name)
         self.qubit = Qubit(qubit)
 
-    def __repr__(self) -> str:
-        if self.arguments:
-            args = ", ".join(f"{arg.__class__.__name__.lower()}={arg}" for arg in self.arguments)
-            return f"{self.__class__.__name__}(qubit={self.qubit}, {args})"
-        return f"{self.__class__.__name__}(qubit={self.qubit})"
-
-    def __eq__(self, other: object) -> bool:
-        return isinstance(other, self.__class__) and self.qubit == other.qubit
-
     @property
     def arguments(self) -> tuple[Expression, ...]:
         return ()
@@ -36,7 +27,17 @@ class NonUnitary(Instruction, ABC):
         return ()
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         return visitor.visit_non_unitary(self)
+
+    def __repr__(self) -> str:
+        if self.arguments:
+            args = ", ".join(f"{arg.__class__.__name__.lower()}={arg}" for arg in self.arguments)
+            return f"{self.__class__.__name__}(qubit={self.qubit}, {args})"
+        return f"{self.__class__.__name__}(qubit={self.qubit})"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__) and self.qubit == other.qubit
 
 
 class Measure(NonUnitary):
@@ -45,22 +46,23 @@ class Measure(NonUnitary):
         self.bit = Bit(bit)
         self.axis = Axis(axis)
 
-    def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, Measure) and self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
-        )
-
     @property
     def arguments(self) -> tuple[Expression, ...]:
         return self.bit, self.axis
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        non_unitary_visit = super().accept(visitor)
-        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_measure(self)
-
     @property
     def bit_operands(self) -> tuple[Bit, ...]:
         return (self.bit,)
+
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        non_unitary_visit = super().accept(visitor)
+        return non_unitary_visit if non_unitary_visit is not None else visitor.visit_measure(self)
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, Measure) and self.qubit == other.qubit and np.allclose(self.axis, other.axis, atol=ATOL)
+        )
 
 
 class Init(NonUnitary):
@@ -68,6 +70,7 @@ class Init(NonUnitary):
         NonUnitary.__init__(self, qubit=qubit, name="init")
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         non_unitary_visit = super().accept(visitor)
         return non_unitary_visit if non_unitary_visit is not None else visitor.visit_init(self)
 
@@ -77,5 +80,6 @@ class Reset(NonUnitary):
         NonUnitary.__init__(self, qubit=qubit, name="reset")
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         non_unitary_visit = super().accept(visitor)
         return non_unitary_visit if non_unitary_visit is not None else visitor.visit_reset(self)

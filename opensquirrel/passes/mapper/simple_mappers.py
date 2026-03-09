@@ -27,7 +27,16 @@ class IdentityMapper(Mapper):
         circuit: Circuit,
         qubit_register_size: int,
     ) -> Mapping:
-        """Create identity mapping."""
+        """Map the circuit according to a identity mapping.
+
+        Args:
+            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            qubit_register_size (int): The size of the (virtual) qubit register.
+
+        Returns:
+            Mapping from virtual to physical qubits.
+
+        """
         return Mapping(list(range(qubit_register_size)))
 
 

@@ -59,6 +59,16 @@ class _QubitRemapper(IRVisitor):
 
 
 def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
+    """Get replacement IR where the qubit indices are remapped according to the provided mapping.
+
+    Args:
+        circuit (Circuit): The input circuit from which the replacement IR is to be generated.
+        mapping (Mapping): Mapping of virtual qubit indices to physical qubit indices.
+
+    Returns:
+        Replacement IR with remapped qubit indices.
+
+    """
     if len(mapping) > circuit.qubit_register_size:
         msg = (
             f"size of the mapping {len(mapping)!r} is larger than the number of qubits {circuit.qubit_register_size!r}"
@@ -72,6 +82,13 @@ def get_remapped_ir(circuit: Circuit, mapping: Mapping) -> IR:
 
 
 def remap_ir(circuit: Circuit, mapping: Mapping) -> None:
+    """Remap the IR of the circuit according to the provided mapping.
+
+    Args:
+        circuit (Circuit): The input circuit whose IR is to be remapped.
+        mapping (Mapping): Mapping of virtual qubit indices to physical qubit indices.
+
+    """
     if len(mapping) > circuit.qubit_register_size:
         msg = (
             f"size of the mapping {len(mapping)!r} is larger than the number of qubits {circuit.qubit_register_size!r}"

@@ -11,17 +11,22 @@ if TYPE_CHECKING:
 
 
 class CNOT2CZDecomposer(Decomposer):
-    """Predefined decomposition of CNOT gate to CZ gate with Y rotations.
-
-    ---•---     -----------------•----------------
-       |     →                   |
-    ---⊕---     --[Ry(-pi/2)]---[Z]---[Ry(pi/2)]--
-
-    Note:
-        This decomposition preserves the global phase of the CNOT gate.
-    """
-
     def decompose(self, gate: Gate) -> list[Gate]:
+        """Predefined decomposition of CNOT gate into CZ gate with Ry rotations.
+
+        ![image](../../../_static/cnot2cz.png#only-light)
+        ![image](../../../_static/cnot2cz_dm.png#only-dark)
+
+        Note:
+            This decomposition preserves the global phase of the CNOT gate.
+
+        Args:
+            gate (Gate): CNOT gate to decompose.
+
+        Returns:
+            A sequence of gates, Ry(-π/2)-CZ-Ry(π/2), that decompose the CNOT gate.
+
+        """
         if gate.name != "CNOT":
             return [gate]
 

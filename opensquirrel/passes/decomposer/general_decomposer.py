@@ -15,11 +15,22 @@ class Decomposer(ABC):
     def __init__(self, **kwargs: Any) -> None: ...
 
     @abstractmethod
-    def decompose(self, gate: Gate) -> list[Gate]:
-        raise NotImplementedError()
+    def decompose(self, gate: Gate) -> list[Gate]: ...
 
 
 def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> None:
+    """Checks that the replacement gate(s) are valid by verifying that they operate on the same
+    qubits and preserve the quantum state up to a global phase.
+
+    Args:
+        gate (Gate): Gate that is being replaced.
+        replacement_gates (Iterable[Gate]): Gate(s) that are replacing the original gate.
+
+    Raises:
+        ValueError: If the replacement gates do not operate on the same qubits as the original gate.
+        ValueError: If the replacement gates do not preserve the quantum state up to a global phase.
+
+    """
     gate_qubit_indices = gate.qubit_indices
     replacement_gates_qubit_indices = set()
     replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
@@ -42,9 +53,12 @@ def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> Non
 
 
 def decompose(ir: IR, decomposer: Decomposer) -> None:
-    """Applies `decomposer` to every gate in the circuit, replacing each gate by the output of `decomposer`.
-    When `decomposer` decides to not decomposer a gate, it needs to return a list with the intact gate as single
-    element.
+    """Decomposes the statements in the circuit IR using the provided decomposer.
+
+    Args:
+        ir (IR): The circuit IR to decompose.
+        decomposer (Decomposer): The decomposer to use for decomposing the gates.
+
     """
     statement_index = 0
     while statement_index < len(ir.statements):
@@ -74,7 +88,14 @@ class _GenericReplacer(Decomposer):
 
 
 def replace(ir: IR, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
-    """Does the same as decomposer, but only applies to a given gate."""
-    generic_replacer = _GenericReplacer(gate, replacement_gates_function)
+    """Replaces all occurrences of a specific gate in the circuit IR with a given sequence of other
+    gates.
 
+    Args:
+        ir (IR): The circuit IR to modify.
+        gate (type[Gate]): Gate to replace.
+        replacement_gates_function (Callable[..., list[Gate]]): Function that returns a list of replacement gates.
+
+    """
+    generic_replacer = _GenericReplacer(gate, replacement_gates_function)
     decompose(ir, generic_replacer)

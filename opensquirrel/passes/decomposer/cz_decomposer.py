@@ -24,6 +24,25 @@ class CZDecomposer(Decomposer):
     """
 
     def decompose(self, gate: Gate) -> list[Gate]:
+        """Decomposes a controlled two-qubit gate into a sequence of (at most 2) CZ gates and
+        single-qubit gates. It decomposes the CR, CRk, and CNOT controlled two-qubit gates.
+
+        Uses the ABC decomposition procedure described in
+        [Quantum Gates by G.E. Crooks (2024), Section 7.5](https://threeplusone.com/pubs/on_gates.pdf).
+
+        Note:
+            The SWAP gate is not a controlled two-qubit gate and is not decomposed by this pass.
+            To decompose SWAP gates, use the
+            [SWAP2CZDecomposer][opensquirrel.passes.decomposer.swap2cz_decomposer.SWAP2CZDecomposer]
+            or the [SWAP2CNOTDecomposer][opensquirrel.passes.decomposer.swap2cnot_decomposer.SWAP2CNOTDecomposer].
+
+        Args:
+            gate (Gate): Two-qubit controlled gate to decompose.
+
+        Returns:
+            A sequence of (at most 2) CZ gates and single-qubit gates.
+
+        """
         if not isinstance(gate, TwoQubitGate):
             return [gate]
 
@@ -42,7 +61,7 @@ class CZDecomposer(Decomposer):
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
         # Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I
         controlled_rotation_times_z = target_gate * Z(target_qubit)
-        theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer().get_decomposition_angles(
+        theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer()._determine_rotation_angles(  # noqa: SLF001
             controlled_rotation_times_z.bsr.axis,
             controlled_rotation_times_z.bsr.angle,
         )
@@ -59,7 +78,7 @@ class CZDecomposer(Decomposer):
                 ],
             )
 
-        theta0, theta1, theta2 = XYXDecomposer().get_decomposition_angles(target_gate.bsr.axis, target_gate.bsr.angle)
+        theta0, theta1, theta2 = XYXDecomposer()._determine_rotation_angles(target_gate.bsr.axis, target_gate.bsr.angle)  # noqa: SLF001
 
         A = [Ry(target_qubit, theta1 / 2), Rx(target_qubit, theta2)]  # noqa: N806
         B = [Rx(target_qubit, -(theta0 + theta2) / 2), Ry(target_qubit, -theta1 / 2)]  # noqa: N806
