@@ -155,9 +155,9 @@ class Circuit:
             decomposer (Decomposer): The decomposer to apply.
 
         """
-        from opensquirrel.passes.decomposer import general_decomposer
+        from opensquirrel.passes.decomposer.general_decomposer import decompose
 
-        general_decomposer.decompose(self.ir, decomposer)
+        decompose(self.ir, decomposer)
 
     def export(self, exporter: Exporter) -> Any:
         """Exports the circuit using the specified exporter.
@@ -208,9 +208,9 @@ class Circuit:
             replacement_gates_function (Callable[..., list[Gate]]): function that describes the replacement gates.
 
         """
-        from opensquirrel.passes.decomposer import general_decomposer
+        from opensquirrel.passes.decomposer.gate_replacer import replace
 
-        general_decomposer.replace(self.ir, gate, replacement_gates_function)
+        replace(self.ir, gate, replacement_gates_function)
 
     def validate(self, validator: Validator) -> None:
         """Validates the circuit using the specified validator.

@@ -21,6 +21,8 @@ parameter
 - Add `interaction_graph` as a property of the `Circuit`.
 - Add `mapping` as an attribute of the `Circuit`, which contains an identity mapping, prior to any 
 arbitrarily applied mapper pass.
+- The measure instruction accepts an axis parameter
+- `MeasureDecomposer` to decompose arbitrary measurements to a decomposition of single-qubit gates and a +Z measurement.
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 

@@ -23,7 +23,7 @@ class CZDecomposer(Decomposer):
     Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"
     """
 
-    def decompose(self, gate: Gate) -> list[Gate]:
+    def decompose(self, instruction: Gate) -> list[Gate]:
         """Decomposes a controlled two-qubit gate into a sequence of (at most 2) CZ gates and
         single-qubit gates. It decomposes the CR, CRk, and CNOT controlled two-qubit gates.
 
@@ -37,14 +37,16 @@ class CZDecomposer(Decomposer):
             or the [SWAP2CNOTDecomposer][opensquirrel.passes.decomposer.swap2cnot_decomposer.SWAP2CNOTDecomposer].
 
         Args:
-            gate (Gate): Two-qubit controlled gate to decompose.
+            instruction (Instruction): Two-qubit controlled gate to decompose.
 
         Returns:
             A sequence of (at most 2) CZ gates and single-qubit gates.
 
         """
-        if not isinstance(gate, TwoQubitGate):
-            return [gate]
+        if not isinstance(instruction, TwoQubitGate):
+            return [instruction]
+
+        gate = instruction
 
         if not gate.controlled:
             # Do nothing:

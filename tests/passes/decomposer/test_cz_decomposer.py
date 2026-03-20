@@ -7,7 +7,7 @@ import pytest
 
 from opensquirrel import CNOT, CR, CZ, CRk, H, Ry, Rz
 from opensquirrel.passes.decomposer import CZDecomposer
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_decomposition
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -21,21 +21,21 @@ def decomposer() -> CZDecomposer:
 
 @pytest.mark.parametrize(("gate", "expected_result"), [(H(0), [H(0)]), (Rz(0, 2.345), [Rz(0, 2.345)])])
 def test_ignores_1q_gates(decomposer: CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
-    check_gate_replacement(gate, expected_result)
+    check_gate_decomposition(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
 
 
 def test_preserves_CZ(decomposer: CZDecomposer) -> None:  # noqa: N802
     gate = CZ(0, 1)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [CZ(0, 1)]
 
 
 def test_CNOT(decomposer: CZDecomposer) -> None:  # noqa: N802
     gate = CNOT(0, 1)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [Ry(1, -math.pi / 2), CZ(0, 1), Ry(1, math.pi / 2)]
 
 
@@ -53,4 +53,4 @@ def test_CNOT(decomposer: CZDecomposer) -> None:  # noqa: N802
 )
 def test_controlled_gates(decomposer: CZDecomposer, controlled_gate: TwoQubitGate) -> None:
     decomposed_gate = decomposer.decompose(controlled_gate)
-    check_gate_replacement(controlled_gate, decomposed_gate)
+    check_gate_decomposition(controlled_gate, decomposed_gate)

@@ -8,7 +8,7 @@ from opensquirrel import CNOT, CR, H, I, Rx, Ry, Rz, X, Y, Z
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import ZYZDecomposer
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_decomposition
 
 
 @pytest.fixture
@@ -45,7 +45,7 @@ def test_zyz_decomposer(
     decomposer: ZYZDecomposer, gate: SingleQubitGate, expected_result: list[SingleQubitGate]
 ) -> None:
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposer.decompose(gate) == expected_result
 
 

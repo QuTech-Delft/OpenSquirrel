@@ -8,7 +8,8 @@ import pytest
 from opensquirrel import CNOT, Y90, CircuitBuilder, H, I, U, X
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
-from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_replacement, decompose, replace
+from opensquirrel.passes.decomposer.gate_replacer import replace
+from opensquirrel.passes.decomposer.general_decomposer import Decomposer, check_gate_decomposition, decompose
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -31,29 +32,29 @@ class TestCheckGateReplacement:
         ],
     )
     def test_valid_replacement(self, gate: Gate, replacement_gates: list[Gate]) -> None:
-        check_gate_replacement(gate, replacement_gates)
+        check_gate_decomposition(gate, replacement_gates)
 
     @pytest.mark.parametrize(
         ("gate", "replacement_gates", "error_msg"),
         [
-            (H(0), [H(1)], "replacement for gate 'H' does not operate on the correct qubits"),
-            (CNOT(0, 1), [CNOT(2, 1)], "replacement for gate 'CNOT' does not operate on the correct qubits"),
-            (CNOT(0, 1), [CNOT(1, 0)], "replacement for gate 'CNOT' does not preserve the quantum state"),
+            (H(0), [H(1)], "decomposition for gate 'H' does not operate on the correct qubits"),
+            (CNOT(0, 1), [CNOT(2, 1)], "decomposition for gate 'CNOT' does not operate on the correct qubits"),
+            (CNOT(0, 1), [CNOT(1, 0)], "decomposition for gate 'CNOT' does not preserve the quantum state"),
         ],
     )
     def test_wrong_qubit(self, gate: Gate, replacement_gates: list[Gate], error_msg: str) -> None:
         with pytest.raises(ValueError, match=error_msg):
-            check_gate_replacement(gate, replacement_gates)
+            check_gate_decomposition(gate, replacement_gates)
 
     def test_large_number_of_qubits(self) -> None:
         # If we were building the whole circuit matrix, this would run out of memory.
-        check_gate_replacement(H(9234687), [Y90(9234687), X(9234687)])
+        check_gate_decomposition(H(9234687), [Y90(9234687), X(9234687)])
 
-        with pytest.raises(ValueError, match="replacement for gate 'H' does not operate on the correct qubits"):
-            check_gate_replacement(H(9234687), [Y90(698446519), X(9234687)])
+        with pytest.raises(ValueError, match="decomposition for gate 'H' does not operate on the correct qubits"):
+            check_gate_decomposition(H(9234687), [Y90(698446519), X(9234687)])
 
-        with pytest.raises(ValueError, match="replacement for gate 'H' does not preserve the quantum state"):
-            check_gate_replacement(H(9234687), [Y90(9234687), X(9234687), X(9234687)])
+        with pytest.raises(ValueError, match="decomposition for gate 'H' does not preserve the quantum state"):
+            check_gate_decomposition(H(9234687), [Y90(9234687), X(9234687), X(9234687)])
 
 
 class TestReplacer:
@@ -65,10 +66,10 @@ class TestReplacer:
 
         # A simple decomposer function that adds identities before and after single-qubit gates.
         class TestDecomposer(Decomposer):
-            def decompose(self, gate: Gate) -> list[Gate]:
-                if isinstance(gate, SingleQubitGate):
-                    return [I(gate.qubit), gate, I(gate.qubit)]
-                return [gate]
+            def decompose(self, instruction: Gate) -> list[Gate]:
+                if isinstance(instruction, SingleQubitGate):
+                    return [I(instruction.qubit), instruction, I(instruction.qubit)]
+                return [instruction]
 
         decompose(circuit.ir, decomposer=TestDecomposer())
 

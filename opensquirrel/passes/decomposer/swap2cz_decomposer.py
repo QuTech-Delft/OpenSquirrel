@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 
 class SWAP2CZDecomposer(Decomposer):
-    def decompose(self, gate: Gate) -> list[Gate]:
+    def decompose(self, instruction: Gate) -> list[Gate]:
         """Predefined decomposition of SWAP gate to 3 CZ gates and Ry rotations.
 
         ![image](../../../_static/swap2cz.png#only-light)
@@ -21,14 +21,17 @@ class SWAP2CZDecomposer(Decomposer):
             This decomposition preserves the global phase of the SWAP gate.
 
         Args:
-            gate: SWAP gate to decompose.
+            instruction: SWAP gate to decompose.
 
         Returns:
             A sequence of 3 CZ gates and Ry rotations that decompose the SWAP gate.
 
         """
-        if gate.name != "SWAP":
-            return [gate]
+        if instruction.name != "SWAP":
+            return [instruction]
+
+        gate = instruction
+
         qubit0, qubit1 = gate.qubit_operands
         return [
             Ry(qubit1, -pi / 2),

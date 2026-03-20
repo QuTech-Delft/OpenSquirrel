@@ -7,7 +7,7 @@ import pytest
 
 from opensquirrel import CNOT, CR, CZ, SWAP, CRk, H, Ry
 from opensquirrel.passes.decomposer import SWAP2CNOTDecomposer
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_decomposition
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -27,7 +27,7 @@ def decomposer() -> SWAP2CNOTDecomposer:
     ids=["Hadamard", "rotation_gate"],
 )
 def test_ignores_1q_gates(decomposer: SWAP2CNOTDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
-    check_gate_replacement(gate, expected_result)
+    check_gate_decomposition(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
 
 
@@ -42,7 +42,7 @@ def test_ignores_1q_gates(decomposer: SWAP2CNOTDecomposer, gate: Gate, expected_
     ids=["CNOT_gate", "CR_gate", "CRk_gate", "CZ_gate"],
 )
 def test_ignores_2q_gates(decomposer: SWAP2CNOTDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
-    check_gate_replacement(gate, expected_result)
+    check_gate_decomposition(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
 
 
@@ -56,5 +56,5 @@ def test_ignores_2q_gates(decomposer: SWAP2CNOTDecomposer, gate: Gate, expected_
 )
 def test_decomposes_SWAP(decomposer: SWAP2CNOTDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # noqa: N802
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == expected_result
