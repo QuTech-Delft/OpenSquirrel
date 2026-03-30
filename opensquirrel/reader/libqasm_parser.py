@@ -163,14 +163,16 @@ class LibQasmParser:
             ]
         return list(zip(*extended_operands, strict=False))
 
-    def _get_expanded_measure_args(self, ast_args: Any) -> list[tuple[Any, ...]]:
+    def _get_expanded_measure_args(self, instruction: cqasm.semantic.Instruction) -> list[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
-        For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))]
+        For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))], for non-parameterized measurement,
+        or [(Qubit(0), Bit(0), [Int(1), Int(0), Int(0)]), (Qubit(1), Bit(1), [Int(1), Int(0), Int(0)])],
+        for parameterized measurement.
         """
         # Notice the list is walked in reverse mode
         # This is because the AST measure node has a bit first operand and a qubit second operand
         expanded_args: list[list[Any]] = []
-        for ast_arg in reversed(ast_args):
+        for ast_arg in reversed(instruction.operands):
             if self._is_qubit_type(ast_arg):
                 expanded_args.append(self._get_qubits(ast_arg))
             elif self._is_bit_type(ast_arg):
@@ -178,6 +180,10 @@ class LibQasmParser:
             else:
                 msg = f"argument {ast_arg!r} is neither of qubit nor bit type"
                 raise TypeError(msg)
+        if instruction.parameters:
+            parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]
+            number_of_operands = len(expanded_args[0])
+            expanded_args.append([parameters] * number_of_operands)
         return list(zip(*expanded_args, strict=False))
 
     @staticmethod
@@ -284,7 +290,7 @@ class LibQasmParser:
             elif LibQasmParser._is_non_gate_instruction(statement):
                 instruction_generator = self._get_non_gate_instruction_generator(statement)
                 expanded_args = (
-                    self._get_expanded_measure_args(statement.operands)
+                    self._get_expanded_measure_args(statement)
                     if statement.name == "measure"
                     else self._get_expanded_instruction_args(statement)
                 )

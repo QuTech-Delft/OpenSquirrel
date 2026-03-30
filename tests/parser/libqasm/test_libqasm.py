@@ -57,6 +57,8 @@ def test_parse_instructions() -> None:
         Y90 q[0]
         mY90 q[0]
         Z q[0]
+        Z90 q[0]
+        mZ90 q[0]
         S q[0]
         Sdag q[0]
         T q[0]
@@ -65,6 +67,7 @@ def test_parse_instructions() -> None:
         Rx(pi/2) q[0]
         Ry(pi/2) q[0]
         Rz(tau) q[0]
+        U(1,2,3) q[0]
 
         // Reset instruction
         reset q
@@ -105,6 +108,8 @@ Y q[0]
 Y90 q[0]
 mY90 q[0]
 Z q[0]
+Z90 q[0]
+mZ90 q[0]
 S q[0]
 Sdag q[0]
 T q[0]
@@ -113,6 +118,7 @@ Rn(1.0, 0.0, 0.0, 1.5707963, 0.78539816) q[0]
 Rx(1.5707963) q[0]
 Ry(1.5707963) q[0]
 Rz(0.0) q[0]
+U(1.0, 2.0, 3.0) q[0]
 reset q[0]
 reset q[1]
 b[0] = measure q[0]
@@ -124,6 +130,33 @@ CRk(2) q[0], q[1]
 SWAP q[0], q[1]
 b[0] = measure q[0]
 b[1] = measure q[1]
+"""
+    )
+
+
+def test_parse_parameterized_measurement() -> None:
+    circuit = LibQasmParser().circuit_from_string(
+        """
+        version 3.0
+
+        qubit[4] q
+        bit[4] b
+
+        b[0] = measure(0,0,1) q[0]
+        b[0,1,3] = measure(1,0,0) q[1:3]
+        """,
+    )
+    assert (
+        str(circuit)
+        == """version 3.0
+
+qubit[4] q
+bit[4] b
+
+b[0] = measure q[0]
+b[0] = measure(1.0, 0.0, 0.0) q[1]
+b[1] = measure(1.0, 0.0, 0.0) q[2]
+b[3] = measure(1.0, 0.0, 0.0) q[3]
 """
     )
 
@@ -154,24 +187,6 @@ CRk(23) q[0, 3], q[1, 4]
         CRk(0, 1, 23),
         CRk(3, 4, 23),
     ]
-
-
-def test_unsupported_gates() -> None:
-    with pytest.raises(
-        IOError,
-        match=r"parsing error: Error at <unknown file name>:1:32..33: couldn't find instruction 'U'",
-    ):
-        LibQasmParser().circuit_from_string("version 3; qubit[1] q; H q[0]; U(1, 2, 3) q[0]")
-    with pytest.raises(
-        IOError,
-        match=r"parsing error: Error at <unknown file name>:1:32..35: couldn't find instruction 'Z90'",
-    ):
-        LibQasmParser().circuit_from_string("version 3; qubit[1] q; H q[0]; Z90 q[0]")
-    with pytest.raises(
-        IOError,
-        match=r"parsing error: Error at <unknown file name>:1:32..36: couldn't find instruction 'mZ90'",
-    ):
-        LibQasmParser().circuit_from_string("version 3; qubit[1] q; H q[0]; mZ90 q[0]")
 
 
 def test_error() -> None:
