@@ -1,5 +1,4 @@
 from __future__ import annotations
-from opensquirrel.common import ATOL
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -8,11 +7,11 @@ from typing import Any, Protocol, SupportsFloat, SupportsInt, cast, overload, ru
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
+from opensquirrel.common import ATOL
 from opensquirrel.ir.ir import IRNode, IRVisitor
 
 
-class Expression(IRNode, ABC):
-    pass
+class Expression(IRNode, ABC): ...
 
 
 @runtime_checkable
@@ -43,6 +42,10 @@ class String(Expression):
         msg = f"value {value!r} must be a str"
         raise TypeError(msg)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_str(self)
+
     def __str__(self) -> str:
         """Cast the ``String`` object to a built-in Python ``str``.
 
@@ -51,9 +54,6 @@ class String(Expression):
         """
         return self.value
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_str(self)
-
 
 @dataclass(init=False)
 class Float(Expression):
@@ -61,6 +61,7 @@ class Float(Expression):
 
     Attributes:
         value: value of the ``Float`` object.
+
     """
 
     value: float
@@ -78,6 +79,10 @@ class Float(Expression):
         msg = f"value {value!r} must be a float"
         raise TypeError(msg)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_float(self)
+
     def __float__(self) -> float:
         """Cast the ``Float`` object to a built-in Python ``float``.
 
@@ -85,9 +90,6 @@ class Float(Expression):
             Built-in Python ``float`` representation of the ``Float``.
         """
         return self.value
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_float(self)
 
 
 @dataclass(init=False)
@@ -113,6 +115,10 @@ class Int(Expression):
         msg = f"value {value!r} must be an int"
         raise TypeError(msg)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_int(self)
+
     def __int__(self) -> int:
         """Cast the ``Int`` object to a built-in Python ``int``.
 
@@ -120,9 +126,6 @@ class Int(Expression):
             Built-in Python ``int`` representation of the ``Int``.
         """
         return self.value
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_int(self)
 
 
 @dataclass(init=False)
@@ -138,14 +141,15 @@ class Bit(Expression):
             msg = f"index {index!r} must be a BitLike"
             raise TypeError(msg)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_bit(self)
+
     def __hash__(self) -> int:
         return hash(str(self.__class__) + str(self.index))
 
     def __repr__(self) -> str:
         return f"Bit[{self.index}]"
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_bit(self)
 
 
 @dataclass(init=False)
@@ -167,14 +171,15 @@ class Qubit(Expression):
             msg = f"index {index!r} must be a QubitLike"
             raise TypeError(msg)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_qubit(self)
+
     def __hash__(self) -> int:
         return hash(str(self.__class__) + str(self.index))
 
     def __repr__(self) -> str:
         return f"Qubit[{self.index}]"
-
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_qubit(self)
 
 
 class BaseAxis(Expression, ABC):
@@ -205,6 +210,19 @@ class BaseAxis(Expression, ABC):
         """
         self._value = self.parse(axis)
 
+    def __array__(self, dtype: DTypeLike | None = None, *, copy: bool | None = None) -> NDArray[Any]:
+        """Convert the ``BaseAxis`` data to an array."""
+        return np.array(self.value, dtype=dtype, copy=copy)
+
+    def __eq__(self, other: Any) -> bool:
+        """Check if `self` is equal to `other`.
+
+        Two ``BaseAxis`` objects are considered equal if their axes are equal.
+        """
+        if not isinstance(other, self.__class__):
+            return False
+        return np.allclose(self, other, atol=ATOL)
+
     @overload
     def __getitem__(self, i: int, /) -> np.float64: ...
 
@@ -223,19 +241,6 @@ class BaseAxis(Expression, ABC):
         """String representation of the ``BaseAxis``."""
         return f"{self.__class__.__name__}{self.value}"
 
-    def __array__(self, dtype: DTypeLike | None = None, *, copy: bool | None = None) -> NDArray[Any]:
-        """Convert the ``BaseAxis`` data to an array."""
-        return np.array(self.value, dtype=dtype, copy=copy)
-
-    def __eq__(self, other: Any) -> bool:
-        """Check if `self` is equal to `other`.
-
-        Two ``BaseAxis`` objects are considered equal if their axes are equal.
-        """
-        if not isinstance(other, self.__class__):
-            return False
-        return np.allclose(self, other, atol=ATOL)
-
 
 class Axis(BaseAxis):
     """The ``Axis`` object parses and stores a vector containing 3 elements.
@@ -247,7 +252,7 @@ class Axis(BaseAxis):
     def parse(axis: AxisLike) -> NDArray[np.float64]:
         """Parse and validate an ``AxisLike``.
 
-        Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
+        Checks if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
         After casting to an array, the axis is normalized.
 
         Args:
@@ -275,11 +280,10 @@ class Axis(BaseAxis):
         return axis / np.linalg.norm(axis)
 
     def accept(self, visitor: IRVisitor) -> Any:
-        """Accept the ``Axis``."""
+        """Accepts visitor and processes this IR node."""
         return visitor.visit_axis(self)
 
 
-# Type Aliases
 BitLike = SupportsInt | Bit
 QubitLike = SupportsInt | Qubit
 AxisLike = ArrayLike | Axis

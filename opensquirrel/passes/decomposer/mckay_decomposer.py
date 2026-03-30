@@ -12,15 +12,22 @@ from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 class McKayDecomposer(Decomposer):
     def decompose(self, gate: Gate) -> list[Gate]:
-        """Return the McKay decomposition of a 1-qubit gate as a list of gates.
-                gate   ---->    Rz.Rx(pi/2).Rz.Rx(pi/2).Rz
+        """Decomposes a single-qubit gate using the McKay decomposition into a sequence of (at most)
+        5 single-qubit gates; according tot the pattern Rz-Rx(pi/2)-Rz-Rx(pi/2)-Rz, where the angles
+        of the Rz gates are to be determined.
 
-        The global phase is deemed _irrelevant_, therefore a simulator backend might produce different output.
-        The results should be equivalent modulo global phase.
-        Notice that, if the gate is Rz or X90, it will not be decomposed further, since they are natively used
-        in the McKay decomposition.
+        Note:
+            The global phase of the original gate is (in general) not preserved in this decomposition.
 
-        Relevant literature: https://arxiv.org/abs/1612.00858
+        The decomposition is based on the procedure described in
+        [McKay et al. (2016)](https://arxiv.org/abs/1612.00858).
+
+        Args:
+            gate (Gate): Single-qubit gate to decompose.
+
+        Returns:
+            A sequence of (at most) 5 single-qubit gates that decompose the original gate.
+
         """
         if not isinstance(gate, SingleQubitGate) or gate == X90(gate.qubit):
             return [gate]

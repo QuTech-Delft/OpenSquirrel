@@ -51,7 +51,7 @@ def _check_waiting_cycles(exported_schedule: Schedule, expected_waiting_cycles: 
         exported_schedule.schedulables.values(), expected_waiting_cycles, strict=False
     ):
         waiting_time = schedulable_data.data["timing_constraints"][0].rel_time
-        assert waiting_time == -1.0 * expected_waiting_cycle * CYCLE_TIME
+        assert waiting_time == pytest.approx(-1.0 * expected_waiting_cycle * CYCLE_TIME, abs=ATOL)
 
 
 @pytest.fixture

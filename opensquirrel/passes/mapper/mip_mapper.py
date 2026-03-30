@@ -13,7 +13,7 @@ from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 if TYPE_CHECKING:
-    from opensquirrel import Connectivity
+    from opensquirrel import Circuit, Connectivity
     from opensquirrel.ir import IR
 
 DISTANCE_UL = 999999
@@ -27,17 +27,20 @@ class MIPMapper(Mapper):
     the sum of distances between mapped operands of all two-qubit gates, using a linearized
     MIP formulation based on OpenQL's approach.
 
-    The formulation uses binary variables x[i][k] indicating whether virtual qubit i
-    is mapped to physical qubit k, and continuous variables w[i][k] representing the
-    cost contribution for mapping i to k.
+    The formulation uses binary variables $x_{ik}$ indicating whether virtual qubit $i$
+    is mapped to physical qubit $k$, and continuous variables $w_{ik}$ representing the
+    cost contribution for mapping $i$ to $k$.
 
-    The objective function minimizes sum(w[i][k]) + epsilon * sum_{i,k: i!=k} x[i][k],
+    The objective function minimizes $\\sum w_{ik} + \\epsilon \\sum_{i \\neq k} x_{ik}$,
     where the epsilon term provides a small penalty for non-identity mappings as a tiebreaker.
 
     Subject to the following constraints:
-    1. Each virtual qubit assigned to exactly one physical qubit: sum_k x[i][k] == 1
-    2. Each physical qubit assigned to at most one virtual qubit: sum_i x[i][k] <= 1
-    3. Linearization: costmax[i][k] * x[i][k] + sum_{j,l} refcount[i][j]*distance[k][l]*x[j][l] - w[i][k] <= costmax[i][k]
+
+    1. Each virtual qubit assigned to exactly one physical qubit: $\\sum_k x_{ik} = 1$
+
+    2. Each physical qubit assigned to at most one virtual qubit: $\\sum_i x_{ik} \\leq 1$
+
+    3. Linearization: $\\Gamma_{ik} x_{ik} + \\sum_{j,l} C^\\text{ref}_{ij}d_{kl}x_{jl} - w_{ik} \\leq \\Gamma_{ik}$
 
     Args:
         connectivity: Physical qubit connectivity graph.
@@ -45,10 +48,13 @@ class MIPMapper(Mapper):
         epsilon: Small penalty coefficient for non-identity mappings (default: 1e-6).
 
     Example:
+        ```python
         >>> connectivity = {"0": [1], "1": [0, 2], "2": [1]}
         >>> mapper = MIPMapper(connectivity=connectivity, timeout=10.0)
         >>> mapping = mapper.map(circuit, qubit_register_size=3)
-    """  # noqa: E501
+        ```
+
+    """
 
     def __init__(
         self,
@@ -67,26 +73,30 @@ class MIPMapper(Mapper):
         self.num_w_vars = 0
         self.num_vars = 0
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-        """
-        Find an initial mapping of virtual qubits to physical qubits that minimizes
+    def map(
+        self,
+        circuit: Circuit,
+        qubit_register_size: int,
+    ) -> Mapping:
+        """Find an initial mapping of virtual qubits to physical qubits that minimizes
         the sum of distances between mapped operands of all two-qubit gates, using
         Mixed Integer Programming (MIP).
 
         This method formulates the mapping as a linear assignment problem, where the
-        objective is to minimize the total "distance cost" of executing all two-qubit
+        objective is to minimize the total _distance cost_ of executing all two-qubit
         gates, given the connectivity.
 
         Args:
-            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            circuit (Circuit): The quantum circuit to be mapped.
             qubit_register_size (int): The number of virtual qubits in the circuit.
 
         Returns:
-            Mapping: Mapping from virtual to physical qubits.
+            Mapping from virtual to physical qubits.
 
         Raises:
             RuntimeError: If the MIP solver fails to find a feasible mapping or times out.
             RuntimeError: If the number of virtual qubits exceeds the number of physical qubits.
+
         """
         self.num_virtual_qubits = qubit_register_size
         self.num_physical_qubits = len(self.connectivity)
@@ -102,7 +112,7 @@ class MIPMapper(Mapper):
             raise RuntimeError(error_message)
 
         distance = self._get_distance()
-        reference_counter = self._get_reference_counter(ir, self.num_virtual_qubits)
+        reference_counter = self._get_reference_counter(circuit.ir, self.num_virtual_qubits)
 
         cost, constraints, integrality, bounds = self._get_linearized_formulation(reference_counter, distance)
 

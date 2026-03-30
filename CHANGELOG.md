@@ -15,8 +15,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - The cycle time [seconds] can be set when instantiating the `QuantifySchedulerExporter` through the `cycle_time`
-parameter. 
-- `CircuitBuilder` accepts multiple (qu)bit registers through `add_register` method.
+parameter
+- `CircuitBuilder` accepts multiple (qu)bit registers through `add_register` method
+- Docstrings added to (user facing) public methods
+- Add `interaction_graph` as a property of the `Circuit`.
+- Add `mapping` as an attribute of the `Circuit`, which contains an identity mapping, prior to any 
+arbitrarily applied mapper pass.
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 

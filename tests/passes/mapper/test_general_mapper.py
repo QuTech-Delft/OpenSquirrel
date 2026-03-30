@@ -10,7 +10,7 @@ from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IR
+    from opensquirrel import Circuit
 
 
 class TestMapper:
@@ -20,7 +20,7 @@ class TestMapper:
                 super().__init__(**kwargs)
                 self._qubit_register = qubit_register_size
 
-            def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+            def map(self, circuit: Circuit, qubit_register_size: int) -> Mapping:
                 return Mapping(list(range(self._qubit_register)))
 
         Mapper2(qubit_register_size=1)
@@ -43,7 +43,9 @@ class TestMapQubits:
         builder.CNOT(1, 0)
         builder.CNOT(0, 2)
         builder.measure(1, 0)
-        return builder.to_circuit()
+        circuit = builder.to_circuit()
+        circuit.mapping = Mapping([1, 0, 2])
+        return circuit
 
     def test_circuit_map(self, circuit: Circuit, remapped_circuit: Circuit) -> None:
         mapper = HardcodedMapper(mapping=Mapping([1, 0, 2]))

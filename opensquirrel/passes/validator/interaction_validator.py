@@ -12,14 +12,14 @@ class InteractionValidator(Validator):
         self.connectivity = connectivity
 
     def validate(self, ir: IR) -> None:
-        """
-        Check if the circuit interactions faciliate a 1-to-1 mapping to the target hardware.
+        """Check if the circuit interactions faciliate a 1-to-1 mapping to the target hardware.
 
         Args:
             ir (IR): The intermediate representation of the circuit to be checked.
 
         Raises:
-            ValueError: If the circuit can't be mapped to the target hardware.
+            ValueError: If the circuit cannot be mapped to the target hardware.
+
         """
         non_executable_interactions = []
         for statement in ir.statements:

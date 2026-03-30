@@ -29,12 +29,12 @@ Check for more details: [Creating a circuit](creating-a-circuit.md)
 The user can, subsequently, perform certain actions (or _methods_) on the `circuit` object;
 these are (at the moment of writing and in alphabetic order):
 
-- decompose
-- export
-- map
-- merge
-- route
-- validate
+- `decompose`
+- `export`
+- `map`
+- `merge`
+- `route`
+- `validate`
 
 For each of these actions the user will provide an appropriate [**compilation pass**](../compilation-passes/index.md)
 and potential input arguments.

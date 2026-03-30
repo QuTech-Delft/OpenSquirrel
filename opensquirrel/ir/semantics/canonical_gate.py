@@ -16,19 +16,23 @@ if TYPE_CHECKING:
 class CanonicalAxis(BaseAxis):
     restrict: bool = True
 
-
     @staticmethod
     def parse(axis: AxisLike) -> NDArray[np.float64]:
-        """Parse and validate an ``AxisLike``.
+        """Parse and validate an `AxisLike`.
 
-        Check if the `axis` can be cast to a 1DArray of length 3, raise an error otherwise.
+        Checks if the axis can be cast to a 1DArray of length 3, raise an error otherwise.
         After casting to an array, the elements of the canonical axis are restricted to the Weyl chamber.
 
         Args:
-            axis: ``AxisLike`` to validate and parse.
+            axis (AxisLike): Axis to validate and parse.
 
         Returns:
-            Parsed axis represented as a 1DArray of length 3.
+            Parsed axis to 1DArray of length 3.
+
+        Raises:
+            TypeError: If the axis cannot be cast to an ArrayLike.
+            ValueError: If the axis cannot be flattened to length 3.
+
         """
 
         if isinstance(axis, CanonicalAxis):
@@ -49,18 +53,29 @@ class CanonicalAxis(BaseAxis):
 
     @staticmethod
     def restrict_to_weyl_chamber(axis: NDArray[np.float64]) -> NDArray[np.float64]:
-        """Restrict the given axis to the Weyl chamber. The six rules that are
-        (implicitly) used are:
-            1. The canonical parameters are periodic with a period of 2 (neglecting
-               a global phase).
-            2. Can(tx, ty, tz) ~ Can(tx - 1, ty, tz) (for any parameter)
-            3. Can(tx, ty, tz) ~ Can(tx, -ty, -tz) (for any pair of parameters)
-            4. Can(tx, ty, tz) ~ Can(ty, tx, tz) (for any pair of parameters)
-            5. Can(tx, ty, 0) ~ Can(1 - tx, ty, 0)
-            6. Can(tx, ty, tz) x Can(tx', ty', tz') = Can(tx + tx', ty + ty', tz + tz')
-               (here x represents matrix multiplication)
+        """Restricts the given axis to the Weyl chamber.
 
-        Based on the rules described in Chapter 5 of https://threeplusone.com/pubs/on_gates.pdf
+        The six rules that are (implicitly) used are:
+
+        1. The canonical parameters are periodic with a period of 2 (neglecting
+            a global phase).
+        2. $\\text{Can}(t_x, t_y, t_z)\\sim\\text{Can}(t_x - 1, t_y, t_z)$ (for any parameter)
+        3. $\\text{Can}(t_x, t_y, t_z)\\sim\\text{Can}(t_x, -t_y, -t_z)$ (for any pair of parameters)
+        4. $\\text{Can}(t_x, t_y, t_z)\\sim\\text{Can}(t_y, t_x, t_z)$ (for any pair of parameters)
+        5. $\\text{Can}(t_x, t_y, 0)\\sim\\text{Can}(1 - t_x, t_y, 0)$
+        6. $\\text{Can}(t_x, t_y, t_z) * \\text{Can}(t_x', t_y', t_z') =
+        \\text{Can}(t_x + t_x', t_y + t_y', t_z + t_z')$
+
+        Note:
+            Based on the rules described in
+            [Quantum Gates by G.E. Crooks (2024), Section 5](https://threeplusone.com/pubs/on_gates.pdf).
+
+        Args:
+            axis (NDArray[np.float64]): Axis to restrict to the Weyl chamber.
+
+        Returns:
+           Axis restricted to the Weyl chamber.
+
         """
         axis = (axis + 1) % 2 - 1
 
@@ -81,6 +96,7 @@ class CanonicalAxis(BaseAxis):
         return np.sort(axis)[::-1]
 
     def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
         return visitor.visit_canonical_axis(self)
 
 
@@ -89,11 +105,18 @@ class CanonicalGateSemantic(GateSemantic):
         self.axis = CanonicalAxis(axis)
         self.rotations = rotations
 
-    def __repr__(self) -> str:
-        return f"CanonicalGateSemantic(axis={self.axis})"
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        return visitor.visit_canonical_gate_semantic(self)
 
     def is_identity(self) -> bool:
+        """Checks if the canonical gate semantic represents an identity operation.
+
+        Returns:
+            True if the canonical gate semantic represents an identity operation, False otherwise.
+
+        """
         return self.axis == CanonicalAxis((0, 0, 0))
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        return visitor.visit_canonical_gate_semantic(self)
+    def __repr__(self) -> str:
+        return f"CanonicalGateSemantic(axis={self.axis})"

@@ -26,7 +26,7 @@ class TestIdentityMapper:
         check_mapper(mapper)
 
     def test_get_mapping(self, mapper: IdentityMapper, circuit: Circuit) -> None:
-        mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
+        mapping = mapper.map(circuit, circuit.qubit_register_size)
         assert mapping == Mapping([0, 1, 2])
 
     def test_map_method(self, mapper: IdentityMapper, circuit: Circuit) -> None:
@@ -60,7 +60,7 @@ class TestHardcodedMapper:
         check_mapper(mapper)
 
     def test_get_mapping(self, mapper: HardcodedMapper, circuit: Circuit) -> None:
-        mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
+        mapping = mapper.map(circuit, circuit.qubit_register_size)
         assert mapping == Mapping([1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
 
     def test_map_method(self, mapper: HardcodedMapper, circuit: Circuit) -> None:
@@ -101,7 +101,7 @@ class TestRandomMapper:
         check_mapper(mapper)
 
     def test_get_mapping(self, mapper: RandomMapper, circuit: Circuit) -> None:
-        mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
+        mapping = mapper.map(circuit, circuit.qubit_register_size)
         assert len(mapping) == 5
 
     def test_map_method(self, mapper: RandomMapper, circuit: Circuit) -> None:
@@ -118,6 +118,6 @@ class TestRandomMapper:
         circuit = builder.to_circuit()
 
         original_mapping = Mapping(list(range(qubit_register_size)))
-        new_mapping = mapper.map(circuit.ir, circuit.qubit_register_size)
+        new_mapping = mapper.map(circuit, circuit.qubit_register_size)
 
         assert new_mapping != original_mapping

@@ -1,11 +1,10 @@
-from opensquirrel.ir.semantics.bsr import bsr_from_matrix
 from functools import cached_property
 from typing import Any
 
 import numpy as np
 
 from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic, CanonicalAxis
+from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 from opensquirrel.utils import get_matrix
 
@@ -26,9 +25,6 @@ class TwoQubitGate(Gate):
         if self._check_repeated_qubit_operands(self.qubit_operands):
             msg = "qubit operands cannot be the same qubit"
             raise ValueError(msg)
-
-    def __repr__(self) -> str:
-        return f"TwoQubitGate(qubits=[{self.qubit0, self.qubit1}], gate_semantic={self.gate_semantic})"
 
     @cached_property
     def matrix(self) -> MatrixGateSemantic:
@@ -52,7 +48,7 @@ class TwoQubitGate(Gate):
 
         from opensquirrel.utils.matrix_expander import canonical_decomposition
 
-        k1, k2, k3, k4, axis = canonical_decomposition(np.array(self.matrix))            
+        k1, k2, k3, k4, axis = canonical_decomposition(np.array(self.matrix))
         self._canonical = CanonicalGateSemantic(axis, [k1, k2, k3, k4])
         return self._canonical
 
@@ -65,25 +61,32 @@ class TwoQubitGate(Gate):
             return None
 
         if self._canonical:
-            matrix_4x4 = np.array(self.matrix)                
+            matrix_4x4 = np.array(self.matrix)
             return None
             # tx, ty, tz = self._canonical.axis
             # if (ty == 0 and tz == 0):
-                
+
             #     bsr = bsr_from_matrix(matrix_4x4[2:, 2:])
             #     self._controlled = ControlledGateSemantic(bsr)
             #     return self._controlled
         return None
 
-    def accept(self, visitor: IRVisitor) -> Any:
-        visit_parent = super().accept(visitor)
-        return visit_parent if visit_parent is not None else visitor.visit_two_qubit_gate(self)
-
     @property
     def qubit_operands(self) -> tuple[Qubit, ...]:
         return (self.qubit0, self.qubit1)
 
+    def accept(self, visitor: IRVisitor) -> Any:
+        """Accepts visitor and processes this IR node."""
+        visit_parent = super().accept(visitor)
+        return visit_parent if visit_parent is not None else visitor.visit_two_qubit_gate(self)
+
     def is_identity(self) -> bool:
+        """Checks if the two-qubit gate is an identity gate.
+
+        Returns:
+            True if the two-qubit gate is an identity gate, False otherwise.
+
+        """
         if self.controlled:
             return self.controlled.is_identity()
         if self.matrix:
@@ -91,3 +94,6 @@ class TwoQubitGate(Gate):
         if self.canonical:
             return self.canonical.is_identity()
         return False
+
+    def __repr__(self) -> str:
+        return f"TwoQubitGate(qubits=[{self.qubit0, self.qubit1}], gate_semantic={self.gate_semantic})"

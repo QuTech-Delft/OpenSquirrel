@@ -7,6 +7,9 @@ nav:
   - Home:
     - Home: index.md
     - Installation: installation.md
+    - Contributing: contributing.md
+    - Authors: authors.md
+    - Acknowledgements: acknowledgements.md
   - Tutorial:
     - Tutorial: tutorial/index.md
     - Creating a circuit: tutorial/creating-a-circuit.md
@@ -116,6 +119,16 @@ plugins:
         - scripts/gen_reference_page.py
   - literate-nav:
       nav_file: reference.md
-  - mkdocstrings
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_bases: true
+            show_signature: true
+            separate_signature: true
+            show_signature_annotations: true
   - glightbox
   - search
+

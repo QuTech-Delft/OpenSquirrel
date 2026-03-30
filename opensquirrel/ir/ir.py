@@ -39,103 +39,121 @@ if TYPE_CHECKING:
 
 
 class IRVisitor:
-    def visit_str(self, s: String) -> Any:
-        pass
+    def visit_str(self, s: String) -> Any: ...
 
-    def visit_int(self, i: Int) -> Any:
-        pass
+    def visit_int(self, i: Int) -> Any: ...
 
-    def visit_float(self, f: Float) -> Any:
-        pass
+    def visit_float(self, f: Float) -> Any: ...
 
-    def visit_bit(self, bit: Bit) -> Any:
-        pass
+    def visit_bit(self, bit: Bit) -> Any: ...
 
-    def visit_qubit(self, qubit: Qubit) -> Any:
-        pass
+    def visit_qubit(self, qubit: Qubit) -> Any: ...
 
-    def visit_axis(self, axis: Axis) -> Any:
-        pass
+    def visit_axis(self, axis: Axis) -> Any: ...
 
-    def visit_canonical_axis(self, axis: CanonicalAxis) -> Any:
-        pass
+    def visit_canonical_axis(self, axis: CanonicalAxis) -> Any: ...
 
-    def visit_statement(self, statement: Statement) -> Any:
-        pass
+    def visit_statement(self, statement: Statement) -> Any: ...
 
-    def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> Any:
-        pass
+    def visit_asm_declaration(self, asm_declaration: AsmDeclaration) -> Any: ...
 
-    def visit_instruction(self, instruction: Instruction) -> Any:
-        pass
+    def visit_instruction(self, instruction: Instruction) -> Any: ...
 
-    def visit_unitary(self, unitary: Unitary) -> Any:
-        pass
+    def visit_unitary(self, unitary: Unitary) -> Any: ...
 
-    def visit_gate(self, gate: Gate) -> Any:
-        pass
+    def visit_gate(self, gate: Gate) -> Any: ...
 
-    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
-        pass
+    def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any: ...
 
-    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
-        pass
+    def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any: ...
 
-    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any:
-        pass
+    def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any: ...
 
-    def visit_bsr_no_params(self, gate: BsrNoParams) -> Any:
-        pass
+    def visit_bsr_no_params(self, gate: BsrNoParams) -> Any: ...
 
-    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any:
-        pass
+    def visit_bsr_full_params(self, gate: BsrFullParams) -> Any: ...
 
-    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any:
-        pass
+    def visit_bsr_angle_param(self, gate: BsrAngleParam) -> Any: ...
 
-    def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> Any:
-        pass
+    def visit_bsr_unitary_params(self, gate: BsrUnitaryParams) -> Any: ...
 
-    def visit_non_unitary(self, non_unitary: NonUnitary) -> Any:
-        pass
+    def visit_non_unitary(self, non_unitary: NonUnitary) -> Any: ...
 
-    def visit_control_instruction(self, control_instruction: ControlInstruction) -> Any:
-        pass
+    def visit_control_instruction(self, control_instruction: ControlInstruction) -> Any: ...
 
-    def visit_measure(self, measure: Measure) -> Any:
-        pass
+    def visit_measure(self, measure: Measure) -> Any: ...
 
-    def visit_init(self, init: Init) -> Any:
-        pass
+    def visit_init(self, init: Init) -> Any: ...
 
-    def visit_reset(self, reset: Reset) -> Any:
-        pass
+    def visit_reset(self, reset: Reset) -> Any: ...
 
-    def visit_barrier(self, barrier: Barrier) -> Any:
-        pass
+    def visit_barrier(self, barrier: Barrier) -> Any: ...
 
-    def visit_wait(self, wait: Wait) -> Any:
-        pass
+    def visit_wait(self, wait: Wait) -> Any: ...
 
-    def visit_canonical_gate_semantic(self, canonical: CanonicalGateSemantic) -> Any:
-        pass
+    def visit_canonical_gate_semantic(self, canonical: CanonicalGateSemantic) -> Any: ...
 
-    def visit_controlled_gate_semantic(self, controlled: ControlledGateSemantic) -> Any:
-        pass
+    def visit_controlled_gate_semantic(self, controlled: ControlledGateSemantic) -> Any: ...
 
-    def visit_matrix_gate_semantic(self, matrix: MatrixGateSemantic) -> Any:
-        pass
+    def visit_matrix_gate_semantic(self, matrix: MatrixGateSemantic) -> Any: ...
 
 
 class IRNode(ABC):
     @abstractmethod
-    def accept(self, visitor: IRVisitor) -> Any:
-        pass
+    def accept(self, visitor: IRVisitor) -> Any: ...
 
 
 class IR:
     def __init__(self) -> None:
         self.statements: list[Statement] = []
+
+    def accept(self, visitor: IRVisitor) -> None:
+        """Accepts visitor and processes the IR nodes."""
+        for statement in self.statements:
+            statement.accept(visitor)
+
+    def add_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
+        """Adds an assembly declaration to the IR.
+
+        Args:
+            asm_declaration (AsmDeclaration): The assembly declaration to add.
+
+        """
+        self.statements.append(asm_declaration)
+
+    def add_gate(self, gate: Gate) -> None:
+        """Adds a gate to the IR.
+
+        Args:
+            gate (Gate): The gate to add.
+
+        """
+        self.statements.append(gate)
+
+    def add_non_unitary(self, non_unitary: NonUnitary) -> None:
+        """Adds a non-unitary operation to the IR.
+
+        Args:
+            non_unitary (NonUnitary): The non-unitary operation to add.
+
+        """
+        self.statements.append(non_unitary)
+
+    def add_statement(self, statement: Statement) -> None:
+        """Adds a generic statement to the IR.
+
+        Args:
+            statement (Statement): The statement to add.
+
+        """
+        self.statements.append(statement)
+
+    def reverse(self) -> IR:
+        """Reverses the order of statements in the IR."""
+        ir = IR()
+        for statement in self.statements[::-1]:
+            ir.add_statement(statement)
+        return ir
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IR):
@@ -144,25 +162,3 @@ class IR:
 
     def __repr__(self) -> str:
         return f"IR: {self.statements}"
-
-    def add_asm_declaration(self, asm_declaration: AsmDeclaration) -> None:
-        self.statements.append(asm_declaration)
-
-    def add_gate(self, gate: Gate) -> None:
-        self.statements.append(gate)
-
-    def add_non_unitary(self, non_unitary: NonUnitary) -> None:
-        self.statements.append(non_unitary)
-
-    def add_statement(self, statement: Statement) -> None:
-        self.statements.append(statement)
-
-    def reverse(self) -> IR:
-        ir = IR()
-        for statement in self.statements[::-1]:
-            ir.add_statement(statement)
-        return ir
-
-    def accept(self, visitor: IRVisitor) -> None:
-        for statement in self.statements:
-            statement.accept(visitor)

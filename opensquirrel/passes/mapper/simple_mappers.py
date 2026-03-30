@@ -14,7 +14,7 @@ from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
 
 if TYPE_CHECKING:
-    from opensquirrel.ir import IR
+    from opensquirrel import Circuit
 
 
 class IdentityMapper(Mapper):
@@ -22,8 +22,21 @@ class IdentityMapper(Mapper):
         """An ``IdentityMapper`` maps each virtual qubit to exactly the same physical qubit."""
         super().__init__(**kwargs)
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
-        """Create identity mapping."""
+    def map(
+        self,
+        circuit: Circuit,
+        qubit_register_size: int,
+    ) -> Mapping:
+        """Map the circuit according to a identity mapping.
+
+        Args:
+            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            qubit_register_size (int): The size of the (virtual) qubit register.
+
+        Returns:
+            Mapping from virtual to physical qubits.
+
+        """
         return Mapping(list(range(qubit_register_size)))
 
 
@@ -38,7 +51,11 @@ class HardcodedMapper(Mapper):
         super().__init__(**kwargs)
         self._mapping = mapping
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        circuit: Circuit,
+        qubit_register_size: int,
+    ) -> Mapping:
         """Return the hardcoded mapping."""
         if qubit_register_size != self._mapping.size():
             msg = (
@@ -60,7 +77,11 @@ class RandomMapper(Mapper):
         super().__init__(**kwargs)
         self.seed = seed
 
-    def map(self, ir: IR, qubit_register_size: int) -> Mapping:
+    def map(
+        self,
+        circuit: Circuit,
+        qubit_register_size: int,
+    ) -> Mapping:
         """Create a random mapping."""
         if self.seed:
             random.seed(self.seed)
