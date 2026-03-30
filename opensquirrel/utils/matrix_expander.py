@@ -5,10 +5,10 @@ import math
 from collections.abc import Iterable
 from math import pi
 from typing import TYPE_CHECKING, Any
-
+import itertools
 import numpy as np
 from numpy.typing import NDArray
-
+from opensquirrel.utils.context import temporary_class_attr
 from opensquirrel.ir import (
     Axis,
     AxisLike,
@@ -131,7 +131,7 @@ class MatrixExpander(IRVisitor):
             return self._matrix_gate(gate)
         return self._controlled_gate(gate)
 
-    def _canonical_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]: ...
+    # def _canonical_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]: ...
 
     def _controlled_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
         if not gate.controlled:
@@ -286,15 +286,10 @@ def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
         dtype=np.complex128,
     )
 
-
 def nearest_kronecker_product(C: NDArray[np.complex128]) -> tuple[NDArray[np.complex128], NDArray[np.complex128]]:
-    """ """
     if C.shape != (4, 4):
-        msg = "C has to have the shape (4, 4), but has shape {C.shape} instead."
+        msg = f"C has to have the shape (4, 4), but has shape {C.shape} instead."
         raise ValueError(msg)
-    # phase = np.trace(C.conj().T @ C)
-    # phase /= np.abs(phase)
-    # C /= phase
 
     C = C.reshape(2, 2, 2, 2)
     C = C.transpose(0, 2, 1, 3)
@@ -303,31 +298,66 @@ def nearest_kronecker_product(C: NDArray[np.complex128]) -> tuple[NDArray[np.com
     u, sv, vh = np.linalg.svd(C)
     A = np.sqrt(sv[0]) * u[:, 0].reshape(2, 2)
     B = np.sqrt(sv[0]) * vh[0, :].reshape(2, 2)
-    return A, B
+
+    phase = np.exp(1j*np.angle(A.flat[np.argmax(np.abs(A))]))
+    return A / phase, B * phase
 
 
-def canonical_decomposition(U: NDArray[np.complex128]):
-    # Magic gate
-    M = (1 / np.sqrt(2)) * np.array([[1, 1j, 0, 0], [0, 0, 1j, 1], [0, 0, 1j, -1], [1, -1j, 0, 0]], dtype=np.complex128)
+def global_phase_and_su4(U):
+    """Extract global phase so that det(U_su) = 1.  U = e^{i alpha} U_su."""
+    d = np.linalg.det(U)
+    alpha = np.angle(d) / 4.0
+    U_su = U * np.exp(-1j * alpha)
+    return alpha, U_su
 
-    V = M @ U @ M.conj().T
-    eig_vals, Q1 = np.linalg.eig(V.T @ V)
-    _, Q2 = np.linalg.eig(V @ V.T)
+def dagger(U):
+    return np.conjugate(U.T)
 
+def canonical_decomposition(U: NDArray[np.complex128]):       
+    alpha, U_su = global_phase_and_su4(U)
+    
+    M = (1 / np.sqrt(2)) * np.array([
+            [1,  0,  0, 1j], 
+            [0, 1j,  1, 0], 
+            [0, 1j, -1, 0], 
+            [1,  0,  0, -1j]
+        ],
+    dtype=np.complex128)
+
+    U_B = dagger(M) @ U_su @ M        
+    U_B = np.round(U_B, decimals=10)
+
+    # Extract local opperations
+    eig_vals, eig_vecs = np.linalg.eig(U_B.T @ U_B)    
+
+    O2 = eig_vecs.T
+    for perm in itertools.permutations(range(4)):
+        O2_perm = O2[:, perm]                
+        k1, k2 = nearest_kronecker_product(O2_perm)  
+        
+        if np.allclose(np.kron(k1, k2), O2_perm):
+            eig_vals = eig_vals[np.array(perm)]
+            O2 = O2_perm
+            break
+      
+    eig_vals, eig_vecs = np.linalg.eig(U_B @ U_B.T)
+    O1 = eig_vecs
+    for perm in itertools.permutations(range(4)):
+        O1_perm = O1[:, perm]                
+        k3, k4 = nearest_kronecker_product(O1_perm)   
+        if np.allclose(np.kron(k3, k4), O1_perm):
+            break
+  
     # Extract canonical gate coordinates from eigenvalues
-    v = -1j * np.log(eig_vals) / np.pi
-    Ainv = (1 / 4) * np.array([[1, -1, 1, -1], [-1, 1, 1, -1], [1, 1, -1, -1]])
-    tx, ty, tz = Ainv @ v
+    v = np.angle(eig_vals) / np.pi
+    tx = np.round((v[0] + v[1]) / 2, decimals=10)
+    ty = np.round((v[1] + v[3]) / 2, decimals=10)
+    tz = np.round((v[0] + v[3]) / 2, decimals=10)
 
-    # Find single-qubit operations
-    X = M @ Q1 @ M.conj().T
-    K1, K2 = nearest_kronecker_product(X)
-
-    Y = M @ Q2 @ M.conj().T
-    K3, K4 = nearest_kronecker_product(Y)
-
-    return (tx, ty, tz), [K1, K2, K3, K4]
-
+    return k1, k2, k3, k4, (tx, ty, tz)
+   
+    # if np.linalg.det(O1) < 0: O1[:,0] *= -1
+    # if np.linalg.det(O2) < 0: O2[:,0] *= -1
 
 def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
     """

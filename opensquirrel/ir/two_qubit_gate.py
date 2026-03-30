@@ -1,10 +1,11 @@
+from opensquirrel.ir.semantics.bsr import bsr_from_matrix
 from functools import cached_property
 from typing import Any
 
 import numpy as np
 
 from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic, CanonicalAxis
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 from opensquirrel.utils import get_matrix
 
@@ -23,7 +24,7 @@ class TwoQubitGate(Gate):
         self.gate_semantic = gate_semantic
 
         if self._check_repeated_qubit_operands(self.qubit_operands):
-            msg = "qubit0 and qubit1 cannot be the same"
+            msg = "qubit operands cannot be the same qubit"
             raise ValueError(msg)
 
     def __repr__(self) -> str:
@@ -49,11 +50,11 @@ class TwoQubitGate(Gate):
         if self._canonical:
             return self._canonical
 
-        if self._controlled:
-            ...
+        from opensquirrel.utils.matrix_expander import canonical_decomposition
 
-        if self._matrix:
-            ...
+        k1, k2, k3, k4, axis = canonical_decomposition(np.array(self.matrix))            
+        self._canonical = CanonicalGateSemantic(axis, [k1, k2, k3, k4])
+        return self._canonical
 
     @cached_property
     def controlled(self) -> ControlledGateSemantic | None:
@@ -64,10 +65,15 @@ class TwoQubitGate(Gate):
             return None
 
         if self._canonical:
-            if ():
-                return ...
-
+            matrix_4x4 = np.array(self.matrix)                
             return None
+            # tx, ty, tz = self._canonical.axis
+            # if (ty == 0 and tz == 0):
+                
+            #     bsr = bsr_from_matrix(matrix_4x4[2:, 2:])
+            #     self._controlled = ControlledGateSemantic(bsr)
+            #     return self._controlled
+        return None
 
     def accept(self, visitor: IRVisitor) -> Any:
         visit_parent = super().accept(visitor)

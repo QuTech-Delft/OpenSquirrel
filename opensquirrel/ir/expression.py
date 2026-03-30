@@ -1,4 +1,5 @@
 from __future__ import annotations
+from opensquirrel.common import ATOL
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
@@ -233,7 +234,7 @@ class BaseAxis(Expression, ABC):
         """
         if not isinstance(other, self.__class__):
             return False
-        return np.array_equal(self, other)
+        return np.allclose(self, other, atol=ATOL)
 
 
 class Axis(BaseAxis):

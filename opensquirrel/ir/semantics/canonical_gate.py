@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 
 
 class CanonicalAxis(BaseAxis):
+    restrict: bool = True
+
+
     @staticmethod
     def parse(axis: AxisLike) -> NDArray[np.float64]:
         """Parse and validate an ``AxisLike``.
@@ -40,8 +43,9 @@ class CanonicalAxis(BaseAxis):
         if len(axis) != 3:
             msg = f"axis has size {len(axis)!r}: requires an ArrayLike of length 3"
             raise ValueError(msg)
-
-        return CanonicalAxis.restrict_to_weyl_chamber(axis)
+        if CanonicalAxis.restrict:
+            return CanonicalAxis.restrict_to_weyl_chamber(axis)
+        return axis
 
     @staticmethod
     def restrict_to_weyl_chamber(axis: NDArray[np.float64]) -> NDArray[np.float64]:

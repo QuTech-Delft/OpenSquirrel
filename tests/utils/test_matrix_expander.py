@@ -1,3 +1,5 @@
+from pygments.unistring import Co
+from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from math import pi, sqrt
 from typing import Any
 
@@ -6,7 +8,7 @@ import numpy.testing
 import pytest
 from numpy.typing import NDArray
 
-from opensquirrel.ir import AxisLike
+from opensquirrel.ir import AxisLike, Axis
 from opensquirrel.ir.semantics import (
     BlochSphereRotation,
     CanonicalAxis,
@@ -116,19 +118,37 @@ def test_canonical_gate(axis: AxisLike, expected_matrix: NDArray[Any]) -> None:
         (np.array([[1, 0], [0, 1]]), np.array([[1, 0], [0, 1]])),
         (np.array([[0, 1], [1, 0]]), np.array([[1, 0], [0, -1]])),
         (np.array([[0, 1j], [-1j, 0]]), np.array([[1, 0], [0, -1]])),
+        (np.array([[1, 0], [0, 1j]]), np.array([[1, 0], [0, -1]])),        
         (1 / np.sqrt(2) * np.array([[1, 1], [1, -1]]), 1 / np.sqrt(2) * np.array([[1, 1], [1, -1]])),
     ],
 )
 def test_nearest_kronecker_product(matrix_a: NDArray[Any], matrix_b: NDArray[Any]) -> None:
     C = np.kron(matrix_a, matrix_b)
     recovered_matrix_a, recovered_matrix_b = nearest_kronecker_product(C)
-    np.testing.assert_almost_equal(C, np.kron(recovered_matrix_a, recovered_matrix_b))
+    np.testing.assert_almost_equal(C, np.kron(recovered_matrix_a, recovered_matrix_b))   
 
 
-def test_can_decomp():
-    axis_original = CanonicalAxis(1 / 2, 0, 0)
-    X = can2(axis_original)
+@pytest.mark.parametrize(
+    ("axis"),
+    [
+        (0, 0, 0),
+        (1/2, 0, 0),
+        (1/2, 1/2, 0),
+        (1/2, 1/2, 1/2), 
+        (1/4, 0, 0),
+        (1/4, 1/4, 0), 
+        (3/8, 3/8, 0),
+        (1/4, 1/4, 1/4),
+        (1/2, 1/4, 0),
+        (1/2, 1/4, 1/4),
+        (1/2, 1/2, 1/4),
+        (1/2, 1/2, 1/12),
+    ]
+)
+def test_canonical_decomposition(axis: tuple[float]) -> None:    
+    X = can2(axis)
+    K1, K2, K3, K4, axis_recov = canonical_decomposition(X)
+    assert CanonicalAxis(axis) == CanonicalAxis(axis_recov)
 
-    axis, (K1, K2, K3, K4) = canonical_decomposition(X)
-
-    np.testing.assert_almost_equal(X, np.kron(K1, K2))
+    Y = np.kron(K3, K4) @ can2(axis_recov) @ np.kron(K1, K2)
+    assert are_matrices_equivalent_up_to_global_phase(X, Y)
