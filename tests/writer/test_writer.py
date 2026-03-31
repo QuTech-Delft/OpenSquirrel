@@ -99,6 +99,7 @@ def test_parametrized_measure() -> None:
     builder.measure(0, 0, Axis(-0.0000001, 0.0000001, 1.0000001))
     builder.measure(0, 0, Axis(1, 0, 0))
     builder.measure(0, 0, Axis(0, 1, 0))
+    builder.measure(0, 0, Axis(0, 0, -1))
     builder.measure(0, 0, Axis(1 / sqrt(2), 0, 1 / sqrt(2)))
     circuit = builder.to_circuit()
     assert (
@@ -113,6 +114,7 @@ b[0] = measure q[0]
 b[0] = measure q[0]
 b[0] = measure(1.0, 0.0, 0.0) q[0]
 b[0] = measure(0.0, 1.0, 0.0) q[0]
+b[0] = measure(0.0, 0.0, -1.0) q[0]
 b[0] = measure(0.70710678, 0.0, 0.70710678) q[0]
 """
     )
