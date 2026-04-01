@@ -12,9 +12,11 @@ import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.common import ATOL
-from opensquirrel.exceptions import ExporterError
+from opensquirrel.exceptions import ExporterError, UnsupportedMeasureError
+from opensquirrel.ir.expression import Axis
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.passes.exporter import quantify_scheduler_exporter
 from opensquirrel.passes.exporter.quantify_scheduler_exporter import CYCLE_TIME, QuantifySchedulerExporter
 
 if TYPE_CHECKING:
@@ -99,6 +101,21 @@ def test_supported_gate_set(qs_is_installed: bool, exporter: QuantifySchedulerEx
         exported_schedule = circuit.export(exporter=exporter)
         for operation_data in exported_schedule.operations.values():
             assert operation_data.name in expected_operations
+
+
+def test_parameterized_measure_error(qs_is_installed: bool, exporter: QuantifySchedulerExporter) -> None:
+    if qs_is_installed:
+        builder = CircuitBuilder(1, 1)
+        builder.measure(0, 0, Axis(0, 0, 1))
+        circuit = builder.to_circuit()
+        
+        with pytest.raises(
+            UnsupportedMeasureError,
+            match=r"measurement along Axis\[1\. 0\. 0\.\] is not supported: decompose measurement before exporting"
+            ):
+            builder.measure(0, 0, Axis(1, 0, 0))
+            circuit = builder.to_circuit()
+            _ = circuit.export(exporter=exporter)
 
 
 @pytest.mark.parametrize(

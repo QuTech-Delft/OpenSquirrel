@@ -4,9 +4,11 @@ import math
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
+import numpy as np
+
 from opensquirrel import Init, Measure, Reset, Wait
 from opensquirrel.common import ATOL
-from opensquirrel.exceptions import ExporterError, UnsupportedGateError
+from opensquirrel.exceptions import ExporterError, UnsupportedGateError, UnsupportedMeasureError
 from opensquirrel.ir import (
     ControlInstruction,
     Gate,
@@ -286,6 +288,8 @@ class _ScheduleCreator(IRVisitor):
             )
 
     def visit_measure(self, measure: Measure) -> None:
+        if not np.allclose(measure.axis.value, (0, 0, 1), atol=ATOL):
+            raise UnsupportedMeasureError(measure)
         qubit_index = measure.qubit.index
         acq_index = self.measurement_index_record[qubit_index]
         self.schedule.add(
