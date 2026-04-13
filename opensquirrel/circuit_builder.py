@@ -8,7 +8,7 @@ from typing import Any
 from typing_extensions import Self
 
 from opensquirrel.circuit import Circuit
-from opensquirrel.default_instructions import default_instruction_set
+from opensquirrel.default_instructions import default_instruction_set, default_two_qubit_gate_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
 from opensquirrel.register_manager import (
     DEFAULT_BIT_REGISTER_NAME,
@@ -120,33 +120,7 @@ class CircuitBuilder:
             self._check_bit_out_of_bounds_access(bit)
 
     @staticmethod
-    def _is_sgmq_expandable(arg: Any) -> bool:
-        """Check if an argument should be expanded for SGMQ notation.
-
-        An argument should be expanded if it is:
-        - A list (but not a tuple, which is used for axis arguments)
-        - A Register (QubitRegister or BitRegister) that is not being used as an index
-
-        Args:
-            arg: The argument to check.
-
-        Returns:
-            True if the argument should be expanded, False otherwise.
-
-        """
-        return isinstance(arg, (Register, list))
-
-    @staticmethod
     def _expand_sgmq_arg(arg: Any) -> list[Any]:
-        """Expand an SGMQ argument into a list of individual values.
-
-        Args:
-            arg: The argument to expand (Register or list).
-
-        Returns:
-            A list of individual values.
-
-        """
         if isinstance(arg, Register):
             return list(arg)
         if isinstance(arg, list):
@@ -185,70 +159,38 @@ class CircuitBuilder:
         if not args:
             return [args]
 
-        expandable_indices = [i for i, arg in enumerate(args) if self._is_sgmq_expandable(arg)]
+        first_expandable = isinstance(args[0], (Register, list))
 
-        if not expandable_indices:
+        if not first_expandable:
             return [args]
 
-        if attr == "measure":
-            return self._expand_measure_args(args, expandable_indices)
+        is_two_operand_instruction = attr in default_two_qubit_gate_set or attr == "measure"
 
-        if self._is_tuple_style_sgmq(args):
-            return self._expand_tuple_style_args(args)
+        if len(args) > 1 and is_two_operand_instruction:
+            second_expandable = isinstance(args[1], (Register, list))
 
-        if 0 not in expandable_indices:
-            return [args]
+            if second_expandable:
+                expanded_first = self._expand_sgmq_arg(args[0])
+                expanded_second = self._expand_sgmq_arg(args[1])
 
-        expanded_qubits = self._expand_sgmq_arg(args[0])
+                if len(expanded_first) != len(expanded_second):
+                    msg = (
+                        f"SGMQ requires matching operand lengths: got {len(expanded_first)} and {len(expanded_second)}"
+                    )
+                    raise ValueError(msg)
+
+                remaining_args = args[2:]
+                return [
+                    (first, second, *remaining_args)
+                    for first, second in zip(expanded_first, expanded_second, strict=True)
+                ]
+
+            msg = "For two-operand instructions, SGMQ requires both operands to be lists/registers of equal length"
+            raise ValueError(msg)
+
+        expanded_first = self._expand_sgmq_arg(args[0])
         remaining_args = args[1:]
-
-        return [(qubit, *remaining_args) for qubit in expanded_qubits]
-
-    @staticmethod
-    def _is_tuple_style_sgmq(args: tuple[Any, ...]) -> bool:
-        if len(args) < 2:
-            return False
-
-        if not all(isinstance(arg, list) for arg in args):
-            return False
-
-        first_len = len(args[0])
-        if first_len == 0:
-            return False
-
-        return all(len(arg) == first_len for arg in args)
-
-    @staticmethod
-    def _expand_tuple_style_args(args: tuple[Any, ...]) -> list[tuple[Any, ...]]:
-        return [tuple(arg) for arg in args]
-
-    def _expand_measure_args(self, args: tuple[Any, ...], expandable_indices: list[int]) -> list[tuple[Any, ...]]:
-        qubit_arg = args[0]
-        bit_arg = args[1] if len(args) > 1 else None
-        remaining_args = args[2:] if len(args) > 2 else ()
-
-        qubit_expandable = 0 in expandable_indices
-        bit_expandable = 1 in expandable_indices
-
-        if qubit_expandable and bit_expandable:
-            expanded_qubits = self._expand_sgmq_arg(qubit_arg)
-            expanded_bits = self._expand_sgmq_arg(bit_arg)
-
-            if len(expanded_qubits) != len(expanded_bits):
-                msg = (
-                    f"SGMQ measure requires matching qubit and bit lengths: "
-                    f"got {len(expanded_qubits)} qubits and {len(expanded_bits)} bits"
-                )
-                raise ValueError(msg)
-
-            return [(qubit, bit, *remaining_args) for qubit, bit in zip(expanded_qubits, expanded_bits, strict=True)]
-        if qubit_expandable:
-            expanded_qubits = self._expand_sgmq_arg(qubit_arg)
-            return [(qubit, bit_arg, *remaining_args) for qubit in expanded_qubits]
-        if bit_expandable:
-            expanded_bits = self._expand_sgmq_arg(bit_arg)
-            return [(qubit_arg, bit, *remaining_args) for bit in expanded_bits]
-        return [args]
+        return [(first, *remaining_args) for first in expanded_first]
 
     def to_circuit(self) -> Circuit:
         """Build the circuit.
