@@ -37,8 +37,13 @@ class TwoQubitGate(Gate):
             return self._matrix
 
         if self._canonical:
-            from opensquirrel.utils.matrix_expander import can2
+            from opensquirrel.utils.matrix_expander import can1, can2
 
+            if self._canonical.rotations is not None:
+                k1, k2, k3, k4 = (
+                    can1(rotation.axis, rotation.angle, rotation.phase) for rotation in self._canonical.rotations
+                )
+                return MatrixGateSemantic(np.kron(k3, k4) @ can2(self._canonical.axis) @ np.kron(k1, k2))
             return MatrixGateSemantic(can2(self._canonical.axis))
         return MatrixGateSemantic(np.eye(4))
 
@@ -62,12 +67,6 @@ class TwoQubitGate(Gate):
     def controlled(self) -> ControlledGateSemantic | None:
         if self._controlled:
             return self._controlled
-
-        if self._matrix:
-            return None
-
-        if self._canonical:
-            return None
         return None
 
     @property

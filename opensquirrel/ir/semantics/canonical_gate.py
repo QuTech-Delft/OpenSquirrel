@@ -126,7 +126,10 @@ class CanonicalGateSemantic(GateSemantic):
             True if the canonical gate semantic represents an identity operation, False otherwise.
 
         """
-        return self.axis == CanonicalAxis((0, 0, 0))
+        if not self.rotations:
+            return self.axis == CanonicalAxis((0, 0, 0))
+        return self.axis == CanonicalAxis((0, 0, 0)) and all(rotation.is_identity() for rotation in self.rotations)
 
     def __repr__(self) -> str:
-        return f"CanonicalGateSemantic(axis={self.axis})"
+        rotation_str = f", rotations={self.rotations}" if self.rotations else ""
+        return f"CanonicalGateSemantic(axis={self.axis}{rotation_str})"
