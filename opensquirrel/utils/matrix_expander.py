@@ -337,7 +337,7 @@ def global_phase_and_su4(unitary: NDArray[np.complex128]) -> tuple[float, NDArra
 def _orthogonal_diagonalization(
     matrix: NDArray[np.complex128],
 ) -> tuple[NDArray[np.complex128], NDArray[np.complex128]]:
-    """    
+    """
     Adapted from: https://github.com/gecrooks/quantumflow/blob/master/quantumflow/decompositions.py#L324
     """
     rng = np.random.default_rng()

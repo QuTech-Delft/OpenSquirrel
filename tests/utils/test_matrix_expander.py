@@ -1,13 +1,11 @@
-from pyqtgraph.examples.MultiDataPlot import rng
-from itertools import product, starmap
 from math import pi, sqrt
 from typing import Any
 
 import numpy as np
-from scipy.linalg import expm
 import numpy.testing
 import pytest
 from numpy.typing import NDArray
+from scipy.linalg import expm
 
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.ir import AxisLike
@@ -17,14 +15,14 @@ from opensquirrel.ir.semantics import (
     ControlledGateSemantic,
     MatrixGateSemantic,
 )
+from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
-from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
 from opensquirrel.utils import get_matrix
-from opensquirrel.utils.matrix_expander import can1, can2, canonical_decomposition, nearest_kronecker_product
+from opensquirrel.utils.matrix_expander import can2, canonical_decomposition, nearest_kronecker_product
 
 
-def random_2x2_unitary():    
+def random_2x2_unitary() -> NDArray[np.complex128]:
     rng = np.random.default_rng()
     h = rng.standard_normal((2, 2)) + 1j * rng.standard_normal((2, 2))
     h = (h + h.conj().T) / 2
@@ -167,7 +165,6 @@ def test_canonical_decomposition(axis: tuple[float]) -> None:
 
     y = np.kron(k3, k4) @ can2(axis_recov) @ np.kron(k1, k2)
     assert are_matrices_equivalent_up_to_global_phase(x, y)
-
 
 
 def test_canonical_decomposition_nontrivial_local_operators() -> None:
