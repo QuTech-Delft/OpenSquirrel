@@ -5,16 +5,26 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import AxisLike, IRVisitor
 from opensquirrel.ir.expression import BaseAxis
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 
 if TYPE_CHECKING:
+    from opensquirrel.ir import AxisLike, IRVisitor
     from opensquirrel.ir.semantics import BlochSphereRotation
 
 
 class CanonicalAxis(BaseAxis):
     restrict: bool = True
+
+    @staticmethod
+    def in_weyl_chamber(tx: float, ty: float, tz: float) -> bool:
+        """Checks if the canonical axis is in the Weyl chamber.
+
+        Returns:
+            True if the canonical axis is in the Weyl chamber, False otherwise.
+
+        """
+        return 1 / 2 >= tx >= ty >= tz >= 0 or 1 / 2 >= (1 - tx) >= ty >= tz > 0
 
     @staticmethod
     def parse(axis: AxisLike) -> NDArray[np.float64]:

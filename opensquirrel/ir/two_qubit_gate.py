@@ -5,6 +5,7 @@ import numpy as np
 
 from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir.semantics.bsr import bsr_from_matrix
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 from opensquirrel.utils import get_matrix
 
@@ -49,7 +50,12 @@ class TwoQubitGate(Gate):
         from opensquirrel.utils.matrix_expander import canonical_decomposition
 
         k1, k2, k3, k4, axis = canonical_decomposition(np.array(self.matrix))
-        self._canonical = CanonicalGateSemantic(axis, [k1, k2, k3, k4])
+
+        bsr1 = bsr_from_matrix(k1)
+        bsr2 = bsr_from_matrix(k2)
+        bsr3 = bsr_from_matrix(k3)
+        bsr4 = bsr_from_matrix(k4)
+        self._canonical = CanonicalGateSemantic(axis, [bsr1, bsr2, bsr3, bsr4])
         return self._canonical
 
     @cached_property
@@ -61,14 +67,7 @@ class TwoQubitGate(Gate):
             return None
 
         if self._canonical:
-            matrix_4x4 = np.array(self.matrix)
             return None
-            # tx, ty, tz = self._canonical.axis
-            # if (ty == 0 and tz == 0):
-
-            #     bsr = bsr_from_matrix(matrix_4x4[2:, 2:])
-            #     self._controlled = ControlledGateSemantic(bsr)
-            #     return self._controlled
         return None
 
     @property
