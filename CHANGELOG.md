@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Add Single Gate Multi Qubit (SGMQ) notation to the `CircuitBuilder`
 - The cycle time [seconds] can be set when instantiating the `QuantifySchedulerExporter` through the `cycle_time`
 parameter
 - `CircuitBuilder` accepts multiple (qu)bit registers through `add_register` method
