@@ -277,7 +277,6 @@ def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
         The unitary $4\\times 4$ matrix.
 
     """
-    # with temporary_class_attr(CanonicalAxis, "restrict", False):
     tx, ty, tz = CanonicalAxis(canonical_axis)
 
     return np.array(
@@ -316,9 +315,7 @@ def nearest_kronecker_product(c: NDArray[np.complex128]) -> tuple[NDArray[np.com
         msg = f"c has to have the shape (4, 4), but has shape {c.shape} instead."
         raise ValueError(msg)
 
-    c = c.reshape(2, 2, 2, 2)
-    c = c.transpose(0, 2, 1, 3)
-    c = c.reshape(4, 4)
+    c = c.reshape(2, 2, 2, 2).swapaxes(1, 2).reshape(4,4)
 
     u, sv, vh = np.linalg.svd(c)
     a = np.sqrt(sv[0]) * u[:, 0].reshape(2, 2)
@@ -354,7 +351,7 @@ def _orthogonal_diagonalization(
         if np.allclose(matrix, reconstructed):
             return eigvals, eigvecs
 
-    msg = "Matrix is not orthogonally diagonalizable"
+    msg = "matrix is not orthogonally diagonalizable"
     raise np.linalg.LinAlgError(msg)
 
 
@@ -395,7 +392,7 @@ def constrain_to_weyl_chamber(
             if CanonicalAxis.in_weyl_chamber(*coords):
                 return coords, np.asarray(signs), np.asarray(permutation)
 
-    msg = "Could not find a permutation and signs to put lambdas in the Weyl chamber."
+    msg = "could not find a permutation and signs to put lambdas in the Weyl chamber."
     raise ValueError(msg)
 
 

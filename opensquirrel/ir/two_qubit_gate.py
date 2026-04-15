@@ -39,35 +39,33 @@ class TwoQubitGate(Gate):
         if self._canonical:
             from opensquirrel.utils.matrix_expander import can1, can2
 
-            if self._canonical.rotations is not None:
+            if self._canonical.rotations:
                 k1, k2, k3, k4 = (
                     can1(rotation.axis, rotation.angle, rotation.phase) for rotation in self._canonical.rotations
                 )
                 return MatrixGateSemantic(np.kron(k3, k4) @ can2(self._canonical.axis) @ np.kron(k1, k2))
             return MatrixGateSemantic(can2(self._canonical.axis))
-        return MatrixGateSemantic(np.eye(4))
+
+        msg = f"invalid GateSemantic: {self.gate_semantic}"
+        raise ValueError(msg)    
 
     @cached_property
     def canonical(self) -> CanonicalGateSemantic:
-        if self._canonical:
-            return self._canonical
+        if not self._canonical:           
+            from opensquirrel.utils.matrix_expander import canonical_decomposition
 
-        from opensquirrel.utils.matrix_expander import canonical_decomposition
+            k1, k2, k3, k4, axis = canonical_decomposition(np.array(self.matrix))
 
-        k1, k2, k3, k4, axis = canonical_decomposition(np.array(self.matrix))
-
-        bsr1 = bsr_from_matrix(k1)
-        bsr2 = bsr_from_matrix(k2)
-        bsr3 = bsr_from_matrix(k3)
-        bsr4 = bsr_from_matrix(k4)
-        self._canonical = CanonicalGateSemantic(axis, [bsr1, bsr2, bsr3, bsr4])
+            bsr1 = bsr_from_matrix(k1)
+            bsr2 = bsr_from_matrix(k2)
+            bsr3 = bsr_from_matrix(k3)
+            bsr4 = bsr_from_matrix(k4)
+            self._canonical = CanonicalGateSemantic(axis, [bsr1, bsr2, bsr3, bsr4])
         return self._canonical
 
     @cached_property
-    def controlled(self) -> ControlledGateSemantic | None:
-        if self._controlled:
-            return self._controlled
-        return None
+    def controlled(self) -> ControlledGateSemantic | None:        
+        return self._controlled        
 
     @property
     def qubit_operands(self) -> tuple[Qubit, ...]:

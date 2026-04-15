@@ -1,3 +1,4 @@
+from jedi.inference.base_value import Value
 import numpy as np
 import numpy.testing
 import pytest
@@ -41,24 +42,23 @@ class TestCanonicalGateSemantic:
         ]
         return CanonicalGateSemantic((0.25, 0.25, 0.25), rotations)
 
-    def test_eq(self, semantic: CanonicalGateSemantic) -> None:
-        assert semantic.is_identity()
-
     def test_init(self, semantic: CanonicalGateSemantic) -> None:
         assert isinstance(semantic, GateSemantic)
         assert hasattr(semantic, "axis")
         assert isinstance(semantic.axis, CanonicalAxis)
 
     def test_is_identity_with_zero_axis(self, semantic: CanonicalGateSemantic) -> None:
-        """Test that (0, 0, 0) axis represents an identity gate."""
         assert semantic.is_identity()
 
     def test_is_identity_with_non_zero_axis(self, semantic_with_rotations: CanonicalGateSemantic) -> None:
-        """Test that non-zero axes do not represent identity gates."""
         assert not semantic_with_rotations.is_identity()
 
     def test_rotations_attribute_list(self, semantic_with_rotations: CanonicalGateSemantic) -> None:
-        """Test that rotations can be a list of BlochSphereRotation objects."""
         assert semantic_with_rotations.rotations is not None
         assert len(semantic_with_rotations.rotations) == 4
         assert all(isinstance(rot, BlochSphereRotation) for rot in semantic_with_rotations.rotations)
+
+    def test_invalid_number_of_rotations(self) -> None:
+        rotations = [BlochSphereRotation(axis=(1, 0, 0), angle=0.5, phase=0.1)]
+        with pytest.raises(ValueError, match="invalid number of rotations, expected 4 but got 1"):
+            CanonicalGateSemantic((0, 0, 0), rotations)
