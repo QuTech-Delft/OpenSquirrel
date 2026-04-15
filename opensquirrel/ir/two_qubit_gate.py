@@ -47,11 +47,11 @@ class TwoQubitGate(Gate):
             return MatrixGateSemantic(can2(self._canonical.axis))
 
         msg = f"invalid GateSemantic: {self.gate_semantic}"
-        raise ValueError(msg)    
+        raise ValueError(msg)
 
     @cached_property
     def canonical(self) -> CanonicalGateSemantic:
-        if not self._canonical:           
+        if not self._canonical:
             from opensquirrel.utils.matrix_expander import canonical_decomposition
 
             k1, k2, k3, k4, axis = canonical_decomposition(np.array(self.matrix))
@@ -64,8 +64,8 @@ class TwoQubitGate(Gate):
         return self._canonical
 
     @cached_property
-    def controlled(self) -> ControlledGateSemantic | None:        
-        return self._controlled        
+    def controlled(self) -> ControlledGateSemantic | None:
+        return self._controlled
 
     @property
     def qubit_operands(self) -> tuple[Qubit, ...]:

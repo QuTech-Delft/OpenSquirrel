@@ -1,5 +1,4 @@
 from __future__ import annotations
-from jedi.inference.base_value import Value
 
 from typing import TYPE_CHECKING, Any
 
@@ -113,10 +112,10 @@ class CanonicalAxis(BaseAxis):
 
 class CanonicalGateSemantic(GateSemantic):
     def __init__(self, axis: AxisLike, rotations: list[BlochSphereRotation] | None = None) -> None:
-        self.axis = CanonicalAxis(axis)        
+        self.axis = CanonicalAxis(axis)
         self.rotations = rotations
-        if self.rotations and len(rotations) != 4:
-            msg = f"invalid number of rotations, expected 4 but got {len(rotations)}"
+        if self.rotations and len(self.rotations) != 4:
+            msg = f"invalid number of rotations, expected 4 but got {len(self.rotations)}"
             raise ValueError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:

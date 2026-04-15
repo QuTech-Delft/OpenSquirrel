@@ -315,7 +315,7 @@ def nearest_kronecker_product(c: NDArray[np.complex128]) -> tuple[NDArray[np.com
         msg = f"c has to have the shape (4, 4), but has shape {c.shape} instead."
         raise ValueError(msg)
 
-    c = c.reshape(2, 2, 2, 2).swapaxes(1, 2).reshape(4,4)
+    c = c.reshape(2, 2, 2, 2).swapaxes(1, 2).reshape(4, 4)
 
     u, sv, vh = np.linalg.svd(c)
     a = np.sqrt(sv[0]) * u[:, 0].reshape(2, 2)

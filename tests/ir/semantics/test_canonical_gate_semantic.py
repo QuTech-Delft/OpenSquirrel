@@ -1,4 +1,3 @@
-from jedi.inference.base_value import Value
 import numpy as np
 import numpy.testing
 import pytest
