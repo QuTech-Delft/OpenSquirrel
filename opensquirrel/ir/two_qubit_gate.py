@@ -46,7 +46,7 @@ class TwoQubitGate(Gate):
                 return MatrixGateSemantic(np.kron(k3, k4) @ can2(self._canonical.axis) @ np.kron(k1, k2))
             return MatrixGateSemantic(can2(self._canonical.axis))
 
-        msg = f"invalid GateSemantic: {self.gate_semantic}"
+        msg = f"invalid gate semantic: {self.gate_semantic}"
         raise ValueError(msg)
 
     @cached_property
