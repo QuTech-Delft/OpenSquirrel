@@ -381,12 +381,15 @@ class TestSGMQNotation:
     def test_sgmq_parametric_gate(self) -> None:
         builder = CircuitBuilder(3)
         builder.Rx([0, 1, 2], math.pi / 2)
+        builder.U([0, 1], 1.0, 2.0, 3.0)
         circuit = builder.to_circuit()
 
         assert circuit.ir.statements == [
             Rx(0, math.pi / 2),
             Rx(1, math.pi / 2),
             Rx(2, math.pi / 2),
+            U(0, 1.0, 2.0, 3.0),
+            U(1, 1.0, 2.0, 3.0),
         ]
 
     def test_sgmq_parametric_register(self) -> None:
@@ -445,35 +448,21 @@ class TestSGMQNotation:
         with pytest.raises(ValueError, match="SGMQ requires matching operand lengths: got 3 and 2"):
             builder.measure(q0, b0)
 
-    def test_sgmq_init(self) -> None:
+    def test_sgmq_init_reset(self) -> None:
         builder = CircuitBuilder(3)
         builder.init([0, 1, 2])
+        builder.reset([0, 1, 2])
         circuit = builder.to_circuit()
 
-        assert circuit.ir.statements == [Init(0), Init(1), Init(2)]
+        assert circuit.ir.statements == [Init(0), Init(1), Init(2), Reset(0), Reset(1), Reset(2)]
 
-    def test_sgmq_reset(self) -> None:
-        builder = CircuitBuilder()
-        q0 = QubitRegister(3, "q0")
-        builder.add_register(q0)
-        builder.reset(q0)
-        circuit = builder.to_circuit()
-
-        assert circuit.ir.statements == [Reset(0), Reset(1), Reset(2)]
-
-    def test_sgmq_barrier(self) -> None:
+    def test_sgmq_barrier_wait(self) -> None:
         builder = CircuitBuilder(3)
         builder.barrier([0, 1, 2])
-        circuit = builder.to_circuit()
-
-        assert circuit.ir.statements == [Barrier(0), Barrier(1), Barrier(2)]
-
-    def test_sgmq_wait(self) -> None:
-        builder = CircuitBuilder(3)
         builder.wait([0, 1], 10)
         circuit = builder.to_circuit()
 
-        assert circuit.ir.statements == [Wait(0, 10), Wait(1, 10)]
+        assert circuit.ir.statements == [Barrier(0), Barrier(1), Barrier(2), Wait(0, 10), Wait(1, 10)]
 
     def test_sgmq_mixed_with_regular_calls(self) -> None:
         builder = CircuitBuilder(4)
@@ -496,48 +485,41 @@ class TestSGMQNotation:
 
         assert circuit.ir.statements == [H(0), H(1), X(2)]
 
-    def test_sgmq_u_gate(self) -> None:
-        builder = CircuitBuilder(2)
-        builder.U([0, 1], 1.0, 2.0, 3.0)
-        circuit = builder.to_circuit()
-
-        assert circuit.ir.statements == [U(0, 1.0, 2.0, 3.0), U(1, 1.0, 2.0, 3.0)]
-
     def test_sgmq_out_of_bounds_error(self) -> None:
         builder = CircuitBuilder(3)
 
         with pytest.raises(IndexError, match="qubit index 10 is out of bounds"):
             builder.H([0, 1, 10])
 
-    def test_sgmq_cnot(self) -> None:
+    def test_sgmq_two_qubit_gates(self) -> None:
         builder = CircuitBuilder(4)
         builder.CNOT([0, 1], [2, 3])
+        builder.SWAP([0, 1], [2, 3])
+        builder.CZ([0, 1], [2, 3])
         circuit = builder.to_circuit()
 
-        assert circuit.ir.statements == [CNOT(0, 2), CNOT(1, 3)]
+        assert circuit.ir.statements == [CNOT(0, 2), CNOT(1, 3), SWAP(0, 2), SWAP(1, 3), CZ(0, 2), CZ(1, 3)]
 
     def test_sgmq_two_qubit_error(self) -> None:
         builder = CircuitBuilder(4)
 
         with pytest.raises(
             ValueError,
-            match="For two-operand instructions, SGMQ requires both operands to be lists/registers of equal length",
+            match=(
+                "SGMQ notation for multi-operand instructions requires operands to be "
+                "lists or registers \\(and of equal length\\)"
+            ),
         ):
             builder.CNOT([0, 1, 2], 3)
 
-    def test_sgmq_swap(self) -> None:
-        builder = CircuitBuilder(4)
-        builder.SWAP([0, 1], [2, 3])
+    def test_sgmq_two_qubit_different_operand_types(self) -> None:
+        builder = CircuitBuilder(2)
+        q0 = QubitRegister(2, "q0")
+        builder.add_register(q0)
+        builder.CNOT([0, 1], q0)
         circuit = builder.to_circuit()
 
-        assert circuit.ir.statements == [SWAP(0, 2), SWAP(1, 3)]
-
-    def test_sgmq_cz(self) -> None:
-        builder = CircuitBuilder(4)
-        builder.CZ([0, 1], [2, 3])
-        circuit = builder.to_circuit()
-
-        assert circuit.ir.statements == [CZ(0, 2), CZ(1, 3)]
+        assert circuit.ir.statements == [CNOT(0, 2), CNOT(1, 3)]
 
     def test_sgmq_length_mismatch(self) -> None:
         builder = CircuitBuilder(4)

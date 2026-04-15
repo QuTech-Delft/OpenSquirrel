@@ -156,12 +156,7 @@ class CircuitBuilder:
         return self
 
     def _expand_sgmq_args(self, attr: str, args: tuple[Any, ...]) -> list[tuple[Any, ...]]:
-        if not args:
-            return [args]
-
-        first_expandable = isinstance(args[0], (Register, list))
-
-        if not first_expandable:
+        if not isinstance(args[0], (Register, list)):
             return [args]
 
         is_two_operand_instruction = attr in default_two_qubit_gate_set or attr == "measure"
@@ -185,7 +180,10 @@ class CircuitBuilder:
                     for first, second in zip(expanded_first, expanded_second, strict=True)
                 ]
 
-            msg = "For two-operand instructions, SGMQ requires both operands to be lists/registers of equal length"
+            msg = (
+                "SGMQ notation for multi-operand instructions requires operands to be "
+                "lists or registers (and of equal length)"
+            )
             raise ValueError(msg)
 
         expanded_first = self._expand_sgmq_arg(args[0])
