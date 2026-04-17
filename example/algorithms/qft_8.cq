@@ -1,6 +1,22 @@
+/*
+ * Quantum Fourier Transform (QFT) on 8 qubits.
+ *
+ * The QFT is the quantum analogue of the discrete Fourier transform.
+ * It maps computational basis states to their frequency-domain
+ * representation and is a key subroutine in many quantum algorithms,
+ * including Shor's factoring algorithm and quantum phase estimation.
+ * The decomposition applies a Hadamard gate to each qubit
+ * followed by controlled phase rotations with successively halving
+ * angles (pi/2, pi/4, ...), then reverses the qubit order with
+ * SWAP gates.
+ *
+ */
+
+
 version 3.0
 
 qubit[8] q
+bit[8] b
 
 
 Rz(3.14) q[7]
@@ -187,3 +203,13 @@ CNOT q[6],  q[1]
 CNOT q[1],  q[6]
 CNOT q[7],  q[0]
 CNOT q[0],  q[7]
+
+
+b[0] = measure q[0]
+b[1] = measure q[1]
+b[2] = measure q[2]
+b[3] = measure q[3]
+b[4] = measure q[4]
+b[5] = measure q[5]
+b[6] = measure q[6]
+b[7] = measure q[7]
