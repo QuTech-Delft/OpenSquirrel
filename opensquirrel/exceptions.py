@@ -25,8 +25,8 @@ class UnsupportedMeasureError(Exception):
             measure: Measure that is not supported.
         """
         super().__init__(
-            f"measurement along {measure.axis!r} is not supported: "
-            "decompose measurement before exporting", *args)
+            f"measurement along {measure.axis!r} is not supported: decompose measurement before exporting", *args
+        )
 
 
 class ExporterError(Exception):

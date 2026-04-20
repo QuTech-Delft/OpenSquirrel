@@ -163,7 +163,7 @@ class LibQasmParser:
             ]
         return list(zip(*extended_operands, strict=False))
 
-    def _get_expanded_measure_args(self, instruction: cqasm.semantic.Instruction) -> list[tuple[Any, ...]]:
+    def _get_expanded_measure_args(self, instruction: cqasm.semantic.NonGateInstruction) -> list[tuple[Any, ...]]:
         """Construct a list with a list of bits and a list of qubits, then return a zip of both lists.
         For example: [(Qubit(0), Bit(0)), (Qubit(1), Bit(1))], for non-parameterized measurement,
         or [(Qubit(0), Bit(0), [Int(1), Int(0), Int(0)]), (Qubit(1), Bit(1), [Int(1), Int(0), Int(0)])],
@@ -172,6 +172,7 @@ class LibQasmParser:
         # Notice the list is walked in reverse mode
         # This is because the AST measure node has a bit first operand and a qubit second operand
         expanded_args: list[list[Any]] = []
+
         for ast_arg in reversed(instruction.operands):
             if self._is_qubit_type(ast_arg):
                 expanded_args.append(self._get_qubits(ast_arg))
