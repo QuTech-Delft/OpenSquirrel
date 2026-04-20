@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import cmath
+import itertools
 import math
 from collections.abc import Iterable
 from math import pi
@@ -9,6 +10,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from numpy.typing import NDArray
 
+from opensquirrel.common import ATOL
 from opensquirrel.ir import (
     Axis,
     AxisLike,
@@ -140,9 +142,7 @@ class _MatrixExpander(IRVisitor):
             msg = f"gate {gate!r} does not have a controlled gate semantic"
             raise ValueError(msg)
 
-        qubit_operands = list(reversed(gate.qubit_operands))
-
-        if any(q.index >= self.qubit_register_size for q in qubit_operands):
+        if any(q.index >= self.qubit_register_size for q in gate.qubit_operands):
             msg = "index out of range"
             raise IndexError(msg)
 
@@ -308,6 +308,139 @@ def can2(canonical_axis: AxisLike) -> NDArray[np.complex128]:
         ],
         dtype=np.complex128,
     )
+
+
+def nearest_kronecker_product(c: NDArray[np.complex128]) -> tuple[NDArray[np.complex128], NDArray[np.complex128]]:
+    if c.shape != (4, 4):
+        msg = f"c has to have the shape (4, 4), but has shape {c.shape} instead."
+        raise ValueError(msg)
+
+    c = c.reshape(2, 2, 2, 2).swapaxes(1, 2).reshape(4, 4)
+
+    u, sv, vh = np.linalg.svd(c)
+    a = np.sqrt(sv[0]) * u[:, 0].reshape(2, 2)
+    b = np.sqrt(sv[0]) * vh[0, :].reshape(2, 2)
+    return a, b
+
+
+def global_phase_and_su4(unitary: NDArray[np.complex128]) -> tuple[float, NDArray[np.complex128]]:
+    """Extract global phase so that det(u_su) = 1.  U = e^{i alpha} u_su."""
+    d = np.linalg.det(unitary)
+    alpha = np.angle(d) / 4.0
+    u_su = unitary * np.exp(-1j * alpha)
+    return alpha, u_su
+
+
+def _orthogonal_diagonalization(
+    matrix: NDArray[np.complex128],
+) -> tuple[NDArray[np.complex128], NDArray[np.complex128]]:
+    """
+    Adapted from: https://github.com/gecrooks/quantumflow/blob/master/quantumflow/decompositions.py#L324
+    """
+    rng = np.random.default_rng()
+    max_attempts = 16
+    for _ in range(max_attempts):
+        c = rng.uniform(0, 1)
+        m = c * matrix.real + (1 - c) * matrix.imag
+        _, eigvecs = np.linalg.eigh(m)
+        eigvecs = np.array(eigvecs, dtype=complex)
+        eigvals = np.diag(eigvecs.transpose() @ matrix @ eigvecs)
+
+        # Finish if we got a correct answer.
+        reconstructed = eigvecs @ np.diag(eigvals) @ eigvecs.transpose()
+        if np.allclose(matrix, reconstructed):
+            return eigvals, eigvecs
+
+    msg = "matrix is not orthogonally diagonalizable"
+    raise np.linalg.LinAlgError(msg)
+
+
+def lambdas_to_coords(lambdas: NDArray[np.complex128]) -> tuple[float, float, float]:
+    l1, l2, _, l4 = lambdas
+    c1 = np.real(1j * np.log(l1 * l2))
+    c2 = np.real(1j * np.log(l2 * l4))
+    c3 = np.real(1j * np.log(l1 * l4))
+    coords = np.asarray((c1, c2, c3)) / np.pi
+
+    coords[np.abs(coords - 1) < ATOL] = -1
+    if all(coords < 0):
+        coords += 1
+
+    if np.abs(coords[0] - coords[1]) < ATOL:
+        coords[1] = coords[0]
+
+    if np.abs(coords[1] - coords[2]) < ATOL:
+        coords[2] = coords[1]
+
+    if np.abs(coords[0] - coords[1] - 1 / 2) < ATOL:
+        coords[1] = coords[0] - 1 / 2
+
+    coords[np.abs(coords) < ATOL] = 0
+    return coords
+
+
+def constrain_to_weyl_chamber(
+    lambdas: NDArray[np.complex128],
+) -> tuple[tuple[float, float, float], NDArray[np.int8], NDArray[np.int8]]:
+    for permutation in itertools.permutations(range(4)):
+        for signs in ([1, 1, 1, 1], [1, 1, -1, -1], [-1, 1, -1, 1], [1, -1, -1, 1]):
+            signed_lambdas = lambdas * np.asarray(signs)
+            lambdas_perm = signed_lambdas[list(permutation)]
+
+            coords = lambdas_to_coords(lambdas_perm)
+
+            if CanonicalAxis.in_weyl_chamber(*coords):
+                return coords, np.asarray(signs), np.asarray(permutation)
+
+    msg = "could not find a permutation and signs to put lambdas in the Weyl chamber."
+    raise ValueError(msg)
+
+
+def canonical_decomposition(
+    unitary: NDArray[np.complex128],
+) -> tuple[
+    NDArray[np.complex128],
+    NDArray[np.complex128],
+    NDArray[np.complex128],
+    NDArray[np.complex128],
+    CanonicalAxis,
+]:
+    """
+    This implentation of the canonical decomposition is heavily based on:
+    https://github.com/gecrooks/quantumflow/blob/master/quantumflow/decompositions.py
+    """
+
+    _, u_su = global_phase_and_su4(unitary)
+
+    m = (1 / np.sqrt(2)) * np.array([[1, 0, 0, 1j], [0, 1j, 1, 0], [0, 1j, -1, 0], [1, 0, 0, -1j]], dtype=np.complex128)
+    m_dag = m.conj().T
+
+    u_m = m_dag @ u_su @ m
+    q = u_m.T @ u_m
+
+    eig_vals, eig_vecs = _orthogonal_diagonalization(q)
+    lambdas = np.sqrt(eig_vals)
+    det_d = np.prod(lambdas)
+    if det_d.real < 0:
+        lambdas[0] = -lambdas[0]
+
+    (tx, ty, tz), signs, perm = constrain_to_weyl_chamber(lambdas)
+    lambdas = (signs * lambdas)[perm]
+    o2 = (np.diag(signs) @ eig_vecs.T)[perm]
+    d = np.diag(lambdas)
+    o1 = u_m @ o2.T @ d.conj()
+
+    if np.linalg.det(o2).real < 0:
+        o2[0, :] *= -1
+        o1[:, 0] *= -1
+
+    q1 = m @ o1 @ m_dag
+    q2 = m @ o2 @ m_dag
+
+    k1, k2 = nearest_kronecker_product(q2)
+    k3, k4 = nearest_kronecker_product(q1)
+
+    return k1, k2, k3, k4, CanonicalAxis(tx, ty, tz)
 
 
 def get_matrix(gate: Gate, qubit_register_size: int) -> NDArray[np.complex128]:
