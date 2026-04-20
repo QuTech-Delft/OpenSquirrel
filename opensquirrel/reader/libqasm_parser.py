@@ -240,13 +240,23 @@ class LibQasmParser:
     @staticmethod
     def _get_registry(
         ast: Any,
-        register_cls: type[QubitRegister | BitRegister],
+        register_cls: type[QubitRegister] | type[BitRegister],
         type_check: Callable[[Any], bool],
     ) -> Registry:
-        registry = OrderedDict()
+        if register_cls is QubitRegister:
+            registry: QubitRegistry = OrderedDict()
+            for variable in filter(type_check, ast.variables):
+                registry[variable.name] = QubitRegister(variable.typ.size, variable.name)
+            if not registry:
+                registry[QubitRegister.default_name] = QubitRegister(0)
+            return registry
+
+        registry: BitRegistry = OrderedDict()
         for variable in filter(type_check, ast.variables):
-            registry[variable.name] = register_cls(variable.typ.size, variable.name)
-        return registry or OrderedDict({register_cls.default_name: register_cls(0)})
+            registry[variable.name] = BitRegister(variable.typ.size, variable.name)
+        if not registry:
+            registry[BitRegister.default_name] = BitRegister(0)
+        return registry
 
     def _create_register_manager(self, ast: Any) -> RegisterManager:
         qubit_registry = self._get_registry(ast, QubitRegister, LibQasmParser._is_qubit_type)

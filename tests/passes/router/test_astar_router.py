@@ -3,6 +3,7 @@ import pytest
 
 from opensquirrel import SWAP, CircuitBuilder
 from opensquirrel.circuit import Circuit
+from opensquirrel.ir import Instruction
 from opensquirrel.passes.router import AStarRouter
 from opensquirrel.passes.router.heuristics import DistanceMetric
 
@@ -137,6 +138,8 @@ def test_route_indices_propagation(router4: AStarRouter, circuit4: Circuit) -> N
 
     for actual, expected in zip(actual_statements, expected_statements, strict=False):
         assert type(actual) is type(expected)
+        assert isinstance(actual, Instruction)
+        assert isinstance(expected, Instruction)
         actual_indices = actual.qubit_indices
         expected_indices = expected.qubit_indices
         assert actual_indices == expected_indices

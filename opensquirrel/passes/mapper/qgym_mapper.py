@@ -132,8 +132,7 @@ class QGymMapper(Mapper):
         for statement in ir.statements:
             if not isinstance(statement, Instruction):
                 continue
-            instruction = cast("Instruction", statement)  # type: ignore[redundant-cast]
-            qubit_indices = instruction.qubit_indices
+            qubit_indices = statement.qubit_indices
             for q_index in qubit_indices:
                 interaction_graph.add_node(q_index)
             if len(qubit_indices) >= 2:
