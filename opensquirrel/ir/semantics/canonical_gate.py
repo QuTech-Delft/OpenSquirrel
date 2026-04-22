@@ -1,14 +1,31 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from numpy.typing import NDArray
 
-from opensquirrel.ir import AxisLike, IRVisitor
 from opensquirrel.ir.expression import BaseAxis
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
 
+if TYPE_CHECKING:
+    from opensquirrel.ir import AxisLike, IRVisitor
+    from opensquirrel.ir.semantics import BlochSphereRotation
+
 
 class CanonicalAxis(BaseAxis):
+    restrict: bool = True
+
+    @staticmethod
+    def in_weyl_chamber(tx: float, ty: float, tz: float) -> bool:
+        """Checks if the canonical axis is in the Weyl chamber.
+
+        Returns:
+            True if the canonical axis is in the Weyl chamber, False otherwise.
+
+        """
+        return 1 / 2 >= tx >= ty >= tz >= 0 or 1 / 2 >= (1 - tx) >= ty >= tz > 0
+
     @staticmethod
     def parse(axis: AxisLike) -> NDArray[np.float64]:
         """Parse and validate an `AxisLike`.
@@ -27,6 +44,7 @@ class CanonicalAxis(BaseAxis):
             ValueError: If the axis cannot be flattened to length 3.
 
         """
+
         if isinstance(axis, CanonicalAxis):
             return axis.value
 
@@ -39,8 +57,9 @@ class CanonicalAxis(BaseAxis):
         if len(axis) != 3:
             msg = f"axis has size {len(axis)!r}: requires an ArrayLike of length 3"
             raise ValueError(msg)
-
-        return CanonicalAxis.restrict_to_weyl_chamber(axis)
+        if CanonicalAxis.restrict:
+            return CanonicalAxis.restrict_to_weyl_chamber(axis)
+        return axis
 
     @staticmethod
     def restrict_to_weyl_chamber(axis: NDArray[np.float64]) -> NDArray[np.float64]:
@@ -92,8 +111,12 @@ class CanonicalAxis(BaseAxis):
 
 
 class CanonicalGateSemantic(GateSemantic):
-    def __init__(self, axis: AxisLike) -> None:
+    def __init__(self, axis: AxisLike, rotations: list[BlochSphereRotation] | None = None) -> None:
         self.axis = CanonicalAxis(axis)
+        self.rotations = rotations
+        if self.rotations and len(self.rotations) != 4:
+            msg = f"invalid number of rotations, expected 4 but got {len(self.rotations)}"
+            raise ValueError(msg)
 
     def accept(self, visitor: IRVisitor) -> Any:
         """Accepts visitor and processes this IR node."""
@@ -106,7 +129,10 @@ class CanonicalGateSemantic(GateSemantic):
             True if the canonical gate semantic represents an identity operation, False otherwise.
 
         """
-        return self.axis == CanonicalAxis((0, 0, 0))
+        if not self.rotations:
+            return self.axis == CanonicalAxis((0, 0, 0))
+        return self.axis == CanonicalAxis((0, 0, 0)) and all(rotation.is_identity() for rotation in self.rotations)
 
     def __repr__(self) -> str:
-        return f"CanonicalGateSemantic(axis={self.axis})"
+        rotation_str = f", rotations={self.rotations}" if self.rotations else ""
+        return f"CanonicalGateSemantic(axis={self.axis}{rotation_str})"

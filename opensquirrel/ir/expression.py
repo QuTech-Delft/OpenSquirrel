@@ -7,6 +7,7 @@ from typing import Any, Protocol, SupportsFloat, SupportsInt, cast, overload, ru
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
+from opensquirrel.common import ATOL
 from opensquirrel.ir.ir import IRNode, IRVisitor
 
 
@@ -220,7 +221,7 @@ class BaseAxis(Expression, ABC):
         """
         if not isinstance(other, self.__class__):
             return False
-        return np.array_equal(self, other)
+        return np.allclose(self, other, atol=ATOL)
 
     @overload
     def __getitem__(self, i: int, /) -> np.float64: ...

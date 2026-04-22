@@ -1,0 +1,115 @@
+/*
+ * QUEKO benchmark circuit: 16 qubits, 10 cycles, TFL gate density.
+ *
+ * QUEKO (QUantum Examples for Knowing Optimality) circuits are
+ * synthetic benchmarks designed with a known-optimal mapping depth.
+ * They are used to evaluate quantum circuit mapping and routing
+ * algorithms by providing a ground truth: the gap between a
+ * compiler's output depth and the known optimum measures compiler
+ * quality.
+ *
+ * Naming convention: <qubits>QBT_<cycles>CYC_<density>_<instance>
+ *   - 16QBT:  16-qubit device graph
+ *   - 10CYC:  known-optimal circuit depth of 10 cycles
+ *   - TFL:    Toffoli gate density vector
+ *   - _1:     instance number 1
+ *
+ */
+
+
+version 3.0
+
+qubit[16] q
+bit[16] b
+
+
+X q[3]
+X q[9]
+X q[12]
+CNOT q[13],  q[15]
+CNOT q[7],  q[0]
+X q[1]
+X q[5]
+CNOT q[3],  q[12]
+CNOT q[10],  q[2]
+CNOT q[8],  q[9]
+CNOT q[7],  q[0]
+X q[12]
+X q[10]
+X q[1]
+X q[11]
+X q[0]
+CNOT q[13],  q[15]
+CNOT q[8],  q[9]
+CNOT q[5],  q[6]
+CNOT q[4],  q[14]
+X q[7]
+X q[11]
+X q[8]
+X q[10]
+X q[15]
+CNOT q[3],  q[12]
+CNOT q[4],  q[14]
+CNOT q[0],  q[9]
+X q[3]
+X q[4]
+X q[10]
+CNOT q[11],  q[13]
+CNOT q[15],  q[2]
+CNOT q[0],  q[1]
+CNOT q[6],  q[7]
+X q[3]
+X q[14]
+X q[5]
+X q[1]
+X q[6]
+X q[11]
+X q[12]
+CNOT q[0],  q[9]
+CNOT q[10],  q[2]
+X q[11]
+X q[0]
+X q[1]
+X q[12]
+CNOT q[3],  q[5]
+X q[3]
+X q[2]
+X q[14]
+X q[13]
+CNOT q[0],  q[9]
+CNOT q[1],  q[11]
+CNOT q[12],  q[4]
+X q[3]
+X q[2]
+X q[12]
+X q[5]
+CNOT q[7],  q[0]
+CNOT q[4],  q[14]
+CNOT q[1],  q[11]
+CNOT q[13],  q[15]
+X q[3]
+X q[2]
+X q[5]
+X q[6]
+X q[7]
+X q[1]
+X q[12]
+CNOT q[13],  q[15]
+CNOT q[8],  q[9]
+
+b[0] = measure q[0]
+b[1] = measure q[1]
+b[2] = measure q[2]
+b[3] = measure q[3]
+b[4] = measure q[4]
+b[5] = measure q[5]
+b[6] = measure q[6]
+b[7] = measure q[7]
+b[8] = measure q[8]
+b[9] = measure q[9]
+b[10] = measure q[10]
+b[11] = measure q[11]
+b[12] = measure q[12]
+b[13] = measure q[13]
+b[14] = measure q[14]
+b[15] = measure q[15]
