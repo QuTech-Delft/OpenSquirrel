@@ -15,6 +15,20 @@ class UnsupportedGateError(Exception):
         super().__init__(f"{gate} is not supported", *args)
 
 
+class UnsupportedMeasureError(Exception):
+    """Should be raised when a measure is not supported."""
+
+    def __init__(self, measure: Any, *args: Any) -> None:
+        """Init of the ``UnsupportedMeasureError``.
+
+        Args:
+            measure: Measure that is not supported.
+        """
+        super().__init__(
+            f"measurement along {measure.axis!r} is not supported: decompose measurement before exporting", *args
+        )
+
+
 class ExporterError(Exception):
     """Should be raised when a circuit cannot be exported to the desired output format."""
 

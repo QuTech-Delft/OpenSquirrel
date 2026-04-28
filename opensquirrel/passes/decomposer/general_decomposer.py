@@ -1,55 +1,22 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Iterable
-from typing import Any
+from collections.abc import Iterable
+from typing import Any, TypeVar
 
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase, is_identity_matrix_up_to_a_global_phase
-from opensquirrel.default_instructions import is_anonymous_gate
-from opensquirrel.ir import IR, Gate
+from opensquirrel.ir import IR, Gate, Instruction, Measure
 from opensquirrel.reindexer import get_reindexed_circuit
+
+InstructionType = TypeVar("InstructionType", bound=Instruction)
 
 
 class Decomposer(ABC):
     def __init__(self, **kwargs: Any) -> None: ...
 
     @abstractmethod
-    def decompose(self, gate: Gate) -> list[Gate]: ...
-
-
-def check_gate_replacement(gate: Gate, replacement_gates: Iterable[Gate]) -> None:
-    """Checks that the replacement gate(s) are valid by verifying that they operate on the same
-    qubits and preserve the quantum state up to a global phase.
-
-    Args:
-        gate (Gate): Gate that is being replaced.
-        replacement_gates (Iterable[Gate]): Gate(s) that are replacing the original gate.
-
-    Raises:
-        ValueError: If the replacement gates do not operate on the same qubits as the original gate.
-        ValueError: If the replacement gates do not preserve the quantum state up to a global phase.
-
-    """
-    gate_qubit_indices = gate.qubit_indices
-    replacement_gates_qubit_indices = set()
-    replaced_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
-
-    if is_identity_matrix_up_to_a_global_phase(replaced_matrix):
-        return
-
-    for replacement_gate in replacement_gates:
-        replacement_gates_qubit_indices.update(replacement_gate.qubit_indices)
-
-    if set(gate_qubit_indices) != replacement_gates_qubit_indices:
-        msg = f"replacement for gate {gate.name!r} does not operate on the correct qubits"
-        raise ValueError(msg)
-
-    replacement_matrix = get_circuit_matrix(get_reindexed_circuit(replacement_gates, gate_qubit_indices))
-
-    if not are_matrices_equivalent_up_to_global_phase(replaced_matrix, replacement_matrix):
-        msg = f"replacement for gate {gate.name!r} does not preserve the quantum state"
-        raise ValueError(msg)
+    def decompose(self, instruction: InstructionType) -> list[InstructionType]: ...
 
 
 def decompose(ir: IR, decomposer: Decomposer) -> None:
@@ -64,38 +31,51 @@ def decompose(ir: IR, decomposer: Decomposer) -> None:
     while statement_index < len(ir.statements):
         statement = ir.statements[statement_index]
 
-        if not isinstance(statement, Gate):
+        if isinstance(statement, Gate):
+            gate = statement
+            replacement_gates: list[Gate] = decomposer.decompose(statement)
+            check_gate_decomposition(gate, replacement_gates)
+
+            ir.statements[statement_index : statement_index + 1] = replacement_gates
+            statement_index += len(replacement_gates)
+
+        elif isinstance(statement, Measure):
+            measure_decomposition = decomposer.decompose(statement)
+            ir.statements[statement_index : statement_index + 1] = measure_decomposition
+            statement_index += len(measure_decomposition)
+        else:
             statement_index += 1
-            continue
-
-        gate = statement
-        replacement_gates: list[Gate] = decomposer.decompose(statement)
-        check_gate_replacement(gate, replacement_gates)
-
-        ir.statements[statement_index : statement_index + 1] = replacement_gates
-        statement_index += len(replacement_gates)
 
 
-class _GenericReplacer(Decomposer):
-    def __init__(self, gate_type: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
-        self.gate_type = gate_type
-        self.replacement_gates_function = replacement_gates_function
-
-    def decompose(self, gate: Gate) -> list[Gate]:
-        if is_anonymous_gate(gate.name) or type(gate) is not self.gate_type:
-            return [gate]
-        return self.replacement_gates_function(*gate.qubit_operands, *gate.arguments)
-
-
-def replace(ir: IR, gate: type[Gate], replacement_gates_function: Callable[..., list[Gate]]) -> None:
-    """Replaces all occurrences of a specific gate in the circuit IR with a given sequence of other
-    gates.
+def check_gate_decomposition(gate: Gate, decomposition_gates: Iterable[Gate]) -> None:
+    """Checks that the decomposition gate(s) are valid by verifying that they operate on the same
+    qubits and preserve the quantum state up to a global phase.
 
     Args:
-        ir (IR): The circuit IR to modify.
-        gate (type[Gate]): Gate to replace.
-        replacement_gates_function (Callable[..., list[Gate]]): Function that returns a list of replacement gates.
+        gate (Gate): Gate that is being decomposed.
+        decomposition_gates (Iterable[Gate]): Gate(s) that are decomposing the original gate.
+
+    Raises:
+        ValueError: If the decomposition gates do not operate on the same qubits as the original gate.
+        ValueError: If the decomposition gates do not preserve the quantum state up to a global phase.
 
     """
-    generic_replacer = _GenericReplacer(gate, replacement_gates_function)
-    decompose(ir, generic_replacer)
+    gate_qubit_indices = gate.qubit_indices
+    decomposition_gates_qubit_indices = set()
+    decomposed_matrix = get_circuit_matrix(get_reindexed_circuit([gate], gate_qubit_indices))
+
+    if is_identity_matrix_up_to_a_global_phase(decomposed_matrix):
+        return
+
+    for decomposition_gate in decomposition_gates:
+        decomposition_gates_qubit_indices.update(decomposition_gate.qubit_indices)
+
+    if set(gate_qubit_indices) != decomposition_gates_qubit_indices:
+        msg = f"decomposition for gate {gate.name!r} does not operate on the correct qubits"
+        raise ValueError(msg)
+
+    decomposition_matrix = get_circuit_matrix(get_reindexed_circuit(decomposition_gates, gate_qubit_indices))
+
+    if not are_matrices_equivalent_up_to_global_phase(decomposed_matrix, decomposition_matrix):
+        msg = f"decomposition for gate {gate.name!r} does not preserve the quantum state"
+        raise ValueError(msg)

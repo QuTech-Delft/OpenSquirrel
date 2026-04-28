@@ -33,7 +33,7 @@ class ABADecomposer(Decomposer, ABC):
     @abstractmethod
     def Rb(self) -> Callable[..., SingleQubitGate]: ...  # noqa: N802
 
-    def decompose(self, gate: Gate) -> list[Gate]:
+    def decompose(self, instruction: Gate) -> list[Gate]:
         """Decomposes a single-qubit gate into (at most) three single-qubit gates following the
         R$a$-R$b$-R$a$ decomposition, where [$ab$] are in $\\{x,y,z\\}$ and $a$ is not equal to $b$.
 
@@ -46,8 +46,10 @@ class ABADecomposer(Decomposer, ABC):
             A sequence of (at most) three gates, following the R$a$-R$b$-R$a$ decomposition.
 
         """
-        if not isinstance(gate, SingleQubitGate):
-            return [gate]
+        if not isinstance(instruction, SingleQubitGate):
+            return [instruction]
+
+        gate = instruction
 
         theta_a1, theta_b, theta_a2 = self._determine_rotation_angles(gate.bsr.axis, gate.bsr.angle)
         return filter_out_identities(

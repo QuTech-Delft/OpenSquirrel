@@ -86,11 +86,9 @@ def circuit2() -> Circuit:
     [("mapper1", "circuit1", 5), ("mapper2", "circuit2", 7)],
     ids=["tuna-5-mapping", "starmon-7-mapping"],
 )
-def test_mapping(
-    mapper: QGymMapper, circuit: Circuit, expected_mapping_length: int, request: pytest.FixtureRequest
-) -> None:
-    circuit = request.getfixturevalue(circuit)  # ty: ignore[invalid-argument-type]
-    mapper = request.getfixturevalue(mapper)  # ty: ignore[invalid-argument-type]
+def test_mapping(mapper: str, circuit: str, expected_mapping_length: int, request: pytest.FixtureRequest) -> None:
+    circuit = request.getfixturevalue(circuit)
+    mapper = request.getfixturevalue(mapper)
     mapping = mapper.map(circuit, circuit.qubit_register_size)
 
     assert isinstance(mapping, Mapping)

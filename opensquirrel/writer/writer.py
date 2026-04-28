@@ -1,6 +1,9 @@
 from typing import Any, SupportsFloat, SupportsInt
 
+import numpy as np
+
 from opensquirrel.circuit import Circuit
+from opensquirrel.common import ATOL
 from opensquirrel.default_instructions import default_two_qubit_gate_set
 from opensquirrel.ir import (
     AsmDeclaration,
@@ -17,6 +20,7 @@ from opensquirrel.ir import (
     SupportsStr,
     Wait,
 )
+from opensquirrel.ir.expression import Axis
 from opensquirrel.ir.semantics import (
     BsrAngleParam,
     BsrFullParams,
@@ -61,6 +65,10 @@ class _WriterImpl(IRVisitor):
     def visit_bit(self, bit: Bit) -> str:
         bit_register_name = self.register_manager.bit_register_name
         return f"{bit_register_name}[{bit.index}]"
+
+    def visit_axis(self, axis: Axis) -> str:
+        nx, ny, nz = (round(component, self.FLOAT_PRECISION) for component in axis.value)
+        return f"({nx}, {ny}, {nz})"
 
     def visit_qubit(self, qubit: Qubit) -> str:
         qubit_register_name = self.register_manager.qubit_register_name
@@ -114,7 +122,11 @@ class _WriterImpl(IRVisitor):
     def visit_measure(self, measure: Measure) -> None:
         qubit_operand = measure.qubit.accept(self)
         bit_operand = measure.bit.accept(self)
-        self.output += f"{bit_operand} = measure {qubit_operand}\n"
+        axis = measure.axis
+        if np.allclose(axis.value, (0, 0, 1), atol=ATOL):
+            self.output += f"{bit_operand} = measure {qubit_operand}\n"
+        else:
+            self.output += f"{bit_operand} = measure{axis.accept(self)} {qubit_operand}\n"
 
     def visit_init(self, init: Init) -> None:
         qubit_operand = init.qubit.accept(self)

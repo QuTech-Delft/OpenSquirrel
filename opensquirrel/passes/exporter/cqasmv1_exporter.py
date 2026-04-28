@@ -29,6 +29,7 @@ from opensquirrel.passes.exporter.general_exporter import Exporter
 
 if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
+    from opensquirrel.ir.expression import Axis
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.two_qubit_gate import TwoQubitGate
     from opensquirrel.register_manager import RegisterManager
@@ -60,6 +61,17 @@ class CqasmV1ExporterParseError(Exception):
     pass
 
 
+class UnsupportedMeasurementAxisError(Exception):
+    def __init__(self, axis: Axis, *args: Any) -> None:
+        """Init of the ``UnsupportedMeasurementAxisError``.
+
+        Args:
+            axis: Measurement axis that is not supported.
+        """
+        nx, ny, nz = (repr_round(component) for component in axis.value)
+        super().__init__(f"unsupported measurement axis ({nx}, {ny}, {nz})", *args)
+
+
 class _CQASMv1Creator(IRVisitor):
     # Precision used when writing out a float number
     FLOAT_PRECISION = 8
@@ -80,6 +92,10 @@ class _CQASMv1Creator(IRVisitor):
     def visit_float(self, f: SupportsFloat) -> str:
         f = Float(f)
         return f"{f.value:.{self.FLOAT_PRECISION}}"
+
+    def visit_axis(self, axis: Axis) -> str:
+        nx, ny, nz = (round(component, self.FLOAT_PRECISION) for component in axis.value)
+        return f"({nx}, {ny}, {nz})"
 
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any:
         qubit_operand = gate.qubit.accept(self)
@@ -114,7 +130,16 @@ class _CQASMv1Creator(IRVisitor):
 
     def visit_measure(self, measure: Measure) -> None:
         qubit_argument = measure.qubit_operands[0].accept(self)
-        self.output += f"measure_z {qubit_argument}\n"
+        axis = measure.axis
+        if np.allclose(axis.value, (0, 0, 1), atol=ATOL):
+            axis_argument = "z"
+        elif np.allclose(axis.value, (1, 0, 0), atol=ATOL):
+            axis_argument = "x"
+        elif np.allclose(axis.value, (0, 1, 0), atol=ATOL):
+            axis_argument = "y"
+        else:
+            raise UnsupportedMeasurementAxisError(measure.axis)
+        self.output += f"measure_{axis_argument} {qubit_argument}\n"
 
     def visit_init(self, init: Init) -> None:
         qubit_argument = init.qubit_operands[0].accept(self)

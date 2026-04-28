@@ -1,4 +1,7 @@
+from math import sqrt
+
 from opensquirrel import CircuitBuilder
+from opensquirrel.ir.expression import Axis
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
@@ -85,6 +88,34 @@ bit[1] b
 
 H q[0]
 b[0] = measure q[0]
+"""
+    )
+
+
+def test_parametrized_measure() -> None:
+    builder = CircuitBuilder(1, 1)
+    builder.measure(0, 0)
+    builder.measure(0, 0, Axis(0, 0, 1))
+    builder.measure(0, 0, Axis(-0.0000001, 0.0000001, 1.0000001))
+    builder.measure(0, 0, Axis(1, 0, 0))
+    builder.measure(0, 0, Axis(0, 1, 0))
+    builder.measure(0, 0, Axis(0, 0, -1))
+    builder.measure(0, 0, Axis(1 / sqrt(2), 0, 1 / sqrt(2)))
+    circuit = builder.to_circuit()
+    assert (
+        writer.circuit_to_string(circuit)
+        == """version 3.0
+
+qubit[1] q
+bit[1] b
+
+b[0] = measure q[0]
+b[0] = measure q[0]
+b[0] = measure q[0]
+b[0] = measure(1.0, 0.0, 0.0) q[0]
+b[0] = measure(0.0, 1.0, 0.0) q[0]
+b[0] = measure(0.0, 0.0, -1.0) q[0]
+b[0] = measure(0.70710678, 0.0, 0.70710678) q[0]
 """
     )
 

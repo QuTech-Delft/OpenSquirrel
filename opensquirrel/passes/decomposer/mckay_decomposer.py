@@ -11,7 +11,7 @@ from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
 class McKayDecomposer(Decomposer):
-    def decompose(self, gate: Gate) -> list[Gate]:
+    def decompose(self, instruction: Gate) -> list[Gate]:
         """Decomposes a single-qubit gate using the McKay decomposition into a sequence of (at most)
         5 single-qubit gates; according tot the pattern Rz-Rx(pi/2)-Rz-Rx(pi/2)-Rz, where the angles
         of the Rz gates are to be determined.
@@ -29,8 +29,10 @@ class McKayDecomposer(Decomposer):
             A sequence of (at most) 5 single-qubit gates that decompose the original gate.
 
         """
-        if not isinstance(gate, SingleQubitGate) or gate == X90(gate.qubit):
-            return [gate]
+        if not isinstance(instruction, SingleQubitGate) or instruction == X90(instruction.qubit):
+            return [instruction]
+
+        gate = instruction
 
         if abs(gate.bsr.angle) < ATOL:
             return [I(gate.qubit)]

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class SWAP2CNOTDecomposer(Decomposer):
-    def decompose(self, gate: Gate) -> list[Gate]:
+    def decompose(self, instruction: Gate) -> list[Gate]:
         """Predefined decomposition of SWAP gate to 3 CNOT gates.
 
         ![image](../../../_static/swap2cnot.png#only-light)
@@ -20,14 +20,17 @@ class SWAP2CNOTDecomposer(Decomposer):
             This decomposition preserves the global phase of the SWAP gate.
 
         Args:
-            gate: SWAP gate to decompose.
+            instruction: SWAP gate to decompose.
 
         Returns:
             A sequence of 3 CNOT gates that decompose the SWAP gate.
 
         """
-        if gate.name != "SWAP":
-            return [gate]
+        if instruction.name != "SWAP":
+            return [instruction]
+
+        gate = instruction
+
         qubit0, qubit1 = gate.qubit_operands
         return [
             CNOT(qubit0, qubit1),

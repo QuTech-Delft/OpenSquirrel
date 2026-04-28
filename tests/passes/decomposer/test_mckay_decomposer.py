@@ -10,7 +10,7 @@ from opensquirrel import CNOT, CR, X90, Y90, H, I, MinusX90, MinusY90, Rz, S, SD
 from opensquirrel.ir.semantics import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer import McKayDecomposer
-from opensquirrel.passes.decomposer.general_decomposer import check_gate_replacement
+from opensquirrel.passes.decomposer.general_decomposer import check_gate_decomposition
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
@@ -26,7 +26,7 @@ def decomposer() -> McKayDecomposer:
     [(CNOT(0, 1), [CNOT(0, 1)]), (CR(2, 3, 2.123), [CR(2, 3, 2.123)])],
 )
 def test_ignores_2q_gates(decomposer: McKayDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
-    check_gate_replacement(gate, expected_result)
+    check_gate_decomposition(gate, expected_result)
     assert decomposer.decompose(gate) == expected_result
 
 
@@ -40,7 +40,7 @@ def test_identity_decomposition(decomposer: McKayDecomposer) -> None:
 def test_x(decomposer: McKayDecomposer) -> None:
     gate = X(0)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     expected_result = [X90(0), X90(0)]
     assert decomposed_gate == expected_result
 
@@ -48,35 +48,35 @@ def test_x(decomposer: McKayDecomposer) -> None:
 def test_y(decomposer: McKayDecomposer) -> None:
     gate = Y(0)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [Rz(0, pi), X90(0), X90(0)]
 
 
 def test_z(decomposer: McKayDecomposer) -> None:
     gate = Z(0)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [Rz(0, pi)]
 
 
 def test_rz(decomposer: McKayDecomposer) -> None:
     gate = Rz(0, pi / 2)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [Rz(0, pi / 2)]
 
 
 def test_hadamard(decomposer: McKayDecomposer) -> None:
     gate = H(0)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [Rz(0, pi / 2), X90(0), Rz(0, pi / 2)]
 
 
 def test_u(decomposer: McKayDecomposer) -> None:
     gate = U(0, pi / 2, 0, pi)
     decomposed_gate = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gate)
+    check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [Rz(0, pi / 2), X90(0), Rz(0, pi / 2)]
 
 
@@ -95,7 +95,7 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
                     qubit=0, gate_semantic=BlochSphereRotation(axis=axis, angle=angle, phase=phase)
                 )
                 decomposed_arbitrary_operation = decomposer.decompose(arbitrary_operation)
-                check_gate_replacement(arbitrary_operation, decomposed_arbitrary_operation)
+                check_gate_decomposition(arbitrary_operation, decomposed_arbitrary_operation)
 
 
 @pytest.mark.parametrize(
@@ -204,5 +204,5 @@ def test_all_octants_of_bloch_sphere_rotation(decomposer: McKayDecomposer) -> No
 )
 def test_single_qubit_clifford_gates(decomposer: McKayDecomposer, gate: Gate, expected_result: list[Gate]) -> None:
     decomposed_gates = decomposer.decompose(gate)
-    check_gate_replacement(gate, decomposed_gates)
+    check_gate_decomposition(gate, decomposed_gates)
     assert decomposed_gates == expected_result

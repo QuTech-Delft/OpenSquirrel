@@ -24,7 +24,7 @@ class CNOTDecomposer(Decomposer):
     [Quantum Gates by G.E. Crooks (2024), Section 7.5](https://threeplusone.com/pubs/on_gates.pdf).
     """
 
-    def decompose(self, gate: Gate) -> list[Gate]:
+    def decompose(self, instruction: Gate) -> list[Gate]:
         """Decomposes a controlled two-qubit gate into a sequence of (at most 2) CNOT gates and
         single-qubit gates. It decomposes the CR, CRk, and CZ controlled two-qubit gates.
 
@@ -35,13 +35,17 @@ class CNOTDecomposer(Decomposer):
             or the [SWAP2CZDecomposer][opensquirrel.passes.decomposer.swap2cz_decomposer.SWAP2CZDecomposer].
 
         Args:
-            gate (Gate): Two-qubit controlled gate to decompose.
+            instruction (Instruction): Two-qubit controlled gate to decompose.
 
         Returns:
             A sequence of (at most 2) CNOT gates and single-qubit gates.
 
         """
-        if not isinstance(gate, TwoQubitGate) or not gate.controlled:
+        if not isinstance(instruction, TwoQubitGate):
+            return [instruction]
+        gate = instruction
+
+        if not gate.controlled:
             return [gate]
 
         control_qubit = gate.qubit0

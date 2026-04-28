@@ -1,14 +1,16 @@
-from math import pi
+from math import pi, sqrt
 
 import pytest
 
 from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.exceptions import UnsupportedGateError
 from opensquirrel.ir import Gate
+from opensquirrel.ir.expression import Axis
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.exporter import CqasmV1Exporter
+from opensquirrel.passes.exporter.cqasmv1_exporter import UnsupportedMeasurementAxisError
 
 
 @pytest.fixture
@@ -148,6 +150,36 @@ measure_z q[1]
 measure_z q[1]
 """
     )
+
+
+def test_parameterized_measure(exporter: CqasmV1Exporter) -> None:
+    builder = CircuitBuilder(1, 1)
+    builder.measure(0, 0)
+    builder.measure(0, 0, Axis(1, 0, 0))
+    builder.measure(0, 0, Axis(0, 1, 0))
+    builder.measure(0, 0, Axis(0, 0, 1))
+    circuit = builder.to_circuit()
+    cqasm_v1_string = circuit.export(exporter=exporter)
+
+    assert (
+        cqasm_v1_string
+        == """version 1.0
+
+qubits 1
+
+measure_z q[0]
+measure_x q[0]
+measure_y q[0]
+measure_z q[0]
+"""
+    )
+
+    builder.measure(0, 0, Axis(1 / sqrt(2), 0, 1 / sqrt(2)))
+    circuit = builder.to_circuit()
+    with pytest.raises(
+        UnsupportedMeasurementAxisError, match=r"unsupported measurement axis \(0.70711, 0.0, 0.70711\)"
+    ):
+        circuit.export(exporter=exporter)
 
 
 def test_init(exporter: CqasmV1Exporter) -> None:
