@@ -3049,6 +3049,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3211,6 +3215,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/gate_replacer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gate_replacer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/passes/decomposer/general_decomposer.html" class="md-nav__link">
         
   
@@ -3247,6 +3279,34 @@
     
   
     mckay_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/measure_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    measure_decomposer
   
 
     
@@ -4823,9 +4883,6 @@
   
 
 
-<div class="admonition note">
-<p class="admonition-title">Coming soon</p>
-</div>
 <h1 id="control-instructions">Control Instructions</h1>
 <table>
 <thead>
@@ -4840,14 +4897,14 @@
 <tr>
 <td><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/control_instructions/barrier_instruction.html">Barrier</a></td>
 <td><em>barrier</em></td>
-<td>Barrier gate</td>
+<td>Places a barrier on specified qubit(s)</td>
 <td><code>builder.barrier(0)</code></td>
 </tr>
 <tr>
 <td><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/control_instructions/wait_instruction.html">Wait</a></td>
 <td><em>wait</em></td>
-<td>Wait gate</td>
-<td><code>builder.wait(0)</code></td>
+<td>Enforces given cycle times between consecutive instructions on specified qubit</td>
+<td><code>builder.wait(5, 0)</code></td>
 </tr>
 </tbody>
 </table>

@@ -3049,6 +3049,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3211,6 +3215,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/gate_replacer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gate_replacer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/passes/decomposer/general_decomposer.html" class="md-nav__link">
         
   
@@ -3247,6 +3279,34 @@
     
   
     mckay_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/measure_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    measure_decomposer
   
 
     
@@ -4823,9 +4883,6 @@
   
 
 
-<div class="admonition note">
-<p class="admonition-title">Coming soon</p>
-</div>
 <h1 id="non-unitary-instructions">Non-Unitary Instructions</h1>
 <table>
 <thead>
@@ -4840,19 +4897,19 @@
 <tr>
 <td><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/init_instruction.html">Init</a></td>
 <td><em>init</em></td>
-<td>Initialize certain qubits in <span class="arithmatex">\(\|0&gt;\)</span></td>
+<td>Initialize the qubit in <span class="arithmatex">\(\vert0\rangle\)</span></td>
 <td><code>builder.init(0)</code></td>
 </tr>
 <tr>
 <td><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/measure_instruction.html">Measure</a></td>
 <td><em>measure</em></td>
-<td>Measure qubit argument</td>
-<td><code>builder.measure(0)</code></td>
+<td>Measures the qubit (by default in the Z-basis) and stores the outcome in the specified bit</td>
+<td><code>builder.measure(0, 0)</code></td>
 </tr>
 <tr>
 <td><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/non_unitary_instructions/reset_instruction.html">Reset</a></td>
 <td><em>reset</em></td>
-<td>Reset a qubit's state to <span class="arithmatex">\(\|0&gt;\)</span></td>
+<td>Resets the state of the qubit to <span class="arithmatex">\(\vert0\rangle\)</span></td>
 <td><code>builder.reset(0)</code></td>
 </tr>
 </tbody>

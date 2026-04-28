@@ -3266,6 +3266,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3428,6 +3432,34 @@
   
   
     <li class="md-nav__item">
+      <a href="passes/decomposer/gate_replacer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gate_replacer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="passes/decomposer/general_decomposer.html" class="md-nav__link">
         
   
@@ -3464,6 +3496,34 @@
     
   
     mckay_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="passes/decomposer/measure_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    measure_decomposer
   
 
     
@@ -5637,9 +5697,9 @@
 <a id="__codelineno-0-155" name="__codelineno-0-155"></a><span class="sd">            decomposer (Decomposer): The decomposer to apply.</span>
 <a id="__codelineno-0-156" name="__codelineno-0-156"></a>
 <a id="__codelineno-0-157" name="__codelineno-0-157"></a><span class="sd">        """</span>
-<a id="__codelineno-0-158" name="__codelineno-0-158"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">general_decomposer</span>
+<a id="__codelineno-0-158" name="__codelineno-0-158"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer.general_decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">decompose</span>
 <a id="__codelineno-0-159" name="__codelineno-0-159"></a>
-<a id="__codelineno-0-160" name="__codelineno-0-160"></a>        <span class="n">general_decomposer</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
+<a id="__codelineno-0-160" name="__codelineno-0-160"></a>        <span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
 <a id="__codelineno-0-161" name="__codelineno-0-161"></a>
 <a id="__codelineno-0-162" name="__codelineno-0-162"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exporter</span><span class="p">:</span> <span class="n">Exporter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <a id="__codelineno-0-163" name="__codelineno-0-163"></a><span class="w">        </span><span class="sd">"""Exports the circuit using the specified exporter.</span>
@@ -5690,9 +5750,9 @@
 <a id="__codelineno-0-208" name="__codelineno-0-208"></a><span class="sd">            replacement_gates_function (Callable[..., list[Gate]]): function that describes the replacement gates.</span>
 <a id="__codelineno-0-209" name="__codelineno-0-209"></a>
 <a id="__codelineno-0-210" name="__codelineno-0-210"></a><span class="sd">        """</span>
-<a id="__codelineno-0-211" name="__codelineno-0-211"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">general_decomposer</span>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a>        <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer.gate_replacer</span><span class="w"> </span><span class="kn">import</span> <span class="n">replace</span>
 <a id="__codelineno-0-212" name="__codelineno-0-212"></a>
-<a id="__codelineno-0-213" name="__codelineno-0-213"></a>        <span class="n">general_decomposer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">gate</span><span class="p">,</span> <span class="n">replacement_gates_function</span><span class="p">)</span>
+<a id="__codelineno-0-213" name="__codelineno-0-213"></a>        <span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">gate</span><span class="p">,</span> <span class="n">replacement_gates_function</span><span class="p">)</span>
 <a id="__codelineno-0-214" name="__codelineno-0-214"></a>
 <a id="__codelineno-0-215" name="__codelineno-0-215"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">:</span> <span class="n">Validator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-216" name="__codelineno-0-216"></a><span class="w">        </span><span class="sd">"""Validates the circuit using the specified validator.</span>
@@ -6023,9 +6083,9 @@
 <a id="__codelineno-0-155" name="__codelineno-0-155"></a><span class="sd">        decomposer (Decomposer): The decomposer to apply.</span>
 <a id="__codelineno-0-156" name="__codelineno-0-156"></a>
 <a id="__codelineno-0-157" name="__codelineno-0-157"></a><span class="sd">    """</span>
-<a id="__codelineno-0-158" name="__codelineno-0-158"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">general_decomposer</span>
+<a id="__codelineno-0-158" name="__codelineno-0-158"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer.general_decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">decompose</span>
 <a id="__codelineno-0-159" name="__codelineno-0-159"></a>
-<a id="__codelineno-0-160" name="__codelineno-0-160"></a>    <span class="n">general_decomposer</span><span class="o">.</span><span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
+<a id="__codelineno-0-160" name="__codelineno-0-160"></a>    <span class="n">decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">decomposer</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -6448,9 +6508,9 @@ using the specified mapper.</p>
 <a id="__codelineno-0-208" name="__codelineno-0-208"></a><span class="sd">        replacement_gates_function (Callable[..., list[Gate]]): function that describes the replacement gates.</span>
 <a id="__codelineno-0-209" name="__codelineno-0-209"></a>
 <a id="__codelineno-0-210" name="__codelineno-0-210"></a><span class="sd">    """</span>
-<a id="__codelineno-0-211" name="__codelineno-0-211"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer</span><span class="w"> </span><span class="kn">import</span> <span class="n">general_decomposer</span>
+<a id="__codelineno-0-211" name="__codelineno-0-211"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.decomposer.gate_replacer</span><span class="w"> </span><span class="kn">import</span> <span class="n">replace</span>
 <a id="__codelineno-0-212" name="__codelineno-0-212"></a>
-<a id="__codelineno-0-213" name="__codelineno-0-213"></a>    <span class="n">general_decomposer</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">gate</span><span class="p">,</span> <span class="n">replacement_gates_function</span><span class="p">)</span>
+<a id="__codelineno-0-213" name="__codelineno-0-213"></a>    <span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ir</span><span class="p">,</span> <span class="n">gate</span><span class="p">,</span> <span class="n">replacement_gates_function</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>

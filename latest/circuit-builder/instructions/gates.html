@@ -3049,6 +3049,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3211,6 +3215,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/gate_replacer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gate_replacer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/passes/decomposer/general_decomposer.html" class="md-nav__link">
         
   
@@ -3247,6 +3279,34 @@
     
   
     mckay_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/measure_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    measure_decomposer
   
 
     
@@ -4823,9 +4883,6 @@
   
 
 
-<div class="admonition note">
-<p class="admonition-title">Coming soon</p>
-</div>
 <h1 id="unitary-instructions"><a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/unitary_instructions.html">Unitary Instructions</a></h1>
 <table>
 <thead>
@@ -4839,133 +4896,151 @@
 <tbody>
 <tr>
 <td>I</td>
-<td><em>I</em></td>
+<td><span class="arithmatex">\(I\)</span></td>
 <td>Identity gate</td>
 <td><code>builder.I(0)</code></td>
 </tr>
 <tr>
 <td>H</td>
-<td><em>H</em></td>
+<td><span class="arithmatex">\(H\)</span></td>
 <td>Hadamard gate</td>
 <td><code>builder.H(0)</code></td>
 </tr>
 <tr>
 <td>X</td>
-<td><em>X</em></td>
+<td><span class="arithmatex">\(X\)</span></td>
 <td>Pauli-X</td>
 <td><code>builder.X(0)</code></td>
 </tr>
 <tr>
 <td>X90</td>
-<td><em>X<sub>90</sub></em></td>
+<td><span class="arithmatex">\(X_{90}\)</span></td>
 <td>Rotation around the x-axis of <span class="arithmatex">\(\frac{\pi}{2}\)</span></td>
 <td><code>builder.X90(0)</code></td>
 </tr>
 <tr>
 <td>mX90</td>
-<td><em>X<sub>-90</sub></em></td>
-<td>Rotation around the x-axis of <span class="arithmatex">\(\frac{-\pi}{2}\)</span></td>
+<td><span class="arithmatex">\(X_{-90}\)</span></td>
+<td>Rotation around the x-axis of <span class="arithmatex">\(-\frac{\pi}{2}\)</span></td>
 <td><code>builder.mX90(0)</code></td>
 </tr>
 <tr>
 <td>Y</td>
-<td><em>Y</em></td>
+<td><span class="arithmatex">\(Y\)</span></td>
 <td>Pauli-Y</td>
 <td><code>builder.Y(0)</code></td>
 </tr>
 <tr>
 <td>Y90</td>
-<td><em>Y<sub>90</sub></em></td>
+<td><span class="arithmatex">\(Y_{90}\)</span></td>
 <td>Rotation around the y-axis of <span class="arithmatex">\(\frac{\pi}{2}\)</span></td>
 <td><code>builder.Y90(0)</code></td>
 </tr>
 <tr>
 <td>mY90</td>
-<td><em>Y<sub>-90</sub></em></td>
-<td>Rotation around the y-axis of <span class="arithmatex">\(\frac{-\pi}{2}\)</span></td>
+<td><span class="arithmatex">\(Y_{-90}\)</span></td>
+<td>Rotation around the y-axis of <span class="arithmatex">\(-\frac{\pi}{2}\)</span></td>
 <td><code>builder.mY90(0)</code></td>
 </tr>
 <tr>
 <td>Z</td>
-<td><em>Z</em></td>
+<td><span class="arithmatex">\(Z\)</span></td>
 <td>Pauli-Z</td>
 <td><code>builder.Z(0)</code></td>
 </tr>
 <tr>
+<td>Z90</td>
+<td><span class="arithmatex">\(Z_{90}\)</span></td>
+<td>Rotation around the z-axis of <span class="arithmatex">\(\frac{\pi}{2}\)</span></td>
+<td><code>builder.Z90(0)</code></td>
+</tr>
+<tr>
+<td>mZ90</td>
+<td><span class="arithmatex">\(Z_{-90}\)</span></td>
+<td>Rotation around the z-axis of <span class="arithmatex">\(-\frac{\pi}{2}\)</span></td>
+<td><code>builder.mZ90(0)</code></td>
+</tr>
+<tr>
 <td>S</td>
-<td><em>S</em></td>
+<td><span class="arithmatex">\(S\)</span></td>
 <td>Phase gate</td>
 <td><code>builder.S(0)</code></td>
 </tr>
 <tr>
 <td>Sdag</td>
-<td><em>S<sup>†</sup></em></td>
+<td><span class="arithmatex">\(S^\dagger\)</span></td>
 <td>S dagger gate</td>
 <td><code>builder.Sdag(0)</code></td>
 </tr>
 <tr>
 <td>T</td>
-<td><em>T</em></td>
-<td>T</td>
+<td><span class="arithmatex">\(T\)</span></td>
+<td>T gate</td>
 <td><code>builder.T(0)</code></td>
 </tr>
 <tr>
 <td>Tdag</td>
-<td><em>T<sup>†</sup></em></td>
+<td><span class="arithmatex">\(T^\dagger\)</span></td>
 <td>T dagger gate</td>
 <td><code>builder.Tdag(0)</code></td>
 </tr>
 <tr>
 <td>Rx</td>
-<td><em>R<sub>x</sub>(<span class="arithmatex">\(\theta\)</span>)</em></td>
+<td><span class="arithmatex">\(R_x(\theta)\)</span></td>
 <td>Arbitrary rotation around x-axis</td>
 <td><code>builder.Rx(0, 0.23)</code></td>
 </tr>
 <tr>
 <td>Ry</td>
-<td><em>R<sub>y</sub>(<span class="arithmatex">\(\theta\)</span>)</em></td>
+<td><span class="arithmatex">\(R_y(\theta)\)</span></td>
 <td>Arbitrary rotation around y-axis</td>
 <td><code>builder.Ry(0, 0.23)</code></td>
 </tr>
 <tr>
 <td>Rz</td>
-<td><em>R<sub>z</sub>(<span class="arithmatex">\(\theta\)</span>)</em></td>
+<td><span class="arithmatex">\(R_z(\theta)\)</span></td>
 <td>Arbitrary rotation around z-axis</td>
 <td><code>builder.Rz(0, 2)</code></td>
 </tr>
 <tr>
 <td>Rn</td>
-<td><em>R<sub>n</sub>(n<sub>x</sub>, n<sub>y</sub>, n<sub>z</sub>, <span class="arithmatex">\(\theta\)</span>, <span class="arithmatex">\(\phi\)</span><sub>g</sub>)</em></td>
+<td><span class="arithmatex">\(R_\textbf{n}(n_x, n_y, n_z, \theta, \phi_g)\)</span></td>
 <td>Arbitrary rotation around specified axis</td>
 <td><code>builder.Rn(0)</code></td>
 </tr>
 <tr>
+<td>U</td>
+<td><span class="arithmatex">\(U(\theta, \phi,\lambda)\)</span></td>
+<td>Arbitrary unitary gate</td>
+<td><code>builder.U(0, 1, 2, 3)</code></td>
+</tr>
+<tr>
 <td>CZ</td>
-<td><em>CZ</em></td>
+<td><span class="arithmatex">\(CZ\)</span></td>
 <td>Controlled-Z, Controlled-Phase</td>
 <td><code>builder.CZ(1, 2)</code></td>
 </tr>
 <tr>
 <td>CR</td>
-<td><em>CR(\theta)</em></td>
+<td><span class="arithmatex">\(CR(\theta)\)</span></td>
 <td>Controlled phase shift (arbitrary angle)</td>
 <td><code>builder.CR(0, 1, 3.1415)</code></td>
 </tr>
 <tr>
 <td>CRk</td>
-<td><em>CR<sub>k</sub>(k)</em></td>
+<td><span class="arithmatex">\(CR_k(k)\)</span></td>
 <td>Controlled phase shift (<span class="arithmatex">\(\frac{\pi}{2^{k-1}}\)</span>)</td>
 <td><code>builder.CRk(1, 0, 2)</code></td>
 </tr>
 <tr>
 <td>SWAP</td>
-<td><em>SWAP</em></td>
+<td><span class="arithmatex">\(SWAP\)</span></td>
 <td>SWAP gate</td>
 <td><code>builder.SWAP(1, 2)</code></td>
 </tr>
 <tr>
 <td>CNOT</td>
-<td><em>CNOT</em></td>
+<td><span class="arithmatex">\(CNOT\)</span></td>
 <td>Controlled-NOT gate</td>
 <td><code>builder.CNOT(1, 2)</code></td>
 </tr>

@@ -3045,6 +3045,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -3207,6 +3211,34 @@
   
   
     <li class="md-nav__item">
+      <a href="gate_replacer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    gate_replacer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="general_decomposer.html" class="md-nav__link">
         
   
@@ -3243,6 +3275,34 @@
     
   
     mckay_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="measure_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    measure_decomposer
   
 
     
@@ -5030,8 +5090,11 @@
 <span class="normal"><a href="#__codelineno-0-40">40</a></span>
 <span class="normal"><a href="#__codelineno-0-41">41</a></span>
 <span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="k">class</span><span class="w"> </span><span class="nc">SWAP2CZDecomposer</span><span class="p">(</span><span class="n">Decomposer</span><span class="p">):</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="k">class</span><span class="w"> </span><span class="nc">SWAP2CZDecomposer</span><span class="p">(</span><span class="n">Decomposer</span><span class="p">):</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">        </span><span class="sd">"""Predefined decomposition of SWAP gate to 3 CZ gates and Ry rotations.</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a>
 <a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">        ![image](../../../_static/swap2cz.png#only-light)</span>
@@ -5041,26 +5104,29 @@
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">            This decomposition preserves the global phase of the SWAP gate.</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">        Args:</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">            gate: SWAP gate to decompose.</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">            instruction: SWAP gate to decompose.</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>
 <a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">        Returns:</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">            A sequence of 3 CZ gates and Ry rotations that decompose the SWAP gate.</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">        """</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="k">if</span> <span class="n">gate</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SWAP"</span><span class="p">:</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">gate</span><span class="p">]</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>        <span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubit_operands</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="k">return</span> <span class="p">[</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">qubit0</span><span class="p">),</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="p">]</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>        <span class="k">if</span> <span class="n">instruction</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SWAP"</span><span class="p">:</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">instruction</span><span class="p">]</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="n">gate</span> <span class="o">=</span> <span class="n">instruction</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubit_operands</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>        <span class="k">return</span> <span class="p">[</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">qubit0</span><span class="p">),</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>            <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="p">]</span>
 </code></pre></div></td></tr></tbody></table></div>
               </details>
 
@@ -5085,7 +5151,7 @@
 
 
 </h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">decompose</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]</span>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">decompose</span><span class="p">(</span><span class="n">instruction</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]</span>
 </code></pre></div>
 
     <div class="doc doc-contents ">
@@ -5113,7 +5179,7 @@
       <tbody>
           <tr class="doc-section-item">
             <td>
-                <code>gate</code>
+                <code>instruction</code>
             </td>
             <td>
                   <code><a class="autorefs autorefs-internal" title="Gate (opensquirrel.ir.Gate)" href="../../ir/unitary.html#opensquirrel.ir.unitary.Gate">Gate</a></code>
@@ -5185,7 +5251,10 @@
 <span class="normal"><a href="#__codelineno-0-40">40</a></span>
 <span class="normal"><a href="#__codelineno-0-41">41</a></span>
 <span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
+<span class="normal"><a href="#__codelineno-0-43">43</a></span>
+<span class="normal"><a href="#__codelineno-0-44">44</a></span>
+<span class="normal"><a href="#__codelineno-0-45">45</a></span>
+<span class="normal"><a href="#__codelineno-0-46">46</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">    </span><span class="sd">"""Predefined decomposition of SWAP gate to 3 CZ gates and Ry rotations.</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a>
 <a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    ![image](../../../_static/swap2cz.png#only-light)</span>
@@ -5195,26 +5264,29 @@
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">        This decomposition preserves the global phase of the SWAP gate.</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">        gate: SWAP gate to decompose.</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">        instruction: SWAP gate to decompose.</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>
 <a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">    Returns:</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">        A sequence of 3 CZ gates and Ry rotations that decompose the SWAP gate.</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    """</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="k">if</span> <span class="n">gate</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SWAP"</span><span class="p">:</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">gate</span><span class="p">]</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>    <span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubit_operands</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="k">return</span> <span class="p">[</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="n">CZ</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">qubit0</span><span class="p">),</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>        <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="p">]</span>
+<a id="__codelineno-0-30" name="__codelineno-0-30"></a>    <span class="k">if</span> <span class="n">instruction</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s2">"SWAP"</span><span class="p">:</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">instruction</span><span class="p">]</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="n">gate</span> <span class="o">=</span> <span class="n">instruction</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>    <span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubit_operands</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="k">return</span> <span class="p">[</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>        <span class="n">CZ</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">qubit0</span><span class="p">),</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="o">-</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="n">CZ</span><span class="p">(</span><span class="n">qubit0</span><span class="p">,</span> <span class="n">qubit1</span><span class="p">),</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">Ry</span><span class="p">(</span><span class="n">qubit1</span><span class="p">,</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="p">]</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
