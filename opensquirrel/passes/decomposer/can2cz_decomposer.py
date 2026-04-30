@@ -6,8 +6,10 @@ import numpy as np
 
 from opensquirrel import CZ, Ry, H, S, Z, X90, MinusX90, SDagger
 from opensquirrel.ir import Gate
+from opensquirrel.ir.default_gates.two_qubit_gates import CNOT
 from opensquirrel.ir.semantics.bsr import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
@@ -29,13 +31,24 @@ class Can2CZDecomposer(Decomposer):
             Decomposition of the original gate into a sequence of gates.
 
         """
-        if not isinstance(instruction, Gate):
+        if not isinstance(instruction, TwoQubitGate):
             return [instruction]
 
         gate = instruction
         q0, q1 = gate.qubit_operands
 
-        if gate.semantic.axis == np.array([0.5, 0, 0]):
+        if gate == CZ(q0, q1):
+            return [gate]
+        
+        # if gate == CNOT(q0, q1):
+        #     return [
+        #         Ry(q1, -pi / 2),
+        #         CZ(q0, q1),
+        #         Ry(q1, pi / 2),
+        #         ]
+
+        if np.allclose(gate.canonical.axis.value, np.array([0.5, 0, 0])):
+            print()
             return [
                 H(q0), S(q0), 
                 H(q1), S(q1), H(q1),
@@ -44,8 +57,8 @@ class Can2CZDecomposer(Decomposer):
                 Ry(q1, pi / 2),
                 H(q0),
             ]
-        elif np.isclose(gate.semantic.axis[2], 0):
-            tx, ty, _ = gate.semantic.axis
+        elif np.isclose(gate.canonical.axis.value[2], 0):
+            tx, ty, _ = gate.canonical.axis.value
             Xtx = SingleQubitGate(q0, BlochSphereRotation(axis=(1, 0, 0), angle=pi * tx, phase=pi/2 * tx))
             Zty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ty, phase=pi/2 * ty))
             return [
@@ -63,7 +76,7 @@ class Can2CZDecomposer(Decomposer):
                 X90(q1), Z(q1),
             ]
         else:
-            tx, ty, tz = gate.semantic.axis
+            tx, ty, tz = gate.canonical.axis.value
             ztz = tz - 0.5
             ytx = tx - 0.5
             yty = 0.5 - ty

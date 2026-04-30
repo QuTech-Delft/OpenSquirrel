@@ -6,6 +6,7 @@ from opensquirrel.passes.decomposer.aba_decomposer import (
     ZXZDecomposer,
     ZYZDecomposer,
 )
+from opensquirrel.passes.decomposer.can2cz_decomposer import Can2CZDecomposer
 from opensquirrel.passes.decomposer.cnot2cz_decomposer import CNOT2CZDecomposer
 from opensquirrel.passes.decomposer.cnot_decomposer import CNOTDecomposer
 from opensquirrel.passes.decomposer.cz_decomposer import CZDecomposer
@@ -14,6 +15,7 @@ from opensquirrel.passes.decomposer.swap2cnot_decomposer import SWAP2CNOTDecompo
 from opensquirrel.passes.decomposer.swap2cz_decomposer import SWAP2CZDecomposer
 
 __all__ = [
+    "Can2CZDecomposer",
     "CNOT2CZDecomposer",
     "CNOTDecomposer",
     "CZDecomposer",
