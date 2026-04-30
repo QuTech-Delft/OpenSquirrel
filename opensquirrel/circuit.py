@@ -148,6 +148,15 @@ class Circuit:
             or (isinstance(statement, AsmDeclaration) and backend_name in str(statement.backend_name))
         ]
 
+    def analyze(self, analyzer: Analyzer) -> None:
+        """Analyzes the circuit using the specified analyzer.
+
+        Args:
+            analyzer (Analyzer): The analyzer to apply.
+
+        """
+        analyzer.analyze(self)
+
     def decompose(self, decomposer: Decomposer) -> None:
         """Decomposes the circuit using to the specified decomposer.
 
