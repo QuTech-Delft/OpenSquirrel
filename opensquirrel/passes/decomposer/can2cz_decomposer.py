@@ -2,17 +2,25 @@ from __future__ import annotations
 
 from math import pi
 
-from opensquirrel import CZ, Ry
+import numpy as np
+
+from opensquirrel import CZ, Ry, H, S, Z, X90, MinusX90, SDagger
 from opensquirrel.ir import Gate
+from opensquirrel.ir.semantics.bsr import BlochSphereRotation
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 
-class CNOT2CZDecomposer(Decomposer):
+class Can2CZDecomposer(Decomposer):
+
     def decompose(self, instruction: Gate) -> list[Gate]:
-        """General decomposition of a 2-qubit gate into (at most 3) CZ gate(s) with single-qubit rotations.
+        """General decomposition of an arbitrary 2-qubit gate into (at most 3) CZ gate(s) with single-qubit rotations.
+
+        Adapted from [Quantum Gates by G.E. Crooks (2024), Section 7.3](https://threeplusone.com/pubs/on_gates.pdf).
 
         Note:
             This decomposition does not, in general, preserve the global phase of the original gate.
+            It is advised to run the single-qubit gates merger pass after this decomposition pass.
 
         Args:
             instruction (Gate): 2-qubit gate to decompose.
@@ -26,8 +34,55 @@ class CNOT2CZDecomposer(Decomposer):
 
         gate = instruction
         q0, q1 = gate.qubit_operands
-        return [
-            Ry(q1, -pi / 2),
-            CZ(q0, q1),
-            Ry(q1, pi / 2),
-        ]
+
+        if gate.semantic.axis == np.array([0.5, 0, 0]):
+            return [
+                H(q0), S(q0), 
+                H(q1), S(q1), H(q1),
+                Ry(q1, -pi / 2),
+                CZ(q0, q1),
+                Ry(q1, pi / 2),
+                H(q0),
+            ]
+        elif np.isclose(gate.semantic.axis[2], 0):
+            tx, ty, _ = gate.semantic.axis
+            Xtx = SingleQubitGate(q0, BlochSphereRotation(axis=(1, 0, 0), angle=pi * tx, phase=pi/2 * tx))
+            Zty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ty, phase=pi/2 * ty))
+            return [
+                Z(q0), MinusX90(q0),
+                Z(q1), MinusX90(q1),
+                Ry(q1, -pi / 2),
+                CZ(q0, q1),
+                Ry(q1, pi / 2),
+                Xtx,
+                Zty,
+                Ry(q1, -pi / 2),
+                CZ(q0, q1),
+                Ry(q1, pi / 2),
+                X90(q0), Z(q0),
+                X90(q1), Z(q1),
+            ]
+        else:
+            tx, ty, tz = gate.semantic.axis
+            ztz = tz - 0.5
+            ytx = tx - 0.5
+            yty = 0.5 - ty
+            Ztz = SingleQubitGate(q0, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ztz, phase=pi/2 * ztz))
+            Ytx = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * ytx, phase=pi/2 * ytx))
+            Yty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * yty, phase=pi/2 * yty))
+            return [
+                S(q1),
+                Ry(q0, -pi / 2),
+                CZ(q1, q0),
+                Ry(q0, pi / 2),
+                Ztz,
+                Ytx,
+                Ry(q1, -pi / 2),
+                CZ(q0, q1),
+                Ry(q1, pi / 2),
+                Yty,
+                Ry(q0, -pi / 2),
+                CZ(q1, q0),
+                Ry(q0, pi / 2),
+                SDagger(q0),
+            ]
