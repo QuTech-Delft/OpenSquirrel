@@ -4,9 +4,8 @@ from math import pi
 
 import numpy as np
 
-from opensquirrel import CZ, Ry, H, S, Z, X90, MinusX90, SDagger
+from opensquirrel import CZ, CNOT, Ry, H, S, Z, X90, MinusX90, SDagger
 from opensquirrel.ir import Gate
-from opensquirrel.ir.default_gates.two_qubit_gates import CNOT
 from opensquirrel.ir.semantics.bsr import BlochSphereRotation
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
@@ -39,6 +38,12 @@ class Can2CZDecomposer(Decomposer):
 
         if gate == CZ(q0, q1):
             return [gate]
+
+        if gate == CNOT(q0, q1):
+            return [Ry(q1, -pi / 2), CZ(q0, q1), Ry(q1, pi / 2)]
+
+        # Canonical 4x4 factors follow tensor-product order (higher index first).
+        q0, q1 = (q0, q1) if q0.index > q1.index else (q1, q0)
 
         gate_axis = gate.canonical.axis
         gate_rotations = gate.canonical.rotations
