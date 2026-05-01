@@ -39,29 +39,31 @@ class Can2CZDecomposer(Decomposer):
 
         if gate == CZ(q0, q1):
             return [gate]
-        
-        # if gate == CNOT(q0, q1):
-        #     return [
-        #         Ry(q1, -pi / 2),
-        #         CZ(q0, q1),
-        #         Ry(q1, pi / 2),
-        #         ]
 
-        if np.allclose(gate.canonical.axis.value, np.array([0.5, 0, 0])):
-            print()
+        gate_axis = gate.canonical.axis
+        gate_rotations = gate.canonical.rotations
+        K1 = SingleQubitGate(q0, gate_rotations[0])
+        K2 = SingleQubitGate(q1, gate_rotations[1])
+        K3 = SingleQubitGate(q0, gate_rotations[2])
+        K4 = SingleQubitGate(q1, gate_rotations[3])
+
+        if np.allclose(gate_axis.value, np.array([0.5, 0, 0])):
             return [
+                K1, K2,
                 H(q0), S(q0), 
                 H(q1), S(q1), H(q1),
                 Ry(q1, -pi / 2),
                 CZ(q0, q1),
                 Ry(q1, pi / 2),
                 H(q0),
+                K3, K4,
             ]
-        elif np.isclose(gate.canonical.axis.value[2], 0):
-            tx, ty, _ = gate.canonical.axis.value
+        elif np.isclose(gate_axis.value[2], 0):
+            tx, ty, _ = gate_axis.value
             Xtx = SingleQubitGate(q0, BlochSphereRotation(axis=(1, 0, 0), angle=pi * tx, phase=pi/2 * tx))
             Zty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ty, phase=pi/2 * ty))
             return [
+                K1, K2,
                 Z(q0), MinusX90(q0),
                 Z(q1), MinusX90(q1),
                 Ry(q1, -pi / 2),
@@ -74,9 +76,10 @@ class Can2CZDecomposer(Decomposer):
                 Ry(q1, pi / 2),
                 X90(q0), Z(q0),
                 X90(q1), Z(q1),
+                K3, K4,
             ]
         else:
-            tx, ty, tz = gate.canonical.axis.value
+            tx, ty, tz = gate_axis.value
             ztz = tz - 0.5
             ytx = tx - 0.5
             yty = 0.5 - ty
@@ -84,6 +87,7 @@ class Can2CZDecomposer(Decomposer):
             Ytx = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * ytx, phase=pi/2 * ytx))
             Yty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * yty, phase=pi/2 * yty))
             return [
+                K1, K2,
                 S(q1),
                 Ry(q0, -pi / 2),
                 CZ(q1, q0),
@@ -98,4 +102,5 @@ class Can2CZDecomposer(Decomposer):
                 CZ(q1, q0),
                 Ry(q0, pi / 2),
                 SDagger(q0),
+                K3, K4,
             ]
