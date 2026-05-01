@@ -149,7 +149,7 @@ class CanonicalGateSemantic(GateSemantic):
         if self.rotations is None or other.rotations is None:
             return False
         return len(self.rotations) == len(other.rotations) and all(
-            r1 == r2 for r1, r2 in zip(self.rotations, other.rotations)
+            r1 == r2 for r1, r2 in zip(self.rotations, other.rotations, strict=False)
         )
 
     def __hash__(self) -> int:

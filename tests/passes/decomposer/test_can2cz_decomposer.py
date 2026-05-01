@@ -95,31 +95,30 @@ def test_decomposes_known_two_qubit_gates(decomposer: Can2CZDecomposer, gate: Ga
                     BlochSphereRotation((1, 0, 0), 0.5 * pi, 0.25 * pi),
                     BlochSphereRotation((1, 0, 0), 0.2 * pi, 0.1 * pi),
                     BlochSphereRotation((0, 0, 1), 0.3 * pi, 0.15 * pi),
-                    ]
-                )
+                ],
+            ),
         ),
         TwoQubitGate(
             qubit0=0,
             qubit1=1,
-            gate_semantic=ControlledGateSemantic(
-                target_bsr=BlochSphereRotation((0, 1, 0), pi / 5, pi / 10)
-            )
+            gate_semantic=ControlledGateSemantic(target_bsr=BlochSphereRotation((0, 1, 0), pi / 5, pi / 10)),
         ),
         TwoQubitGate(
             qubit0=0,
             qubit1=1,
             gate_semantic=MatrixGateSemantic(
-                matrix= (1 / 2) * np.array(
+                matrix=(1 / 2)
+                * np.array(
                     [
-                        [1,  1,  1,  1],
-                        [1, -1,  1, -1],
-                        [1,  1, -1, -1],
-                        [1, -1, -1,  1],
+                        [1, 1, 1, 1],
+                        [1, -1, 1, -1],
+                        [1, 1, -1, -1],
+                        [1, -1, -1, 1],
                     ],
                     dtype=np.complex128,
                 )
-            )
-        ),      
+            ),
+        ),
     ],
     ids=["canonical", "controlled", "matrix"],
 )

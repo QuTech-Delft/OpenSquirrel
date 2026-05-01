@@ -3328,11 +3328,11 @@ export = [
     { name = "pyqt5-qt5", marker = "sys_platform != 'darwin'", specifier = "==5.15.2" },
     { name = "qcodes", marker = "sys_platform != 'darwin'", specifier = "<0.57.0" },
     { name = "quantify-scheduler", marker = "sys_platform != 'darwin'", specifier = "==0.28.0" },
-    { name = "spirack", marker = "sys_platform != 'darwin'", specifier = "<=0.2.12" },
+    { name = "spirack", marker = "sys_platform != 'darwin'", specifier = "<=0.2.17" },
 ]
 qgym-mapper = [
     { name = "qgym", specifier = "==0.3.1" },
-    { name = "sb3-contrib", specifier = "==2.7.1" },
+    { name = "sb3-contrib", specifier = "==2.8.0" },
     { name = "stable-baselines3", specifier = "==2.8.0" },
 ]
 
@@ -4947,14 +4947,14 @@ wheels = [
 
 [[package]]
 name = "sb3-contrib"
-version = "2.7.1"
+version = "2.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "stable-baselines3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1d/ee/0d0a0a964e4dc290784b8dc7d540e6a2a4e688efdbda5e4c397d27e9d085/sb3_contrib-2.7.1.tar.gz", hash = "sha256:491070fb14c6a59757cbcc1aea5c62c894c2312f3f8a1ccf8f363a48eb3126ad", size = 89982, upload-time = "2025-12-05T11:31:18.904Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/13/c1/d50b8f886c586864fbda8855c03b0da235dd345ff66e05500ef887711efe/sb3_contrib-2.8.0.tar.gz", hash = "sha256:25656d093169239db1081b7665091f168f6113776878387387fdf4e3e894c7f1", size = 90527, upload-time = "2026-04-01T10:59:58.367Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/40/4d/6737dc879ba484419fc6db2bdfbd13aa6b1a3b516368ad0370546693ae82/sb3_contrib-2.7.1-py3-none-any.whl", hash = "sha256:27dd9db11e4f0b5e172bc73eef32c6342e7de8d6b4b833a8a28933e1679e907f", size = 93189, upload-time = "2025-12-05T11:31:17.587Z" },
+    { url = "https://files.pythonhosted.org/packages/8c/17/3a00211e7453d382b98783995174e1f587c461719ac916078bac26dbe597/sb3_contrib-2.8.0-py3-none-any.whl", hash = "sha256:14c81ce4e15c747a13e2b1a8945e7658da6e320b1341b9e971358c35837598b2", size = 93043, upload-time = "2026-04-01T10:59:56.704Z" },
 ]
 
 [[package]]
