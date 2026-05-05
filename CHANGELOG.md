@@ -166,6 +166,7 @@ arbitrarily applied mapper pass.
 - `CNOT2CZDecomposer` decomposer pass
 - `RoutingChecker` routing pass
 - Restore SGMQ notation for barrier groups in cQASMv1 Exporter
+- `CircuitAnalyzer` analyzer pass for computing structural circuit metrics (size, interaction graph, gate dependency graph, density)
 
 ### Changed
 

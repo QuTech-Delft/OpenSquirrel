@@ -1,13 +1,14 @@
-## Rewrite to analyzer
+from __future__ import annotations
 
-# from abc import ABC, abstractmethod
-# from typing import Any
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any
 
-# from opensquirrel.ir import IR
+if TYPE_CHECKING:
+    from opensquirrel.circuit import Circuit
 
 
-# class Validator(ABC):
-#     def __init__(self, **kwargs: Any) -> None: ...
+class Analyzer(ABC):
+    def __init__(self, **kwargs: Any) -> None: ...
 
-#     @abstractmethod
-#     def validate(self, ir: IR) -> None: ...
+    @abstractmethod
+    def analyze(self, circuit: Circuit) -> dict[str, Any]: ...
