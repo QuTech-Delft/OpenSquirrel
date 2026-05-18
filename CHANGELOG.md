@@ -24,6 +24,7 @@ parameter
 arbitrarily applied mapper pass.
 - The measure instruction accepts an axis parameter
 - `MeasureDecomposer` to decompose arbitrary measurements to a decomposition of single-qubit gates and a +Z measurement.
+- `CircuitAnalyzer` analyzer pass for computing structural circuit metrics (size, interaction graph, gate dependency graph, density)
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 
@@ -166,7 +167,6 @@ arbitrarily applied mapper pass.
 - `CNOT2CZDecomposer` decomposer pass
 - `RoutingChecker` routing pass
 - Restore SGMQ notation for barrier groups in cQASMv1 Exporter
-- `CircuitAnalyzer` analyzer pass for computing structural circuit metrics (size, interaction graph, gate dependency graph, density)
 
 ### Changed
 

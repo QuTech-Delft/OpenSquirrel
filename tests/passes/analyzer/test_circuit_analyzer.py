@@ -102,86 +102,114 @@ def test_circuit_analyze_method_returns_dict(ghz_circuit: Circuit) -> None:
 
 
 # --------------------------------------------------------------------- #
-# Size metrics                                                          #
+# Size & Depth metrics                                                  #
 # --------------------------------------------------------------------- #
-def test_size_metrics_on_empty_circuit(analyzer: CircuitAnalyzer, empty_circuit: Circuit) -> None:
-    result = analyzer.analyze(empty_circuit)
-    assert result["n_qubits"] == 3
-    assert result["n_gates"] == 0
-    assert result["n_two_qubit_gates"] == 0
-    assert result["two_qubit_pct"] == pytest.approx(0.0, abs=1e-9)
-    assert result["depth"] == 0
+@pytest.mark.parametrize(
+    "circuit_name, exp_qubits, exp_gates, exp_2q, exp_pct, exp_depth",
+    [
+        ("empty_circuit", 3, 0, 0, 0.0, 0),
+        ("ghz_circuit", 3, 3, 2, 2 / 3, 3),
+    ]
+)
+def test_size_metrics(
+    analyzer: CircuitAnalyzer, 
+    request: pytest.FixtureRequest, 
+    circuit_name: str, 
+    exp_qubits: int, 
+    exp_gates: int, 
+    exp_2q: int, 
+    exp_pct: float, 
+    exp_depth: int
+) -> None:
+    circuit = request.getfixturevalue(circuit_name)
+    result = analyzer.analyze(circuit)
+    
+    assert result["n_qubits"] == exp_qubits
+    assert result["n_gates"] == exp_gates
+    assert result["n_two_qubit_gates"] == exp_2q
+    assert result["two_qubit_pct"] == pytest.approx(exp_pct, abs=1e-3)
+    assert result["depth"] == exp_depth
 
 
-def test_size_metrics_on_ghz(analyzer: CircuitAnalyzer, ghz_circuit: Circuit) -> None:
-    result = analyzer.analyze(ghz_circuit)
-    assert result["n_qubits"] == 3
-    assert result["n_gates"] == 3
-    assert result["n_two_qubit_gates"] == 2
-    assert result["two_qubit_pct"] == pytest.approx(2 / 3, abs=1e-3)
-    assert result["depth"] == 3
-
-
-def test_depth_with_parallel_gates(analyzer: CircuitAnalyzer, parallel_circuit: Circuit) -> None:
-    """Two independent gates can run in the same time-step, so depth is 1."""
-    result = analyzer.analyze(parallel_circuit)
-    assert result["depth"] == 1
-    assert result["n_gates"] == 2
-
-
-def test_depth_with_sequential_gates(analyzer: CircuitAnalyzer, sequential_circuit: Circuit) -> None:
-    """Gates that share qubits must serialise, so depth equals gate count."""
-    result = analyzer.analyze(sequential_circuit)
-    assert result["depth"] == 3
-    assert result["n_gates"] == 3
+@pytest.mark.parametrize(
+    "circuit_name, exp_depth, exp_gates",
+    [
+        ("parallel_circuit", 1, 2),
+        ("sequential_circuit", 3, 3),
+    ]
+)
+def test_depth_metrics(
+    analyzer: CircuitAnalyzer, 
+    request: pytest.FixtureRequest, 
+    circuit_name: str, 
+    exp_depth: int, 
+    exp_gates: int
+) -> None:
+    circuit = request.getfixturevalue(circuit_name)
+    result = analyzer.analyze(circuit)
+    
+    assert result["depth"] == exp_depth
+    assert result["n_gates"] == exp_gates
 
 
 # --------------------------------------------------------------------- #
 # Interaction graph metrics                                             #
 # --------------------------------------------------------------------- #
-def test_interaction_graph_empty_when_no_two_qubit_gates(
-    analyzer: CircuitAnalyzer, single_qubit_circuit: Circuit
+@pytest.mark.parametrize(
+    "circuit_name, exp_diameter, exp_avg_degree, exp_cliques, exp_clustering",
+    [
+        ("single_qubit_circuit", 0, 0.0, 0, 0.0),
+        ("ghz_circuit", 2, 4 / 3, 2, 0.0),
+    ]
+)
+def test_interaction_graph_metrics(
+    analyzer: CircuitAnalyzer, 
+    request: pytest.FixtureRequest, 
+    circuit_name: str, 
+    exp_diameter: int, 
+    exp_avg_degree: float, 
+    exp_cliques: int, 
+    exp_clustering: float
 ) -> None:
-    result = analyzer.analyze(single_qubit_circuit)
-    assert result["ig_diameter"] == 0
-    assert result["ig_avg_degree"] == pytest.approx(0.0, abs=1e-9)
-    assert result["ig_n_maximal_cliques"] == 0
-    assert result["ig_clustering_coefficient"] == pytest.approx(0.0, abs=1e-9)
-
-
-def test_interaction_graph_metrics_on_ghz(analyzer: CircuitAnalyzer, ghz_circuit: Circuit) -> None:
-    """GHZ-like has IG = path q0-q1-q2: 3 nodes, 2 edges, diameter 2."""
-    result = analyzer.analyze(ghz_circuit)
-    assert result["ig_diameter"] == 2
-    # avg degree of a 3-node path = (1 + 2 + 1) / 3 ~= 1.333
-    assert result["ig_avg_degree"] == pytest.approx(4 / 3, abs=1e-3)
-    # 2 maximal cliques (each edge is a maximal clique)
-    assert result["ig_n_maximal_cliques"] == 2
+    circuit = request.getfixturevalue(circuit_name)
+    result = analyzer.analyze(circuit)
+    
+    assert result["ig_diameter"] == exp_diameter
+    assert result["ig_avg_degree"] == pytest.approx(exp_avg_degree, abs=1e-3)
+    assert result["ig_n_maximal_cliques"] == exp_cliques
+    assert result["ig_clustering_coefficient"] == pytest.approx(exp_clustering, abs=1e-9)
 
 
 # --------------------------------------------------------------------- #
 # Gate dependency graph metrics                                         #
 # --------------------------------------------------------------------- #
-def test_critical_path_on_sequential_circuit(analyzer: CircuitAnalyzer, sequential_circuit: Circuit) -> None:
-    """Three sequential CNOTs form a chain. Critical path length = 2 (3 nodes, 2 edges)."""
-    result = analyzer.analyze(sequential_circuit)
-    assert result["gdg_critical_path_length"] == 2
-    # All 3 gates lie on the unique critical path.
-    assert result["gdg_pct_gates_in_critical_path"] == pytest.approx(1.0, abs=1e-9)
+@pytest.mark.parametrize(
+    "circuit_name, exp_cp_length, exp_pct",
+    [
+        ("sequential_circuit", 2, 1.0),
+        ("parallel_circuit", 0, 1.0),
+        ("empty_circuit", 0, 0.0),
+    ]
+)
+def test_critical_path_metrics(
+    analyzer: CircuitAnalyzer, 
+    request: pytest.FixtureRequest, 
+    circuit_name: str, 
+    exp_cp_length: int, 
+    exp_pct: float
+) -> None:
+    circuit = request.getfixturevalue(circuit_name)
+    result = analyzer.analyze(circuit)
+    
+    assert result["gdg_critical_path_length"] == exp_cp_length
+    assert result["gdg_pct_gates_in_critical_path"] == pytest.approx(exp_pct, abs=1e-9)
 
 
-def test_critical_path_on_parallel_circuit(analyzer: CircuitAnalyzer, parallel_circuit: Circuit) -> None:
-    """Two independent gates means no edges in the GDG, so critical path length is 0."""
-    result = analyzer.analyze(parallel_circuit)
-    assert result["gdg_critical_path_length"] == 0
-
-
-def test_critical_path_empty_on_empty_circuit(analyzer: CircuitAnalyzer, empty_circuit: Circuit) -> None:
+def test_gdg_path_length_stats_on_empty_circuit(analyzer: CircuitAnalyzer, empty_circuit: Circuit) -> None:
+    """Ensure that standard deviation and mean don't throw errors on empty graphs."""
     result = analyzer.analyze(empty_circuit)
-    assert result["gdg_critical_path_length"] == 0
     assert result["gdg_path_length_mean"] == pytest.approx(0.0, abs=1e-9)
     assert result["gdg_path_length_std"] == pytest.approx(0.0, abs=1e-9)
-    assert result["gdg_pct_gates_in_critical_path"] == pytest.approx(0.0, abs=1e-9)
 
 
 # --------------------------------------------------------------------- #
