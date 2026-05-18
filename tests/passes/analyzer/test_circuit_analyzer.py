@@ -105,25 +105,25 @@ def test_circuit_analyze_method_returns_dict(ghz_circuit: Circuit) -> None:
 # Size & Depth metrics                                                  #
 # --------------------------------------------------------------------- #
 @pytest.mark.parametrize(
-    "circuit_name, exp_qubits, exp_gates, exp_2q, exp_pct, exp_depth",
+    "circuit_name", "exp_qubits", "exp_gates", "exp_2q", "exp_pct", "exp_depth",
     [
         ("empty_circuit", 3, 0, 0, 0.0, 0),
         ("ghz_circuit", 3, 3, 2, 2 / 3, 3),
-    ]
+    ],
 )
 def test_size_metrics(
-    analyzer: CircuitAnalyzer, 
-    request: pytest.FixtureRequest, 
-    circuit_name: str, 
-    exp_qubits: int, 
-    exp_gates: int, 
-    exp_2q: int, 
-    exp_pct: float, 
-    exp_depth: int
+    analyzer: CircuitAnalyzer,
+    request: pytest.FixtureRequest,
+    circuit_name: str,
+    exp_qubits: int,
+    exp_gates: int,
+    exp_2q: int,
+    exp_pct: float,
+    exp_depth: int,
 ) -> None:
     circuit = request.getfixturevalue(circuit_name)
     result = analyzer.analyze(circuit)
-    
+
     assert result["n_qubits"] == exp_qubits
     assert result["n_gates"] == exp_gates
     assert result["n_two_qubit_gates"] == exp_2q
@@ -132,22 +132,18 @@ def test_size_metrics(
 
 
 @pytest.mark.parametrize(
-    "circuit_name, exp_depth, exp_gates",
+    "circuit_name", "exp_depth", "exp_gates",
     [
         ("parallel_circuit", 1, 2),
         ("sequential_circuit", 3, 3),
-    ]
+    ],
 )
 def test_depth_metrics(
-    analyzer: CircuitAnalyzer, 
-    request: pytest.FixtureRequest, 
-    circuit_name: str, 
-    exp_depth: int, 
-    exp_gates: int
+    analyzer: CircuitAnalyzer, request: pytest.FixtureRequest, circuit_name: str, exp_depth: int, exp_gates: int
 ) -> None:
     circuit = request.getfixturevalue(circuit_name)
     result = analyzer.analyze(circuit)
-    
+
     assert result["depth"] == exp_depth
     assert result["n_gates"] == exp_gates
 
@@ -156,24 +152,24 @@ def test_depth_metrics(
 # Interaction graph metrics                                             #
 # --------------------------------------------------------------------- #
 @pytest.mark.parametrize(
-    "circuit_name, exp_diameter, exp_avg_degree, exp_cliques, exp_clustering",
+    "circuit_name", "exp_diameter", "exp_avg_degree", "exp_cliques", "exp_clustering",
     [
         ("single_qubit_circuit", 0, 0.0, 0, 0.0),
         ("ghz_circuit", 2, 4 / 3, 2, 0.0),
-    ]
+    ],
 )
 def test_interaction_graph_metrics(
-    analyzer: CircuitAnalyzer, 
-    request: pytest.FixtureRequest, 
-    circuit_name: str, 
-    exp_diameter: int, 
-    exp_avg_degree: float, 
-    exp_cliques: int, 
-    exp_clustering: float
+    analyzer: CircuitAnalyzer,
+    request: pytest.FixtureRequest,
+    circuit_name: str,
+    exp_diameter: int,
+    exp_avg_degree: float,
+    exp_cliques: int,
+    exp_clustering: float,
 ) -> None:
     circuit = request.getfixturevalue(circuit_name)
     result = analyzer.analyze(circuit)
-    
+
     assert result["ig_diameter"] == exp_diameter
     assert result["ig_avg_degree"] == pytest.approx(exp_avg_degree, abs=1e-3)
     assert result["ig_n_maximal_cliques"] == exp_cliques
@@ -184,23 +180,19 @@ def test_interaction_graph_metrics(
 # Gate dependency graph metrics                                         #
 # --------------------------------------------------------------------- #
 @pytest.mark.parametrize(
-    "circuit_name, exp_cp_length, exp_pct",
+    "circuit_name", "exp_cp_length", "exp_pct",
     [
         ("sequential_circuit", 2, 1.0),
         ("parallel_circuit", 0, 1.0),
         ("empty_circuit", 0, 0.0),
-    ]
+    ],
 )
 def test_critical_path_metrics(
-    analyzer: CircuitAnalyzer, 
-    request: pytest.FixtureRequest, 
-    circuit_name: str, 
-    exp_cp_length: int, 
-    exp_pct: float
+    analyzer: CircuitAnalyzer, request: pytest.FixtureRequest, circuit_name: str, exp_cp_length: int, exp_pct: float
 ) -> None:
     circuit = request.getfixturevalue(circuit_name)
     result = analyzer.analyze(circuit)
-    
+
     assert result["gdg_critical_path_length"] == exp_cp_length
     assert result["gdg_pct_gates_in_critical_path"] == pytest.approx(exp_pct, abs=1e-9)
 
