@@ -105,7 +105,7 @@ def test_circuit_analyze_method_returns_dict(ghz_circuit: Circuit) -> None:
 # Size & Depth metrics                                                  #
 # --------------------------------------------------------------------- #
 @pytest.mark.parametrize(
-    "circuit_name", "exp_qubits", "exp_gates", "exp_2q", "exp_pct", "exp_depth",
+    ("circuit_name", "exp_qubits", "exp_gates", "exp_2q", "exp_pct", "exp_depth"),
     [
         ("empty_circuit", 3, 0, 0, 0.0, 0),
         ("ghz_circuit", 3, 3, 2, 2 / 3, 3),
@@ -132,7 +132,7 @@ def test_size_metrics(
 
 
 @pytest.mark.parametrize(
-    "circuit_name", "exp_depth", "exp_gates",
+    ("circuit_name", "exp_depth", "exp_gates"),
     [
         ("parallel_circuit", 1, 2),
         ("sequential_circuit", 3, 3),
@@ -152,7 +152,7 @@ def test_depth_metrics(
 # Interaction graph metrics                                             #
 # --------------------------------------------------------------------- #
 @pytest.mark.parametrize(
-    "circuit_name", "exp_diameter", "exp_avg_degree", "exp_cliques", "exp_clustering",
+    ("circuit_name", "exp_diameter", "exp_avg_degree", "exp_cliques", "exp_clustering"),
     [
         ("single_qubit_circuit", 0, 0.0, 0, 0.0),
         ("ghz_circuit", 2, 4 / 3, 2, 0.0),
@@ -180,7 +180,7 @@ def test_interaction_graph_metrics(
 # Gate dependency graph metrics                                         #
 # --------------------------------------------------------------------- #
 @pytest.mark.parametrize(
-    "circuit_name", "exp_cp_length", "exp_pct",
+    ("circuit_name", "exp_cp_length", "exp_pct"),
     [
         ("sequential_circuit", 2, 1.0),
         ("parallel_circuit", 0, 1.0),
