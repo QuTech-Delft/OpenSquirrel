@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import statistics
 from typing import TYPE_CHECKING, Any
 
 import networkx as nx
@@ -20,7 +21,7 @@ class CircuitAnalyzer(Analyzer):
 
     * Size: number of qubits, gates, two-qubit gates, two-qubit gate percentage, depth.
     * Interaction graph (IG): metrics derived from the qubit interaction graph,
-      where nodes are qubits and edges are two-qubit gates.
+      where nodes correspond to qubits and edges correspond to two-qubit gates.
     * Gate dependency graph (GDG): metrics derived from the directed acyclic graph
       of gate-to-gate dependencies on shared qubits.
     * Density: parallelisation-related metrics (density score, idling score).
@@ -41,24 +42,26 @@ class CircuitAnalyzer(Analyzer):
             dict[str, Any]: A flat dictionary mapping metric name to its value.
 
         """
+        self.circuit = circuit
+        self.gate_statements = [s for s in circuit.ir.statements if isinstance(s, Gate)]
+
         metrics: dict[str, Any] = {}
-        metrics.update(self._size_metrics(circuit))
-        metrics.update(self._interaction_graph_metrics(circuit))
-        metrics.update(self._gate_dependency_graph_metrics(circuit))
-        metrics.update(self._density_metrics(circuit))
+        metrics.update(self._size_metrics())
+        metrics.update(self._interaction_graph_metrics())
+        metrics.update(self._gate_dependency_graph_metrics())
+        metrics.update(self._density_metrics())
+
         return metrics
 
     # ------------------------------------------------------------------ #
     # Size metrics                                                       #
     # ------------------------------------------------------------------ #
-    @staticmethod
-    def _size_metrics(circuit: Circuit) -> dict[str, Any]:
-        n_qubits = circuit.qubit_register_size
-        gate_statements = [s for s in circuit.ir.statements if isinstance(s, Gate)]
-        n_gates = len(gate_statements)
-        n_two_qubit_gates = sum(1 for s in gate_statements if isinstance(s, TwoQubitGate))
+    def _size_metrics(self) -> dict[str, Any]:
+        n_qubits = self.circuit.qubit_register_size
+        n_gates = len(self.gate_statements)
+        n_two_qubit_gates = sum(1 for s in self.gate_statements if isinstance(s, TwoQubitGate))
         two_qubit_pct = round(n_two_qubit_gates / n_gates, 4) if n_gates > 0 else 0.0
-        depth = CircuitAnalyzer._compute_depth(circuit, gate_statements)
+        depth = self._compute_depth()
 
         return {
             "n_qubits": n_qubits,
@@ -68,44 +71,38 @@ class CircuitAnalyzer(Analyzer):
             "depth": depth,
         }
 
-    @staticmethod
-    def _compute_depth(circuit: Circuit, gate_statements: list[Gate]) -> int:
+    def _compute_depth(self) -> int:
         """ASAP-style circuit depth (longest dependency chain)."""
-        n_qubits = circuit.qubit_register_size
-        if n_qubits == 0 or not gate_statements:
+        n_qubits = self.circuit.qubit_register_size
+        if n_qubits == 0 or not self.gate_statements:
             return 0
 
         layer = [0] * n_qubits
-        for gate in gate_statements:
-            qubit_indices = list(gate.qubit_indices)
-            if not qubit_indices:
-                continue
-            new_layer = max(layer[i] for i in qubit_indices) + 1
-            for i in qubit_indices:
-                layer[i] = new_layer
+        for gate_statement in self.gate_statements:
+            qubit_indices = list(gate_statement.qubit_indices)
+            new_layer = max(layer[qubit_index] for qubit_index in qubit_indices) + 1
+            for qubit_index in qubit_indices:
+                layer[qubit_index] = new_layer
         return max(layer)
 
     # ------------------------------------------------------------------ #
     # Interaction graph metrics                                          #
     # ------------------------------------------------------------------ #
-    @staticmethod
-    def _interaction_graph_metrics(circuit: Circuit) -> dict[str, Any]:
-        empty: dict[str, Any] = {
-            "ig_avg_shortest_path": 0.0,
-            "ig_std_adjacency": 0.0,
-            "ig_diameter": 0,
-            "ig_central_dominance": 0.0,
-            "ig_avg_degree": 0.0,
-            "ig_n_maximal_cliques": 0,
-            "ig_clustering_coefficient": 0.0,
-        }
-
-        weighted_edges = circuit.interaction_graph
+    def _interaction_graph_metrics(self) -> dict[str, Any]:
+        weighted_edges = self.circuit.interaction_graph
         if not weighted_edges:
-            return empty
+            return {
+                "ig_avg_shortest_path": 0.0,
+                "ig_std_adjacency": 0.0,
+                "ig_diameter": 0,
+                "ig_central_dominance": 0.0,
+                "ig_avg_degree": 0.0,
+                "ig_n_maximal_cliques": 0,
+                "ig_clustering_coefficient": 0.0,
+            }
 
         graph = nx.Graph()
-        graph.add_nodes_from(range(circuit.qubit_register_size))
+        graph.add_nodes_from(range(self.circuit.qubit_register_size))
         for (i, j), weight in weighted_edges.items():
             graph.add_edge(i, j, weight=weight)
 
@@ -159,10 +156,8 @@ class CircuitAnalyzer(Analyzer):
     # ------------------------------------------------------------------ #
     # Gate dependency graph metrics                                      #
     # ------------------------------------------------------------------ #
-    @staticmethod
-    def _gate_dependency_graph_metrics(circuit: Circuit) -> dict[str, Any]:
-        gate_statements = [s for s in circuit.ir.statements if isinstance(s, Gate)]
-        n_gates = len(gate_statements)
+    def _gate_dependency_graph_metrics(self) -> dict[str, Any]:
+        n_gates = len(self.gate_statements)
         if n_gates == 0:
             return {
                 "gdg_critical_path_length": 0,
@@ -171,12 +166,12 @@ class CircuitAnalyzer(Analyzer):
                 "gdg_pct_gates_in_critical_path": 0.0,
             }
 
-        gdg = CircuitAnalyzer._build_gate_dependency_graph(gate_statements)
-        critical_path_length = CircuitAnalyzer._safe_critical_path_length(gdg)
-        longest_to, longest_from = CircuitAnalyzer._compute_longest_paths(gdg)
-        mean_length, std_length = CircuitAnalyzer._path_length_stats(longest_to)
-        pct_gates_in_cp = CircuitAnalyzer._critical_path_membership_fraction(
-            gdg, longest_to, longest_from, critical_path_length, n_gates
+        gate_dependency_graph = self._build_gate_dependency_graph()
+        critical_path_length = self._safe_critical_path_length(gate_dependency_graph)
+        longest_to, longest_from = self._compute_longest_paths(gate_dependency_graph)
+        mean_length, std_length = self._path_length_stats(longest_to)
+        pct_gates_in_cp = self._critical_path_membership_fraction(
+            gate_dependency_graph, longest_to, longest_from, critical_path_length, n_gates
         )
 
         return {
@@ -186,12 +181,11 @@ class CircuitAnalyzer(Analyzer):
             "gdg_pct_gates_in_critical_path": pct_gates_in_cp,
         }
 
-    @staticmethod
-    def _build_gate_dependency_graph(gate_statements: list[Gate]) -> nx.DiGraph:
-        """Build a DAG where edge (i, j) means gate i must run before gate j."""
+    def _build_gate_dependency_graph(self) -> nx.DiGraph:
+        """Build a directed acyclic gate dependency graph where edge (i, j) means gate i must run before gate j."""
         gdg: nx.DiGraph = nx.DiGraph()
         last_gate_on_qubit: dict[int, int] = {}
-        for index, gate in enumerate(gate_statements):
+        for index, gate in enumerate(self.gate_statements):
             gdg.add_node(index)
             for qubit_index in gate.qubit_indices:
                 if qubit_index in last_gate_on_qubit:
@@ -199,47 +193,44 @@ class CircuitAnalyzer(Analyzer):
                 last_gate_on_qubit[qubit_index] = index
         return gdg
 
-    @staticmethod
-    def _safe_critical_path_length(gdg: nx.DiGraph) -> int:
+    def _safe_critical_path_length(self, gate_dependency_graph: nx.DiGraph) -> int:
         try:
-            return nx.dag_longest_path_length(gdg)
+            return nx.dag_longest_path_length(gate_dependency_graph)
         except nx.NetworkXError:
             return 0
 
-    @staticmethod
-    def _compute_longest_paths(gdg: nx.DiGraph) -> tuple[dict[int, int], dict[int, int]]:
-        """Return (longest_to, longest_from) for every node in the DAG.
+    def _compute_longest_paths(self, gate_dependency_graph: nx.DiGraph) -> tuple[dict[int, int], dict[int, int]]:
+        """Return (longest_from, longest_to) for every node in the gate dependency graph.
 
         longest_to[n]   = length of the longest path ending at n
         longest_from[n] = length of the longest path starting at n
         """
-        topo_order = list(nx.topological_sort(gdg))
-        longest_to: dict[int, int] = dict.fromkeys(gdg.nodes, 0)
+        topo_order = list(nx.topological_sort(gate_dependency_graph))
+        longest_to: dict[int, int] = dict.fromkeys(gate_dependency_graph.nodes, 0)
         for node in topo_order:
-            for successor in gdg.successors(node):
+            for successor in gate_dependency_graph.successors(node):
                 if longest_to[node] + 1 > longest_to[successor]:
                     longest_to[successor] = longest_to[node] + 1
 
-        longest_from: dict[int, int] = dict.fromkeys(gdg.nodes, 0)
+        longest_from: dict[int, int] = dict.fromkeys(gate_dependency_graph.nodes, 0)
         for node in reversed(topo_order):
-            for successor in gdg.successors(node):
+            for successor in gate_dependency_graph.successors(node):
                 if longest_from[successor] + 1 > longest_from[node]:
                     longest_from[node] = longest_from[successor] + 1
 
-        return longest_to, longest_from
+        return longest_from, longest_to
 
-    @staticmethod
-    def _path_length_stats(longest_to: dict[int, int]) -> tuple[float, float]:
+    def _path_length_stats(self, longest_to: dict[int, int]) -> tuple[float, float]:
         path_lengths = list(longest_to.values())
         if not path_lengths:
             return 0.0, 0.0
-        mean_length = sum(path_lengths) / len(path_lengths)
-        variance = sum((x - mean_length) ** 2 for x in path_lengths) / len(path_lengths)
+        mean_length = statistics.mean(path_lengths)
+        variance = statistics.pstdev(path_lengths)
         return mean_length, math.sqrt(variance)
 
-    @staticmethod
     def _critical_path_membership_fraction(
-        gdg: nx.DiGraph,
+        self,
+        gate_dependency_graph: nx.DiGraph,
         longest_to: dict[int, int],
         longest_from: dict[int, int],
         critical_path_length: int,
@@ -250,20 +241,21 @@ class CircuitAnalyzer(Analyzer):
         A node lies on a critical path iff the longest path through it
         (longest_to[n] + longest_from[n]) equals the overall critical path length.
         """
-        n_in_cp = sum(1 for node in gdg.nodes if longest_to[node] + longest_from[node] == critical_path_length)
+        n_in_cp = sum(
+            1 for node in gate_dependency_graph.nodes if longest_to[node] + longest_from[node] == critical_path_length
+        )
         return round(n_in_cp / n_gates, 4)
 
     # ------------------------------------------------------------------ #
     # Density metrics                                                    #
     # ------------------------------------------------------------------ #
-    @staticmethod
-    def _density_metrics(circuit: Circuit) -> dict[str, Any]:
-        n_qubits = circuit.qubit_register_size
-        gate_statements = [s for s in circuit.ir.statements if isinstance(s, Gate)]
-        n_gates = len(gate_statements)
-        n_two_qubit_gates = sum(1 for s in gate_statements if isinstance(s, TwoQubitGate))
+
+    def _density_metrics(self) -> dict[str, Any]:
+        n_qubits = self.circuit.qubit_register_size
+        n_gates = len(self.gate_statements)
+        n_two_qubit_gates = sum(1 for s in self.gate_statements if isinstance(s, TwoQubitGate))
         n_one_qubit_gates = n_gates - n_two_qubit_gates
-        depth = CircuitAnalyzer._compute_depth(circuit, gate_statements)
+        depth = self._compute_depth()
 
         # Density score: parallelisation level of the circuit (0..1).
         # Formula from Bandic et al. 2025, eq. (1).
@@ -276,8 +268,8 @@ class CircuitAnalyzer(Analyzer):
         # Idling score: average qubit idling fraction (0..1).
         if n_qubits > 0 and depth > 0:
             qubit_active_layers: dict[int, int] = dict.fromkeys(range(n_qubits), 0)
-            for gate in gate_statements:
-                for qubit_index in gate.qubit_indices:
+            for gate_statement in self.gate_statements:
+                for qubit_index in gate_statement.qubit_indices:
                     qubit_active_layers[qubit_index] = qubit_active_layers.get(qubit_index, 0) + 1
             total_idle = sum(depth - active for active in qubit_active_layers.values())
             idling_score = round(max(0.0, min(total_idle / (n_qubits * depth), 1.0)), 4)

@@ -2,8 +2,7 @@
 
 import pytest
 
-from opensquirrel import CircuitBuilder
-from opensquirrel.circuit import Circuit
+from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.passes.analyzer import CircuitAnalyzer
 
 
