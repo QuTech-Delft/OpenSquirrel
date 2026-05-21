@@ -183,15 +183,15 @@ class CircuitAnalyzer(Analyzer):
 
     def _build_gate_dependency_graph(self) -> nx.DiGraph:
         """Build a directed acyclic gate dependency graph where edge (i, j) means gate i must run before gate j."""
-        gdg: nx.DiGraph = nx.DiGraph()
+        gate_dependency_graph: nx.DiGraph = nx.DiGraph()
         last_gate_on_qubit: dict[int, int] = {}
         for index, gate in enumerate(self.gate_statements):
-            gdg.add_node(index)
+            gate_dependency_graph.add_node(index)
             for qubit_index in gate.qubit_indices:
                 if qubit_index in last_gate_on_qubit:
-                    gdg.add_edge(last_gate_on_qubit[qubit_index], index)
+                    gate_dependency_graph.add_edge(last_gate_on_qubit[qubit_index], index)
                 last_gate_on_qubit[qubit_index] = index
-        return gdg
+        return gate_dependency_graph
 
     def _safe_critical_path_length(self, gate_dependency_graph: nx.DiGraph) -> int:
         try:
