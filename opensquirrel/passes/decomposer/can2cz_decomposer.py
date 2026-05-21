@@ -23,7 +23,7 @@ class Can2CZDecomposer(Decomposer):
 
         Note:
             This decomposition does not, in general, preserve the global phase of the original gate.
-            It is advised to run the single-qubit gates merger pass after this decomposition pass.
+            It is advised to run the single-qubit gates merger pass after this two-qubit gate decomposition pass.
 
         Args:
             instruction (Gate): 2-qubit gate to decompose.
@@ -43,9 +43,6 @@ class Can2CZDecomposer(Decomposer):
 
         if gate == CNOT(q0, q1):
             return [Ry(q1, -pi / 2), CZ(q0, q1), Ry(q1, pi / 2)]
-
-        # Canonical 4x4 factors follow tensor-product order (higher index first).
-        q0, q1 = (q0, q1) if q0.index > q1.index else (q1, q0)
 
         gate_axis = gate.canonical.axis
         gate_rotations = gate.canonical.rotations

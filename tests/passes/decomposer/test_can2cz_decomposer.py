@@ -86,8 +86,8 @@ def test_decomposes_known_two_qubit_gates(decomposer: Can2CZDecomposer, gate: Ga
     "gate",
     [
         TwoQubitGate(
-            qubit0=0,
-            qubit1=1,
+            qubit0=1,
+            qubit1=0,
             gate_semantic=CanonicalGateSemantic(
                 axis=(0.3, 0.2, 0.1),
                 rotations=[
