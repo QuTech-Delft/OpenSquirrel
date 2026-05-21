@@ -437,8 +437,8 @@ def canonical_decomposition(
     q1 = m @ o1 @ m_dag
     q2 = m @ o2 @ m_dag
 
-    k1, k2 = nearest_kronecker_product(q1)
-    k3, k4 = nearest_kronecker_product(q2)
+    k1, k2 = nearest_kronecker_product(q2)
+    k3, k4 = nearest_kronecker_product(q1)
 
     return k1, k2, k3, k4, CanonicalAxis(tx, ty, tz)
 

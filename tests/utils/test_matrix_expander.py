@@ -163,7 +163,7 @@ def test_canonical_decomposition(axis: tuple[float]) -> None:
 
     k1, k2, k3, k4, axis_recov = canonical_decomposition(x)
 
-    y = np.kron(k1, k2) @ can2(axis_recov) @ np.kron(k3, k4)
+    y = np.kron(k3, k4) @ can2(axis_recov) @ np.kron(k1, k2)
     assert are_matrices_equivalent_up_to_global_phase(x, y)
 
 
@@ -176,5 +176,5 @@ def test_canonical_decomposition_nontrivial_local_operators() -> None:
 
         k1, k2, k3, k4, axis_recov = canonical_decomposition(x)
 
-        y = np.kron(k1, k2) @ can2(axis_recov) @ np.kron(k3, k4)
+        y = np.kron(k3, k4) @ can2(axis_recov) @ np.kron(k1, k2)
         assert are_matrices_equivalent_up_to_global_phase(x, y)
