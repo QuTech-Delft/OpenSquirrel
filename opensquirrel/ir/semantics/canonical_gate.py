@@ -142,7 +142,7 @@ class CanonicalGateSemantic(GateSemantic):
         """
         if not isinstance(other, CanonicalGateSemantic):
             return False
-        if not np.allclose(self.axis, other.axis, atol=1e-9):
+        if not self.axis == other.axis:
             return False
         if self.rotations is None and other.rotations is None:
             return True
@@ -151,13 +151,6 @@ class CanonicalGateSemantic(GateSemantic):
         return len(self.rotations) == len(other.rotations) and all(
             r1 == r2 for r1, r2 in zip(self.rotations, other.rotations, strict=False)
         )
-
-    def __hash__(self) -> int:
-        """Returns hash for use in sets and dicts.
-
-        Note: Returns a fixed hash since CanonicalGateSemantic contains mutable rotations list.
-        """
-        return hash(CanonicalGateSemantic)
 
     def __repr__(self) -> str:
         rotation_str = f", rotations={self.rotations}" if self.rotations else ""

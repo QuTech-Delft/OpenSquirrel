@@ -7,6 +7,7 @@ import numpy as np
 
 from opensquirrel import CNOT, CZ, X90, H, MinusX90, Ry, S, SDagger, Z
 from opensquirrel.ir.semantics.bsr import BlochSphereRotation
+from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
@@ -38,7 +39,7 @@ class Can2CZDecomposer(Decomposer):
         gate = instruction
         q0, q1 = gate.qubit_operands
 
-        if gate == CZ(q0, q1):
+        if gate == CZ(q0, q1) or gate == CZ(q1, q0):
             return [gate]
 
         if gate == CNOT(q0, q1):
@@ -53,7 +54,7 @@ class Can2CZDecomposer(Decomposer):
         k3 = SingleQubitGate(q0, gate_rotations[2])
         k4 = SingleQubitGate(q1, gate_rotations[3])
 
-        if np.allclose(gate_axis.value, np.array([0.5, 0, 0])):
+        if gate_axis == CanonicalAxis((0.5, 0.0, 0.0)):
             return [
                 k1,
                 k2,
@@ -69,7 +70,7 @@ class Can2CZDecomposer(Decomposer):
                 k3,
                 k4,
             ]
-        if np.isclose(gate_axis.value[2], 0):
+        if np.isclose(gate_axis[2], 0):
             tx, ty, _ = gate_axis.value
             Xtx = SingleQubitGate(q0, BlochSphereRotation(axis=(1, 0, 0), angle=pi * tx, phase=pi / 2 * tx))  # noqa: N806
             Zty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ty, phase=pi / 2 * ty))  # noqa: N806
