@@ -13,6 +13,7 @@ from opensquirrel.passes.mapper import IdentityMapper
 if TYPE_CHECKING:
     from opensquirrel.ir.ir import IR
     from opensquirrel.ir.unitary import Gate
+    from opensquirrel.passes.analyzer.general_analyzer import Analyzer
     from opensquirrel.passes.decomposer.general_decomposer import Decomposer
     from opensquirrel.passes.exporter.general_exporter import Exporter
     from opensquirrel.passes.mapper.general_mapper import Mapper
@@ -147,6 +148,18 @@ class Circuit:
             if not isinstance(statement, AsmDeclaration)
             or (isinstance(statement, AsmDeclaration) and backend_name in str(statement.backend_name))
         ]
+
+    def analyze(self, analyzer: Analyzer) -> dict[str, Any]:
+        """Analyzes the circuit using the specified analyzer.
+
+        Args:
+             analyzer (Analyzer): The analyzer to apply.
+
+        Returns:
+            dict[str, Any]: The metrics computed by the analyzer.
+
+        """
+        return analyzer.analyze(self)
 
     def decompose(self, decomposer: Decomposer) -> None:
         """Decomposes the circuit using to the specified decomposer.

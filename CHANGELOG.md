@@ -24,7 +24,8 @@ parameter
 arbitrarily applied mapper pass.
 - The measure instruction accepts an axis parameter
 - `MeasureDecomposer` to decompose arbitrary measurements to a decomposition of single-qubit gates and a +Z measurement.
-- `Can2CZDecomposer` to decompose arbitrary two-qubit gates. 
+- `CircuitAnalyzer` analyzer pass for computing structural circuit metrics (size, interaction graph, gate dependency graph, density)
+- `Can2CZDecomposer` to decompose arbitrary two-qubit gates.
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 
