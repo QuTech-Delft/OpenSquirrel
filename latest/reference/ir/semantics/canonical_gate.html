@@ -2863,6 +2863,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.canonical_gate.CanonicalGateSemantic.__eq__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __eq__
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#opensquirrel.ir.semantics.canonical_gate.CanonicalGateSemantic.accept" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3325,6 +3336,8 @@
       
         
       
+        
+      
     
     
     
@@ -3383,6 +3396,34 @@
     
   
     aba_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../passes/decomposer/can2cz_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    can2cz_decomposer
   
 
     
@@ -5226,6 +5267,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#opensquirrel.ir.semantics.canonical_gate.CanonicalGateSemantic.__eq__" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        __eq__
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#opensquirrel.ir.semantics.canonical_gate.CanonicalGateSemantic.accept" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6057,7 +6109,26 @@ After casting to an array, the elements of the canonical axis are restricted to 
 <span class="normal"><a href="#__codelineno-0-135">135</a></span>
 <span class="normal"><a href="#__codelineno-0-136">136</a></span>
 <span class="normal"><a href="#__codelineno-0-137">137</a></span>
-<span class="normal"><a href="#__codelineno-0-138">138</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-113" name="__codelineno-0-113"></a><span class="k">class</span><span class="w"> </span><span class="nc">CanonicalGateSemantic</span><span class="p">(</span><span class="n">GateSemantic</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#__codelineno-0-140">140</a></span>
+<span class="normal"><a href="#__codelineno-0-141">141</a></span>
+<span class="normal"><a href="#__codelineno-0-142">142</a></span>
+<span class="normal"><a href="#__codelineno-0-143">143</a></span>
+<span class="normal"><a href="#__codelineno-0-144">144</a></span>
+<span class="normal"><a href="#__codelineno-0-145">145</a></span>
+<span class="normal"><a href="#__codelineno-0-146">146</a></span>
+<span class="normal"><a href="#__codelineno-0-147">147</a></span>
+<span class="normal"><a href="#__codelineno-0-148">148</a></span>
+<span class="normal"><a href="#__codelineno-0-149">149</a></span>
+<span class="normal"><a href="#__codelineno-0-150">150</a></span>
+<span class="normal"><a href="#__codelineno-0-151">151</a></span>
+<span class="normal"><a href="#__codelineno-0-152">152</a></span>
+<span class="normal"><a href="#__codelineno-0-153">153</a></span>
+<span class="normal"><a href="#__codelineno-0-154">154</a></span>
+<span class="normal"><a href="#__codelineno-0-155">155</a></span>
+<span class="normal"><a href="#__codelineno-0-156">156</a></span>
+<span class="normal"><a href="#__codelineno-0-157">157</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-113" name="__codelineno-0-113"></a><span class="k">class</span><span class="w"> </span><span class="nc">CanonicalGateSemantic</span><span class="p">(</span><span class="n">GateSemantic</span><span class="p">):</span>
 <a id="__codelineno-0-114" name="__codelineno-0-114"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="n">AxisLike</span><span class="p">,</span> <span class="n">rotations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BlochSphereRotation</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-115" name="__codelineno-0-115"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">CanonicalAxis</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
 <a id="__codelineno-0-116" name="__codelineno-0-116"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="o">=</span> <span class="n">rotations</span>
@@ -6080,9 +6151,28 @@ After casting to an array, the elements of the canonical axis are restricted to 
 <a id="__codelineno-0-133" name="__codelineno-0-133"></a>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="n">CanonicalAxis</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <a id="__codelineno-0-134" name="__codelineno-0-134"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="n">CanonicalAxis</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">rotation</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()</span> <span class="k">for</span> <span class="n">rotation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">)</span>
 <a id="__codelineno-0-135" name="__codelineno-0-135"></a>
-<a id="__codelineno-0-136" name="__codelineno-0-136"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-137" name="__codelineno-0-137"></a>        <span class="n">rotation_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">", rotations=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="k">else</span> <span class="s2">""</span>
-<a id="__codelineno-0-138" name="__codelineno-0-138"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">"CanonicalGateSemantic(axis=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="si">}{</span><span class="n">rotation_str</span><span class="si">}</span><span class="s2">)"</span>
+<a id="__codelineno-0-136" name="__codelineno-0-136"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137"></a><span class="w">        </span><span class="sd">"""Checks if two CanonicalGateSemantic instances are equal.</span>
+<a id="__codelineno-0-138" name="__codelineno-0-138"></a>
+<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">        Returns:</span>
+<a id="__codelineno-0-140" name="__codelineno-0-140"></a><span class="sd">            True if both have the same axis and rotations, False otherwise.</span>
+<a id="__codelineno-0-141" name="__codelineno-0-141"></a>
+<a id="__codelineno-0-142" name="__codelineno-0-142"></a><span class="sd">        """</span>
+<a id="__codelineno-0-143" name="__codelineno-0-143"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">CanonicalGateSemantic</span><span class="p">):</span>
+<a id="__codelineno-0-144" name="__codelineno-0-144"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-145" name="__codelineno-0-145"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">axis</span><span class="p">:</span>
+<a id="__codelineno-0-146" name="__codelineno-0-146"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-147" name="__codelineno-0-147"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-148" name="__codelineno-0-148"></a>            <span class="k">return</span> <span class="kc">True</span>
+<a id="__codelineno-0-149" name="__codelineno-0-149"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-150" name="__codelineno-0-150"></a>            <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-151" name="__codelineno-0-151"></a>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">rotations</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+<a id="__codelineno-0-152" name="__codelineno-0-152"></a>            <span class="n">r1</span> <span class="o">==</span> <span class="n">r2</span> <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-153" name="__codelineno-0-153"></a>        <span class="p">)</span>
+<a id="__codelineno-0-154" name="__codelineno-0-154"></a>
+<a id="__codelineno-0-155" name="__codelineno-0-155"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<a id="__codelineno-0-156" name="__codelineno-0-156"></a>        <span class="n">rotation_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">", rotations=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="k">else</span> <span class="s2">""</span>
+<a id="__codelineno-0-157" name="__codelineno-0-157"></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">"CanonicalGateSemantic(axis=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">axis</span><span class="si">}{</span><span class="n">rotation_str</span><span class="si">}</span><span class="s2">)"</span>
 </code></pre></div></td></tr></tbody></table></div>
               </details>
 
@@ -6098,6 +6188,88 @@ After casting to an array, the elements of the canonical axis are restricted to 
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="opensquirrel.ir.semantics.canonical_gate.CanonicalGateSemantic.__eq__" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">__eq__</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Checks if two CanonicalGateSemantic instances are equal.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>True if both have the same axis and rotations, False otherwise.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>opensquirrel/ir/semantics/canonical_gate.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#__codelineno-0-140">140</a></span>
+<span class="normal"><a href="#__codelineno-0-141">141</a></span>
+<span class="normal"><a href="#__codelineno-0-142">142</a></span>
+<span class="normal"><a href="#__codelineno-0-143">143</a></span>
+<span class="normal"><a href="#__codelineno-0-144">144</a></span>
+<span class="normal"><a href="#__codelineno-0-145">145</a></span>
+<span class="normal"><a href="#__codelineno-0-146">146</a></span>
+<span class="normal"><a href="#__codelineno-0-147">147</a></span>
+<span class="normal"><a href="#__codelineno-0-148">148</a></span>
+<span class="normal"><a href="#__codelineno-0-149">149</a></span>
+<span class="normal"><a href="#__codelineno-0-150">150</a></span>
+<span class="normal"><a href="#__codelineno-0-151">151</a></span>
+<span class="normal"><a href="#__codelineno-0-152">152</a></span>
+<span class="normal"><a href="#__codelineno-0-153">153</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-136" name="__codelineno-0-136"></a><span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137"></a><span class="w">    </span><span class="sd">"""Checks if two CanonicalGateSemantic instances are equal.</span>
+<a id="__codelineno-0-138" name="__codelineno-0-138"></a>
+<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-140" name="__codelineno-0-140"></a><span class="sd">        True if both have the same axis and rotations, False otherwise.</span>
+<a id="__codelineno-0-141" name="__codelineno-0-141"></a>
+<a id="__codelineno-0-142" name="__codelineno-0-142"></a><span class="sd">    """</span>
+<a id="__codelineno-0-143" name="__codelineno-0-143"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">CanonicalGateSemantic</span><span class="p">):</span>
+<a id="__codelineno-0-144" name="__codelineno-0-144"></a>        <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-145" name="__codelineno-0-145"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">axis</span><span class="p">:</span>
+<a id="__codelineno-0-146" name="__codelineno-0-146"></a>        <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-147" name="__codelineno-0-147"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-148" name="__codelineno-0-148"></a>        <span class="k">return</span> <span class="kc">True</span>
+<a id="__codelineno-0-149" name="__codelineno-0-149"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">other</span><span class="o">.</span><span class="n">rotations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-150" name="__codelineno-0-150"></a>        <span class="k">return</span> <span class="kc">False</span>
+<a id="__codelineno-0-151" name="__codelineno-0-151"></a>    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">rotations</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+<a id="__codelineno-0-152" name="__codelineno-0-152"></a>        <span class="n">r1</span> <span class="o">==</span> <span class="n">r2</span> <span class="k">for</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">rotations</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<a id="__codelineno-0-153" name="__codelineno-0-153"></a>    <span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
+            </details>
+    </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
