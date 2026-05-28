@@ -7,7 +7,6 @@ from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
 from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.semantics.bsr import bsr_from_matrix
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
-from opensquirrel.utils import get_matrix
 
 
 class TwoQubitGate(Gate):
@@ -33,7 +32,13 @@ class TwoQubitGate(Gate):
             return self._matrix
 
         if self._controlled:
-            self._matrix = MatrixGateSemantic(get_matrix(self, 2))
+            from opensquirrel.utils.matrix_expander import can1
+
+            target_bsr = self._controlled.target_bsr
+            u_target = can1(target_bsr.axis, target_bsr.angle, target_bsr.phase)
+            m = np.eye(4, dtype=np.complex128)
+            m[2:, 2:] = u_target
+            self._matrix = MatrixGateSemantic(m)
             return self._matrix
 
         if self._canonical:

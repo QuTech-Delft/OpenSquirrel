@@ -133,6 +133,25 @@ class CanonicalGateSemantic(GateSemantic):
             return self.axis == CanonicalAxis((0, 0, 0))
         return self.axis == CanonicalAxis((0, 0, 0)) and all(rotation.is_identity() for rotation in self.rotations)
 
+    def __eq__(self, other: Any) -> bool:
+        """Checks if two CanonicalGateSemantic instances are equal.
+
+        Returns:
+            True if both have the same axis and rotations, False otherwise.
+
+        """
+        if not isinstance(other, CanonicalGateSemantic):
+            return False
+        if not self.axis == other.axis:
+            return False
+        if self.rotations is None and other.rotations is None:
+            return True
+        if self.rotations is None or other.rotations is None:
+            return False
+        return len(self.rotations) == len(other.rotations) and all(
+            r1 == r2 for r1, r2 in zip(self.rotations, other.rotations, strict=False)
+        )
+
     def __repr__(self) -> str:
         rotation_str = f", rotations={self.rotations}" if self.rotations else ""
         return f"CanonicalGateSemantic(axis={self.axis}{rotation_str})"
