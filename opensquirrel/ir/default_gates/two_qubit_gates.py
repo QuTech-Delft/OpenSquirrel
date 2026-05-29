@@ -81,8 +81,8 @@ class CV(TwoQubitGate):
                     [
                         [1, 0, 0, 0],
                         [0, 1, 0, 0],
-                        [0, 0, 1 + 1j, 1 - 1j],
-                        [0, 0, 1 - 1j, 1 + 1j],
+                        [0, 0, (1 + 1j) / 2, (1 - 1j) / 2],
+                        [0, 0, (1 - 1j) / 2, (1 + 1j) / 2],
                     ],
                 ),
             ),
@@ -143,7 +143,9 @@ class ECR(TwoQubitGate):
             qubit0=qubit_0,
             qubit1=qubit_1,
             gate_semantic=MatrixGateSemantic(
-                matrix=np.array(
+                matrix=1
+                / np.sqrt(2)
+                * np.array(
                     [
                         [0, 0, 1, 1j],
                         [0, 0, 1j, 1],
@@ -167,8 +169,8 @@ class InvSqrtSWAP(TwoQubitGate):
                 matrix=np.array(
                     [
                         [1, 0, 0, 0],
-                        [0, (1j - 1) / 2, (1j + 1) / 2, 0],
-                        [0, (1j + 1) / 2, (1j - 1) / 2, 0],
+                        [0, (1 - 1j) / 2, (1 + 1j) / 2, 0],
+                        [0, (1 + 1j) / 2, (1 - 1j) / 2, 0],
                         [0, 0, 0, 1],
                     ],
                 ),
@@ -206,7 +208,9 @@ class M(TwoQubitGate):
             qubit0=qubit_0,
             qubit1=qubit_1,
             gate_semantic=MatrixGateSemantic(
-                matrix=np.array(
+                matrix=1
+                / np.sqrt(2)
+                * np.array(
                     [
                         [1, 1j, 0, 0],
                         [0, 0, 1j, 1],
@@ -227,7 +231,9 @@ class MS(TwoQubitGate):
             qubit0=qubit_0,
             qubit1=qubit_1,
             gate_semantic=MatrixGateSemantic(
-                matrix=np.array(
+                matrix=1
+                / np.sqrt(2)
+                * np.array(
                     [
                         [1, 0, 0, 1j],
                         [0, 1, 1j, 0],

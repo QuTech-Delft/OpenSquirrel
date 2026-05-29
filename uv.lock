@@ -3327,7 +3327,7 @@ examples = [{ name = "jupyter", specifier = ">=1.0.0,<2" }]
 export = [
     { name = "pyqt5-qt5", marker = "sys_platform != 'darwin'", specifier = "==5.15.2" },
     { name = "qcodes", marker = "sys_platform != 'darwin'", specifier = "<0.57.0" },
-    { name = "quantify-scheduler", marker = "sys_platform != 'darwin'", specifier = "==0.28.0" },
+    { name = "quantify-scheduler", marker = "sys_platform != 'darwin'", specifier = "==0.28.0.post2" },
     { name = "spirack", marker = "sys_platform != 'darwin'", specifier = "<=0.2.17" },
 ]
 qgym-mapper = [
@@ -4659,7 +4659,7 @@ wheels = [
 
 [[package]]
 name = "quantify-scheduler"
-version = "0.28.0"
+version = "0.28.0.post2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "columnar" },
@@ -4687,9 +4687,9 @@ dependencies = [
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d1/f5/7d8d692f2cdd68f22bea297feb9ab681cb7717be4db6fe4bae343d363cd5/quantify_scheduler-0.28.0.tar.gz", hash = "sha256:f1c2e32083c55555270bc4b4a96dc3f19b7555e0ab1a296c89f65bb7cd5b4c01", size = 1923152, upload-time = "2026-03-19T14:41:12.093Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fa/87/5fcf4c1d3cd75fd2f92064ca0ce4a408f6b8139850a607d368a144d41437/quantify_scheduler-0.28.0.post2.tar.gz", hash = "sha256:70d31822071feecf6d5127a12e4c63a8d4d29ba8009954846b03670a8ba3fed0", size = 1923486, upload-time = "2026-05-05T17:48:49.731Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/06/1c/980fd2709977e12cbbfd996e94315b47a06af6d756e0d63df2467731dd7d/quantify_scheduler-0.28.0-py3-none-any.whl", hash = "sha256:1e5ffe6c700cfacb5039af49e4d6ff3ffc47d6e0384ebbec0c73ad0dbd800693", size = 454981, upload-time = "2026-03-19T14:41:10.499Z" },
+    { url = "https://files.pythonhosted.org/packages/04/06/75c5f81558f1770fcf3a4de809ea99d911ef0f83068c8bdfa6f152afc8fb/quantify_scheduler-0.28.0.post2-py3-none-any.whl", hash = "sha256:b7634d9a49ba0a412392cd6f3f4b80eff7d9f9176a6b404dfd76d09ce4bce992", size = 455071, upload-time = "2026-05-05T17:48:48.058Z" },
 ]
 
 [[package]]

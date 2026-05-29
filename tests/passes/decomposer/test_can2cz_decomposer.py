@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 
-from opensquirrel import CNOT, CR, CZ, SWAP, CRk, H, Ry
+from opensquirrel import CNOT, CR, CV, CZ, DCNOT, ECR, ISWAP, MS, SWAP, CRk, H, InvSqrtSWAP, M, Ry, SqrtISWAP, SqrtSWAP
 from opensquirrel.ir.semantics.bsr import BlochSphereRotation
 from opensquirrel.ir.semantics.canonical_gate import CanonicalGateSemantic
 from opensquirrel.ir.semantics.controlled_gate import ControlledGateSemantic
@@ -72,10 +72,53 @@ def test_decomposes_CNOT(decomposer: Can2CZDecomposer, gate: Gate, expected_resu
         CRk(1, 0, 2),
         CR(0, 1, pi / 3),
         CR(1, 0, pi / 3),
+        CV(0, 1),
+        CV(1, 0),
+        DCNOT(0, 1),
+        DCNOT(1, 0),
+        ECR(0, 1),
+        ECR(1, 0),
+        InvSqrtSWAP(0, 1),
+        InvSqrtSWAP(1, 0),
+        ISWAP(0, 1),
+        ISWAP(1, 0),
+        M(0, 1),
+        M(1, 0),
+        MS(0, 1),
+        MS(1, 0),
+        SqrtISWAP(0, 1),
+        SqrtISWAP(1, 0),
+        SqrtSWAP(0, 1),
+        SqrtSWAP(1, 0),
         SWAP(0, 1),
         SWAP(1, 0),
     ],
-    ids=["CRk_0_1_2", "CRk_1_0_2", "CR_0_1_pi_3", "CR_1_0_pi_3", "SWAP_0_1", "SWAP_1_0"],
+    ids=[
+        "CRk_0_1_2",
+        "CRk_1_0_2",
+        "CR_0_1_pi_3",
+        "CR_1_0_pi_3",
+        "CV_0_1",
+        "CV_1_0",
+        "DCNOT_0_1",
+        "DCNOT_1_0",
+        "ECR_0_1",
+        "ECR_1_0",
+        "InvSqrtSWAP_0_1",
+        "InvSqrtSWAP_1_0",
+        "ISWAP_0_1",
+        "ISWAP_1_0",
+        "M_0_1",
+        "M_1_0",
+        "MS_0_1",
+        "MS_1_0",
+        "SqrtISWAP_0_1",
+        "SqrtISWAP_1_0",
+        "SqrtSWAP_0_1",
+        "SqrtSWAP_1_0",
+        "SWAP_0_1",
+        "SWAP_1_0",
+    ],
 )
 def test_decomposes_known_two_qubit_gates(decomposer: Can2CZDecomposer, gate: Gate) -> None:
     decomposed_gate = decomposer.decompose(gate)
