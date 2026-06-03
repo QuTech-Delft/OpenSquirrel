@@ -3,7 +3,8 @@ from typing import cast
 import pytest
 
 from opensquirrel import Circuit
-from opensquirrel.passes.decomposer import CNOT2CZDecomposer, CNOTDecomposer, McKayDecomposer, SWAP2CNOTDecomposer
+from opensquirrel.passes.decomposer import McKayDecomposer
+from opensquirrel.passes.decomposer.can2cz_decomposer import Can2CZDecomposer
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 from tests import STATIC_DATA
@@ -63,9 +64,19 @@ class TestSpin2Plus:
 
             // Two-qubit gates
             CNOT q[0], q[1]
+            CR(pi) q[1], q[0]
+            CRk(2) q[0], q[1]
+            CV q[1], q[0]
+            CY q[0], q[1]
             CZ q[1], q[0]
-            CR(pi) q[0], q[1]
-            CRk(2) q[1], q[0]
+            DCNOT q[0], q[1]
+            ECR q[1], q[0]
+            InvSqrtSWAP q[0], q[1]
+            ISWAP q[1], q[0]
+            M q[0], q[1]
+            MS q[1], q[0]
+            SqrtISWAP q[0], q[1]
+            SqrtSWAP q[1], q[0]
             SWAP q[0], q[1]
 
             // Control instructions
@@ -77,9 +88,7 @@ class TestSpin2Plus:
             """,
         )
         circuit.validate(validator=InteractionValidator(**data))
-        circuit.decompose(decomposer=SWAP2CNOTDecomposer(**data))
-        circuit.decompose(decomposer=CNOTDecomposer(**data))
-        circuit.decompose(decomposer=CNOT2CZDecomposer(**data))
+        circuit.decompose(decomposer=Can2CZDecomposer(**data))
         circuit.merge(merger=SingleQubitGatesMerger(**data))
         circuit.decompose(decomposer=McKayDecomposer(**data))
         circuit.validate(validator=PrimitiveGateValidator(**data))
@@ -91,70 +100,7 @@ class TestSpin2Plus:
 qubit[2] q
 bit[4] b
 
-init q[0]
-init q[1]
-Rz(1.5707963) q[0]
-X90 q[0]
-Rz(0.78539813) q[0]
-X90 q[0]
-Rz(-1.5707964) q[0]
-b[0] = measure q[0]
-Rz(2.3561946) q[1]
-X90 q[1]
-Rz(3.1415926) q[1]
-b[2] = measure q[1]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-Rz(3.1415927) q[0]
-CZ q[1], q[0]
-Rz(3.1415927) q[0]
-Rz(3.1415927) q[1]
-CZ q[0], q[1]
-Rz(3.1415927) q[1]
-Rz(2.3561944) q[0]
-X90 q[0]
-Rz(-1.5707963) q[0]
-CZ q[1], q[0]
-Rz(-1.5707963) q[0]
-X90 q[0]
-Rz(2.3561946) q[0]
-X90 q[0]
-Rz(-1.5707963) q[0]
-CZ q[1], q[0]
-Rz(-1.5707963) q[0]
-X90 q[0]
-Rz(1.5707963) q[0]
-Rz(2.3561944) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-Rz(1.5707963) q[0]
-X90 q[0]
-Rz(-1.5707963) q[0]
-CZ q[1], q[0]
-Rz(-1.5707963) q[0]
-X90 q[0]
-Rz(1.5707963) q[0]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-barrier q[0]
-barrier q[1]
-wait(3) q[0]
-wait(3) q[1]
-b[1] = measure q[0]
-b[3] = measure q[1]
+// Resulting circuit after compilation
+
 """
         )

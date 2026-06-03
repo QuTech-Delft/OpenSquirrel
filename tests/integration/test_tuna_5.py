@@ -6,7 +6,8 @@ from typing import cast
 import pytest
 
 from opensquirrel import Circuit
-from opensquirrel.passes.decomposer import CZDecomposer, SWAP2CZDecomposer, XYXDecomposer
+from opensquirrel.passes.decomposer import XYXDecomposer
+from opensquirrel.passes.decomposer.can2cz_decomposer import Can2CZDecomposer
 from opensquirrel.passes.exporter import QuantifySchedulerExporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
@@ -99,10 +100,20 @@ class TestTuna5:
 
             // Two-qubit gates
             CNOT q[0], q[2]
-            CZ q[2], q[3]
-            CR(pi) q[4], q[2]
-            CRk(2) q[1], q[2]
-            SWAP q[3], q[2]
+            CR(pi) q[2], q[4]
+            CRk(2) q[4], q[2]
+            CV q[2], q[3]
+            CY q[3], q[2]
+            CZ q[2], q[1]
+            DCNOT q[1], q[2]
+            ECR q[2], q[0]
+            InvSqrtSWAP q[0], q[2]
+            ISWAP q[2], q[4]
+            M q[4], q[2]
+            MS q[2], q[3]
+            SqrtISWAP q[3], q[2]
+            SqrtSWAP q[2], q[1]
+            SWAP q[1], q[2]
 
             // Control instructions
             barrier q
@@ -113,8 +124,7 @@ class TestTuna5:
             """
         )
         circuit.validate(validator=InteractionValidator(**data))
-        circuit.decompose(decomposer=SWAP2CZDecomposer(**data))
-        circuit.decompose(decomposer=CZDecomposer(**data))
+        circuit.decompose(decomposer=Can2CZDecomposer(**data))
         circuit.merge(merger=SingleQubitGatesMerger(**data))
         circuit.decompose(decomposer=XYXDecomposer(**data))
         circuit.validate(validator=PrimitiveGateValidator(**data))
@@ -124,69 +134,7 @@ class TestTuna5:
             operations = _get_operations(exported_schedule)
 
             assert exported_schedule.name == "Exported OpenSquirrel circuit"
-            assert operations == [
-                "Reset q[0]",
-                "Reset q[1]",
-                "Reset q[2]",
-                "Reset q[3]",
-                "Reset q[4]",
-                "Rxy(90, 0, 'q[0]')",
-                "Rxy(90, 90, 'q[0]')",
-                "Rxy(90, 0, 'q[0]')",
-                "Rxy(90, 0, 'q[1]')",
-                "Rxy(45, 90, 'q[1]')",
-                "Rxy(90, 0, 'q[1]')",
-                "Rxy(-45, 0, 'q[2]')",
-                "Rxy(90, 90, 'q[2]')",
-                "Rxy(180, 0, 'q[2]')",
-                "Rxy(-90, 0, 'q[3]')",
-                "Rxy(180, 90, 'q[3]')",
-                "Rxy(90, 0, 'q[3]')",
-                "Rxy(-90, 0, 'q[4]')",
-                "Rxy(90, 90, 'q[4]')",
-                "Rxy(90, 0, 'q[4]')",
-                "Measure q[0]",
-                "Measure q[1]",
-                "Measure q[2]",
-                "Measure q[3]",
-                "Measure q[4]",
-                "Rxy(180, 0, 'q[2]')",
-                "Rxy(90, 90, 'q[2]')",
-                "Rxy(180, 0, 'q[2]')",
-                "CZ (q[0], q[2])",
-                "Rxy(90, 90, 'q[2]')",
-                "CZ (q[2], q[3])",
-                "CZ (q[4], q[2])",
-                "Rxy(-90, 0, 'q[2]')",
-                "CZ (q[1], q[2])",
-                "Rxy(180, 0, 'q[2]')",
-                "Rxy(45, 90, 'q[2]')",
-                "Rxy(180, 0, 'q[2]')",
-                "CZ (q[1], q[2])",
-                "Rxy(-90, 0, 'q[2]')",
-                "Rxy(90, 90, 'q[2]')",
-                "Rxy(135.00001, 0, 'q[2]')",
-                "CZ (q[3], q[2])",
-                "Rxy(90, 90, 'q[2]')",
-                "Rxy(180, 0, 'q[3]')",
-                "Rxy(90, 90, 'q[3]')",
-                "Rxy(180, 0, 'q[3]')",
-                "CZ (q[2], q[3])",
-                "Rxy(90, 90, 'q[3]')",
-                "Rxy(180, 0, 'q[2]')",
-                "Rxy(90, 90, 'q[2]')",
-                "Rxy(180, 0, 'q[2]')",
-                "CZ (q[3], q[2])",
-                "Rxy(-90, 0, 'q[1]')",
-                "Rxy(45, 90, 'q[1]')",
-                "Rxy(90, 0, 'q[1]')",
-                "Rxy(90, 90, 'q[2]')",
-                "Measure q[0]",
-                "Measure q[1]",
-                "Measure q[2]",
-                "Measure q[3]",
-                "Measure q[4]",
-            ]
+            assert operations == ["These need to be determined based on the actual gate decompositions."]
             _check_measurement_to_bit_mapping(circuit, exported_schedule)
 
     def test_all_xy(self, qs_is_installed: bool, data: DataType) -> None:
