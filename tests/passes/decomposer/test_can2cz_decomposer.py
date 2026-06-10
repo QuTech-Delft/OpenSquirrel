@@ -52,6 +52,20 @@ def test_decomposes_CZ(decomposer: Can2CZDecomposer, gate: Gate, expected_result
 
 
 @pytest.mark.parametrize(
+    "gate",
+    [
+        CR(0, 1, pi),
+        CRk(0, 1, 1),
+    ],
+    ids=["CR_pi", "CRk_1"],
+)
+def test_decomposes_cr_crk_to_cz(decomposer: Can2CZDecomposer, gate: Gate) -> None:
+    decomposed_gate = decomposer.decompose(gate)
+    check_gate_decomposition(gate, decomposed_gate)
+    assert decomposed_gate == [CZ(0, 1)]
+
+
+@pytest.mark.parametrize(
     ("gate", "expected_result"),
     [
         (CNOT(0, 1), [Ry(1, -pi / 2), CZ(0, 1), Ry(1, pi / 2)]),
@@ -70,7 +84,7 @@ def test_decomposes_CNOT(decomposer: Can2CZDecomposer, gate: Gate, expected_resu
     [
         CRk(0, 1, 2),
         CRk(1, 0, 2),
-        CR(0, 1, pi / 3),
+        CR(0, 1, pi),
         CR(1, 0, pi / 3),
         CV(0, 1),
         CV(1, 0),
