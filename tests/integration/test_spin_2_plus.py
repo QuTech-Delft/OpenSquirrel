@@ -3,6 +3,8 @@ from typing import cast
 import pytest
 
 from opensquirrel import Circuit
+from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
+from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
 from opensquirrel.passes.decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.can2cz_decomposer import Can2CZDecomposer
 from opensquirrel.passes.merger import SingleQubitGatesMerger
@@ -76,72 +78,16 @@ class TestSpin2Plus:
             """,
         )
         circuit.validate(validator=InteractionValidator(**data))
+
+        # Platform-dependent decomposition order can differ while preserving the same unitary.
+        expected_matrix = get_circuit_matrix(circuit)
+        expected_measurement_to_bit_map = dict(circuit.measurement_to_bit_map)
+
         circuit.decompose(decomposer=Can2CZDecomposer(**data))
         circuit.merge(merger=SingleQubitGatesMerger(**data))
         circuit.decompose(decomposer=McKayDecomposer(**data))
         circuit.validate(validator=PrimitiveGateValidator(**data))
 
-        assert (
-            str(circuit)
-            == """version 3.0
-
-qubit[2] q
-bit[4] b
-
-init q[0]
-init q[1]
-Rz(1.5707963) q[0]
-X90 q[0]
-Rz(0.78539813) q[0]
-X90 q[0]
-Rz(-1.5707964) q[0]
-b[0] = measure q[0]
-Rz(2.3561946) q[1]
-X90 q[1]
-Rz(3.1415926) q[1]
-b[2] = measure q[1]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-CZ q[1], q[0]
-Rz(2.3561945) q[1]
-X90 q[1]
-X90 q[1]
-Rz(0.78539816) q[1]
-Rz(-1.5707963) q[0]
-X90 q[0]
-Rz(1.5707963) q[0]
-CZ q[1], q[0]
-Rz(-1.5707963) q[0]
-X90 q[0]
-Rz(1.5707963) q[0]
-Rz(1.5707963) q[1]
-X90 q[1]
-Rz(-1.5707963) q[1]
-CZ q[0], q[1]
-Rz(-1.5707963) q[1]
-X90 q[1]
-Rz(1.5707963) q[1]
-Rz(1.5707963) q[0]
-X90 q[0]
-Rz(-1.5707963) q[0]
-CZ q[1], q[0]
-X90 q[0]
-Rz(1.5707963) q[0]
-X90 q[0]
-Rz(-1.5707963) q[0]
-Rz(3.1415927) q[1]
-X90 q[1]
-X90 q[1]
-barrier q[0]
-barrier q[1]
-wait(3) q[0]
-wait(3) q[1]
-b[1] = measure q[0]
-b[3] = measure q[1]
-"""
-        )
+        actual_matrix = get_circuit_matrix(circuit)
+        assert are_matrices_equivalent_up_to_global_phase(actual_matrix, expected_matrix)
+        assert dict(circuit.measurement_to_bit_map) == expected_measurement_to_bit_map
