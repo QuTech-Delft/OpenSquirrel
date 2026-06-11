@@ -72,24 +72,15 @@ class CRk(TwoQubitGate):
 
 
 class CV(TwoQubitGate):
-    def __init__(self, qubit_0: QubitLike, qubit_1: QubitLike) -> None:
+    def __init__(self, control_qubit: QubitLike, target_qubit: QubitLike) -> None:
         super().__init__(
-            qubit0=qubit_0,
-            qubit1=qubit_1,
-            gate_semantic=MatrixGateSemantic(
-                matrix=np.array(
-                    [
-                        [1, 0, 0, 0],
-                        [0, 1, 0, 0],
-                        [0, 0, (1 + 1j) / 2, (1 - 1j) / 2],
-                        [0, 0, (1 - 1j) / 2, (1 + 1j) / 2],
-                    ],
-                ),
-            ),
+            qubit0=control_qubit,
+            qubit1=target_qubit,
+            gate_semantic=ControlledGateSemantic(BsrNoParams(axis=(1, 0, 0), angle=pi / 2, phase=pi / 4)),
             name="CV",
         )
-        self.qubit_0 = Qubit(qubit_0)
-        self.qubit_1 = Qubit(qubit_1)
+        self.control_qubit = Qubit(control_qubit)
+        self.target_qubit = Qubit(target_qubit)
 
 
 class CY(TwoQubitGate):

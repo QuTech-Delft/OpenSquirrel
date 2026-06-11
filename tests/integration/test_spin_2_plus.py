@@ -67,6 +67,8 @@ class TestSpin2Plus:
             // Two-qubit gates
             CNOT q[0], q[1]
             CZ q[1], q[0]
+            CR(pi) q[0], q[1]
+            CRk(2) q[1], q[0]
             SWAP q[0], q[1]
 
             // Control instructions

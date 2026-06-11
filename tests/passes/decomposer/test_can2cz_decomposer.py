@@ -62,6 +62,7 @@ def test_decomposes_CZ(decomposer: Can2CZDecomposer, gate: Gate, expected_result
 def test_decomposes_cr_crk_to_cz(decomposer: Can2CZDecomposer, gate: Gate) -> None:
     decomposed_gate = decomposer.decompose(gate)
     check_gate_decomposition(gate, decomposed_gate)
+    assert isinstance(decomposed_gate[0], CZ)
     assert decomposed_gate == [CZ(0, 1)]
 
 

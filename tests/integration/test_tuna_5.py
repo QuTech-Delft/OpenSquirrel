@@ -160,13 +160,9 @@ class TestTuna5:
             ]
 
             cz_operation_re = re.compile(r"^CZ \(q\[(\d+)\], q\[(\d+)\]\)$")
-            cz_pairs = []
-            for operation in operations:
-                cz_match = cz_operation_re.match(operation)
-                if cz_match:
-                    cz_pairs.append((int(cz_match.group(1)), int(cz_match.group(2))))
+            cz_pairs = [m.groups() for m in map(cz_operation_re.match, operations) if m]
 
-            assert Counter(cz_pairs) == Counter({(0, 2): 1, (2, 1): 3, (1, 2): 1})
+            assert Counter(cz_pairs) == Counter({("0", "2"): 1, ("2", "1"): 3, ("1", "2"): 1})
             assert all(operation.startswith(("Reset ", "Measure ", "Rxy(", "CZ (")) for operation in operations)
             _check_measurement_to_bit_mapping(circuit, exported_schedule)
 
