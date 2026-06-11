@@ -89,6 +89,9 @@ class CanonicalAxis(BaseAxis):
         """
         axis = (axis + 1) % 2 - 1
 
+        if CanonicalAxis.in_weyl_chamber(*axis):
+            return axis
+
         while (axis < 0).any():
             axis = np.where(axis < 0, axis - 1, axis)
             axis = (axis + 1) % 2 - 1

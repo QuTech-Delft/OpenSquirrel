@@ -40,7 +40,9 @@ class Can2CZDecomposer(Decomposer):
         q0, q1 = gate.qubit_operands
 
         if gate == CZ(q0, q1) or gate == CZ(q1, q0):
-            return [gate]
+            if isinstance(gate, CZ):
+                return [gate]
+            return [CZ(q0, q1)]
 
         if gate == CNOT(q0, q1):
             return [Ry(q1, -pi / 2), CZ(q0, q1), Ry(q1, pi / 2)]

@@ -1,11 +1,18 @@
-import math
 import re
+from math import pi
 
 import pytest
 
 from opensquirrel import (
     CNOT,
+    CR,
+    CV,
+    CY,
     CZ,
+    DCNOT,
+    ECR,
+    ISWAP,
+    MS,
     SWAP,
     X90,
     Y90,
@@ -13,9 +20,12 @@ from opensquirrel import (
     Barrier,
     BitRegister,
     CircuitBuilder,
+    CRk,
     H,
     I,
     Init,
+    InvSqrtSWAP,
+    M,
     Measure,
     MinusX90,
     MinusY90,
@@ -25,6 +35,8 @@ from opensquirrel import (
     Rx,
     Ry,
     Rz,
+    SqrtISWAP,
+    SqrtSWAP,
     U,
     Wait,
     X,
@@ -59,9 +71,17 @@ class TestCircuitBuilder:
                 CircuitBuilder(2, 2).X90(0).mX90(0).Y90(0).mY90(0).Z90(0).mZ90(0),
                 [X90(0), MinusX90(0), Y90(0), MinusY90(0), Z90(0), MinusZ90(0)],
             ),
-            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, math.pi), [Rx(0, -1), Ry(1, 1), Rz(0, math.pi)]),
+            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, pi), [Rx(0, -1), Ry(1, 1), Rz(0, pi)]),
             (CircuitBuilder(2, 2).U(0, 1, 2, 3), [U(0, 1.0, 2.0, 3.0)]),
-            (CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1), [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]),
+            (
+                CircuitBuilder(2, 2).CNOT(0, 1).CZ(0, 1).CR(0, 1, pi / 2).CRk(0, 1, 2).CV(0, 1).CY(0, 1),
+                [CNOT(0, 1), CZ(0, 1), CR(0, 1, pi / 2), CRk(0, 1, 2), CV(0, 1), CY(0, 1)],
+            ),
+            (
+                CircuitBuilder(2, 2).InvSqrtSWAP(0, 1).ISWAP(0, 1).SqrtISWAP(0, 1).SqrtSWAP(0, 1).SWAP(0, 1),
+                [InvSqrtSWAP(0, 1), ISWAP(0, 1), SqrtISWAP(0, 1), SqrtSWAP(0, 1), SWAP(0, 1)],
+            ),
+            (CircuitBuilder(2, 2).DCNOT(0, 1).ECR(0, 1).M(0, 1).MS(0, 1), [DCNOT(0, 1), ECR(0, 1), M(0, 1), MS(0, 1)]),
             (CircuitBuilder(2, 2).measure(0, 0).measure(1, 1), [Measure(0, 0), Measure(1, 1)]),
             (CircuitBuilder(2, 2).init(0).init(1), [Init(0), Init(1)]),
             (CircuitBuilder(2, 2).reset(0).reset(1), [Reset(0), Reset(1)]),
@@ -73,7 +93,9 @@ class TestCircuitBuilder:
             "pi/2-rotations",
             "rotation_gates",
             "u_gate",
-            "two-qubit_gates",
+            "controlled_gates",
+            "swap_gates",
+            "additional_2_qubit_gates",
             "measure",
             "init",
             "reset",
@@ -380,14 +402,14 @@ class TestSGMQNotation:
 
     def test_sgmq_parametric_gate(self) -> None:
         builder = CircuitBuilder(3)
-        builder.Rx([0, 1, 2], math.pi / 2)
+        builder.Rx([0, 1, 2], pi / 2)
         builder.U([0, 1], 1.0, 2.0, 3.0)
         circuit = builder.to_circuit()
 
         assert circuit.ir.statements == [
-            Rx(0, math.pi / 2),
-            Rx(1, math.pi / 2),
-            Rx(2, math.pi / 2),
+            Rx(0, pi / 2),
+            Rx(1, pi / 2),
+            Rx(2, pi / 2),
             U(0, 1.0, 2.0, 3.0),
             U(1, 1.0, 2.0, 3.0),
         ]
