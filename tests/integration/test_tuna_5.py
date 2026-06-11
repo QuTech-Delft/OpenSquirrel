@@ -160,7 +160,7 @@ class TestTuna5:
             ]
 
             cz_operation_re = re.compile(r"^CZ \(q\[(\d+)\], q\[(\d+)\]\)$")
-            cz_pairs = [m.groups() for m in map(cz_operation_re.match, operations) if m]
+            cz_pairs = [m.groups() for m in (cz_operation_re.match(op) for op in operations) if m]
 
             assert Counter(cz_pairs) == Counter({("0", "2"): 1, ("2", "1"): 3, ("1", "2"): 1})
             assert all(operation.startswith(("Reset ", "Measure ", "Rxy(", "CZ (")) for operation in operations)
