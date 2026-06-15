@@ -548,3 +548,84 @@ class TestSGMQNotation:
 
         with pytest.raises(ValueError, match="SGMQ requires matching operand lengths: got 3 and 2"):
             builder.CNOT([0, 1, 2], [1, 2])
+
+
+class TestAddInstruction:
+    def test_add_single_instruction(self) -> None:
+        builder = CircuitBuilder(2)
+        builder.add_instruction(H(0))
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [H(0)]
+
+    def test_add_multiple_instructions(self) -> None:
+        builder = CircuitBuilder(2)
+        builder.add_instruction([H(0), CNOT(0, 1)])
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+
+    def test_add_multiple_parametric_instructions(self) -> None:
+        builder = CircuitBuilder(4)
+        builder.add_instruction(Rz(i, pi / 2 ** (i + 1)) for i in range(4))
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [Rz(i, pi / 2 ** (i + 1)) for i in range(4)]
+
+    def test_add_instruction_chaining(self) -> None:
+        builder = CircuitBuilder(2)
+        circuit = builder.add_instruction(H(0)).add_instruction(CNOT(0, 1)).to_circuit()
+
+        assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+
+    def test_add_instruction_mixed_with_plain_builder_calls(self) -> None:
+        builder = CircuitBuilder(3)
+        builder.H(0)
+        builder.add_instruction(CNOT(0, 1))
+        builder.H(2)
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [H(0), CNOT(0, 1), H(2)]
+
+    def test_add_instruction_out_of_bounds_qubit(self) -> None:
+        builder = CircuitBuilder(2)
+
+        with pytest.raises(IndexError, match="qubit index 5 is out of bounds"):
+            builder.add_instruction(H(5))
+
+    def test_add_instruction_out_of_bounds_bit(self) -> None:
+        builder = CircuitBuilder(2, 2)
+
+        with pytest.raises(IndexError, match="bit index 10 is out of bounds"):
+            builder.add_instruction(Measure(0, 10))
+
+    def test_add_empty_list(self) -> None:
+        builder = CircuitBuilder(2)
+        builder.add_instruction([])
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == []
+
+    @pytest.mark.parametrize(
+        ("instruction", "expected"),
+        [
+            (Measure(0, 0), Measure(0, 0)),
+            (Init(0), Init(0)),
+            (Reset(0), Reset(0)),
+            (Barrier(0), Barrier(0)),
+            (Wait(0, 10), Wait(0, 10)),
+        ],
+        ids=[
+            "measure",
+            "init",
+            "reset",
+            "barrier",
+            "wait",
+        ],
+    )
+    def test_add_instruction_non_unitaries(self, instruction: Instruction, expected: Instruction) -> None:
+        builder = CircuitBuilder(2, 2)
+        builder.add_instruction(instruction)
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [expected]
