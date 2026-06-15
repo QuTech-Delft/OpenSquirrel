@@ -37,6 +37,12 @@ if TYPE_CHECKING:
 
 
 class LibQasmParser:
+    _MEASURE_ALIASES: dict[str, list[Float]] = {
+        "measureX": [Float(1), Float(0), Float(0)],
+        "measureY": [Float(0), Float(1), Float(0)],
+        "measureZ": [Float(0), Float(0), Float(1)],
+    }
+
     def __init__(self) -> None:
         self.ir = IR()
 
@@ -181,8 +187,11 @@ class LibQasmParser:
             else:
                 msg = f"argument {ast_arg!r} is neither of qubit nor bit type"
                 raise TypeError(msg)
-        if instruction.parameters:
+
+        parameters = self._MEASURE_ALIASES.get(instruction.name)
+        if not parameters and instruction.parameters:
             parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]
+        if parameters:
             number_of_operands = len(expanded_args[0])
             expanded_args.append([parameters] * number_of_operands)
         return list(zip(*expanded_args, strict=False))
@@ -217,6 +226,8 @@ class LibQasmParser:
     def _get_non_gate_instruction_generator(
         self, instruction: cqasm.semantic.NonGateInstruction
     ) -> Callable[..., NonUnitary | ControlInstruction]:
+        if instruction.name in self._MEASURE_ALIASES:
+            return lambda *args: default_non_unitary_set["measure"](*args)
         if instruction.name in default_control_instruction_set:
             return lambda *args: default_control_instruction_set[instruction.name](*args)
         return lambda *args: default_non_unitary_set[instruction.name](*args)
@@ -302,7 +313,7 @@ class LibQasmParser:
                 instruction_generator = self._get_non_gate_instruction_generator(statement)
                 expanded_args = (
                     self._get_expanded_measure_args(statement)
-                    if statement.name == "measure"
+                    if statement.name == "measure" or statement.name in self._MEASURE_ALIASES
                     else self._get_expanded_instruction_args(statement)
                 )
             elif LibQasmParser._is_asm_declaration(statement):
