@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import OrderedDict
+from collections.abc import Iterable
 from copy import deepcopy
 from functools import partial
 from typing import Any
@@ -189,6 +190,20 @@ class CircuitBuilder:
         expanded_first = self._expand_sgmq_arg(args[0])
         remaining_args = args[1:]
         return [(first, *remaining_args) for first in expanded_first]
+
+    def add_instruction(self, instruction: Instruction | Iterable[Instruction]) -> Self:
+        """Add instructions to the ir.
+
+        Args:
+            instruction: A single instruction or an iterable of instructions to append to the IR.
+
+        """
+        if isinstance(instruction, Instruction):
+            instruction = [instruction]
+        for instr in instruction:
+            self._check_out_of_bounds_access(instr)
+            self.ir.add_statement(instr)
+        return self
 
     def to_circuit(self) -> Circuit:
         """Build the circuit.
