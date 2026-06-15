@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, cast, overload
+from typing import TYPE_CHECKING, Any, ClassVar, cast, overload
 
 import cqasm.v3x as cqasm
 import cqasm.v3x.types as cqasm_types
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 
 
 class LibQasmParser:
-    _MEASURE_ALIASES: dict[str, list[Float]] = {
+    _MEASURE_ALIASES: ClassVar[dict[str, list[Float]]] = {
         "measureX": [Float(1), Float(0), Float(0)],
         "measureY": [Float(0), Float(1), Float(0)],
         "measureZ": [Float(0), Float(0), Float(1)],
