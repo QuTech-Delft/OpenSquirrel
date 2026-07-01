@@ -80,6 +80,13 @@ class CircuitBuilder:
         # Default behaviour
         return self.__getattribute__(attr)
 
+    def __contains__(self, item: object) -> bool:
+        if isinstance(item, QubitRegister):
+            return item.name in self.register_manager._qubit_registry  # noqa: SLF001
+        if isinstance(item, BitRegister):
+            return item.name in self.register_manager._bit_registry  # noqa: SLF001
+        return False
+
     def add_register(self, register: QubitRegister | BitRegister) -> None:
         """Add a (qu)bit register to the circuit builder.
 

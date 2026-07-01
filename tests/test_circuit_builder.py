@@ -629,3 +629,32 @@ class TestAddInstruction:
         circuit = builder.to_circuit()
 
         assert circuit.ir.statements == [expected]
+
+
+@pytest.fixture
+def qubit_register1() -> QubitRegister:
+    return QubitRegister(4, "q0")
+
+
+@pytest.fixture
+def qubit_register2() -> QubitRegister:
+    return QubitRegister(8, "q1")
+
+
+@pytest.fixture
+def bit_register() -> BitRegister:
+    return BitRegister(4, "b0")
+
+
+def test_qubit_register_in_builder(qubit_register1: QubitRegister, qubit_register2: QubitRegister) -> None:
+    builder = CircuitBuilder()
+    builder.add_register(qubit_register1)
+    assert qubit_register1 in builder
+    assert qubit_register2 not in builder
+
+
+def test_bit_register_in_builder(bit_register: BitRegister) -> None:
+    builder = CircuitBuilder()
+    builder.add_register(bit_register)
+    assert bit_register in builder
+    assert BitRegister(8, "b1") not in builder
