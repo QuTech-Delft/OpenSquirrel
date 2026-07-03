@@ -82,9 +82,9 @@ class CircuitBuilder:
 
     def __contains__(self, item: object) -> bool:
         if isinstance(item, QubitRegister):
-            return item.name in self.register_manager._qubit_registry  # noqa: SLF001
+            return item.name in self.register_manager.qubit_registry
         if isinstance(item, BitRegister):
-            return item.name in self.register_manager._bit_registry  # noqa: SLF001
+            return item.name in self.register_manager.bit_registry
         return False
 
     def add_register(self, register: QubitRegister | BitRegister) -> None:
