@@ -106,6 +106,14 @@ class RegisterManager:
         )
 
     @property
+    def qubit_registry(self) -> QubitRegistry:
+        return self._qubit_registry
+
+    @property
+    def bit_registry(self) -> BitRegistry:
+        return self._bit_registry
+
+    @property
     def qubit_register_size(self) -> int:
         return self._virtual_qubit_register.size
 
