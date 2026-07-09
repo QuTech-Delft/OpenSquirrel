@@ -65,7 +65,6 @@ class MinusX90(SingleQubitGate):
             qubit=qubit, gate_semantic=BsrNoParams(axis=(1, 0, 0), angle=-pi / 2, phase=-pi / 4), name="mX90"
         )
 
-
 class Y(SingleQubitGate):
     def __init__(self, qubit: QubitLike) -> None:
         super().__init__(qubit=qubit, gate_semantic=BsrNoParams(axis=(0, 1, 0), angle=pi, phase=pi / 2), name="Y")

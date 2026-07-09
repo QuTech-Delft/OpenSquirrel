@@ -190,6 +190,10 @@ class CircuitBuilder:
         remaining_args = args[1:]
         return [(first, *remaining_args) for first in expanded_first]
 
+    def clear(self) -> None:
+        """Clears all statements from the IR."""
+        self.ir.clear()
+
     def to_circuit(self) -> Circuit:
         """Build the circuit.
 
