@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import OrderedDict
+from collections.abc import Iterable
 from copy import deepcopy
 from functools import partial
 from typing import Any
@@ -78,6 +79,13 @@ class CircuitBuilder:
             return partial(self._add_statement, attr)
         # Default behaviour
         return self.__getattribute__(attr)
+
+    def __contains__(self, item: object) -> bool:
+        if isinstance(item, QubitRegister):
+            return item.name in self.register_manager.qubit_registry
+        if isinstance(item, BitRegister):
+            return item.name in self.register_manager.bit_registry
+        return False
 
     def add_register(self, register: QubitRegister | BitRegister) -> None:
         """Add a (qu)bit register to the circuit builder.
@@ -189,6 +197,20 @@ class CircuitBuilder:
         expanded_first = self._expand_sgmq_arg(args[0])
         remaining_args = args[1:]
         return [(first, *remaining_args) for first in expanded_first]
+
+    def add_instruction(self, instruction: Instruction | Iterable[Instruction]) -> Self:
+        """Add instructions to the ir.
+
+        Args:
+            instruction: A single instruction or an iterable of instructions to append to the IR.
+
+        """
+        if isinstance(instruction, Instruction):
+            instruction = [instruction]
+        for instr in instruction:
+            self._check_out_of_bounds_access(instr)
+            self.ir.add_statement(instr)
+        return self
 
     def clear(self) -> None:
         """Clears all statements from the IR."""

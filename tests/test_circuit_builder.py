@@ -1,11 +1,18 @@
-import math
 import re
+from math import pi
 
 import pytest
 
 from opensquirrel import (
     CNOT,
+    CR,
+    CV,
+    CY,
     CZ,
+    DCNOT,
+    ECR,
+    ISWAP,
+    MS,
     SWAP,
     X90,
     Y90,
@@ -13,9 +20,12 @@ from opensquirrel import (
     Barrier,
     BitRegister,
     CircuitBuilder,
+    CRk,
     H,
     I,
     Init,
+    InvSqrtSWAP,
+    M,
     Measure,
     MinusX90,
     MinusY90,
@@ -25,6 +35,8 @@ from opensquirrel import (
     Rx,
     Ry,
     Rz,
+    SqrtISWAP,
+    SqrtSWAP,
     U,
     Wait,
     X,
@@ -59,9 +71,17 @@ class TestCircuitBuilder:
                 CircuitBuilder(2, 2).X90(0).mX90(0).Y90(0).mY90(0).Z90(0).mZ90(0),
                 [X90(0), MinusX90(0), Y90(0), MinusY90(0), Z90(0), MinusZ90(0)],
             ),
-            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, math.pi), [Rx(0, -1), Ry(1, 1), Rz(0, math.pi)]),
+            (CircuitBuilder(2, 2).Rx(0, -1).Ry(1, 1).Rz(0, pi), [Rx(0, -1), Ry(1, 1), Rz(0, pi)]),
             (CircuitBuilder(2, 2).U(0, 1, 2, 3), [U(0, 1.0, 2.0, 3.0)]),
-            (CircuitBuilder(2, 2).CZ(0, 1).CNOT(1, 0).SWAP(0, 1), [CZ(0, 1), CNOT(1, 0), SWAP(0, 1)]),
+            (
+                CircuitBuilder(2, 2).CNOT(0, 1).CZ(0, 1).CR(0, 1, pi / 2).CRk(0, 1, 2).CV(0, 1).CY(0, 1),
+                [CNOT(0, 1), CZ(0, 1), CR(0, 1, pi / 2), CRk(0, 1, 2), CV(0, 1), CY(0, 1)],
+            ),
+            (
+                CircuitBuilder(2, 2).InvSqrtSWAP(0, 1).ISWAP(0, 1).SqrtISWAP(0, 1).SqrtSWAP(0, 1).SWAP(0, 1),
+                [InvSqrtSWAP(0, 1), ISWAP(0, 1), SqrtISWAP(0, 1), SqrtSWAP(0, 1), SWAP(0, 1)],
+            ),
+            (CircuitBuilder(2, 2).DCNOT(0, 1).ECR(0, 1).M(0, 1).MS(0, 1), [DCNOT(0, 1), ECR(0, 1), M(0, 1), MS(0, 1)]),
             (CircuitBuilder(2, 2).measure(0, 0).measure(1, 1), [Measure(0, 0), Measure(1, 1)]),
             (CircuitBuilder(2, 2).init(0).init(1), [Init(0), Init(1)]),
             (CircuitBuilder(2, 2).reset(0).reset(1), [Reset(0), Reset(1)]),
@@ -73,7 +93,9 @@ class TestCircuitBuilder:
             "pi/2-rotations",
             "rotation_gates",
             "u_gate",
-            "two-qubit_gates",
+            "controlled_gates",
+            "swap_gates",
+            "additional_2_qubit_gates",
             "measure",
             "init",
             "reset",
@@ -380,14 +402,14 @@ class TestSGMQNotation:
 
     def test_sgmq_parametric_gate(self) -> None:
         builder = CircuitBuilder(3)
-        builder.Rx([0, 1, 2], math.pi / 2)
+        builder.Rx([0, 1, 2], pi / 2)
         builder.U([0, 1], 1.0, 2.0, 3.0)
         circuit = builder.to_circuit()
 
         assert circuit.ir.statements == [
-            Rx(0, math.pi / 2),
-            Rx(1, math.pi / 2),
-            Rx(2, math.pi / 2),
+            Rx(0, pi / 2),
+            Rx(1, pi / 2),
+            Rx(2, pi / 2),
             U(0, 1.0, 2.0, 3.0),
             U(1, 1.0, 2.0, 3.0),
         ]
@@ -526,3 +548,113 @@ class TestSGMQNotation:
 
         with pytest.raises(ValueError, match="SGMQ requires matching operand lengths: got 3 and 2"):
             builder.CNOT([0, 1, 2], [1, 2])
+
+
+class TestAddInstruction:
+    def test_add_single_instruction(self) -> None:
+        builder = CircuitBuilder(2)
+        builder.add_instruction(H(0))
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [H(0)]
+
+    def test_add_multiple_instructions(self) -> None:
+        builder = CircuitBuilder(2)
+        builder.add_instruction([H(0), CNOT(0, 1)])
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+
+    def test_add_multiple_parametric_instructions(self) -> None:
+        builder = CircuitBuilder(4)
+        builder.add_instruction(Rz(i, pi / 2 ** (i + 1)) for i in range(4))
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [Rz(i, pi / 2 ** (i + 1)) for i in range(4)]
+
+    def test_add_instruction_chaining(self) -> None:
+        builder = CircuitBuilder(2)
+        circuit = builder.add_instruction(H(0)).add_instruction(CNOT(0, 1)).to_circuit()
+
+        assert circuit.ir.statements == [H(0), CNOT(0, 1)]
+
+    def test_add_instruction_mixed_with_plain_builder_calls(self) -> None:
+        builder = CircuitBuilder(3)
+        builder.H(0)
+        builder.add_instruction(CNOT(0, 1))
+        builder.H(2)
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [H(0), CNOT(0, 1), H(2)]
+
+    def test_add_instruction_out_of_bounds_qubit(self) -> None:
+        builder = CircuitBuilder(2)
+
+        with pytest.raises(IndexError, match="qubit index 5 is out of bounds"):
+            builder.add_instruction(H(5))
+
+    def test_add_instruction_out_of_bounds_bit(self) -> None:
+        builder = CircuitBuilder(2, 2)
+
+        with pytest.raises(IndexError, match="bit index 10 is out of bounds"):
+            builder.add_instruction(Measure(0, 10))
+
+    def test_add_empty_list(self) -> None:
+        builder = CircuitBuilder(2)
+        builder.add_instruction([])
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == []
+
+    @pytest.mark.parametrize(
+        ("instruction", "expected"),
+        [
+            (Measure(0, 0), Measure(0, 0)),
+            (Init(0), Init(0)),
+            (Reset(0), Reset(0)),
+            (Barrier(0), Barrier(0)),
+            (Wait(0, 10), Wait(0, 10)),
+        ],
+        ids=[
+            "measure",
+            "init",
+            "reset",
+            "barrier",
+            "wait",
+        ],
+    )
+    def test_add_instruction_non_unitaries(self, instruction: Instruction, expected: Instruction) -> None:
+        builder = CircuitBuilder(2, 2)
+        builder.add_instruction(instruction)
+        circuit = builder.to_circuit()
+
+        assert circuit.ir.statements == [expected]
+
+
+@pytest.fixture
+def qubit_register1() -> QubitRegister:
+    return QubitRegister(4, "q0")
+
+
+@pytest.fixture
+def qubit_register2() -> QubitRegister:
+    return QubitRegister(8, "q1")
+
+
+@pytest.fixture
+def bit_register() -> BitRegister:
+    return BitRegister(4, "b0")
+
+
+def test_qubit_register_in_builder(qubit_register1: QubitRegister, qubit_register2: QubitRegister) -> None:
+    builder = CircuitBuilder()
+    builder.add_register(qubit_register1)
+    assert qubit_register1 in builder
+    assert qubit_register2 not in builder
+
+
+def test_bit_register_in_builder(bit_register: BitRegister) -> None:
+    builder = CircuitBuilder()
+    builder.add_register(bit_register)
+    assert bit_register in builder
+    assert BitRegister(8, "b1") not in builder
