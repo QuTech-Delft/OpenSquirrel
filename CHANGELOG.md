@@ -28,6 +28,7 @@ arbitrarily applied mapper pass.
 - `Can2CZDecomposer` to decompose arbitrary two-qubit gates.
 - The following 2-qubit gates: `CV`, `CY`, `DCNOT`, `ECR`, `ISWAP`, `InvSqrtSWAP`, `M`, `MS`, `SqrtISWAP`, and `SqrtSWAP`
 - Add `add_instruction` method to the `CircuitBuilder`
+- libQASM parser accepts measure instruction aliases: `measureX`, `measureY`, and `measureZ`
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 
