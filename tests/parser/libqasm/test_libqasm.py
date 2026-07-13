@@ -181,6 +181,33 @@ b[3] = measure(1.0, 0.0, 0.0) q[3]
     )
 
 
+def test_parse_measurement_aliases() -> None:
+    circuit = LibQasmParser().circuit_from_string(
+        """
+        version 3.0
+
+        qubit[3] q
+        bit[3] b
+
+        b[0] = measureX q[0]
+        b[1] = measureY q[1]
+        b[2] = measureZ q[2]
+        """,
+    )
+    assert (
+        str(circuit)
+        == """version 3.0
+
+qubit[3] q
+bit[3] b
+
+b[0] = measure(1.0, 0.0, 0.0) q[0]
+b[1] = measure(0.0, 1.0, 0.0) q[1]
+b[2] = measure q[2]
+"""
+    )
+
+
 def test_sgmq() -> None:
     circuit = LibQasmParser().circuit_from_string(
         """
