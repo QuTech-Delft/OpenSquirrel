@@ -14,7 +14,7 @@ keywords = [
     "compilation",
 ]
 dependencies = [
-    "libqasm==1.4.0",
+    "libqasm==1.4.1",
     "networkx>=3.4.2",
     "numpy>=2.2.6",
     "scipy>=1.15.3",
@@ -48,12 +48,12 @@ export = [
     "pyqt5-qt5==5.15.19; sys_platform != 'darwin'",
     "quantify-scheduler==0.28.0.post2; sys_platform != 'darwin'",
     "qcodes<0.57.0; sys_platform != 'darwin'",
-    "spirack<=0.2.19; sys_platform != 'darwin'",
+    "spirack<=0.2.20; sys_platform != 'darwin'",
 ]
 qgym_mapper = [
     "qgym==0.3.1",
-    "stable-baselines3==2.8.0",
-    "sb3-contrib==2.8.0",
+    "stable-baselines3==2.9.0",
+    "sb3-contrib==2.9.0",
 ]
 docs = [
     "mike>=2.1.3",
@@ -67,7 +67,7 @@ docs = [
     "mkdocs-render-swagger-plugin==0.1.2",
     "mkdocs_gen_files>=0.5.0,<0.7",
     "mkdocstrings[python]>=0.24,<1.1",
-    "pymdown-extensions>=10.7.1,<11",
+    "pymdown-extensions>=10.7.1,<12",
 ]
 examples = [
     "jupyter>=1.0.0,<2",

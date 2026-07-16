@@ -145,7 +145,10 @@ def test_all_instructions() -> None:
     builder.mX90(0).mY90(0).mZ90(0)
     builder.S(0).Sdag(0).T(0).Tdag(0)
     builder.U(0, 1.0, 2.0, 3.0)
-    builder.CZ(0, 1).CNOT(1, 0).SWAP(0, 1)
+    builder.CNOT(0, 1).CR(1, 0, 1.234).CRk(1, 0, 2).CV(0, 1).CY(1, 0).CZ(0, 1)
+    builder.DCNOT(1, 0).ECR(0, 1).InvSqrtSWAP(1, 0).ISWAP(1, 0).M(0, 1).MS(0, 1).SqrtISWAP(1, 0).SqrtSWAP(0, 1).SWAP(
+        1, 0
+    )
     builder.measure(0, 0).measure(1, 1)
     circuit = builder.to_circuit()
 
@@ -178,9 +181,21 @@ Sdag q[0]
 T q[0]
 Tdag q[0]
 U(1.0, 2.0, 3.0) q[0]
+CNOT q[0], q[1]
+CR(1.234) q[1], q[0]
+CRk(2) q[1], q[0]
+CV q[0], q[1]
+CY q[1], q[0]
 CZ q[0], q[1]
-CNOT q[1], q[0]
-SWAP q[0], q[1]
+DCNOT q[1], q[0]
+ECR q[0], q[1]
+InvSqrtSWAP q[1], q[0]
+ISWAP q[1], q[0]
+M q[0], q[1]
+MS q[0], q[1]
+SqrtISWAP q[1], q[0]
+SqrtSWAP q[0], q[1]
+SWAP q[1], q[0]
 b[0] = measure q[0]
 b[1] = measure q[1]
 """

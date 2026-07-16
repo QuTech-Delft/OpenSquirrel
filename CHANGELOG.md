@@ -19,13 +19,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 parameter
 - `CircuitBuilder` accepts multiple (qu)bit registers through `add_register` method
 - Docstrings added to (user facing) public methods
-- Add `interaction_graph` as a property of the `Circuit`.
+- Add `interaction_graph` as a property of the `Circuit`
 - Add `mapping` as an attribute of the `Circuit`, which contains an identity mapping, prior to any 
 arbitrarily applied mapper pass.
 - The measure instruction accepts an axis parameter
-- `MeasureDecomposer` to decompose arbitrary measurements to a decomposition of single-qubit gates and a +Z measurement.
+- `MeasureDecomposer` to decompose arbitrary measurements to a decomposition of single-qubit gates and a +Z measurement
 - `CircuitAnalyzer` analyzer pass for computing structural circuit metrics (size, interaction graph, gate dependency graph, density)
 - `Can2CZDecomposer` to decompose arbitrary two-qubit gates.
+- The following 2-qubit gates: `CV`, `CY`, `DCNOT`, `ECR`, `ISWAP`, `InvSqrtSWAP`, `M`, `MS`, `SqrtISWAP`, and `SqrtSWAP`
+- Add `add_instruction` method to the `CircuitBuilder`
+- libQASM parser accepts measure instruction aliases: `measureX`, `measureY`, and `measureZ`
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 

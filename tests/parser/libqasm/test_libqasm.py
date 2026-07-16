@@ -77,9 +77,19 @@ def test_parse_instructions() -> None:
 
         // Two-qubit instructions
         CNOT q[0], q[1]
-        CZ q[0], q[1]
-        CR(pi) q[0], q[1]
+        CR(pi/2) q[0], q[1]
         CRk(2) q[0], q[1]
+        CV q[0], q[1]
+        CY q[0], q[1]
+        CZ q[0], q[1]
+        DCNOT q[0], q[1]
+        ECR q[0], q[1]
+        InvSqrtSWAP q[0], q[1]
+        ISWAP q[0], q[1]
+        M q[0], q[1]
+        MS q[0], q[1]
+        SqrtISWAP q[0], q[1]
+        SqrtSWAP q[0], q[1]
         SWAP q[0], q[1]
 
         // Measurement instruction (final)
@@ -124,9 +134,19 @@ reset q[1]
 b[0] = measure q[0]
 b[1] = measure q[1]
 CNOT q[0], q[1]
-CZ q[0], q[1]
-CR(3.1415927) q[0], q[1]
+CR(1.5707963) q[0], q[1]
 CRk(2) q[0], q[1]
+CV q[0], q[1]
+CY q[0], q[1]
+CZ q[0], q[1]
+DCNOT q[0], q[1]
+ECR q[0], q[1]
+InvSqrtSWAP q[0], q[1]
+ISWAP q[0], q[1]
+M q[0], q[1]
+MS q[0], q[1]
+SqrtISWAP q[0], q[1]
+SqrtSWAP q[0], q[1]
 SWAP q[0], q[1]
 b[0] = measure q[0]
 b[1] = measure q[1]
@@ -157,6 +177,33 @@ b[0] = measure q[0]
 b[0] = measure(1.0, 0.0, 0.0) q[1]
 b[1] = measure(1.0, 0.0, 0.0) q[2]
 b[3] = measure(1.0, 0.0, 0.0) q[3]
+"""
+    )
+
+
+def test_parse_measurement_aliases() -> None:
+    circuit = LibQasmParser().circuit_from_string(
+        """
+        version 3.0
+
+        qubit[3] q
+        bit[3] b
+
+        b[0] = measureX q[0]
+        b[1] = measureY q[1]
+        b[2] = measureZ q[2]
+        """,
+    )
+    assert (
+        str(circuit)
+        == """version 3.0
+
+qubit[3] q
+bit[3] b
+
+b[0] = measure(1.0, 0.0, 0.0) q[0]
+b[1] = measure(0.0, 1.0, 0.0) q[1]
+b[2] = measure q[2]
 """
     )
 
