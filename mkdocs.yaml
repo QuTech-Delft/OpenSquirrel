@@ -23,6 +23,9 @@ nav:
         - Control instructions: circuit-builder/instructions/control-instructions.md
   - Compilation passes:
     - Compilation passes: compilation-passes/index.md
+    - Analysis:
+      - Analysis: compilation-passes/analysis/index.md
+      - Circuit analyzer: compilation-passes/analysis/circuit-analyzer.md
     - Decomposition:
       - Decomposition: compilation-passes/decomposition/index.md
       - ABA decomposer: compilation-passes/decomposition/aba-decomposer.md

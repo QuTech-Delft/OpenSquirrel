@@ -25,6 +25,7 @@ arbitrarily applied mapper pass.
 - The measure instruction accepts an axis parameter
 - `MeasureDecomposer` to decompose arbitrary measurements to a decomposition of single-qubit gates and a +Z measurement
 - `CircuitAnalyzer` analyzer pass for computing structural circuit metrics (size, interaction graph, gate dependency graph, density)
+- Metrics computed by the `CircuitAnalyzer` can be (de)selected through the `metrics` and `exclude_metrics` parameters, and a configurable per-metric time-out can be set through the `timeout` parameter
 - `Can2CZDecomposer` to decompose arbitrary two-qubit gates.
 - The following 2-qubit gates: `CV`, `CY`, `DCNOT`, `ECR`, `ISWAP`, `InvSqrtSWAP`, `M`, `MS`, `SqrtISWAP`, and `SqrtSWAP`
 - Add `add_instruction` method to the `CircuitBuilder`
