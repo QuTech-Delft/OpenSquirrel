@@ -106,9 +106,7 @@ class CircuitAnalyzer(Analyzer):
         return self._analyze_with_timeout()
 
     def _analyze_with_timeout(self) -> dict[str, Any]:
-        """Compute each selected metric in a worker thread, bounded by the configured time-out.
-
-        """
+        """Compute each selected metric in a worker thread, bounded by the configured time-out."""
         metrics: dict[str, Any] = {}
         executor = ThreadPoolExecutor(max_workers=1)
         try:
@@ -357,9 +355,7 @@ class CircuitAnalyzer(Analyzer):
     # Density metrics                                                    #
     # ------------------------------------------------------------------ #
     def _metric_density_score(self) -> float:
-        """Density score: parallelisation level of the circuit (0..1).
-
-        """
+        """Density score: parallelisation level of the circuit (0..1)."""
         n_qubits = self.circuit.qubit_register_size
         n_gates = len(self.gate_statements)
         n_two_qubit_gates = self._metric_n_two_qubit_gates()
