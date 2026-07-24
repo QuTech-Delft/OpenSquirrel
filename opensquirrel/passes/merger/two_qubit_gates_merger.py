@@ -2,6 +2,7 @@ from copy import copy
 
 import numpy as np
 
+from opensquirrel.circuit import Circuit
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
 from opensquirrel.ir import IR, Gate, Qubit
@@ -52,6 +53,11 @@ def normalize_gate_indices(gate: Gate) -> Gate:
     msg = f"Unsupported gate type: {type(gate)}"
     raise TypeError(msg)
 
+def _get_sub_circuit_matrix(circuit: Circuit) -> np.ndarray:
+    # `get_circuit_matrix` uses the convention of the first qubit being the most significant bit,
+    # so we need to swap the qubits before and after calculating the matrix
+    swap = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
+    return swap @ get_circuit_matrix(circuit) @ swap
 
 class TwoQubitGatesMerger(Merger):
     def merge(self, ir: IR, qubit_register_size: int) -> None:
@@ -68,23 +74,19 @@ class TwoQubitGatesMerger(Merger):
 
         new_gates = []
 
-        swap = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
         for qubit_indices, statement_indices in groups:
             if len(statement_indices) == 1:
                 new_gates.append(ir.statements[statement_indices[0]])
                 continue
 
-            sub_circuit = CircuitBuilder(len(qubit_indices))
+            builder = CircuitBuilder(len(qubit_indices))
             for statement_index in statement_indices:
                 statement = ir.statements[statement_index]
                 if isinstance(statement, Gate):
                     statement = normalize_gate_indices(statement)
-                    sub_circuit.add_instruction(statement)
+                    builder.add_instruction(statement)
 
-            # `get_circuit_matrix` uses the convention of the first qubit being the most significant bit,
-            # so we need to swap the qubits before and after calculating the matrix
-            sub_circuit_matrix = swap @ get_circuit_matrix(sub_circuit.to_circuit()) @ swap
-
+            sub_circuit_matrix = _get_sub_circuit_matrix(builder.to_circuit())
             gate = TwoQubitGate(*qubit_indices, gate_semantic=MatrixGateSemantic(sub_circuit_matrix))
             new_gates.append(gate)
 
@@ -100,3 +102,4 @@ class TwoQubitGatesMerger(Merger):
 
         # Replace the original statements with the merged gates
         ir.statements = new_statements
+
