@@ -81,7 +81,8 @@ class SingleQubitGate(Gate):
         if self.qubit != other.qubit:
             msg = "cannot merge two single qubit gates on different qubits."
             raise ValueError(msg)
-        return SingleQubitGate(self.qubit, self.bsr * other.bsr)
+        composed = SingleQubitGate(self.qubit, self.bsr * other.bsr)
+        return try_match_replace_with_default_gate(composed)
 
     @property
     def arguments(self) -> tuple[Qubit, ...]:

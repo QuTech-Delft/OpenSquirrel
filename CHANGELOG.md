@@ -10,6 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * **Fixed** for any bug fixes.
 * **Removed** for now removed features.
 
+## [ 0.9.1 ] - [ 2025-07-30 ]
+
+### Fixed
+
+- `SingleQubitGate.__mul__` tries to match and replace with a default gate
+
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 
 ### Added
