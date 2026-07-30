@@ -1,4 +1,5 @@
 from math import pi
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
@@ -8,6 +9,9 @@ from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.merger.general_merger import rearrange_barriers
 from tests.ir.ir_equality_test_base import modify_circuit_and_check
+
+if TYPE_CHECKING:
+    from opensquirrel.ir.statement import Instruction
 
 
 @pytest.fixture
@@ -266,3 +270,13 @@ def test_rearrange_barriers_after_merge_single_qubit_gates(
     circuit.merge(merger=merger)
     rearrange_barriers(circuit.ir)
     assert str(circuit) == expected_result
+
+
+def test_default_gate_recognition() -> None:
+    builder = CircuitBuilder(1)
+    builder.X90(0)
+    circuit = builder.to_circuit()
+
+    circuit.merge(SingleQubitGatesMerger())
+    instruction = cast("Instruction", circuit.ir.statements[0])
+    assert instruction.name == "X90"
