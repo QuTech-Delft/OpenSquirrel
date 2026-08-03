@@ -231,3 +231,88 @@ def test_idling_score_high_when_one_qubit_unused() -> None:
     circuit = builder.to_circuit()
     result = CircuitAnalyzer().analyze(circuit)
     assert result["idling_score"] == pytest.approx(0.5, abs=1e-3)
+
+
+# --------------------------------------------------------------------- #
+# Metric (de)selection                                                  #
+# --------------------------------------------------------------------- #
+def test_available_metrics_matches_default_analysis_keys(ghz_circuit: Circuit) -> None:
+    result = CircuitAnalyzer().analyze(ghz_circuit)
+    assert list(result.keys()) == CircuitAnalyzer.available_metrics()
+
+
+def test_select_subset_of_metrics(ghz_circuit: Circuit) -> None:
+    selected_analyzer = CircuitAnalyzer(metrics=["n_qubits", "depth", "density_score"])
+    result = selected_analyzer.analyze(ghz_circuit)
+    assert set(result.keys()) == {"n_qubits", "depth", "density_score"}
+
+
+def test_selected_metric_values_match_full_analysis(ghz_circuit: Circuit) -> None:
+    full_result = CircuitAnalyzer().analyze(ghz_circuit)
+    subset_result = CircuitAnalyzer(metrics=["ig_diameter", "gdg_critical_path_length"]).analyze(ghz_circuit)
+    assert subset_result["ig_diameter"] == full_result["ig_diameter"]
+    assert subset_result["gdg_critical_path_length"] == full_result["gdg_critical_path_length"]
+
+
+def test_exclude_metrics(ghz_circuit: Circuit) -> None:
+    excluding_analyzer = CircuitAnalyzer(exclude_metrics=["ig_avg_shortest_path", "ig_central_dominance"])
+    result = excluding_analyzer.analyze(ghz_circuit)
+    expected_keys = set(CircuitAnalyzer.available_metrics()) - {"ig_avg_shortest_path", "ig_central_dominance"}
+    assert set(result.keys()) == expected_keys
+
+
+def test_select_and_exclude_metrics_combined(ghz_circuit: Circuit) -> None:
+    analyzer = CircuitAnalyzer(metrics=["n_qubits", "n_gates", "depth"], exclude_metrics=["depth"])
+    result = analyzer.analyze(ghz_circuit)
+    assert set(result.keys()) == {"n_qubits", "n_gates"}
+
+
+def test_metric_order_is_canonical_regardless_of_selection_order(ghz_circuit: Circuit) -> None:
+    analyzer = CircuitAnalyzer(metrics=["depth", "n_qubits"])
+    result = analyzer.analyze(ghz_circuit)
+    assert list(result.keys()) == ["n_qubits", "depth"]
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"metrics": ["n_qubits", "not_a_metric"]},
+        {"exclude_metrics": ["also_not_a_metric"]},
+    ],
+)
+def test_unknown_metric_name_raises(kwargs: dict) -> None:
+    with pytest.raises(ValueError, match="unknown metric"):
+        CircuitAnalyzer(**kwargs)
+
+
+# --------------------------------------------------------------------- #
+# Time-out                                                              #
+# --------------------------------------------------------------------- #
+@pytest.mark.parametrize("timeout", [0, -1.5])
+def test_non_positive_timeout_raises(timeout: float) -> None:
+    with pytest.raises(ValueError, match="timeout must be a positive number"):
+        CircuitAnalyzer(timeout=timeout)
+
+
+def test_analysis_succeeds_within_timeout(ghz_circuit: Circuit) -> None:
+    result = CircuitAnalyzer(timeout=60.0).analyze(ghz_circuit)
+    assert result["n_qubits"] == 3
+    assert None not in result.values()
+
+
+def test_timed_out_metric_is_none_and_warns(ghz_circuit: Circuit, monkeypatch: pytest.MonkeyPatch) -> None:
+    import time
+
+    def slow_metric(self: CircuitAnalyzer) -> int:
+        time.sleep(2.0)
+        return 42
+
+    monkeypatch.setitem(CircuitAnalyzer._METRIC_REGISTRY, "depth", slow_metric)
+    analyzer = CircuitAnalyzer(metrics=["n_qubits", "depth", "n_gates"], timeout=0.1)
+
+    with pytest.warns(UserWarning, match="exceeded the time-out"):
+        result = analyzer.analyze(ghz_circuit)
+
+    assert result["depth"] is None
+    assert result["n_qubits"] == 3
+    assert result["n_gates"] == 3
