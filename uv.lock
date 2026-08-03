@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.10.0"
 resolution-markers = [
     "python_full_version >= '3.14' and platform_machine == 'ARM64' and sys_platform == 'win32'",
@@ -7,13 +7,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "(python_full_version < '3.11' and platform_machine != 'ARM64') or (python_full_version < '3.11' and sys_platform != 'win32')",
 ]
@@ -49,13 +53,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "cloudpickle", marker = "python_full_version >= '3.11'" },
@@ -334,13 +342,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "xarray", version = "2026.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -719,13 +731,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -2752,13 +2768,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "(python_full_version < '3.11' and platform_machine != 'ARM64') or (python_full_version < '3.11' and sys_platform != 'win32')",
 ]
 dependencies = [
@@ -2817,13 +2837,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6a/51/63fe664f3908c97be9d2e4f1158eb633317598cfa6e1fc14af5383f17512/networkx-3.6.1.tar.gz", hash = "sha256:26b7c357accc0c8cde558ad486283728b65b6a95d85ee1cd66bafab4c8168509", size = 2517025, upload-time = "2025-12-08T17:02:39.908Z" }
 wheels = [
@@ -2899,13 +2923,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -3003,13 +3031,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d7/9f/b8cef5bffa569759033adda9481211426f12f53299629b410340795c2514/numpy-2.4.4.tar.gz", hash = "sha256:2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0", size = 20731587, upload-time = "2026-03-29T13:22:01.298Z" }
 wheels = [
@@ -3279,8 +3311,7 @@ examples = [
 ]
 export = [
     { name = "pyqt5-qt5", marker = "sys_platform != 'darwin'" },
-    { name = "qcodes", version = "0.52.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' and sys_platform != 'darwin'" },
-    { name = "qcodes", version = "0.56.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' and sys_platform != 'darwin'" },
+    { name = "qcodes", marker = "sys_platform != 'darwin'" },
     { name = "quantify-scheduler", marker = "sys_platform != 'darwin'" },
     { name = "spirack", marker = "sys_platform != 'darwin'" },
 ]
@@ -3321,19 +3352,19 @@ docs = [
     { name = "mkdocs-material-extensions", specifier = "==1.3.1" },
     { name = "mkdocs-render-swagger-plugin", specifier = "==0.1.2" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.24,<1.1" },
-    { name = "pymdown-extensions", specifier = ">=10.7.1,<11" },
+    { name = "pymdown-extensions", specifier = ">=10.7.1,<12" },
 ]
 examples = [{ name = "jupyter", specifier = ">=1.0.0,<2" }]
 export = [
     { name = "pyqt5-qt5", marker = "sys_platform != 'darwin'", specifier = "==5.15.2" },
     { name = "qcodes", marker = "sys_platform != 'darwin'", specifier = "<0.57.0" },
-    { name = "quantify-scheduler", marker = "sys_platform != 'darwin'", specifier = "==0.28.0.post2" },
+    { name = "quantify-scheduler", marker = "sys_platform != 'darwin'", specifier = "==0.28.1" },
     { name = "spirack", marker = "sys_platform != 'darwin'", specifier = "<=0.2.19" },
 ]
 qgym-mapper = [
     { name = "qgym", specifier = "==0.3.1" },
-    { name = "sb3-contrib", specifier = "==2.8.0" },
-    { name = "stable-baselines3", specifier = "==2.8.0" },
+    { name = "sb3-contrib", specifier = "==2.9.0" },
+    { name = "stable-baselines3", specifier = "==2.9.0" },
 ]
 
 [[package]]
@@ -3466,13 +3497,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -4257,42 +4292,12 @@ wheels = [
 name = "pyvisa"
 version = "1.15.0"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "(python_full_version < '3.11' and platform_machine != 'ARM64') or (python_full_version < '3.11' and sys_platform != 'win32')",
-]
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/52/04/1833acfa4ddefc5cdcfd76607f1bf494e7b7b658d890626e23026655d599/pyvisa-1.15.0.tar.gz", hash = "sha256:cec3cb91703a2849f6faa42b1ecd7689a0175baabff8ca33fce9f45934ce45e6", size = 236289, upload-time = "2025-04-01T15:52:25.377Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a1/12/4979772f36acceb57664bde282fc7bd3e67f8d0ce85f2a521a05e90baaa5/pyvisa-1.15.0-py3-none-any.whl", hash = "sha256:e3ac8d9e863fbdbbe7e6d4d91401bceb7914d1c4a558a89b2cc755789f1e8309", size = 179199, upload-time = "2025-04-01T15:52:23.631Z" },
-]
-
-[[package]]
-name = "pyvisa"
-version = "1.16.2"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.14' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.14' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.14' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
-    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-]
-dependencies = [
-    { name = "typing-extensions", marker = "python_full_version >= '3.11'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/13/72/a50adff945e66f2161a44b243970f809de19152a2e7da0473ae8ff96d642/pyvisa-1.16.2.tar.gz", hash = "sha256:75beb93eeafe20a50be5726fa4e3a645948c93d86819f9c1f8c542efa4085a38", size = 238729, upload-time = "2026-02-27T12:14:08.54Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e4/a9/776da4f397003cca093659524c3526590522f81b642936838428c11274e6/pyvisa-1.16.2-py3-none-any.whl", hash = "sha256:54f034adafd3e8d1858d57cdafec64e920444f4b84b31c9fd17487fbad0a197a", size = 181413, upload-time = "2026-02-27T12:14:07.301Z" },
 ]
 
 [[package]]
@@ -4477,8 +4482,7 @@ dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pysquashfsimage" },
-    { name = "qcodes", version = "0.52.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "qcodes", version = "0.56.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "qcodes" },
     { name = "spirack" },
     { name = "strenum" },
     { name = "typing-extensions" },
@@ -4489,92 +4493,42 @@ sdist = { url = "https://files.pythonhosted.org/packages/bf/1d/d0cb501ba547e375f
 name = "qcodes"
 version = "0.52.0"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version < '3.11' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "(python_full_version < '3.11' and platform_machine != 'ARM64') or (python_full_version < '3.11' and sys_platform != 'win32')",
-]
 dependencies = [
-    { name = "broadbean", marker = "python_full_version < '3.11'" },
+    { name = "broadbean" },
     { name = "cf-xarray", version = "0.10.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "dask", marker = "python_full_version < '3.11'" },
-    { name = "h5netcdf", marker = "python_full_version < '3.11'" },
-    { name = "h5py", marker = "python_full_version < '3.11'" },
-    { name = "ipykernel", marker = "python_full_version < '3.11'" },
-    { name = "ipython", marker = "python_full_version < '3.11'" },
-    { name = "ipywidgets", marker = "python_full_version < '3.11'" },
-    { name = "jsonschema", marker = "python_full_version < '3.11'" },
-    { name = "matplotlib", marker = "python_full_version < '3.11'" },
+    { name = "cf-xarray", version = "0.10.11", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "dask" },
+    { name = "h5netcdf" },
+    { name = "h5py" },
+    { name = "ipykernel" },
+    { name = "ipython" },
+    { name = "ipywidgets" },
+    { name = "jsonschema" },
+    { name = "matplotlib" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "opentelemetry-api", marker = "python_full_version < '3.11'" },
-    { name = "packaging", marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "opentelemetry-api" },
+    { name = "packaging" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "pillow", marker = "python_full_version < '3.11'" },
-    { name = "pyarrow", marker = "python_full_version < '3.11'" },
-    { name = "pyvisa", version = "1.15.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "ruamel-yaml", marker = "python_full_version < '3.11'" },
-    { name = "tabulate", marker = "python_full_version < '3.11'" },
-    { name = "tornado", marker = "python_full_version < '3.11'" },
-    { name = "tqdm", marker = "python_full_version < '3.11'" },
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
-    { name = "uncertainties", marker = "python_full_version < '3.11'" },
-    { name = "versioningit", marker = "python_full_version < '3.11'" },
-    { name = "websockets", marker = "python_full_version < '3.11'" },
-    { name = "wrapt", marker = "python_full_version < '3.11'" },
+    { name = "pandas", version = "3.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "pillow" },
+    { name = "pyarrow" },
+    { name = "pyvisa" },
+    { name = "ruamel-yaml" },
+    { name = "tabulate" },
+    { name = "tornado" },
+    { name = "tqdm" },
+    { name = "typing-extensions" },
+    { name = "uncertainties" },
+    { name = "versioningit" },
+    { name = "websockets" },
+    { name = "wrapt" },
     { name = "xarray", version = "2025.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "xarray", version = "2026.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7c/d5/2e8c3b36c6fd4969911ad905814320f7ca2c541bafa8d7199e35d8143002/qcodes-0.52.0.tar.gz", hash = "sha256:add998d3817ff5bbc96665291a615bc230fa39fcac52b19ef315c8f1553c0a6e", size = 800095, upload-time = "2025-04-04T07:33:11.013Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c0/30/1525fb29910d159145b873737d0ef54a8d00c6044ed9d5b55712d93e0bda/qcodes-0.52.0-py3-none-any.whl", hash = "sha256:de11fb04626b36503cca19f075bb7d73c4c6c16d78906fa5e4f3e938910b211e", size = 953160, upload-time = "2025-04-04T07:33:08.855Z" },
-]
-
-[[package]]
-name = "qcodes"
-version = "0.56.0"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.14' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.14' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.14' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
-    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-]
-dependencies = [
-    { name = "broadbean", marker = "python_full_version >= '3.11'" },
-    { name = "cf-xarray", version = "0.10.11", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "dask", marker = "python_full_version >= '3.11'" },
-    { name = "h5netcdf", marker = "python_full_version >= '3.11'" },
-    { name = "h5py", marker = "python_full_version >= '3.11'" },
-    { name = "ipykernel", marker = "python_full_version >= '3.11'" },
-    { name = "ipywidgets", marker = "python_full_version >= '3.11'" },
-    { name = "jsonschema", marker = "python_full_version >= '3.11'" },
-    { name = "matplotlib", marker = "python_full_version >= '3.11'" },
-    { name = "networkx", version = "3.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "opentelemetry-api", marker = "python_full_version >= '3.11'" },
-    { name = "packaging", marker = "python_full_version >= '3.11'" },
-    { name = "pandas", version = "3.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "pillow", marker = "python_full_version >= '3.11'" },
-    { name = "pyarrow", marker = "python_full_version >= '3.11'" },
-    { name = "pyvisa", version = "1.16.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "ruamel-yaml", marker = "python_full_version >= '3.11'" },
-    { name = "tabulate", marker = "python_full_version >= '3.11'" },
-    { name = "tqdm", marker = "python_full_version >= '3.11'" },
-    { name = "typing-extensions", marker = "python_full_version >= '3.11'" },
-    { name = "uncertainties", marker = "python_full_version >= '3.11'" },
-    { name = "versioningit", marker = "python_full_version >= '3.11'" },
-    { name = "websockets", marker = "python_full_version >= '3.11'" },
-    { name = "xarray", version = "2026.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/ad/cd/4a639af0bdbaf6632467fd442ee1800ab722365c73c29e8f004b86d0a964/qcodes-0.56.0.tar.gz", hash = "sha256:f25b07044571c14f5ea84056da57db71210138ff109144efa0c8f70440d64773", size = 830852, upload-time = "2026-03-16T11:22:47.574Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/cd/e48a589e56de608b0b5a8e71afbc9742b822f4c50fec171fcff6c2c41c9c/qcodes-0.56.0-py3-none-any.whl", hash = "sha256:cafb7efd761b7cb7c4c8197e3cd55f559bdb35c5228766f1e806a7f4817b5a4f", size = 993343, upload-time = "2026-03-16T11:22:45.837Z" },
 ]
 
 [[package]]
@@ -4591,8 +4545,7 @@ dependencies = [
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "qcodes", version = "0.52.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "qcodes", version = "0.56.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "qcodes" },
     { name = "versioningit" },
     { name = "xarray", version = "2025.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "xarray", version = "2026.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -4640,8 +4593,7 @@ dependencies = [
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pyqt5" },
     { name = "pyqtgraph" },
-    { name = "qcodes", version = "0.52.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "qcodes", version = "0.56.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "qcodes" },
     { name = "qcodes-loop" },
     { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scikit-learn", version = "1.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -4659,7 +4611,7 @@ wheels = [
 
 [[package]]
 name = "quantify-scheduler"
-version = "0.28.0.post2"
+version = "0.28.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "columnar" },
@@ -4678,8 +4630,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pyqt5-qt5", marker = "sys_platform == 'win32'" },
     { name = "qblox-instruments" },
-    { name = "qcodes", version = "0.52.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "qcodes", version = "0.56.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "qcodes" },
     { name = "quantify-core" },
     { name = "rich", extra = ["jupyter"] },
     { name = "ruamel-yaml" },
@@ -4687,9 +4638,9 @@ dependencies = [
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fa/87/5fcf4c1d3cd75fd2f92064ca0ce4a408f6b8139850a607d368a144d41437/quantify_scheduler-0.28.0.post2.tar.gz", hash = "sha256:70d31822071feecf6d5127a12e4c63a8d4d29ba8009954846b03670a8ba3fed0", size = 1923486, upload-time = "2026-05-05T17:48:49.731Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/44/97/16a39b59694c057c7b8dd1bfb6d7ec057846b76e6f5810dfb8308e57c82b/quantify_scheduler-0.28.1.tar.gz", hash = "sha256:6e5abfa54d553851d7ad1b75ae0fdfecd4b5f164962df0ad995fa0d9934dd8c0", size = 1923845, upload-time = "2026-06-19T13:59:43.802Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/04/06/75c5f81558f1770fcf3a4de809ea99d911ef0f83068c8bdfa6f152afc8fb/quantify_scheduler-0.28.0.post2-py3-none-any.whl", hash = "sha256:b7634d9a49ba0a412392cd6f3f4b80eff7d9f9176a6b404dfd76d09ce4bce992", size = 455071, upload-time = "2026-05-05T17:48:48.058Z" },
+    { url = "https://files.pythonhosted.org/packages/13/52/6bba8bb0da25dd175dad575f4f1b3398610bc480994b1dd70ea3f38251b1/quantify_scheduler-0.28.1-py3-none-any.whl", hash = "sha256:fc9256bb27ad92450c6c14908d4ed9ed18b56ee5624a4262ecab9f5da163cc62", size = 455075, upload-time = "2026-06-19T13:59:42.212Z" },
 ]
 
 [[package]]
@@ -4947,14 +4898,14 @@ wheels = [
 
 [[package]]
 name = "sb3-contrib"
-version = "2.8.0"
+version = "2.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "stable-baselines3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/13/c1/d50b8f886c586864fbda8855c03b0da235dd345ff66e05500ef887711efe/sb3_contrib-2.8.0.tar.gz", hash = "sha256:25656d093169239db1081b7665091f168f6113776878387387fdf4e3e894c7f1", size = 90527, upload-time = "2026-04-01T10:59:58.367Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8f/8e/476222d88ba09dce0feebf6fb30b55e4dd0c80be5b19dc7b40d12d70752a/sb3_contrib-2.9.0.tar.gz", hash = "sha256:6e839c669552ecb3deb616a42ea98ed5e6c599eb5ac5f86232415b87a3873699", size = 90312, upload-time = "2026-06-15T17:06:08.8Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8c/17/3a00211e7453d382b98783995174e1f587c461719ac916078bac26dbe597/sb3_contrib-2.8.0-py3-none-any.whl", hash = "sha256:14c81ce4e15c747a13e2b1a8945e7658da6e320b1341b9e971358c35837598b2", size = 93043, upload-time = "2026-04-01T10:59:56.704Z" },
+    { url = "https://files.pythonhosted.org/packages/c3/06/add3f1d6250f58ca493830ddb2118975aa3c4433bc07662d5ac5089eb691/sb3_contrib-2.9.0-py3-none-any.whl", hash = "sha256:b492b2be792f8f8214ff6b984e94812dc877f809ae82302cbe00626442ae316a", size = 93042, upload-time = "2026-06-15T17:06:07.452Z" },
 ]
 
 [[package]]
@@ -5012,13 +4963,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "joblib", marker = "python_full_version >= '3.11'" },
@@ -5124,13 +5079,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -5334,21 +5293,18 @@ wheels = [
 
 [[package]]
 name = "stable-baselines3"
-version = "2.8.0"
+version = "2.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cloudpickle" },
     { name = "gymnasium" },
-    { name = "matplotlib" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "pandas", version = "3.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "torch" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e2/07/01a2aa6a6a58f911085981dad1af2f1877d04886768c0df33930945fb98c/stable_baselines3-2.8.0.tar.gz", hash = "sha256:fe976d102b596c8001ca619638901721bcf97e8934a397e235b2d277fa9216c2", size = 220224, upload-time = "2026-04-01T10:49:29.738Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/89/f8/9c1901a42e55b21b9e9559a720cb33dffdeb4c4215b1dfd10d63224b19c0/stable_baselines3-2.9.0.tar.gz", hash = "sha256:92b46c6099a0e8f99163ff09e26729e4d0a68b33dc8598626ca13ade3c0b3a61", size = 221345, upload-time = "2026-06-15T17:00:30.713Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/85/1b/8046baf1e7756006eab991cd3260c4342c515dd6b536bc2d03df4b6f35aa/stable_baselines3-2.8.0-py3-none-any.whl", hash = "sha256:8c19d960b534a909f46dac5227662fc2d6be380e5c66cb04e1ad23edb23dc5a2", size = 187458, upload-time = "2026-04-01T10:49:28.132Z" },
+    { url = "https://files.pythonhosted.org/packages/a6/70/d18c8278223d4928378c4af822b66d3c87e19e73bcb011e05e2f0b43f4e5/stable_baselines3-2.9.0-py3-none-any.whl", hash = "sha256:95f39a473dce081d1abe31acaf7cee446dcf223dcd74093d6ea460bc37e2e748", size = 187606, upload-time = "2026-06-15T17:00:29.331Z" },
 ]
 
 [[package]]
@@ -6041,13 +5997,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "numpy", version = "2.4.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -6203,13 +6163,17 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine == 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
+    "python_full_version == '3.11.*' and platform_machine != 'ARM64' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.11.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
-    "python_full_version >= '3.11' and python_full_version < '3.13' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version == '3.11.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "donfig", marker = "python_full_version >= '3.11'" },
