@@ -1,10 +1,10 @@
 This pass computes a collection of structural metrics that describe a quantum circuit.
-The metrics follow the circuit profiling approach proposed by Bandić _et al._[^1] and are grouped into four categories:
+The metrics follow the circuit profiling approach proposed by Bandić _et al._ (2025)$^1$ and are grouped into four categories:
 
-- **Size**: number of qubits, number of gates, number of two-qubit gates, two-qubit gate percentage, and circuit depth.
-- **Interaction graph (IG)**: metrics derived from the qubit interaction graph, where nodes are qubits and edges are two-qubit gates (_e.g._, diameter, average degree, clustering coefficient).
-- **Gate dependency graph (GDG)**: metrics derived from the directed acyclic graph of gate-to-gate dependencies on shared qubits (_e.g._, critical path length).
-- **Density**: parallelisation-related metrics (density score and idling score).
+1. **Size**: number of qubits, number of gates, number of two-qubit gates, two-qubit gate percentage, and circuit depth.
+2. **Interaction graph (IG)**: metrics derived from the qubit interaction graph, where nodes are qubits and edges are two-qubit gates (_e.g._, diameter, average degree, clustering coefficient).
+3. **Gate dependency graph (GDG)**: metrics derived from the directed acyclic graph (DAG) of gate-to-gate dependencies on shared qubits (_e.g._, critical path length).
+4. **Density**: parallelisation-related metrics (density score and idling score).
 
 The analysis returns a flat dictionary mapping each metric name to its value.
 The circuit analyzer (`CircuitAnalyzer`) can be used in the following manner.
@@ -49,8 +49,10 @@ Some metrics can be expensive to compute on large circuits.
 For instance, determining the average shortest path in the interaction graph can be costly.
 To avoid computing metrics that are not needed, the analyzer accepts two parameters:
 
-- `metrics`: an iterable of metric names to compute. When omitted, all metrics are computed.
-- `exclude_metrics`: an iterable of metric names to leave out. It is applied after `metrics`.
+- `metrics`: an iterable of metric names to compute.
+When omitted, all metrics are computed.
+- `exclude_metrics`: an iterable of metric names to leave out.
+It is applied after `metrics`.
 
 The full list of metric names can be obtained through the `available_metrics` class method.
 
@@ -90,8 +92,8 @@ Regardless of the order in which metrics are requested, they are always reported
 ## Setting a time-out
 
 A per-metric time-out (in seconds) can be set through the `timeout` parameter.
-Each metric is computed under this time budget; if a metric exceeds it, its value is set to `None`, a `UserWarning`
-is emitted, and the analysis continues with the remaining metrics.
+Each metric is computed under this time budget; if a metric exceeds it, its value is set to `None`, 
+a `UserWarning` is emitted, and the analysis continues with the remaining metrics.
 
 ```python
 circuit_analyzer = CircuitAnalyzer(timeout=5.0)
@@ -108,6 +110,6 @@ The `timeout` parameter can be combined with `metrics` and `exclude_metrics`.
     so it may continue in the background until it completes on its own.
     A positive value is required for `timeout`; a non-positive value raises a `ValueError`.
 
-[^1]:
+$^1$
     M. Bandić _et al._, "Profiling quantum circuits for their efficient execution on single- and multi-core
     architectures", _Quantum Sci. Technol._ **10**, 015060 (2025).
