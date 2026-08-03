@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import math
 import statistics
 import warnings
 from collections.abc import Callable
@@ -15,6 +14,7 @@ from opensquirrel.passes.analyzer.general_analyzer import Analyzer
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+
     from opensquirrel.circuit import Circuit
 
 
