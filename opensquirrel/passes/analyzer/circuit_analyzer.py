@@ -329,8 +329,8 @@ class CircuitAnalyzer(Analyzer):
         if not path_lengths:
             return 0.0, 0.0
         mean_length = statistics.mean(path_lengths)
-        variance = statistics.pstdev(path_lengths)
-        return mean_length, math.sqrt(variance)
+        std_length = statistics.pstdev(path_lengths)
+        return mean_length, std_length
 
     def _critical_path_membership_fraction(
         self,
