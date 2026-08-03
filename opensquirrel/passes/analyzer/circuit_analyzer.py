@@ -15,7 +15,6 @@ from opensquirrel.passes.analyzer.general_analyzer import Analyzer
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
-
     from opensquirrel.circuit import Circuit
 
 
@@ -62,8 +61,8 @@ class CircuitAnalyzer(Analyzer):
     ) -> None:
         super().__init__(**kwargs)
 
-        requested = set(self._METRIC_REGISTRY) if metrics is None else set(metrics)
-        excluded = set(exclude_metrics) if exclude_metrics is not None else set()
+        requested = set(self._METRIC_REGISTRY) if not metrics else set(metrics)
+        excluded = set(exclude_metrics) if exclude_metrics else set()
 
         unknown = (requested | excluded) - set(self._METRIC_REGISTRY)
         if unknown:
@@ -117,7 +116,7 @@ class CircuitAnalyzer(Analyzer):
                 except FuturesTimeoutError:
                     metrics[name] = None
                     warnings.warn(
-                        f"computation of metric '{name}' exceeded the time-out of {self.timeout} s; "
+                        f"computation of metric '{name}' exceeded the time-out of {self.timeout} s: "
                         "its value is set to None",
                         UserWarning,
                         stacklevel=3,
