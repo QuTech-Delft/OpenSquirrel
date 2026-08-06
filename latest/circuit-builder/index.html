@@ -82,6 +82,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#instantiating-the-builder" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -5103,6 +5108,80 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#instantiating-the-builder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Instantiating the builder
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-instructions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding instructions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-the-circuit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building the circuit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building-circuits-programmatically" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Building circuits programmatically
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-gate-multiple-qubit-notation-sgmq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-gate-multiple-qubit notation (SGMQ)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#named-registers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Named registers
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -5123,9 +5202,166 @@
 
   <h1>Circuit builder</h1>
 
-<div class="admonition note">
-<p class="admonition-title">Coming soon</p>
-</div>
+<p>The <code>CircuitBuilder</code> is OpenSquirrel's programmatic API for constructing a circuit. 
+It offers an alternative to writing out a 
+<a href="../tutorial/creating-a-circuit.html#1-from-a-cqasm-string">cQASM string</a>. Instead of 
+describing your program as text, you assemble it instruction by instruction, directly in
+Python. </p>
+<p>The <code>CircuitBuilder</code> may be more convenient when the structure of your program is more 
+naturally and easily expressed with code than as a static string. 
+Since you're building in Python, you have all of the language's programmatic tools at 
+your disposal, such as loops, conditionals or list comprehensions, to generate your 
+circuit.</p>
+<p>To get started, import the <code>CircuitBuilder</code> from <code>opensquirrel</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
+</code></pre></div>
+<h2 id="instantiating-the-builder">Instantiating the builder</h2>
+<p>A builder is created by declaring the sizes of its qubit and (optionally) bit registers:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">bit_register_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+<p>This reserves a qubit register <code>q</code> of size 3 and a bit register <code>b</code> of size 2. 
+Qubits and bits are always referred to by their integer index into these registers, 
+starting at <code>0</code>.</p>
+<p>This is the simplest way to get started. 
+If you need more control, for instance to define multiple named registers, see 
+<a href="#named-registers">Named registers</a> below.</p>
+<h2 id="adding-instructions">Adding instructions</h2>
+<p>Once the builder is instantiated, instructions are added by calling their name directly 
+on the builder, passing the qubit and bit indices (and any parameters for e.g. 
+<em>parameterized gates</em>) as arguments. 
+The available instructions fall into three main categories:</p>
+<ul>
+<li><a href="instructions/gates.html">Gates</a>: the unitary instructions, from single-qubit gates 
+such as <code>H</code>, <code>X</code> and <code>Rz</code> to two-qubit gates such as <code>CNOT</code>, abd <code>CZ</code> ,</li>
+<li><a href="instructions/non-unitaries.html">Non-unitaries</a>: <code>init</code>, <code>measure</code> and <code>reset</code>, and</li>
+<li><a href="instructions/control-instructions.html">Control instructions</a>: <code>barrier</code> and <code>wait</code>.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">builder</span><span class="o">.</span><span class="n">Rz</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">)</span>
+</code></pre></div>
+<p>Instruction calls can also be <em>chained</em> together into a single expression:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+<p>The builder checks every call as it is made. 
+Referring to a qubit or bit that lies outside its register raises an <code>IndexError</code>, 
+calling an instruction that does not exist raises an <code>AttributeError</code>, and passing the 
+wrong number or type of arguments raises a <code>TypeError</code>.</p>
+<p>Instructions can also be appended with <code>add_instruction</code>, which accepts either 
+a single instruction or an iterable of them:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">CNOT</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">builder</span><span class="o">.</span><span class="n">add_instruction</span><span class="p">(</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">builder</span><span class="o">.</span><span class="n">add_instruction</span><span class="p">([</span><span class="n">H</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+</code></pre></div>
+<h2 id="building-the-circuit">Building the circuit</h2>
+<p>Calling <code>to_circuit()</code> finalizes the construction and returns the <code>Circuit</code> object:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">bit_register_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">builder</span><span class="o">.</span><span class="n">add_instruction</span><span class="p">([</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span>
+<span class="normal"><a href="#__codelineno-6-6">6</a></span>
+<span class="normal"><a href="#__codelineno-6-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>version 3.0
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a>qubit[2] q
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a>bit[2] b
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a>H q[0]
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a>CNOT q[0], q[1]
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a>b[0] = measure q[1]
+<a id="__codelineno-6-7" name="__codelineno-6-7"></a>b[1] = measure q[0] 
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<p>From here on, one can proceed to, for instance, 
+<a href="../tutorial/applying-compilation-passes.html">apply compilation passes</a> to the <code>circuit</code> 
+object.</p>
+<h2 id="building-circuits-programmatically">Building circuits programmatically</h2>
+<p>Because you are building the circuit in Python, the whole language is available to 
+generate the instructions. 
+Loops, conditionals and list comprehensions make it easy to describe circuits whose 
+size or structure depends on a parameter:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">qubit_register_size</span> <span class="o">=</span> <span class="mi">10</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="k">for</span> <span class="n">qubit_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="n">qubit_index</span><span class="p">)</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
+<span class="normal"><a href="#__codelineno-8-2">2</a></span>
+<span class="normal"><a href="#__codelineno-8-3">3</a></span>
+<span class="normal"><a href="#__codelineno-8-4">4</a></span>
+<span class="normal"><a href="#__codelineno-8-5">5</a></span>
+<span class="normal"><a href="#__codelineno-8-6">6</a></span>
+<span class="normal"><a href="#__codelineno-8-7">7</a></span>
+<span class="normal"><a href="#__codelineno-8-8">8</a></span>
+<span class="normal"><a href="#__codelineno-8-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>version 3.0
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a>
+<a id="__codelineno-8-3" name="__codelineno-8-3"></a>qubit[10] q
+<a id="__codelineno-8-4" name="__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5"></a>H q[0]
+<a id="__codelineno-8-6" name="__codelineno-8-6"></a>H q[2]
+<a id="__codelineno-8-7" name="__codelineno-8-7"></a>H q[4]
+<a id="__codelineno-8-8" name="__codelineno-8-8"></a>H q[6]
+<a id="__codelineno-8-9" name="__codelineno-8-9"></a>H q[8]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<p>The <a href="../tutorial/creating-a-circuit.html#2-by-using-the-circuit-builder">tutorial</a> works 
+through a larger example of this pattern, generating a 
+<a href="https://en.wikipedia.org/wiki/Quantum_Fourier_transform">quantum Fourier transform</a> of 
+arbitrary size.</p>
+<h2 id="single-gate-multiple-qubit-notation-sgmq">Single-gate-multiple-qubit notation (SGMQ)</h2>
+<p>Instructions accept a <em>list</em> of indices wherever they accept a single index, following 
+the 
+<a href="https://qutech-delft.github.io/cQASM-spec/latest/language_specification/statements/instructions/single-gate-multiple-qubit-notation.html">single-gate-multiple-qubit (SGMQ) notation</a>. 
+The builder unpacks such a call into separate, consecutive instructions:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</code></pre></div>
+<p>is equivalent to <code>builder.H(0).H(1).H(2)</code>. 
+Any parameters are shared across the expansion, so <code>builder.Rx([0, 1, 2], math.pi / 2)</code> 
+applies the same rotation to each of the three qubits.</p>
+<p>For two-operand instructions, such as two-qubit gates and <code>measure</code>, both operands may 
+be lists, in which case they are zipped together and must be of equal length:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+</code></pre></div>
+<p>adds <code>CNOT q[0], q[2]</code> followed by <code>CNOT q[1], q[3]</code>.</p>
+<h2 id="named-registers">Named registers</h2>
+<p>The register created by the constructor is always called <code>q</code> (and <code>b</code> for the bits). If 
+you need more than one named register, for example to keep logical qubits separate from 
+ancillas, start from an empty builder and add the registers yourself with <code>add_register</code>
+:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span><span class="p">,</span> <span class="n">QubitRegister</span><span class="p">,</span> <span class="n">BitRegister</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">()</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">data</span> <span class="o">=</span> <span class="n">QubitRegister</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"data"</span><span class="p">)</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="n">ancilla</span> <span class="o">=</span> <span class="n">QubitRegister</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"ancilla"</span><span class="p">)</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="n">bits</span> <span class="o">=</span> <span class="n">BitRegister</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">"measurement"</span><span class="p">)</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="n">builder</span><span class="o">.</span><span class="n">add_register</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="n">builder</span><span class="o">.</span><span class="n">add_register</span><span class="p">(</span><span class="n">ancilla</span><span class="p">)</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="n">builder</span><span class="o">.</span><span class="n">add_register</span><span class="p">(</span><span class="n">bits</span><span class="p">)</span>
+<a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>
+<a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a><span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ancilla</span><span class="p">):</span>
+<a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>    <span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+<a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bits</span><span class="p">)</span>
+<a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>
+<a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+</code></pre></div>
 
 
 
