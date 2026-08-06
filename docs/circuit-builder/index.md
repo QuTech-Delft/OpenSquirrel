@@ -31,7 +31,7 @@ Qubits and bits are always referred to by their integer index into these registe
 starting at `0`.
 
 This is the simplest way to get started. 
-If you need more control, for instance to  define multiple named  registers, see 
+If you need more control, for instance to define multiple named registers, see 
 [Named registers](#named-registers) below.
 
 ## Adding instructions
@@ -191,8 +191,3 @@ builder.measure(data, bits)
 
 circuit = builder.to_circuit()
 ```
-
-
-
-
-
