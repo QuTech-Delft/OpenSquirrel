@@ -1,14 +1,16 @@
 # Circuit builder
 
-The `CircuitBuilder` is OpenSquirrel's programmatic API for constructing a circuit. It 
-offers an alternative to writing out a 
+The `CircuitBuilder` is OpenSquirrel's programmatic API for constructing a circuit. 
+It offers an alternative to writing out a 
 [cQASM string](../tutorial/creating-a-circuit.md#1-from-a-cqasm-string). Instead of 
 describing your program as text, you assemble it instruction by instruction, directly in
 Python. 
 
-The `CircuitBuilder` may be more convenient  when the structure of your program is more 
-naturally and easily expressed with code than as a static string, for instance when a 
-circuit has patterns that a `for` loop captures nicely.
+The `CircuitBuilder` may be more convenient when the structure of your program is more 
+naturally and easily expressed with code than as a static string. 
+Since you're building in Python, you have all of the language's programmatic tools at 
+your disposal, such as loops, conditionals or list comprehensions, to generate your 
+circuit.
 
 To get started, import the `CircuitBuilder` from `opensquirrel`:
 
@@ -24,15 +26,25 @@ A builder is created by declaring the sizes of its qubit and (optionally) bit re
 builder = CircuitBuilder(qubit_register_size=3, bit_register_size=2)
 ```
 
-This reserves a qubit register `q` of size 3 and a bit register `b` of size 2. Qubits 
-and bits are always referred to by their integer index into these registers, 
+This reserves a qubit register `q` of size 3 and a bit register `b` of size 2. 
+Qubits and bits are always referred to by their integer index into these registers, 
 starting at `0`.
+
+This is the simplest way to get started. 
+If you need more control, for instance to  define multiple named  registers, see 
+[Named registers](#named-registers) below.
 
 ## Adding instructions
 
-Once the builder is instantiated, instructions are added by calling the method that 
-carries the name of the instruction, passing the qubit and bit indices (and any 
-parameters for e.g. _parameterized gates_ ) as arguments:
+Once the builder is instantiated, instructions are added by calling their name directly 
+on the builder, passing the qubit and bit indices (and any parameters for e.g. 
+_parameterized gates_) as arguments. 
+The available instructions fall into three main categories:
+
+- [Gates](instructions/gates.md): the unitary instructions, from single-qubit gates 
+such as `H`, `X` and `Rz` to two-qubit gates such as `CNOT`, abd `CZ` ,
+- [Non-unitaries](instructions/non-unitaries.md): `init`, `measure` and `reset`, and
+- [Control instructions](instructions/control-instructions.md): `barrier` and `wait`.
 
 ```python
 builder.H(0)
@@ -46,19 +58,12 @@ Instruction calls can also be _chained_ together into a single expression:
 builder.H(0).CNOT(0, 1).CNOT(0, 2)
 ```
 
-The available instructions fall into three main categories:
+The builder checks every call as it is made. 
+Referring to a qubit or bit that lies outside its register raises an `IndexError`, 
+calling an instruction that does not exist raises an `AttributeError`, and passing the 
+wrong number or type of arguments raises a `TypeError`.
 
-- [Gates](instructions/gates.md): the unitary instructions, from single-qubit gates 
-such as `H`, `X` and `Rz` to two-qubit gates such as `CNOT`, abd `CZ` ,
-- [Non-unitaries](instructions/non-unitaries.md): `init`, `measure` and `reset`, and
-- [Control instructions](instructions/control-instructions.md): `barrier` and `wait`.
-
-The builder checks every call as it is made. Referring to a qubit or bit that lies 
-outside its register raises an `IndexError`, calling an instruction that does not exist 
-raises an `AttributeError`, and passing the wrong number or type of arguments raises a 
-`TypeError`.
-
-Instructions can also be appended directly with `add_instruction`, which accepts either 
+Instructions can also be appended with `add_instruction`, which accepts either 
 a single instruction or an iterable of them:
 
 ```python
@@ -67,7 +72,6 @@ from opensquirrel import CircuitBuilder, H, CNOT
 builder = CircuitBuilder(2)
 builder.add_instruction(H(0))
 builder.add_instruction([H(1), CNOT(0, 1)])
-circuit = builder.to_circuit()
 ```
 
 ## Building the circuit
@@ -77,9 +81,9 @@ Calling `to_circuit()` finalizes the construction and returns the `Circuit` obje
 ```python
 from opensquirrel import CircuitBuilder
 
-builder = CircuitBuilder(qubit_register_size=2)
-builder.H(0)
-builder.CNOT(0, 1)
+builder = CircuitBuilder(qubit_register_size=2, bit_register_size=2)
+builder.add_instruction([H(0) CNOT(0, 1)])
+builder.measure(1, 0).measure(0, 1)
 circuit = builder.to_circuit()
 ```
 
@@ -87,11 +91,12 @@ circuit = builder.to_circuit()
 
     ```linenums="1"
     version 3.0
-
     qubit[2] q
-
+    bit[2] b
     H q[0]
     CNOT q[0], q[1]
+    b[0] = measure q[1]
+    b[1] = measure q[0] 
     ```
 
 From here on, one can proceed to, for instance, 
@@ -101,8 +106,9 @@ object.
 ## Building circuits programmatically
 
 Because you are building the circuit in Python, the whole language is available to 
-generate the instructions. Loops, conditionals and list comprehensions make it easy to 
-describe circuits whose size or structure depends on a parameter:
+generate the instructions. 
+Loops, conditionals and list comprehensions make it easy to describe circuits whose 
+size or structure depends on a parameter:
 
 ```python
 from opensquirrel import CircuitBuilder
@@ -145,9 +151,9 @@ builder = CircuitBuilder(3)
 builder.H([0, 1, 2])
 ```
 
-is equivalent to `builder.H(0).H(1).H(2)`. Any parameters are shared across the 
-expansion, so `builder.Rx([0, 1, 2], math.pi / 2)` applies the same rotation to each of 
-the three qubits.
+is equivalent to `builder.H(0).H(1).H(2)`. 
+Any parameters are shared across the expansion, so `builder.Rx([0, 1, 2], math.pi / 2)` 
+applies the same rotation to each of the three qubits.
 
 For two-operand instructions, such as two-qubit gates and `measure`, both operands may 
 be lists, in which case they are zipped together and must be of equal length:
@@ -186,7 +192,6 @@ builder.measure(data, bits)
 circuit = builder.to_circuit()
 ```
 
-## Adding instructions
 
 
 
