@@ -1,5 +1,3 @@
-# Circuit builder
-
 The `CircuitBuilder` is OpenSquirrel's programmatic API for constructing a circuit. 
 It offers an alternative to writing out a 
 [cQASM string](../tutorial/creating-a-circuit.md#1-from-a-cqasm-string). Instead of 
