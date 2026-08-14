@@ -23,7 +23,7 @@ class McKayDecomposer(Decomposer):
         [McKay et al. (2016)](https://arxiv.org/abs/1612.00858).
 
         Args:
-            gate (Gate): Single-qubit gate to decompose.
+            instruction (Gate): Single-qubit gate to decompose.
 
         Returns:
             A sequence of (at most) 5 single-qubit gates that decompose the original gate.
