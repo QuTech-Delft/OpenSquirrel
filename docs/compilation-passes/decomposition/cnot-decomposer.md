@@ -8,8 +8,9 @@ and single-qubit gates. It decomposes the CR, CRk and CZ controlled two-qubit ga
     To decompose a SWAP gate into either CNOT or CZ gates,
     use the predefined 
     [SWAP to CNOT decomposer](predefined-decomposers.md#swap-to-cnot-decomposer) (`SWAP2CNOTDecomposer`)
-    or [SWAP to CZ decomposer](predefined-decomposers.md#swap-to-cz-decomposer) (`SWAP2CZDecomposer`),
-    or the more general [canoncial gate to CZ decomposer](can2cz-decomposer.md).
+    or [SWAP to CZ decomposer](predefined-decomposers.md#swap-to-cz-decomposer) (`SWAP2CZDecomposer`).
+    Use the more general [canoncial gate to CZ decomposer](can2cz-decomposer.md)
+    for a decomposition of any two-qubit gate.
 
 !!! note ""
 

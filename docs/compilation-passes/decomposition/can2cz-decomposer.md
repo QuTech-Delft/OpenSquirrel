@@ -19,11 +19,12 @@ unitary, as described in [Quantum Gates, section 7.3 by G. Crooks (2024)](https:
 Any two-qubit unitary $U$ can be written as,
 
 $$
-U = (K_1 \otimes K_2) \cdot \text{Can}(t_x,t_y,t_z) \cdot (K_3 \otimes K_4),
+U \simeq (K_1 \otimes K_2) \cdot \text{Can}(t_x,t_y,t_z) \cdot (K_3 \otimes K_4),
 $$
 
 where $K_1, K_2, K_3,$ and $K_4$ are single-qubit unitaries, and where the canonical block
 $\text{Can}(t_x,t_y,t_z)$ contains the two-qubit interaction, or entangling, part of the gate.
+The '$\simeq$' symbol is used to denote that the states are equal up to a global phase.
 
 The canonical to CZ decomposer decomposes the canonical block into 
 a set of gates consisting of (at most) 3 CNOTs and single-qubit gates.
