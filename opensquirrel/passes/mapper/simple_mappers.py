@@ -30,7 +30,7 @@ class IdentityMapper(Mapper):
         """Map the circuit according to a identity mapping.
 
         Args:
-            ir (IR): The intermediate representation of the quantum circuit to be mapped.
+            circuit (Circuit): The quantum circuit to be mapped.
             qubit_register_size (int): The size of the (virtual) qubit register.
 
         Returns:
