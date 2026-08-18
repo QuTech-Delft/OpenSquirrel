@@ -6,28 +6,28 @@
       
       
       
-        <link rel="prev" href="cnot_decomposer.html">
+        <link rel="prev" href="cz-decomposer.html">
       
       
-        <link rel="next" href="gate_replacer.html">
+        <link rel="next" href="mckay-decomposer.html">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
-        <title>cz_decomposer - OpenSquirrel</title>
+        <title>Canonical to CZ decomposer - OpenSquirrel</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -46,15 +46,15 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
-  <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
             html.glightbox-open { overflow: initial; height: 100%; }
             .gslide-title { margin-top: 0px; user-select: text; }
             .gslide-desc { color: #666; user-select: text; }
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#opensquirrel.passes.decomposer.cz_decomposer" class="md-skip">
+        <a href="#decomposition-of-the-canonical-block" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+    <a href="../.." title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              cz_decomposer
+              Canonical to CZ decomposer
             
           </span>
         </div>
@@ -240,7 +240,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../index.html" class="md-tabs__link">
+        <a href="../../index.html" class="md-tabs__link">
           
   
   
@@ -262,7 +262,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../tutorial/index.html" class="md-tabs__link">
+        <a href="../../tutorial/index.html" class="md-tabs__link">
           
   
   
@@ -284,7 +284,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../circuit-builder/index.html" class="md-tabs__link">
+        <a href="../../circuit-builder/index.html" class="md-tabs__link">
           
   
   
@@ -302,11 +302,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../compilation-passes/index.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../index.html" class="md-tabs__link">
           
   
   
@@ -324,8 +326,6 @@
   
   
   
-    
-  
   
     
     
@@ -333,13 +333,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../circuit.html" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../reference/circuit.html" class="md-tabs__link">
           
   
   
@@ -378,7 +376,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+    <a href="../.." title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
@@ -437,7 +435,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../index.html" class="md-nav__link ">
+            <a href="../../index.html" class="md-nav__link ">
               
   
   
@@ -481,7 +479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../installation.html" class="md-nav__link">
+      <a href="../../installation.html" class="md-nav__link">
         
   
   
@@ -509,7 +507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../contributing.html" class="md-nav__link">
+      <a href="../../contributing.html" class="md-nav__link">
         
   
   
@@ -537,7 +535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../authors.html" class="md-nav__link">
+      <a href="../../authors.html" class="md-nav__link">
         
   
   
@@ -565,7 +563,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../acknowledgements.html" class="md-nav__link">
+      <a href="../../acknowledgements.html" class="md-nav__link">
         
   
   
@@ -627,7 +625,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../tutorial/index.html" class="md-nav__link ">
+            <a href="../../tutorial/index.html" class="md-nav__link ">
               
   
   
@@ -671,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/creating-a-circuit.html" class="md-nav__link">
+      <a href="../../tutorial/creating-a-circuit.html" class="md-nav__link">
         
   
   
@@ -699,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/applying-compilation-passes.html" class="md-nav__link">
+      <a href="../../tutorial/applying-compilation-passes.html" class="md-nav__link">
         
   
   
@@ -727,7 +725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/writing-out-and-exporting.html" class="md-nav__link">
+      <a href="../../tutorial/writing-out-and-exporting.html" class="md-nav__link">
         
   
   
@@ -785,7 +783,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../circuit-builder/index.html" class="md-nav__link ">
+            <a href="../../circuit-builder/index.html" class="md-nav__link ">
               
   
   
@@ -887,7 +885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../circuit-builder/instructions/gates.html" class="md-nav__link">
+      <a href="../../circuit-builder/instructions/gates.html" class="md-nav__link">
         
   
   
@@ -915,7 +913,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../circuit-builder/instructions/non-unitaries.html" class="md-nav__link">
+      <a href="../../circuit-builder/instructions/non-unitaries.html" class="md-nav__link">
         
   
   
@@ -943,7 +941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../circuit-builder/instructions/control-instructions.html" class="md-nav__link">
+      <a href="../../circuit-builder/instructions/control-instructions.html" class="md-nav__link">
         
   
   
@@ -983,6 +981,8 @@
       
   
   
+    
+  
   
   
     
@@ -1010,18 +1010,21 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked="">
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/index.html" class="md-nav__link ">
+            <a href="../index.html" class="md-nav__link ">
               
   
   
@@ -1039,13 +1042,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1088,7 +1091,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/analysis/index.html" class="md-nav__link ">
+            <a href="../analysis/index.html" class="md-nav__link ">
               
   
   
@@ -1132,7 +1135,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/analysis/circuit-analyzer.html" class="md-nav__link">
+      <a href="../analysis/circuit-analyzer.html" class="md-nav__link">
         
   
   
@@ -1165,6 +1168,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1195,15 +1200,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked="">
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/decomposition/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link ">
               
   
   
@@ -1227,7 +1232,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1247,7 +1252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/aba-decomposer.html" class="md-nav__link">
+      <a href="aba-decomposer.html" class="md-nav__link">
         
   
   
@@ -1275,7 +1280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/cnot-decomposer.html" class="md-nav__link">
+      <a href="cnot-decomposer.html" class="md-nav__link">
         
   
   
@@ -1303,7 +1308,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/cz-decomposer.html" class="md-nav__link">
+      <a href="cz-decomposer.html" class="md-nav__link">
         
   
   
@@ -1328,10 +1333,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/can2cz-decomposer.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Canonical to CZ decomposer
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="can2cz-decomposer.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1347,6 +1377,74 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#decomposition-of-the-canonical-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decomposition of the canonical block
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decomposition of the canonical block">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-one-cnot-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. One CNOT gate
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-two-cnot-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Two CNOT gates
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-three-cnot-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Three CNOT gates
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1359,7 +1457,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/mckay-decomposer.html" class="md-nav__link">
+      <a href="mckay-decomposer.html" class="md-nav__link">
         
   
   
@@ -1387,7 +1485,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/measure-decomposer.html" class="md-nav__link">
+      <a href="measure-decomposer.html" class="md-nav__link">
         
   
   
@@ -1415,7 +1513,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/predefined-decomposers.html" class="md-nav__link">
+      <a href="predefined-decomposers.html" class="md-nav__link">
         
   
   
@@ -1476,7 +1574,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/exporting/index.html" class="md-nav__link ">
+            <a href="../exporting/index.html" class="md-nav__link ">
               
   
   
@@ -1520,7 +1618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/exporting/cqasm-v1-exporter.html" class="md-nav__link">
+      <a href="../exporting/cqasm-v1-exporter.html" class="md-nav__link">
         
   
   
@@ -1548,7 +1646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/exporting/quantify-scheduler-exporter.html" class="md-nav__link">
+      <a href="../exporting/quantify-scheduler-exporter.html" class="md-nav__link">
         
   
   
@@ -1613,7 +1711,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/mapping/index.html" class="md-nav__link ">
+            <a href="../mapping/index.html" class="md-nav__link ">
               
   
   
@@ -1657,7 +1755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/hardcoded-mapper.html" class="md-nav__link">
+      <a href="../mapping/hardcoded-mapper.html" class="md-nav__link">
         
   
   
@@ -1685,7 +1783,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/identity-mapper.html" class="md-nav__link">
+      <a href="../mapping/identity-mapper.html" class="md-nav__link">
         
   
   
@@ -1713,7 +1811,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/random-mapper.html" class="md-nav__link">
+      <a href="../mapping/random-mapper.html" class="md-nav__link">
         
   
   
@@ -1741,7 +1839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/qgym-mapper.html" class="md-nav__link">
+      <a href="../mapping/qgym-mapper.html" class="md-nav__link">
         
   
   
@@ -1800,7 +1898,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/merging/index.html" class="md-nav__link ">
+            <a href="../merging/index.html" class="md-nav__link ">
               
   
   
@@ -1844,7 +1942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/merging/single-qubit-gates-merger.html" class="md-nav__link">
+      <a href="../merging/single-qubit-gates-merger.html" class="md-nav__link">
         
   
   
@@ -1905,7 +2003,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/routing/index.html" class="md-nav__link ">
+            <a href="../routing/index.html" class="md-nav__link ">
               
   
   
@@ -1949,7 +2047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/routing/a-star-router.html" class="md-nav__link">
+      <a href="../routing/a-star-router.html" class="md-nav__link">
         
   
   
@@ -1977,7 +2075,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/routing/shortest-path-router.html" class="md-nav__link">
+      <a href="../routing/shortest-path-router.html" class="md-nav__link">
         
   
   
@@ -2038,7 +2136,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/validation/index.html" class="md-nav__link ">
+            <a href="../validation/index.html" class="md-nav__link ">
               
   
   
@@ -2082,7 +2180,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/validation/interaction-validator.html" class="md-nav__link">
+      <a href="../validation/interaction-validator.html" class="md-nav__link">
         
   
   
@@ -2110,7 +2208,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/validation/primitive-gate-validator.html" class="md-nav__link">
+      <a href="../validation/primitive-gate-validator.html" class="md-nav__link">
         
   
   
@@ -2150,10 +2248,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -2163,20 +2259,17 @@
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -2194,7 +2287,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2209,10 +2302,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -2251,11 +2342,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1">
         
           
           <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
@@ -2276,7 +2367,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2294,7 +2385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../circuit.html" class="md-nav__link">
+      <a href="../../reference/circuit.html" class="md-nav__link">
         
   
   
@@ -2322,7 +2413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../circuit_builder.html" class="md-nav__link">
+      <a href="../../reference/circuit_builder.html" class="md-nav__link">
         
   
   
@@ -2350,7 +2441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../circuit_matrix_calculator.html" class="md-nav__link">
+      <a href="../../reference/circuit_matrix_calculator.html" class="md-nav__link">
         
   
   
@@ -2378,7 +2469,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../common.html" class="md-nav__link">
+      <a href="../../reference/common.html" class="md-nav__link">
         
   
   
@@ -2406,7 +2497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../default_gate_modifiers.html" class="md-nav__link">
+      <a href="../../reference/default_gate_modifiers.html" class="md-nav__link">
         
   
   
@@ -2434,7 +2525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../default_instructions.html" class="md-nav__link">
+      <a href="../../reference/default_instructions.html" class="md-nav__link">
         
   
   
@@ -2462,7 +2553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exceptions.html" class="md-nav__link">
+      <a href="../../reference/exceptions.html" class="md-nav__link">
         
   
   
@@ -2562,7 +2653,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/control_instruction.html" class="md-nav__link">
+      <a href="../../reference/ir/control_instruction.html" class="md-nav__link">
         
   
   
@@ -2646,7 +2737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/default_gates/single_qubit_gates.html" class="md-nav__link">
+      <a href="../../reference/ir/default_gates/single_qubit_gates.html" class="md-nav__link">
         
   
   
@@ -2674,7 +2765,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/default_gates/two_qubit_gates.html" class="md-nav__link">
+      <a href="../../reference/ir/default_gates/two_qubit_gates.html" class="md-nav__link">
         
   
   
@@ -2710,7 +2801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/expression.html" class="md-nav__link">
+      <a href="../../reference/ir/expression.html" class="md-nav__link">
         
   
   
@@ -2738,7 +2829,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/ir.html" class="md-nav__link">
+      <a href="../../reference/ir/ir.html" class="md-nav__link">
         
   
   
@@ -2766,7 +2857,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/non_unitary.html" class="md-nav__link">
+      <a href="../../reference/ir/non_unitary.html" class="md-nav__link">
         
   
   
@@ -2856,7 +2947,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/bsr.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/bsr.html" class="md-nav__link">
         
   
   
@@ -2884,7 +2975,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/canonical_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/canonical_gate.html" class="md-nav__link">
         
   
   
@@ -2912,7 +3003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/controlled_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/controlled_gate.html" class="md-nav__link">
         
   
   
@@ -2940,7 +3031,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/gate_semantic.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/gate_semantic.html" class="md-nav__link">
         
   
   
@@ -2968,7 +3059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/matrix_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/matrix_gate.html" class="md-nav__link">
         
   
   
@@ -3004,7 +3095,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/single_qubit_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/single_qubit_gate.html" class="md-nav__link">
         
   
   
@@ -3032,7 +3123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/statement.html" class="md-nav__link">
+      <a href="../../reference/ir/statement.html" class="md-nav__link">
         
   
   
@@ -3060,7 +3151,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/two_qubit_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/two_qubit_gate.html" class="md-nav__link">
         
   
   
@@ -3088,7 +3179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/unitary.html" class="md-nav__link">
+      <a href="../../reference/ir/unitary.html" class="md-nav__link">
         
   
   
@@ -3121,10 +3212,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -3149,11 +3238,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9">
         
           
           <label class="md-nav__link" for="__nav_5_1_9" id="__nav_5_1_9_label" tabindex="0">
@@ -3174,7 +3263,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_1_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3248,7 +3337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../analyzer/circuit_analyzer.html" class="md-nav__link">
+      <a href="../../reference/passes/analyzer/circuit_analyzer.html" class="md-nav__link">
         
   
   
@@ -3276,7 +3365,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../analyzer/general_analyzer.html" class="md-nav__link">
+      <a href="../../reference/passes/analyzer/general_analyzer.html" class="md-nav__link">
         
   
   
@@ -3309,10 +3398,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -3345,11 +3432,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_2" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_2">
         
           
           <label class="md-nav__link" for="__nav_5_1_9_2" id="__nav_5_1_9_2_label" tabindex="0">
@@ -3370,7 +3457,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_1_9_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3388,7 +3475,7 @@
   
   
     <li class="md-nav__item">
-      <a href="aba_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/aba_decomposer.html" class="md-nav__link">
         
   
   
@@ -3416,7 +3503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="can2cz_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/can2cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3444,7 +3531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cnot2cz_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/cnot2cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3472,7 +3559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cnot_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/cnot_decomposer.html" class="md-nav__link">
         
   
   
@@ -3497,35 +3584,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    cz_decomposer
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="cz_decomposer.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3541,63 +3603,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-      
-        <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.cz_decomposer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        cz_decomposer
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.cz_decomposer.CZDecomposer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        CZDecomposer
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="CZDecomposer">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.cz_decomposer.CZDecomposer.decompose" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        decompose
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3610,7 +3615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="gate_replacer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/gate_replacer.html" class="md-nav__link">
         
   
   
@@ -3638,7 +3643,7 @@
   
   
     <li class="md-nav__item">
-      <a href="general_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/general_decomposer.html" class="md-nav__link">
         
   
   
@@ -3666,7 +3671,7 @@
   
   
     <li class="md-nav__item">
-      <a href="mckay_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/mckay_decomposer.html" class="md-nav__link">
         
   
   
@@ -3694,7 +3699,7 @@
   
   
     <li class="md-nav__item">
-      <a href="measure_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/measure_decomposer.html" class="md-nav__link">
         
   
   
@@ -3722,7 +3727,7 @@
   
   
     <li class="md-nav__item">
-      <a href="swap2cnot_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/swap2cnot_decomposer.html" class="md-nav__link">
         
   
   
@@ -3750,7 +3755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="swap2cz_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/swap2cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3844,7 +3849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exporter/cqasmv1_exporter.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/cqasmv1_exporter.html" class="md-nav__link">
         
   
   
@@ -3872,7 +3877,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exporter/general_exporter.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/general_exporter.html" class="md-nav__link">
         
   
   
@@ -3900,7 +3905,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exporter/quantify_scheduler_exporter.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/quantify_scheduler_exporter.html" class="md-nav__link">
         
   
   
@@ -4004,7 +4009,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/check_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/check_mapper.html" class="md-nav__link">
         
   
   
@@ -4032,7 +4037,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/general_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/general_mapper.html" class="md-nav__link">
         
   
   
@@ -4060,7 +4065,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/mapping.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/mapping.html" class="md-nav__link">
         
   
   
@@ -4088,7 +4093,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/mip_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/mip_mapper.html" class="md-nav__link">
         
   
   
@@ -4116,7 +4121,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/qgym_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/qgym_mapper.html" class="md-nav__link">
         
   
   
@@ -4144,7 +4149,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/qubit_remapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/qubit_remapper.html" class="md-nav__link">
         
   
   
@@ -4172,7 +4177,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/simple_mappers.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/simple_mappers.html" class="md-nav__link">
         
   
   
@@ -4200,7 +4205,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/utils.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/utils.html" class="md-nav__link">
         
   
   
@@ -4292,7 +4297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../merger/general_merger.html" class="md-nav__link">
+      <a href="../../reference/passes/merger/general_merger.html" class="md-nav__link">
         
   
   
@@ -4320,7 +4325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../merger/single_qubit_gates_merger.html" class="md-nav__link">
+      <a href="../../reference/passes/merger/single_qubit_gates_merger.html" class="md-nav__link">
         
   
   
@@ -4418,7 +4423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/astar_router.html" class="md-nav__link">
+      <a href="../../reference/passes/router/astar_router.html" class="md-nav__link">
         
   
   
@@ -4446,7 +4451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/common.html" class="md-nav__link">
+      <a href="../../reference/passes/router/common.html" class="md-nav__link">
         
   
   
@@ -4474,7 +4479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/general_router.html" class="md-nav__link">
+      <a href="../../reference/passes/router/general_router.html" class="md-nav__link">
         
   
   
@@ -4502,7 +4507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/heuristics.html" class="md-nav__link">
+      <a href="../../reference/passes/router/heuristics.html" class="md-nav__link">
         
   
   
@@ -4530,7 +4535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/shortest_path_router.html" class="md-nav__link">
+      <a href="../../reference/passes/router/shortest_path_router.html" class="md-nav__link">
         
   
   
@@ -4624,7 +4629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validator/general_validator.html" class="md-nav__link">
+      <a href="../../reference/passes/validator/general_validator.html" class="md-nav__link">
         
   
   
@@ -4652,7 +4657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validator/interaction_validator.html" class="md-nav__link">
+      <a href="../../reference/passes/validator/interaction_validator.html" class="md-nav__link">
         
   
   
@@ -4680,7 +4685,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validator/primitive_gate_validator.html" class="md-nav__link">
+      <a href="../../reference/passes/validator/primitive_gate_validator.html" class="md-nav__link">
         
   
   
@@ -4778,7 +4783,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reader/libqasm_parser.html" class="md-nav__link">
+      <a href="../../reference/reader/libqasm_parser.html" class="md-nav__link">
         
   
   
@@ -4814,7 +4819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../register_manager.html" class="md-nav__link">
+      <a href="../../reference/register_manager.html" class="md-nav__link">
         
   
   
@@ -4896,7 +4901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reindexer/qubit_reindexer.html" class="md-nav__link">
+      <a href="../../reference/reindexer/qubit_reindexer.html" class="md-nav__link">
         
   
   
@@ -4994,7 +4999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/context.html" class="md-nav__link">
+      <a href="../../reference/utils/context.html" class="md-nav__link">
         
   
   
@@ -5022,7 +5027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/general_math.html" class="md-nav__link">
+      <a href="../../reference/utils/general_math.html" class="md-nav__link">
         
   
   
@@ -5050,7 +5055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/identity_filter.html" class="md-nav__link">
+      <a href="../../reference/utils/identity_filter.html" class="md-nav__link">
         
   
   
@@ -5078,7 +5083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/list.html" class="md-nav__link">
+      <a href="../../reference/utils/list.html" class="md-nav__link">
         
   
   
@@ -5106,7 +5111,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/matrix_expander.html" class="md-nav__link">
+      <a href="../../reference/utils/matrix_expander.html" class="md-nav__link">
         
   
   
@@ -5196,7 +5201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../writer/writer.html" class="md-nav__link">
+      <a href="../../reference/writer/writer.html" class="md-nav__link">
         
   
   
@@ -5265,33 +5270,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.cz_decomposer" class="md-nav__link">
+  <a href="#decomposition-of-the-canonical-block" class="md-nav__link">
     <span class="md-ellipsis">
       
-        cz_decomposer
+        Decomposition of the canonical block
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decomposition of the canonical block">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-one-cnot-gate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. One CNOT gate
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.cz_decomposer.CZDecomposer" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#2-two-cnot-gates" class="md-nav__link">
     <span class="md-ellipsis">
       
-        CZDecomposer
+        2. Two CNOT gates
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="CZDecomposer">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.cz_decomposer.CZDecomposer.decompose" class="md-nav__link">
+  <a href="#3-three-cnot-gates" class="md-nav__link">
     <span class="md-ellipsis">
       
-        decompose
+        3. Three CNOT gates
       
     </span>
   </a>
@@ -5323,490 +5339,67 @@
   
 
 
-  <h1>cz_decomposer</h1>
-
-<div class="doc doc-object doc-module">
-
-
-
-<a id="opensquirrel.passes.decomposer.cz_decomposer"></a>
-    <div class="doc doc-contents first">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="opensquirrel.passes.decomposer.cz_decomposer.CZDecomposer" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">CZDecomposer</span>
-
-
-</h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="opensquirrel.passes.decomposer.general_decomposer.Decomposer">Decomposer</span></code></p>
-
-
-
-        <p>Decomposes 2-qubit controlled unitary gates to CZ + Rx/Ry.
-Applying single-qubit gate fusion after this pass might be beneficial.</p>
-<p>Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"</p>
-
-
-
-
-
-
-
-
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>opensquirrel/passes/decomposer/cz_decomposer.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span>
-<span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span>
-<span class="normal"><a href="#__codelineno-0-58">58</a></span>
-<span class="normal"><a href="#__codelineno-0-59">59</a></span>
-<span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span>
-<span class="normal"><a href="#__codelineno-0-64">64</a></span>
-<span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span>
-<span class="normal"><a href="#__codelineno-0-67">67</a></span>
-<span class="normal"><a href="#__codelineno-0-68">68</a></span>
-<span class="normal"><a href="#__codelineno-0-69">69</a></span>
-<span class="normal"><a href="#__codelineno-0-70">70</a></span>
-<span class="normal"><a href="#__codelineno-0-71">71</a></span>
-<span class="normal"><a href="#__codelineno-0-72">72</a></span>
-<span class="normal"><a href="#__codelineno-0-73">73</a></span>
-<span class="normal"><a href="#__codelineno-0-74">74</a></span>
-<span class="normal"><a href="#__codelineno-0-75">75</a></span>
-<span class="normal"><a href="#__codelineno-0-76">76</a></span>
-<span class="normal"><a href="#__codelineno-0-77">77</a></span>
-<span class="normal"><a href="#__codelineno-0-78">78</a></span>
-<span class="normal"><a href="#__codelineno-0-79">79</a></span>
-<span class="normal"><a href="#__codelineno-0-80">80</a></span>
-<span class="normal"><a href="#__codelineno-0-81">81</a></span>
-<span class="normal"><a href="#__codelineno-0-82">82</a></span>
-<span class="normal"><a href="#__codelineno-0-83">83</a></span>
-<span class="normal"><a href="#__codelineno-0-84">84</a></span>
-<span class="normal"><a href="#__codelineno-0-85">85</a></span>
-<span class="normal"><a href="#__codelineno-0-86">86</a></span>
-<span class="normal"><a href="#__codelineno-0-87">87</a></span>
-<span class="normal"><a href="#__codelineno-0-88">88</a></span>
-<span class="normal"><a href="#__codelineno-0-89">89</a></span>
-<span class="normal"><a href="#__codelineno-0-90">90</a></span>
-<span class="normal"><a href="#__codelineno-0-91">91</a></span>
-<span class="normal"><a href="#__codelineno-0-92">92</a></span>
-<span class="normal"><a href="#__codelineno-0-93">93</a></span>
-<span class="normal"><a href="#__codelineno-0-94">94</a></span>
-<span class="normal"><a href="#__codelineno-0-95">95</a></span>
-<span class="normal"><a href="#__codelineno-0-96">96</a></span>
-<span class="normal"><a href="#__codelineno-0-97">97</a></span>
-<span class="normal"><a href="#__codelineno-0-98">98</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="k">class</span><span class="w"> </span><span class="nc">CZDecomposer</span><span class="p">(</span><span class="n">Decomposer</span><span class="p">):</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="sd">    Decomposes 2-qubit controlled unitary gates to CZ + Rx/Ry.</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="sd">    Applying single-qubit gate fusion after this pass might be beneficial.</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    Source of the math: https://threeplusone.com/pubs/on_gates.pdf, chapter 7.5 "ABC decomposition"</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="sd">    """</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">        </span><span class="sd">"""Decomposes a controlled two-qubit gate into a sequence of (at most 2) CZ gates and</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">        single-qubit gates. It decomposes the CR, CRk, and CNOT controlled two-qubit gates.</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">        Uses the ABC decomposition procedure described in</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">        [Quantum Gates by G.E. Crooks (2024), Section 7.5](https://threeplusone.com/pubs/on_gates.pdf).</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">        Note:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">            The SWAP gate is not a controlled two-qubit gate and is not decomposed by this pass.</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">            To decompose SWAP gates, use the</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">            [SWAP2CZDecomposer][opensquirrel.passes.decomposer.swap2cz_decomposer.SWAP2CZDecomposer]</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">            or the [SWAP2CNOTDecomposer][opensquirrel.passes.decomposer.swap2cnot_decomposer.SWAP2CNOTDecomposer].</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        Args:</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">            instruction (Instruction): Two-qubit controlled gate to decompose.</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        Returns:</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">            A sequence of (at most 2) CZ gates and single-qubit gates.</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        """</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">TwoQubitGate</span><span class="p">):</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">instruction</span><span class="p">]</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="n">gate</span> <span class="o">=</span> <span class="n">instruction</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">gate</span><span class="o">.</span><span class="n">controlled</span><span class="p">:</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>            <span class="c1"># Do nothing:</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="c1"># - BlochSphereRotation's are only single-qubit,</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="c1"># - decomposing MatrixGate is currently not supported.</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">gate</span><span class="p">]</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubit_operands</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>        <span class="n">target_gate</span> <span class="o">=</span> <span class="n">SingleQubitGate</span><span class="p">(</span><span class="n">qubit</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">gate_semantic</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">controlled</span><span class="o">.</span><span class="n">target_bsr</span><span class="p">)</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>        <span class="c1"># Perform XYX decomposition on the target gate.</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="c1"># This gives us an ABC decomposition (U = exp(i phase) * AZBZC, ABC = I) of the target gate.</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="c1"># See https://threeplusone.com/pubs/on_gates.pdf</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>        <span class="c1"># Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>        <span class="c1"># Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>        <span class="n">controlled_rotation_times_z</span> <span class="o">=</span> <span class="n">target_gate</span> <span class="o">*</span> <span class="n">Z</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">)</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>        <span class="n">theta0_with_z</span><span class="p">,</span> <span class="n">theta1_with_z</span><span class="p">,</span> <span class="n">theta2_with_z</span> <span class="o">=</span> <span class="n">XYXDecomposer</span><span class="p">()</span><span class="o">.</span><span class="n">_determine_rotation_angles</span><span class="p">(</span>  <span class="c1"># noqa: SLF001</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>            <span class="n">controlled_rotation_times_z</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>            <span class="n">controlled_rotation_times_z</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>        <span class="p">)</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">if</span> <span class="nb">abs</span><span class="p">((</span><span class="n">theta0_with_z</span> <span class="o">-</span> <span class="n">theta2_with_z</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">ATOL</span><span class="p">:</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>            <span class="c1"># The decomposition can use a single CZ according to the lemma.</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>            <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta1_with_z</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta2_with_z</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>            <span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">theta2_with_z</span><span class="p">),</span> <span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">theta1_with_z</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>            <span class="k">return</span> <span class="n">filter_out_identities</span><span class="p">(</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>                <span class="p">[</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>                    <span class="o">*</span><span class="n">B</span><span class="p">,</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>                    <span class="n">CZ</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span><span class="p">),</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>                    <span class="o">*</span><span class="n">A</span><span class="p">,</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>                    <span class="n">Rz</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span> <span class="o">-</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>                <span class="p">],</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>            <span class="p">)</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>        <span class="n">theta0</span><span class="p">,</span> <span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span> <span class="o">=</span> <span class="n">XYXDecomposer</span><span class="p">()</span><span class="o">.</span><span class="n">_determine_rotation_angles</span><span class="p">(</span><span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>        <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>        <span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">theta0</span> <span class="o">+</span> <span class="n">theta2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">theta1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>        <span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="p">(</span><span class="n">theta0</span> <span class="o">-</span> <span class="n">theta2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>        <span class="k">return</span> <span class="n">filter_out_identities</span><span class="p">(</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>            <span class="p">[</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>                <span class="o">*</span><span class="n">C</span><span class="p">,</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>                <span class="n">CZ</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span><span class="p">),</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>                <span class="o">*</span><span class="n">B</span><span class="p">,</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>                <span class="n">CZ</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span><span class="p">),</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>                <span class="o">*</span><span class="n">A</span><span class="p">,</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>                <span class="n">Rz</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">),</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>            <span class="p">],</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>        <span class="p">)</span>
-</code></pre></div></td></tr></tbody></table></div>
-              </details>
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="opensquirrel.passes.decomposer.cz_decomposer.CZDecomposer.decompose" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">decompose</span>
-
-
-</h3>
-<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">decompose</span><span class="p">(</span><span class="n">instruction</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]</span>
-</code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Decomposes a controlled two-qubit gate into a sequence of (at most 2) CZ gates and
-single-qubit gates. It decomposes the CR, CRk, and CNOT controlled two-qubit gates.</p>
-<p>Uses the ABC decomposition procedure described in
-<a href="https://threeplusone.com/pubs/on_gates.pdf">Quantum Gates by G.E. Crooks (2024), Section 7.5</a>.</p>
-
-
-<details class="note" open="">
-  <summary>Note</summary>
-  <p>The SWAP gate is not a controlled two-qubit gate and is not decomposed by this pass.
-To decompose SWAP gates, use the
-<a class="autorefs autorefs-internal" title="SWAP2CZDecomposer" href="swap2cz_decomposer.html#opensquirrel.passes.decomposer.swap2cz_decomposer.SWAP2CZDecomposer">SWAP2CZDecomposer</a>
-or the <a class="autorefs autorefs-internal" title="SWAP2CNOTDecomposer" href="swap2cnot_decomposer.html#opensquirrel.passes.decomposer.swap2cnot_decomposer.SWAP2CNOTDecomposer">SWAP2CNOTDecomposer</a>.</p>
-</details>
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>instruction</code>
-            </td>
-            <td>
-                  <code><span title="Instruction">Instruction</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Two-qubit controlled gate to decompose.</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="list">list</span>[<a class="autorefs autorefs-internal" title="Gate (opensquirrel.ir.Gate)" href="../../ir/unitary.html#opensquirrel.ir.unitary.Gate">Gate</a>]</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>A sequence of (at most 2) CZ gates and single-qubit gates.</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-
-            <details class="mkdocstrings-source">
-              <summary>Source code in <code>opensquirrel/passes/decomposer/cz_decomposer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span>
-<span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span>
-<span class="normal"><a href="#__codelineno-0-58">58</a></span>
-<span class="normal"><a href="#__codelineno-0-59">59</a></span>
-<span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span>
-<span class="normal"><a href="#__codelineno-0-64">64</a></span>
-<span class="normal"><a href="#__codelineno-0-65">65</a></span>
-<span class="normal"><a href="#__codelineno-0-66">66</a></span>
-<span class="normal"><a href="#__codelineno-0-67">67</a></span>
-<span class="normal"><a href="#__codelineno-0-68">68</a></span>
-<span class="normal"><a href="#__codelineno-0-69">69</a></span>
-<span class="normal"><a href="#__codelineno-0-70">70</a></span>
-<span class="normal"><a href="#__codelineno-0-71">71</a></span>
-<span class="normal"><a href="#__codelineno-0-72">72</a></span>
-<span class="normal"><a href="#__codelineno-0-73">73</a></span>
-<span class="normal"><a href="#__codelineno-0-74">74</a></span>
-<span class="normal"><a href="#__codelineno-0-75">75</a></span>
-<span class="normal"><a href="#__codelineno-0-76">76</a></span>
-<span class="normal"><a href="#__codelineno-0-77">77</a></span>
-<span class="normal"><a href="#__codelineno-0-78">78</a></span>
-<span class="normal"><a href="#__codelineno-0-79">79</a></span>
-<span class="normal"><a href="#__codelineno-0-80">80</a></span>
-<span class="normal"><a href="#__codelineno-0-81">81</a></span>
-<span class="normal"><a href="#__codelineno-0-82">82</a></span>
-<span class="normal"><a href="#__codelineno-0-83">83</a></span>
-<span class="normal"><a href="#__codelineno-0-84">84</a></span>
-<span class="normal"><a href="#__codelineno-0-85">85</a></span>
-<span class="normal"><a href="#__codelineno-0-86">86</a></span>
-<span class="normal"><a href="#__codelineno-0-87">87</a></span>
-<span class="normal"><a href="#__codelineno-0-88">88</a></span>
-<span class="normal"><a href="#__codelineno-0-89">89</a></span>
-<span class="normal"><a href="#__codelineno-0-90">90</a></span>
-<span class="normal"><a href="#__codelineno-0-91">91</a></span>
-<span class="normal"><a href="#__codelineno-0-92">92</a></span>
-<span class="normal"><a href="#__codelineno-0-93">93</a></span>
-<span class="normal"><a href="#__codelineno-0-94">94</a></span>
-<span class="normal"><a href="#__codelineno-0-95">95</a></span>
-<span class="normal"><a href="#__codelineno-0-96">96</a></span>
-<span class="normal"><a href="#__codelineno-0-97">97</a></span>
-<span class="normal"><a href="#__codelineno-0-98">98</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Gate</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="w">    </span><span class="sd">"""Decomposes a controlled two-qubit gate into a sequence of (at most 2) CZ gates and</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    single-qubit gates. It decomposes the CR, CRk, and CNOT controlled two-qubit gates.</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    Uses the ABC decomposition procedure described in</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    [Quantum Gates by G.E. Crooks (2024), Section 7.5](https://threeplusone.com/pubs/on_gates.pdf).</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Note:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        The SWAP gate is not a controlled two-qubit gate and is not decomposed by this pass.</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">        To decompose SWAP gates, use the</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        [SWAP2CZDecomposer][opensquirrel.passes.decomposer.swap2cz_decomposer.SWAP2CZDecomposer]</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        or the [SWAP2CNOTDecomposer][opensquirrel.passes.decomposer.swap2cnot_decomposer.SWAP2CNOTDecomposer].</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">        instruction (Instruction): Two-qubit controlled gate to decompose.</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">        A sequence of (at most 2) CZ gates and single-qubit gates.</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    """</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">TwoQubitGate</span><span class="p">):</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">instruction</span><span class="p">]</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>    <span class="n">gate</span> <span class="o">=</span> <span class="n">instruction</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">gate</span><span class="o">.</span><span class="n">controlled</span><span class="p">:</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="c1"># Do nothing:</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="c1"># - BlochSphereRotation's are only single-qubit,</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="c1"># - decomposing MatrixGate is currently not supported.</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="k">return</span> <span class="p">[</span><span class="n">gate</span><span class="p">]</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>    <span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span> <span class="o">=</span> <span class="n">gate</span><span class="o">.</span><span class="n">qubit_operands</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="n">target_gate</span> <span class="o">=</span> <span class="n">SingleQubitGate</span><span class="p">(</span><span class="n">qubit</span><span class="o">=</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">gate_semantic</span><span class="o">=</span><span class="n">gate</span><span class="o">.</span><span class="n">controlled</span><span class="o">.</span><span class="n">target_bsr</span><span class="p">)</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="c1"># Perform XYX decomposition on the target gate.</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="c1"># This gives us an ABC decomposition (U = exp(i phase) * AZBZC, ABC = I) of the target gate.</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="c1"># See https://threeplusone.com/pubs/on_gates.pdf</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="c1"># Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5</span>
-<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="c1"># Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I</span>
-<a id="__codelineno-0-65" name="__codelineno-0-65"></a>    <span class="n">controlled_rotation_times_z</span> <span class="o">=</span> <span class="n">target_gate</span> <span class="o">*</span> <span class="n">Z</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">)</span>
-<a id="__codelineno-0-66" name="__codelineno-0-66"></a>    <span class="n">theta0_with_z</span><span class="p">,</span> <span class="n">theta1_with_z</span><span class="p">,</span> <span class="n">theta2_with_z</span> <span class="o">=</span> <span class="n">XYXDecomposer</span><span class="p">()</span><span class="o">.</span><span class="n">_determine_rotation_angles</span><span class="p">(</span>  <span class="c1"># noqa: SLF001</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a>        <span class="n">controlled_rotation_times_z</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a>        <span class="n">controlled_rotation_times_z</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">,</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="p">)</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>    <span class="k">if</span> <span class="nb">abs</span><span class="p">((</span><span class="n">theta0_with_z</span> <span class="o">-</span> <span class="n">theta2_with_z</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">ATOL</span><span class="p">:</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a>        <span class="c1"># The decomposition can use a single CZ according to the lemma.</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>        <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta1_with_z</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta2_with_z</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a>        <span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">theta2_with_z</span><span class="p">),</span> <span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">theta1_with_z</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>        <span class="k">return</span> <span class="n">filter_out_identities</span><span class="p">(</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a>            <span class="p">[</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a>                <span class="o">*</span><span class="n">B</span><span class="p">,</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a>                <span class="n">CZ</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span><span class="p">),</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a>                <span class="o">*</span><span class="n">A</span><span class="p">,</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a>                <span class="n">Rz</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span> <span class="o">-</span> <span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>            <span class="p">],</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a>        <span class="p">)</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>    <span class="n">theta0</span><span class="p">,</span> <span class="n">theta1</span><span class="p">,</span> <span class="n">theta2</span> <span class="o">=</span> <span class="n">XYXDecomposer</span><span class="p">()</span><span class="o">.</span><span class="n">_determine_rotation_angles</span><span class="p">(</span><span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">axis</span><span class="p">,</span> <span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>  <span class="c1"># noqa: SLF001</span>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a>    <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="n">theta2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a>    <span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">theta0</span> <span class="o">+</span> <span class="n">theta2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">Ry</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">theta1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a>    <span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="n">Rx</span><span class="p">(</span><span class="n">target_qubit</span><span class="p">,</span> <span class="p">(</span><span class="n">theta0</span> <span class="o">-</span> <span class="n">theta2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)]</span>  <span class="c1"># noqa: N806</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a>    <span class="k">return</span> <span class="n">filter_out_identities</span><span class="p">(</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a>        <span class="p">[</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a>            <span class="o">*</span><span class="n">C</span><span class="p">,</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span><span class="p">),</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a>            <span class="o">*</span><span class="n">B</span><span class="p">,</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a>            <span class="n">CZ</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_qubit</span><span class="p">),</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a>            <span class="o">*</span><span class="n">A</span><span class="p">,</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a>            <span class="n">Rz</span><span class="p">(</span><span class="n">control_qubit</span><span class="p">,</span> <span class="n">target_gate</span><span class="o">.</span><span class="n">bsr</span><span class="o">.</span><span class="n">phase</span><span class="p">),</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a>        <span class="p">],</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a>    <span class="p">)</span>
-</code></pre></div></td></tr></tbody></table></div>
-            </details>
-    </div>
-
+  <h1>Canonical to CZ decomposer</h1>
+
+<p>The canonical to CZ decomposer (<code>Can2CZDecomposer</code>) is a general two-qubit gate decomposer.
+When applied to a circuit, it decomposes every two-qubit gate into a sequence of (at most 3) CZ gates
+and single-qubit gates.</p>
+<p>Unlike the <a href="cnot-decomposer.html">CNOT decomposer</a> and <a href="cz-decomposer.html">CZ decomposer</a>,
+the canonical to CZ decomposer is not restricted to <em>controlled</em> two-qubit gates.
+It can therefore also decompose gates such as the SWAP gate.</p>
+<div class="admonition warning">
+<p class="admonition-title">Global phase difference</p>
+<p>Note that the resulting decomposition using the canonical to CZ decomposer (<code>Can2CZDecomposer</code>)
+is equal to the original gate, up to a (possible) difference in <em>global phase</em>.
+A difference in global phase can, in certain cases, lead to a semantically different circuit,
+therefore we urge the user to be aware of this risk.</p>
 </div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-
-
-  </div>
-
-    </div>
-
+<p>The algorithm for the canonical to CZ decomposer is based on the canonical decomposition of an arbitrary two-qubit 
+unitary, as described in <a href="https://threeplusone.com/pubs/on_gates.pdf">Quantum Gates, section 7.3 by G. Crooks (2024)</a>.</p>
+<p>Any two-qubit unitary <span class="arithmatex">\(U\)</span> can be written as,</p>
+<div class="arithmatex">\[
+U \simeq (K_1 \otimes K_2) \cdot \text{Can}(t_x,t_y,t_z) \cdot (K_3 \otimes K_4),
+\]</div>
+<p>where <span class="arithmatex">\(K_1, K_2, K_3,\)</span> and <span class="arithmatex">\(K_4\)</span> are single-qubit unitaries, and where the canonical block
+<span class="arithmatex">\(\text{Can}(t_x,t_y,t_z)\)</span> contains the two-qubit interaction, or entangling, part of the gate.
+The '<span class="arithmatex">\(\simeq\)</span>' symbol is used to denote that the states are equal up to a global phase.</p>
+<p>The canonical to CZ decomposer decomposes the canonical block into 
+a set of gates consisting of (at most) 3 CNOTs and single-qubit gates.</p>
+<p>The CNOT gates are further decomposed into CZ gates according to the predefined CNOT-to-CZ identity:</p>
+<div class="arithmatex">\[
+\mathrm{CNOT}(c,t) = R_y\left(\frac{\pi}{2}\right)_t \cdot \mathrm{CZ}(c,t) \cdot R_y\left(-\frac{\pi}{2}\right)_t,
+\]</div>
+<p>where <span class="arithmatex">\(c\)</span> and <span class="arithmatex">\(t\)</span>, respectively represent the control and target qubit:</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/cnot2cz.png#only-light" data-desc-position="bottom"><img alt="image" src="../../_static/cnot2cz.png#only-light"></a>
+<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/cnot2cz_dm.png#only-dark" data-desc-position="bottom"><img alt="image" src="../../_static/cnot2cz_dm.png#only-dark"></a></p>
+<p>Finally, the resultant decomposition is placed in between the single-qubit <span class="arithmatex">\(K\)</span>-rotations.</p>
+<h2 id="decomposition-of-the-canonical-block">Decomposition of the canonical block</h2>
+<p>Depending on the canonical coordinates <span class="arithmatex">\((t_x,t_y,t_z)\)</span>, the decomposition uses one of three circuit templates,
+listed below, to create the decomposition.</p>
+<h3 id="1-one-cnot-gate">1. One CNOT gate</h3>
+<p>For a subset of gates with canonical axis</p>
+<div class="arithmatex">\[
+(t_x,t_y,t_z)=\left(\frac{1}{2},0,0\right),
+\]</div>
+<p>the decomposition requires only one CNOT gate:</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/can2cz_1.png#only-light" data-desc-position="bottom"><img alt="image" src="../../_static/can2cz_1.png#only-light"></a>
+<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/can2cz_1_dm.png#only-dark" data-desc-position="bottom"><img alt="image" src="../../_static/can2cz_1_dm.png#only-dark"></a></p>
+<h3 id="2-two-cnot-gates">2. Two CNOT gates</h3>
+<p>For gates with</p>
+<div class="arithmatex">\[
+t_z \approx 0,
+\]</div>
+<p>the decomposition requires two CNOT gates:</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/can2cz_2.png#only-light" data-desc-position="bottom"><img alt="image" src="../../_static/can2cz_2.png#only-light"></a>
+<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/can2cz_2_dm.png#only-dark" data-desc-position="bottom"><img alt="image" src="../../_static/can2cz_2_dm.png#only-dark"></a></p>
+<h3 id="3-three-cnot-gates">3. Three CNOT gates</h3>
+<p>In the general case, the decomposition requires three CNOT gates:</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/can2cz_3.png#only-light" data-desc-position="bottom"><img alt="image" src="../../_static/can2cz_3.png#only-light"></a>
+<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/can2cz_3_dm.png#only-dark" data-desc-position="bottom"><img alt="image" src="../../_static/can2cz_3_dm.png#only-dark"></a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is advised to run the <a href="../merging/single-qubit-gates-merger.html">single-qubit gates merger</a>
+(<code>SingleQubitGatesMerger</code>) after this decomposition pass.</p>
 </div>
 
 
@@ -5837,7 +5430,7 @@ or the <a class="autorefs autorefs-internal" title="SWAP2CNOTDecomposer" href="s
       <nav class="md-footer__inner md-grid" aria-label="Footer">
         
           
-          <a href="cnot_decomposer.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: cnot_decomposer">
+          <a href="cz-decomposer.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: CZ decomposer">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
@@ -5847,20 +5440,20 @@ or the <a class="autorefs autorefs-internal" title="SWAP2CNOTDecomposer" href="s
                 Previous
               </span>
               <div class="md-ellipsis">
-                cnot_decomposer
+                CZ decomposer
               </div>
             </div>
           </a>
         
         
           
-          <a href="gate_replacer.html" class="md-footer__link md-footer__link--next" aria-label="Next: gate_replacer">
+          <a href="mckay-decomposer.html" class="md-footer__link md-footer__link--next" aria-label="Next: McKay decomposer">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                gate_replacer
+                McKay decomposer
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -5897,12 +5490,12 @@ or the <a class="autorefs autorefs-internal" title="SWAP2CNOTDecomposer" href="s
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.tabs", "navigation.tracking", "navigation.footer", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.tabs", "navigation.tracking", "navigation.footer", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../../../javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       

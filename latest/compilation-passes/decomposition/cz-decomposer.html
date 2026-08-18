@@ -9,7 +9,7 @@
         <link rel="prev" href="cnot-decomposer.html">
       
       
-        <link rel="next" href="mckay-decomposer.html">
+        <link rel="next" href="can2cz-decomposer.html">
       
       
         
@@ -1184,6 +1184,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -1335,6 +1339,34 @@
   
   
     <li class="md-nav__item">
+      <a href="can2cz-decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Canonical to CZ decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="mckay-decomposer.html" class="md-nav__link">
         
   
@@ -1343,6 +1375,34 @@
     
   
     McKay decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="measure-decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Measure decomposer
   
 
     
@@ -5141,7 +5201,9 @@ and single-qubit gates. It decomposes the CR, CRk and CNOT controlled two-qubit 
 <p>The SWAP gate is not a <em>controlled</em> two-qubit gate and can therefore not be decomposed using the CZ decomposer.
 To decompose a SWAP gate into either CZ or CNOT gates,
 use the predefined <a href="predefined-decomposers.html#swap-to-cz-decomposer">SWAP to CZ decomposer</a> (<code>SWAP2CZDecomposer</code>)
-or <a href="predefined-decomposers.html#swap-to-cnot-decomposer">SWAP to CNOT decomposer</a> (<code>SWAP2CNOTDecomposer</code>).</p>
+or <a href="predefined-decomposers.html#swap-to-cnot-decomposer">SWAP to CNOT decomposer</a> (<code>SWAP2CNOTDecomposer</code>).
+Use the more general <a href="can2cz-decomposer.html">canoncial gate to CZ decomposer</a>
+for a decomposition of any two-qubit gate.</p>
 </div>
 <div class="admonition note">
 <p>The CZ gate is more likely to be part of the <a href="../../tutorial/applying-compilation-passes.html#primitive-gate-set">primitive gate set</a> over the CNOT gate.
@@ -5225,13 +5287,13 @@ according to <a href="https://arxiv.org/abs/quant-ph/9503016">Lemma 5.5 in Baren
         
         
           
-          <a href="mckay-decomposer.html" class="md-footer__link md-footer__link--next" aria-label="Next: McKay decomposer">
+          <a href="can2cz-decomposer.html" class="md-footer__link md-footer__link--next" aria-label="Next: Canonical to CZ decomposer">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                McKay decomposer
+                Canonical to CZ decomposer
               </div>
             </div>
             <div class="md-footer__button md-icon">
