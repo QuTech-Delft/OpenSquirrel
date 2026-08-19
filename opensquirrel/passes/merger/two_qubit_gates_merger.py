@@ -17,13 +17,36 @@ if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
 
 
+def _add_asm_declaration_edges(graph: nx.DiGraph, ir: IR) -> nx.DiGraph:
+    n = len(ir.statements)
+    last_non_instruction = 0
+    for i, statement in enumerate(ir.statements):
+        if isinstance(statement, Instruction):
+            continue
+
+        for j in range(n):
+            if not isinstance(ir.statements[j], Instruction) and i != j and i > last_non_instruction:
+                last_non_instruction = j
+                break
+
+            qubit_indices = graph.nodes[j]["qubit_indices"]
+            if not qubit_indices:
+                continue
+
+            if j < i and graph.out_degree(j) == len(qubit_indices) - 1:
+                graph.add_edge(j, i)
+
+            if j > i and graph.in_degree(j) == len(qubit_indices) - 1:
+                graph.add_edge(i, j)
+    return graph
+
+
 def build_graph(ir: IR) -> nx.DiGraph:
     n = len(ir.statements)
     graph = nx.DiGraph()
     graph.add_nodes_from(
-        (i, {"qubit_indices": statement.qubit_indices})
+        (i, {"qubit_indices": statement.qubit_indices if isinstance(statement, Instruction) else None})
         for i, statement in enumerate(ir.statements)
-        if isinstance(statement, Instruction)
     )
 
     for i, statement in enumerate(ir.statements):
@@ -33,15 +56,19 @@ def build_graph(ir: IR) -> nx.DiGraph:
         qubit_indices = set(statement.qubit_indices)
         for j in range(i + 1, n):
             other_statement = ir.statements[j]
-            if isinstance(other_statement, Instruction):
-                other_qubit_indices = set(other_statement.qubit_indices)
+            if not isinstance(other_statement, Instruction):
+                break
 
-                if inter := qubit_indices.intersection(other_qubit_indices):
-                    graph.add_edge(i, j, qubit_index=tuple(inter))
-                    qubit_indices = qubit_indices.difference(inter)
+            other_qubit_indices = set(other_statement.qubit_indices)
+
+            if inter := qubit_indices.intersection(other_qubit_indices):
+                graph.add_edge(i, j, qubit_index=tuple(inter))
+                qubit_indices = qubit_indices.difference(inter)
 
             if not qubit_indices:
                 break
+
+    graph = _add_asm_declaration_edges(graph, ir)
 
     if not nx.is_directed_acyclic_graph(graph):
         raise ValueError

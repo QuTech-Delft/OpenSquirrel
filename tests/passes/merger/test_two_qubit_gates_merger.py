@@ -4,7 +4,7 @@ from opensquirrel import CNOT, H, circuit_matrix_calculator
 from opensquirrel.circuit import Circuit
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.common import are_matrices_equivalent_up_to_global_phase
-from opensquirrel.ir import IR, Statement
+from opensquirrel.ir import IR, AsmDeclaration, Statement
 from opensquirrel.passes.merger.two_qubit_gates_merger import TwoQubitGatesMerger, build_graph, group_gates
 
 
@@ -27,6 +27,21 @@ class TestNodeGraph:
             (
                 [H(3), CNOT(2, 3), H(1), H(2), CNOT(0, 1), H(2), H(1), H(3), CNOT(1, 2), H(2)],
                 {(0, 1), (1, 3), (1, 7), (6, 8), (2, 4), (4, 6), (3, 5), (5, 8), (8, 9)},
+            ),
+            (
+                [
+                    H(0),
+                    H(1),
+                    AsmDeclaration("backend", "code"),
+                    H(0),
+                    CNOT(0, 1),
+                    H(0),
+                    AsmDeclaration("backend", "code"),
+                    H(1),
+                    CNOT(1, 2),
+                    H(1),
+                ],
+                {(0, 2), (1, 2), (2, 3), (2, 4), (3, 4), (4, 5), (4, 6), (5, 6), (6, 7), (6, 8), (7, 8), (8, 9)},
             ),
         ],
     )
