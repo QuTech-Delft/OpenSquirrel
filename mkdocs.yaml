@@ -41,6 +41,7 @@ nav:
       - Mapping: compilation-passes/mapping/index.md
       - Hardcoded mapper: compilation-passes/mapping/hardcoded-mapper.md
       - Identity mapper: compilation-passes/mapping/identity-mapper.md
+      - MIP mapper: compilation-passes/mapping/mip-mapper.md
       - Random mapper: compilation-passes/mapping/random-mapper.md
       - QGym mapper: compilation-passes/mapping/qgym-mapper.md
     - Merging:
