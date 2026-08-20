@@ -40,7 +40,7 @@ class ABADecomposer(Decomposer, ABC):
         For instance, the ZYZ decomposer decomposes a single-qubit gate into Rz-Ry-Rz.
 
         Args:
-            gate (Gate): Single-qubit gate to decompose.
+            instruction (Gate): Single-qubit gate to decompose.
 
         Returns:
             A sequence of (at most) three gates, following the R$a$-R$b$-R$a$ decomposition.

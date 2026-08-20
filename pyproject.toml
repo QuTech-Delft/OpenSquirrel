@@ -39,7 +39,7 @@ dev = [
     "IPython>=8.37,<9",
     "pytest>=8.4.2,<10",
     "pytest-cov>=4.1,<8.0",
-    "ruff>=0.13.2,<0.16",
+    "ruff>=0.13.2,<0.17",
     "sympy>=1.14.0,<2",
     "tox>=4.30.2,<5",
     "ty>=0.0.10",
@@ -48,7 +48,7 @@ export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
     "quantify-scheduler==0.28.1; sys_platform != 'darwin'",
     "qcodes<0.57.0; sys_platform != 'darwin'",
-    "spirack<=0.2.19; sys_platform != 'darwin'",
+    "spirack<=0.2.21; sys_platform != 'darwin'",
 ]
 qgym_mapper = [
     "qgym==0.3.1",

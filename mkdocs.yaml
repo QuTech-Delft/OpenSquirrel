@@ -23,12 +23,17 @@ nav:
         - Control instructions: circuit-builder/instructions/control-instructions.md
   - Compilation passes:
     - Compilation passes: compilation-passes/index.md
+    - Analysis:
+      - Analysis: compilation-passes/analysis/index.md
+      - Circuit analyzer: compilation-passes/analysis/circuit-analyzer.md
     - Decomposition:
       - Decomposition: compilation-passes/decomposition/index.md
       - ABA decomposer: compilation-passes/decomposition/aba-decomposer.md
       - CNOT decomposer: compilation-passes/decomposition/cnot-decomposer.md
       - CZ decomposer: compilation-passes/decomposition/cz-decomposer.md
+      - Canonical to CZ decomposer: compilation-passes/decomposition/can2cz-decomposer.md
       - McKay decomposer: compilation-passes/decomposition/mckay-decomposer.md
+      - Measure decomposer: compilation-passes/decomposition/measure-decomposer.md
       - Predefined decomposers: compilation-passes/decomposition/predefined-decomposers.md
     - Exporting:
       - Exporting: compilation-passes/exporting/index.md

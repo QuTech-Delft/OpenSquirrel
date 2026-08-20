@@ -13,6 +13,7 @@ These passes are therefore needed to ensure that an initial circuit is converted
 requirements of the hardware.
 They can easily be applied using the following methods on the `circuit` object:
 
+- analyze
 - decompose
 - export
 - map
@@ -24,6 +25,7 @@ They can easily be applied using the following methods on the `circuit` object:
 
 Given the methods stated above, the following types of passes are available:
 
+- [Analyzer](analysis/index.md)
 - [Decomposer](decomposition/index.md)
 - [Exporter](exporting/index.md)
 - [Mapper](mapping/index.md)

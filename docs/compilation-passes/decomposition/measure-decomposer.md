@@ -22,5 +22,5 @@ This unitary maps Z-axis eigenstates to eigenstates along the $\hat{n}$ directio
 |---|---|
 | Z | $I$ |
 | X | $R_y(-\pi/2)$ |
-| Y | $R_y(-\pi/2) \cdot R_z(\-pi/2)$ |
+| Y | $R_y(-\pi/2) \cdot R_z(-\pi/2)$ |
 | H | $R_y(-\pi/4)$ |
