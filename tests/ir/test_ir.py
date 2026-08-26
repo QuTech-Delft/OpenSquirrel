@@ -1,9 +1,12 @@
 from math import pi
 
 import numpy as np
+import pytest
 
 from opensquirrel.ir import (
+    IR,
     Bit,
+    IRVisitor,
     Qubit,
 )
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
@@ -100,3 +103,15 @@ class TestIR:
 
     def test_hash_difference_bit_qubit(self) -> None:
         assert hash(Qubit(1)) != hash(Bit(1))
+
+    def test_eq_different_type(self) -> None:
+        assert IR() != "not an IR"
+
+    def test_repr(self) -> None:
+        assert repr(IR()) == "IR: []"
+
+
+class TestIRVisitor:
+    @pytest.mark.parametrize("method_name", [name for name in dir(IRVisitor) if name.startswith("visit_")])
+    def test_default_returns_none(self, method_name: str) -> None:
+        assert getattr(IRVisitor(), method_name)(None) is None

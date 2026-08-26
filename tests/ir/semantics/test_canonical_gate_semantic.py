@@ -3,7 +3,7 @@ import numpy.testing
 import pytest
 from numpy.typing import NDArray
 
-from opensquirrel.ir import GateSemantic
+from opensquirrel.ir import AxisLike, GateSemantic, IRVisitor, Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation, CanonicalAxis, CanonicalGateSemantic
 
 
@@ -23,6 +23,35 @@ class TestCanonicalAxis:
     )
     def test_restrict_to_weyl_chamber(self, axis: NDArray[np.float64], restricted_axis: NDArray[np.float64]) -> None:
         numpy.testing.assert_array_almost_equal(CanonicalAxis.restrict_to_weyl_chamber(axis), restricted_axis)
+
+    @pytest.mark.parametrize("axis", [Qubit(1), [0, [3], [2]], "abc"])
+    def test_parse_no_array_like(self, axis: AxisLike) -> None:
+        with pytest.raises(TypeError, match="axis requires an ArrayLike"):
+            CanonicalAxis(axis)
+
+    @pytest.mark.parametrize(("axis", "size"), [([1, 2], 2), ([1, 2, 3, 4], 4)])
+    def test_parse_incorrect_size(self, axis: AxisLike, size: int) -> None:
+        with pytest.raises(ValueError, match=f"axis has size {size}: requires an ArrayLike of length 3"):
+            CanonicalAxis(axis)
+
+    def test_parse_without_restriction(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(CanonicalAxis, "restrict", False)
+        numpy.testing.assert_array_almost_equal(CanonicalAxis((3 / 4, 1 / 4, 0)), [3 / 4, 1 / 4, 0])
+
+    def test_parse_canonical_axis(self) -> None:
+        axis = CanonicalAxis((1 / 4, 1 / 4, 0))
+        numpy.testing.assert_array_almost_equal(CanonicalAxis(axis), axis)
+
+    def test_accept(self) -> None:
+        class Visitor(IRVisitor):
+            def visit_canonical_axis(self, axis: CanonicalAxis) -> CanonicalAxis:
+                return axis
+
+        axis = CanonicalAxis((0, 0, 0))
+        assert axis.accept(Visitor()) is axis
+
+    def test_repr(self) -> None:
+        assert repr(CanonicalAxis((1 / 4, 1 / 4, 0))) == "CanonicalAxis[0.25 0.25 0.  ]"
 
 
 class TestCanonicalGateSemantic:
@@ -61,3 +90,34 @@ class TestCanonicalGateSemantic:
         rotations = [BlochSphereRotation(axis=(1, 0, 0), angle=0.5, phase=0.1)]
         with pytest.raises(ValueError, match="invalid number of rotations, expected 4 but got 1"):
             CanonicalGateSemantic((0, 0, 0), rotations)
+
+    def test_accept(self, semantic: CanonicalGateSemantic) -> None:
+        class Visitor(IRVisitor):
+            def visit_canonical_gate_semantic(self, canonical: CanonicalGateSemantic) -> CanonicalGateSemantic:
+                return canonical
+
+        assert semantic.accept(Visitor()) is semantic
+
+    def test_eq_different_type(self, semantic: CanonicalGateSemantic) -> None:
+        assert semantic != CanonicalAxis((0, 0, 0))
+
+    def test_eq_different_axis(self, semantic: CanonicalGateSemantic) -> None:
+        assert semantic != CanonicalGateSemantic((1 / 4, 1 / 4, 0))
+
+    def test_eq_without_rotations(self, semantic: CanonicalGateSemantic) -> None:
+        assert semantic == CanonicalGateSemantic((0, 0, 0))
+
+    def test_eq_with_rotations(self, semantic_with_rotations: CanonicalGateSemantic) -> None:
+        assert semantic_with_rotations == CanonicalGateSemantic((0.25, 0.25, 0.25), semantic_with_rotations.rotations)
+
+    def test_eq_only_one_has_rotations(self, semantic_with_rotations: CanonicalGateSemantic) -> None:
+        assert semantic_with_rotations != CanonicalGateSemantic((0.25, 0.25, 0.25))
+        assert CanonicalGateSemantic((0.25, 0.25, 0.25)) != semantic_with_rotations
+
+    def test_repr(self, semantic: CanonicalGateSemantic) -> None:
+        assert repr(semantic) == "CanonicalGateSemantic(axis=CanonicalAxis[0. 0. 0.])"
+
+    def test_repr_with_rotations(self, semantic_with_rotations: CanonicalGateSemantic) -> None:
+        assert repr(semantic_with_rotations).startswith(
+            "CanonicalGateSemantic(axis=CanonicalAxis[0.25 0.25 0.25], rotations=["
+        )
