@@ -357,3 +357,17 @@ def test_barrier_groups(exporter: CqasmV1Exporter, program: str, expected_output
     circuit = Circuit.from_string(program)
     output = circuit.export(exporter=exporter)
     assert output == expected_output
+
+
+@pytest.mark.parametrize("gate_name", ["CCX", "CCNOT"], ids=["CCX", "CCNOT"])
+def test_toffoli(exporter: CqasmV1Exporter, gate_name: str) -> None:
+    builder = CircuitBuilder(3)
+    getattr(builder, gate_name)(0, 1, 2)
+    assert builder.to_circuit().export(exporter=exporter) == ("version 1.0\n\nqubits 3\n\ntoffoli q[0], q[1], q[2]\n")
+
+
+def test_cswap_is_unsupported(exporter: CqasmV1Exporter) -> None:
+    builder = CircuitBuilder(3)
+    builder.CSWAP(0, 1, 2)
+    with pytest.raises(UnsupportedGateError, match="not supported"):
+        builder.to_circuit().export(exporter=exporter)
