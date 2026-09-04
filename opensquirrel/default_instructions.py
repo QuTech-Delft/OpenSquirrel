@@ -10,8 +10,10 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.default_gates import (
+    CCX,
     CNOT,
     CR,
+    CSWAP,
     CV,
     CY,
     CZ,
@@ -50,6 +52,7 @@ from opensquirrel.ir.default_gates import (
 if TYPE_CHECKING:
     from opensquirrel.ir import ControlInstruction, Gate, Instruction, NonUnitary
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
     from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 default_bsr_without_params_set: dict[str, type[SingleQubitGate]] = {
@@ -101,13 +104,22 @@ default_two_qubit_gate_set: dict[str, type[TwoQubitGate]] = {
     "SWAP": SWAP,
 }
 
+default_three_qubit_gate_set: dict[str, type[ThreeQubitGate]] = {
+    "CCX": CCX,
+    "CSWAP": CSWAP,
+}
+
 default_gate_alias_set = {
+    "CCNOT": CCX,
     "Hadamard": H,
     "Identity": I,
+    "Toffoli": CCX,
+    "Fredkin": CSWAP,
 }
 default_gate_set: dict[str, type[Gate]] = {
     **default_single_qubit_gate_set,
     **default_two_qubit_gate_set,
+    **default_three_qubit_gate_set,
     **default_gate_alias_set,
 }
 
