@@ -8,8 +8,10 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.default_gates import (
+    CCX,
     CNOT,
     CR,
+    CSWAP,
     CV,
     CY,
     CZ,
@@ -47,8 +49,10 @@ from opensquirrel.ir.default_gates import (
 from opensquirrel.register_manager import BitRegister, QubitRegister
 
 __all__ = [
+    "CCX",
     "CNOT",
     "CR",
+    "CSWAP",
     "CV",
     "CY",
     "CZ",

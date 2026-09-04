@@ -13,6 +13,7 @@ from opensquirrel.passes.decomposer.cz_decomposer import CZDecomposer
 from opensquirrel.passes.decomposer.mckay_decomposer import McKayDecomposer
 from opensquirrel.passes.decomposer.swap2cnot_decomposer import SWAP2CNOTDecomposer
 from opensquirrel.passes.decomposer.swap2cz_decomposer import SWAP2CZDecomposer
+from opensquirrel.passes.decomposer.three_qubit_gate_decomposer import ThreeQubitGateDecomposer
 
 __all__ = [
     "CNOT2CZDecomposer",
@@ -22,6 +23,7 @@ __all__ = [
     "McKayDecomposer",
     "SWAP2CNOTDecomposer",
     "SWAP2CZDecomposer",
+    "ThreeQubitGateDecomposer",
     "XYXDecomposer",
     "XZXDecomposer",
     "YXYDecomposer",
