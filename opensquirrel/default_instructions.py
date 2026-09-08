@@ -111,10 +111,10 @@ default_three_qubit_gate_set: dict[str, type[ThreeQubitGate]] = {
 
 default_gate_alias_set = {
     "CCNOT": CCX,
+    "Fredkin": CSWAP,
     "Hadamard": H,
     "Identity": I,
     "Toffoli": CCX,
-    "Fredkin": CSWAP,
 }
 default_gate_set: dict[str, type[Gate]] = {
     **default_single_qubit_gate_set,
