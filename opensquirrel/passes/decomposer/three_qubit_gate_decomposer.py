@@ -4,41 +4,11 @@ from math import pi
 from typing import TYPE_CHECKING
 
 from opensquirrel import CZ, Ry, T, TDagger
+from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
 from opensquirrel.passes.decomposer.general_decomposer import Decomposer
 
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate, Qubit
-
-
-def _cnot_to_cz(control_qubit: Qubit, target_qubit: Qubit) -> list[Gate]:
-    """CNOT expressed as a CZ gate conjugated by Ry rotations, as in the CNOT2CZDecomposer."""
-    return [
-        Ry(target_qubit, -pi / 2),
-        CZ(control_qubit, target_qubit),
-        Ry(target_qubit, pi / 2),
-    ]
-
-
-def _ccx_to_cz(control_qubit_0: Qubit, control_qubit_1: Qubit, target_qubit: Qubit) -> list[Gate]:
-    """Toffoli gate as 6 CNOT gates and T rotations, with every CNOT gate rewritten in terms of CZ."""
-    a, b, c = control_qubit_0, control_qubit_1, target_qubit
-    return [
-        Ry(c, -pi / 2),
-        *_cnot_to_cz(b, c),
-        TDagger(c),
-        *_cnot_to_cz(a, c),
-        T(c),
-        *_cnot_to_cz(b, c),
-        TDagger(c),
-        *_cnot_to_cz(a, c),
-        T(b),
-        T(c),
-        Ry(c, pi / 2),
-        *_cnot_to_cz(a, b),
-        T(a),
-        TDagger(b),
-        *_cnot_to_cz(a, b),
-    ]
 
 
 class ThreeQubitGateDecomposer(Decomposer):
@@ -61,18 +31,51 @@ class ThreeQubitGateDecomposer(Decomposer):
             A sequence of CZ gates and single-qubit gates that decompose the three-qubit gate.
 
         """
-        if instruction.name not in ("CCX", "CSWAP"):
+        if not isinstance(instruction, ThreeQubitGate) or instruction.name not in ("CCX", "CSWAP"):
             return [instruction]
 
         gate = instruction
 
         if gate.name == "CCX":
             control_qubit_0, control_qubit_1, target_qubit = gate.qubit_operands
-            return _ccx_to_cz(control_qubit_0, control_qubit_1, target_qubit)
+            return self._get_toffoli_gates(control_qubit_0, control_qubit_1, target_qubit)
 
         control_qubit, qubit_0, qubit_1 = gate.qubit_operands
         return [
-            *_cnot_to_cz(qubit_1, qubit_0),
-            *_ccx_to_cz(control_qubit, qubit_0, qubit_1),
-            *_cnot_to_cz(qubit_1, qubit_0),
+            *self._get_cnot_gates(qubit_1, qubit_0),
+            *self._get_toffoli_gates(control_qubit, qubit_0, qubit_1),
+            *self._get_cnot_gates(qubit_1, qubit_0),
+        ]
+
+    def _get_cnot_gates(self, control_qubit: Qubit, target_qubit: Qubit) -> list[Gate]:
+        """CNOT gate expressed as a CZ gate conjugated by Ry rotations, as in the CNOT2CZDecomposer."""
+        return [
+            Ry(target_qubit, -pi / 2),
+            CZ(control_qubit, target_qubit),
+            Ry(target_qubit, pi / 2),
+        ]
+
+    def _get_toffoli_gates(self, control_qubit_0: Qubit, control_qubit_1: Qubit, target_qubit: Qubit) -> list[Gate]:
+        """Toffoli gate as 6 CNOT gates and T rotations, with every CNOT gate rewritten in terms of CZ.
+
+        The Hadamard gates that conjugate the target qubit in the textbook circuit are replaced by
+        the same Ry rotations used above, which likewise map Z onto X under conjugation.
+        """
+        a, b, c = control_qubit_0, control_qubit_1, target_qubit
+        return [
+            Ry(c, -pi / 2),
+            *self._get_cnot_gates(b, c),
+            TDagger(c),
+            *self._get_cnot_gates(a, c),
+            T(c),
+            *self._get_cnot_gates(b, c),
+            TDagger(c),
+            *self._get_cnot_gates(a, c),
+            T(b),
+            T(c),
+            Ry(c, pi / 2),
+            *self._get_cnot_gates(a, b),
+            T(a),
+            TDagger(b),
+            *self._get_cnot_gates(a, b),
         ]
