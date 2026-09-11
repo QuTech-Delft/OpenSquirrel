@@ -101,7 +101,7 @@ def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
         bad_indices = set()
 
         neighbors = list(graph.successors(node))
-        while neighbors:
+        while sorted(neighbors):
             neighbor = neighbors.pop(0)
             if neighbor not in available_nodes:
                 continue
