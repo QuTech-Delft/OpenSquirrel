@@ -6,28 +6,28 @@
       
       
       
-        <link rel="prev" href="mckay_decomposer.html">
+        <link rel="prev" href="identity-mapper.html">
       
       
-        <link rel="next" href="swap2cnot_decomposer.html">
+        <link rel="next" href="random-mapper.html">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
     
     
       
-        <title>measure_decomposer - OpenSquirrel</title>
+        <title>MIP mapper - OpenSquirrel</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -46,15 +46,15 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
-  <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
             html.glightbox-open { overflow: initial; height: 100%; }
             .gslide-title { margin-top: 0px; user-select: text; }
             .gslide-desc { color: #666; user-select: text; }
@@ -83,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#opensquirrel.passes.decomposer.measure_decomposer" class="md-skip">
+        <a href="#how-the-mapping-is-computed" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+    <a href="../.." title="OpenSquirrel" class="md-header__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              measure_decomposer
+              MIP mapper
             
           </span>
         </div>
@@ -240,7 +240,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../index.html" class="md-tabs__link">
+        <a href="../../index.html" class="md-tabs__link">
           
   
   
@@ -262,7 +262,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../tutorial/index.html" class="md-tabs__link">
+        <a href="../../tutorial/index.html" class="md-tabs__link">
           
   
   
@@ -284,7 +284,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../circuit-builder/index.html" class="md-tabs__link">
+        <a href="../../circuit-builder/index.html" class="md-tabs__link">
           
   
   
@@ -302,11 +302,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../compilation-passes/index.html" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../index.html" class="md-tabs__link">
           
   
   
@@ -324,8 +326,6 @@
   
   
   
-    
-  
   
     
     
@@ -333,13 +333,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../circuit.html" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../reference/circuit.html" class="md-tabs__link">
           
   
   
@@ -378,7 +376,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
+    <a href="../.." title="OpenSquirrel" class="md-nav__button md-logo" aria-label="OpenSquirrel" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
@@ -437,7 +435,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../index.html" class="md-nav__link ">
+            <a href="../../index.html" class="md-nav__link ">
               
   
   
@@ -481,7 +479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../installation.html" class="md-nav__link">
+      <a href="../../installation.html" class="md-nav__link">
         
   
   
@@ -509,7 +507,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../contributing.html" class="md-nav__link">
+      <a href="../../contributing.html" class="md-nav__link">
         
   
   
@@ -537,7 +535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../authors.html" class="md-nav__link">
+      <a href="../../authors.html" class="md-nav__link">
         
   
   
@@ -565,7 +563,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../acknowledgements.html" class="md-nav__link">
+      <a href="../../acknowledgements.html" class="md-nav__link">
         
   
   
@@ -627,7 +625,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../tutorial/index.html" class="md-nav__link ">
+            <a href="../../tutorial/index.html" class="md-nav__link ">
               
   
   
@@ -671,7 +669,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/creating-a-circuit.html" class="md-nav__link">
+      <a href="../../tutorial/creating-a-circuit.html" class="md-nav__link">
         
   
   
@@ -699,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/applying-compilation-passes.html" class="md-nav__link">
+      <a href="../../tutorial/applying-compilation-passes.html" class="md-nav__link">
         
   
   
@@ -727,7 +725,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../tutorial/writing-out-and-exporting.html" class="md-nav__link">
+      <a href="../../tutorial/writing-out-and-exporting.html" class="md-nav__link">
         
   
   
@@ -785,7 +783,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../circuit-builder/index.html" class="md-nav__link ">
+            <a href="../../circuit-builder/index.html" class="md-nav__link ">
               
   
   
@@ -887,7 +885,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../circuit-builder/instructions/gates.html" class="md-nav__link">
+      <a href="../../circuit-builder/instructions/gates.html" class="md-nav__link">
         
   
   
@@ -915,7 +913,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../circuit-builder/instructions/non-unitaries.html" class="md-nav__link">
+      <a href="../../circuit-builder/instructions/non-unitaries.html" class="md-nav__link">
         
   
   
@@ -943,7 +941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../circuit-builder/instructions/control-instructions.html" class="md-nav__link">
+      <a href="../../circuit-builder/instructions/control-instructions.html" class="md-nav__link">
         
   
   
@@ -983,6 +981,8 @@
       
   
   
+    
+  
   
   
     
@@ -1010,18 +1010,21 @@
     
     
       
+        
+        
+      
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked="">
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/index.html" class="md-nav__link ">
+            <a href="../index.html" class="md-nav__link ">
               
   
   
@@ -1039,13 +1042,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1088,7 +1091,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/analysis/index.html" class="md-nav__link ">
+            <a href="../analysis/index.html" class="md-nav__link ">
               
   
   
@@ -1132,7 +1135,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/analysis/circuit-analyzer.html" class="md-nav__link">
+      <a href="../analysis/circuit-analyzer.html" class="md-nav__link">
         
   
   
@@ -1203,7 +1206,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/decomposition/index.html" class="md-nav__link ">
+            <a href="../decomposition/index.html" class="md-nav__link ">
               
   
   
@@ -1247,7 +1250,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/aba-decomposer.html" class="md-nav__link">
+      <a href="../decomposition/aba-decomposer.html" class="md-nav__link">
         
   
   
@@ -1275,7 +1278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/cnot-decomposer.html" class="md-nav__link">
+      <a href="../decomposition/cnot-decomposer.html" class="md-nav__link">
         
   
   
@@ -1303,7 +1306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/cz-decomposer.html" class="md-nav__link">
+      <a href="../decomposition/cz-decomposer.html" class="md-nav__link">
         
   
   
@@ -1331,7 +1334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/can2cz-decomposer.html" class="md-nav__link">
+      <a href="../decomposition/can2cz-decomposer.html" class="md-nav__link">
         
   
   
@@ -1359,7 +1362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/mckay-decomposer.html" class="md-nav__link">
+      <a href="../decomposition/mckay-decomposer.html" class="md-nav__link">
         
   
   
@@ -1387,7 +1390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/measure-decomposer.html" class="md-nav__link">
+      <a href="../decomposition/measure-decomposer.html" class="md-nav__link">
         
   
   
@@ -1415,7 +1418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/decomposition/predefined-decomposers.html" class="md-nav__link">
+      <a href="../decomposition/predefined-decomposers.html" class="md-nav__link">
         
   
   
@@ -1476,7 +1479,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/exporting/index.html" class="md-nav__link ">
+            <a href="../exporting/index.html" class="md-nav__link ">
               
   
   
@@ -1520,7 +1523,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/exporting/cqasm-v1-exporter.html" class="md-nav__link">
+      <a href="../exporting/cqasm-v1-exporter.html" class="md-nav__link">
         
   
   
@@ -1548,7 +1551,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/exporting/quantify-scheduler-exporter.html" class="md-nav__link">
+      <a href="../exporting/quantify-scheduler-exporter.html" class="md-nav__link">
         
   
   
@@ -1581,6 +1584,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1607,15 +1612,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" checked="">
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/mapping/index.html" class="md-nav__link ">
+            <a href="index.html" class="md-nav__link ">
               
   
   
@@ -1639,7 +1644,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1659,7 +1664,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/hardcoded-mapper.html" class="md-nav__link">
+      <a href="hardcoded-mapper.html" class="md-nav__link">
         
   
   
@@ -1687,7 +1692,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/identity-mapper.html" class="md-nav__link">
+      <a href="identity-mapper.html" class="md-nav__link">
         
   
   
@@ -1712,10 +1717,35 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/mip-mapper.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIP mapper
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="mip-mapper.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1731,6 +1761,68 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+      
+        <li class="md-nav__item">
+  <a href="#how-the-mapping-is-computed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the mapping is computed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-mapping-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When mapping fails
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1743,7 +1835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/random-mapper.html" class="md-nav__link">
+      <a href="random-mapper.html" class="md-nav__link">
         
   
   
@@ -1771,7 +1863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/mapping/qgym-mapper.html" class="md-nav__link">
+      <a href="qgym-mapper.html" class="md-nav__link">
         
   
   
@@ -1830,7 +1922,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/merging/index.html" class="md-nav__link ">
+            <a href="../merging/index.html" class="md-nav__link ">
               
   
   
@@ -1874,7 +1966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/merging/single-qubit-gates-merger.html" class="md-nav__link">
+      <a href="../merging/single-qubit-gates-merger.html" class="md-nav__link">
         
   
   
@@ -1935,7 +2027,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/routing/index.html" class="md-nav__link ">
+            <a href="../routing/index.html" class="md-nav__link ">
               
   
   
@@ -1979,7 +2071,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/routing/a-star-router.html" class="md-nav__link">
+      <a href="../routing/a-star-router.html" class="md-nav__link">
         
   
   
@@ -2007,7 +2099,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/routing/shortest-path-router.html" class="md-nav__link">
+      <a href="../routing/shortest-path-router.html" class="md-nav__link">
         
   
   
@@ -2068,7 +2160,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../compilation-passes/validation/index.html" class="md-nav__link ">
+            <a href="../validation/index.html" class="md-nav__link ">
               
   
   
@@ -2112,7 +2204,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/validation/interaction-validator.html" class="md-nav__link">
+      <a href="../validation/interaction-validator.html" class="md-nav__link">
         
   
   
@@ -2140,7 +2232,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../compilation-passes/validation/primitive-gate-validator.html" class="md-nav__link">
+      <a href="../validation/primitive-gate-validator.html" class="md-nav__link">
         
   
   
@@ -2180,10 +2272,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -2193,20 +2283,17 @@
     
     
       
-        
-        
-      
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -2224,7 +2311,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2239,10 +2326,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -2281,11 +2366,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1">
         
           
           <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
@@ -2306,7 +2391,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2324,7 +2409,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../circuit.html" class="md-nav__link">
+      <a href="../../reference/circuit.html" class="md-nav__link">
         
   
   
@@ -2352,7 +2437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../circuit_builder.html" class="md-nav__link">
+      <a href="../../reference/circuit_builder.html" class="md-nav__link">
         
   
   
@@ -2380,7 +2465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../circuit_matrix_calculator.html" class="md-nav__link">
+      <a href="../../reference/circuit_matrix_calculator.html" class="md-nav__link">
         
   
   
@@ -2408,7 +2493,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../common.html" class="md-nav__link">
+      <a href="../../reference/common.html" class="md-nav__link">
         
   
   
@@ -2436,7 +2521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../default_gate_modifiers.html" class="md-nav__link">
+      <a href="../../reference/default_gate_modifiers.html" class="md-nav__link">
         
   
   
@@ -2464,7 +2549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../default_instructions.html" class="md-nav__link">
+      <a href="../../reference/default_instructions.html" class="md-nav__link">
         
   
   
@@ -2492,7 +2577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../exceptions.html" class="md-nav__link">
+      <a href="../../reference/exceptions.html" class="md-nav__link">
         
   
   
@@ -2592,7 +2677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/control_instruction.html" class="md-nav__link">
+      <a href="../../reference/ir/control_instruction.html" class="md-nav__link">
         
   
   
@@ -2676,7 +2761,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/default_gates/single_qubit_gates.html" class="md-nav__link">
+      <a href="../../reference/ir/default_gates/single_qubit_gates.html" class="md-nav__link">
         
   
   
@@ -2704,7 +2789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/default_gates/two_qubit_gates.html" class="md-nav__link">
+      <a href="../../reference/ir/default_gates/two_qubit_gates.html" class="md-nav__link">
         
   
   
@@ -2740,7 +2825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/expression.html" class="md-nav__link">
+      <a href="../../reference/ir/expression.html" class="md-nav__link">
         
   
   
@@ -2768,7 +2853,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/ir.html" class="md-nav__link">
+      <a href="../../reference/ir/ir.html" class="md-nav__link">
         
   
   
@@ -2796,7 +2881,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/non_unitary.html" class="md-nav__link">
+      <a href="../../reference/ir/non_unitary.html" class="md-nav__link">
         
   
   
@@ -2886,7 +2971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/bsr.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/bsr.html" class="md-nav__link">
         
   
   
@@ -2914,7 +2999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/canonical_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/canonical_gate.html" class="md-nav__link">
         
   
   
@@ -2942,7 +3027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/controlled_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/controlled_gate.html" class="md-nav__link">
         
   
   
@@ -2970,7 +3055,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/gate_semantic.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/gate_semantic.html" class="md-nav__link">
         
   
   
@@ -2998,7 +3083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/semantics/matrix_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/semantics/matrix_gate.html" class="md-nav__link">
         
   
   
@@ -3034,7 +3119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/single_qubit_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/single_qubit_gate.html" class="md-nav__link">
         
   
   
@@ -3062,7 +3147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/statement.html" class="md-nav__link">
+      <a href="../../reference/ir/statement.html" class="md-nav__link">
         
   
   
@@ -3090,7 +3175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/two_qubit_gate.html" class="md-nav__link">
+      <a href="../../reference/ir/two_qubit_gate.html" class="md-nav__link">
         
   
   
@@ -3118,7 +3203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ir/unitary.html" class="md-nav__link">
+      <a href="../../reference/ir/unitary.html" class="md-nav__link">
         
   
   
@@ -3151,10 +3236,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -3179,11 +3262,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9">
         
           
           <label class="md-nav__link" for="__nav_5_1_9" id="__nav_5_1_9_label" tabindex="0">
@@ -3204,7 +3287,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_1_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3278,7 +3361,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../analyzer/circuit_analyzer.html" class="md-nav__link">
+      <a href="../../reference/passes/analyzer/circuit_analyzer.html" class="md-nav__link">
         
   
   
@@ -3306,7 +3389,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../analyzer/general_analyzer.html" class="md-nav__link">
+      <a href="../../reference/passes/analyzer/general_analyzer.html" class="md-nav__link">
         
   
   
@@ -3339,10 +3422,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -3375,11 +3456,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_2" checked="">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_9_2">
         
           
           <label class="md-nav__link" for="__nav_5_1_9_2" id="__nav_5_1_9_2_label" tabindex="0">
@@ -3400,7 +3481,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_5_1_9_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_1_9_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3418,7 +3499,7 @@
   
   
     <li class="md-nav__item">
-      <a href="aba_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/aba_decomposer.html" class="md-nav__link">
         
   
   
@@ -3446,7 +3527,7 @@
   
   
     <li class="md-nav__item">
-      <a href="can2cz_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/can2cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3474,7 +3555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cnot2cz_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/cnot2cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3502,7 +3583,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cnot_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/cnot_decomposer.html" class="md-nav__link">
         
   
   
@@ -3530,7 +3611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="cz_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3558,7 +3639,7 @@
   
   
     <li class="md-nav__item">
-      <a href="gate_replacer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/gate_replacer.html" class="md-nav__link">
         
   
   
@@ -3586,7 +3667,7 @@
   
   
     <li class="md-nav__item">
-      <a href="general_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/general_decomposer.html" class="md-nav__link">
         
   
   
@@ -3614,7 +3695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="mckay_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/mckay_decomposer.html" class="md-nav__link">
         
   
   
@@ -3639,35 +3720,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    measure_decomposer
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="measure_decomposer.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/measure_decomposer.html" class="md-nav__link">
         
   
   
@@ -3683,46 +3739,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
-      
-        <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.measure_decomposer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        measure_decomposer
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.measure_decomposer.MeasureDecomposer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MeasureDecomposer
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3735,7 +3751,7 @@
   
   
     <li class="md-nav__item">
-      <a href="swap2cnot_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/swap2cnot_decomposer.html" class="md-nav__link">
         
   
   
@@ -3763,7 +3779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="swap2cz_decomposer.html" class="md-nav__link">
+      <a href="../../reference/passes/decomposer/swap2cz_decomposer.html" class="md-nav__link">
         
   
   
@@ -3857,7 +3873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exporter/cqasmv1_exporter.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/cqasmv1_exporter.html" class="md-nav__link">
         
   
   
@@ -3885,7 +3901,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exporter/general_exporter.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/general_exporter.html" class="md-nav__link">
         
   
   
@@ -3913,7 +3929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../exporter/quantify_scheduler_exporter.html" class="md-nav__link">
+      <a href="../../reference/passes/exporter/quantify_scheduler_exporter.html" class="md-nav__link">
         
   
   
@@ -4017,7 +4033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/check_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/check_mapper.html" class="md-nav__link">
         
   
   
@@ -4045,7 +4061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/general_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/general_mapper.html" class="md-nav__link">
         
   
   
@@ -4073,7 +4089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/mapping.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/mapping.html" class="md-nav__link">
         
   
   
@@ -4101,7 +4117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/mip_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/mip_mapper.html" class="md-nav__link">
         
   
   
@@ -4129,7 +4145,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/qgym_mapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/qgym_mapper.html" class="md-nav__link">
         
   
   
@@ -4157,7 +4173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/qubit_remapper.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/qubit_remapper.html" class="md-nav__link">
         
   
   
@@ -4185,7 +4201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/simple_mappers.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/simple_mappers.html" class="md-nav__link">
         
   
   
@@ -4213,7 +4229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mapper/utils.html" class="md-nav__link">
+      <a href="../../reference/passes/mapper/utils.html" class="md-nav__link">
         
   
   
@@ -4305,7 +4321,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../merger/general_merger.html" class="md-nav__link">
+      <a href="../../reference/passes/merger/general_merger.html" class="md-nav__link">
         
   
   
@@ -4333,7 +4349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../merger/single_qubit_gates_merger.html" class="md-nav__link">
+      <a href="../../reference/passes/merger/single_qubit_gates_merger.html" class="md-nav__link">
         
   
   
@@ -4431,7 +4447,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/astar_router.html" class="md-nav__link">
+      <a href="../../reference/passes/router/astar_router.html" class="md-nav__link">
         
   
   
@@ -4459,7 +4475,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/common.html" class="md-nav__link">
+      <a href="../../reference/passes/router/common.html" class="md-nav__link">
         
   
   
@@ -4487,7 +4503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/general_router.html" class="md-nav__link">
+      <a href="../../reference/passes/router/general_router.html" class="md-nav__link">
         
   
   
@@ -4515,7 +4531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/heuristics.html" class="md-nav__link">
+      <a href="../../reference/passes/router/heuristics.html" class="md-nav__link">
         
   
   
@@ -4543,7 +4559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../router/shortest_path_router.html" class="md-nav__link">
+      <a href="../../reference/passes/router/shortest_path_router.html" class="md-nav__link">
         
   
   
@@ -4637,7 +4653,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validator/general_validator.html" class="md-nav__link">
+      <a href="../../reference/passes/validator/general_validator.html" class="md-nav__link">
         
   
   
@@ -4665,7 +4681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validator/interaction_validator.html" class="md-nav__link">
+      <a href="../../reference/passes/validator/interaction_validator.html" class="md-nav__link">
         
   
   
@@ -4693,7 +4709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../validator/primitive_gate_validator.html" class="md-nav__link">
+      <a href="../../reference/passes/validator/primitive_gate_validator.html" class="md-nav__link">
         
   
   
@@ -4791,7 +4807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reader/libqasm_parser.html" class="md-nav__link">
+      <a href="../../reference/reader/libqasm_parser.html" class="md-nav__link">
         
   
   
@@ -4827,7 +4843,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../register_manager.html" class="md-nav__link">
+      <a href="../../reference/register_manager.html" class="md-nav__link">
         
   
   
@@ -4909,7 +4925,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reindexer/qubit_reindexer.html" class="md-nav__link">
+      <a href="../../reference/reindexer/qubit_reindexer.html" class="md-nav__link">
         
   
   
@@ -5007,7 +5023,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/context.html" class="md-nav__link">
+      <a href="../../reference/utils/context.html" class="md-nav__link">
         
   
   
@@ -5035,7 +5051,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/general_math.html" class="md-nav__link">
+      <a href="../../reference/utils/general_math.html" class="md-nav__link">
         
   
   
@@ -5063,7 +5079,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/identity_filter.html" class="md-nav__link">
+      <a href="../../reference/utils/identity_filter.html" class="md-nav__link">
         
   
   
@@ -5091,7 +5107,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/list.html" class="md-nav__link">
+      <a href="../../reference/utils/list.html" class="md-nav__link">
         
   
   
@@ -5119,7 +5135,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../utils/matrix_expander.html" class="md-nav__link">
+      <a href="../../reference/utils/matrix_expander.html" class="md-nav__link">
         
   
   
@@ -5209,7 +5225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../writer/writer.html" class="md-nav__link">
+      <a href="../../reference/writer/writer.html" class="md-nav__link">
         
   
   
@@ -5278,10 +5294,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
       
         <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.measure_decomposer" class="md-nav__link">
+  <a href="#how-the-mapping-is-computed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        measure_decomposer
+        How the mapping is computed
       
     </span>
   </a>
@@ -5289,10 +5305,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#opensquirrel.passes.decomposer.measure_decomposer.MeasureDecomposer" class="md-nav__link">
+  <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MeasureDecomposer
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-mapping-fails" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When mapping fails
       
     </span>
   </a>
@@ -5319,181 +5357,191 @@
   
 
 
-  <h1>measure_decomposer</h1>
+  <h1>MIP mapper</h1>
 
-<div class="doc doc-object doc-module">
-
-
-
-<a id="opensquirrel.passes.decomposer.measure_decomposer"></a>
-    <div class="doc doc-contents first">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-<h2 id="opensquirrel.passes.decomposer.measure_decomposer.MeasureDecomposer" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">MeasureDecomposer</span>
-
-
-</h2>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="opensquirrel.passes.decomposer.general_decomposer.Decomposer">Decomposer</span></code></p>
-
-
-
-
-
-
-
-
-
-
-              <details class="mkdocstrings-source">
-                <summary>Source code in <code>opensquirrel/passes/decomposer/measure_decomposer.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="k">class</span><span class="w"> </span><span class="nc">MeasureDecomposer</span><span class="p">(</span><span class="n">Decomposer</span><span class="p">):</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Measure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Instruction</span><span class="p">]:</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">Measure</span><span class="p">):</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">instruction</span><span class="p">]</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a>        <span class="n">measure</span> <span class="o">=</span> <span class="n">instruction</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17"></a>        <span class="k">if</span> <span class="n">measure</span><span class="o">.</span><span class="n">axis</span> <span class="o">==</span> <span class="n">Axis</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-<a id="__codelineno-0-18" name="__codelineno-0-18"></a>            <span class="k">return</span> <span class="p">[</span><span class="n">measure</span><span class="p">]</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19"></a>        <span class="n">rotation_gates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_rotation_gates</span><span class="p">(</span><span class="n">measure</span><span class="p">)</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20"></a>        <span class="k">return</span> <span class="p">[</span><span class="o">*</span><span class="n">rotation_gates</span><span class="p">,</span> <span class="n">Measure</span><span class="p">(</span><span class="n">measure</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="n">measure</span><span class="o">.</span><span class="n">bit</span><span class="p">,</span> <span class="n">Axis</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))]</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_rotation_gates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measure</span><span class="p">:</span> <span class="n">Measure</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Gate</span><span class="p">]:</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="w">        </span><span class="sd">"""Determines the rotation gates needed to rotate the measurement axis to the Z-axis.</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">        If the measurement axis is given by the unit vector</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="sd">        $\\hat{n} = (n_x, n_y, n_z) = (\\sin\\theta\\cos\\phi, \\sin\\theta\\sin\\phi, \\cos\\theta)$,</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">        with $\\theta = \\arccos(n_z)$ and $\\phi = \\arctan2(n_y, n_x)$. We can define a unitary</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">        $U = Rz(\\phi) Ry(\\theta)$, that maps the +Z eigenstates to the $\\hat{n}$ eigenstates.</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">        Measuring in the $\\hat{n}$ direction is equivalent to first applying</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">        $U^\\dagger = R_y(-\\theta) R_z(-\\phi)$ and then measuring in the +Z direction.</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">        Order of instructions:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        1. Apply Rz(-φ).</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">        2. Apply Ry(-θ).</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        3. Measure in the +Z direction.</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">        Args:</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">            measure: The measure instruction for which to determine the rotation gates.</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">        Returns:</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">            A list of gates that rotate the measurement axis to the +Z-axis.</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        """</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>        <span class="n">n_x</span><span class="p">,</span> <span class="n">n_y</span><span class="p">,</span> <span class="n">n_z</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">axis</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>        <span class="n">theta</span> <span class="o">=</span> <span class="n">acos</span><span class="p">(</span><span class="n">n_z</span><span class="p">)</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>        <span class="n">phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">n_y</span><span class="p">,</span> <span class="n">n_x</span><span class="p">)</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>        <span class="k">return</span> <span class="n">filter_out_identities</span><span class="p">(</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>            <span class="p">[</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>                <span class="n">Rz</span><span class="p">(</span><span class="n">measure</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">phi</span><span class="p">),</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>                <span class="n">Ry</span><span class="p">(</span><span class="n">measure</span><span class="o">.</span><span class="n">qubit</span><span class="p">,</span> <span class="o">-</span><span class="n">theta</span><span class="p">),</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="p">]</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>        <span class="p">)</span>
+<p>The MIP mapper (<code>MIPMapper</code>) pass tries to place the circuit on the quantum backend such
+that qubits that need to interact end up close to each other. 
+It is based on the <code>place_mip</code> pass of
+<a href="https://github.com/QuTech-Delft/OpenQL/blob/develop/src/ql/pass/map/qubits/place_mip/place_mip.cc">OpenQL</a>.</p>
+<p>Unlike the <a href="identity-mapper.html">identity</a>, <a href="random-mapper.html">random</a> and 
+<a href="hardcoded-mapper.html">hardcoded</a> mappers, which decide on a placement without looking at
+the circuit, this pass takes the two-qubit gates into account.
+It solves a <em>Mixed Integer Programming</em> (MIP) problem to find a placement that is 
+as optimal as possible for the given connectivity.</p>
+<h2 id="how-the-mapping-is-computed">How the mapping is computed</h2>
+<p>For every pair of virtual qubits <span class="arithmatex">\(i\)</span> and <span class="arithmatex">\(j\)</span> the pass counts how many two-qubit gates 
+act on that pair, giving an interaction count <span class="arithmatex">\(C_{ij}\)</span>.
+Single-qubit gates and non-unitary instructions are ignored, as they do not constrain 
+the qubit placement.
+It also computes the distance <span class="arithmatex">\(d_{kl}\)</span> between every pair of physical qubits <span class="arithmatex">\(k\)</span> and 
+<span class="arithmatex">\(l\)</span>, <em>i.e.</em> the length of the shortest path between them in the connectivity graph, 
+using Floyd-Warshall. 
+Neighbouring qubits are at distance 1.</p>
+<p>Writing <span class="arithmatex">\(\pi(i)\)</span> for the physical qubit that virtual qubit <span class="arithmatex">\(i\)</span> is placed on, the solver 
+then looks for the placement that minimizes</p>
+<div class="arithmatex">\[
+\sum_{i,j} C_{ij} \, d_{\pi(i)\,\pi(j)},
+\]</div>
+<p>under the constraints that every virtual qubit gets exactly one physical qubit and that 
+no physical qubit is used twice.</p>
+<p>That objective is quadratic, and as such is handled by
+<a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.milp.html">SciPy's <code>milp</code> solver</a> 
+in a linearized form. 
+A small penalty is added for every qubit that does not stay where it was, 
+which breaks ties in favour of the identity mapping.</p>
+<div class="admonition note">
+<p class="admonition-title">Mapping is not routing</p>
+<p>Placing interacting qubits close together reduces the number of SWAPs a router has 
+to insert, but it does not guarantee that none are needed.
+Unless every interaction ends up between neighbouring qubits,
+a <a href="../routing/index.html">routing pass</a> is still required to make the circuit 
+executable.</p>
+</div>
+<h2 id="usage">Usage</h2>
+<p>The mapper needs the <code>connectivity</code> of the target backend: a dictionary mapping each
+physical qubit index to the qubits it is connected to.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIPMapper</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">connectivity</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"0"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">"1"</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s2">"2"</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">circuit</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="o">=</span><span class="n">MIPMapper</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">))</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>version 3.0
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a>qubit[3] q
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a>H q[1]
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>CNOT q[1], q[0]
+<a id="__codelineno-1-7" name="__codelineno-1-7"></a>CNOT q[1], q[2]
 </code></pre></div></td></tr></tbody></table></div>
-              </details>
-
-
-
-<div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
+</details>
+<p>The connectivity above represents a linear array, so physical qubit <code>1</code> is the only one 
+with two neighbours. 
+Virtual qubit <code>0</code> interacts with both virtual qubits <code>1</code> and <code>2</code>, so it is placed on the 
+position of physical qubit <code>1</code>, giving the mapping <code>{0: 1, 1: 0, 2: 2}</code> and leaving both 
+CNOTs on neighbouring qubits.</p>
+<p>When the circuit can already be executed on the given connectivity there is nothing to 
+gain, and the tiebreaker leaves every qubit in place:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">circuit</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="o">=</span><span class="n">MIPMapper</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">))</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>version 3.0
+<a id="__codelineno-3-2" name="__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3"></a>qubit[3] q
+<a id="__codelineno-3-4" name="__codelineno-3-4"></a>
+<a id="__codelineno-3-5" name="__codelineno-3-5"></a>H q[0]
+<a id="__codelineno-3-6" name="__codelineno-3-6"></a>CNOT q[0], q[1]
+<a id="__codelineno-3-7" name="__codelineno-3-7"></a>CNOT q[1], q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<p>Non-unitary instructions are remapped along with the gates. 
+Each measurement follows the qubit it acts on and still writes to the same bit, 
+so the meaning of the bit register is preserved:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">builder</span><span class="o">.</span><span class="n">CNOT</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">circuit</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="o">=</span><span class="n">MIPMapper</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">))</span>
+</code></pre></div>
+<details class="example">
+<summary><code>print(circuit)</code></summary>
+<div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>version 3.0
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3"></a>qubit[3] q
+<a id="__codelineno-5-4" name="__codelineno-5-4"></a>bit[3] b
+<a id="__codelineno-5-5" name="__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6"></a>H q[1]
+<a id="__codelineno-5-7" name="__codelineno-5-7"></a>CNOT q[1], q[0]
+<a id="__codelineno-5-8" name="__codelineno-5-8"></a>CNOT q[1], q[2]
+<a id="__codelineno-5-9" name="__codelineno-5-9"></a>b[0] = measure q[1]
+<a id="__codelineno-5-10" name="__codelineno-5-10"></a>b[1] = measure q[0]
+<a id="__codelineno-5-11" name="__codelineno-5-11"></a>b[2] = measure q[2]
+</code></pre></div></td></tr></tbody></table></div>
+</details>
+<h2 id="parameters">Parameters</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>connectivity</code></td>
+<td>Connectivity of the target backend.</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>Maximum time, in seconds, the solver may spend. No limit by default.</td>
+</tr>
+<tr>
+<td><code>epsilon</code></td>
+<td>Penalty used to break ties towards the identity mapping. Defaults to <code>1e-6</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="when-mapping-fails">When mapping fails</h2>
+<p>Finding an optimal mapping is an NP-hard problem, and the solver slows down quickly as 
+the number of qubits grows. 
+The <code>timeout</code> argument bounds how long it may take, but a solver that hits the limit 
+raises a <code>RuntimeError</code> instead of returning a mapping:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">mip_mapper</span> <span class="o">=</span> <span class="n">MIPMapper</span><span class="p">(</span><span class="n">connectivity</span><span class="o">=</span><span class="n">connectivity</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">0.000001</span><span class="p">)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">circuit</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapper</span><span class="o">=</span><span class="n">mip_mapper</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition example">
+<p><code>RuntimeError: MIP solver failed to find a feasible mapping. Status: 1, Message: 
+Time limit reached.</code></p>
 </div>
-
-
-
-
-  </div>
-
-    </div>
-
+<p>The circuit also has to fit on the backend:</p>
+<div class="admonition example">
+<p><code>RuntimeError: Number of virtual qubits (3) exceeds number of physical qubits (2)</code></p>
 </div>
+<p>Fewer virtual qubits than physical ones is fine as they are mapped onto a subset of 
+them.</p>
 
 
 
@@ -5523,7 +5571,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer">
         
           
-          <a href="mckay_decomposer.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: mckay_decomposer">
+          <a href="identity-mapper.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Identity mapper">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
@@ -5533,20 +5581,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                mckay_decomposer
+                Identity mapper
               </div>
             </div>
           </a>
         
         
           
-          <a href="swap2cnot_decomposer.html" class="md-footer__link md-footer__link--next" aria-label="Next: swap2cnot_decomposer">
+          <a href="random-mapper.html" class="md-footer__link md-footer__link--next" aria-label="Next: Random mapper">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                swap2cnot_decomposer
+                Random mapper
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -5583,12 +5631,12 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.indexes", "navigation.tabs", "navigation.tracking", "navigation.footer", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.tabs", "navigation.tracking", "navigation.footer", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
-        <script src="../../../javascripts/mathjax.js"></script>
+        <script src="../../javascripts/mathjax.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
