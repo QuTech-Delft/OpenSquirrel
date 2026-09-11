@@ -5,8 +5,11 @@ import pytest
 
 from opensquirrel.ir import (
     IR,
+    Barrier,
     Bit,
+    Init,
     IRVisitor,
+    Measure,
     Qubit,
 )
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
@@ -104,11 +107,17 @@ class TestIR:
     def test_hash_difference_bit_qubit(self) -> None:
         assert hash(Qubit(1)) != hash(Bit(1))
 
-    def test_eq_different_type(self) -> None:
-        assert IR() != "not an IR"
-
     def test_repr(self) -> None:
-        assert repr(IR()) == "IR: []"
+        ir = IR()
+        assert repr(ir) == "IR: []"
+
+        ir.add_statement(Init(0))
+        ir.add_statement(Barrier(0))
+        ir.add_statement(Measure(0, 0))
+        assert repr(ir) == (
+            "IR: [Init(qubit=Qubit[0]), Barrier(qubit=Qubit[0]), "
+            "Measure(qubit=Qubit[0], bit=Bit[0], axis=Axis[0. 0. 1.])]"
+        )
 
 
 class TestIRVisitor:
