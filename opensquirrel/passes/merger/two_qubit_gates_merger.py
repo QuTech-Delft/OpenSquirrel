@@ -76,9 +76,10 @@ def build_graph(ir: IR) -> nx.DiGraph:
     return graph
 
 
-def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
+def _old_group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
     groups: list[tuple[set, set]] = []
     available_nodes = set(graph.nodes)
+    # start_nodes = [n for n in graph.nodes if graph.in_degree(n) == 0]
 
     if len(available_nodes) == 1:
         return [(available_nodes, set(graph.nodes[0]["qubit_indices"]))]
@@ -114,9 +115,51 @@ def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
     return sorted(groups, key=lambda x: _first_two_qubit_gate(graph, x[0]))
 
 
+def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
+    groups: list[tuple[set, set]] = []
+    available_nodes = set(graph.nodes)
+    start_nodes = [n for n in graph.nodes if graph.in_degree(n) == 0]
+
+    while start_nodes or available_nodes:
+        if not start_nodes:
+            start_nodes = [n for n in available_nodes if all(p not in available_nodes for p in graph.predecessors(n))]
+        node = start_nodes.pop(0)
+        if node not in available_nodes:
+            continue
+
+        qubit_indices = set(graph.nodes[node]["qubit_indices"])
+        group = {node}
+        available_nodes.remove(node)
+
+        neighbors = list(graph.successors(node))
+        while neighbors:
+            neighbor = neighbors.pop(0)
+            if neighbor not in available_nodes:
+                continue
+
+            neighbor_qubit_indices = set(graph.nodes[neighbor]["qubit_indices"])
+            if len(qubit_indices) == 1:
+                qubit_indices.update(neighbor_qubit_indices)
+
+            if neighbor_qubit_indices.issubset(qubit_indices):
+                group.add(neighbor)
+                available_nodes.remove(neighbor)
+                neighbors.extend(s for s in graph.successors(neighbor) if s in available_nodes)
+                neighbors.extend(p for p in graph.predecessors(neighbor) if p in available_nodes)
+            else:
+                succ = list(graph.successors(neighbor))
+                for s in succ:
+                    if s in available_nodes and s in neighbors:
+                        neighbors.remove(s)
+
+        groups.append((group, qubit_indices))
+    return sorted(groups, key=lambda x: _first_two_qubit_gate(graph, x[0]))
+
+
 def _first_two_qubit_gate(graph: nx.DiGraph, group: set[int]) -> int:
     """Return the first statement index pointing to a two qubit gate."""
-    return min(i for i in group if len(graph.nodes[i]["qubit_indices"]) == 2)
+    x = [i for i in group if len(graph.nodes[i]["qubit_indices"]) == 2]
+    return min(x) if x else min(group)
 
 
 def normalize_gate_indices(gate: Gate) -> Gate:
@@ -135,7 +178,7 @@ def normalize_gate_indices(gate: Gate) -> Gate:
 
 def _merge_gate_group(ir: IR, group: set[int], qubit_indices: set[int]) -> TwoQubitGate:
     builder = CircuitBuilder(len(qubit_indices))
-    for index in group:
+    for index in sorted(group):
         statement = ir.statements[index]
         if isinstance(statement, Gate):
             statement = normalize_gate_indices(statement)
