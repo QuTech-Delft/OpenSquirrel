@@ -76,45 +76,6 @@ def build_graph(ir: IR) -> nx.DiGraph:
     return graph
 
 
-def _old_group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
-    groups: list[tuple[set, set]] = []
-    available_nodes = set(graph.nodes)
-    # start_nodes = [n for n in graph.nodes if graph.in_degree(n) == 0]
-
-    if len(available_nodes) == 1:
-        return [(available_nodes, set(graph.nodes[0]["qubit_indices"]))]
-
-    for edge in graph.edges():
-        source_node = graph.nodes[edge[0]]
-        target_node = graph.nodes[edge[1]]
-
-        edge_nodes = {edge[0], edge[1]}
-        active_nodes = edge_nodes & available_nodes
-        qubit_indices = set(source_node["qubit_indices"]) | set(target_node["qubit_indices"])
-
-        matched_group = False
-        for group, indices in groups:
-            if not (group & edge_nodes):
-                continue
-
-            if len(indices) == 1:
-                indices.update(qubit_indices)
-
-            if qubit_indices.issubset(indices):
-                group.update(active_nodes)
-                available_nodes.difference_update(active_nodes)
-
-            matched_group = True
-            break
-
-        if not matched_group:
-            groups.append((active_nodes, set(qubit_indices)))
-            available_nodes.difference_update(active_nodes)
-
-    # Sort the groups, such that the order of the two qubit gates is preserved.
-    return sorted(groups, key=lambda x: _first_two_qubit_gate(graph, x[0]))
-
-
 def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
     groups: list[tuple[set, set]] = []
     available_nodes = set(graph.nodes)
