@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import chain
 from typing import TYPE_CHECKING
 
 import networkx as nx
@@ -76,14 +77,20 @@ def build_graph(ir: IR) -> nx.DiGraph:
     return graph
 
 
+def get_starting_nodes(graph: nx.DiGraph, available_nodes: set[int] | None = None) -> list[int]:
+    if available_nodes is None:
+        available_nodes = set(graph.nodes)
+    return [n for n, degree in graph.subgraph(available_nodes).in_degree() if degree == 0]
+
+
 def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
     groups: list[tuple[set, set]] = []
     available_nodes = set(graph.nodes)
-    start_nodes = [n for n in graph.nodes if graph.in_degree(n) == 0]
+    start_nodes = get_starting_nodes(graph)
 
     while start_nodes or available_nodes:
         if not start_nodes:
-            start_nodes = [n for n in available_nodes if all(p not in available_nodes for p in graph.predecessors(n))]
+            start_nodes = get_starting_nodes(graph, available_nodes)
         node = start_nodes.pop(0)
         if node not in available_nodes:
             continue
@@ -91,6 +98,7 @@ def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
         qubit_indices = set(graph.nodes[node]["qubit_indices"])
         group = {node}
         available_nodes.remove(node)
+        bad_indices = set()
 
         neighbors = list(graph.successors(node))
         while neighbors:
@@ -102,16 +110,14 @@ def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
             if len(qubit_indices) == 1:
                 qubit_indices.update(neighbor_qubit_indices)
 
-            if neighbor_qubit_indices.issubset(qubit_indices):
+            if neighbor_qubit_indices <= qubit_indices and not bad_indices & neighbor_qubit_indices:
                 group.add(neighbor)
                 available_nodes.remove(neighbor)
-                neighbors.extend(s for s in graph.successors(neighbor) if s in available_nodes)
-                neighbors.extend(p for p in graph.predecessors(neighbor) if p in available_nodes)
+                neighbors.extend(
+                    n for n in chain(graph.successors(neighbor), graph.predecessors(neighbor)) if n in available_nodes
+                )
             else:
-                succ = list(graph.successors(neighbor))
-                for s in succ:
-                    if s in available_nodes and s in neighbors:
-                        neighbors.remove(s)
+                bad_indices |= neighbor_qubit_indices & qubit_indices
 
         groups.append((group, qubit_indices))
     return sorted(groups, key=lambda x: _first_two_qubit_gate(graph, x[0]))
