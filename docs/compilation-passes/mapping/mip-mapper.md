@@ -1,6 +1,6 @@
 The MIP mapper (`MIPMapper`) pass tries to place the circuit on the quantum backend such
 that qubits that need to interact end up close to each other. 
-It is based on the  `place_mip` pass of
+It is based on the `place_mip` pass of
 [OpenQL](https://github.com/QuTech-Delft/OpenQL/blob/develop/src/ql/pass/map/qubits/place_mip/place_mip.cc).
 
 Unlike the [identity](identity-mapper.md), [random](random-mapper.md) and 
@@ -15,9 +15,9 @@ For every pair of virtual qubits $i$ and $j$ the pass counts how many two-qubit 
 act on that pair, giving an interaction count $C_{ij}$.
 Single-qubit gates and non-unitary instructions are ignored, as they do not constrain 
 the qubit placement.
-It is also computes the distance $d_{kl}$ between every pair of physical qubits $k$ and 
-$l$, i.e. the length of the shortest path between them in the connectivity graph, using 
-Floyd-Warshall. 
+It also computes the distance $d_{kl}$ between every pair of physical qubits $k$ and 
+$l$, _i.e._ the length of the shortest path between them in the connectivity graph, 
+using Floyd-Warshall. 
 Neighbouring qubits are at distance 1.
 
 Writing $\pi(i)$ for the physical qubit that virtual qubit $i$ is placed on, the solver 
@@ -76,10 +76,11 @@ circuit.map(mapper=MIPMapper(connectivity=connectivity))
     CNOT q[1], q[2]
     ```
 
-The connectivity above is a line, so physical qubit `1` is the only one with two 
-neighbours. 
-Virtual qubit `0` is the one interacting with both others, so it is placed there, 
-giving the mapping `{0: 1, 1: 0, 2: 2}` and leaving both CNOTs on neighbouring qubits.
+The connectivity above represents a linear array, so physical qubit `1` is the only one 
+with two neighbours. 
+Virtual qubit `0` interacts with both virtual qubits `1` and `2`, so it is placed on the 
+position of physical qubit `1`, giving the mapping `{0: 1, 1: 0, 2: 2}` and leaving both 
+CNOTs on neighbouring qubits.
 
 When the circuit can already be executed on the given connectivity there is nothing to 
 gain, and the tiebreaker leaves every qubit in place:
