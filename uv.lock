@@ -3869,7 +3869,7 @@ dev = [
     { name = "ruff", specifier = "==0.15.11" },
     { name = "sympy", specifier = ">=1.14.0,<2" },
     { name = "tox", specifier = ">=4.30.2,<5" },
-    { name = "ty", specifier = ">=0.0.10,<=0.0.32" },
+    { name = "ty", specifier = "==0.0.32" },
 ]
 docs = [
     { name = "mike", specifier = ">=2.1.3" },
