@@ -19,5 +19,6 @@ The following mapping passes are available in Opensquirrel:
 
 - [Hardcoded Mapper](hardcoded-mapper.md) (`HardcodedMapper`)
 - [Identity Mapper](identity-mapper.md) (`IdentitiyMapper`)
+- [MIP Mapper](mip-mapper.md) (`MIPMapper`)
 - [Random Mapper](random-mapper.md) (`RandomMapper`)
 - [QGym Mapper](qgym-mapper.md) (`QGymMapper`)
