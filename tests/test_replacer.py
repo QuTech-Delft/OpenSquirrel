@@ -96,6 +96,22 @@ class TestReplacer:
 
         assert expected_circuit == circuit
 
+    def test_replace_leaves_other_gates_untouched(self) -> None:
+        builder1 = CircuitBuilder(3)
+        builder1.H(0)
+        builder1.CNOT(0, 1)
+        circuit = builder1.to_circuit()
+
+        replace(circuit.ir, H, lambda q: [Y90(q), X(q)])
+
+        builder2 = CircuitBuilder(3)
+        builder2.Y90(0)
+        builder2.X(0)
+        builder2.CNOT(0, 1)
+        expected_circuit = builder2.to_circuit()
+
+        assert expected_circuit == circuit
+
     def test_replace_h_by_u(self) -> None:
         builder1 = CircuitBuilder(3)
         builder1.H(0)

@@ -43,6 +43,7 @@ dev = [
     "sympy>=1.14.0,<2",
     "tox>=4.30.2,<5",
     "ty>=0.0.10",
+    "typing_extensions>=4.0.0",
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
@@ -96,7 +97,11 @@ exclude_lines = [
     "raise NotImplementedError",
     "if __name__ == .__main__.:"
 ]
-exclude_also = ["if TYPE_CHECKING:"]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    '@(abc\.)?abstractmethod',
+    "@overload",
+]
 
 [tool.ruff]
 line-length = 120
