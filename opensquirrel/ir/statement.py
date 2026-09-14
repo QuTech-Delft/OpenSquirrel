@@ -30,6 +30,9 @@ class AsmDeclaration(Statement):
         visitor.visit_statement(self)
         return visitor.visit_asm_declaration(self)
 
+    def __repr__(self) -> str:
+        return f"AsmDeclaration(backend_name={self.backend_name})"
+
 
 class Instruction(Statement, ABC):
     def __init__(self, name: str) -> None:

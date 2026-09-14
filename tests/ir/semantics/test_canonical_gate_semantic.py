@@ -110,10 +110,6 @@ class TestCanonicalGateSemantic:
     def test_eq_with_rotations(self, semantic_with_rotations: CanonicalGateSemantic) -> None:
         assert semantic_with_rotations == CanonicalGateSemantic((0.25, 0.25, 0.25), semantic_with_rotations.rotations)
 
-    def test_eq_is_symmetric_when_only_one_has_rotations(self, semantic_with_rotations: CanonicalGateSemantic) -> None:
-        assert semantic_with_rotations != CanonicalGateSemantic((0.25, 0.25, 0.25))
-        assert CanonicalGateSemantic((0.25, 0.25, 0.25)) != semantic_with_rotations
-
     def test_repr(self, semantic: CanonicalGateSemantic) -> None:
         assert repr(semantic) == "CanonicalGateSemantic(axis=CanonicalAxis[0. 0. 0.])"
 

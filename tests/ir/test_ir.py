@@ -5,6 +5,7 @@ import pytest
 
 from opensquirrel.ir import (
     IR,
+    AsmDeclaration,
     Barrier,
     Bit,
     Init,
@@ -13,6 +14,7 @@ from opensquirrel.ir import (
     Qubit,
 )
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
@@ -114,9 +116,14 @@ class TestIR:
         ir.add_statement(Init(0))
         ir.add_statement(Barrier(0))
         ir.add_statement(Measure(0, 0))
+        ir.add_statement(SingleQubitGate(0, BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)))
+        ir.add_statement(AsmDeclaration("TestBackend", "some backend code"))
         assert repr(ir) == (
             "IR: [Init(qubit=Qubit[0]), Barrier(qubit=Qubit[0]), "
-            "Measure(qubit=Qubit[0], bit=Bit[0], axis=Axis[0. 0. 1.])]"
+            "Measure(qubit=Qubit[0], bit=Bit[0], axis=Axis[0. 0. 1.]), "
+            "SingleQubitGate(qubit=Qubit[0], "
+            "gate_semantic=BlochSphereRotation(axis=[1. 0. 0.], angle=3.14159, phase=1.5708)), "
+            "AsmDeclaration(backend_name=TestBackend)]"
         )
 
 
