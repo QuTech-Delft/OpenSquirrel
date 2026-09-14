@@ -123,7 +123,7 @@ class TestIR:
             "Measure(qubit=Qubit[0], bit=Bit[0], axis=Axis[0. 0. 1.]), "
             "SingleQubitGate(qubit=Qubit[0], "
             "gate_semantic=BlochSphereRotation(axis=[1. 0. 0.], angle=3.14159, phase=1.5708)), "
-            "AsmDeclaration(backend_name=TestBackend)]"
+            "AsmDeclaration(backend_name=TestBackend, backend_code_length=17)]"
         )
 
 

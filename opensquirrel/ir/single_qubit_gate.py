@@ -110,5 +110,4 @@ class SingleQubitGate(Gate):
         return SingleQubitGate(self.qubit, self.bsr * other.bsr)
 
     def __repr__(self) -> str:
-        gate_semantic = self._bsr if self._bsr is not None else self._matrix
-        return f"SingleQubitGate(qubit={self.qubit}, gate_semantic={gate_semantic})"
+        return f"SingleQubitGate(qubit={self.qubit}, gate_semantic={self.bsr})"

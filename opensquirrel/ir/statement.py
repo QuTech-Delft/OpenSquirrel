@@ -31,7 +31,7 @@ class AsmDeclaration(Statement):
         return visitor.visit_asm_declaration(self)
 
     def __repr__(self) -> str:
-        return f"AsmDeclaration(backend_name={self.backend_name})"
+        return f"AsmDeclaration(backend_name={self.backend_name}, backend_code_length={len(str(self.backend_code))})"
 
 
 class Instruction(Statement, ABC):
