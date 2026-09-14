@@ -2543,6 +2543,8 @@
       
         
       
+        
+      
     
     
     
@@ -2627,6 +2629,8 @@
       
         
       
+        
+      
     
     
     
@@ -2685,6 +2689,34 @@
     
   
     single_qubit_gates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ir/default_gates/three_qubit_gates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gates
   
 
     
@@ -3091,6 +3123,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/ir/three_qubit_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/ir/two_qubit_gate.html" class="md-nav__link">
         
   
@@ -3342,6 +3402,8 @@
   
     
     
+      
+        
       
         
       
@@ -3703,6 +3765,34 @@
     
   
     swap2cz_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/three_qubit_gate_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gate_decomposer
   
 
     
@@ -5251,14 +5341,16 @@ qubits can be scheduled.</li>
 <div class="admonition warning">
 <p class="admonition-title">Unsupported gates</p>
 <p>cQASM version 1.0 does not support the <a href="https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/single_qubit/sq_Rn.html">Rn gate</a>
-and will raise an error (<code>UnSupportedGateError</code>) if this gate is part of the circuit that is to be exported.
+or the Fredkin gate (<code>CSWAP</code>),
+and will raise an error (<code>UnSupportedGateError</code>) if either of these gates is part of the circuit that is to be
+exported.
 A single-qubit <a href="../decomposition/index.html">decomposition pass</a> can be used to decompose the circuit to gates that
 the cQASM v1 exporter supports.</p>
 </div>
-<p>The four examples below show how circuits written in <a href="https://qutech-delft.github.io/cQASM-spec/">cQASM</a> are exported to
+<p>The five examples below show how circuits written in <a href="https://qutech-delft.github.io/cQASM-spec/">cQASM</a> are exported to
 cQASM v1.</p>
 <div class="admonition example">
-<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><input id="__tabbed_1_4" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Simple circuit</label><label for="__tabbed_1_2">Registers</label><label for="__tabbed_1_3"><code>init</code> and <code>reset</code></label><label for="__tabbed_1_4">SGMQ notation and <em>uniform</em> barriers</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><input id="__tabbed_1_4" name="__tabbed_1" type="radio"><input id="__tabbed_1_5" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Simple circuit</label><label for="__tabbed_1_2">Registers</label><label for="__tabbed_1_3"><code>init</code> and <code>reset</code></label><label for="__tabbed_1_4">SGMQ notation and <em>uniform</em> barriers</label><label for="__tabbed_1_5">Toffoli gate</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
@@ -5484,6 +5576,44 @@ They form a uniform barrier across all the specified qubits, instead of a single
 respective qubits.
 Also, in contrast to other instructions where the SGMQ notation has been unpacked, the SGMQ notation for the
 statement <code>barrier q[2, 3]</code> has been preserved.</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel</span><span class="w"> </span><span class="kn">import</span> <span class="n">CircuitBuilder</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opensquirrel.passes.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">CqasmV1Exporter</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">builder</span> <span class="o">=</span> <span class="n">CircuitBuilder</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="n">builder</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="n">builder</span><span class="o">.</span><span class="n">CCX</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="n">builder</span><span class="o">.</span><span class="n">measure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
+<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="n">exported_circuit</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">to_circuit</span><span class="p">()</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">exporter</span><span class="o">=</span><span class="n">CqasmV1Exporter</span><span class="p">())</span>
+<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">exported_circuit</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>version 1.0
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>qubits 3
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>h q[0]
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>h q[1]
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>toffoli q[0], q[1], q[2]
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>measure_z q[0]
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>measure_z q[1]
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>measure_z q[2]
+</code></pre></div>
+<p>The Toffoli gate (<code>CCX</code>, or its alias <code>CCNOT</code>) is translated to the
+<a href="https://libqasm.readthedocs.io/en/latest/cq1-instructions.html"><code>toffoli</code></a> instruction,
+which takes the two control qubits followed by the target qubit.</p>
+<p>Note that this example uses the <a href="../../circuit-builder/index.html">circuit builder</a> rather than
+<code>Circuit.from_string</code>, since the three-qubit gates are not yet part of the cQASM language specification.</p>
+<p>The Fredkin gate (<code>CSWAP</code>) has no equivalent in cQASM version 1.0 and cannot be exported.
+A <a href="../decomposition/index.html">decomposition pass</a>, <em>e.g.</em>, the
+<a href="../decomposition/predefined-decomposers.html">three-qubit gate decomposer</a> (<code>ThreeQubitGateDecomposer</code>),
+can be used to decompose it into gates that the cQASM v1 exporter supports.</p>
 </div>
 </div>
 </div>

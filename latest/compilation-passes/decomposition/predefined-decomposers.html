@@ -1508,6 +1508,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#three-qubit-gate-decomposer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three-qubit gate decomposer
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2616,6 +2627,8 @@
       
         
       
+        
+      
     
     
     
@@ -2700,6 +2713,8 @@
       
         
       
+        
+      
     
     
     
@@ -2758,6 +2773,34 @@
     
   
     single_qubit_gates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ir/default_gates/three_qubit_gates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gates
   
 
     
@@ -3164,6 +3207,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/ir/three_qubit_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/ir/two_qubit_gate.html" class="md-nav__link">
         
   
@@ -3415,6 +3486,8 @@
   
     
     
+      
+        
       
         
       
@@ -3776,6 +3849,34 @@
     
   
     swap2cz_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/passes/decomposer/three_qubit_gate_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gate_decomposer
   
 
     
@@ -5315,6 +5416,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#three-qubit-gate-decomposer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Three-qubit gate decomposer
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -5339,11 +5451,12 @@
 
 <p>We refer to a decomposition as being <em>predefined</em> when each instance of a particular gate in the circuit,
 <em>e.g.</em>, the CNOT gate, is replaced with a fixed gate or list of gates.</p>
-<p>Three predefined decomposers are available in OpenSquirrel:</p>
+<p>Four predefined decomposers are available in OpenSquirrel:</p>
 <ul>
 <li>CNOT to CZ decomposer</li>
 <li>SWAP to CNOT decomposer</li>
 <li>SWAP to CZ decomposer</li>
+<li>Three-qubit gate decomposer</li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">SWAP decomposition</p>
@@ -5374,6 +5487,26 @@ rotations and 3 CZ gates.
 The decomposition is illustrated in the image below.</p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/swap2cz.png#only-light" data-desc-position="bottom"><img alt="image" src="../../_static/swap2cz.png#only-light"></a>
 <a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../_static/swap2cz_dm.png#only-dark" data-desc-position="bottom"><img alt="image" src="../../_static/swap2cz_dm.png#only-dark"></a></p>
+<h2 id="three-qubit-gate-decomposer">Three-qubit gate decomposer</h2>
+<p>The three-qubit gate decomposer (<code>ThreeQubitGateDecomposer</code>) implements the predefined decomposition of the
+Toffoli gate (<code>CCX</code>) and the Fredkin gate (<code>CSWAP</code>) into CZ gates and single-qubit gates.</p>
+<p>The Toffoli gate is decomposed into 6 CZ gates and single-qubit gates, following the circuit described in
+<a href="https://arxiv.org/abs/0803.2316">Shende and Markov (2008)</a>,
+in which the CNOT gates are further decomposed according to the CNOT to CZ identity described above.
+Six is the minimum number of CZ gates required to implement the Toffoli gate,
+and this remains the case even when ancilla qubits are available.</p>
+<p>The Fredkin gate is decomposed as a Toffoli gate conjugated by two CNOT gates, resulting in 8 CZ gates in total.
+Note that, in contrast to the Toffoli gate, it is not known whether this is the minimum number of CZ gates required.</p>
+<div class="admonition note">
+<p class="admonition-title">Global phase</p>
+<p>In contrast to the <a href="can2cz-decomposer.html">canonical to CZ decomposer</a> (<code>Can2CZDecomposer</code>),
+the decomposition of the three-qubit gates preserves the global phase of the original gate.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is advised to run the <a href="../merging/single-qubit-gates-merger.html">single-qubit gates merger</a>
+(<code>SingleQubitGatesMerger</code>) after this decomposition pass.</p>
+</div>
 
 
 

@@ -2542,6 +2542,8 @@
       
         
       
+        
+      
     
     
     
@@ -2626,6 +2628,8 @@
       
         
       
+        
+      
     
     
     
@@ -2684,6 +2688,34 @@
     
   
     single_qubit_gates
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ir/default_gates/three_qubit_gates.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gates
   
 
     
@@ -3090,6 +3122,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../ir/three_qubit_gate.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../ir/two_qubit_gate.html" class="md-nav__link">
         
   
@@ -3341,6 +3401,8 @@
   
     
     
+      
+        
       
         
       
@@ -3702,6 +3764,34 @@
     
   
     swap2cz_decomposer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../passes/decomposer/three_qubit_gate_decomposer.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    three_qubit_gate_decomposer
   
 
     
@@ -5584,11 +5674,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-250">250</a></span>
-<span class="normal"><a href="#__codelineno-0-251">251</a></span>
-<span class="normal"><a href="#__codelineno-0-252">252</a></span>
-<span class="normal"><a href="#__codelineno-0-253">253</a></span>
-<span class="normal"><a href="#__codelineno-0-254">254</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-254">254</a></span>
 <span class="normal"><a href="#__codelineno-0-255">255</a></span>
 <span class="normal"><a href="#__codelineno-0-256">256</a></span>
 <span class="normal"><a href="#__codelineno-0-257">257</a></span>
@@ -5601,24 +5687,28 @@
 <span class="normal"><a href="#__codelineno-0-264">264</a></span>
 <span class="normal"><a href="#__codelineno-0-265">265</a></span>
 <span class="normal"><a href="#__codelineno-0-266">266</a></span>
-<span class="normal"><a href="#__codelineno-0-267">267</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-250" name="__codelineno-0-250"></a><span class="k">def</span><span class="w"> </span><span class="nf">can1</span><span class="p">(</span><span class="n">axis</span><span class="p">:</span> <span class="n">AxisLike</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
-<a id="__codelineno-0-251" name="__codelineno-0-251"></a><span class="w">    </span><span class="sd">"""Generates the unitary matrix for a canonical single-qubit gate.</span>
-<a id="__codelineno-0-252" name="__codelineno-0-252"></a>
-<a id="__codelineno-0-253" name="__codelineno-0-253"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="sd">        axis (AxisLike): The rotation axis.</span>
-<a id="__codelineno-0-255" name="__codelineno-0-255"></a><span class="sd">        angle (float): The rotation angle in radians.</span>
-<a id="__codelineno-0-256" name="__codelineno-0-256"></a><span class="sd">        phase (float): The phase in radians.</span>
-<a id="__codelineno-0-257" name="__codelineno-0-257"></a>
-<a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="sd">        The unitary $2\\times 2$ matrix.</span>
-<a id="__codelineno-0-260" name="__codelineno-0-260"></a>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a><span class="sd">    """</span>
-<a id="__codelineno-0-262" name="__codelineno-0-262"></a>    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">Axis</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
-<a id="__codelineno-0-263" name="__codelineno-0-263"></a>
-<a id="__codelineno-0-264" name="__codelineno-0-264"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">cmath</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
-<a id="__codelineno-0-265" name="__codelineno-0-265"></a>        <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">nx</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">ny</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">nz</span> <span class="o">*</span> <span class="n">Z</span><span class="p">)</span>
-<a id="__codelineno-0-266" name="__codelineno-0-266"></a>    <span class="p">)</span>
-<a id="__codelineno-0-267" name="__codelineno-0-267"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-267">267</a></span>
+<span class="normal"><a href="#__codelineno-0-268">268</a></span>
+<span class="normal"><a href="#__codelineno-0-269">269</a></span>
+<span class="normal"><a href="#__codelineno-0-270">270</a></span>
+<span class="normal"><a href="#__codelineno-0-271">271</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="k">def</span><span class="w"> </span><span class="nf">can1</span><span class="p">(</span><span class="n">axis</span><span class="p">:</span> <span class="n">AxisLike</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">phase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<a id="__codelineno-0-255" name="__codelineno-0-255"></a><span class="w">    </span><span class="sd">"""Generates the unitary matrix for a canonical single-qubit gate.</span>
+<a id="__codelineno-0-256" name="__codelineno-0-256"></a>
+<a id="__codelineno-0-257" name="__codelineno-0-257"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="sd">        axis (AxisLike): The rotation axis.</span>
+<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="sd">        angle (float): The rotation angle in radians.</span>
+<a id="__codelineno-0-260" name="__codelineno-0-260"></a><span class="sd">        phase (float): The phase in radians.</span>
+<a id="__codelineno-0-261" name="__codelineno-0-261"></a>
+<a id="__codelineno-0-262" name="__codelineno-0-262"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-263" name="__codelineno-0-263"></a><span class="sd">        The unitary $2\\times 2$ matrix.</span>
+<a id="__codelineno-0-264" name="__codelineno-0-264"></a>
+<a id="__codelineno-0-265" name="__codelineno-0-265"></a><span class="sd">    """</span>
+<a id="__codelineno-0-266" name="__codelineno-0-266"></a>    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">Axis</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+<a id="__codelineno-0-267" name="__codelineno-0-267"></a>
+<a id="__codelineno-0-268" name="__codelineno-0-268"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">cmath</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span>
+<a id="__codelineno-0-269" name="__codelineno-0-269"></a>        <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">nx</span> <span class="o">*</span> <span class="n">X</span> <span class="o">+</span> <span class="n">ny</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">+</span> <span class="n">nz</span> <span class="o">*</span> <span class="n">Z</span><span class="p">)</span>
+<a id="__codelineno-0-270" name="__codelineno-0-270"></a>    <span class="p">)</span>
+<a id="__codelineno-0-271" name="__codelineno-0-271"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -5697,11 +5787,7 @@
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-270">270</a></span>
-<span class="normal"><a href="#__codelineno-0-271">271</a></span>
-<span class="normal"><a href="#__codelineno-0-272">272</a></span>
-<span class="normal"><a href="#__codelineno-0-273">273</a></span>
-<span class="normal"><a href="#__codelineno-0-274">274</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-274">274</a></span>
 <span class="normal"><a href="#__codelineno-0-275">275</a></span>
 <span class="normal"><a href="#__codelineno-0-276">276</a></span>
 <span class="normal"><a href="#__codelineno-0-277">277</a></span>
@@ -5737,47 +5823,51 @@
 <span class="normal"><a href="#__codelineno-0-307">307</a></span>
 <span class="normal"><a href="#__codelineno-0-308">308</a></span>
 <span class="normal"><a href="#__codelineno-0-309">309</a></span>
-<span class="normal"><a href="#__codelineno-0-310">310</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-270" name="__codelineno-0-270"></a><span class="k">def</span><span class="w"> </span><span class="nf">can2</span><span class="p">(</span><span class="n">canonical_axis</span><span class="p">:</span> <span class="n">AxisLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
-<a id="__codelineno-0-271" name="__codelineno-0-271"></a><span class="w">    </span><span class="sd">"""Generates the unitary matrix for a canonical two-qubit gate.</span>
-<a id="__codelineno-0-272" name="__codelineno-0-272"></a>
-<a id="__codelineno-0-273" name="__codelineno-0-273"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="sd">        canonical_axis (AxisLike): The canonical axis.</span>
-<a id="__codelineno-0-275" name="__codelineno-0-275"></a>
-<a id="__codelineno-0-276" name="__codelineno-0-276"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="sd">        The unitary $4\\times 4$ matrix.</span>
-<a id="__codelineno-0-278" name="__codelineno-0-278"></a>
-<a id="__codelineno-0-279" name="__codelineno-0-279"></a><span class="sd">    """</span>
-<a id="__codelineno-0-280" name="__codelineno-0-280"></a>    <span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">tz</span> <span class="o">=</span> <span class="n">CanonicalAxis</span><span class="p">(</span><span class="n">canonical_axis</span><span class="p">)</span>
-<a id="__codelineno-0-281" name="__codelineno-0-281"></a>
-<a id="__codelineno-0-282" name="__codelineno-0-282"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-<a id="__codelineno-0-283" name="__codelineno-0-283"></a>        <span class="p">[</span>
-<a id="__codelineno-0-284" name="__codelineno-0-284"></a>            <span class="p">[</span>
-<a id="__codelineno-0-285" name="__codelineno-0-285"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
-<a id="__codelineno-0-286" name="__codelineno-0-286"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a>            <span class="p">],</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a>            <span class="p">[</span>
+<span class="normal"><a href="#__codelineno-0-310">310</a></span>
+<span class="normal"><a href="#__codelineno-0-311">311</a></span>
+<span class="normal"><a href="#__codelineno-0-312">312</a></span>
+<span class="normal"><a href="#__codelineno-0-313">313</a></span>
+<span class="normal"><a href="#__codelineno-0-314">314</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-274" name="__codelineno-0-274"></a><span class="k">def</span><span class="w"> </span><span class="nf">can2</span><span class="p">(</span><span class="n">canonical_axis</span><span class="p">:</span> <span class="n">AxisLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<a id="__codelineno-0-275" name="__codelineno-0-275"></a><span class="w">    </span><span class="sd">"""Generates the unitary matrix for a canonical two-qubit gate.</span>
+<a id="__codelineno-0-276" name="__codelineno-0-276"></a>
+<a id="__codelineno-0-277" name="__codelineno-0-277"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-278" name="__codelineno-0-278"></a><span class="sd">        canonical_axis (AxisLike): The canonical axis.</span>
+<a id="__codelineno-0-279" name="__codelineno-0-279"></a>
+<a id="__codelineno-0-280" name="__codelineno-0-280"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-281" name="__codelineno-0-281"></a><span class="sd">        The unitary $4\\times 4$ matrix.</span>
+<a id="__codelineno-0-282" name="__codelineno-0-282"></a>
+<a id="__codelineno-0-283" name="__codelineno-0-283"></a><span class="sd">    """</span>
+<a id="__codelineno-0-284" name="__codelineno-0-284"></a>    <span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">tz</span> <span class="o">=</span> <span class="n">CanonicalAxis</span><span class="p">(</span><span class="n">canonical_axis</span><span class="p">)</span>
+<a id="__codelineno-0-285" name="__codelineno-0-285"></a>
+<a id="__codelineno-0-286" name="__codelineno-0-286"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+<a id="__codelineno-0-287" name="__codelineno-0-287"></a>        <span class="p">[</span>
+<a id="__codelineno-0-288" name="__codelineno-0-288"></a>            <span class="p">[</span>
+<a id="__codelineno-0-289" name="__codelineno-0-289"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-290" name="__codelineno-0-290"></a>                <span class="mi">0</span><span class="p">,</span>
 <a id="__codelineno-0-291" name="__codelineno-0-291"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a>            <span class="p">],</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a>            <span class="p">[</span>
-<a id="__codelineno-0-297" name="__codelineno-0-297"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-298" name="__codelineno-0-298"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
-<a id="__codelineno-0-299" name="__codelineno-0-299"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
-<a id="__codelineno-0-300" name="__codelineno-0-300"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-301" name="__codelineno-0-301"></a>            <span class="p">],</span>
-<a id="__codelineno-0-302" name="__codelineno-0-302"></a>            <span class="p">[</span>
-<a id="__codelineno-0-303" name="__codelineno-0-303"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-292" name="__codelineno-0-292"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-293" name="__codelineno-0-293"></a>            <span class="p">],</span>
+<a id="__codelineno-0-294" name="__codelineno-0-294"></a>            <span class="p">[</span>
+<a id="__codelineno-0-295" name="__codelineno-0-295"></a>                <span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-296" name="__codelineno-0-296"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-297" name="__codelineno-0-297"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-298" name="__codelineno-0-298"></a>                <span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-299" name="__codelineno-0-299"></a>            <span class="p">],</span>
+<a id="__codelineno-0-300" name="__codelineno-0-300"></a>            <span class="p">[</span>
+<a id="__codelineno-0-301" name="__codelineno-0-301"></a>                <span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-302" name="__codelineno-0-302"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-303" name="__codelineno-0-303"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">+</span> <span class="n">ty</span><span class="p">)),</span>
 <a id="__codelineno-0-304" name="__codelineno-0-304"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-305" name="__codelineno-0-305"></a>                <span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-0-306" name="__codelineno-0-306"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
-<a id="__codelineno-0-307" name="__codelineno-0-307"></a>            <span class="p">],</span>
-<a id="__codelineno-0-308" name="__codelineno-0-308"></a>        <span class="p">],</span>
-<a id="__codelineno-0-309" name="__codelineno-0-309"></a>        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">,</span>
-<a id="__codelineno-0-310" name="__codelineno-0-310"></a>    <span class="p">)</span>
+<a id="__codelineno-0-305" name="__codelineno-0-305"></a>            <span class="p">],</span>
+<a id="__codelineno-0-306" name="__codelineno-0-306"></a>            <span class="p">[</span>
+<a id="__codelineno-0-307" name="__codelineno-0-307"></a>                <span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-308" name="__codelineno-0-308"></a>                <span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-309" name="__codelineno-0-309"></a>                <span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-0-310" name="__codelineno-0-310"></a>                <span class="n">cmath</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tz</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">((</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">tx</span> <span class="o">-</span> <span class="n">ty</span><span class="p">)),</span>
+<a id="__codelineno-0-311" name="__codelineno-0-311"></a>            <span class="p">],</span>
+<a id="__codelineno-0-312" name="__codelineno-0-312"></a>        <span class="p">],</span>
+<a id="__codelineno-0-313" name="__codelineno-0-313"></a>        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">,</span>
+<a id="__codelineno-0-314" name="__codelineno-0-314"></a>    <span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -5811,11 +5901,7 @@ https://github.com/gecrooks/quantumflow/blob/master/quantumflow/decompositions.p
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-399">399</a></span>
-<span class="normal"><a href="#__codelineno-0-400">400</a></span>
-<span class="normal"><a href="#__codelineno-0-401">401</a></span>
-<span class="normal"><a href="#__codelineno-0-402">402</a></span>
-<span class="normal"><a href="#__codelineno-0-403">403</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-403">403</a></span>
 <span class="normal"><a href="#__codelineno-0-404">404</a></span>
 <span class="normal"><a href="#__codelineno-0-405">405</a></span>
 <span class="normal"><a href="#__codelineno-0-406">406</a></span>
@@ -5855,51 +5941,55 @@ https://github.com/gecrooks/quantumflow/blob/master/quantumflow/decompositions.p
 <span class="normal"><a href="#__codelineno-0-440">440</a></span>
 <span class="normal"><a href="#__codelineno-0-441">441</a></span>
 <span class="normal"><a href="#__codelineno-0-442">442</a></span>
-<span class="normal"><a href="#__codelineno-0-443">443</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-399" name="__codelineno-0-399"></a><span class="k">def</span><span class="w"> </span><span class="nf">canonical_decomposition</span><span class="p">(</span>
-<a id="__codelineno-0-400" name="__codelineno-0-400"></a>    <span class="n">unitary</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
-<a id="__codelineno-0-401" name="__codelineno-0-401"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
-<a id="__codelineno-0-402" name="__codelineno-0-402"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
-<a id="__codelineno-0-403" name="__codelineno-0-403"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
-<a id="__codelineno-0-404" name="__codelineno-0-404"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
-<a id="__codelineno-0-405" name="__codelineno-0-405"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
-<a id="__codelineno-0-406" name="__codelineno-0-406"></a>    <span class="n">CanonicalAxis</span><span class="p">,</span>
-<a id="__codelineno-0-407" name="__codelineno-0-407"></a><span class="p">]:</span>
-<a id="__codelineno-0-408" name="__codelineno-0-408"></a><span class="w">    </span><span class="sd">"""</span>
-<a id="__codelineno-0-409" name="__codelineno-0-409"></a><span class="sd">    This implentation of the canonical decomposition is heavily based on:</span>
-<a id="__codelineno-0-410" name="__codelineno-0-410"></a><span class="sd">    https://github.com/gecrooks/quantumflow/blob/master/quantumflow/decompositions.py</span>
-<a id="__codelineno-0-411" name="__codelineno-0-411"></a><span class="sd">    """</span>
-<a id="__codelineno-0-412" name="__codelineno-0-412"></a>
-<a id="__codelineno-0-413" name="__codelineno-0-413"></a>    <span class="n">_</span><span class="p">,</span> <span class="n">u_su</span> <span class="o">=</span> <span class="n">global_phase_and_su4</span><span class="p">(</span><span class="n">unitary</span><span class="p">)</span>
-<a id="__codelineno-0-414" name="__codelineno-0-414"></a>
-<a id="__codelineno-0-415" name="__codelineno-0-415"></a>    <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
-<a id="__codelineno-0-416" name="__codelineno-0-416"></a>    <span class="n">m_dag</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
-<a id="__codelineno-0-417" name="__codelineno-0-417"></a>
-<a id="__codelineno-0-418" name="__codelineno-0-418"></a>    <span class="n">u_m</span> <span class="o">=</span> <span class="n">m_dag</span> <span class="o">@</span> <span class="n">u_su</span> <span class="o">@</span> <span class="n">m</span>
-<a id="__codelineno-0-419" name="__codelineno-0-419"></a>    <span class="n">q</span> <span class="o">=</span> <span class="n">u_m</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">u_m</span>
-<a id="__codelineno-0-420" name="__codelineno-0-420"></a>
-<a id="__codelineno-0-421" name="__codelineno-0-421"></a>    <span class="n">eig_vals</span><span class="p">,</span> <span class="n">eig_vecs</span> <span class="o">=</span> <span class="n">_orthogonal_diagonalization</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-<a id="__codelineno-0-422" name="__codelineno-0-422"></a>    <span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eig_vals</span><span class="p">)</span>
-<a id="__codelineno-0-423" name="__codelineno-0-423"></a>    <span class="n">det_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span>
-<a id="__codelineno-0-424" name="__codelineno-0-424"></a>    <span class="k">if</span> <span class="n">det_d</span><span class="o">.</span><span class="n">real</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-425" name="__codelineno-0-425"></a>        <span class="n">lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<a id="__codelineno-0-426" name="__codelineno-0-426"></a>
-<a id="__codelineno-0-427" name="__codelineno-0-427"></a>    <span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">tz</span><span class="p">),</span> <span class="n">signs</span><span class="p">,</span> <span class="n">perm</span> <span class="o">=</span> <span class="n">constrain_to_weyl_chamber</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span>
-<a id="__codelineno-0-428" name="__codelineno-0-428"></a>    <span class="n">lambdas</span> <span class="o">=</span> <span class="p">(</span><span class="n">signs</span> <span class="o">*</span> <span class="n">lambdas</span><span class="p">)[</span><span class="n">perm</span><span class="p">]</span>
-<a id="__codelineno-0-429" name="__codelineno-0-429"></a>    <span class="n">o2</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">signs</span><span class="p">)</span> <span class="o">@</span> <span class="n">eig_vecs</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="n">perm</span><span class="p">]</span>
-<a id="__codelineno-0-430" name="__codelineno-0-430"></a>    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span>
-<a id="__codelineno-0-431" name="__codelineno-0-431"></a>    <span class="n">o1</span> <span class="o">=</span> <span class="n">u_m</span> <span class="o">@</span> <span class="n">o2</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">d</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
-<a id="__codelineno-0-432" name="__codelineno-0-432"></a>
-<a id="__codelineno-0-433" name="__codelineno-0-433"></a>    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">o2</span><span class="p">)</span><span class="o">.</span><span class="n">real</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-0-434" name="__codelineno-0-434"></a>        <span class="n">o2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
-<a id="__codelineno-0-435" name="__codelineno-0-435"></a>        <span class="n">o1</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="normal"><a href="#__codelineno-0-443">443</a></span>
+<span class="normal"><a href="#__codelineno-0-444">444</a></span>
+<span class="normal"><a href="#__codelineno-0-445">445</a></span>
+<span class="normal"><a href="#__codelineno-0-446">446</a></span>
+<span class="normal"><a href="#__codelineno-0-447">447</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-403" name="__codelineno-0-403"></a><span class="k">def</span><span class="w"> </span><span class="nf">canonical_decomposition</span><span class="p">(</span>
+<a id="__codelineno-0-404" name="__codelineno-0-404"></a>    <span class="n">unitary</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
+<a id="__codelineno-0-405" name="__codelineno-0-405"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+<a id="__codelineno-0-406" name="__codelineno-0-406"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
+<a id="__codelineno-0-407" name="__codelineno-0-407"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
+<a id="__codelineno-0-408" name="__codelineno-0-408"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
+<a id="__codelineno-0-409" name="__codelineno-0-409"></a>    <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">],</span>
+<a id="__codelineno-0-410" name="__codelineno-0-410"></a>    <span class="n">CanonicalAxis</span><span class="p">,</span>
+<a id="__codelineno-0-411" name="__codelineno-0-411"></a><span class="p">]:</span>
+<a id="__codelineno-0-412" name="__codelineno-0-412"></a><span class="w">    </span><span class="sd">"""</span>
+<a id="__codelineno-0-413" name="__codelineno-0-413"></a><span class="sd">    This implentation of the canonical decomposition is heavily based on:</span>
+<a id="__codelineno-0-414" name="__codelineno-0-414"></a><span class="sd">    https://github.com/gecrooks/quantumflow/blob/master/quantumflow/decompositions.py</span>
+<a id="__codelineno-0-415" name="__codelineno-0-415"></a><span class="sd">    """</span>
+<a id="__codelineno-0-416" name="__codelineno-0-416"></a>
+<a id="__codelineno-0-417" name="__codelineno-0-417"></a>    <span class="n">_</span><span class="p">,</span> <span class="n">u_su</span> <span class="o">=</span> <span class="n">global_phase_and_su4</span><span class="p">(</span><span class="n">unitary</span><span class="p">)</span>
+<a id="__codelineno-0-418" name="__codelineno-0-418"></a>
+<a id="__codelineno-0-419" name="__codelineno-0-419"></a>    <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="n">j</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+<a id="__codelineno-0-420" name="__codelineno-0-420"></a>    <span class="n">m_dag</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+<a id="__codelineno-0-421" name="__codelineno-0-421"></a>
+<a id="__codelineno-0-422" name="__codelineno-0-422"></a>    <span class="n">u_m</span> <span class="o">=</span> <span class="n">m_dag</span> <span class="o">@</span> <span class="n">u_su</span> <span class="o">@</span> <span class="n">m</span>
+<a id="__codelineno-0-423" name="__codelineno-0-423"></a>    <span class="n">q</span> <span class="o">=</span> <span class="n">u_m</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">u_m</span>
+<a id="__codelineno-0-424" name="__codelineno-0-424"></a>
+<a id="__codelineno-0-425" name="__codelineno-0-425"></a>    <span class="n">eig_vals</span><span class="p">,</span> <span class="n">eig_vecs</span> <span class="o">=</span> <span class="n">_orthogonal_diagonalization</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<a id="__codelineno-0-426" name="__codelineno-0-426"></a>    <span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eig_vals</span><span class="p">)</span>
+<a id="__codelineno-0-427" name="__codelineno-0-427"></a>    <span class="n">det_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span>
+<a id="__codelineno-0-428" name="__codelineno-0-428"></a>    <span class="k">if</span> <span class="n">det_d</span><span class="o">.</span><span class="n">real</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-429" name="__codelineno-0-429"></a>        <span class="n">lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<a id="__codelineno-0-430" name="__codelineno-0-430"></a>
+<a id="__codelineno-0-431" name="__codelineno-0-431"></a>    <span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">tz</span><span class="p">),</span> <span class="n">signs</span><span class="p">,</span> <span class="n">perm</span> <span class="o">=</span> <span class="n">constrain_to_weyl_chamber</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span>
+<a id="__codelineno-0-432" name="__codelineno-0-432"></a>    <span class="n">lambdas</span> <span class="o">=</span> <span class="p">(</span><span class="n">signs</span> <span class="o">*</span> <span class="n">lambdas</span><span class="p">)[</span><span class="n">perm</span><span class="p">]</span>
+<a id="__codelineno-0-433" name="__codelineno-0-433"></a>    <span class="n">o2</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">signs</span><span class="p">)</span> <span class="o">@</span> <span class="n">eig_vecs</span><span class="o">.</span><span class="n">T</span><span class="p">)[</span><span class="n">perm</span><span class="p">]</span>
+<a id="__codelineno-0-434" name="__codelineno-0-434"></a>    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span>
+<a id="__codelineno-0-435" name="__codelineno-0-435"></a>    <span class="n">o1</span> <span class="o">=</span> <span class="n">u_m</span> <span class="o">@</span> <span class="n">o2</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">d</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span>
 <a id="__codelineno-0-436" name="__codelineno-0-436"></a>
-<a id="__codelineno-0-437" name="__codelineno-0-437"></a>    <span class="n">q1</span> <span class="o">=</span> <span class="n">m</span> <span class="o">@</span> <span class="n">o1</span> <span class="o">@</span> <span class="n">m_dag</span>
-<a id="__codelineno-0-438" name="__codelineno-0-438"></a>    <span class="n">q2</span> <span class="o">=</span> <span class="n">m</span> <span class="o">@</span> <span class="n">o2</span> <span class="o">@</span> <span class="n">m_dag</span>
-<a id="__codelineno-0-439" name="__codelineno-0-439"></a>
-<a id="__codelineno-0-440" name="__codelineno-0-440"></a>    <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span> <span class="o">=</span> <span class="n">nearest_kronecker_product</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span>
-<a id="__codelineno-0-441" name="__codelineno-0-441"></a>    <span class="n">k3</span><span class="p">,</span> <span class="n">k4</span> <span class="o">=</span> <span class="n">nearest_kronecker_product</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span>
-<a id="__codelineno-0-442" name="__codelineno-0-442"></a>
-<a id="__codelineno-0-443" name="__codelineno-0-443"></a>    <span class="k">return</span> <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">,</span> <span class="n">k3</span><span class="p">,</span> <span class="n">k4</span><span class="p">,</span> <span class="n">CanonicalAxis</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">tz</span><span class="p">)</span>
+<a id="__codelineno-0-437" name="__codelineno-0-437"></a>    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">o2</span><span class="p">)</span><span class="o">.</span><span class="n">real</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-0-438" name="__codelineno-0-438"></a>        <span class="n">o2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+<a id="__codelineno-0-439" name="__codelineno-0-439"></a>        <span class="n">o1</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+<a id="__codelineno-0-440" name="__codelineno-0-440"></a>
+<a id="__codelineno-0-441" name="__codelineno-0-441"></a>    <span class="n">q1</span> <span class="o">=</span> <span class="n">m</span> <span class="o">@</span> <span class="n">o1</span> <span class="o">@</span> <span class="n">m_dag</span>
+<a id="__codelineno-0-442" name="__codelineno-0-442"></a>    <span class="n">q2</span> <span class="o">=</span> <span class="n">m</span> <span class="o">@</span> <span class="n">o2</span> <span class="o">@</span> <span class="n">m_dag</span>
+<a id="__codelineno-0-443" name="__codelineno-0-443"></a>
+<a id="__codelineno-0-444" name="__codelineno-0-444"></a>    <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span> <span class="o">=</span> <span class="n">nearest_kronecker_product</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span>
+<a id="__codelineno-0-445" name="__codelineno-0-445"></a>    <span class="n">k3</span><span class="p">,</span> <span class="n">k4</span> <span class="o">=</span> <span class="n">nearest_kronecker_product</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span>
+<a id="__codelineno-0-446" name="__codelineno-0-446"></a>
+<a id="__codelineno-0-447" name="__codelineno-0-447"></a>    <span class="k">return</span> <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">,</span> <span class="n">k3</span><span class="p">,</span> <span class="n">k4</span><span class="p">,</span> <span class="n">CanonicalAxis</span><span class="p">(</span><span class="n">tx</span><span class="p">,</span> <span class="n">ty</span><span class="p">,</span> <span class="n">tz</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -6048,8 +6138,7 @@ expand_ket(0b0001, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1011
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
-<span class="normal"><a href="#__codelineno-0-67"> 67</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-67"> 67</a></span>
 <span class="normal"><a href="#__codelineno-0-68"> 68</a></span>
 <span class="normal"><a href="#__codelineno-0-69"> 69</a></span>
 <span class="normal"><a href="#__codelineno-0-70"> 70</a></span>
@@ -6093,52 +6182,53 @@ expand_ket(0b0001, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1011
 <span class="normal"><a href="#__codelineno-0-108">108</a></span>
 <span class="normal"><a href="#__codelineno-0-109">109</a></span>
 <span class="normal"><a href="#__codelineno-0-110">110</a></span>
-<span class="normal"><a href="#__codelineno-0-111">111</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="k">def</span><span class="w"> </span><span class="nf">expand_ket</span><span class="p">(</span><span class="n">base_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reduced_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="w">    </span><span class="sd">"""Given a base quantum ket on $n$ qubits and a reduced ket on a subset of those qubits, this</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    computes the expanded ket where the reduction qubits and the other qubits are set based on the</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">    reduced ket and the base ket, respectively.</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a><span class="sd">    Roughly equivalent to the PDEP assembly instruction (bits deposit).</span>
-<a id="__codelineno-0-72" name="__codelineno-0-72"></a>
-<a id="__codelineno-0-73" name="__codelineno-0-73"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">        base_ket (int): A quantum ket, represented by its corresponding non-negative integer.</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">                  By convention, qubit #0 corresponds to the least significant bit.</span>
-<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">        reduced_ket (int): A quantum ket, represented by its corresponding non-negative integer.</span>
-<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">                     By convention, qubit #0 corresponds to the least significant bit.</span>
-<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">        qubits (Iterable[QubitLike]): The indices of the qubits to expand from the reduced ket.</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">                                      Order matters.</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80"></a>
-<a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">        The non-negative integer corresponding to the expanded ket.</span>
-<a id="__codelineno-0-83" name="__codelineno-0-83"></a>
-<a id="__codelineno-0-84" name="__codelineno-0-84"></a><span class="sd">    Example:</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b0, [Qubit(5)])   # 0b000000</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">        0</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b1, [Qubit(5)])   # 0b100000</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a><span class="sd">        32</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b0, [Qubit(5)])   # 0b000111</span>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">        7</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b1, [Qubit(5)])   # 0b100111</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">        39</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b000, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0000</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">        0</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b001, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0010</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="sd">        2</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b011, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0110</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">        6</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1010</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a><span class="sd">        10</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0001, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1011</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102"></a><span class="sd">        11</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>
-<a id="__codelineno-0-104" name="__codelineno-0-104"></a><span class="sd">    """</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>    <span class="n">expanded_ket</span> <span class="o">=</span> <span class="n">base_ket</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
-<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="n">expanded_ket</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># erase bit</span>
-<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="n">expanded_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">reduced_ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># set bit to value from reduced_ket</span>
-<a id="__codelineno-0-110" name="__codelineno-0-110"></a>
-<a id="__codelineno-0-111" name="__codelineno-0-111"></a>    <span class="k">return</span> <span class="n">expanded_ket</span>
+<span class="normal"><a href="#__codelineno-0-111">111</a></span>
+<span class="normal"><a href="#__codelineno-0-112">112</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="k">def</span><span class="w"> </span><span class="nf">expand_ket</span><span class="p">(</span><span class="n">base_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reduced_ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="w">    </span><span class="sd">"""Given a base quantum ket on $n$ qubits and a reduced ket on a subset of those qubits, this</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a><span class="sd">    computes the expanded ket where the reduction qubits and the other qubits are set based on the</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a><span class="sd">    reduced ket and the base ket, respectively.</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a>
+<a id="__codelineno-0-72" name="__codelineno-0-72"></a><span class="sd">    Roughly equivalent to the PDEP assembly instruction (bits deposit).</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73"></a>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="sd">        base_ket (int): A quantum ket, represented by its corresponding non-negative integer.</span>
+<a id="__codelineno-0-76" name="__codelineno-0-76"></a><span class="sd">                  By convention, qubit #0 corresponds to the least significant bit.</span>
+<a id="__codelineno-0-77" name="__codelineno-0-77"></a><span class="sd">        reduced_ket (int): A quantum ket, represented by its corresponding non-negative integer.</span>
+<a id="__codelineno-0-78" name="__codelineno-0-78"></a><span class="sd">                     By convention, qubit #0 corresponds to the least significant bit.</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79"></a><span class="sd">        qubits (Iterable[QubitLike]): The indices of the qubits to expand from the reduced ket.</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80"></a><span class="sd">                                      Order matters.</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81"></a>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">        The non-negative integer corresponding to the expanded ket.</span>
+<a id="__codelineno-0-84" name="__codelineno-0-84"></a>
+<a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">    Example:</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b0, [Qubit(5)])   # 0b000000</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87"></a><span class="sd">        0</span>
+<a id="__codelineno-0-88" name="__codelineno-0-88"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00000, 0b1, [Qubit(5)])   # 0b100000</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a><span class="sd">        32</span>
+<a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b0, [Qubit(5)])   # 0b000111</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">        7</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b00111, 0b1, [Qubit(5)])   # 0b100111</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">        39</span>
+<a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b000, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0000</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="sd">        0</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b001, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0010</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">        2</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b011, [Qubit(1), Qubit(2), Qubit(3)])    # 0b0110</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">        6</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0000, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1010</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">        10</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102"></a><span class="sd">        &gt;&gt;&gt; expand_ket(0b0001, 0b101, [Qubit(1), Qubit(2), Qubit(3)])   # 0b1011</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a><span class="sd">        11</span>
+<a id="__codelineno-0-104" name="__codelineno-0-104"></a>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a><span class="sd">    """</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>    <span class="n">expanded_ket</span> <span class="o">=</span> <span class="n">base_ket</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
+<a id="__codelineno-0-108" name="__codelineno-0-108"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+<a id="__codelineno-0-109" name="__codelineno-0-109"></a>        <span class="n">expanded_ket</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># erase bit</span>
+<a id="__codelineno-0-110" name="__codelineno-0-110"></a>        <span class="n">expanded_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">reduced_ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">i</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span>  <span class="c1"># set bit to value from reduced_ket</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111"></a>
+<a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="k">return</span> <span class="n">expanded_ket</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -6276,11 +6366,7 @@ array([[1, 0, 0, 0, 0, 0, 0, 0],
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-446">446</a></span>
-<span class="normal"><a href="#__codelineno-0-447">447</a></span>
-<span class="normal"><a href="#__codelineno-0-448">448</a></span>
-<span class="normal"><a href="#__codelineno-0-449">449</a></span>
-<span class="normal"><a href="#__codelineno-0-450">450</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-450">450</a></span>
 <span class="normal"><a href="#__codelineno-0-451">451</a></span>
 <span class="normal"><a href="#__codelineno-0-452">452</a></span>
 <span class="normal"><a href="#__codelineno-0-453">453</a></span>
@@ -6320,51 +6406,55 @@ array([[1, 0, 0, 0, 0, 0, 0, 0],
 <span class="normal"><a href="#__codelineno-0-487">487</a></span>
 <span class="normal"><a href="#__codelineno-0-488">488</a></span>
 <span class="normal"><a href="#__codelineno-0-489">489</a></span>
-<span class="normal"><a href="#__codelineno-0-490">490</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-446" name="__codelineno-0-446"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
-<a id="__codelineno-0-447" name="__codelineno-0-447"></a><span class="w">    </span><span class="sd">"""Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken</span>
-<a id="__codelineno-0-448" name="__codelineno-0-448"></a><span class="sd">    among any number of qubits. This can be used for, e.g.,</span>
-<a id="__codelineno-0-449" name="__codelineno-0-449"></a>
-<a id="__codelineno-0-450" name="__codelineno-0-450"></a><span class="sd">    - testing,</span>
-<a id="__codelineno-0-451" name="__codelineno-0-451"></a><span class="sd">    - permuting the operands of multi-qubit gates,</span>
-<a id="__codelineno-0-452" name="__codelineno-0-452"></a><span class="sd">    - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).</span>
+<span class="normal"><a href="#__codelineno-0-490">490</a></span>
+<span class="normal"><a href="#__codelineno-0-491">491</a></span>
+<span class="normal"><a href="#__codelineno-0-492">492</a></span>
+<span class="normal"><a href="#__codelineno-0-493">493</a></span>
+<span class="normal"><a href="#__codelineno-0-494">494</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-450" name="__codelineno-0-450"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_matrix</span><span class="p">(</span><span class="n">gate</span><span class="p">:</span> <span class="n">Gate</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<a id="__codelineno-0-451" name="__codelineno-0-451"></a><span class="w">    </span><span class="sd">"""Compute the unitary matrix corresponding to the gate applied to those qubit operands, taken</span>
+<a id="__codelineno-0-452" name="__codelineno-0-452"></a><span class="sd">    among any number of qubits. This can be used for, e.g.,</span>
 <a id="__codelineno-0-453" name="__codelineno-0-453"></a>
-<a id="__codelineno-0-454" name="__codelineno-0-454"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-455" name="__codelineno-0-455"></a><span class="sd">        gate (Gate): The gate, including the qubits on which it is operated on.</span>
-<a id="__codelineno-0-456" name="__codelineno-0-456"></a><span class="sd">        qubit_register_size (int): The size of the qubit register.</span>
+<a id="__codelineno-0-454" name="__codelineno-0-454"></a><span class="sd">    - testing,</span>
+<a id="__codelineno-0-455" name="__codelineno-0-455"></a><span class="sd">    - permuting the operands of multi-qubit gates,</span>
+<a id="__codelineno-0-456" name="__codelineno-0-456"></a><span class="sd">    - simulating a circuit (simulation in this way is inefficient for large numbers of qubits).</span>
 <a id="__codelineno-0-457" name="__codelineno-0-457"></a>
-<a id="__codelineno-0-458" name="__codelineno-0-458"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-459" name="__codelineno-0-459"></a><span class="sd">        The unitary matrix corresponding to the gate applied to the qubit operands.</span>
-<a id="__codelineno-0-460" name="__codelineno-0-460"></a>
-<a id="__codelineno-0-461" name="__codelineno-0-461"></a><span class="sd">    Example:</span>
-<a id="__codelineno-0-462" name="__codelineno-0-462"></a><span class="sd">        &gt;&gt;&gt; X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)</span>
-<a id="__codelineno-0-463" name="__codelineno-0-463"></a><span class="sd">        &gt;&gt;&gt; get_matrix(X(1), 2).astype(int)           # X q[1]</span>
-<a id="__codelineno-0-464" name="__codelineno-0-464"></a><span class="sd">        array([[0, 0, 1, 0],</span>
-<a id="__codelineno-0-465" name="__codelineno-0-465"></a><span class="sd">               [0, 0, 0, 1],</span>
-<a id="__codelineno-0-466" name="__codelineno-0-466"></a><span class="sd">               [1, 0, 0, 0],</span>
-<a id="__codelineno-0-467" name="__codelineno-0-467"></a><span class="sd">               [0, 1, 0, 0]])</span>
-<a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">        &gt;&gt;&gt; CNOT02 = ControlledGate(0, X(2))</span>
-<a id="__codelineno-0-469" name="__codelineno-0-469"></a><span class="sd">        &gt;&gt;&gt; get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]</span>
-<a id="__codelineno-0-470" name="__codelineno-0-470"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-471" name="__codelineno-0-471"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
-<a id="__codelineno-0-472" name="__codelineno-0-472"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-473" name="__codelineno-0-473"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
-<a id="__codelineno-0-474" name="__codelineno-0-474"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
-<a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
-<a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
-<a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="sd">        &gt;&gt;&gt; get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]</span>
-<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-480" name="__codelineno-0-480"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
-<a id="__codelineno-0-482" name="__codelineno-0-482"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
-<a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
-<a id="__codelineno-0-484" name="__codelineno-0-484"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
-<a id="__codelineno-0-485" name="__codelineno-0-485"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
-<a id="__codelineno-0-486" name="__codelineno-0-486"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
-<a id="__codelineno-0-487" name="__codelineno-0-487"></a>
-<a id="__codelineno-0-488" name="__codelineno-0-488"></a><span class="sd">    """</span>
-<a id="__codelineno-0-489" name="__codelineno-0-489"></a>    <span class="n">expander</span> <span class="o">=</span> <span class="n">_MatrixExpander</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span>
-<a id="__codelineno-0-490" name="__codelineno-0-490"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">expander</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+<a id="__codelineno-0-458" name="__codelineno-0-458"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-459" name="__codelineno-0-459"></a><span class="sd">        gate (Gate): The gate, including the qubits on which it is operated on.</span>
+<a id="__codelineno-0-460" name="__codelineno-0-460"></a><span class="sd">        qubit_register_size (int): The size of the qubit register.</span>
+<a id="__codelineno-0-461" name="__codelineno-0-461"></a>
+<a id="__codelineno-0-462" name="__codelineno-0-462"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-463" name="__codelineno-0-463"></a><span class="sd">        The unitary matrix corresponding to the gate applied to the qubit operands.</span>
+<a id="__codelineno-0-464" name="__codelineno-0-464"></a>
+<a id="__codelineno-0-465" name="__codelineno-0-465"></a><span class="sd">    Example:</span>
+<a id="__codelineno-0-466" name="__codelineno-0-466"></a><span class="sd">        &gt;&gt;&gt; X = lambda q: BlochSphereRotation(qubit=q, axis=(1, 0, 0), angle=math.pi, phase=math.pi / 2)</span>
+<a id="__codelineno-0-467" name="__codelineno-0-467"></a><span class="sd">        &gt;&gt;&gt; get_matrix(X(1), 2).astype(int)           # X q[1]</span>
+<a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">        array([[0, 0, 1, 0],</span>
+<a id="__codelineno-0-469" name="__codelineno-0-469"></a><span class="sd">               [0, 0, 0, 1],</span>
+<a id="__codelineno-0-470" name="__codelineno-0-470"></a><span class="sd">               [1, 0, 0, 0],</span>
+<a id="__codelineno-0-471" name="__codelineno-0-471"></a><span class="sd">               [0, 1, 0, 0]])</span>
+<a id="__codelineno-0-472" name="__codelineno-0-472"></a><span class="sd">        &gt;&gt;&gt; CNOT02 = ControlledGate(0, X(2))</span>
+<a id="__codelineno-0-473" name="__codelineno-0-473"></a><span class="sd">        &gt;&gt;&gt; get_matrix(CNOT02, 3).astype(int)     # CNOT q[0], q[2]</span>
+<a id="__codelineno-0-474" name="__codelineno-0-474"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
+<a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
+<a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
+<a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-480" name="__codelineno-0-480"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
+<a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
+<a id="__codelineno-0-482" name="__codelineno-0-482"></a><span class="sd">        &gt;&gt;&gt; get_matrix(ControlledGate(1, X(2)), 3).astype(int)     # CNOT q[1], q[2]</span>
+<a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="sd">        array([[1, 0, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-484" name="__codelineno-0-484"></a><span class="sd">               [0, 1, 0, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-485" name="__codelineno-0-485"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 1, 0],</span>
+<a id="__codelineno-0-486" name="__codelineno-0-486"></a><span class="sd">               [0, 0, 0, 0, 0, 0, 0, 1],</span>
+<a id="__codelineno-0-487" name="__codelineno-0-487"></a><span class="sd">               [0, 0, 0, 0, 1, 0, 0, 0],</span>
+<a id="__codelineno-0-488" name="__codelineno-0-488"></a><span class="sd">               [0, 0, 0, 0, 0, 1, 0, 0],</span>
+<a id="__codelineno-0-489" name="__codelineno-0-489"></a><span class="sd">               [0, 0, 1, 0, 0, 0, 0, 0],</span>
+<a id="__codelineno-0-490" name="__codelineno-0-490"></a><span class="sd">               [0, 0, 0, 1, 0, 0, 0, 0]])</span>
+<a id="__codelineno-0-491" name="__codelineno-0-491"></a>
+<a id="__codelineno-0-492" name="__codelineno-0-492"></a><span class="sd">    """</span>
+<a id="__codelineno-0-493" name="__codelineno-0-493"></a>    <span class="n">expander</span> <span class="o">=</span> <span class="n">_MatrixExpander</span><span class="p">(</span><span class="n">qubit_register_size</span><span class="p">)</span>
+<a id="__codelineno-0-494" name="__codelineno-0-494"></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gate</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="n">expander</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -6486,8 +6576,7 @@ get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-30">30</a></span>
 <span class="normal"><a href="#__codelineno-0-31">31</a></span>
 <span class="normal"><a href="#__codelineno-0-32">32</a></span>
 <span class="normal"><a href="#__codelineno-0-33">33</a></span>
@@ -6520,41 +6609,42 @@ get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01
 <span class="normal"><a href="#__codelineno-0-60">60</a></span>
 <span class="normal"><a href="#__codelineno-0-61">61</a></span>
 <span class="normal"><a href="#__codelineno-0-62">62</a></span>
-<span class="normal"><a href="#__codelineno-0-63">63</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_reduced_ket</span><span class="p">(</span><span class="n">ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="w">    </span><span class="sd">"""Given a quantum ket represented by its corresponding base-10 integer, this computes the</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    reduced ket where only the given qubits appear, in order.</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Roughly equivalent to the PEXT assembly instruction (bits extraction).</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">        ket (int): A quantum ket, represented by its corresponding non-negative integer.</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">             By convention, qubit #0 corresponds to the least significant bit.</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">        qubits (Iterable[QubitLike]): The indices of the qubits to extract. Order matters.</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">        The non-negative integer corresponding to the reduced ket.</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    Example:</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1, [Qubit(0)])         # 0b01</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        1</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2)])      # 0b01</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        1</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(5)])      # 0b0</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        0</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2), Qubit(5)])   # 0b01</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        1</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(1), Qubit(0)])    # 0b10</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">        2</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">        1</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="sd">    """</span>
-<a id="__codelineno-0-58" name="__codelineno-0-58"></a>    <span class="n">reduced_ket</span> <span class="o">=</span> <span class="mi">0</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="n">reduced_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62"></a>
-<a id="__codelineno-0-63" name="__codelineno-0-63"></a>    <span class="k">return</span> <span class="n">reduced_ket</span>
+<span class="normal"><a href="#__codelineno-0-63">63</a></span>
+<span class="normal"><a href="#__codelineno-0-64">64</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_reduced_ket</span><span class="p">(</span><span class="n">ket</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">qubits</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">QubitLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="w">    </span><span class="sd">"""Given a quantum ket represented by its corresponding base-10 integer, this computes the</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    reduced ket where only the given qubits appear, in order.</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33"></a>
+<a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">    Roughly equivalent to the PEXT assembly instruction (bits extraction).</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="sd">    Args:</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="sd">        ket (int): A quantum ket, represented by its corresponding non-negative integer.</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a><span class="sd">             By convention, qubit #0 corresponds to the least significant bit.</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><span class="sd">        qubits (Iterable[QubitLike]): The indices of the qubits to extract. Order matters.</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40"></a>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="sd">        The non-negative integer corresponding to the reduced ket.</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43"></a>
+<a id="__codelineno-0-44" name="__codelineno-0-44"></a><span class="sd">    Example:</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1, [Qubit(0)])         # 0b01</span>
+<a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">        1</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2)])      # 0b01</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">        1</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(5)])      # 0b0</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">        0</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(1111, [Qubit(2), Qubit(5)])   # 0b01</span>
+<a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="sd">        1</span>
+<a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(1), Qubit(0)])    # 0b10</span>
+<a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="sd">        2</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="sd">        &gt;&gt;&gt; get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="sd">        1</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a>
+<a id="__codelineno-0-58" name="__codelineno-0-58"></a><span class="sd">    """</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a>    <span class="n">reduced_ket</span> <span class="o">=</span> <span class="mi">0</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qubits</span><span class="p">):</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61"></a>        <span class="n">qubit</span> <span class="o">=</span> <span class="n">Qubit</span><span class="p">(</span><span class="n">qubit</span><span class="p">)</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62"></a>        <span class="n">reduced_ket</span> <span class="o">|=</span> <span class="p">((</span><span class="n">ket</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">i</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63"></a>
+<a id="__codelineno-0-64" name="__codelineno-0-64"></a>    <span class="k">return</span> <span class="n">reduced_ket</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
@@ -6581,17 +6671,17 @@ get_reduced_ket(101, [Qubit(0), Qubit(1)])    # 0b01
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>opensquirrel/utils/matrix_expander.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-326">326</a></span>
-<span class="normal"><a href="#__codelineno-0-327">327</a></span>
-<span class="normal"><a href="#__codelineno-0-328">328</a></span>
-<span class="normal"><a href="#__codelineno-0-329">329</a></span>
-<span class="normal"><a href="#__codelineno-0-330">330</a></span>
-<span class="normal"><a href="#__codelineno-0-331">331</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-326" name="__codelineno-0-326"></a><span class="k">def</span><span class="w"> </span><span class="nf">global_phase_and_su4</span><span class="p">(</span><span class="n">unitary</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]]:</span>
-<a id="__codelineno-0-327" name="__codelineno-0-327"></a><span class="w">    </span><span class="sd">"""Extract global phase so that det(u_su) = 1.  U = e^{i alpha} u_su."""</span>
-<a id="__codelineno-0-328" name="__codelineno-0-328"></a>    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">unitary</span><span class="p">)</span>
-<a id="__codelineno-0-329" name="__codelineno-0-329"></a>    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span>
-<a id="__codelineno-0-330" name="__codelineno-0-330"></a>    <span class="n">u_su</span> <span class="o">=</span> <span class="n">unitary</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
-<a id="__codelineno-0-331" name="__codelineno-0-331"></a>    <span class="k">return</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">u_su</span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-330">330</a></span>
+<span class="normal"><a href="#__codelineno-0-331">331</a></span>
+<span class="normal"><a href="#__codelineno-0-332">332</a></span>
+<span class="normal"><a href="#__codelineno-0-333">333</a></span>
+<span class="normal"><a href="#__codelineno-0-334">334</a></span>
+<span class="normal"><a href="#__codelineno-0-335">335</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-330" name="__codelineno-0-330"></a><span class="k">def</span><span class="w"> </span><span class="nf">global_phase_and_su4</span><span class="p">(</span><span class="n">unitary</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]]:</span>
+<a id="__codelineno-0-331" name="__codelineno-0-331"></a><span class="w">    </span><span class="sd">"""Extract global phase so that det(u_su) = 1.  U = e^{i alpha} u_su."""</span>
+<a id="__codelineno-0-332" name="__codelineno-0-332"></a>    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">unitary</span><span class="p">)</span>
+<a id="__codelineno-0-333" name="__codelineno-0-333"></a>    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span>
+<a id="__codelineno-0-334" name="__codelineno-0-334"></a>    <span class="n">u_su</span> <span class="o">=</span> <span class="n">unitary</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+<a id="__codelineno-0-335" name="__codelineno-0-335"></a>    <span class="k">return</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">u_su</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
