@@ -20,6 +20,7 @@ from opensquirrel.ir.default_gates.single_qubit_gates import (
     Y,
     Z,
 )
+from opensquirrel.ir.default_gates.three_qubit_gates import CCX, CSWAP
 from opensquirrel.ir.default_gates.two_qubit_gates import (
     CNOT,
     CR,
@@ -39,8 +40,10 @@ from opensquirrel.ir.default_gates.two_qubit_gates import (
 )
 
 __all__ = [
+    "CCX",
     "CNOT",
     "CR",
+    "CSWAP",
     "CV",
     "CY",
     "CZ",

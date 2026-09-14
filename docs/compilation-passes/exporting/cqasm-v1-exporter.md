@@ -27,11 +27,13 @@ qubits can be scheduled.
 !!! warning "Unsupported gates"
 
     cQASM version 1.0 does not support the [Rn gate](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/single_qubit/sq_Rn.html)
-    and will raise an error (`UnSupportedGateError`) if this gate is part of the circuit that is to be exported.
+    or the Fredkin gate (`CSWAP`),
+    and will raise an error (`UnSupportedGateError`) if either of these gates is part of the circuit that is to be
+    exported.
     A single-qubit [decomposition pass](../decomposition/index.md) can be used to decompose the circuit to gates that
     the cQASM v1 exporter supports.
 
-The four examples below show how circuits written in [cQASM](https://qutech-delft.github.io/cQASM-spec/) are exported to
+The five examples below show how circuits written in [cQASM](https://qutech-delft.github.io/cQASM-spec/) are exported to
 cQASM v1.
 
 !!! example ""
@@ -292,3 +294,50 @@ cQASM v1.
         respective qubits.
         Also, in contrast to other instructions where the SGMQ notation has been unpacked, the SGMQ notation for the
         statement `barrier q[2, 3]` has been preserved.
+
+    === "Toffoli gate"
+
+        ```python
+        from opensquirrel import CircuitBuilder
+        from opensquirrel.passes.exporter import CqasmV1Exporter
+        ```
+
+        ```python
+        builder = CircuitBuilder(3, 3)
+
+        builder.H(0)
+        builder.H(1)
+        builder.CCX(0, 1, 2)
+
+        builder.measure(0, 0)
+        builder.measure(1, 1)
+        builder.measure(2, 2)
+
+        exported_circuit = builder.to_circuit().export(exporter=CqasmV1Exporter())
+        print(exported_circuit)
+        ```
+
+        ```
+        version 1.0
+
+        qubits 3
+
+        h q[0]
+        h q[1]
+        toffoli q[0], q[1], q[2]
+        measure_z q[0]
+        measure_z q[1]
+        measure_z q[2]
+        ```
+
+        The Toffoli gate (`CCX`, or its alias `CCNOT`) is translated to the
+        [`toffoli`](https://libqasm.readthedocs.io/en/latest/cq1-instructions.html) instruction,
+        which takes the two control qubits followed by the target qubit.
+
+        Note that this example uses the [circuit builder](../../circuit-builder/index.md) rather than
+        `Circuit.from_string`, since the three-qubit gates are not yet part of the cQASM language specification.
+
+        The Fredkin gate (`CSWAP`) has no equivalent in cQASM version 1.0 and cannot be exported.
+        A [decomposition pass](../decomposition/index.md), _e.g._, the
+        [three-qubit gate decomposer](../decomposition/predefined-decomposers.md) (`ThreeQubitGateDecomposer`),
+        can be used to decompose it into gates that the cQASM v1 exporter supports.

@@ -23,6 +23,7 @@ from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
 if TYPE_CHECKING:
     from opensquirrel.ir import Gate
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
     from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
@@ -137,6 +138,9 @@ class _MatrixExpander(IRVisitor):
             return self._matrix_gate(gate)
         return self._controlled_gate(gate)
 
+    def visit_three_qubit_gate(self, gate: ThreeQubitGate) -> NDArray[np.complex128]:
+        return self._matrix_gate(gate)
+
     def _controlled_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
         if not gate.controlled:
             msg = f"gate {gate!r} does not have a controlled gate semantic"
@@ -172,7 +176,7 @@ class _MatrixExpander(IRVisitor):
                 col[col_index] = 1
         return np.asarray(expanded_matrix, dtype=np.complex128)
 
-    def _matrix_gate(self, gate: TwoQubitGate) -> NDArray[np.complex128]:
+    def _matrix_gate(self, gate: TwoQubitGate | ThreeQubitGate) -> NDArray[np.complex128]:
         # The convention is to write gate matrices with operands reversed.
         # For instance, the first operand of CNOT is the control qubit, and this is written as
         #   1, 0, 0, 0

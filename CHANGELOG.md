@@ -31,6 +31,9 @@ arbitrarily applied mapper pass.
 - The following 2-qubit gates: `CV`, `CY`, `DCNOT`, `ECR`, `ISWAP`, `InvSqrtSWAP`, `M`, `MS`, `SqrtISWAP`, and `SqrtSWAP`
 - Add `add_instruction` method to the `CircuitBuilder`
 - libQASM parser accepts measure instruction aliases: `measureX`, `measureY`, and `measureZ`
+- The following 3-qubit gates: `CCX` (alias `CCNOT`) and `CSWAP`
+- `ThreeQubitGateDecomposer` to decompose the 3-qubit gates into CZ gates and single-qubit gates
+- The `CqasmV1Exporter` exports the Toffoli gate
 
 ## [ 0.9.0 ] - [ 2025-12-19 ]
 

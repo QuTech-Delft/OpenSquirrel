@@ -4,7 +4,7 @@ import numpy as np
 
 from opensquirrel.circuit import Circuit
 from opensquirrel.common import ATOL
-from opensquirrel.default_instructions import default_two_qubit_gate_set
+from opensquirrel.default_instructions import default_three_qubit_gate_set, default_two_qubit_gate_set
 from opensquirrel.ir import (
     AsmDeclaration,
     Barrier,
@@ -28,6 +28,7 @@ from opensquirrel.ir.semantics import (
     BsrUnitaryParams,
 )
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
+from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.register_manager import RegisterManager
 
@@ -97,6 +98,14 @@ class _WriterImpl(IRVisitor):
             self.output += f"{gate.name}({arguments}) {qubit_operand_0}, {qubit_operand_1}\n"
         else:
             self.output += f"{gate.name} {qubit_operand_0}, {qubit_operand_1}\n"
+
+    def visit_three_qubit_gate(self, gate: ThreeQubitGate) -> Any:
+        qubit_operands = ", ".join(qubit.accept(self) for qubit in gate.qubit_operands)
+
+        if gate.name not in default_three_qubit_gate_set:
+            self.output += f"{gate}\n"
+        else:
+            self.output += f"{gate.name} {qubit_operands}\n"
 
     def visit_bsr_no_params(self, gate: BsrNoParams) -> str:
         return ""

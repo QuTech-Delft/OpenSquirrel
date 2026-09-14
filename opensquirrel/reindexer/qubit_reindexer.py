@@ -15,6 +15,7 @@ from opensquirrel.ir import (
     Wait,
 )
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.register_manager import (
     DEFAULT_BIT_REGISTER_NAME,
@@ -68,7 +69,15 @@ class _QubitReindexer(IRVisitor):
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> TwoQubitGate:
         qubit0 = self.qubit_indices.index(gate.qubit0.index)
         qubit1 = self.qubit_indices.index(gate.qubit1.index)
-        return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=gate.gate_semantic)
+        return TwoQubitGate(qubit0=qubit0, qubit1=qubit1, gate_semantic=gate.gate_semantic, name=gate.name)
+
+    def visit_three_qubit_gate(self, gate: ThreeQubitGate) -> ThreeQubitGate:
+        qubit0 = self.qubit_indices.index(gate.qubit0.index)
+        qubit1 = self.qubit_indices.index(gate.qubit1.index)
+        qubit2 = self.qubit_indices.index(gate.qubit2.index)
+        return ThreeQubitGate(
+            qubit0=qubit0, qubit1=qubit1, qubit2=qubit2, gate_semantic=gate.gate_semantic, name=gate.name
+        )
 
 
 def get_reindexed_circuit(

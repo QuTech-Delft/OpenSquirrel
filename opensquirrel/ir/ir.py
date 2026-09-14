@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from opensquirrel.ir.semantics.canonical_gate import CanonicalAxis
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
     from opensquirrel.ir.statement import Instruction, Statement
+    from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
     from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 
 
@@ -66,6 +67,8 @@ class IRVisitor:
     def visit_single_qubit_gate(self, gate: SingleQubitGate) -> Any: ...
 
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any: ...
+
+    def visit_three_qubit_gate(self, gate: ThreeQubitGate) -> Any: ...
 
     def visit_bloch_sphere_rotation(self, bloch_sphere_rotation: BlochSphereRotation) -> Any: ...
 
