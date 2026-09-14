@@ -27,3 +27,6 @@
 | CRk   | $CR_k(k)$                                     | Controlled phase shift ($\frac{\pi}{2^{k-1}}$)    | `builder.CRk(1, 0, 2)`    |
 | SWAP  | $SWAP$                                        | SWAP gate                                         | `builder.SWAP(1, 2)`      |
 | CNOT  | $CNOT$                                        | Controlled-NOT gate                               | `builder.CNOT(1, 2)`      |
+| CCX   | $CCX$                                         | Toffoli gate, controlled-controlled-NOT           | `builder.CCX(0, 1, 2)`    |
+| CCNOT | $CCX$                                         | Alias for the Toffoli gate                        | `builder.CCNOT(0, 1, 2)`  |
+| CSWAP | $CSWAP$                                       | Fredkin gate, controlled-SWAP                     | `builder.CSWAP(0, 1, 2)`  |

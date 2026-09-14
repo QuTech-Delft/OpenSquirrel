@@ -1,11 +1,12 @@
 We refer to a decomposition as being _predefined_ when each instance of a particular gate in the circuit,
 _e.g._, the CNOT gate, is replaced with a fixed gate or list of gates.
 
-Three predefined decomposers are available in OpenSquirrel:
+Four predefined decomposers are available in OpenSquirrel:
 
 - CNOT to CZ decomposer
 - SWAP to CNOT decomposer
 - SWAP to CZ decomposer
+- Three-qubit gate decomposer
 
 !!! note "SWAP decomposition"
 
@@ -45,3 +46,27 @@ The decomposition is illustrated in the image below.
 
 ![image](../../_static/swap2cz.png#only-light)
 ![image](../../_static/swap2cz_dm.png#only-dark)
+
+## Three-qubit gate decomposer
+
+The three-qubit gate decomposer (`ThreeQubitGateDecomposer`) implements the predefined decomposition of the
+Toffoli gate (`CCX`) and the Fredkin gate (`CSWAP`) into CZ gates and single-qubit gates.
+
+The Toffoli gate is decomposed into 6 CZ gates and single-qubit gates, following the circuit described in
+[Shende and Markov (2008)](https://arxiv.org/abs/0803.2316),
+in which the CNOT gates are further decomposed according to the CNOT to CZ identity described above.
+Six is the minimum number of CZ gates required to implement the Toffoli gate,
+and this remains the case even when ancilla qubits are available.
+
+The Fredkin gate is decomposed as a Toffoli gate conjugated by two CNOT gates, resulting in 8 CZ gates in total.
+Note that, in contrast to the Toffoli gate, it is not known whether this is the minimum number of CZ gates required.
+
+!!! note "Global phase"
+
+    In contrast to the [canonical to CZ decomposer](can2cz-decomposer.md) (`Can2CZDecomposer`),
+    the decomposition of the three-qubit gates preserves the global phase of the original gate.
+
+!!! note
+
+    It is advised to run the [single-qubit gates merger](../merging/single-qubit-gates-merger.md)
+    (`SingleQubitGatesMerger`) after this decomposition pass.
