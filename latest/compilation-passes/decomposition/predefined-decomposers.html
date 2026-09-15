@@ -5460,11 +5460,11 @@
 </ul>
 <div class="admonition note">
 <p class="admonition-title">SWAP decomposition</p>
-<p>The latter two SWAP decomposers, are currently the only available decomposers in
-OpenSquirrel that can decompose the SWAP gate.
-The general two-qubit decomposers,
-<em>e.g.</em>, the <a href="cnot-decomposer.html">CNOT decomposer</a> and <a href="cz-decomposer.html">CZ decomposer</a> do not decompose
-the SWAP gate.</p>
+<p>Besides the two SWAP decomposers listed above, the SWAP gate can also be decomposed using the
+<a href="can2cz-decomposer.html">canonical to CZ decomposer</a> (<code>Can2CZDecomposer</code>).
+The remaining general two-qubit decomposers,
+<em>e.g.</em>, the <a href="cnot-decomposer.html">CNOT decomposer</a> and <a href="cz-decomposer.html">CZ decomposer</a>,
+are restricted to <em>controlled</em> two-qubit gates and therefore do not decompose the SWAP gate.</p>
 </div>
 <h2 id="cnot-to-cz-decomposer">CNOT to CZ decomposer</h2>
 <p>The decomposition of the CNOT gate into a CZ gate (with additional single-qubit gates) is used frequently.
