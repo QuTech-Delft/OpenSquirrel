@@ -3,9 +3,11 @@ The measure decomposer (`MeasureDecomposer`) decomposes measurements along an ar
 ## Theory
 
 For a measurement axis defined by the unit vector
+
 $$\hat{n} = (\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)$$
 
-where $\theta = \arccos(n_z)$ and $\phi = \arctan2(n_y, n_x)$, we construct the unitary transformation:
+where $\theta = \arccos(n_z)$ and $\phi = \arctan_2(n_y, n_x)$, we construct the unitary transformation:
+
 $$U = R_z(\phi) R_y(\theta)$$
 
 This unitary maps Z-axis eigenstates to eigenstates along the $\hat{n}$ direction. Measuring in the $\hat{n}$ basis is equivalent to applying the inverse transformation $U^\dagger = R_y(-\theta) R_z(-\phi)$ and then measuring along Z.
@@ -18,9 +20,9 @@ This unitary maps Z-axis eigenstates to eigenstates along the $\hat{n}$ directio
 
 ## Common examples
 
-| Measurement axis | Decomposition |
-|---|---|
-| Z | $I$ |
-| X | $R_y(-\pi/2)$ |
-| Y | $R_y(-\pi/2) \cdot R_z(-\pi/2)$ |
-| H | $R_y(-\pi/4)$ |
+| Measurement axis | Axis | Decomposition |
+|---|---|---|
+| Z | $(0, 0, 1)$ | $I$ |
+| X | $(1, 0, 0)$ | $R_y(-\pi/2)$ |
+| Y | $(0, 1, 0)$ | $R_y(-\pi/2) \cdot R_z(-\pi/2)$ |
+| H | $\tfrac{1}{\sqrt{2}}(1, 0, 1)$ | $R_y(-\pi/4)$ |
