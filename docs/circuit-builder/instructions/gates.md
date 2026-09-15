@@ -27,6 +27,16 @@
 | CRk   | $CR_k(k)$                                     | Controlled phase shift ($\frac{\pi}{2^{k-1}}$)    | `builder.CRk(1, 0, 2)`    |
 | SWAP  | $SWAP$                                        | SWAP gate                                         | `builder.SWAP(1, 2)`      |
 | CNOT  | $CNOT$                                        | Controlled-NOT gate                               | `builder.CNOT(1, 2)`      |
+| CY    | $CY$                                          | Controlled-Y gate                                 | `builder.CY(0, 1)`        |
+| CV    | $CV$                                          | Controlled-V, the square root of the CNOT gate    | `builder.CV(0, 1)`        |
+| DCNOT | $DCNOT$                                       | Double controlled-NOT gate                        | `builder.DCNOT(0, 1)`     |
+| ECR   | $ECR$                                         | Echoed cross-resonance gate                       | `builder.ECR(0, 1)`       |
+| ISWAP | $iSWAP$                                       | iSWAP gate                                        | `builder.ISWAP(0, 1)`     |
+| SqrtISWAP | $\sqrt{iSWAP}$                            | Square root of the iSWAP gate                     | `builder.SqrtISWAP(0, 1)` |
+| SqrtSWAP | $\sqrt{SWAP}$                              | Square root of the SWAP gate                      | `builder.SqrtSWAP(0, 1)`  |
+| InvSqrtSWAP | $\sqrt{SWAP}^\dagger$                   | Inverse of the square root of the SWAP gate       | `builder.InvSqrtSWAP(0, 1)`|
+| M     | $M$                                           | Magic gate                                        | `builder.M(0, 1)`         |
+| MS    | $MS$                                          | Mølmer–Sørensen gate                              | `builder.MS(0, 1)`        |
 | CCX   | $CCX$                                         | Toffoli gate, controlled-controlled-NOT           | `builder.CCX(0, 1, 2)`    |
 | CCNOT | $CCX$                                         | Alias for the Toffoli gate                        | `builder.CCNOT(0, 1, 2)`  |
 | CSWAP | $CSWAP$                                       | Fredkin gate, controlled-SWAP                     | `builder.CSWAP(0, 1, 2)`  |

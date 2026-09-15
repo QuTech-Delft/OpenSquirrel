@@ -10,11 +10,11 @@ Four predefined decomposers are available in OpenSquirrel:
 
 !!! note "SWAP decomposition"
 
-    The latter two SWAP decomposers, are currently the only available decomposers in
-    OpenSquirrel that can decompose the SWAP gate.
-    The general two-qubit decomposers,
-    _e.g._, the [CNOT decomposer](cnot-decomposer.md) and [CZ decomposer](cz-decomposer.md) do not decompose
-    the SWAP gate.
+    Besides the two SWAP decomposers listed above, the SWAP gate can also be decomposed using the
+    [canonical to CZ decomposer](can2cz-decomposer.md) (`Can2CZDecomposer`).
+    The remaining general two-qubit decomposers,
+    _e.g._, the [CNOT decomposer](cnot-decomposer.md) and [CZ decomposer](cz-decomposer.md),
+    are restricted to _controlled_ two-qubit gates and therefore do not decompose the SWAP gate.
 
 ## CNOT to CZ decomposer
 
