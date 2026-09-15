@@ -1,10 +1,11 @@
 import numpy as np
 import pytest
 
+from opensquirrel import CNOT, CV, DCNOT, ISWAP, SWAP, InvSqrtSWAP, SqrtISWAP, SqrtSWAP
 from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation, CanonicalGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
-from opensquirrel.utils.matrix_expander import can2
+from opensquirrel.utils.matrix_expander import can2, get_matrix
 
 
 class TestTwoQubitGate:
@@ -87,3 +88,35 @@ class TestTwoQubitGate:
         gate = TwoQubitGate(0, 1, gate_semantic=canonical_semantic)
 
         assert gate.is_identity()
+
+
+class TestDefaultTwoQubitGateIdentities:
+    """Checks that the gates named after another gate actually relate to it as their name implies."""
+
+    @staticmethod
+    def _matrix(gate: TwoQubitGate) -> np.typing.NDArray[np.complex128]:
+        return get_matrix(gate, 2)
+
+    def test_sqrt_swap_squares_to_swap(self) -> None:
+        sqrt_swap = self._matrix(SqrtSWAP(0, 1))
+        np.testing.assert_almost_equal(sqrt_swap @ sqrt_swap, self._matrix(SWAP(0, 1)))
+
+    def test_inv_sqrt_swap_squares_to_swap(self) -> None:
+        inv_sqrt_swap = self._matrix(InvSqrtSWAP(0, 1))
+        np.testing.assert_almost_equal(inv_sqrt_swap @ inv_sqrt_swap, self._matrix(SWAP(0, 1)))
+
+    def test_inv_sqrt_swap_is_the_inverse_of_sqrt_swap(self) -> None:
+        product = self._matrix(InvSqrtSWAP(0, 1)) @ self._matrix(SqrtSWAP(0, 1))
+        np.testing.assert_almost_equal(product, np.eye(4))
+
+    def test_sqrt_iswap_squares_to_iswap(self) -> None:
+        sqrt_iswap = self._matrix(SqrtISWAP(0, 1))
+        np.testing.assert_almost_equal(sqrt_iswap @ sqrt_iswap, self._matrix(ISWAP(0, 1)))
+
+    def test_cv_squares_to_cnot(self) -> None:
+        cv = self._matrix(CV(0, 1))
+        np.testing.assert_almost_equal(cv @ cv, self._matrix(CNOT(0, 1)))
+
+    def test_dcnot_is_two_cnot_gates(self) -> None:
+        two_cnot_gates = self._matrix(CNOT(1, 0)) @ self._matrix(CNOT(0, 1))
+        np.testing.assert_almost_equal(self._matrix(DCNOT(0, 1)), two_cnot_gates)
