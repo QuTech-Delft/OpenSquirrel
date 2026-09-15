@@ -1,10 +1,12 @@
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 
+from opensquirrel import CNOT, CV, DCNOT, ISWAP, SWAP, InvSqrtSWAP, SqrtISWAP, SqrtSWAP
 from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation, CanonicalGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
-from opensquirrel.utils.matrix_expander import can2
+from opensquirrel.utils.matrix_expander import can2, get_matrix
 
 
 class TestTwoQubitGate:
@@ -87,3 +89,29 @@ class TestTwoQubitGate:
         gate = TwoQubitGate(0, 1, gate_semantic=canonical_semantic)
 
         assert gate.is_identity()
+
+
+class TestDefaultTwoQubitGateIdentities:
+    @pytest.mark.parametrize(
+        ("gate_matrix", "expected_matrix"),
+        [
+            (get_matrix(SqrtSWAP(0, 1), 2) @ get_matrix(SqrtSWAP(0, 1), 2), get_matrix(SWAP(0, 1), 2)),
+            (get_matrix(InvSqrtSWAP(0, 1), 2) @ get_matrix(InvSqrtSWAP(0, 1), 2), get_matrix(SWAP(0, 1), 2)),
+            (get_matrix(InvSqrtSWAP(0, 1), 2) @ get_matrix(SqrtSWAP(0, 1), 2), np.eye(4)),
+            (get_matrix(SqrtISWAP(0, 1), 2) @ get_matrix(SqrtISWAP(0, 1), 2), get_matrix(ISWAP(0, 1), 2)),
+            (get_matrix(CV(0, 1), 2) @ get_matrix(CV(0, 1), 2), get_matrix(CNOT(0, 1), 2)),
+            (get_matrix(DCNOT(0, 1), 2), get_matrix(CNOT(1, 0), 2) @ get_matrix(CNOT(0, 1), 2)),
+        ],
+        ids=[
+            "SqrtSWAP_squared_is_SWAP",
+            "InvSqrtSWAP_squared_is_SWAP",
+            "InvSqrtSWAP_is_inverse_of_SqrtSWAP",
+            "SqrtISWAP_squared_is_ISWAP",
+            "CV_squared_is_CNOT",
+            "DCNOT_is_two_CNOT_gates",
+        ],
+    )
+    def test_gate_identities(
+        self, gate_matrix: NDArray[np.complex128], expected_matrix: NDArray[np.complex128]
+    ) -> None:
+        np.testing.assert_almost_equal(gate_matrix, expected_matrix)
