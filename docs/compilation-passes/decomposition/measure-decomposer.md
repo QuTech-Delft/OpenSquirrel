@@ -6,7 +6,7 @@ For a measurement axis defined by the unit vector
 
 $$\hat{n} = (\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)$$
 
-where $\theta = \arccos(n_z)$ and $\phi = \arctan_2(n_y, n_x)$, we construct the unitary transformation:
+where $\theta = \arccos(n_z)$ and $\phi = \text{arctan2}(n_y, n_x)$, we construct the unitary transformation:
 
 $$U = R_z(\phi) R_y(\theta)$$
 
