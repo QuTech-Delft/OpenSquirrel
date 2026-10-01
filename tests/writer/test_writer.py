@@ -231,3 +231,18 @@ TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=MatrixGateSemantic(mat
 CR(1.234) q[0], q[1]
 """  # noqa: E501
     )
+
+
+def test_three_qubit_gates() -> None:
+    builder = CircuitBuilder(3)
+    builder.CCX(0, 1, 2).CSWAP(2, 0, 1)
+    assert (
+        str(builder.to_circuit())
+        == """version 3.0
+
+qubit[3] q
+
+CCX q[0], q[1], q[2]
+CSWAP q[2], q[0], q[1]
+"""
+    )

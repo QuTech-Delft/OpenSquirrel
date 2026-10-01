@@ -108,3 +108,6 @@ class SingleQubitGate(Gate):
             msg = "cannot merge two single-qubit gates on different qubits"
             raise ValueError(msg)
         return SingleQubitGate(self.qubit, self.bsr * other.bsr)
+
+    def __repr__(self) -> str:
+        return f"SingleQubitGate(qubit={self.qubit}, gate_semantic={self.bsr})"

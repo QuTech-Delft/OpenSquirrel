@@ -1,4 +1,5 @@
 from math import pi
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -330,3 +331,32 @@ def test_simplest(circuit_string: str, expected_output: str) -> None:
 def test_gate_modifiers(circuit_string: str, expected_result: list[Gate]) -> None:
     circuit = LibQasmParser().circuit_from_string(circuit_string)
     assert circuit.ir.statements == expected_result
+
+
+def test_ast_literal_to_ir_literal_unrecognized_type() -> None:
+    with pytest.raises(TypeError, match="unrecognized type"):
+        LibQasmParser._ast_literal_to_ir_literal("not a literal")  # ty: ignore[invalid-argument-type]
+
+
+def test_ast_literal_to_ir_literal_none() -> None:
+    assert LibQasmParser._ast_literal_to_ir_literal(None) is None
+
+
+def test_type_of_plain_value() -> None:
+    assert LibQasmParser._type_of(42) is int
+
+
+def test_size_of_plain_value() -> None:
+    assert LibQasmParser._size_of(42) == 1
+
+
+def test_get_instruction_operands_not_a_qubit() -> None:
+    instruction = SimpleNamespace(operands=[42])
+    with pytest.raises(TypeError, match="argument 42 is not of qubit type"):
+        LibQasmParser()._get_instruction_operands(instruction)  # ty: ignore[invalid-argument-type]
+
+
+def test_get_expanded_measure_args_neither_qubit_nor_bit() -> None:
+    instruction = SimpleNamespace(operands=[42])
+    with pytest.raises(TypeError, match="argument 42 is neither of qubit nor bit type"):
+        LibQasmParser()._get_expanded_measure_args(instruction)  # ty: ignore[invalid-argument-type]

@@ -125,6 +125,37 @@ def test_canonical_gate(axis: AxisLike, expected_matrix: NDArray[Any]) -> None:
     np.testing.assert_almost_equal(get_matrix(gate, 2), expected_matrix)
 
 
+def test_single_qubit_gate_index_out_of_range() -> None:
+    gate = SingleQubitGate(3, BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2))
+    with pytest.raises(IndexError, match="index 3 out of range 2"):
+        get_matrix(gate, 2)
+
+
+@pytest.mark.parametrize(
+    "gate_semantic",
+    [
+        ControlledGateSemantic(target_bsr=BlochSphereRotation(axis=(1, 0, 0), angle=pi, phase=pi / 2)),
+        MatrixGateSemantic(np.eye(4)),
+    ],
+    ids=["controlled", "matrix"],
+)
+def test_two_qubit_gate_index_out_of_range(gate_semantic: Any) -> None:
+    gate = TwoQubitGate(0, 3, gate_semantic=gate_semantic)
+    with pytest.raises(IndexError, match="index out of range"):
+        get_matrix(gate, 2)
+
+
+def test_matrix_gate_incorrect_shape() -> None:
+    gate = TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(np.eye(2)))
+    with pytest.raises(ValueError, match="matrix has incorrect shape"):
+        get_matrix(gate, 2)
+
+
+def test_nearest_kronecker_product_incorrect_shape() -> None:
+    with pytest.raises(ValueError, match="c has to have the shape"):
+        nearest_kronecker_product(np.eye(2, dtype=np.complex128))
+
+
 @pytest.mark.parametrize(
     ("matrix_a", "matrix_b"),
     [

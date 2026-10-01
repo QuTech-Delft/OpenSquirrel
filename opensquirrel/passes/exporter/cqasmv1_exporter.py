@@ -31,6 +31,7 @@ if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
     from opensquirrel.ir.expression import Axis
     from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+    from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
     from opensquirrel.ir.two_qubit_gate import TwoQubitGate
     from opensquirrel.register_manager import RegisterManager
 
@@ -55,6 +56,11 @@ class CqasmV1Exporter(Exporter):
         circuit.ir.accept(cqasmv1_creator)
 
         return _post_process(cqasmv1_creator.output).rstrip() + "\n"
+
+
+# cQASM v1 names for the three-qubit gates it supports. The Fredkin gate (CSWAP) is not part of the
+# cQASM v1 default instruction set, and is therefore absent.
+CQASM_V1_THREE_QUBIT_GATE_NAMES = {"CCX": "toffoli"}
 
 
 class CqasmV1ExporterParseError(Exception):
@@ -127,6 +133,13 @@ class _CQASMv1Creator(IRVisitor):
             self.output += f"{gate.name.lower()}({arguments}) {qubit_operand_0}, {qubit_operand_1}\n"
         else:
             self.output += f"{gate.name.lower()} {qubit_operand_0}, {qubit_operand_1}\n"
+
+    def visit_three_qubit_gate(self, gate: ThreeQubitGate) -> Any:
+        if gate.name not in CQASM_V1_THREE_QUBIT_GATE_NAMES:
+            raise UnsupportedGateError(gate)
+
+        qubit_operands = ", ".join(qubit.accept(self) for qubit in gate.qubit_operands)
+        self.output += f"{CQASM_V1_THREE_QUBIT_GATE_NAMES[gate.name]} {qubit_operands}\n"
 
     def visit_measure(self, measure: Measure) -> None:
         qubit_argument = measure.qubit_operands[0].accept(self)

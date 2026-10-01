@@ -5,12 +5,12 @@ from math import pi
 import pytest
 
 from opensquirrel import Y90, Circuit, CircuitBuilder, X
-from opensquirrel.ir import Gate, Measure
+from opensquirrel.ir import Barrier, Gate, Init, Instruction, Measure, Reset, Wait
 from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
 from opensquirrel.ir.semantics.bsr import BsrNoParams
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
-from opensquirrel.reindexer.qubit_reindexer import get_reindexed_circuit
+from opensquirrel.reindexer.qubit_reindexer import _QubitReindexer, get_reindexed_circuit
 
 
 def circuit_1_reindexed() -> Circuit:
@@ -72,3 +72,17 @@ def test_get_reindexed_circuit(
 ) -> None:
     circuit = get_reindexed_circuit(replacement_gates, qubit_indices, bit_register_size)
     assert circuit == circuit_reindexed
+
+
+@pytest.mark.parametrize(
+    ("instruction", "reindexed_instruction"),
+    [
+        (Init(3), Init(0)),
+        (Reset(3), Reset(0)),
+        (Barrier(3), Barrier(0)),
+        (Wait(3, 2), Wait(0, 2)),
+    ],
+    ids=["init", "reset", "barrier", "wait"],
+)
+def test_reindex_non_gate_instructions(instruction: Instruction, reindexed_instruction: Instruction) -> None:
+    assert instruction.accept(_QubitReindexer([3, 1])) == reindexed_instruction

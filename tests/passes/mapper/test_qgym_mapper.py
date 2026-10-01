@@ -1,4 +1,5 @@
 import importlib.util
+import re
 from collections.abc import Generator
 from typing import Any
 
@@ -124,6 +125,40 @@ def test_circuit_interaction_graph_property(circuit1: Circuit) -> None:
     assert (3, 4) in graph
 
     assert all(weight == 1 for weight in graph.values())
+
+
+def test_ir_to_graph() -> None:
+    builder = CircuitBuilder(4)
+    builder.asm("TestBackend", "")
+    builder.H(3)
+    builder.CNOT(0, 1)
+    builder.CNOT(0, 1)
+    builder.CNOT(1, 2)
+
+    graph = QGymMapper._ir_to_graph(builder.to_circuit().ir)
+
+    assert set(graph.nodes) == {0, 1, 2, 3}
+    assert set(graph.edges) == {(0, 1), (1, 2)}
+    assert graph[0][1]["weight"] == 2
+    assert graph[1][2]["weight"] == 1
+
+
+@pytest.mark.parametrize("last_obs", [None, {}, {"mapping": None}], ids=["not-a-dict", "no-key", "none-value"])
+def test_get_mapping_without_mapping(last_obs: Any) -> None:
+    with pytest.raises(RuntimeError, match="QGym environment did not provide 'mapping' in observation"):
+        QGymMapper._get_mapping(last_obs, 2)
+
+
+def test_get_mapping_incorrect_size() -> None:
+    msg = "the size of the mapping 3 is not equal to the number of qubits 2."
+    with pytest.raises(ValueError, match=re.escape(msg)):
+        QGymMapper._get_mapping({"mapping": np.array([0, 1, 2])}, 2)
+
+
+def test_get_mapping_incomplete() -> None:
+    msg = "mapping is incomplete: obtained mapping [5, 1]"
+    with pytest.raises(ValueError, match=re.escape(msg)):
+        QGymMapper._get_mapping({"mapping": np.array([5, 1])}, 2)
 
 
 def test_qgym_mapper_uses_provided_interaction_graph(
