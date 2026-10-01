@@ -8,9 +8,12 @@ import numpy as np
 
 from opensquirrel.circuit_builder import CircuitBuilder
 from opensquirrel.circuit_matrix_calculator import get_circuit_matrix
-from opensquirrel.ir import IR, Gate, Instruction, Qubit
+from opensquirrel.ir import IR, ControlInstruction, Gate, Instruction, Qubit
+from opensquirrel.ir.default_gates.two_qubit_gates import SWAP
+from opensquirrel.ir.non_unitary import NonUnitary
 from opensquirrel.ir.semantics.matrix_gate import MatrixGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
+from opensquirrel.ir.statement import AsmDeclaration
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.passes.merger.general_merger import Merger
 
@@ -18,58 +21,32 @@ if TYPE_CHECKING:
     from opensquirrel.circuit import Circuit
 
 
-def _add_asm_declaration_edges(graph: nx.DiGraph, ir: IR) -> nx.DiGraph:
-    n = len(ir.statements)
-    last_non_instruction = 0
-    for i, statement in enumerate(ir.statements):
-        if isinstance(statement, Instruction):
-            continue
+Group = tuple[set[int], set[int]]  # (statement indices, qubit indices)
 
-        for j in range(n):
-            if not isinstance(ir.statements[j], Instruction) and i != j and i > last_non_instruction:
-                last_non_instruction = j
-                break
-
-            qubit_indices = graph.nodes[j]["qubit_indices"]
-            if not qubit_indices:
-                continue
-
-            if j < i and graph.out_degree(j) == len(qubit_indices) - 1:
-                graph.add_edge(j, i)
-
-            if j > i and graph.in_degree(j) == len(qubit_indices) - 1:
-                graph.add_edge(i, j)
-    return graph
+SWAP_MATRIX = SWAP(0, 1).matrix
 
 
 def build_graph(ir: IR) -> nx.DiGraph:
     n = len(ir.statements)
     graph = nx.DiGraph()
     graph.add_nodes_from(
-        (i, {"qubit_indices": statement.qubit_indices if isinstance(statement, Instruction) else None})
+        (i, {"qubit_indices": set(statement.qubit_indices) if isinstance(statement, Instruction) else set(range(n))})
         for i, statement in enumerate(ir.statements)
     )
 
-    for i, statement in enumerate(ir.statements):
-        if not isinstance(statement, Instruction):
-            continue
+    for i in range(n):
+        qubit_indices = graph.nodes[i]["qubit_indices"]
 
-        qubit_indices = set(statement.qubit_indices)
         for j in range(i + 1, n):
-            other_statement = ir.statements[j]
-            if not isinstance(other_statement, Instruction):
-                break
-
-            other_qubit_indices = set(other_statement.qubit_indices)
+            other_qubit_indices = graph.nodes[j]["qubit_indices"]
 
             if inter := qubit_indices.intersection(other_qubit_indices):
                 graph.add_edge(i, j, qubit_index=tuple(inter))
                 qubit_indices = qubit_indices.difference(inter)
 
-            if not qubit_indices:
-                break
-
-    graph = _add_asm_declaration_edges(graph, ir)
+    for node in graph.nodes:
+        if isinstance(ir.statements[node], (NonUnitary, AsmDeclaration, ControlInstruction)):
+            graph.nodes[node]["qubit_indices"] = None
 
     if not nx.is_directed_acyclic_graph(graph):
         raise ValueError
@@ -83,8 +60,8 @@ def get_starting_nodes(graph: nx.DiGraph, available_nodes: set[int] | None = Non
     return [n for n, degree in graph.subgraph(available_nodes).in_degree() if degree == 0]
 
 
-def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
-    groups: list[tuple[set, set]] = []
+def group_gates(graph: nx.DiGraph) -> list[Group]:
+    groups: list[Group] = []
     available_nodes = set(graph.nodes)
     start_nodes = get_starting_nodes(graph)
 
@@ -95,15 +72,26 @@ def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
         if node not in available_nodes:
             continue
 
-        qubit_indices = set(graph.nodes[node]["qubit_indices"])
         group = {node}
         available_nodes.remove(node)
         bad_indices = set()
+        if graph.nodes[node]["qubit_indices"] is None:
+            start_nodes.extend(graph.successors(node))
+            groups.append((group, set()))
+            available_nodes.remove(node)
+            continue
 
+        qubit_indices = set(graph.nodes[node]["qubit_indices"])
         neighbors = list(graph.successors(node))
-        while sorted(neighbors):
+        while neighbors:
             neighbor = neighbors.pop(0)
             if neighbor not in available_nodes:
+                continue
+
+            if graph.nodes[neighbor]["qubit_indices"] is None:
+                start_nodes.extend(graph.successors(neighbor))
+                groups.append(({neighbor}, set()))
+                available_nodes.remove(neighbor)
                 continue
 
             neighbor_qubit_indices = set(graph.nodes[neighbor]["qubit_indices"])
@@ -120,35 +108,41 @@ def group_gates(graph: nx.DiGraph) -> list[tuple[set[int], set[int]]]:
                 bad_indices |= neighbor_qubit_indices & qubit_indices
 
         groups.append((group, qubit_indices))
-    return sorted(groups, key=lambda x: _first_two_qubit_gate(graph, x[0]))
+    return sorted(groups, key=lambda x: _first_two_qubit_gate(graph, x))
 
 
-def _first_two_qubit_gate(graph: nx.DiGraph, group: set[int]) -> int:
+def _first_two_qubit_gate(graph: nx.DiGraph, group: Group) -> int:
     """Return the first statement index pointing to a two qubit gate."""
-    x = [i for i in group if len(graph.nodes[i]["qubit_indices"]) == 2]
-    return min(x) if x else min(group)
+    statement_indices, qubit_indices = group
+    if not qubit_indices:
+        return min(statement_indices)
+
+    x = [i for i in statement_indices if len(graph.nodes[i]["qubit_indices"]) == 2]
+    return min(x) if x else min(statement_indices)
 
 
-def normalize_gate_indices(gate: Gate) -> Gate:
+def normalize_gate_indices(gate: Gate, mapping: dict[int, int]) -> Gate:
     if isinstance(gate, TwoQubitGate):
-        gate.qubit0 = Qubit(gate.qubit0.index % 2)
-        gate.qubit1 = Qubit(gate.qubit1.index % 2)
+        gate.qubit0 = Qubit(mapping[gate.qubit0.index])
+        gate.qubit1 = Qubit(mapping[gate.qubit1.index])
         return gate
 
     if isinstance(gate, SingleQubitGate):
-        gate.qubit = Qubit(gate.qubit.index % 2)
+        gate.qubit = Qubit(mapping[gate.qubit.index])
         return gate
 
     msg = f"Unsupported gate type: {type(gate)}"
     raise TypeError(msg)
 
 
-def _merge_gate_group(ir: IR, group: set[int], qubit_indices: set[int]) -> TwoQubitGate:
+def _merge_gate_group(ir: IR, group: Group) -> TwoQubitGate:
+    statement_indices, qubit_indices = group
+    index_mapping = {index: i for i, index in enumerate(sorted(qubit_indices))}
     builder = CircuitBuilder(len(qubit_indices))
-    for index in sorted(group):
+    for index in sorted(statement_indices):
         statement = ir.statements[index]
         if isinstance(statement, Gate):
-            statement = normalize_gate_indices(statement)
+            statement = normalize_gate_indices(statement, index_mapping)
             builder.add_instruction(statement)
 
     sub_circuit_matrix = _get_sub_circuit_matrix(builder.to_circuit())
@@ -156,10 +150,11 @@ def _merge_gate_group(ir: IR, group: set[int], qubit_indices: set[int]) -> TwoQu
 
 
 def _get_sub_circuit_matrix(circuit: Circuit) -> np.ndarray:
+    if circuit.qubit_register_size == 1:
+        return get_circuit_matrix(circuit)
     # `get_circuit_matrix` uses the convention of the first qubit being the most significant bit,
     # so we need to swap the qubits before and after calculating the matrix
-    swap = np.array([[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
-    return swap @ get_circuit_matrix(circuit) @ swap
+    return SWAP_MATRIX @ get_circuit_matrix(circuit) @ SWAP_MATRIX
 
 
 class TwoQubitGatesMerger(Merger):
@@ -176,4 +171,14 @@ class TwoQubitGatesMerger(Merger):
             return
 
         groups = group_gates(graph)
-        ir.statements = [_merge_gate_group(ir, group, qubit_indices) for group, qubit_indices in groups]
+        statements = []
+
+        for group in groups:
+            statement_indices, qubit_indices = group
+            if len(qubit_indices) == 2 and len(statement_indices) > 1:
+                merged_gate = _merge_gate_group(ir, group)
+                statements.append(merged_gate)
+            else:
+                statements.append(ir.statements[statement_indices.pop()])
+
+        ir.statements = statements
