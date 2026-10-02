@@ -212,6 +212,10 @@ class CircuitBuilder:
             self.ir.add_statement(instr)
         return self
 
+    def clear(self) -> None:
+        """Clears all statements from the IR."""
+        self.ir.clear()
+
     def to_circuit(self) -> Circuit:
         """Build the circuit.
 
