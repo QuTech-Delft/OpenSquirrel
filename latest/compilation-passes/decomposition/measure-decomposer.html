@@ -5429,10 +5429,10 @@
 
 <p>The measure decomposer (<code>MeasureDecomposer</code>) decomposes measurements along an arbitrary axis into at most 2 single-qubit gates followed by a measurement along the Z-axis.</p>
 <h2 id="theory">Theory</h2>
-<p>For a measurement axis defined by the unit vector
-$<span class="arithmatex">\(\hat{n} = (\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)\)</span>$</p>
-<p>where <span class="arithmatex">\(\theta = \arccos(n_z)\)</span> and <span class="arithmatex">\(\phi = \arctan2(n_y, n_x)\)</span>, we construct the unitary transformation:
-$<span class="arithmatex">\(U = R_z(\phi) R_y(\theta)\)</span>$</p>
+<p>For a measurement axis defined by the unit vector</p>
+<div class="arithmatex">\[\hat{n} = (\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)\]</div>
+<p>where <span class="arithmatex">\(\theta = \arccos(n_z)\)</span> and <span class="arithmatex">\(\phi = \text{arctan2}(n_y, n_x)\)</span>, we construct the unitary transformation:</p>
+<div class="arithmatex">\[U = R_z(\phi) R_y(\theta)\]</div>
 <p>This unitary maps Z-axis eigenstates to eigenstates along the <span class="arithmatex">\(\hat{n}\)</span> direction. Measuring in the <span class="arithmatex">\(\hat{n}\)</span> basis is equivalent to applying the inverse transformation <span class="arithmatex">\(U^\dagger = R_y(-\theta) R_z(-\phi)\)</span> and then measuring along Z.</p>
 <h2 id="decomposition-steps">Decomposition steps</h2>
 <ol>
@@ -5445,24 +5445,29 @@ $<span class="arithmatex">\(U = R_z(\phi) R_y(\theta)\)</span>$</p>
 <thead>
 <tr>
 <th>Measurement axis</th>
+<th>Axis</th>
 <th>Decomposition</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Z</td>
+<td><span class="arithmatex">\((0, 0, 1)\)</span></td>
 <td><span class="arithmatex">\(I\)</span></td>
 </tr>
 <tr>
 <td>X</td>
+<td><span class="arithmatex">\((1, 0, 0)\)</span></td>
 <td><span class="arithmatex">\(R_y(-\pi/2)\)</span></td>
 </tr>
 <tr>
 <td>Y</td>
+<td><span class="arithmatex">\((0, 1, 0)\)</span></td>
 <td><span class="arithmatex">\(R_y(-\pi/2) \cdot R_z(-\pi/2)\)</span></td>
 </tr>
 <tr>
 <td>H</td>
+<td><span class="arithmatex">\(\tfrac{1}{\sqrt{2}}(1, 0, 1)\)</span></td>
 <td><span class="arithmatex">\(R_y(-\pi/4)\)</span></td>
 </tr>
 </tbody>
