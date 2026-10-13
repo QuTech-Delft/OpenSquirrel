@@ -108,7 +108,7 @@ class TestRandomMapper:
         circuit.map(mapper=mapper)
         assert str(circuit) is not None
 
-    @pytest.mark.parametrize("seed, qubit_register_size", [(42, 5), (123, 10), (456, 20)])  # noqa: PT006
+    @pytest.mark.parametrize("seed, qubit_register_size", [(42, 5), (123, 10), (456, 20)])  # ruff: ignore[pytest-parametrize-names-wrong-type]
     def test_mapping_uniqueness(self, seed: int, qubit_register_size: int) -> None:
         random.seed(seed)
         mapper = RandomMapper(seed=seed)

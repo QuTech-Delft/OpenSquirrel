@@ -16,19 +16,19 @@ from opensquirrel.passes.exporter import QuantifySchedulerExporter
 from opensquirrel.passes.merger import SingleQubitGatesMerger
 from opensquirrel.passes.validator import InteractionValidator, PrimitiveGateValidator
 from tests import STATIC_DATA
-from tests.integration import DataType  # noqa: TC001
+from tests.integration import DataType  # ruff: ignore[typing-only-first-party-import]
 
 BACKEND_ID = "tuna-5"
 
 
-def _get_operations(exported_schedule) -> list[str]:  # noqa: ANN001
+def _get_operations(exported_schedule) -> list[str]:  # ruff: ignore[missing-type-function-argument]
     return [
         exported_schedule.operations[schedulable["operation_id"]].name
         for schedulable in exported_schedule.schedulables.values()
     ]
 
 
-def _check_measurement_to_bit_mapping(circuit: Circuit, exported_schedule) -> None:  # noqa: ANN001
+def _check_measurement_to_bit_mapping(circuit: Circuit, exported_schedule) -> None:  # ruff: ignore[missing-type-function-argument]
     qs_measures = [
         operation.data["gate_info"]
         for operation in exported_schedule.operations.values()

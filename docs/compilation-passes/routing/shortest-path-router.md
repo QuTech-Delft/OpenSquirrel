@@ -49,15 +49,7 @@ circuit.route(router=shortest_path_router)
     ```
 
 ```python
-connectivity = {
-    "0": [1, 2],
-    "1": [0, 3],
-    "2": [0, 4],
-    "3": [1, 5],
-    "4": [2, 5],
-    "5": [3, 4, 6],
-    "6": [5]
-}
+connectivity = {"0": [1, 2], "1": [0, 3], "2": [0, 4], "3": [1, 5], "4": [2, 5], "5": [3, 4, 6], "6": [5]}
 
 builder = CircuitBuilder(7)
 builder.CNOT(0, 6)
