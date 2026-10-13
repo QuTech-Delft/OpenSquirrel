@@ -165,3 +165,7 @@ class IR:
 
     def __repr__(self) -> str:
         return f"IR: {self.statements}"
+
+    def clear(self) -> None:
+        """Clears all statements from the IR."""
+        self.statements.clear()
