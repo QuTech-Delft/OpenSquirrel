@@ -80,7 +80,7 @@ def test_ignores_2q_gates(decomposer: SWAP2CZDecomposer, gate: Gate, expected_re
     ],
     ids=["SWAP_0_1", "SWAP_1_0"],
 )
-def test_decomposes_SWAP(decomposer: SWAP2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # noqa: N802
+def test_decomposes_SWAP(decomposer: SWAP2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # ruff: ignore[invalid-function-name]
     decomposed_gate = decomposer.decompose(gate)
     check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == expected_result

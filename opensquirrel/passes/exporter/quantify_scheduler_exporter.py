@@ -19,7 +19,7 @@ from opensquirrel.passes.exporter.general_exporter import Exporter
 
 try:
     import quantify_scheduler
-    from quantify_scheduler.schedules import Schedulable  # noqa: TC002
+    from quantify_scheduler.schedules import Schedulable  # ruff: ignore[typing-only-third-party-import]
     from quantify_scheduler.schedules.schedule import TimingConstraint
 except ModuleNotFoundError:
     pass

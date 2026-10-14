@@ -40,11 +40,10 @@ dev = [
     "IPython>=8.37,<9",
     "pytest>=8.4.2,<10",
     "pytest-cov>=4.1,<8.0",
-    "ruff>=0.13.2,<0.17",
+    "ruff>=0.16.10",
     "sympy>=1.14.0,<2",
     "tox>=4.30.2,<5",
-    "ty>=0.0.10",
-    "typing_extensions>=4.0.0",
+    "ty==0.0.32",
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
@@ -145,7 +144,7 @@ select = [
     "FURB", # refurb
     "RET", # flake8-return
     "RUF", # Ruff-specific rules
-    "RUF022",
+    "unsorted-dunder-all",
     "S", # flake8-bandit
     "SIM", # flake8-simplify
     "SLF", # flake8-self
@@ -153,22 +152,22 @@ select = [
     "TCH", # flake8-type-checking
     "TRY", # tryceratops
     "T20", # flake8-print
-    "T100", # flake8-debugger
+    "debugger", # flake8-debugger
     "UP", # pyupgrade
     "W", # pycodestyle (warning)
     "Q", # flake8-quotes
     "YTT", # flake8-2020
 ]
 ignore = [
-    "A005", # module shadowing a Python builtin module
-    "ANN401", # typing.Any can be useful (for example in __eq__)
-    "B027", # Ignore the rule for empty methods in abstract base classes
-    "COM812", # Conflicts with ruff format
-    "ISC001", # Possible conflicts with ruff format
-    "W605", # deprecated in Python 3.6
-    "PT012", # pytest.raises() block should contain only a single simple statement
-    "SIM105", # Use `contextlib.suppress(ModuleNotFoundError)` instead of `try`-`except`-`pass`
-    "RUF067", # Ignore "non-empty" __init__.py
+    "stdlib-module-shadowing", # module shadowing a Python builtin module
+    "any-type", # typing.Any can be useful (for example in __eq__)
+    "empty-method-without-abstract-decorator", # Ignore the rule for empty methods in abstract base classes
+    "missing-trailing-comma", # Conflicts with ruff format
+    "single-line-implicit-string-concatenation", # Possible conflicts with ruff format
+    "invalid-escape-sequence", # deprecated in Python 3.6
+    "pytest-raises-with-multiple-statements", # pytest.raises() block should contain only a single simple statement
+    "suppressible-exception", # Use `contextlib.suppress(ModuleNotFoundError)` instead of `try`-`except`-`pass`
+    "non-empty-init-module", # Ignore "non-empty" __init__.py
 ]
 isort.combine-as-imports = true
 pydocstyle.convention = "google"
@@ -176,15 +175,15 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
 
 [tool.ruff.lint.extend-per-file-ignores]
 "*.py" = [
-    "S101", # asserts allowed everywhere
+    "assert", # asserts allowed everywhere
 ]
 "tests/**/*.py" = [
     "FBT", # Don't care about booleans as positional arguments in tests, e.g. via @pytest.mark.parametrize()
     "D", # No doc requirements in tests
-    "SLF001", # Testing private functions is OK
+    "private-member-access", # Testing private functions is OK
 ]
 "check_*.py" = [
-    "SLF001", # Checking private functions is OK
+    "private-member-access", # Checking private functions is OK
 ]
 
 [tool.ty.rules]

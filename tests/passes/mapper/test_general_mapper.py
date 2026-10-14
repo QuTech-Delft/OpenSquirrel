@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import pytest
 
@@ -8,9 +8,6 @@ from opensquirrel import Circuit, CircuitBuilder
 from opensquirrel.passes.mapper import HardcodedMapper
 from opensquirrel.passes.mapper.general_mapper import Mapper
 from opensquirrel.passes.mapper.mapping import Mapping
-
-if TYPE_CHECKING:
-    from opensquirrel import Circuit
 
 
 class TestMapper:
