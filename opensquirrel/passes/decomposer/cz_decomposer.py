@@ -63,14 +63,14 @@ class CZDecomposer(Decomposer):
         # Try special case first, see https://arxiv.org/pdf/quant-ph/9503016.pdf lemma 5.5
         # Note that here V = Rx(a) * Ry(th) * Rx(a) * Z to create V = AZBZ, with AB = I
         controlled_rotation_times_z = target_gate * Z(target_qubit)
-        theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer()._determine_rotation_angles(  # noqa: SLF001
+        theta0_with_z, theta1_with_z, theta2_with_z = XYXDecomposer()._determine_rotation_angles(  # ruff: ignore[private-member-access]
             controlled_rotation_times_z.bsr.axis,
             controlled_rotation_times_z.bsr.angle,
         )
         if abs((theta0_with_z - theta2_with_z) % (2 * pi)) < ATOL:
             # The decomposition can use a single CZ according to the lemma.
-            A = [Ry(target_qubit, theta1_with_z / 2), Rx(target_qubit, theta2_with_z)]  # noqa: N806
-            B = [Rx(target_qubit, -theta2_with_z), Ry(target_qubit, -theta1_with_z / 2)]  # noqa: N806
+            A = [Ry(target_qubit, theta1_with_z / 2), Rx(target_qubit, theta2_with_z)]  # ruff: ignore[non-lowercase-variable-in-function]
+            B = [Rx(target_qubit, -theta2_with_z), Ry(target_qubit, -theta1_with_z / 2)]  # ruff: ignore[non-lowercase-variable-in-function]
             return filter_out_identities(
                 [
                     *B,
@@ -80,11 +80,11 @@ class CZDecomposer(Decomposer):
                 ],
             )
 
-        theta0, theta1, theta2 = XYXDecomposer()._determine_rotation_angles(target_gate.bsr.axis, target_gate.bsr.angle)  # noqa: SLF001
+        theta0, theta1, theta2 = XYXDecomposer()._determine_rotation_angles(target_gate.bsr.axis, target_gate.bsr.angle)  # ruff: ignore[private-member-access]
 
-        A = [Ry(target_qubit, theta1 / 2), Rx(target_qubit, theta2)]  # noqa: N806
-        B = [Rx(target_qubit, -(theta0 + theta2) / 2), Ry(target_qubit, -theta1 / 2)]  # noqa: N806
-        C = [Rx(target_qubit, (theta0 - theta2) / 2)]  # noqa: N806
+        A = [Ry(target_qubit, theta1 / 2), Rx(target_qubit, theta2)]  # ruff: ignore[non-lowercase-variable-in-function]
+        B = [Rx(target_qubit, -(theta0 + theta2) / 2), Ry(target_qubit, -theta1 / 2)]  # ruff: ignore[non-lowercase-variable-in-function]
+        C = [Rx(target_qubit, (theta0 - theta2) / 2)]  # ruff: ignore[non-lowercase-variable-in-function]
 
         return filter_out_identities(
             [

@@ -48,18 +48,14 @@ import networkx as nx
 import json
 
 connectivity = {
-        "0": [2],
-        "1": [2],
-        "2": [0, 1, 3, 4],
-        "3": [2],
-        "4": [2],
+    "0": [2],
+    "1": [2],
+    "2": [0, 1, 3, 4],
+    "3": [2],
+    "4": [2],
 }
 
-qgym_mapper = QGymMapper(
-    agent_class="TRPO",
-    agent_path="path-to-agent/TRPO.zip",
-    connectivity=connectivity
-)
+qgym_mapper = QGymMapper(agent_class="TRPO", agent_path="path-to-agent/TRPO.zip", connectivity=connectivity)
 
 builder = CircuitBuilder(5)
 builder.H(0)
@@ -70,5 +66,5 @@ builder.CNOT(2, 4)
 builder.CNOT(3, 4)
 circuit = builder.to_circuit()
 
-circuit.map(mapper = qgym_mapper)
+circuit.map(mapper=qgym_mapper)
 ```

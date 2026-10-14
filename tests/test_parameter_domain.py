@@ -29,7 +29,7 @@ class TestParsing:
     def _check_expected(circuit: Circuit, expected: float) -> None:
         for statement in circuit.ir.statements:
             if isinstance(statement, SingleQubitGate):
-                assert getattr(statement.bsr, "theta").value == expected  # noqa
+                assert getattr(statement.bsr, "theta").value == expected  # ruff: ignore[get-attr-with-constant]
                 phi = getattr(statement, "phi", None)
                 assert phi.value == expected if phi else True
 

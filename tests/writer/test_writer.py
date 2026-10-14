@@ -229,7 +229,7 @@ Rn(0.57735027, 0.57735027, 0.57735027, 1.23, 0.0) q[0]
 TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=ControlledGateSemantic(target_bsr=BlochSphereRotation(axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)))
 TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=MatrixGateSemantic(matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]]))
 CR(1.234) q[0], q[1]
-"""  # noqa: E501
+"""  # ruff: ignore[line-too-long]
     )
 
 

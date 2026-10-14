@@ -25,14 +25,14 @@ def test_ignores_1q_gates(decomposer: CNOTDecomposer, gate: Gate, expected_resul
     assert decomposer.decompose(gate) == expected_result
 
 
-def test_preserves_CNOT(decomposer: CNOTDecomposer) -> None:  # noqa: N802
+def test_preserves_CNOT(decomposer: CNOTDecomposer) -> None:  # ruff: ignore[invalid-function-name]
     gate = CNOT(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == [CNOT(0, 1)]
 
 
-def test_CZ(decomposer: CNOTDecomposer) -> None:  # noqa: N802
+def test_CZ(decomposer: CNOTDecomposer) -> None:  # ruff: ignore[invalid-function-name]
     gate = CZ(0, 1)
     decomposed_gate = decomposer.decompose(gate)
     check_gate_decomposition(gate, decomposed_gate)

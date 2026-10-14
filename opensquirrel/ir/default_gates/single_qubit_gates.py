@@ -39,7 +39,7 @@ class Rz(SingleQubitGate):
         super().__init__(qubit=qubit, gate_semantic=BsrAngleParam(axis=(0, 0, 1), angle=theta, phase=0.0), name="Rz")
 
 
-class I(SingleQubitGate):  # noqa: E742
+class I(SingleQubitGate):  # ruff: ignore[ambiguous-class-name]
     def __init__(self, qubit: QubitLike) -> None:
         super().__init__(qubit=qubit, gate_semantic=BsrNoParams(axis=(0, 0, 1), angle=0, phase=0), name="I")
 

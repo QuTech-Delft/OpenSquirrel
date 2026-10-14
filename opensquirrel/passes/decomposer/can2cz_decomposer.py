@@ -74,8 +74,8 @@ class Can2CZDecomposer(Decomposer):
             ]
         if np.isclose(gate_axis[2], 0):
             tx, ty, _ = gate_axis.value
-            Xtx = SingleQubitGate(q0, BlochSphereRotation(axis=(1, 0, 0), angle=pi * tx, phase=pi / 2 * tx))  # noqa: N806
-            Zty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ty, phase=pi / 2 * ty))  # noqa: N806
+            Xtx = SingleQubitGate(q0, BlochSphereRotation(axis=(1, 0, 0), angle=pi * tx, phase=pi / 2 * tx))  # ruff: ignore[non-lowercase-variable-in-function]
+            Zty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ty, phase=pi / 2 * ty))  # ruff: ignore[non-lowercase-variable-in-function]
             return [
                 k1,
                 k2,
@@ -102,9 +102,9 @@ class Can2CZDecomposer(Decomposer):
         ztz = tz - 0.5
         ytx = tx - 0.5
         yty = 0.5 - ty
-        Ztz = SingleQubitGate(q0, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ztz, phase=pi / 2 * ztz))  # noqa: N806
-        Ytx = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * ytx, phase=pi / 2 * ytx))  # noqa: N806
-        Yty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * yty, phase=pi / 2 * yty))  # noqa: N806
+        Ztz = SingleQubitGate(q0, BlochSphereRotation(axis=(0, 0, 1), angle=pi * ztz, phase=pi / 2 * ztz))  # ruff: ignore[non-lowercase-variable-in-function]
+        Ytx = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * ytx, phase=pi / 2 * ytx))  # ruff: ignore[non-lowercase-variable-in-function]
+        Yty = SingleQubitGate(q1, BlochSphereRotation(axis=(0, 1, 0), angle=pi * yty, phase=pi / 2 * yty))  # ruff: ignore[non-lowercase-variable-in-function]
         return [
             k1,
             k2,
