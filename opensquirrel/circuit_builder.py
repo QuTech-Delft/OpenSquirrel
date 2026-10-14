@@ -6,8 +6,6 @@ from copy import deepcopy
 from functools import partial
 from typing import Any
 
-from typing_extensions import Self
-
 from opensquirrel.circuit import Circuit
 from opensquirrel.default_instructions import default_instruction_set, default_two_qubit_gate_set
 from opensquirrel.ir import IR, AsmDeclaration, Bit, BitLike, Instruction, Qubit, QubitLike
@@ -135,7 +133,7 @@ class CircuitBuilder:
             return arg
         return [arg]
 
-    def _add_statement(self, attr: str, *args: Any) -> Self:
+    def _add_statement(self, attr: str, *args: Any) -> CircuitBuilder:
         if attr == "asm":
             try:
                 asm_declaration = AsmDeclaration(*args)
@@ -198,7 +196,7 @@ class CircuitBuilder:
         remaining_args = args[1:]
         return [(first, *remaining_args) for first in expanded_first]
 
-    def add_instruction(self, instruction: Instruction | Iterable[Instruction]) -> Self:
+    def add_instruction(self, instruction: Instruction | Iterable[Instruction]) -> CircuitBuilder:
         """Add instructions to the ir.
 
         Args:
