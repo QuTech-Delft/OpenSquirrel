@@ -4269,7 +4269,7 @@ export = [
     { name = "spirack", marker = "sys_platform != 'darwin'" },
 ]
 qgym-mapper = [
-    { name = "qgym" },
+    { name = "qgym", marker = "python_full_version < '3.14'" },
     { name = "sb3-contrib" },
     { name = "stable-baselines3" },
 ]
@@ -4315,7 +4315,7 @@ export = [
     { name = "spirack", marker = "sys_platform != 'darwin'", specifier = "<=0.2.21" },
 ]
 qgym-mapper = [
-    { name = "qgym", specifier = "==0.3.1" },
+    { name = "qgym", marker = "python_full_version < '3.14'", specifier = "==0.3.1" },
     { name = "sb3-contrib", specifier = "==2.9.0" },
     { name = "stable-baselines3", specifier = "==2.9.0" },
 ]
@@ -5627,12 +5627,12 @@ version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "gymnasium" },
-    { name = "networkx", version = "3.4.2", source = { registry = "https://pypi.org/simple" }, extra = ["default"], marker = "python_full_version < '3.11'" },
+    { name = "networkx", version = "3.4.2", source = { registry = "https://pypi.org/simple" }, extra = ["default"], marker = "python_full_version < '3.11' or python_full_version >= '3.14'" },
     { name = "networkx", version = "3.6.1", source = { registry = "https://pypi.org/simple" }, extra = ["default"], marker = "python_full_version == '3.11.*'" },
-    { name = "networkx", version = "3.7", source = { registry = "https://pypi.org/simple" }, extra = ["default"], marker = "python_full_version >= '3.12'" },
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "networkx", version = "3.7", source = { registry = "https://pypi.org/simple" }, extra = ["default"], marker = "python_full_version >= '3.12' and python_full_version < '3.14'" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or python_full_version >= '3.14'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
-    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12' and python_full_version < '3.14'" },
     { name = "pygame" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/58/49/22ab7f2cd665f7e723a7ec3ab723ebaf975fda6c0d4580e46fa524109ca7/qgym-0.3.1.tar.gz", hash = "sha256:e479efbd6b65360125353688fee31e16404857215990dae43acea103e14c83b0", size = 64298, upload-time = "2024-07-19T12:30:06.032Z" }

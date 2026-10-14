@@ -52,7 +52,7 @@ export = [
     "spirack<=0.2.21; sys_platform != 'darwin'",
 ]
 qgym_mapper = [
-    "qgym==0.3.1",
+    "qgym==0.3.1; python_version < '3.14'",
     "stable-baselines3==2.9.0",
     "sb3-contrib==2.9.0",
 ]
