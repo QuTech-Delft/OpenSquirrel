@@ -47,7 +47,7 @@ dev = [
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
-    "quantify-scheduler==0.28.1; sys_platform != 'darwin'",
+    "quantify-scheduler==0.28.1; sys_platform != 'darwin' and python_version < '3.14'",
     "qcodes<0.57.0; sys_platform != 'darwin'",
     "spirack<=0.2.21; sys_platform != 'darwin'",
 ]
