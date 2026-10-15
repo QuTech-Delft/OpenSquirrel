@@ -14,7 +14,7 @@ keywords = [
     "compilation",
 ]
 dependencies = [
-    "libqasm==1.5.0",
+    "libqasm==1.6.0",
     "networkx>=3.4.2",
     "numpy>=2.2.6",
     "scipy>=1.15.3",
@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "License :: OSI Approved :: Apache Software License",
 ]
 
@@ -46,12 +47,12 @@ dev = [
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
-    "quantify-scheduler==0.28.1; sys_platform != 'darwin'",
+    "quantify-scheduler==0.28.1; sys_platform != 'darwin' and python_version < '3.14'",
     "qcodes<0.57.0; sys_platform != 'darwin'",
     "spirack<=0.2.21; sys_platform != 'darwin'",
 ]
 qgym_mapper = [
-    "qgym==0.3.1",
+    "qgym==0.3.1; python_version < '3.14'",
     "stable-baselines3==2.9.0",
     "sb3-contrib==2.9.0",
 ]
