@@ -20,9 +20,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install uv
-        uses: yezz123/setup-uv@v4
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884
         with:
-          uv-version: "0.8.12"
+          version: "latest"
       - name: Install tox
         run: pip install tox
       - name: run tox lint and type
@@ -51,9 +51,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install uv
-        uses: yezz123/setup-uv@v4
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884
         with:
-          uv-version: "0.8.12"
+          version: "latest"
       - name: Install tox
         run: pip install tox
       - name: run tox test
