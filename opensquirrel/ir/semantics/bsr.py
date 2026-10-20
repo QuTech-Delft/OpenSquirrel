@@ -94,7 +94,7 @@ class BlochSphereRotation(GateSemantic, IRNode):
             order_of_magnitude,
         )
 
-        # combined_angle is in the domain [0, 2pi], but this is normalize to the domain of (-pi, pi].
+        # The combined angle is in the domain [0, 2pi], but this is normalized to the domain (-pi, pi].
         # This normalization adds a global phase of pi to the resulting Bloch-sphere rotation.
         phase_adjustment = pi if self.normalize_angle_params and normalize_angle(combined_angle) < 0 else 0
         combined_phase = np.round(self.phase + other.phase + phase_adjustment, order_of_magnitude)
