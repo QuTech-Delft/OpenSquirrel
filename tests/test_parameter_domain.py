@@ -99,6 +99,6 @@ class TestMerging:
         circuit.merge(merger=SingleQubitGatesMerger())
         assert circuit.ir.statements[0] == Ry(0, pi - DELTA)
 
-        circuit = CircuitBuilder(1).Rz(0, pi).Rz(0, pi / 2).to_circuit()
+        circuit = CircuitBuilder(1).Rz(0, pi / 2).Rz(0, pi / 2).to_circuit()
         circuit.merge(merger=SingleQubitGatesMerger())
-        assert circuit.ir.statements[0] == Rz(0, -pi / 2)
+        assert circuit.ir.statements[0] == Rz(0, pi)

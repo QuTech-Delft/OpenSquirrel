@@ -12,7 +12,6 @@ from opensquirrel.common import ATOL, normalize_angle, repr_round
 from opensquirrel.ir.expression import Axis, AxisLike, Float
 from opensquirrel.ir.ir import IRNode
 from opensquirrel.ir.semantics.gate_semantic import GateSemantic
-from opensquirrel.utils import can1
 from opensquirrel.utils.general_math import acos
 
 if TYPE_CHECKING:
@@ -95,7 +94,10 @@ class BlochSphereRotation(GateSemantic, IRNode):
             order_of_magnitude,
         )
 
-        combined_phase = np.round(self.phase + other.phase, order_of_magnitude)
+        # combined_angle is in the domain [0, 2pi], but this is normalize to the domain of (-pi, pi].
+        # This normalization adds a global phase of pi to the resulting Bloch-sphere rotation.
+        phase_adjustment = pi if self.normalize_angle_params and normalize_angle(combined_angle) < 0 else 0
+        combined_phase = np.round(self.phase + other.phase + phase_adjustment, order_of_magnitude)
         return BlochSphereRotation(
             axis=combined_axis,
             angle=combined_angle,
@@ -191,11 +193,7 @@ class BsrUnitaryParams(BlochSphereRotation):
         a = BlochSphereRotation((0, 0, 1), lmbda, 0)
         b = BlochSphereRotation((0, 1, 0), theta, 0)
         c = BlochSphereRotation((0, 0, 1), phi, (float(phi) + float(lmbda)) / 2)
-
-        ma = can1(a.axis, a.angle, a.phase)
-        mb = can1(b.axis, b.angle, b.phase)
-        mc = can1(c.axis, c.angle, c.phase)
-        return bsr_from_matrix(mc @ mb @ ma)
+        return a * b * c
 
     @property
     def arguments(self) -> tuple[Float, ...]:
