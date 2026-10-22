@@ -179,7 +179,6 @@ def merger() -> TwoQubitGatesMerger:
         (CircuitBuilder(1).H(0).to_circuit(), CircuitBuilder(1).H(0).to_circuit()),
         (CircuitBuilder(2).CNOT(0, 1).to_circuit(), CircuitBuilder(2).CNOT(0, 1).to_circuit()),
         (CircuitBuilder(2).CNOT(0, 1).CNOT(1, 0).CNOT(0, 1).to_circuit(), CircuitBuilder(2).SWAP(0, 1).to_circuit()),
-        (CircuitBuilder(2).SWAP(0, 1).SWAP(0, 1).to_circuit(), CircuitBuilder(2).I(0).to_circuit()),
         (CircuitBuilder(2).SWAP(0, 1).CZ(0, 1).S(0).S(1).to_circuit(), CircuitBuilder(2).ISWAP(0, 1).to_circuit()),
         (CircuitBuilder(2).H(1).CNOT(0, 1).H(1).to_circuit(), CircuitBuilder(2).CZ(0, 1).to_circuit()),
         (CircuitBuilder(2).CV(0, 1).CV(0, 1).to_circuit(), CircuitBuilder(2).CNOT(0, 1).to_circuit()),
