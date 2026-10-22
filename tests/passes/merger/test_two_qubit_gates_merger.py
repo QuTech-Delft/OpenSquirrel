@@ -296,3 +296,10 @@ def test_two_qubit_gates_merger_with_non_instructions(
                 "Both should be either TwoQubitGate or SingleQubitGate."
             )
             raise TypeError(msg)
+
+
+def test_two_qubit_gates_merger_filters_out_identity_gates(merger: TwoQubitGatesMerger) -> None:
+    circuit = CircuitBuilder(2).SWAP(0, 1).SWAP(0, 1).to_circuit()
+    merger.merge(circuit.ir, circuit.qubit_register_size)
+
+    assert len(circuit.ir.statements) == 0

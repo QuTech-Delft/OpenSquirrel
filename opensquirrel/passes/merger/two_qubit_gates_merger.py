@@ -181,4 +181,4 @@ class TwoQubitGatesMerger(Merger):
             else:
                 statements.append(ir.statements[statement_indices.pop()])
 
-        ir.statements = statements
+        ir.statements = list(filter(lambda x: not x.is_identity(), statements))
