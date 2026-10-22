@@ -5550,8 +5550,7 @@
 <span class="normal"><a href="#__codelineno-0-180">180</a></span>
 <span class="normal"><a href="#__codelineno-0-181">181</a></span>
 <span class="normal"><a href="#__codelineno-0-182">182</a></span>
-<span class="normal"><a href="#__codelineno-0-183">183</a></span>
-<span class="normal"><a href="#__codelineno-0-184">184</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-160" name="__codelineno-0-160"></a><span class="k">class</span><span class="w"> </span><span class="nc">TwoQubitGatesMerger</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
+<span class="normal"><a href="#__codelineno-0-183">183</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-160" name="__codelineno-0-160"></a><span class="k">class</span><span class="w"> </span><span class="nc">TwoQubitGatesMerger</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
 <a id="__codelineno-0-161" name="__codelineno-0-161"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-162" name="__codelineno-0-162"></a><span class="w">        </span><span class="sd">"""Merge all consecutive two-qubit gates in the circuit.</span>
 <a id="__codelineno-0-163" name="__codelineno-0-163"></a>
@@ -5561,21 +5560,20 @@
 <a id="__codelineno-0-167" name="__codelineno-0-167"></a>
 <a id="__codelineno-0-168" name="__codelineno-0-168"></a><span class="sd">        """</span>
 <a id="__codelineno-0-169" name="__codelineno-0-169"></a>        <span class="n">graph</span> <span class="o">=</span> <span class="n">build_graph</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span>
-<a id="__codelineno-0-170" name="__codelineno-0-170"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-171" name="__codelineno-0-171"></a>            <span class="k">return</span>
+<a id="__codelineno-0-170" name="__codelineno-0-170"></a>        <span class="n">groups</span> <span class="o">=</span> <span class="n">group_gates</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+<a id="__codelineno-0-171" name="__codelineno-0-171"></a>        <span class="n">statements</span> <span class="o">=</span> <span class="p">[]</span>
 <a id="__codelineno-0-172" name="__codelineno-0-172"></a>
-<a id="__codelineno-0-173" name="__codelineno-0-173"></a>        <span class="n">groups</span> <span class="o">=</span> <span class="n">group_gates</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
-<a id="__codelineno-0-174" name="__codelineno-0-174"></a>        <span class="n">statements</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-0-175" name="__codelineno-0-175"></a>
-<a id="__codelineno-0-176" name="__codelineno-0-176"></a>        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
-<a id="__codelineno-0-177" name="__codelineno-0-177"></a>            <span class="n">statement_indices</span><span class="p">,</span> <span class="n">qubit_indices</span> <span class="o">=</span> <span class="n">group</span>
-<a id="__codelineno-0-178" name="__codelineno-0-178"></a>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qubit_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">statement_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-179" name="__codelineno-0-179"></a>                <span class="n">merged_gate</span> <span class="o">=</span> <span class="n">_merge_gate_group</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
-<a id="__codelineno-0-180" name="__codelineno-0-180"></a>                <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merged_gate</span><span class="p">)</span>
-<a id="__codelineno-0-181" name="__codelineno-0-181"></a>            <span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-0-182" name="__codelineno-0-182"></a>                <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_indices</span><span class="o">.</span><span class="n">pop</span><span class="p">()])</span>
-<a id="__codelineno-0-183" name="__codelineno-0-183"></a>
-<a id="__codelineno-0-184" name="__codelineno-0-184"></a>        <span class="n">ir</span><span class="o">.</span><span class="n">statements</span> <span class="o">=</span> <span class="n">statements</span>
+<a id="__codelineno-0-173" name="__codelineno-0-173"></a>        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+<a id="__codelineno-0-174" name="__codelineno-0-174"></a>            <span class="n">statement_indices</span><span class="p">,</span> <span class="n">qubit_indices</span> <span class="o">=</span> <span class="n">group</span>
+<a id="__codelineno-0-175" name="__codelineno-0-175"></a>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qubit_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-176" name="__codelineno-0-176"></a>                <span class="n">statement</span> <span class="o">=</span> <span class="n">_merge_gate_group</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+<a id="__codelineno-0-177" name="__codelineno-0-177"></a>            <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-178" name="__codelineno-0-178"></a>                <span class="n">statement</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_indices</span><span class="o">.</span><span class="n">pop</span><span class="p">()]</span>
+<a id="__codelineno-0-179" name="__codelineno-0-179"></a>
+<a id="__codelineno-0-180" name="__codelineno-0-180"></a>            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Gate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">statement</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()):</span>
+<a id="__codelineno-0-181" name="__codelineno-0-181"></a>                <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+<a id="__codelineno-0-182" name="__codelineno-0-182"></a>
+<a id="__codelineno-0-183" name="__codelineno-0-183"></a>        <span class="n">ir</span><span class="o">.</span><span class="n">statements</span> <span class="o">=</span> <span class="n">statements</span>
 </code></pre></div></td></tr></tbody></table></div>
               </details>
 
@@ -5679,8 +5677,7 @@
 <span class="normal"><a href="#__codelineno-0-180">180</a></span>
 <span class="normal"><a href="#__codelineno-0-181">181</a></span>
 <span class="normal"><a href="#__codelineno-0-182">182</a></span>
-<span class="normal"><a href="#__codelineno-0-183">183</a></span>
-<span class="normal"><a href="#__codelineno-0-184">184</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-161" name="__codelineno-0-161"></a><span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-183">183</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-161" name="__codelineno-0-161"></a><span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ir</span><span class="p">:</span> <span class="n">IR</span><span class="p">,</span> <span class="n">qubit_register_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-162" name="__codelineno-0-162"></a><span class="w">    </span><span class="sd">"""Merge all consecutive two-qubit gates in the circuit.</span>
 <a id="__codelineno-0-163" name="__codelineno-0-163"></a>
 <a id="__codelineno-0-164" name="__codelineno-0-164"></a><span class="sd">    Args:</span>
@@ -5689,21 +5686,20 @@
 <a id="__codelineno-0-167" name="__codelineno-0-167"></a>
 <a id="__codelineno-0-168" name="__codelineno-0-168"></a><span class="sd">    """</span>
 <a id="__codelineno-0-169" name="__codelineno-0-169"></a>    <span class="n">graph</span> <span class="o">=</span> <span class="n">build_graph</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span>
-<a id="__codelineno-0-170" name="__codelineno-0-170"></a>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-171" name="__codelineno-0-171"></a>        <span class="k">return</span>
+<a id="__codelineno-0-170" name="__codelineno-0-170"></a>    <span class="n">groups</span> <span class="o">=</span> <span class="n">group_gates</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+<a id="__codelineno-0-171" name="__codelineno-0-171"></a>    <span class="n">statements</span> <span class="o">=</span> <span class="p">[]</span>
 <a id="__codelineno-0-172" name="__codelineno-0-172"></a>
-<a id="__codelineno-0-173" name="__codelineno-0-173"></a>    <span class="n">groups</span> <span class="o">=</span> <span class="n">group_gates</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
-<a id="__codelineno-0-174" name="__codelineno-0-174"></a>    <span class="n">statements</span> <span class="o">=</span> <span class="p">[]</span>
-<a id="__codelineno-0-175" name="__codelineno-0-175"></a>
-<a id="__codelineno-0-176" name="__codelineno-0-176"></a>    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
-<a id="__codelineno-0-177" name="__codelineno-0-177"></a>        <span class="n">statement_indices</span><span class="p">,</span> <span class="n">qubit_indices</span> <span class="o">=</span> <span class="n">group</span>
-<a id="__codelineno-0-178" name="__codelineno-0-178"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qubit_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">statement_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-<a id="__codelineno-0-179" name="__codelineno-0-179"></a>            <span class="n">merged_gate</span> <span class="o">=</span> <span class="n">_merge_gate_group</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
-<a id="__codelineno-0-180" name="__codelineno-0-180"></a>            <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merged_gate</span><span class="p">)</span>
-<a id="__codelineno-0-181" name="__codelineno-0-181"></a>        <span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-0-182" name="__codelineno-0-182"></a>            <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_indices</span><span class="o">.</span><span class="n">pop</span><span class="p">()])</span>
-<a id="__codelineno-0-183" name="__codelineno-0-183"></a>
-<a id="__codelineno-0-184" name="__codelineno-0-184"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">statements</span> <span class="o">=</span> <span class="n">statements</span>
+<a id="__codelineno-0-173" name="__codelineno-0-173"></a>    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+<a id="__codelineno-0-174" name="__codelineno-0-174"></a>        <span class="n">statement_indices</span><span class="p">,</span> <span class="n">qubit_indices</span> <span class="o">=</span> <span class="n">group</span>
+<a id="__codelineno-0-175" name="__codelineno-0-175"></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qubit_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+<a id="__codelineno-0-176" name="__codelineno-0-176"></a>            <span class="n">statement</span> <span class="o">=</span> <span class="n">_merge_gate_group</span><span class="p">(</span><span class="n">ir</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+<a id="__codelineno-0-177" name="__codelineno-0-177"></a>        <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-178" name="__codelineno-0-178"></a>            <span class="n">statement</span> <span class="o">=</span> <span class="n">ir</span><span class="o">.</span><span class="n">statements</span><span class="p">[</span><span class="n">statement_indices</span><span class="o">.</span><span class="n">pop</span><span class="p">()]</span>
+<a id="__codelineno-0-179" name="__codelineno-0-179"></a>
+<a id="__codelineno-0-180" name="__codelineno-0-180"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">statement</span><span class="p">,</span> <span class="n">Gate</span><span class="p">)</span> <span class="ow">and</span> <span class="n">statement</span><span class="o">.</span><span class="n">is_identity</span><span class="p">()):</span>
+<a id="__codelineno-0-181" name="__codelineno-0-181"></a>            <span class="n">statements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+<a id="__codelineno-0-182" name="__codelineno-0-182"></a>
+<a id="__codelineno-0-183" name="__codelineno-0-183"></a>    <span class="n">ir</span><span class="o">.</span><span class="n">statements</span> <span class="o">=</span> <span class="n">statements</span>
 </code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
