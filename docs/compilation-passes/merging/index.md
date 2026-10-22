@@ -10,3 +10,4 @@ The kind of decomposition pass required will depend on the primitive gate set th
 OpenSquirrel currently facilitates the following merge pass:
 
 - [Single-qubit gates merger](single-qubit-gates-merger.md) (`SingleQubitGatesMerger`)
+- [Two-qubit gates merger](two-qubit-gates-merger.md) (`TwoQubitGatesMerger`)
