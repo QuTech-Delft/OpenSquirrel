@@ -2,11 +2,50 @@ import numpy as np
 import pytest
 from numpy.typing import NDArray
 
-from opensquirrel import CNOT, CV, DCNOT, ISWAP, SWAP, InvSqrtSWAP, SqrtISWAP, SqrtSWAP
+from opensquirrel import CNOT, CV, CY, CZ, DCNOT, ECR, ISWAP, MS, SWAP, InvSqrtSWAP, M, SqrtISWAP, SqrtSWAP
 from opensquirrel.ir import Qubit
 from opensquirrel.ir.semantics import BlochSphereRotation, CanonicalGateSemantic, MatrixGateSemantic
-from opensquirrel.ir.two_qubit_gate import TwoQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate, try_match_replace_with_default_two_qubit_gate
 from opensquirrel.utils.matrix_expander import can2, get_matrix
+
+
+@pytest.mark.parametrize(
+    ("gate", "default_gate"),
+    [
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(CNOT(1, 0), 2))), CNOT(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(CV(1, 0), 2))), CV(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(CY(1, 0), 2))), CY(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(CZ(1, 0), 2))), CZ(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(DCNOT(1, 0), 2))), DCNOT(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(ECR(1, 0), 2))), ECR(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(InvSqrtSWAP(1, 0), 2))), InvSqrtSWAP(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(ISWAP(1, 0), 2))), ISWAP(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(M(1, 0), 2))), M(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(MS(1, 0), 2))), MS(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(SqrtISWAP(1, 0), 2))), SqrtISWAP(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(SqrtSWAP(1, 0), 2))), SqrtSWAP(0, 1)),
+        (TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic(get_matrix(SWAP(1, 0), 2))), SWAP(0, 1)),
+    ],
+    ids=[
+        "CNOT",
+        "CV",
+        "CY",
+        "CZ",
+        "DCNOT",
+        "ECR",
+        "InvSqrtSWAP",
+        "ISWAP",
+        "M",
+        "MS",
+        "SqrtISWAP",
+        "SqrtSWAP",
+        "SWAP",
+    ],
+)
+def test_default_gate_matching(gate: TwoQubitGate, default_gate: TwoQubitGate) -> None:
+    matched_gate = try_match_replace_with_default_two_qubit_gate(gate)
+    assert matched_gate == default_gate
+    assert matched_gate.name == default_gate.name
 
 
 class TestTwoQubitGate:

@@ -5,8 +5,12 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from opensquirrel.ir import Float, Gate, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
+from opensquirrel.ir.semantics import (
+    CanonicalGateSemantic,
+    ControlledGateSemantic,
+    MatrixGateSemantic,
+)
 from opensquirrel.ir.semantics.bsr import bsr_from_matrix
 
 if TYPE_CHECKING:
@@ -39,16 +43,15 @@ def try_match_replace_with_default_two_qubit_gate(gate: TwoQubitGate) -> TwoQubi
     if gate.name in default_two_qubit_gate_set:
         return gate
 
-    for gate_name in default_two_qubit_gate_set:
+    default_gates = {
+        gate_name: gate_type
+        for gate_name, gate_type in default_two_qubit_gate_set.items()
+        if gate_name not in default_two_qubit_gate_with_param_set
+    }
+
+    for gate_type in default_gates.values():
         arguments: tuple[Any, ...] = (gate.qubit0, gate.qubit1)
-        if gate_name in default_two_qubit_gate_with_param_set and gate.controlled:
-            arguments += (Float(gate.controlled.target_bsr.angle),)
-
-        try:
-            possible_gate = default_two_qubit_gate_set[gate_name](*arguments)  # ty: ignore[invalid-argument-type]
-        except (TypeError, ValueError):
-            continue
-
+        possible_gate = gate_type(*arguments)  # ty: ignore[missing-argument]
         if possible_gate == gate:
             return possible_gate
 
