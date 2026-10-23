@@ -17,11 +17,13 @@ _Check the [circuit builder](../../circuit-builder/index.md) on how to generate 
 ```python
 from opensquirrel import CircuitBuilder
 from opensquirrel.passes.merger import TwoQubitGatesMerger
+from math import pi  # not necessary for using the TwoQubitGatesMerger
 ```
 
 ```python
-builder = CircuitBuilder(2)
-builder.CNOT(0, 1).CNOT(1, 0).CNOT(0, 1)
+builder = CircuitBuilder(3)
+for _ in range(4):
+    builder.CR(0, 1, pi / 4)
 circuit = builder.to_circuit()
 
 circuit.merge(merger=TwoQubitGatesMerger())
