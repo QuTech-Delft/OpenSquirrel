@@ -2,7 +2,7 @@ from math import sqrt
 
 from opensquirrel import CircuitBuilder
 from opensquirrel.ir.expression import Axis
-from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir.semantics import BlochSphereRotation, ControlledGateSemantic
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate
 from opensquirrel.ir.two_qubit_gate import TwoQubitGate
 from opensquirrel.writer import writer
@@ -213,9 +213,7 @@ def test_anonymous_gate() -> None:
             gate_semantic=ControlledGateSemantic(target_bsr=BlochSphereRotation(axis=(1, 1, 1), angle=1.23, phase=0.0)),
         )
     )
-    builder.ir.add_gate(
-        TwoQubitGate(0, 1, gate_semantic=MatrixGateSemantic([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]]))
-    )
+
     builder.CR(0, 1, 1.234)
     assert (
         str(builder.to_circuit())
@@ -227,7 +225,6 @@ bit[2] b
 H q[0]
 Rn(0.57735027, 0.57735027, 0.57735027, 1.23, 0.0) q[0]
 TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=ControlledGateSemantic(target_bsr=BlochSphereRotation(axis=[0.57735 0.57735 0.57735], angle=1.23, phase=0.0)))
-TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=MatrixGateSemantic(matrix=[[1.+0.j 0.+0.j 0.+0.j 0.+0.j] [0.+0.j 1.+0.j 0.+0.j 0.+0.j] [0.+0.j 0.+0.j 0.+0.j 1.+0.j] [0.+0.j 0.+0.j 1.+0.j 0.+0.j]]))
 CR(1.234) q[0], q[1]
 """  # ruff: ignore[line-too-long]
     )

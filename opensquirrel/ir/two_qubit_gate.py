@@ -1,12 +1,60 @@
+from __future__ import annotations
+
 from functools import cached_property
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
 from opensquirrel.ir import Gate, IRVisitor, Qubit, QubitLike
-from opensquirrel.ir.semantics import CanonicalGateSemantic, ControlledGateSemantic, MatrixGateSemantic
+from opensquirrel.ir.semantics import (
+    CanonicalGateSemantic,
+    ControlledGateSemantic,
+    MatrixGateSemantic,
+)
 from opensquirrel.ir.semantics.bsr import bsr_from_matrix
-from opensquirrel.ir.semantics.gate_semantic import GateSemantic
+
+if TYPE_CHECKING:
+    from opensquirrel.ir.semantics.gate_semantic import GateSemantic
+
+
+def try_match_replace_with_default_two_qubit_gate(gate: TwoQubitGate) -> TwoQubitGate:
+    """Tries to match a given two-qubit gate with a _default_ two-qubit gate.
+    It does that by checking if the two-qubit gates matches one of the _default_ two-qubit gates.
+
+    Note:
+        - The default (two-qubit) gates are defined in the
+        [cQASM standard gate set](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html).
+        - If no specific match is found, the input gate is returned unmodified.
+        - The parameterized two-qubit gates (e.g., CR, CRk) are not included in the default two-qubit gate set.
+
+    Args:
+        gate: The two-qubit gate to be matched.
+
+    Returns:
+        A default two-qubit gate if this two-qubit gate matches it, otherwise return the input gate.
+
+    """
+    from opensquirrel.default_instructions import (
+        default_two_qubit_gate_set,
+        default_two_qubit_gate_with_param_set,
+    )
+
+    if gate.name in default_two_qubit_gate_set:
+        return gate
+
+    default_gates = {
+        gate_name: gate_type
+        for gate_name, gate_type in default_two_qubit_gate_set.items()
+        if gate_name not in default_two_qubit_gate_with_param_set
+    }
+
+    for gate_type in default_gates.values():
+        arguments: tuple[Any, ...] = (gate.qubit0, gate.qubit1)
+        possible_gate = gate_type(*arguments)  # ty: ignore[missing-argument]
+        if possible_gate == gate:
+            return possible_gate
+
+    return gate
 
 
 class TwoQubitGate(Gate):
