@@ -19,14 +19,13 @@ if TYPE_CHECKING:
 
 def try_match_replace_with_default_two_qubit_gate(gate: TwoQubitGate) -> TwoQubitGate:
     """Tries to match a given two-qubit gate with a _default_ two-qubit gate.
-    It does that by checking if the parameters of the Bloch sphere rotation (BSR) semantic of the
-    input two-qubit gate are close to those of any of the default two-qubit gates.
+    It does that by checking if the two-qubit gates matches one of the _default_ two-qubit gates.
 
     Note:
         - The default (two-qubit) gates are defined in the
         [cQASM standard gate set](https://qutech-delft.github.io/cQASM-spec/latest/standard_gate_set/index.html).
-        - If no specific match is found, the general Rn gate is returned with the same parameters
-        values as those of the input gate.
+        - If no specific match is found, the input gate is returned unmodified.
+        - The parameterized two-qubit gates (e.g., CR, CRk) are not included in the default two-qubit gate set.
 
     Args:
         gate: The two-qubit gate to be matched.
