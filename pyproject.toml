@@ -43,7 +43,7 @@ dev = [
     "ruff>=0.16.10",
     "sympy>=1.14.0,<2",
     "tox>=4.30.2,<5",
-    "ty==0.0.32",
+    "ty==0.0.92",
 ]
 export = [
     "pyqt5-qt5==5.15.2; sys_platform != 'darwin'",
