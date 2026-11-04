@@ -101,7 +101,7 @@ def circuit4() -> Circuit:
 
 
 @pytest.mark.parametrize(
-    "router, circuit, expected_swap_count",  # noqa: PT006
+    "router, circuit, expected_swap_count",  # ruff: ignore[pytest-parametrize-names-wrong-type]
     [("router1", "circuit1", 3), ("router2", "circuit2", 14), ("router3", "circuit3", 10)],
 )
 def test_router(

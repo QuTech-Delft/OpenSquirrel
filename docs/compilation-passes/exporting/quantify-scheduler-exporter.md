@@ -94,7 +94,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
 
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
-        print('\n', "measurement to bit map: ", circuit.measurement_to_bit_map)
+        print("\n", "measurement to bit map: ", circuit.measurement_to_bit_map)
         ```
 
         ```
@@ -150,7 +150,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
         exported_circuit = circuit.export(exporter=QuantifySchedulerExporter)
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
-        print('\n', "measurement to bit map: ", circuit.measurement_to_bit_map)
+        print("\n", "measurement to bit map: ", circuit.measurement_to_bit_map)
         ```
 
         ```
@@ -226,7 +226,7 @@ The four examples below show how circuits written in [cQASM](https://qutech-delf
         exported_circuit = circuit.export(exporter=QuantifySchedulerExporter())
         for schedulable in exported_schedule.schedulables.values():
             print(exported_schedule.operations[schedulable["operation_id"]].name)
-        print('\n', "measurement to bit map: ", circuit.measurement_to_bit_map)
+        print("\n", "measurement to bit map: ", circuit.measurement_to_bit_map)
         ```
 
         ```

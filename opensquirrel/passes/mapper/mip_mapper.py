@@ -181,7 +181,7 @@ class MIPMapper(Mapper):
                 max_cost[i][k] = sum(
                     reference_counter[i][j] * distance[k][l]
                     for j in range(self.num_virtual_qubits)
-                    for l in range(self.num_physical_qubits)  # noqa: E741
+                    for l in range(self.num_physical_qubits)  # ruff: ignore[ambiguous-variable-name]
                 )
         return max_cost
 
@@ -224,7 +224,7 @@ class MIPMapper(Mapper):
                 lin_a[constraint_idx, i * self.num_physical_qubits + k] = max_cost[i][k]
 
                 for j in range(self.num_virtual_qubits):
-                    for l in range(self.num_physical_qubits):  # noqa: E741
+                    for l in range(self.num_physical_qubits):  # ruff: ignore[ambiguous-variable-name]
                         lin_a[constraint_idx, j * self.num_physical_qubits + l] += (
                             reference_counter[i][j] * distance[k][l]
                         )

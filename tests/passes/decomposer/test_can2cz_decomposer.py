@@ -45,7 +45,7 @@ def test_ignores_1q_gates(decomposer: Can2CZDecomposer, gate: Gate, expected_res
     ],
     ids=["CZ_0_1", "CZ_1_0"],
 )
-def test_decomposes_CZ(decomposer: Can2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # noqa: N802
+def test_decomposes_CZ(decomposer: Can2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # ruff: ignore[invalid-function-name]
     decomposed_gate = decomposer.decompose(gate)
     check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == expected_result
@@ -74,7 +74,7 @@ def test_decomposes_cr_crk_to_cz(decomposer: Can2CZDecomposer, gate: Gate) -> No
     ],
     ids=["CNOT_0_1", "CNOT_1_0"],
 )
-def test_decomposes_CNOT(decomposer: Can2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # noqa: N802
+def test_decomposes_CNOT(decomposer: Can2CZDecomposer, gate: Gate, expected_result: list[Gate]) -> None:  # ruff: ignore[invalid-function-name]
     decomposed_gate = decomposer.decompose(gate)
     check_gate_decomposition(gate, decomposed_gate)
     assert decomposed_gate == expected_result

@@ -90,7 +90,7 @@ def rearrange_barriers(ir: IR) -> None:
 
     """
     statements_groups = group_linked_barriers(ir.statements)
-    for i, statement_group in enumerate(statements_groups):
+    for i, statement_group in enumerate(statements_groups.copy()):
         statement = statement_group[0]
         if not isinstance(statement, Barrier):
             assert len(statement_group) == 1

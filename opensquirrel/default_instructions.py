@@ -86,6 +86,11 @@ default_single_qubit_gate_set: dict[str, type[SingleQubitGate]] = {
     **default_bsr_with_param_set,
 }
 
+default_two_qubit_gate_with_param_set: dict[str, type[TwoQubitGate]] = {
+    "CRk": CRk,
+    "CR": CR,
+}
+
 default_two_qubit_gate_set: dict[str, type[TwoQubitGate]] = {
     "CNOT": CNOT,
     "CR": CR,
@@ -116,6 +121,7 @@ default_gate_alias_set = {
     "Identity": I,
     "Toffoli": CCX,
 }
+
 default_gate_set: dict[str, type[Gate]] = {
     **default_single_qubit_gate_set,
     **default_two_qubit_gate_set,
@@ -128,10 +134,12 @@ default_non_unitary_set: dict[str, type[NonUnitary]] = {
     "measure": Measure,
     "reset": Reset,
 }
+
 default_control_instruction_set: dict[str, type[ControlInstruction]] = {
     "barrier": Barrier,
     "wait": Wait,
 }
+
 default_instruction_set: dict[str, type[Instruction]] = {
     **default_gate_set,
     **default_non_unitary_set,

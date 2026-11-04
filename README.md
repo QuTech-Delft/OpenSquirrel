@@ -75,7 +75,7 @@ circuit = builder.to_circuit()
 Alternatively, one can define the same circuit as a cQASM string:
 
 ```python
-cqasm_string = ("""
+cqasm_string = """
     version 3.0
 
     qubit q
@@ -84,9 +84,10 @@ cqasm_string = ("""
     Z q
     Y q
     Rx(1.0471976) q
-""")
+"""
 
 from opensquirrel.circuit import Circuit
+
 circuit = Circuit.from_string(cqasm_string)
 ```
 

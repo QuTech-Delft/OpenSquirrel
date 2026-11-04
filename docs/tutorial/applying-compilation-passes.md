@@ -80,11 +80,7 @@ The connectivity is given by a dictionary, where the keys are the qubit indices 
 indices that the qubit has a (uni-directional) connection with.
 
 ```python
-connectivity= {
-    "0": [1],
-    "1": [0, 2],
-    "2": [1]
-}
+connectivity = {"0": [1], "1": [0, 2], "2": [1]}
 ```
 
 !!! note "Bi-directional connections"
@@ -454,7 +450,6 @@ program).
     The Python script, taking as input the example program:
 
     ```python
-
     from opensquirrel import Circuit
     from opensquirrel.passes.router import ShortestPathRouter
     from opensquirrel.passes.decomposer import SWAP2CZDecomposer, CNOT2CZDecomposer, McKayDecomposer
@@ -462,11 +457,7 @@ program).
     from opensquirrel.passes.validator import RoutingValidator, PrimitiveGateValidator
 
     # Target QPU specifications
-    connectivity= {
-        "0": [1],
-        "1": [0, 2],
-        "2": [1]
-    }
+    connectivity = {"0": [1], "1": [0, 2], "2": [1]}
     pgs = ["I", "X", "Z", "X90", "mX90", "S", "Sdag", "T", "Tdag", "Rx", "Rz", "CZ"]
 
     # Reading the example program
@@ -501,7 +492,6 @@ program).
 
     # Writing out the compiled program to cQASM (one can also use the 'str()' method)
     print(circuit)
-
     ```
 
     The compiled program (in cQASM):

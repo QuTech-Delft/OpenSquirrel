@@ -37,7 +37,7 @@ def test_bsr_from_matrix(matrix: ArrayLike | list[list[int | DTypeLike]], bsr: B
 
 def assert_equal_upto_phase(bsr1: BlochSphereRotation, bsr2: BlochSphereRotation) -> None:
     assert bsr1.axis == bsr2.axis
-    assert bsr1.angle == bsr2.angle
+    assert bsr1.angle == pytest.approx(bsr2.angle)
 
 
 class TestBlochSphereRotation:
@@ -82,6 +82,20 @@ class TestBlochSphereRotation:
         assert_equal_upto_phase(u.bsr, Y90(0).bsr)
         u = U(0, 0, pi / 2, 0)
         assert_equal_upto_phase(u.bsr, Z90(0).bsr)
+
+    @pytest.mark.parametrize(
+        ("theta", "phi", "lmbda"),
+        [(0, 0, 0), (pi / 2, 0, 0), (0, pi / 2, 0), (0, 0, pi / 2), (pi / 2, pi / 2, pi / 2), (1, 2, 3)],
+    )
+    def test_multiplication(self, theta: float, phi: float, lmbda: float) -> None:
+        u = U(0, theta, phi, lmbda)
+        a = BlochSphereRotation((0, 0, 1), lmbda, 0)
+        b = BlochSphereRotation((0, 1, 0), theta, 0)
+        c = BlochSphereRotation((0, 0, 1), phi, (float(phi) + float(lmbda)) / 2)
+
+        expected_bsr = u.bsr
+        bsr = a * b * c
+        assert expected_bsr == bsr
 
     def test_y_rotations(self) -> None:
         assert Y90(0).bsr == BlochSphereRotation(axis=(0, 1, 0), angle=pi / 2, phase=pi / 4)

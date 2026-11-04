@@ -83,7 +83,7 @@ def circuit2() -> Circuit:
 
 
 @pytest.mark.parametrize(
-    "mapper, circuit, expected_mapping_length",  # noqa: PT006
+    "mapper, circuit, expected_mapping_length",  # ruff: ignore[pytest-parametrize-names-wrong-type]
     [("mapper1", "circuit1", 5), ("mapper2", "circuit2", 7)],
     ids=["tuna-5-mapping", "starmon-7-mapping"],
 )

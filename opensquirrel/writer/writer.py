@@ -29,7 +29,7 @@ from opensquirrel.ir.semantics import (
 )
 from opensquirrel.ir.single_qubit_gate import SingleQubitGate, try_match_replace_with_default_gate
 from opensquirrel.ir.three_qubit_gate import ThreeQubitGate
-from opensquirrel.ir.two_qubit_gate import TwoQubitGate
+from opensquirrel.ir.two_qubit_gate import TwoQubitGate, try_match_replace_with_default_two_qubit_gate
 from opensquirrel.register_manager import RegisterManager
 
 
@@ -88,6 +88,7 @@ class _WriterImpl(IRVisitor):
         self.output += f"{gate.name}{bsr_parameters} {qubit_operand}\n"
 
     def visit_two_qubit_gate(self, gate: TwoQubitGate) -> Any:
+        gate = try_match_replace_with_default_two_qubit_gate(gate)
         qubit_operand_0 = gate.qubit0.accept(self)
         qubit_operand_1 = gate.qubit1.accept(self)
 

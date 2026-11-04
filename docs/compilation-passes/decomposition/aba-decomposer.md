@@ -29,7 +29,6 @@ builder.H(0).Z(0).Y(0).Rx(0, math.pi / 3)
 circuit = builder.to_circuit()
 
 circuit.decompose(decomposer=ZYZDecomposer())
-
 ```
 
 ??? example "`print(circuit)`"

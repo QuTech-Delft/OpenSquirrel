@@ -27,11 +27,11 @@ class ABADecomposer(Decomposer, ABC):
 
     @property
     @abstractmethod
-    def Ra(self) -> Callable[..., SingleQubitGate]: ...  # noqa: N802
+    def Ra(self) -> Callable[..., SingleQubitGate]: ...  # ruff: ignore[invalid-function-name]
 
     @property
     @abstractmethod
-    def Rb(self) -> Callable[..., SingleQubitGate]: ...  # noqa: N802
+    def Rb(self) -> Callable[..., SingleQubitGate]: ...  # ruff: ignore[invalid-function-name]
 
     def decompose(self, instruction: Gate) -> list[Gate]:
         """Decomposes a single-qubit gate into (at most) three single-qubit gates following the
@@ -151,11 +151,11 @@ class XYXDecomposer(ABADecomposer):
     """Decomposes single-qubit gates into a Rx-Ry-Rx decomposition."""
 
     @property
-    def Ra(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Ra(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rx
 
     @property
-    def Rb(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Rb(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Ry
 
 
@@ -163,11 +163,11 @@ class XZXDecomposer(ABADecomposer):
     """Decomposes single-qubit gates into a Rx-Rz-Rx decomposition."""
 
     @property
-    def Ra(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Ra(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rx
 
     @property
-    def Rb(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Rb(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rz
 
 
@@ -175,11 +175,11 @@ class YXYDecomposer(ABADecomposer):
     """Decomposes single-qubit gates into a Ry-Rx-Ry decomposition."""
 
     @property
-    def Ra(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Ra(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Ry
 
     @property
-    def Rb(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Rb(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rx
 
 
@@ -187,11 +187,11 @@ class YZYDecomposer(ABADecomposer):
     """Decomposes single-qubit gates into a Ry-Rz-Ry decomposition."""
 
     @property
-    def Ra(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Ra(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Ry
 
     @property
-    def Rb(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Rb(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rz
 
 
@@ -199,11 +199,11 @@ class ZXZDecomposer(ABADecomposer):
     """Decomposes single-qubit gates into a Rz-Rx-Rz decomposition."""
 
     @property
-    def Ra(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Ra(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rz
 
     @property
-    def Rb(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Rb(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rx
 
 
@@ -211,9 +211,9 @@ class ZYZDecomposer(ABADecomposer):
     """Decomposes single-qubit gates into a Rz-Ry-Rz decomposition."""
 
     @property
-    def Ra(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Ra(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Rz
 
     @property
-    def Rb(self) -> Callable[..., SingleQubitGate]:  # noqa: N802
+    def Rb(self) -> Callable[..., SingleQubitGate]:  # ruff: ignore[invalid-function-name]
         return Ry

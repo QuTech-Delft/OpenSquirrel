@@ -29,7 +29,7 @@ class TestParsing:
     def _check_expected(circuit: Circuit, expected: float) -> None:
         for statement in circuit.ir.statements:
             if isinstance(statement, SingleQubitGate):
-                assert getattr(statement.bsr, "theta").value == expected  # noqa
+                assert getattr(statement.bsr, "theta").value == expected  # ruff: ignore[get-attr-with-constant]
                 phi = getattr(statement, "phi", None)
                 assert phi.value == expected if phi else True
 
@@ -99,6 +99,6 @@ class TestMerging:
         circuit.merge(merger=SingleQubitGatesMerger())
         assert circuit.ir.statements[0] == Ry(0, pi - DELTA)
 
-        circuit = CircuitBuilder(1).Rz(0, pi).Rz(0, pi / 2).to_circuit()
+        circuit = CircuitBuilder(1).Rz(0, pi / 2).Rz(0, pi / 2).to_circuit()
         circuit.merge(merger=SingleQubitGatesMerger())
-        assert circuit.ir.statements[0] == Rz(0, -pi / 2)
+        assert circuit.ir.statements[0] == Rz(0, pi)

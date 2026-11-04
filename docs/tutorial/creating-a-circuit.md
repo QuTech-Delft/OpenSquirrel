@@ -208,11 +208,11 @@ from opensquirrel import CircuitBuilder
 qreg_size = 5
 builder = CircuitBuilder(qubit_register_size=qreg_size)
 for qubit_index in range(qreg_size):
-      builder.H(qubit_index)
-      for control_index in range(qubit_index + 1, qreg_size):
-            target_index = qubit_index
-            k = control_index - target_index + 1
-            builder.CRk(control_index, target_index, k)
+    builder.H(qubit_index)
+    for control_index in range(qubit_index + 1, qreg_size):
+        target_index = qubit_index
+        k = control_index - target_index + 1
+        builder.CRk(control_index, target_index, k)
 circuit_qft = builder.to_circuit()
 ```
 

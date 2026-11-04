@@ -92,7 +92,7 @@ def test_decomposition_yields_only_cz_and_single_qubit_gates(decomposer: ThreeQu
         assert len(decomposed_gate.qubit_operands) == 1 or decomposed_gate.name == "CZ"
 
 
-def test_decomposes_CCX(decomposer: ThreeQubitGateDecomposer) -> None:  # noqa: N802
+def test_decomposes_CCX(decomposer: ThreeQubitGateDecomposer) -> None:  # ruff: ignore[invalid-function-name]
     assert decomposer.decompose(CCX(0, 1, 2))[:5] == [
         Ry(2, -pi / 2),
         Ry(2, -pi / 2),

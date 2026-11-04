@@ -17,6 +17,7 @@ from opensquirrel.passes.validator import PrimitiveGateValidator
 
 ```python
 from math import pi
+
 pgs = ["I", "Rx", "Ry", "Rz", "CZ"]
 
 builder = CircuitBuilder(5)

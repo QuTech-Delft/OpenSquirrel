@@ -33,13 +33,24 @@ The `metrics` dictionary then contains the value of every metric:
 
     ```python
     {
-        "n_qubits": 3, "n_gates": 3, "n_two_qubit_gates": 2, "two_qubit_pct": 0.6667, "depth": 3,
-        "ig_avg_shortest_path": 1.3333, "ig_std_adjacency": 0.4969, "ig_diameter": 2,
-        "ig_central_dominance": 1.0, "ig_avg_degree": 1.3333, "ig_n_maximal_cliques": 2,
+        "n_qubits": 3,
+        "n_gates": 3,
+        "n_two_qubit_gates": 2,
+        "two_qubit_pct": 0.6667,
+        "depth": 3,
+        "ig_avg_shortest_path": 1.3333,
+        "ig_std_adjacency": 0.4969,
+        "ig_diameter": 2,
+        "ig_central_dominance": 1.0,
+        "ig_avg_degree": 1.3333,
+        "ig_n_maximal_cliques": 2,
         "ig_clustering_coefficient": 0.0,
-        "gdg_critical_path_length": 2, "gdg_path_length_mean": 1.0, "gdg_path_length_std": 0.9036,
+        "gdg_critical_path_length": 2,
+        "gdg_path_length_mean": 1.0,
+        "gdg_path_length_std": 0.9036,
         "gdg_pct_gates_in_critical_path": 1.0,
-        "density_score": 1.0, "idling_score": 0.4444,
+        "density_score": 1.0,
+        "idling_score": 0.4444,
     }
     ```
 

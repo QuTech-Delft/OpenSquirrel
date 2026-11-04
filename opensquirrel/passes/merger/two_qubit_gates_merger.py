@@ -167,18 +167,17 @@ class TwoQubitGatesMerger(Merger):
 
         """
         graph = build_graph(ir)
-        if len(graph.nodes) == 1:
-            return
-
         groups = group_gates(graph)
         statements = []
 
         for group in groups:
             statement_indices, qubit_indices = group
-            if len(qubit_indices) == 2 and len(statement_indices) > 1:
-                merged_gate = _merge_gate_group(ir, group)
-                statements.append(merged_gate)
+            if len(qubit_indices) == 2:
+                statement = _merge_gate_group(ir, group)
             else:
-                statements.append(ir.statements[statement_indices.pop()])
+                statement = ir.statements[statement_indices.pop()]
+
+            if not (isinstance(statement, Gate) and statement.is_identity()):
+                statements.append(statement)
 
         ir.statements = statements
