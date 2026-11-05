@@ -385,7 +385,7 @@ def lambdas_to_coords(lambdas: NDArray[np.complex128]) -> tuple[float, float, fl
 
 def constrain_to_weyl_chamber(
     lambdas: NDArray[np.complex128],
-) -> tuple[tuple[float, float, float], NDArray[np.int8], NDArray[np.int8]]:
+) -> tuple[tuple[float, float, float], NDArray[np.intp], NDArray[np.intp]]:
     for permutation in itertools.permutations(range(4)):
         for signs in ([1, 1, 1, 1], [1, 1, -1, -1], [-1, 1, -1, 1], [1, -1, -1, 1]):
             signed_lambdas = lambdas * np.asarray(signs)

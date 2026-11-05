@@ -42,7 +42,7 @@ def try_match_replace_with_default_gate(gate: SingleQubitGate) -> SingleQubitGat
         if gate_name in default_bsr_with_param_set:
             arguments += (Float(gate.bsr.angle),)
 
-        possible_gate = default_single_qubit_gate_set[gate_name](*arguments)  # ty: ignore[invalid-argument-type]
+        possible_gate = default_single_qubit_gate_set[gate_name](*arguments)
         if possible_gate == gate:
             return possible_gate
 
