@@ -286,7 +286,7 @@ class LibQasmParser:
 
         """
         analyzer = LibQasmParser._create_analyzer()
-        ast = analyzer.analyze_string(s)
+        ast = cast("cqasm.semantic.Program | list[str]", analyzer.analyze_string(s))
         if not isinstance(ast, cqasm.semantic.Program):
             msg = "parsing error: " + ", ".join(ast)
             raise OSError(msg)

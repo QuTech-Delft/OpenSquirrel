@@ -50,7 +50,7 @@ def try_match_replace_with_default_two_qubit_gate(gate: TwoQubitGate) -> TwoQubi
 
     for gate_type in default_gates.values():
         arguments: tuple[Any, ...] = (gate.qubit0, gate.qubit1)
-        possible_gate = gate_type(*arguments)  # ty: ignore[missing-argument]
+        possible_gate = gate_type(*arguments)
         if possible_gate == gate:
             return possible_gate
 

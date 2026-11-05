@@ -134,7 +134,7 @@ class MIPMapper(Mapper):
                     if distance[i][j] > distance[i][k] + distance[k][j]:
                         distance[i][j] = distance[i][k] + distance[k][j]
 
-        return list(distance)
+        return distance.tolist()
 
     @staticmethod
     def _get_reference_counter(ir: IR, num_virtual_qubits: int) -> list[list[int]]:
