@@ -129,7 +129,7 @@ class LibQasmParser:
         For example, for CNOT q[0, 1] q[2, 3], this function returns [[Qubit(0), Qubit(1)], [Qubit(2), Qubit(3)]].
         """
         ret: list[list[Any]] = []
-        for operand in instruction.operands:  # ty: ignore[unresolved-attribute]
+        for operand in instruction.operands:  # ty: ignore[missing-attribute]
             if self._is_qubit_type(operand):
                 ret.append(self._get_qubits(operand))
             else:
@@ -157,7 +157,7 @@ class LibQasmParser:
         if isinstance(instruction, cqasm.semantic.GateInstruction):
             gate_parameters = self._get_named_gate_parameters(instruction.gate)
         else:
-            gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]  # ty: ignore[unresolved-attribute]
+            gate_parameters = [self._ast_literal_to_ir_literal(parameter) for parameter in instruction.parameters]  # ty: ignore[missing-attribute]
         if gate_parameters:
             number_of_operands = len(extended_operands[0])
             extended_gate_parameters = [gate_parameters] * number_of_operands

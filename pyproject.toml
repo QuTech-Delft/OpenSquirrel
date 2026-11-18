@@ -187,5 +187,5 @@ flake8-type-checking.exempt-modules = ["typing", "typing_extensions", "numpy", "
 ]
 
 [tool.ty.rules]
-unresolved-import = "ignore"
+import-not-found = "ignore"
 
