@@ -49,6 +49,7 @@ nav:
     - Merging:
       - Merging: compilation-passes/merging/index.md
       - Single-qubit gates merger: compilation-passes/merging/single-qubit-gates-merger.md
+      - Two-qubit gates merger: compilation-passes/merging/two-qubit-gates-merger.md
     - Routing:
       - Routing: compilation-passes/routing/index.md
       - A* router: compilation-passes/routing/a-star-router.md
