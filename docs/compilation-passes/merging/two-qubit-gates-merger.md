@@ -1,9 +1,11 @@
 The two-qubit gates merger (`TwoQubitGatesMerger`) allows combining gates acting on the same pair of qubits into a single
 two-qubit gate. Single-qubit gates on either qubit can be included in the sequence being merged.
-This can reduce circuit depth, but the resulting gate may be an arbitrary two-qubit gate rather than a known gate.
+This can reduce circuit depth, yet the resulting gate will likely be an arbitrary two-qubit gate rather than a known gate.
 
-Merging does not cross _non-unitary_ instructions, _e.g._ `init`, `reset`, and `measure`, or _control_ instructions, from
-_e.g._ `wait` and `barrier`. Gates acting on other qubits are not included in the merged gate. OpenSquirrel will try to identify whether the resulting two-qubit gate is a _known_ gate.
+Merging does not cross _non-unitary_ instructions, _e.g._ `init`, `reset`, and `measure`, or _control_ instructions,
+_e.g._ `wait` and `barrier`.
+Gates acting on other qubits are not included in the merged gate.
+OpenSquirrel will try to identify whether the resulting two-qubit gate is a _known_ gate.
 
 To execute the resulting circuit on a backend with a limited primitive gate set, it may be necessary to apply a
 [decomposition](../decomposition/index.md) pass. The [canonical to CZ decomposer](../decomposition/can2cz-decomposer.md)
@@ -39,7 +41,7 @@ circuit.merge(merger=TwoQubitGatesMerger())
     CZ q[0], q[1]
     ```
 
-The example above show how four consecutive controlled Rz rotations over $\pi/4$, are merged into a single CZ gate.
+The example above shows how four consecutive controlled Rz rotations over $\pi/4$, are merged into a single CZ gate.
 
 The following example shows that single-qubit gates are also included in the merge.
 
@@ -62,26 +64,10 @@ circuit.merge(merger=TwoQubitGatesMerger())
     ISWAP q[0], q[1]
     ```
 
-Be aware that the merging happens in a _greedy_ manner, so a two-qubit gate will merge with as many single-qubit gates as possible, until a new two-qubit gate is encountered.
+!!! warning "Greedy merging"
 
-```python
-builder = CircuitBuilder(3)
-builder.CNOT(0, 1).H(1).CNOT(2, 1).H(1)
-circuit = builder.to_circuit()
+    Be aware that the merging happens in a _greedy_ manner, _i.e._, a two-qubit gate will merge with as many 
+    single-qubit gates as possible, until a new two-qubit gate is encountered.
 
-circuit.merge(merger=TwoQubitGatesMerger())
-```
-
-??? example "`print(circuit)`"
-
-    ```
-    version 3.0
-
-    qubit[3] q
-
-    TwoQubitGate(qubits=[(Qubit[0], Qubit[1])], gate_semantic=MatrixGateSemantic(matrix=[[ 0.70711+0.j  0.70711-0.j  0.     +0.j  0.     +0.j] [ 0.70711-0.j -0.70711+0.j  0.     +0.j  0.     +0.j] [ 0.     +0.j  0.     +0.j  0.70711-0.j  0.70711+0.j] [ 0.     +0.j  0.     +0.j -0.70711+0.j  0.70711-0.j]]))
-    TwoQubitGate(qubits=[(Qubit[1], Qubit[2])], gate_semantic=MatrixGateSemantic(matrix=[[ 0.70711+0.j  0.     +0.j  0.70711-0.j  0.     +0.j] [ 0.     +0.j  0.70711-0.j  0.     +0.j  0.70711+0.j] [ 0.70711-0.j  0.     +0.j -0.70711+0.j  0.     +0.j] [ 0.     +0.j -0.70711+0.j  0.     +0.j  0.70711-0.j]]))
-    ```
-
-Here the first Hadamard gate is merged with the first CNOT gate, instead of merging with the second one (which would result in a CZ gate).
+    
 
