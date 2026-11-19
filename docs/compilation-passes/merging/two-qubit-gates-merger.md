@@ -1,5 +1,5 @@
 The two-qubit gates merger (`TwoQubitGatesMerger`) allows combining gates acting on the same pair of qubits into a single
-two-qubit gate. Single-qubit gates on either qubit can be included in the sequence being merged.
+two-qubit gate. Single-qubit gates on either qubit will be included, based on the grouping algorithm, in the sequence being merged.
 This can reduce circuit depth, yet the resulting gate will likely be an arbitrary two-qubit gate rather than a known gate.
 
 Merging does not cross _non-unitary_ instructions, _e.g._ `init`, `reset`, and `measure`, or _control_ instructions,

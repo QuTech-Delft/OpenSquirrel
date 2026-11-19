@@ -19,16 +19,18 @@ set.
 The following decomposer passes are available in OpenSquirrel:
 
 - [ABA decomposer](aba-decomposer.md)
+- [Canonical to CZ decomposer](can2cz-decomposer.md) (`Can2CZDecomposer`)
 - [CNOT decomposer](cnot-decomposer.md) (`CNOTDecomposer`)
 - [CZ decomposer](cz-decomposer.md) (`CZDecomposer`)
 - [McKay decomposer](mckay-decomposer.md) (`McKayDecomposer`)
 - [Predefined decomposers](predefined-decomposers.md)
     - [CNOT to CZ decomposer](predefined-decomposers.md#cnot-to-cz-decomposer) (`CNOT2CZDecomposer`)
     - [SWAP to CNOT decomposer](predefined-decomposers.md#swap-to-cnot-decomposer) (`SWAP2CNOTDecomposer`)
-    - [SWAP to CZ decomposer](predefined-decomposers.md#swap-to-cnot-decomposer) (`SWAP2CZDecomposer`)
+    - [SWAP to CZ decomposer](predefined-decomposers.md#swap-to-cz-decomposer) (`SWAP2CZDecomposer`)
+    - [Three-qubit gate decomposer](predefined-decomposers.md#three-qubit-gate-decomposer) (`ThreeQubitGateDecomposer`)
 
-Note that the above decomposers are specific for single- or two-qubit gates;
-two-qubit gates are not decomposed by single-qubit gate decomposers, and vice versa.
+Note that decomposers may be specific to particular gate arities; for example, single-qubit gate decomposers do not
+decompose two-qubit gates, and vice versa.
 
 !!! note "Primitive gate validator"
     
